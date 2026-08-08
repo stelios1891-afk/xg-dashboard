@@ -1,0 +1,58 @@
+name: value-scanner
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'      # καθε ~30' (UTC· το GitHub μπορει να αργησει λιγο)
+  workflow_dispatch: {}          # + χειροκινητο κουμπι "Run workflow"
+
+permissions:
+  contents: write                # για commit των αποτελεσματων πισω στο repo
+
+concurrency:
+  group: value-scanner
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # gating state (last_scan / fixtures cache) — μενει σε cache, οχι στο repo
+      - name: Restore gating state
+        uses: actions/cache@v4
+        with:
+          path: |
+            value_last_scan.txt
+            value_fixtures_cache.json
+          key: scanner-state-${{ github.run_id }}
+          restore-keys: |
+            scanner-state-
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run scanner (adaptive)
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PYTHONIOENCODING: utf-8
+        run: python scan_value.py auto
+
+      # commit ΜΟΝΟ οταν αλλαξαν τα picks (state) → το dashboard ανανεωνεται μονο σε νεα/αλλαγες
+      - name: Commit picks if changed
+        run: |
+          git config user.name "scanner-bot"
+          git config user.email "actions@github.com"
+          git add value_scan_state.json value_picks_latest.json
+          if git diff --cached --quiet -- value_scan_state.json; then
+            echo "no pick changes — skip commit"
+          else
+            git commit -m "picks update [skip ci]"
+            git push
+          fi

@@ -241,15 +241,19 @@ def render_value(league):
     with open(_LATEST_F, encoding='utf-8') as fh:
         res = json.load(fh)
     picks = res.get('picks', [])
-    top = st.columns([3, 1])
-    top[0].caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')}")
-    if top[1].button("🔄 Scan τωρα"):
-        try:
-            import scan_value
-            scan_value.scan(notify_tg=False)
-            st.rerun()
-        except Exception as e:
-            st.error(f"Σφαλμα scan: {e}")
+    if os.environ.get('TOA_KEY'):   # τοπικα μονο· στο cloud σκαναρει το GitHub Actions
+        top = st.columns([3, 1])
+        top[0].caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')}")
+        if top[1].button("🔄 Scan τωρα"):
+            try:
+                import scan_value
+                scan_value.scan(notify_tg=False)
+                st.rerun()
+            except Exception as e:
+                st.error(f"Σφαλμα scan: {e}")
+    else:
+        st.caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')} "
+                   "· auto-scan καθε 30' (GitHub Actions)")
     if not picks:
         st.info("Καμια value pick στο τελευταιο scan (αναμενομενο προεποχικα / χαμηλη ρευστοτητα Betfair).")
         return
