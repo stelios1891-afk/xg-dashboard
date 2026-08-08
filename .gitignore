@@ -1,0 +1,47 @@
+# ══ Κραταμε ΜΟΝΟ ο,τι χρειαζεται το cloud (dashboard + scanner). ══
+# ── temp / caches / personal ──
+__pycache__/
+*.pyc
+*.bak
+*.xlsx
+.claude/
+
+# ── μεγαλοι backtest/research φακελοι & αρχεια (ΔΕΝ χρειαζονται) ──
+hist/
+odds/
+odds2/
+toa_cache/
+markstats/
+soccer_*.json
+players_*.json
+odds_*.json
+snap*.json
+euro_fixtures.json
+hfa_10yr.json
+match_index.json
+totals_odds.json
+
+# ── ολα τα CSV εκτος απο το teamgame_inputs.csv ──
+*.csv
+!teamgame_inputs.csv
+
+# ── raw shot JSONs: μονο οι 9 λιγκες (2526) ──
+data_*.json
+!data_EPL_2526.json
+!data_LaLiga_2526.json
+!data_SerieA_2526.json
+!data_Bundesliga_2526.json
+!data_Ligue1_2526.json
+!data_PrimeiraLiga_2526.json
+!data_Belgium_2526.json
+!data_Eredivisie_2526.json
+!data_ScottishPrem_2526.json
+
+# ── dashboard preview artifacts (τοπικα μονο) ──
+dashboard/preview*.html
+dashboard/preview*.py
+
+# ── local scanner scheduler state (το cloud/Actions εχει δικο του) ──
+value_fixtures_cache.json
+value_last_scan.txt
+oddspapi_keymap.json
