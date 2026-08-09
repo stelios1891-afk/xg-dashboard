@@ -19,10 +19,47 @@ from math import exp, factorial
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import picks
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RATINGS_SEASON_DEFAULT = '2526'   # τελευταια πληρης σεζον (warm-start για 26/27)
 CURRENT_FOTMOB_SEASON = '2026%2F2027'
 LEAGUE_FOTMOB = {'EPL': 47, 'LaLiga': 87, 'SerieA': 55, 'Bundesliga': 54, 'Ligue1': 53,
                  'Belgium': 40, 'ScottishPrem': 64, 'Eredivisie': 57, 'PrimeiraLiga': 61}
+
+# --- Νεοφωτιστες: prior απο 2η κατηγορια × μεταφραση (βλ. memory promoted-team-translation) ---
+SECOND_DIV = {'EPL': 'Championship', 'LaLiga': 'LaLiga2', 'SerieA': 'SerieB',
+              'Bundesliga': 'Bundesliga2', 'Ligue1': 'Ligue2'}
+PROMO_SEASON = '2526'
+PROMO_ATT, PROMO_DEF = 0.65, 1.50   # xGF ×0.65 (−35%), xGA ×1.5 (+50%) — England-validated (approx αλλες χωρες)
+PROMO_SF, PROMO_SA = 0.73, 1.34     # σουτ επιθεσης ×0.73, δεχομενα σουτ ×1.34 (για ρεαλιστικο shots display)
+
+def _promoted_synth(second_div):
+    """{tid: (name, synthetic_hist)} — ομαδες 2ης κατηγοριας με μεταφρασμενο (translated) rating.
+    Το synthetic hist ειναι 8 σταθερα 'ματς' ωστε το predict_full να τις χειριζεται σαν κανονικες."""
+    path = os.path.join(ROOT, f'data_{second_div}_{PROMO_SEASON}.json')
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding='utf-8') as fh:
+        d = json.load(fh)
+    from collections import defaultdict
+    ag = defaultdict(lambda: dict(name='', sf=0, xf=0.0, sa=0, xa=0.0, n=0))
+    for m in d.values():
+        h, a = m['home'], m['away']; xf = {h['id']: 0.0, a['id']: 0.0}; sh = {h['id']: 0, a['id']: 0}
+        for s in m.get('shots', []):
+            if s.get('sit') != 'Penalty' and s.get('xg') is not None and s.get('tid') in xf:
+                xf[s['tid']] += s['xg']; sh[s['tid']] += 1
+        for t, o in [(h['id'], a['id']), (a['id'], h['id'])]:
+            ag[t]['name'] = h['name'] if t == h['id'] else a['name']
+            ag[t]['sf'] += sh[t]; ag[t]['xf'] += xf[t]; ag[t]['sa'] += sh[o]; ag[t]['xa'] += xf[o]; ag[t]['n'] += 1
+    out = {}
+    for tid, v in ag.items():
+        if v['n'] < 10:
+            continue
+        n = v['n']
+        sf = (v['sf'] / n) * PROMO_SF; xf = (v['xf'] / n) * PROMO_ATT        # attack (translated)
+        sa = (v['sa'] / n) * PROMO_SA; xa = (v['xa'] / n) * PROMO_DEF        # defense (translated)
+        K = 8
+        out[tid] = (v['name'], dict(sf=[sf]*K, xf=[xf]*K, sa=[sa]*K, xa=[xa]*K, gf=[xf]*K, ga=[xa]*K))
+    return out
 
 _FOT_HDR = {'User-Agent': 'Mozilla/5.0', 'Accept': '*/*', 'Referer': 'https://www.fotmob.com/'}
 def _fotmob(url):
@@ -92,6 +129,13 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, leagues=None):
     out = []; stats = {}
     for lg in leagues:
         hist, lg_shots, lg_xgps, hf = picks.league_state(M, lg, ratings_season)
+        # --- εισαγωγη νεοφωτιστων (2η κατηγορια × μεταφραση) ως prior ---
+        promoted = set()
+        if lg in SECOND_DIV:
+            for tid, (nm, synth) in _promoted_synth(SECOND_DIV[lg]).items():
+                if tid not in hist:                 # μονο οσες ΔΕΝ ειναι ηδη στα ratings
+                    hist[tid] = synth; id2name.setdefault(tid, nm)
+                    name2id.setdefault(nm, tid); promoted.add(tid)
         try:
             fixtures = fetch_upcoming(lg)
         except Exception as e:
@@ -103,7 +147,8 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, leagues=None):
             if A is None and f['away_id'] and int(f['away_id']) in hist: A = int(f['away_id'])
             rec = dict(league=lg, gw=f['gw'], utc=f['utc'],
                        home=f['home_name'], away=f['away_name'],
-                       home_id=f['home_id'], away_id=f['away_id'], projectable=False)
+                       home_id=f['home_id'], away_id=f['away_id'], projectable=False,
+                       promoted=(H in promoted or A in promoted))
             hh = hist.get(H); ha = hist.get(A)
             if hh and ha and len(hh['sf']) >= picks.MIN_PRIOR and len(ha['sf']) >= picks.MIN_PRIOR:
                 pf = predict_full(hh, ha, lg_shots, lg_xgps, hf)
