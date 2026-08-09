@@ -278,8 +278,10 @@ def evaluate_bet(xg_h, xg_a, line, oh, oa):
         pw, pp = p_cover(dist, side, ud)
         edge = pw * (odds - 1) * (1 - MARGIN) - (1 - pw - pp)   # 3% vig haircut στα winnings· DC μεσω gd_dist(DRAW_BOOST)
         if edge >= EDGE:
+            # fair odds ΜΕ push (AH): break-even = (1-pp)/pw· το 1/pw αγνοουσε το push
+            # (παραπλανητικο σε ακεραιες/μισες γραμμες)· ΔΕΝ αλλαζει edge/picks, μονο το display.
             out.append(dict(side=side, hcap=ud, odds=odds, pw=pw, pp=pp, edge=edge,
-                            proj_odds=(1 / pw if pw > 0 else float('inf'))))
+                            proj_odds=((1 - pp) / pw if pw > 0 else float('inf'))))
     return out
 
 # ---------- signals: παραγει ΚΑΘΕ value bet (pre-match) [backtest, με football-data odds] ----------
