@@ -32,6 +32,23 @@ PROMO_SEASON = '2526'
 PROMO_ATT, PROMO_DEF = 0.65, 1.50   # xGF ×0.65 (−35%), xGA ×1.5 (+50%) — England-validated (approx αλλες χωρες)
 PROMO_SF, PROMO_SA = 0.73, 1.34     # σουτ επιθεσης ×0.73, δεχομενα σουτ ×1.34 (για ρεαλιστικο shots display)
 
+PLAYOFF_LEAGUES = {'Belgium', 'ScottishPrem'}   # split/playoff season — κραταμε decay (pending test)
+
+def flatten_warmstart(hist, league):
+    """Cross-season prior: FLAT (χωρις decay) aggregation του περσινου — καλυτερο για ΠΡΩΤΕΣ 6
+    (test 2026-08-09: flat −0.9% MAE vs decay 0.96, μονοτονο). Αντικαθιστα καθε team-history με
+    constant lists (μεσος ορος) ωστε wmean=flat για ΟΠΟΙΟΔΗΠΟΤΕ decay. Playoff λιγκες εξαιρουνται."""
+    if league in PLAYOFF_LEAGUES:
+        return hist
+    K = 8
+    out = {}
+    for tid, h in hist.items():
+        keys = ('sf', 'xf', 'sa', 'xa', 'gf', 'ga')
+        if not h.get('sf'):
+            out[tid] = h; continue
+        out[tid] = {k: [sum(h[k]) / len(h[k])] * K for k in keys}
+    return out
+
 def _promoted_synth(second_div):
     """{tid: (name, synthetic_hist)} — ομαδες 2ης κατηγοριας με μεταφρασμενο (translated) rating.
     Το synthetic hist ειναι 8 σταθερα 'ματς' ωστε το predict_full να τις χειριζεται σαν κανονικες."""
@@ -136,6 +153,7 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, leagues=None):
                 if tid not in hist:                 # μονο οσες ΔΕΝ ειναι ηδη στα ratings
                     hist[tid] = synth; id2name.setdefault(tid, nm)
                     name2id.setdefault(nm, tid); promoted.add(tid)
+        hist = flatten_warmstart(hist, lg)          # flat cross-season prior (πλην playoff)
         try:
             fixtures = fetch_upcoming(lg)
         except Exception as e:

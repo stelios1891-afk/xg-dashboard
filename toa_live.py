@@ -12,8 +12,10 @@ from collections import defaultdict
 import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dashboard'))
 import picks as engine
 import live_odds   # reuse assign() / team_match()
+import build_data   # flatten_warmstart (flat cross-season prior)
 
 BASE = 'https://api.the-odds-api.com/v4'
 SPORT = {'EPL': 'soccer_epl', 'LaLiga': 'soccer_spain_la_liga', 'SerieA': 'soccer_italy_serie_a',
@@ -94,7 +96,8 @@ def compute_picks_toa(leagues, ratings_season):
     allfix, rem, cost = fetch_all(leagues)
     all_picks, all_blocked, all_norating = [], [], []
     for lg in leagues:
-        state = engine.league_state(M, lg, ratings_season)
+        hist, lg_shots, lg_xgps, hf = engine.league_state(M, lg, ratings_season)
+        state = (build_data.flatten_warmstart(hist, lg), lg_shots, lg_xgps, hf)  # flat cross-season prior
         fixtures = allfix.get(lg, [])
         toa_names = sorted({_al(n) for f in fixtures for n in (f['home_toa'], f['away_toa']) if n})
         res = live_odds.assign(toa_names, sorted(x for x in lg_names.get(lg, set()) if x))
