@@ -32,21 +32,21 @@ PROMO_SEASON = '2526'
 PROMO_ATT, PROMO_DEF = 0.65, 1.50   # xGF ×0.65 (−35%), xGA ×1.5 (+50%) — England-validated (approx αλλες χωρες)
 PROMO_SF, PROMO_SA = 0.73, 1.34     # σουτ επιθεσης ×0.73, δεχομενα σουτ ×1.34 (για ρεαλιστικο shots display)
 
-PLAYOFF_LEAGUES = {'Belgium', 'ScottishPrem'}   # split/playoff season — κραταμε decay (pending test)
+# Belgium: τα playoff ματς (points-halved) ΒΛΑΠΤΟΥΝ τον prior → μονο regular season (πρωτα 30· test −11%).
+# Scotland: το split ειναι απλο re-seeding (ματς μετρανε κανονικα) → flat-all καλυτερο (test), ΚΑΝΕΝΑ special.
+REGULAR_CUTOFF = {'Belgium': 30}
 
 def flatten_warmstart(hist, league):
     """Cross-season prior: FLAT (χωρις decay) aggregation του περσινου — καλυτερο για ΠΡΩΤΕΣ 6
-    (test 2026-08-09: flat −0.9% MAE vs decay 0.96, μονοτονο). Αντικαθιστα καθε team-history με
-    constant lists (μεσος ορος) ωστε wmean=flat για ΟΠΟΙΟΔΗΠΟΤΕ decay. Playoff λιγκες εξαιρουνται."""
-    if league in PLAYOFF_LEAGUES:
-        return hist
+    (test 2026-08-09: flat < decay 0.96 MAE, μονοτονο). Αντικαθιστα καθε team-history με constant
+    lists (μεσος) ωστε wmean=flat για ΟΠΟΙΟΔΗΠΟΤΕ decay. Belgium: μονο τα πρωτα 30 (regular)."""
+    cut = REGULAR_CUTOFF.get(league)   # None → ολη η σεζον (h[k][:None] = full)
     K = 8
     out = {}
     for tid, h in hist.items():
-        keys = ('sf', 'xf', 'sa', 'xa', 'gf', 'ga')
         if not h.get('sf'):
             out[tid] = h; continue
-        out[tid] = {k: [sum(h[k]) / len(h[k])] * K for k in keys}
+        out[tid] = {k: [sum(h[k][:cut]) / len(h[k][:cut])] * K for k in ('sf', 'xf', 'sa', 'xa', 'gf', 'ga')}
     return out
 
 def _promoted_synth(second_div):
