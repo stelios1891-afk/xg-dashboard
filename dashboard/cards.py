@@ -41,9 +41,6 @@ summary::-webkit-details-marker{display:none;}
 .row b{font-family:'JetBrains Mono',monospace;color:#e8edf8;font-weight:600;}
 .row b.acc{color:#7ea2ff;}
 .time{font-size:9px;color:#5a6b8c;text-align:center;padding-top:2px;}
-.promo{position:absolute;top:8px;right:10px;font-size:8px;letter-spacing:.5px;color:#f5b731;
-       background:rgba(245,183,49,.12);border:1px solid rgba(245,183,49,.3);border-radius:4px;padding:1px 5px;}
-.card{position:relative;}
 </style>
 """
 
@@ -63,9 +60,8 @@ def card_html(m):
     ac = '#34d17a' if aw > hw else ('#f04f5a' if aw < hw else '#8fa3c8')
     hbg, abg = _BG[hc], _BG[ac]
     day = (m.get('utc') or '')[:10]
-    promo = '<span class="promo">νεοφωτιστη · est</span>' if m.get('promoted') else ''
     return f"""
-<div class="card">{promo}<div class="sum">
+<div class="card"><div class="sum">
   <div class="team">
     <div class="thead">{_logo(m.get('home_id'))}<div class="tn">{esc(m['home'])}</div></div>
     <div class="meta"><span class="xg">xG {m['home_adj_xg']:.2f}</span><span>{m['home_exp_shots']:.1f} sh</span></div></div>
