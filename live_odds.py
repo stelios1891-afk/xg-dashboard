@@ -28,10 +28,10 @@ LEAGUES = {
     'Bundesliga':   {'fotmob': 54, 'oddspapi': 35},
     'Ligue1':       {'fotmob': 53, 'oddspapi': 34},
     # --- προσθηκες Phase-2 (backtest-validated, ανεξαρτητη βαθμονομηση) ---
-    'Belgium':      {'fotmob': 40, 'oddspapi': 38},    # TOA-gold @18h validated (proj +14.0, real +18.4)
-    'ScottishPrem': {'fotmob': 64, 'oddspapi': 36},    # TOA-gold @18h validated (proj +14.8, real +8.2)
-    'Eredivisie':   {'fotmob': 57, 'oddspapi': 37},    # TOA-gold @18h validated (proj +9.7, real +5.2)· ΤΡΕΞΕ check-names πριν το live
-    'PrimeiraLiga': {'fotmob': 61, 'oddspapi': 238},   # WATCH
+    'Eredivisie':   {'fotmob': 57, 'oddspapi': 37},    # @15η+ closing +8.4%
+    'PrimeiraLiga': {'fotmob': 61, 'oddspapi': 238},   # @15η+ closing +7.6%
+    # ΑΦΑΙΡΕΘΗΚΑΝ (2026-08-11): Belgium (fotmob 40/oddspapi 38) & ScottishPrem (64/36) —
+    # 5-season sharp = θορυβος/αρνητικες @15η+ (Belgium −11%, Scottish −7.6%, μικρο ασταθες δειγμα).
 }
 # Λιγκες σε "παρατηρηση": παραγουν picks/alerts αλλα σημαινονται ⚠ watch (αδυναμο σημα,
 # μικρο/μηδεν stake μεχρι να επιβεβαιωθει σε 3η σεζον 26/27). Belgium & top-5 = σιγουρα.

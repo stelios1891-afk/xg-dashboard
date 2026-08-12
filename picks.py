@@ -32,7 +32,7 @@ F = [factorial(i) for i in range(13)]
 HFA_FIX = {'EPL': 1.10, 'LaLiga': 1.15, 'SerieA': 1.08, 'Bundesliga': 1.12, 'Ligue1': 1.105,
            'Bundesliga2': 1.102, 'Eredivisie': 1.130, 'PrimeiraLiga': 1.116,
            'GreeceSL': 1.133, 'Belgium': 1.113, 'ScottishPrem': 1.118}
-TOP5 = ['EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Belgium', 'Eredivisie', 'ScottishPrem']  # +Primeira· +Belgium/Eredivisie/ScottishPrem (2026-08-08: TOA-gold @18h validated +14.0/+9.7/+14.8· date-aware matching για playoff-repeats Belgium/Scotland· Eredivisie προστ. στο teamgame_inputs.csv)
+TOP5 = ['EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Eredivisie']  # CORE 7 (2026-08-11): αφαιρεθηκαν Belgium & ScottishPrem — 5-season sharp = θορυβος/αρνητικες @15η+ (Belgium −11%, Scottish −7.6%). Core 7 @15η+ closing +6.3% (4/5 σεζον θετικες). Βλ. memory league-config-registry.
 ALL_SEASONS = ['2425', '2526']
 
 # ---------- φορτωση data & id->name ----------
