@@ -1,0 +1,56 @@
+name: data-refresh
+
+# Καθημερινη αυτοματη ανανεωση φετινων δεδομενων (CORE7, 2627): discover -> dl -> add_current_season.
+# Τρεχει στους servers του GitHub (χωρις PC/μηνυμα). Commit ΜΟΝΟ αν αλλαξαν raw data (νεα ματς / Opta revisions).
+on:
+  schedule:
+    - cron: '0 5 * * *'      # 05:00 UTC καθε μερα (~7-8πμ Ελλαδας)· το GitHub μπορει να αργησει λιγο
+  workflow_dispatch: {}       # + χειροκινητο "Run workflow" (για τεστ)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # πληρες ιστορικο -> καθαρο rebase-before-push (αν συμπεσει με scanner)
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Refresh CORE7 data (2627)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          # ΠΡΟΣΟΧΗ: το '2627' αλλαζει μια φορα/χρονο (νεα σεζον) — και εδω ΚΑΙ στο add_current_season.py
+          python discover.py 2627 EPL LaLiga SerieA Bundesliga Ligue1 PrimeiraLiga Eredivisie
+          for L in EPL LaLiga SerieA Bundesliga Ligue1 PrimeiraLiga Eredivisie; do
+            python dl.py ${L}_2627 || echo "dl ${L} skipped (0 finished;)"
+          done
+          python add_current_season.py
+
+      - name: Commit if raw data changed
+        run: |
+          git config user.name "data-refresh-bot"
+          git config user.email "actions@github.com"
+          git add teamgame_inputs.csv data_*_2627.json
+          # commit ΜΟΝΟ αν αλλαξαν τα raw data (νεα ματς / Opta revisions) — οχι μονο float-noise στο csv
+          if git diff --cached --quiet -- data_*_2627.json; then
+            echo "no raw-data changes — skip commit"
+          else
+            git commit -m "data refresh 2627 [skip ci]"
+            for i in 1 2 3; do
+              git pull --rebase --autostash origin main && git push && break || sleep 5
+            done
+          fi
