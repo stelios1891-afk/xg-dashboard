@@ -128,8 +128,6 @@ def render_projections(league):
     with c2:
         gw = st.selectbox("Αγωνιστικη", gws, format_func=lambda x: f"GW {x}", key=f"gw_{league}")
     sel = sorted([m for m in lg_matches if m['gw'] == gw], key=lambda m: m['utc'])
-    st.caption(f"{len(sel)} ματς · pre-match προβλεψεις μοντελου (xG & win%) · αποδοσεις: "
-               "**μοντ** = fair μοντελου · **αγορ** = market 1X2 (🟢 εμεις πιο ψηλα = value · 🔴 αγορα πιο σιγουρη)")
     ws = [m['warm_cur'] for m in sel if 'warm_cur' in m]
     if ws:
         cur = sum(ws) / len(ws) * 100
