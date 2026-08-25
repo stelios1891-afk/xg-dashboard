@@ -115,6 +115,12 @@ def compute_picks_toa(leagues, ratings_season):
     for _, r in M.iterrows():
         lg_names[r['league']].add(id2name.get(r['home']))
         lg_names[r['league']].add(id2name.get(r['away']))
+    # νεοφωτιστες (2η κατηγορια): προσθηκη name->id ωστε να ταιριαζουν & να μαζευουν market 1X2
+    # (ιδιο με build_data· δεν εχουν top-flight ratings -> ΟΧΙ picks, αλλα ΝΑΙ market odds/projections)
+    for lg in leagues:
+        if lg in build_data.SECOND_DIV:
+            for tid, (nm, _synth) in build_data._promoted_synth(build_data.SECOND_DIV[lg]).items():
+                id2name.setdefault(tid, nm); name2id.setdefault(nm, tid); lg_names[lg].add(nm)
     allfix, rem, cost = fetch_all(leagues)
     all_picks, all_blocked, all_norating = [], [], []
     market_1x2 = {}   # "{home_id}_{away_id}" -> {h,d,a,when} (ολα τα matched fixtures, οχι μονο picks)
