@@ -23,7 +23,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RATINGS_SEASON_DEFAULT = '2526'   # τελευταια πληρης σεζον (warm-start για 26/27)
 CURRENT_FOTMOB_SEASON = '2026%2F2027'
 LEAGUE_FOTMOB = {'EPL': 47, 'LaLiga': 87, 'SerieA': 55, 'Bundesliga': 54, 'Ligue1': 53,
-                 'Belgium': 40, 'ScottishPrem': 64, 'Eredivisie': 57, 'PrimeiraLiga': 61}
+                 'Eredivisie': 57, 'PrimeiraLiga': 61}   # CORE 7 (Belgium & ScottishPrem αφαιρεθηκαν 2026-08, εκτος portfolio)
 
 # --- Νεοφωτιστες: prior απο 2η κατηγορια × μεταφραση (βλ. memory promoted-team-translation) ---
 SECOND_DIV = {'EPL': 'Championship', 'LaLiga': 'LaLiga2', 'SerieA': 'SerieB',

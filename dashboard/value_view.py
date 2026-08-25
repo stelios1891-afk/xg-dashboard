@@ -5,8 +5,8 @@ import build_data
 TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
 LLOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}.png'
 LEAGUE_LABELS = {'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
-                 'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Belgium': 'Belgium Pro',
-                 'ScottishPrem': 'Scottish Prem', 'Eredivisie': 'Eredivisie', 'PrimeiraLiga': 'Primeira'}
+                 'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
+                 'PrimeiraLiga': 'Primeira'}
 
 CSS = """
 <style>

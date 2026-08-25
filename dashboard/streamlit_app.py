@@ -28,12 +28,10 @@ st.set_page_config(page_title="xG Model — Live", page_icon="⚽", layout="wide
                    initial_sidebar_state="expanded")
 
 LEAGUE_LABELS = {'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
-                 'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Belgium': 'Belgium Pro League',
-                 'ScottishPrem': 'Scottish Premiership', 'Eredivisie': 'Eredivisie',
+                 'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
                  'PrimeiraLiga': 'Primeira Liga'}
 LEAGUE_COUNTRY = {'EPL': 'ENGLAND', 'LaLiga': 'SPAIN', 'SerieA': 'ITALY', 'Bundesliga': 'GERMANY',
-                  'Ligue1': 'FRANCE', 'Belgium': 'BELGIUM', 'ScottishPrem': 'SCOTLAND',
-                  'Eredivisie': 'NETHERLANDS', 'PrimeiraLiga': 'PORTUGAL'}
+                  'Ligue1': 'FRANCE', 'Eredivisie': 'NETHERLANDS', 'PrimeiraLiga': 'PORTUGAL'}
 LEAGUE_LOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}.png'  # dark-mode variant (ανοιχτοχρωμο σε σκουρο φοντο)
 
 # (id, label, icon)· ενεργα: projections, goals
