@@ -77,5 +77,5 @@ def pick_card(p):
 </div>"""
 
 def picks_html(picks):
-    picks = sorted(picks, key=lambda p: -p['edge'])
+    picks = sorted(picks, key=lambda p: (p.get('when') or '9999'))   # χρονολογικα: νωριτερο πανω, πιο μετα κατω
     return CSS + '<div class="wrap">' + ''.join(pick_card(p) for p in picks) + '</div>'

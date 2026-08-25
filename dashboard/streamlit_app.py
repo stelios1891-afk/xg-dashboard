@@ -265,7 +265,14 @@ def render_value(league):
         st.caption(f"τελευταιο scan: {res.get('n_new', 0)} νεα · {res.get('n_changed', 0)} με αλλαγη odds")
     if sc < 1.0:
         st.caption(f"⚙ Συνολικη εκθεση {gr*100:.0f}% > cap {cap*100:.0f}% → μειωση ολων ×{sc:.2f}.")
-    st.components.v1.html(value_view.picks_html(picks), height=min(len(picks) * 150 + 40, 4000), scrolling=True)
+    # ---- φιλτρο ανα πρωταθλημα (default: ολα μαζι) ----
+    order = list(build_data.LEAGUE_FOTMOB)
+    lgs_present = sorted({p['lg'] for p in picks}, key=lambda x: order.index(x) if x in order else 99)
+    sel_lg = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs_present,
+                          format_func=lambda x: 'Όλα τα πρωταθληματα' if x == 'Όλα' else value_view.LEAGUE_LABELS.get(x, x),
+                          key='vp_league')
+    shown = picks if sel_lg == 'Όλα' else [p for p in picks if p['lg'] == sel_lg]
+    st.components.v1.html(value_view.picks_html(shown), height=min(len(shown) * 150 + 40, 4000), scrolling=True)
 
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value}
