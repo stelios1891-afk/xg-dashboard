@@ -49,6 +49,27 @@ def _pb(g, bk):
                     return (float(hp), float(ha), float(aa))
     return None
 
+def _h2h(g, bk):
+    """1X2 (h2h) ενος bookmaker -> (home_odds, draw_odds, away_odds)."""
+    ht, at = g.get('home_team'), g.get('away_team')
+    for b in g.get('bookmakers', []):
+        if b.get('key') != bk:
+            continue
+        for m in b.get('markets', []):
+            if m.get('key') == 'h2h':
+                h = d = a = None
+                for o in m.get('outcomes', []):
+                    nm = o.get('name')
+                    if nm == ht:
+                        h = o.get('price')
+                    elif nm == at:
+                        a = o.get('price')
+                    elif nm and str(nm).lower() == 'draw':
+                        d = o.get('price')
+                if h and d and a:
+                    return (float(h), float(d), float(a))
+    return None
+
 def fetch_all(leagues):
     """{league: [fixtures]} + credits_remaining, credits_cost. 1 request/λιγκα."""
     out = {}; rem = None; cost = 0
@@ -57,7 +78,7 @@ def fetch_all(leagues):
         if not sport:
             out[lg] = []; continue
         r = requests.get(f'{BASE}/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu', markets='spreads',
+                         params=dict(apiKey=_key(), regions='eu', markets='spreads,h2h',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'), timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
         try:
@@ -77,6 +98,7 @@ def fetch_all(leagues):
                 continue
             fx.append(dict(home_toa=g.get('home_team'), away_toa=g.get('away_team'),
                            line=c[0], home_odds=c[1], away_odds=c[2],
+                           h2h=_h2h(g, 'pinnacle') or _h2h(g, 'matchbook'),   # 1X2 (Pinnacle preferred)
                            startTime=(g.get('commence_time') or '')[:16]))
         out[lg] = fx
         time.sleep(0.3)
@@ -95,6 +117,7 @@ def compute_picks_toa(leagues, ratings_season):
         lg_names[r['league']].add(id2name.get(r['away']))
     allfix, rem, cost = fetch_all(leagues)
     all_picks, all_blocked, all_norating = [], [], []
+    market_1x2 = {}   # "{home_id}_{away_id}" -> {h,d,a,when} (ολα τα matched fixtures, οχι μονο picks)
     for lg in leagues:
         hist, lg_shots, lg_xgps, hf = engine.league_state(M, lg, ratings_season)
         state = (build_data.flatten_warmstart(hist, lg), lg_shots, lg_xgps, hf)  # flat cross-season prior
@@ -110,6 +133,9 @@ def compute_picks_toa(leagues, ratings_season):
             H = name2id.get(hfot); A = name2id.get(afot)
             if H is None or A is None:
                 all_norating.append((lg, f, hfot if H is None else afot, 'δεν υπαρχει στα ratings')); continue
+            if f.get('h2h'):   # market 1X2 για ΚΑΘΕ matched fixture (ανεξαρτητα MIN_PRIOR/pick)
+                mh, mdw, ma = f['h2h']
+                market_1x2[f"{H}_{A}"] = dict(h=round(mh, 2), d=round(mdw, 2), a=round(ma, 2), when=f['startTime'])
             pred = engine.predict_ids(state, H, A)
             if pred is None:
                 all_norating.append((lg, f, f"{hfot}/{afot}", f'<{engine.MIN_PRIOR} ματς ιστορικο')); continue
@@ -125,7 +151,8 @@ def compute_picks_toa(leagues, ratings_season):
     for p in all_picks:
         p['stake_final'] = p['stake'] * scale
     return dict(picks=all_picks, blocked=all_blocked, norating=all_norating,
-                gross=gross, scale=scale, cap=CAP, credits_remaining=rem, credits_cost=cost)
+                gross=gross, scale=scale, cap=CAP, credits_remaining=rem, credits_cost=cost,
+                market_1x2=market_1x2)
 
 if __name__ == '__main__':
     res = compute_picks_toa(list(SPORT), sys.argv[1] if len(sys.argv) > 1 else '2526')

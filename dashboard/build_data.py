@@ -22,6 +22,15 @@ import picks
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RATINGS_SEASON_DEFAULT = '2526'   # τελευταια πληρης σεζον (warm-start για 26/27)
 CURRENT_FOTMOB_SEASON = '2026%2F2027'
+MARKET_1X2_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 απο τον scanner (scan_value.py)
+
+def _market_1x2():
+    """Market 1X2 odds -> {"{home_id}_{away_id}": {h,d,a,when}}. {} αν λειπει (graceful)."""
+    try:
+        with open(MARKET_1X2_F, encoding='utf-8') as fh:
+            return json.load(fh).get('odds', {})
+    except Exception:
+        return {}
 LEAGUE_FOTMOB = {'EPL': 47, 'LaLiga': 87, 'SerieA': 55, 'Bundesliga': 54, 'Ligue1': 53,
                  'Eredivisie': 57, 'PrimeiraLiga': 61}   # CORE 7 (Belgium & ScottishPrem αφαιρεθηκαν 2026-08, εκτος portfolio)
 
@@ -144,6 +153,7 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, leagues=None):
     leagues = leagues or list(LEAGUE_FOTMOB)
     M, id2name = picks.load_matches(list(LEAGUE_FOTMOB), [ratings_season])
     name2id = {v: k for k, v in id2name.items()}
+    market = _market_1x2()
     out = []; stats = {}
     for lg in leagues:
         hist, lg_shots, lg_xgps, hf = picks.league_state(M, lg, ratings_season)
@@ -173,6 +183,9 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, leagues=None):
                 pf = predict_full(hh, ha, lg_shots, lg_xgps, hf)
                 pf.update(one_x_two(pf['home_adj_xg'], pf['away_adj_xg']))
                 rec.update(pf); rec['projectable'] = True; proj += 1
+                mo = market.get(f"{H}_{A}")
+                if mo:
+                    rec['mkt_hw_odds'], rec['mkt_d_odds'], rec['mkt_aw_odds'] = mo.get('h'), mo.get('d'), mo.get('a')
             out.append(rec)
         stats[lg] = dict(fixtures=len(fixtures), projected=proj)
     return out, stats

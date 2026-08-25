@@ -29,6 +29,13 @@ body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf
 .pa{background:rgba(240,79,90,.12);color:#f04f5a;border:1px solid rgba(240,79,90,.22);}
 .odds{display:flex;gap:5px;}
 .odds span{width:62px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#8fa3c8;}
+.oddswrap{display:flex;flex-direction:column;gap:2px;width:100%;align-items:center;}
+.oddsrow{display:flex;align-items:center;justify-content:center;gap:6px;}
+.oddsrow .rl{font-size:7px;color:#5a6b8c;width:26px;text-align:right;letter-spacing:.2px;text-transform:uppercase;}
+.odds span.mo.near{color:#8fa3c8;}
+.odds span.mo.val{color:#34d17a;}
+.odds span.mo.against{color:#f04f5a;}
+.odds span.mo.none{color:#3d4a63;}
 .pbar{display:flex;height:4px;margin-top:9px;}
 .pbar div:first-child{background:#34d17a;}.pbar div:nth-child(2){background:#f5b731;}.pbar div:last-child{background:#f04f5a;}
 details{border-top:1px solid #1e2d47;}
@@ -54,6 +61,28 @@ def _logo(tid):
 
 _BG = {'#34d17a': 'rgba(52,209,122,.14)', '#f04f5a': 'rgba(240,79,90,.14)', '#8fa3c8': 'rgba(143,163,200,.10)'}
 
+def _mkt_span(our, mkt):
+    """Market 1X2 span, χρωμα κατα διαφωνια: πρασινο = εμεις πιο ψηλα (value), κοκκινο = αγορα πιο σιγουρη."""
+    if not mkt:
+        return '<span class="mo none">—</span>'
+    if our < mkt * 0.97:
+        c = 'val'
+    elif our > mkt * 1.03:
+        c = 'against'
+    else:
+        c = 'near'
+    return f'<span class="mo {c}">{mkt:.2f}</span>'
+
+def _odds_block(m):
+    """Δυο γραμμες odds: 'μοντ' (fair μοντελου) + 'αγορ' (market 1X2, χρωμα διαφωνιας)."""
+    fh, fd, fa = m['hw_odds'], m['d_odds'], m['aw_odds']
+    model = f'<div class="odds"><span>{fh:.2f}</span><span>{fd:.2f}</span><span>{fa:.2f}</span></div>'
+    market = (f'<div class="odds">{_mkt_span(fh, m.get("mkt_hw_odds"))}'
+              f'{_mkt_span(fd, m.get("mkt_d_odds"))}{_mkt_span(fa, m.get("mkt_aw_odds"))}</div>')
+    return (f'<div class="oddswrap">'
+            f'<div class="oddsrow"><span class="rl">μοντ</span>{model}</div>'
+            f'<div class="oddsrow"><span class="rl">αγορ</span>{market}</div></div>')
+
 def card_html(m):
     hw, dw, aw = m['hw'], m['d'], m['aw']
     hc = '#34d17a' if hw > aw else ('#f04f5a' if hw < aw else '#8fa3c8')
@@ -69,7 +98,7 @@ def card_html(m):
     <div class="lbls"><span>Home</span><span>Draw</span><span>Away</span></div>
     <div class="pills"><div class="pill" style="background:{hbg};color:{hc};border:1px solid {hc}44">{hw:.0f}%</div>
       <div class="pill pd">{dw:.0f}%</div><div class="pill" style="background:{abg};color:{ac};border:1px solid {ac}44">{aw:.0f}%</div></div>
-    <div class="odds"><span>{m['hw_odds']:.2f}</span><span>{m['d_odds']:.2f}</span><span>{m['aw_odds']:.2f}</span></div>
+    {_odds_block(m)}
   </div>
   <div class="team away">
     <div class="thead">{_logo(m.get('away_id'))}<div class="tn">{esc(m['away'])}</div></div>

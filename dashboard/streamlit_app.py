@@ -128,7 +128,8 @@ def render_projections(league):
     with c2:
         gw = st.selectbox("Αγωνιστικη", gws, format_func=lambda x: f"GW {x}", key=f"gw_{league}")
     sel = sorted([m for m in lg_matches if m['gw'] == gw], key=lambda m: m['utc'])
-    st.caption(f"{len(sel)} ματς · pre-match προβλεψεις μοντελου (xG & win%)")
+    st.caption(f"{len(sel)} ματς · pre-match προβλεψεις μοντελου (xG & win%) · αποδοσεις: "
+               "**μοντ** = fair μοντελου · **αγορ** = market 1X2 (🟢 εμεις πιο ψηλα = value · 🔴 αγορα πιο σιγουρη)")
     st.components.v1.html(cards.cards_block(sel), height=min(len(sel) * 118 + 40, 6000), scrolling=True)
 
 def _lg_header(league, sub):

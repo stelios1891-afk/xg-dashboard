@@ -16,6 +16,7 @@ import os, sys, json, datetime
 ROOT = os.path.dirname(os.path.abspath(__file__))
 STATE_F = os.path.join(ROOT, 'value_scan_state.json')
 LATEST_F = os.path.join(ROOT, 'value_picks_latest.json')
+MARKET_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 για ΟΛΑ τα fixtures (dashboard)
 RATINGS_SEASON = '2526'   # warm-start· αλλαξε σε '2627' οταν μαζευτουν φετινα ματς
 ODDS_DELTA = 0.05         # κατωφλι αλλαγης αποδοσης για re-alert
 
@@ -100,6 +101,7 @@ def scan(notify_tg=True):
                          gross=res['gross'], scale=res['scale'], cap=res['cap'],
                          credits_remaining=res.get('credits_remaining'), credits_cost=res.get('credits_cost'),
                          n_new=len(new_alerts), n_changed=len(changed_alerts), picks=picks))
+    _save(MARKET_F, dict(scanned_at=now, odds=res.get('market_1x2', {})))   # market 1X2 -> dashboard cards
 
     # ---- Telegram ----
     if notify_tg and (new_alerts or changed_alerts):
