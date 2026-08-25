@@ -42,7 +42,12 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PYTHONIOENCODING: utf-8
-        run: python scan_value.py auto
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python scan_value.py            # manual = force scan τωρα (για τεστ/επιβεβαιωση)
+          else
+            python scan_value.py auto       # scheduled = adaptive gating
+          fi
 
       # commit ΜΟΝΟ οταν αλλαξαν τα picks (state) → το dashboard ανανεωνεται μονο σε νεα/αλλαγες
       - name: Commit picks if changed
@@ -50,9 +55,9 @@ jobs:
           git config user.name "scanner-bot"
           git config user.email "actions@github.com"
           git add value_scan_state.json value_picks_latest.json market_1x2_latest.json
-          if git diff --cached --quiet -- value_scan_state.json; then
-            echo "no pick changes — skip commit"
+          if git diff --cached --quiet -- value_scan_state.json market_1x2_latest.json; then
+            echo "no pick/market changes — skip commit"
           else
-            git commit -m "picks update [skip ci]"
+            git commit -m "picks/market update [skip ci]"
             git push
           fi
