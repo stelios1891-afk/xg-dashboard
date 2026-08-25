@@ -20,8 +20,8 @@ import build_data   # flatten_warmstart (flat cross-season prior)
 BASE = 'https://api.the-odds-api.com/v4'
 SPORT = {'EPL': 'soccer_epl', 'LaLiga': 'soccer_spain_la_liga', 'SerieA': 'soccer_italy_serie_a',
          'Bundesliga': 'soccer_germany_bundesliga', 'Ligue1': 'soccer_france_ligue_one',
-         'PrimeiraLiga': 'soccer_portugal_primeira_liga', 'Belgium': 'soccer_belgium_first_div',
-         'Eredivisie': 'soccer_netherlands_eredivisie', 'ScottishPrem': 'soccer_spl'}
+         'PrimeiraLiga': 'soccer_portugal_primeira_liga',
+         'Eredivisie': 'soccer_netherlands_eredivisie'}   # CORE 7 (Belgium & ScottishPrem εκτος portfolio, 2026-08)
 # TOA ονομα -> FotMob/μοντελο ονομα (προσθηκες οποτε φανει block)
 TOA_ALIAS = {}
 
