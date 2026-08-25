@@ -20,8 +20,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import picks
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RATINGS_SEASON_DEFAULT = '2526'   # τελευταια πληρης σεζον (warm-start για 26/27)
+RATINGS_SEASON_DEFAULT = '2526'   # περσινη πληρης σεζον (prior για warm-start)
+CURRENT_SEASON = '2627'           # φετινη in-season (blend-άρεται πανω στο prior)
 CURRENT_FOTMOB_SEASON = '2026%2F2027'
+K_WARM = 6.0                      # warm-start blend: βαρος_φετινου = n/(n+K)· βρεθηκε με backtest (warmstart_k_test.py, RPS, LOSO-σταθερο 5-7)
 MARKET_1X2_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 απο τον scanner (scan_value.py)
 
 def _market_1x2():
@@ -149,22 +151,71 @@ def one_x_two(lh, la):
                 d_odds=round(1 / dw, 2) if dw else None,
                 aw_odds=round(1 / aw, 2) if aw else None)
 
-def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, leagues=None):
+# ---------- warm-start blend: prior (flat περσινο) + in-season (φετινο), w=n/(n+K_WARM) ----------
+def _rating(h):
+    """(Ax,Dx,SF,SA) απο rolling history — ιδιο math με sos_test.ratings."""
+    sf = picks.wmean(h['sf']); sa = picks.wmean(h['sa'])
+    Ax = (picks.BLEND * picks.wmean(h['xf']) + (1 - picks.BLEND) * picks.wmean(h['gf'])) / max(sf, 1e-9)
+    Dx = (picks.BLEND * picks.wmean(h['xa']) + (1 - picks.BLEND) * picks.wmean(h['ga'])) / max(sa, 1e-9)
+    return (Ax, Dx, sf, sa)
+
+def _shrink(r, prior, n, K=K_WARM):
+    """Geometric shrink προς prior· w=n/(n+K) (ιδιο με sos_test.shrink_prior)."""
+    w = n / (n + K)
+    return tuple(max(pi, 1e-9) * (max(ri, 1e-9) / max(pi, 1e-9)) ** w for ri, pi in zip(r, prior))
+
+def _predict_ratings(rh, ra, lg_shots, lg_xgps, hf):
+    """Ιδιο math με predict_full αλλα δεχεται ΕΤΟΙΜΑ (blended) rating tuples."""
+    Ax_h, Dx_h, SF_h, SA_h = rh; Ax_a, Dx_a, SF_a, SA_a = ra
+    af = 1.0 / hf
+    esh_h = (SF_h / lg_shots) * (SA_a / lg_shots) * lg_shots
+    esh_a = (SF_a / lg_shots) * (SA_h / lg_shots) * lg_shots
+    xgps_h = Ax_h * (Dx_a / lg_xgps); xgps_a = Ax_a * (Dx_h / lg_xgps)
+    neu_h = esh_h * xgps_h; neu_a = esh_a * xgps_a
+    return dict(home_exp_shots=round(esh_h, 3), home_xg_shot=round(xgps_h, 5),
+                home_xg=round(neu_h, 3), home_adj_xg=round(neu_h * hf, 3),
+                away_exp_shots=round(esh_a, 3), away_xg_shot=round(xgps_a, 5),
+                away_xg=round(neu_a, 3), away_adj_xg=round(neu_a * af, 3))
+
+def blend_league(prior_r, histc, K=K_WARM):
+    """prior_r: {tid:(Ax,Dx,SF,SA)} flat περσινο. histc: {tid: φετινο in-season hist}.
+    -> ({tid: blended rating}, {tid: n φετινα ματς}). n=0 → καθαρα prior· χωρις prior → θελει n>=MIN_PRIOR."""
+    out = {}; ns = {}
+    for tid in set(prior_r) | set(histc):
+        hc = histc.get(tid); n = len(hc['sf']) if hc else 0; ns[tid] = n
+        pr = prior_r.get(tid)
+        if n == 0:
+            if pr is not None:
+                out[tid] = pr
+        else:
+            ri = _rating(hc)
+            if pr is not None:
+                out[tid] = _shrink(ri, pr, n, K)
+            elif n >= picks.MIN_PRIOR:      # νεα ομαδα χωρις prior → μονο με αρκετα φετινα ματς
+                out[tid] = ri
+    return out, ns
+
+def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, current_season=CURRENT_SEASON, leagues=None):
     leagues = leagues or list(LEAGUE_FOTMOB)
-    M, id2name = picks.load_matches(list(LEAGUE_FOTMOB), [ratings_season])
+    Mp, id2name = picks.load_matches(list(LEAGUE_FOTMOB), [ratings_season])   # περσινο (prior)
+    Mc, id2c = picks.load_matches(list(LEAGUE_FOTMOB), [current_season])      # φετινο (in-season)
+    id2name.update(id2c)
     name2id = {v: k for k, v in id2name.items()}
     market = _market_1x2()
     out = []; stats = {}
     for lg in leagues:
-        hist, lg_shots, lg_xgps, hf = picks.league_state(M, lg, ratings_season)
-        # --- εισαγωγη νεοφωτιστων (2η κατηγορια × μεταφραση) ως prior ---
+        histp, lg_shots, lg_xgps, hf = picks.league_state(Mp, lg, ratings_season)
+        # --- νεοφωτιστες (2η κατηγορια × μεταφραση) ως prior ---
         promoted = set()
         if lg in SECOND_DIV:
             for tid, (nm, synth) in _promoted_synth(SECOND_DIV[lg]).items():
-                if tid not in hist:                 # μονο οσες ΔΕΝ ειναι ηδη στα ratings
-                    hist[tid] = synth; id2name.setdefault(tid, nm)
+                if tid not in histp:
+                    histp[tid] = synth; id2name.setdefault(tid, nm)
                     name2id.setdefault(nm, tid); promoted.add(tid)
-        hist = flatten_warmstart(hist, lg)          # flat cross-season prior (πλην playoff)
+        histp = flatten_warmstart(histp, lg)                       # flat περσινο prior
+        prior_r = {tid: _rating(h) for tid, h in histp.items() if h.get('sf')}
+        histc, _, _, _ = picks.league_state(Mc, lg, current_season)  # φετινο rolling (in-season)
+        blended, ns = blend_league(prior_r, histc)                  # blend K=6 ανα ομαδα
         try:
             fixtures = fetch_upcoming(lg)
         except Exception as e:
@@ -172,16 +223,18 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, leagues=None):
         proj = 0
         for f in fixtures:
             H = name2id.get(f['home_name']); A = name2id.get(f['away_name'])
-            if H is None and f['home_id'] and int(f['home_id']) in hist: H = int(f['home_id'])
-            if A is None and f['away_id'] and int(f['away_id']) in hist: A = int(f['away_id'])
+            if H is None and f['home_id'] and int(f['home_id']) in blended: H = int(f['home_id'])
+            if A is None and f['away_id'] and int(f['away_id']) in blended: A = int(f['away_id'])
             rec = dict(league=lg, gw=f['gw'], utc=f['utc'],
                        home=f['home_name'], away=f['away_name'],
                        home_id=f['home_id'], away_id=f['away_id'], projectable=False,
                        promoted=(H in promoted or A in promoted))
-            hh = hist.get(H); ha = hist.get(A)
-            if hh and ha and len(hh['sf']) >= picks.MIN_PRIOR and len(ha['sf']) >= picks.MIN_PRIOR:
-                pf = predict_full(hh, ha, lg_shots, lg_xgps, hf)
+            rh = blended.get(H); ra = blended.get(A)
+            if rh and ra:
+                pf = _predict_ratings(rh, ra, lg_shots, lg_xgps, hf)
                 pf.update(one_x_two(pf['home_adj_xg'], pf['away_adj_xg']))
+                nh = ns.get(H, 0); na = ns.get(A, 0)
+                pf['warm_cur'] = round((nh / (nh + K_WARM) + na / (na + K_WARM)) / 2, 3)  # μεσο βαρος φετινου
                 rec.update(pf); rec['projectable'] = True; proj += 1
                 mo = market.get(f"{H}_{A}")
                 if mo:

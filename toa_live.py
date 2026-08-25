@@ -107,9 +107,14 @@ def fetch_all(leagues):
 def _al(n):
     return TOA_ALIAS.get(n, n)
 
-def compute_picks_toa(leagues, ratings_season):
-    """Structured value picks απο TOA — ιδια εξοδος με live_odds.compute_picks (+credits)."""
+def compute_picks_toa(leagues, ratings_season, current_season=None):
+    """Structured value picks απο TOA — ιδια εξοδος με live_odds.compute_picks (+credits).
+    Ratings = warm-start blend K=6 (φετινο in-season + περσινο prior· βλ. build_data)."""
+    if current_season is None:
+        current_season = build_data.CURRENT_SEASON
     M, id2name = engine.load_matches(list(SPORT), [ratings_season])
+    Mc, id2c = engine.load_matches(list(SPORT), [current_season])   # φετινο in-season
+    id2name.update(id2c)
     name2id = {v: k for k, v in id2name.items()}
     lg_names = defaultdict(set)
     for _, r in M.iterrows():
@@ -125,8 +130,14 @@ def compute_picks_toa(leagues, ratings_season):
     all_picks, all_blocked, all_norating = [], [], []
     market_1x2 = {}   # "{home_id}_{away_id}" -> {h,d,a,when} (ολα τα matched fixtures, οχι μονο picks)
     for lg in leagues:
-        hist, lg_shots, lg_xgps, hf = engine.league_state(M, lg, ratings_season)
-        state = (build_data.flatten_warmstart(hist, lg), lg_shots, lg_xgps, hf)  # flat cross-season prior
+        histp, lg_shots, lg_xgps, hf = engine.league_state(M, lg, ratings_season)
+        if lg in build_data.SECOND_DIV:      # νεοφωτιστες synth στο prior (ιδιο με build_data)
+            for tid, (nm, synth) in build_data._promoted_synth(build_data.SECOND_DIV[lg]).items():
+                if tid not in histp: histp[tid] = synth
+        histp = build_data.flatten_warmstart(histp, lg)
+        prior_r = {tid: build_data._rating(h) for tid, h in histp.items() if h.get('sf')}
+        histc, _, _, _ = engine.league_state(Mc, lg, current_season)
+        blended, _ns = build_data.blend_league(prior_r, histc)   # warm-start blend K=6
         fixtures = allfix.get(lg, [])
         toa_names = sorted({_al(n) for f in fixtures for n in (f['home_toa'], f['away_toa']) if n})
         res = live_odds.assign(toa_names, sorted(x for x in lg_names.get(lg, set()) if x))
@@ -142,10 +153,11 @@ def compute_picks_toa(leagues, ratings_season):
             if f.get('h2h'):   # market 1X2 για ΚΑΘΕ matched fixture (ανεξαρτητα MIN_PRIOR/pick)
                 mh, mdw, ma = f['h2h']
                 market_1x2[f"{H}_{A}"] = dict(h=round(mh, 2), d=round(mdw, 2), a=round(ma, 2), when=f['startTime'])
-            pred = engine.predict_ids(state, H, A)
-            if pred is None:
-                all_norating.append((lg, f, f"{hfot}/{afot}", f'<{engine.MIN_PRIOR} ματς ιστορικο')); continue
-            xg_h, xg_a = pred
+            rh = blended.get(H); ra = blended.get(A)
+            if rh is None or ra is None:
+                all_norating.append((lg, f, f"{hfot}/{afot}", 'χωρις rating (prior/in-season)')); continue
+            pf = build_data._predict_ratings(rh, ra, lg_shots, lg_xgps, hf)
+            xg_h, xg_a = pf['home_adj_xg'], pf['away_adj_xg']
             for b in engine.evaluate_bet(xg_h, xg_a, f['line'], f['home_odds'], f['away_odds']):
                 all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
                                       when=f['startTime'], **b, hnote=hnote, anote=anote))
