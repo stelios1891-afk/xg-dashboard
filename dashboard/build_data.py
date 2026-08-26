@@ -23,7 +23,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RATINGS_SEASON_DEFAULT = '2526'   # περσινη πληρης σεζον (prior για warm-start)
 CURRENT_SEASON = '2627'           # φετινη in-season (blend-άρεται πανω στο prior)
 CURRENT_FOTMOB_SEASON = '2026%2F2027'
-K_WARM = 6.0                      # warm-start blend: βαρος_φετινου = n/(n+K)· βρεθηκε με backtest (warmstart_k_test.py, RPS, LOSO-σταθερο 5-7)
+K_WARM = 8.0                      # warm-start blend: βαρος_φετινου = n/(n+K). K=8 (2026-08-26, k_final.py): με ΔΙΟΡΘΩΜΕΝΕΣ νεοφωτιστες το βελτιστο μετακινηθηκε 6→8 (RPS ολικο ελαχιστο· LOSO διαλεξε >=8 σε 4/4 folds). Πλατο K=4-12 — η διαφορα 6 vs 8 ειναι 1/15 του τυπικου σφαλματος, δηλ. αδιαφορη.
 MARKET_1X2_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 απο τον scanner (scan_value.py)
 
 def _market_1x2():
