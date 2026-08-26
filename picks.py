@@ -24,7 +24,7 @@ except Exception:
     pass
 
 # ---------- ΚΛΕΙΔΩΜΕΝΕΣ ΣΤΑΘΕΡΕΣ ----------
-BLEND = 0.80; MIN_PRIOR = 6; DECAY = 0.96
+BLEND = 0.60; MIN_PRIOR = 6; DECAY = 0.96   # BLEND 0.80→0.60 (2026-08-26, blend_test.py + blend_roi.py): το 80/20 εδινε υπερβολικο βαρος στο xG. RPS: 60/40 καλυτερο σε ΚΑΙ ΤΙΣ 5 φασεις σεζον (0.1953 vs 0.1958), LOSO διαλεξε 50-60 σε 4/4 folds, ποτε 80. ROI @15η+: +5.2% vs +3.6%, συνολικο κερδος 63.2u vs 53.6u (+18%). Καθε τεστ ~1 SE μονο του — πειθει η ΣΥΜΦΩΝΙΑ δυο ανεξαρτητων μετρικων σε μονοτονη καμπυλη. Βλ. memory blend-60-40.
 EDGE = 0.10; OMIN, OMAX = 1.70, 2.10; MIN_LINE = 0.5; DRAW_BOOST = 1.13; MARGIN = 0.03  # MARGIN = vig-consistent haircut στα net winnings (standard εγχωριο+ευρωπαικο)
 STAKE = 1000.0
 F = [factorial(i) for i in range(13)]
