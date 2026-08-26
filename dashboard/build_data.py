@@ -36,12 +36,26 @@ def _market_1x2():
 LEAGUE_FOTMOB = {'EPL': 47, 'LaLiga': 87, 'SerieA': 55, 'Bundesliga': 54, 'Ligue1': 53,
                  'Eredivisie': 57, 'PrimeiraLiga': 61}   # CORE 7 (Belgium & ScottishPrem αφαιρεθηκαν 2026-08, εκτος portfolio)
 
-# --- Νεοφωτιστες: prior απο 2η κατηγορια × μεταφραση (βλ. memory promoted-team-translation) ---
+# --- Νεοφωτιστες (αναθεωρηθηκε 2026-08-26, βλ. memory early-window-mechanics) ---
+# ΕΠΙΠΕΔΟ: μεσος λιγκας × per-league συντελεστη. Μετρημενο σε 78 νεοφωτιστες / 4 μεταβασεις
+#          (top-flight δεδομενα μονο), shrunk 0.7 προς το pooled (split-half reliability 0.76).
+# ΞΕΧΩΡΙΣΜΑ: × (θεση της στη 2η κατηγορια / μεσος των νεοφωτιστων)^λ  με λ=0.5.
+#          λ βρεθηκε με LOSO MAE (0.237@λ=0 → 0.223@λ=0.5)· λ=1 (η παλια συμπεριφορα) ειναι
+#          ΧΕΙΡΟΤΕΡΟ κι απο λ=0 (0.245) — υπερ-διαφοροποιει, corr(Champ,EPL xGD)=0.44 μονο.
 SECOND_DIV = {'EPL': 'Championship', 'LaLiga': 'LaLiga2', 'SerieA': 'SerieB',
               'Bundesliga': 'Bundesliga2', 'Ligue1': 'Ligue2'}
 PROMO_SEASON = '2526'
-PROMO_ATT, PROMO_DEF = 0.65, 1.50   # xGF ×0.65 (−35%), xGA ×1.5 (+50%) — England-validated (approx αλλες χωρες)
-PROMO_SF, PROMO_SA = 0.73, 1.34     # σουτ επιθεσης ×0.73, δεχομενα σουτ ×1.34 (για ρεαλιστικο shots display)
+PROMO_LAMBDA = 0.5
+PROMO_COEF = {   # σχετικα με τον μεσο ορο της λιγκας (xGF, xGA, σουτ-υπερ, σουτ-κατα)
+    'EPL':          dict(xf=0.772, xa=1.239, sf=0.812, sa=1.192),
+    'Eredivisie':   dict(xf=0.800, xa=1.192, sf=0.829, sa=1.147),
+    'Ligue1':       dict(xf=0.817, xa=1.152, sf=0.859, sa=1.098),
+    'Bundesliga':   dict(xf=0.835, xa=1.176, sf=0.885, sa=1.110),
+    'LaLiga':       dict(xf=0.839, xa=1.185, sf=0.873, sa=1.143),
+    'SerieA':       dict(xf=0.852, xa=1.160, sf=0.880, sa=1.108),
+    'PrimeiraLiga': dict(xf=0.853, xa=1.129, sf=0.902, sa=1.128),
+}
+PROMO_POOLED = dict(xf=0.828, xa=1.159, sf=0.861, sa=1.134)   # fallback (78 ομαδες)
 
 # ΑΠΟΦΑΣΗ (Stelios): FLAT για ΟΛΕΣ, με τα playoffs ΜΕΣΑ. Το Belgium regular-only εβγαζε −11% αλλα
 # n=68 (μια σεζον) → δεν ρισκαρουμε overfit· το flat-all ειναι ηδη −4.9% vs decay, ασφαλες κερδος.
@@ -61,12 +75,11 @@ def flatten_warmstart(hist, league):
         out[tid] = {k: [sum(h[k][:cut]) / len(h[k][:cut])] * K for k in ('sf', 'xf', 'sa', 'xa', 'gf', 'ga')}
     return out
 
-def _promoted_synth(second_div):
-    """{tid: (name, synthetic_hist)} — ομαδες 2ης κατηγοριας με μεταφρασμενο (translated) rating.
-    Το synthetic hist ειναι 8 σταθερα 'ματς' ωστε το predict_full να τις χειριζεται σαν κανονικες."""
+def _second_div_stats(second_div):
+    """({tid: {name,xf,xa,sf,sa} ανα ματς}, {μεσοι της κατηγοριας}) — raw, ΧΩΡΙΣ μεταφραση."""
     path = os.path.join(ROOT, f'data_{second_div}_{PROMO_SEASON}.json')
     if not os.path.exists(path):
-        return {}
+        return {}, None
     with open(path, encoding='utf-8') as fh:
         d = json.load(fh)
     from collections import defaultdict
@@ -84,10 +97,42 @@ def _promoted_synth(second_div):
         if v['n'] < 10:
             continue
         n = v['n']
-        sf = (v['sf'] / n) * PROMO_SF; xf = (v['xf'] / n) * PROMO_ATT        # attack (translated)
-        sa = (v['sa'] / n) * PROMO_SA; xa = (v['xa'] / n) * PROMO_DEF        # defense (translated)
+        out[int(tid)] = dict(name=v['name'], xf=v['xf']/n, xa=v['xa']/n, sf=v['sf']/n, sa=v['sa']/n)
+    if not out:
+        return {}, None
+    mean = {k: sum(v[k] for v in out.values()) / len(out) for k in ('xf', 'xa', 'sf', 'sa')}
+    return out, mean
+
+def promoted_priors(league, newcomer_ids, lg_shots, lg_xgps, id2name=None):
+    """{tid: (name, synthetic_hist)} για τις ΝΕΟΦΩΤΙΣΤΕΣ που παιζουν φετος.
+
+    επιπεδο   = μεσος λιγκας × per-league συντελεστη
+    ξεχωρισμα = × (θεση της στη 2η κατηγορια / μεσος ΤΩΝ ΝΕΟΦΩΤΙΣΤΩΝ)^λ   (οπου εχουμε δεδομενα)
+    Οσες δεν εχουν δεδομενα 2ης κατηγοριας -> σκετο το επιπεδο (λ ανενεργο).
+    """
+    if not newcomer_ids:
+        return {}
+    coef = PROMO_COEF.get(league, PROMO_POOLED)
+    lgX = lg_shots * lg_xgps
+    base = dict(xf=lgX * coef['xf'], xa=lgX * coef['xa'],
+                sf=lg_shots * coef['sf'], sa=lg_shots * coef['sa'])
+    stats, dmean = _second_div_stats(SECOND_DIV[league]) if league in SECOND_DIV else ({}, None)
+    have = {t: stats[t] for t in newcomer_ids if t in stats}
+    pm = None
+    if have and dmean:                      # μεσος ΤΩΝ ΝΕΟΦΩΤΙΣΤΩΝ (αυτο-κανονικοποιηση)
+        pm = {k: sum(v[k] / dmean[k] for v in have.values()) / len(have) for k in ('xf', 'xa', 'sf', 'sa')}
+    out = {}
+    for t in newcomer_ids:
+        v = have.get(t)
+        if v and pm:
+            f = {k: max((v[k] / dmean[k]) / pm[k], 1e-6) ** PROMO_LAMBDA for k in ('xf', 'xa', 'sf', 'sa')}
+        else:
+            f = dict(xf=1.0, xa=1.0, sf=1.0, sa=1.0)
+        xf = base['xf'] * f['xf']; xa = base['xa'] * f['xa']
+        sf = max(base['sf'] * f['sf'], 1.0); sa = max(base['sa'] * f['sa'], 1.0)
+        nm = (v or {}).get('name') or (id2name or {}).get(t) or str(t)
         K = 8
-        out[tid] = (v['name'], dict(sf=[sf]*K, xf=[xf]*K, sa=[sa]*K, xa=[xa]*K, gf=[xf]*K, ga=[xa]*K))
+        out[t] = (nm, dict(sf=[sf]*K, xf=[xf]*K, sa=[sa]*K, xa=[xa]*K, gf=[xf]*K, ga=[xa]*K))
     return out
 
 _FOT_HDR = {'User-Agent': 'Mozilla/5.0', 'Accept': '*/*', 'Referer': 'https://www.fotmob.com/'}
@@ -205,21 +250,28 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, current_season=CURRENT_
     out = []; stats = {}
     for lg in leagues:
         histp, lg_shots, lg_xgps, hf = picks.league_state(Mp, lg, ratings_season)
-        # --- νεοφωτιστες (2η κατηγορια × μεταφραση) ως prior ---
-        promoted = set()
-        if lg in SECOND_DIV:
-            for tid, (nm, synth) in _promoted_synth(SECOND_DIV[lg]).items():
-                if tid not in histp:
-                    histp[tid] = synth; id2name.setdefault(tid, nm)
-                    name2id.setdefault(nm, tid); promoted.add(tid)
-        histp = flatten_warmstart(histp, lg)                       # flat περσινο prior
-        prior_r = {tid: _rating(h) for tid, h in histp.items() if h.get('sf')}
-        histc, _, _, _ = picks.league_state(Mc, lg, current_season)  # φετινο rolling (in-season)
-        blended, ns = blend_league(prior_r, histc)                  # blend K=6 ανα ομαδα
         try:
             fixtures = fetch_upcoming(lg)
         except Exception as e:
             stats[lg] = dict(fixtures=0, projected=0, error=str(e)[:120]); continue
+        # --- νεοφωτιστες: ΠΟΙΕΣ παιζουν φετος αλλα ΔΕΝ ηταν περσι στην κατηγορια ---
+        fx_ids = set(); fx_names = {}
+        for f in fixtures:
+            for ik, nk in (('home_id', 'home_name'), ('away_id', 'away_name')):
+                if f.get(ik):
+                    fx_ids.add(int(f[ik])); fx_names.setdefault(int(f[ik]), f.get(nk))
+        newcomers = sorted(t for t in fx_ids if t not in histp)
+        for t, nm in fx_names.items():
+            if nm:
+                id2name.setdefault(t, nm)
+        promoted = set()
+        for tid, (nm, synth) in promoted_priors(lg, newcomers, lg_shots, lg_xgps, id2name).items():
+            histp[tid] = synth; id2name.setdefault(tid, nm)
+            name2id.setdefault(nm, tid); promoted.add(tid)
+        histp = flatten_warmstart(histp, lg)                       # flat περσινο prior
+        prior_r = {tid: _rating(h) for tid, h in histp.items() if h.get('sf')}
+        histc, _, _, _ = picks.league_state(Mc, lg, current_season)  # φετινο rolling (in-season)
+        blended, ns = blend_league(prior_r, histc)                  # blend K=6 ανα ομαδα
         proj = 0
         for f in fixtures:
             H = name2id.get(f['home_name']); A = name2id.get(f['away_name'])
