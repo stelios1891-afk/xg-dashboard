@@ -30,6 +30,25 @@ SOS = 1.5; SOS_MIN_N = 6   # Strength-of-Schedule (Caley one-pass). 1.5 (2026-08
             # SOS_MIN_N=6: με <6 αντιπαλους το SoS ΚΑΤΑΣΤΡΕΦΕΙ την ακριβεια (RPS md2-4: 0.1930 -> 0.2143).
             # Το gate n>=6 ειναι ΔΩΡΕΑΝ: ΙΔΙΟ ROI παντου (δεν στοιχηματιζουμε πριν την 7η ουτως ή αλλως),
             # και επαναφερει το RPS md2-4 στο 0.1930. Το n>=8 σπαει το md7-14 (-2.5%). Βλ. sos_ramp_test.py.
+# --- ΡΑΜΠΑ blend μεσα στη σεζον (2026-08-27, blend_ramp.py/blend_early.py) ---
+# Νωρις τα γκολ ειναι σχεδον καθαρος θορυβος (2-3 ματς)· οσο μαζευονται, αποκτουν σημα.
+#   b(n) = 1.00 - D*n/(n+Kg)   n<=13   ·   b(n) = BLEND (0.60)   n>=14
+# Ιδια μορφη n/(n+K) με το warm-start: καθε νεο ματς προσθετει ΛΙΓΟΤΕΡΟ απο το προηγουμενο.
+# Προσγειωνεται ΑΚΡΙΒΩΣ στο 0.60 στην 14η -> καμια ασυνεχεια στο συνορο 14/15.
+# md1 100/0 · md4 85/15 · md7 74/26 · md10 67/33 · md14 60/40 · md15+ 60/40
+# Τεκμηριωση: ROI@md7-14 +2.8% (vs +0.9% flat 60/40, +1.5% flat 80/20)· RPS βελτιστο ή ισοπαλο
+# σε ΚΑΘΕ υπο-παραθυρο· LOSO βελτιωση και στα δυο κριτηρια (ROI -0.23%->+0.62%, RPS .20066->.20055).
+# Καθε μεμονωμενη διαφορα ειναι μεσα στον θορυβο — πειθει η συμφωνια ολων των κελιων.
+BLEND_EARLY = 1.00; BLEND_SPLIT = 13; BLEND_KG = 12.0
+_BLEND_D = (BLEND_EARLY - BLEND) * (BLEND_SPLIT + BLEND_KG) / BLEND_SPLIT
+
+def blend_at(n):
+    """Βαρος xG (εναντι γκολ) για ομαδα με n παιγμενα ματς ΦΕΤΟΣ.
+    n=None ή n>13 -> BLEND (ωριμο 60/40). Χρησιμοποιειται και για το περσινο prior (n=None)."""
+    if n is None or n > BLEND_SPLIT:
+        return BLEND
+    return BLEND_EARLY - _BLEND_D * n / (n + BLEND_KG)
+
 EDGE = 0.10; OMIN, OMAX = 1.70, 2.10; MIN_LINE = 0.5; DRAW_BOOST = 1.13; MARGIN = 0.03  # MARGIN = vig-consistent haircut στα net winnings (standard εγχωριο+ευρωπαικο)
 STAKE = 1000.0
 F = [factorial(i) for i in range(13)]
@@ -82,7 +101,8 @@ def predict(hh, ha, lg_shots, lg_xgps, hf):
     """xg_h, xg_a απο τα rolling ιστορικα (ΠΡΙΝ το ματς). Ιδιο math με hfa_compare.build()."""
     af = 1 / hf
     def blx(t, fx, fg):
-        return BLEND * wmean(t[fx]) + (1 - BLEND) * wmean(t[fg])
+        b = blend_at(len(t[fx]))          # ραμπα: πολυ xG νωρις, 60/40 απο την 14η
+        return b * wmean(t[fx]) + (1 - b) * wmean(t[fg])
     Hax = blx(hh, 'xf', 'gf') / max(wmean(hh['sf']), 1e-9)
     Hdx = blx(hh, 'xa', 'ga') / max(wmean(hh['sa']), 1e-9)
     Aax = blx(ha, 'xf', 'gf') / max(wmean(ha['sf']), 1e-9)

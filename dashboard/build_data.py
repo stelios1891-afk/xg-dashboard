@@ -197,11 +197,14 @@ def one_x_two(lh, la):
                 aw_odds=round(1 / aw, 2) if aw else None)
 
 # ---------- warm-start blend: prior (flat περσινο) + in-season (φετινο), w=n/(n+K_WARM) ----------
-def _rating(h):
-    """(Ax,Dx,SF,SA) απο rolling history — ιδιο math με sos_test.ratings."""
+def _rating(h, n=None):
+    """(Ax,Dx,SF,SA) απο rolling history.
+    n = παιγμενα ματς ΦΕΤΟΣ -> ραμπα blend (picks.blend_at). n=None -> ωριμο 60/40,
+    που ειναι το σωστο για το ΠΕΡΣΙΝΟ prior (πληρης σεζον)."""
+    b = picks.blend_at(n)
     sf = picks.wmean(h['sf']); sa = picks.wmean(h['sa'])
-    Ax = (picks.BLEND * picks.wmean(h['xf']) + (1 - picks.BLEND) * picks.wmean(h['gf'])) / max(sf, 1e-9)
-    Dx = (picks.BLEND * picks.wmean(h['xa']) + (1 - picks.BLEND) * picks.wmean(h['ga'])) / max(sa, 1e-9)
+    Ax = (b * picks.wmean(h['xf']) + (1 - b) * picks.wmean(h['gf'])) / max(sf, 1e-9)
+    Dx = (b * picks.wmean(h['xa']) + (1 - b) * picks.wmean(h['ga'])) / max(sa, 1e-9)
     return (Ax, Dx, sf, sa)
 
 def _shrink(r, prior, n, K=K_WARM):
@@ -233,7 +236,7 @@ def blend_league(prior_r, histc, K=K_WARM):
             if pr is not None:
                 out[tid] = pr
         else:
-            ri = _rating(hc)
+            ri = _rating(hc, n)      # ραμπα blend αναλογα με τα φετινα ματς
             if pr is not None:
                 out[tid] = _shrink(ri, pr, n, K)
             elif n >= picks.MIN_PRIOR:      # νεα ομαδα χωρις prior → μονο με αρκετα φετινα ματς
