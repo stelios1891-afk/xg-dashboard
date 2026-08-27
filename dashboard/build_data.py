@@ -240,6 +240,37 @@ def blend_league(prior_r, histc, K=K_WARM):
                 out[tid] = ri
     return out, ns
 
+def league_ratings(lg, Mp, Mc, ratings_season=RATINGS_SEASON_DEFAULT,
+                   current_season=CURRENT_SEASON, id2name=None, name2id=None):
+    """ΚΟΙΝΗ λογικη ratings μιας λιγκας — χρησιμοποιειται ΚΑΙ απο το dashboard ΚΑΙ απο τον scanner.
+    ΜΗΝ την διπλασιασεις αλλου: καθε αλλαγη (νεοφωτιστες/K/prior) πρεπει να ισχυει και στα δυο.
+
+    -> dict(blended, ns, lg_shots, lg_xgps, hf, fixtures, promoted)
+    """
+    id2name = id2name if id2name is not None else {}
+    name2id = name2id if name2id is not None else {}
+    histp, lg_shots, lg_xgps, hf = picks.league_state(Mp, lg, ratings_season)
+    fixtures = fetch_upcoming(lg)          # χρειαζεται για να ξερουμε ΠΟΙΕΣ ειναι οι νεοφωτιστες
+    fx_ids = set(); fx_names = {}
+    for f in fixtures:
+        for ik, nk in (('home_id', 'home_name'), ('away_id', 'away_name')):
+            if f.get(ik):
+                fx_ids.add(int(f[ik])); fx_names.setdefault(int(f[ik]), f.get(nk))
+    for t, nm in fx_names.items():
+        if nm:
+            id2name.setdefault(t, nm); name2id.setdefault(nm, t)
+    newcomers = sorted(t for t in fx_ids if t not in histp)
+    promoted = set()
+    for tid, (nm, synth) in promoted_priors(lg, newcomers, lg_shots, lg_xgps, id2name).items():
+        histp[tid] = synth; id2name.setdefault(tid, nm)
+        name2id.setdefault(nm, tid); promoted.add(tid)
+    histp = flatten_warmstart(histp, lg)                         # flat περσινο prior
+    prior_r = {tid: _rating(h) for tid, h in histp.items() if h.get('sf')}
+    histc, _, _, _ = picks.league_state(Mc, lg, current_season)   # φετινο rolling (in-season)
+    blended, ns = blend_league(prior_r, histc)                    # warm-start blend K=K_WARM
+    return dict(blended=blended, ns=ns, lg_shots=lg_shots, lg_xgps=lg_xgps, hf=hf,
+                fixtures=fixtures, promoted=promoted)
+
 def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, current_season=CURRENT_SEASON, leagues=None):
     leagues = leagues or list(LEAGUE_FOTMOB)
     Mp, id2name = picks.load_matches(list(LEAGUE_FOTMOB), [ratings_season])   # περσινο (prior)
@@ -249,29 +280,13 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, current_season=CURRENT_
     market = _market_1x2()
     out = []; stats = {}
     for lg in leagues:
-        histp, lg_shots, lg_xgps, hf = picks.league_state(Mp, lg, ratings_season)
         try:
-            fixtures = fetch_upcoming(lg)
+            LR = league_ratings(lg, Mp, Mc, ratings_season, current_season, id2name, name2id)
         except Exception as e:
             stats[lg] = dict(fixtures=0, projected=0, error=str(e)[:120]); continue
-        # --- νεοφωτιστες: ΠΟΙΕΣ παιζουν φετος αλλα ΔΕΝ ηταν περσι στην κατηγορια ---
-        fx_ids = set(); fx_names = {}
-        for f in fixtures:
-            for ik, nk in (('home_id', 'home_name'), ('away_id', 'away_name')):
-                if f.get(ik):
-                    fx_ids.add(int(f[ik])); fx_names.setdefault(int(f[ik]), f.get(nk))
-        newcomers = sorted(t for t in fx_ids if t not in histp)
-        for t, nm in fx_names.items():
-            if nm:
-                id2name.setdefault(t, nm)
-        promoted = set()
-        for tid, (nm, synth) in promoted_priors(lg, newcomers, lg_shots, lg_xgps, id2name).items():
-            histp[tid] = synth; id2name.setdefault(tid, nm)
-            name2id.setdefault(nm, tid); promoted.add(tid)
-        histp = flatten_warmstart(histp, lg)                       # flat περσινο prior
-        prior_r = {tid: _rating(h) for tid, h in histp.items() if h.get('sf')}
-        histc, _, _, _ = picks.league_state(Mc, lg, current_season)  # φετινο rolling (in-season)
-        blended, ns = blend_league(prior_r, histc)                  # blend K=6 ανα ομαδα
+        blended, ns = LR['blended'], LR['ns']
+        lg_shots, lg_xgps, hf = LR['lg_shots'], LR['lg_xgps'], LR['hf']
+        fixtures, promoted = LR['fixtures'], LR['promoted']
         proj = 0
         for f in fixtures:
             H = name2id.get(f['home_name']); A = name2id.get(f['away_name'])

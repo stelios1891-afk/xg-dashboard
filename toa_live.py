@@ -109,7 +109,7 @@ def _al(n):
 
 def compute_picks_toa(leagues, ratings_season, current_season=None):
     """Structured value picks απο TOA — ιδια εξοδος με live_odds.compute_picks (+credits).
-    Ratings = warm-start blend K=6 (φετινο in-season + περσινο prior· βλ. build_data)."""
+    Ratings = warm-start blend K=8 (φετινο in-season + περσινο prior· βλ. build_data.league_ratings)."""
     if current_season is None:
         current_season = build_data.CURRENT_SEASON
     M, id2name = engine.load_matches(list(SPORT), [ratings_season])
@@ -120,24 +120,21 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
     for _, r in M.iterrows():
         lg_names[r['league']].add(id2name.get(r['home']))
         lg_names[r['league']].add(id2name.get(r['away']))
-    # νεοφωτιστες (2η κατηγορια): προσθηκη name->id ωστε να ταιριαζουν & να μαζευουν market 1X2
-    # (ιδιο με build_data· δεν εχουν top-flight ratings -> ΟΧΙ picks, αλλα ΝΑΙ market odds/projections)
-    for lg in leagues:
-        if lg in build_data.SECOND_DIV:
-            for tid, (nm, _synth) in build_data._promoted_synth(build_data.SECOND_DIV[lg]).items():
-                id2name.setdefault(tid, nm); name2id.setdefault(nm, tid); lg_names[lg].add(nm)
     allfix, rem, cost = fetch_all(leagues)
     all_picks, all_blocked, all_norating = [], [], []
     market_1x2 = {}   # "{home_id}_{away_id}" -> {h,d,a,when} (ολα τα matched fixtures, οχι μονο picks)
     for lg in leagues:
-        histp, lg_shots, lg_xgps, hf = engine.league_state(M, lg, ratings_season)
-        if lg in build_data.SECOND_DIV:      # νεοφωτιστες synth στο prior (ιδιο με build_data)
-            for tid, (nm, synth) in build_data._promoted_synth(build_data.SECOND_DIV[lg]).items():
-                if tid not in histp: histp[tid] = synth
-        histp = build_data.flatten_warmstart(histp, lg)
-        prior_r = {tid: build_data._rating(h) for tid, h in histp.items() if h.get('sf')}
-        histc, _, _, _ = engine.league_state(Mc, lg, current_season)
-        blended, _ns = build_data.blend_league(prior_r, histc)   # warm-start blend K=6
+        # ΚΟΙΝΗ λογικη με το dashboard -> build_data.league_ratings()
+        # (flat περσινο prior + διορθωμενες νεοφωτιστες + warm-start blend K=K_WARM).
+        # ΜΗΝ την ξαναγραψεις εδω: πρεπει scanner & dashboard να δινουν ΤΑ ΙΔΙΑ ratings.
+        try:
+            LR = build_data.league_ratings(lg, M, Mc, ratings_season, current_season, id2name, name2id)
+        except Exception as e:
+            print(f'  [{lg}] ratings error: {type(e).__name__}: {e}'); continue
+        blended = LR['blended']; lg_shots = LR['lg_shots']; lg_xgps = LR['lg_xgps']; hf = LR['hf']
+        for _f in LR['fixtures']:      # ονοματα (& νεοφωτιστες) -> name-matching + market 1X2
+            for _nk in ('home_name', 'away_name'):
+                if _f.get(_nk): lg_names[lg].add(_f[_nk])
         fixtures = allfix.get(lg, [])
         toa_names = sorted({_al(n) for f in fixtures for n in (f['home_toa'], f['away_toa']) if n})
         res = live_odds.assign(toa_names, sorted(x for x in lg_names.get(lg, set()) if x))
