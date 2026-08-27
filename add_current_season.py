@@ -73,13 +73,36 @@ if not rows:
     print("Καμια 2627 γραμμη — τιποτα να προσθεσω."); sys.exit(0)
 
 new = pd.DataFrame(rows)
-# per-league-season rescale (ιδιο με build_inputs)
+# ---------- per-league rescale, ΜΕ WARM-START (2026-08-27) ----------
+# Το build_inputs.py υπολογιζει τον συντελεστη απο ΟΛΗ την τελειωμενη σεζον (380 ματς).
+# Εδω, μεσα στη σεζον, ειχαμε μονο τα ματς που εχουν παιχτει -> 8.1% σφαλμα στην 1η αγων.
+# Ο περσινος συντελεστης ειναι ΣΤΑΘΕΡΟΤΕΡΟΣ (3.7% σφαλμα, σταθερα) απο 20 ματς φετινα.
+# Μιξη (ιδια μορφη με το warm-start των ratings): σφαλμα 8.1%->3.3% (md1), 2.2%->1.4% (md8).
+# Kf=4 = στην 4η αγωνιστικη μετρανε 50/50. Πλατο Kf=2-8 (βλ. συνομιλια 2026-08-27).
+KF = 4.0
+_prev = pd.read_csv(CSV)
+_prev['season'] = _prev['season'].astype(str)
+_seasons = sorted(_prev.season.unique())
+PREV_SEASON = _seasons[-1] if _seasons and _seasons[-1] != SEASON else (
+    _seasons[-2] if len(_seasons) > 1 else None)
+
 new['comp_np_scaled'] = new['np_comp']
 for (lg, sea), g in new.groupby(['league', 'season']):
-    sf = g.np_raw.sum() / g.np_comp.sum()
+    live = g.np_raw.sum() / g.np_comp.sum()
+    pg = _prev[(_prev.league == lg) & (_prev.season == PREV_SEASON)] if PREV_SEASON else None
+    if pg is not None and len(pg) and pg.np_comp.sum() > 0:
+        prior = pg.np_raw.sum() / pg.np_comp.sum()
+        md = len(g) / max(g.team.nunique(), 1)          # αγωνιστικες που εχουν παιχτει
+        w = md / (md + KF)
+        sf = prior * (live / prior) ** w
+    else:
+        sf = live                                        # καμια περσινη -> ο,τι εχουμε
+        md = float('nan'); w = 1.0; prior = float('nan')
     mk = (new.league == lg) & (new.season == sea)
     new.loc[mk, 'comp_np_scaled'] = new.loc[mk, 'np_comp'] * sf
     new.loc[mk, 'sf'] = sf
+    print("  %-13s md%-4.1f  περσινος %.4f · φετινος %.4f · βαρος φετ. %.0f%%  ->  %.4f"
+          % (lg, md, prior, live, w * 100, sf))
 new['xg_model'] = new['comp_np_scaled'] + 0.25 * new['pen'] + new['red_xg']
 new['ns_eff'] = new['ns'] + new['pen'] + (new['red_xg'].abs() / 0.10)
 new['xgps'] = new['xg_model'] / new['ns_eff'].clip(lower=1)

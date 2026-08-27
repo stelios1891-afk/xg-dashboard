@@ -268,6 +268,10 @@ def league_ratings(lg, Mp, Mc, ratings_season=RATINGS_SEASON_DEFAULT,
     prior_r = {tid: _rating(h) for tid, h in histp.items() if h.get('sf')}
     histc, _, _, _ = picks.league_state(Mc, lg, current_season)   # φετινο rolling (in-season)
     blended, ns = blend_league(prior_r, histc)                    # warm-start blend K=K_WARM
+    if picks.SOS:                        # SoS: διορθωση για τη δυσκολια του ΦΕΤΙΝΟΥ προγραμματος
+        blended = {tid: picks.sos_adjust(r, histc.get(tid, {}).get('opp', []),
+                                         blended, lg_shots, lg_xgps)
+                   for tid, r in blended.items()}
     return dict(blended=blended, ns=ns, lg_shots=lg_shots, lg_xgps=lg_xgps, hf=hf,
                 fixtures=fixtures, promoted=promoted)
 

@@ -25,6 +25,11 @@ except Exception:
 
 # ---------- ΚΛΕΙΔΩΜΕΝΕΣ ΣΤΑΘΕΡΕΣ ----------
 BLEND = 0.60; MIN_PRIOR = 6; DECAY = 0.96   # BLEND 0.80→0.60 (2026-08-26, blend_test.py + blend_roi.py): το 80/20 εδινε υπερβολικο βαρος στο xG. RPS: 60/40 καλυτερο σε ΚΑΙ ΤΙΣ 5 φασεις σεζον (0.1953 vs 0.1958), LOSO διαλεξε 50-60 σε 4/4 folds, ποτε 80. ROI @15η+: +5.2% vs +3.6%, συνολικο κερδος 63.2u vs 53.6u (+18%). Καθε τεστ ~1 SE μονο του — πειθει η ΣΥΜΦΩΝΙΑ δυο ανεξαρτητων μετρικων σε μονοτονη καμπυλη. Βλ. memory blend-60-40.
+SOS = 1.5; SOS_MIN_N = 6   # Strength-of-Schedule (Caley one-pass). 1.5 (2026-08-27, sos_clean_loso.py/blend_ramp.py):
+            # md7-14 ROI -10.3% -> +2.8%· md15+ +5.8%->+5.4% αλλα 4/4 σεζον & +40% ογκος (61u -> 80u).
+            # SOS_MIN_N=6: με <6 αντιπαλους το SoS ΚΑΤΑΣΤΡΕΦΕΙ την ακριβεια (RPS md2-4: 0.1930 -> 0.2143).
+            # Το gate n>=6 ειναι ΔΩΡΕΑΝ: ΙΔΙΟ ROI παντου (δεν στοιχηματιζουμε πριν την 7η ουτως ή αλλως),
+            # και επαναφερει το RPS md2-4 στο 0.1930. Το n>=8 σπαει το md7-14 (-2.5%). Βλ. sos_ramp_test.py.
 EDGE = 0.10; OMIN, OMAX = 1.70, 2.10; MIN_LINE = 0.5; DRAW_BOOST = 1.13; MARGIN = 0.03  # MARGIN = vig-consistent haircut στα net winnings (standard εγχωριο+ευρωπαικο)
 STAKE = 1000.0
 F = [factorial(i) for i in range(13)]
@@ -88,6 +93,28 @@ def predict(hh, ha, lg_shots, lg_xgps, hf):
     xg_a = esh_a * (Aax * (Hdx / lg_xgps)) * af
     return xg_h, xg_a
 
+def sos_adjust(r, opps, ratings, lg_shots, lg_xgps, strength=SOS):
+    """Caley one-pass Strength-of-Schedule.
+    Διορθωνει το (Ax, Dx, SF, SA) μιας ομαδας για τη δυσκολια των αντιπαλων που ΕΧΕΙ ΗΔΗ
+    παιξει ΦΕΤΟΣ. Αν επαιξε δυσκολο προγραμμα, τα νουμερα της ηταν τεχνητα χαμηλα -> πανω.
+    `ratings` = οι ΠΡΙΝ-το-SoS βαθμολογιες ολης της λιγκας (one-pass: καμια αναδρομη).
+    Επιστρεφει το r αμεταβλητο αν εχει παιξει <SOS_MIN_N αντιπαλους (πολυ θορυβος)."""
+    if not opps or not strength or len(opps) < SOS_MIN_N:
+        return r
+    oA = []; oD = []; oSF = []; oSA = []
+    for o in opps:
+        a = ratings.get(o)
+        if a is None:
+            continue
+        oA.append(a[0]); oD.append(a[1]); oSF.append(a[2]); oSA.append(a[3])
+    if not oA:
+        return r
+    mA, mD, mSF, mSA = wmean(oA), wmean(oD), wmean(oSF), wmean(oSA)
+    return (r[0] * (lg_xgps / max(mD, 1e-9)) ** strength,
+            r[1] * (lg_xgps / max(mA, 1e-9)) ** strength,
+            r[2] * (lg_shots / max(mSA, 1e-9)) ** strength,
+            r[3] * (lg_shots / max(mSF, 1e-9)) ** strength)
+
 def build_predictions(M, id2name):
     """Walk-forward: για καθε ματς με >=MIN_PRIOR ιστορικο, προβλεψη προ-αγωνα."""
     out = []
@@ -106,11 +133,11 @@ def build_predictions(M, id2name):
                                 home_name=id2name.get(H), away_name=id2name.get(A),
                                 gd=r['hg'] - r['ag'], hg=r['hg'], ag=r['ag'],
                                 xg_h=xg_h, xg_a=xg_a, model_sup=xg_h - xg_a))
-            for tid, sf, xf, sa, xa, gf, ga in [
-                    (H, r['h_ns'], r['h_xg'], r['a_ns'], r['a_xg'], r['hg'], r['ag']),
-                    (A, r['a_ns'], r['a_xg'], r['h_ns'], r['h_xg'], r['ag'], r['hg'])]:
-                hist.setdefault(tid, dict(sf=[], xf=[], sa=[], xa=[], gf=[], ga=[]))
-                for k, v in [('sf', sf), ('xf', xf), ('sa', sa), ('xa', xa), ('gf', gf), ('ga', ga)]:
+            for tid, opp, sf, xf, sa, xa, gf, ga in [
+                    (H, A, r['h_ns'], r['h_xg'], r['a_ns'], r['a_xg'], r['hg'], r['ag']),
+                    (A, H, r['a_ns'], r['a_xg'], r['h_ns'], r['h_xg'], r['ag'], r['hg'])]:
+                hist.setdefault(tid, dict(sf=[], xf=[], sa=[], xa=[], gf=[], ga=[], opp=[]))
+                for k, v in [('sf', sf), ('xf', xf), ('sa', sa), ('xa', xa), ('gf', gf), ('ga', ga), ('opp', opp)]:
                     hist[tid][k].append(v)
     return pd.DataFrame(out)
 
@@ -126,11 +153,11 @@ def league_state(M, league, season):
     lg_xgps = pd.concat([G.h_xg, G.a_xg]).sum() / pd.concat([G.h_ns, G.a_ns]).sum()
     hf = HFA_FIX[league]
     for _, r in G.iterrows():
-        for tid, sf, xf, sa, xa, gf, ga in [
-                (r['home'], r['h_ns'], r['h_xg'], r['a_ns'], r['a_xg'], r['hg'], r['ag']),
-                (r['away'], r['a_ns'], r['a_xg'], r['h_ns'], r['h_xg'], r['ag'], r['hg'])]:
-            hist.setdefault(tid, dict(sf=[], xf=[], sa=[], xa=[], gf=[], ga=[]))
-            for k, v in [('sf', sf), ('xf', xf), ('sa', sa), ('xa', xa), ('gf', gf), ('ga', ga)]:
+        for tid, opp, sf, xf, sa, xa, gf, ga in [
+                (r['home'], r['away'], r['h_ns'], r['h_xg'], r['a_ns'], r['a_xg'], r['hg'], r['ag']),
+                (r['away'], r['home'], r['a_ns'], r['a_xg'], r['h_ns'], r['h_xg'], r['ag'], r['hg'])]:
+            hist.setdefault(tid, dict(sf=[], xf=[], sa=[], xa=[], gf=[], ga=[], opp=[]))
+            for k, v in [('sf', sf), ('xf', xf), ('sa', sa), ('xa', xa), ('gf', gf), ('ga', ga), ('opp', opp)]:
                 hist[tid][k].append(v)
     return hist, lg_shots, lg_xgps, hf
 
