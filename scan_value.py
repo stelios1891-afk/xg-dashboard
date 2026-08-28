@@ -19,6 +19,7 @@ LATEST_F = os.path.join(ROOT, 'value_picks_latest.json')
 MARKET_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 για ΟΛΑ τα fixtures (dashboard)
 HIST_F = os.path.join(ROOT, 'odds_history.jsonl')         # ιστορικο τιμων: μια γραμμη ανα ΑΛΛΑΓΗ (2026-08-28)
 HSTATE_F = os.path.join(ROOT, 'odds_history_state.json')  # τελευταιο στιγμιοτυπο ανα ματς (για ανιχνευση αλλαγης)
+CLVBETS_F = os.path.join(ROOT, 'clv_bets.jsonl')          # CLV ημερολογιο: μια γραμμη ανα ΝΕΟ pick (2026-08-29)
 RATINGS_SEASON = '2526'   # warm-start· αλλαξε σε '2627' οταν μαζευτουν φετινα ματς
 ODDS_DELTA = 0.05         # κατωφλι αλλαγης αποδοσης για re-alert
 
@@ -126,6 +127,18 @@ def scan(notify_tg=True):
         if w and w[:10] < today and k not in cur_keys:
             del state[k]
 
+    # ---- CLV ημερολογιο: καθε ΝΕΟ pick = η τιμη εισοδου μας (κρινεται στο κλεισιμο) ----
+    try:
+        with open(CLVBETS_F, 'a', encoding='utf-8') as fh:
+            for p in new_alerts:
+                rec = dict(seen=now_utc, lg=p['lg'], home=p['home'], away=p['away'],
+                           hid=p.get('home_id'), aid=p.get('away_id'), ko=p.get('when'),
+                           side=p['side'], hcap=p['hcap'], odds=p['odds'],
+                           edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4))
+                fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
+    except Exception as e:
+        print(f"clv_bets ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
+
     _save(STATE_F, state)
     _save(LATEST_F, dict(scanned_at=now, ratings_season=RATINGS_SEASON,
                          gross=res['gross'], scale=res['scale'], cap=res['cap'],
@@ -207,6 +220,12 @@ def auto():
     else:
         print(f"[{_now_utc().isoformat(timespec='minutes')}] skip · πλησιεστερο ματς {h:.1f}h · "
               f"gap {gap}h · τελευταιο scan {since:.1f}h πριν")
+    # ---- CLV ημερολογιο: settle ο,τι τελειωσε · Δευτερα = εβδομαδιαια συνοψη Telegram ----
+    try:
+        import clv_ledger
+        clv_ledger.maybe_weekly(notify_tg=True)
+    except Exception as e:
+        print(f"clv_ledger ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
 
 if __name__ == '__main__':
     if 'auto' in sys.argv:
