@@ -212,6 +212,12 @@ def match_fig(d, market='1x2'):
                xaxis=dict(gridcolor='#121b30'), yaxis=dict(gridcolor='#16203a', title='αποδοση'),
                legend=dict(orientation='h', y=1.1, bgcolor='rgba(0,0,0,0)'),
                hovermode='x unified')
+    # changes-only αποθηκευση: τραβα την τελευταια τιμη μεχρι τωρα (η τη σεντρα)
+    now = datetime.datetime.now(UTC)
+    ko = _dt(d['meta'].get('ko'))
+    end = min(now, ko) if ko else now
+    if snaps and end > snaps[-1]['t']:
+        snaps = snaps + [dict(snaps[-1], t=end)]
     xs = [s['t'].astimezone(ATHENS) for s in snaps]
     if market == '1x2':
         m = d['meta']
