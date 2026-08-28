@@ -38,12 +38,12 @@ LEAGUE_LOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}
 PAGES = [('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 'Pi Rating', '🔵'),
          ('team', 'Team Rating', '🛡️'), ('scatter', 'Scatter Plots', '✳️'),
          ('ave', 'Actual vs Expected', '🎯'), ('value', 'Value Picks', '💰'),
-         ('ledger', 'Pick History', '📒'),
+         ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -320,9 +320,53 @@ def render_ledger(league):
     st.components.v1.html(lv.table_html(settled, pending),
                           height=min((len(settled) + len(pending)) * 52 + 60, 5000), scrolling=True)
 
+@st.cache_data(ttl=15 * 60)
+def _moves_hist():
+    import moves_view
+    return moves_view.load_history()
+
+def render_moves(league):
+    import moves_view as mv
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#7ea2ff">📡 MARKET WATCH</div>'
+                '<div class="co">ΚΙΝΗΣΕΙΣ ΑΓΟΡΑΣ · PINNACLE/MATCHBOOK · ΕΠΕΡΧΟΜΕΝΑ ΜΑΤΣ</div></div></div>',
+                unsafe_allow_html=True)
+    st.caption("Απο τις καταγραφες του scanner (καθε 30′ σε μερα αγωνων, 2h τις τελευταιες 3 μερες, 1×/μερα νωριτερα). "
+               "↓ = η αποδοση επεσε (πηρε χρημα). Το βαθος ιστοριας μεγαλωνει μερα με τη μερα — η συλλογη ξεκινησε 28/8/2026.")
+    H = _moves_hist()
+    if not H:
+        st.info("Δεν υπαρχουν καταγραφες ακομα.")
+        return
+    # ---- 1. Biggest Movers (ολες οι λιγκες, επομενες μερες) ----
+    st.markdown("#### 🔥 Biggest Movers — τελευταιες 48 ωρες")
+    rows = mv.movers_rows(H, hours=48, top=12)
+    if rows:
+        st.components.v1.html(mv.movers_html(rows), height=min(len(rows) * 52 + 50, 900), scrolling=True)
+    else:
+        st.caption("Καμια αξιολογη κινηση ακομα (χρειαζονται ≥2 καταγραφες ανα ματς).")
+    # ---- 2. Ανα πρωταθλημα ----
+    st.markdown("#### Ολα τα επερχομενα ανα πρωταθλημα")
+    lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg')},
+                 key=lambda x: list(build_data.LEAGUE_FOTMOB).index(x) if x in build_data.LEAGUE_FOTMOB else 99)
+    sel_lg = st.selectbox("Πρωταθλημα", lgs,
+                          index=lgs.index(league) if league in lgs else 0, key='mw_lg')
+    st.components.v1.html(mv.league_html(H, sel_lg), height=560, scrolling=True)
+    # ---- 3. Διαγραμμα ματς ----
+    ups = [(k, d, ko) for k, d, ko in mv.upcoming(H) if d['meta']['lg'] == sel_lg and len(d['snaps']) >= 2]
+    if not ups:
+        return
+    st.markdown("#### Διαγραμμα κινησης")
+    names = {k: f"{d['meta']['home']} – {d['meta']['away']} ({mv._kofmt(ko)})" for k, d, ko in ups}
+    sel_m = st.selectbox("Ματς", [k for k, _, _ in ups], format_func=lambda k: names[k], key='mw_match')
+    D = {k: d for k, d, _ in ups}[sel_m]
+    tabs = st.tabs(["1Χ2", "Ασιατικο χαντικαπ"])
+    with tabs[0]:
+        st.plotly_chart(mv.match_fig(D, '1x2'), use_container_width=True, config={'displayModeBar': False})
+    with tabs[1]:
+        st.plotly_chart(mv.match_fig(D, 'ah'), use_container_width=True, config={'displayModeBar': False})
+
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
-          'ledger': render_ledger}
+          'ledger': render_ledger, 'moves': render_moves}
 if page in RENDER:
     RENDER[page](league)
 else:
