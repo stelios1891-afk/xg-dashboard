@@ -131,10 +131,13 @@ def scan(notify_tg=True):
     try:
         with open(CLVBETS_F, 'a', encoding='utf-8') as fh:
             for p in new_alerts:
+                if p.get('md') is not None and p['md'] < 7:
+                    continue          # ημερολογιο ΜΟΝΟ απο την 7η αγωνιστικη (2026-08-29 Στελιος)
                 rec = dict(seen=now_utc, lg=p['lg'], home=p['home'], away=p['away'],
                            hid=p.get('home_id'), aid=p.get('away_id'), ko=p.get('when'),
                            side=p['side'], hcap=p['hcap'], odds=p['odds'],
-                           edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4))
+                           edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4),
+                           md=p.get('md'), mxh=p.get('mxh'), mxa=p.get('mxa'))
                 fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
     except Exception as e:
         print(f"clv_bets ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")

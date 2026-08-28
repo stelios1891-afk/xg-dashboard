@@ -99,6 +99,54 @@ def _league_results(lg):
     return res
 
 
+# ---------- ισοδυναμο κλεισιμο οταν αλλαξε η γραμμη ----------
+def _equiv_close_odds(mxh, mxa, side, our_line, close_line_our, co_our, co_opp):
+    """Η γραμμη εκλεισε αλλου (πχ παιξαμε +0.5, εκλεισε +0.25): βρες ποια «δυναμη»
+    (goal supremacy) δικαιολογει το κλεισιμο, και τιμολογησε τη ΔΙΚΗ μας γραμμη απο
+    την ιδια κατανομη — με τη γκανιοτα του κλεισιματος. Επιστρεφει εκτιμωμενη αποδοση."""
+    import picks as engine
+
+    def pq(dist, sd, line):
+        """p_cover με ΣΩΣΤΟ χειρισμο quarter-γραμμων (μεσος ορος των δυο μισων)."""
+        parts = [line] if (line * 4) % 2 == 0 else [line - 0.25, line + 0.25]
+        pw = pp = 0.0
+        for L in parts:
+            w, p = engine.p_cover(dist, sd, L)
+            pw += w / len(parts); pp += p / len(parts)
+        return pw, pp
+
+    T = max(float(mxh) + float(mxa), 0.4)      # συνολο γκολ: απο το μοντελο τη στιγμη του bet
+    imp = (1 / co_our) / (1 / co_our + 1 / co_opp)
+
+    def f(d):
+        lh = max((T + d) / 2, 0.05); la = max((T - d) / 2, 0.05)
+        dist = engine.gd_dist(lh, la)
+        pw, pp = pq(dist, side, close_line_our)
+        return pw / max(pw + (1 - pw - pp), 1e-9)
+
+    lo, hi = -6.0, 6.0
+    flo, fhi = f(lo), f(hi)
+    if not (min(flo, fhi) <= imp <= max(flo, fhi)):
+        return None
+    inc = fhi > flo
+    for _ in range(40):
+        mid = (lo + hi) / 2
+        if (f(mid) < imp) == inc:
+            lo = mid
+        else:
+            hi = mid
+    d = (lo + hi) / 2
+    lh = max((T + d) / 2, 0.05); la = max((T - d) / 2, 0.05)
+    dist = engine.gd_dist(lh, la)
+    pw2, pp2 = pq(dist, side, our_line)
+    pwc, ppc = pq(dist, side, close_line_our)
+    if pw2 <= 0 or pwc <= 0:
+        return None
+    fair_our = (1 - pp2) / pw2
+    fair_close = (1 - ppc) / pwc
+    return co_our * fair_our / fair_close      # ιδια γκανιοτα με το πραγματικο κλεισιμο
+
+
 # ---------- settle ----------
 def settle_pending(verbose=True):
     import picks
@@ -134,7 +182,18 @@ def settle_pending(verbose=True):
                     rec['clv'] = round(b['odds'] - co, 3)          # + = νικησαμε το κλεισιμο
                     rec['clv_pct'] = round(b['odds'] / co - 1, 4)
                 else:
-                    rec['clv'] = None                              # αλλαξε γραμμη — δεν συγκρινεται ευθεως
+                    rec['clv'] = None                              # αλλαξε γραμμη — οχι ευθεια συγκριση
+                    if b.get('mxh') is not None and b.get('mxa') is not None:
+                        co_opp = float(c['oa'] if b['side'] == 1 else c['oh'])
+                        try:
+                            eq = _equiv_close_odds(b['mxh'], b['mxa'], b['side'], b['hcap'],
+                                                   our_close_line, co, co_opp)
+                        except Exception:
+                            eq = None
+                        if eq:
+                            rec['close_eq'] = round(eq, 3)         # εκτιμωμενο κλεισιμο ΣΤΗ γραμμη μας
+                            rec['clv_est'] = round(b['odds'] - eq, 3)
+                            rec['clv_est_pct'] = round(b['odds'] / eq - 1, 4)
             else:
                 rec['close_odds'] = None; rec['clv'] = None
             # --- αποτελεσμα ---
@@ -180,7 +239,9 @@ def report(days=7):
                  + (f' (+{tie} ισοπαλιες)' if tie else '')
                  + f' · μεσο CLV {mclv:+.3f} ({mpct:+.1f}%)')
     if moved:
-        L.append(f'γραμμη αλλαξε ως τη σεντρα: {len(moved)} picks')
+        est = [r['clv_est_pct'] for r in moved if r.get('clv_est_pct') is not None]
+        extra = (f' · εκτιμωμενο ≈CLV {sum(est)/len(est)*100:+.1f}% ({len(est)})' if est else '')
+        L.append(f'γραμμη αλλαξε ως τη σεντρα: {len(moved)} picks{extra}')
     if pnl:
         L.append(f'αποτελεσμα: {sum(pnl):+.2f} μοναδες σε {len(pnl)} bets ({sum(pnl)/len(pnl)*100:+.1f}%)')
     if pnlc:

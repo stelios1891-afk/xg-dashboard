@@ -79,9 +79,13 @@ def prepare(current_season):
 
 def summary(settled):
     pnl = [r['pnl'] for r in settled if r.get('pnl') is not None]
-    clv = [r['clv_pct'] for r in settled if r.get('clv_pct') is not None]
+    # CLV: ακριβες οπου η γραμμη εμεινε ιδια, αλλιως η ≈εκτιμηση (μεταφραση στη γραμμη μας)
+    clv = [r['clv_pct'] if r.get('clv_pct') is not None else r.get('clv_est_pct')
+           for r in settled]
+    clv = [v for v in clv if v is not None]
     xv = [r['xg_value'] for r in settled if r.get('xg_value') is not None]
-    beat = sum(1 for r in settled if (r.get('clv') or 0) > 0)
+    beat = sum(1 for r in settled
+               if ((r.get('clv_pct') if r.get('clv_pct') is not None else r.get('clv_est_pct')) or 0) > 0)
     return dict(n=len(settled), units=sum(pnl), roi=(sum(pnl) / len(pnl) if pnl else 0),
                 clv=(sum(clv) / len(clv) if clv else None), nclv=len(clv), beat=beat,
                 xgv=(sum(xv) / len(xv) if xv else None), nxg=len(xv))
@@ -155,7 +159,10 @@ def table_html(settled, pending):
         elif r.get('close_odds') is not None:
             closes = (f'{r["close_odds"]:.2f}<div class="dim">γραμμη {"+" if r["close_line"] >= 0 else ""}'
                       f'{r["close_line"]:g}</div>')
-            clv = '<span class="mut">αλλη γραμμη</span>'
+            if r.get('clv_est_pct') is not None:
+                clv = '≈' + _pct(r['clv_est_pct'])     # εκτιμηση: κλεισιμο μεταφρασμενο στη γραμμη μας
+            else:
+                clv = '<span class="mut">αλλη γραμμη</span>'
         else:
             closes = '<span class="mut">—</span>'; clv = '<span class="mut">—</span>'
         xg = (f'{r["xg_h"]:.2f} – {r["xg_a"]:.2f}' if r.get('xg_h') is not None
@@ -189,11 +196,14 @@ def cum_fig(settled):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x, y=cum, mode='lines+markers', name='Μοναδες',
                              line=dict(color='#34d17a', width=2), marker=dict(size=5)))
-    cl = [r for r in rows if r.get('clv_pct') is not None]
+    def _c(r):
+        v = r.get('clv_pct')
+        return v if v is not None else r.get('clv_est_pct')
+    cl = [r for r in rows if _c(r) is not None]
     if cl:
         s = 0.0; cc = []
         for r in rows:
-            s += (r.get('clv_pct') or 0) * 100; cc.append(round(s, 1))
+            s += (_c(r) or 0) * 100; cc.append(round(s, 1))
         fig.add_trace(go.Scatter(x=x, y=cc, mode='lines', name='Σωρ. CLV %',
                                  line=dict(color='#7ea2ff', width=1.5, dash='dot'), yaxis='y2'))
     fig.update_layout(paper_bgcolor='#0a0f1e', plot_bgcolor='#0a0f1e', height=300,

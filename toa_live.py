@@ -161,9 +161,15 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                 all_norating.append((lg, f, f"{hfot}/{afot}", 'χωρις rating (prior/in-season)')); continue
             pf = build_data._predict_ratings(rh, ra, lg_shots, lg_xgps, hf)
             xg_h, xg_a = pf['home_adj_xg'], pf['away_adj_xg']
+            # αγωνιστικη: ποσα ματς εχει παιξει ΦΕΤΟΣ η καθε ομαδα (για το CLV ημερολογιο: md>=7)
+            lgc = Mc[Mc.league == lg] if len(Mc) else Mc
+            md = min(int(((lgc.home == H) | (lgc.away == H)).sum()),
+                     int(((lgc.home == A) | (lgc.away == A)).sum())) + 1 if len(lgc) else 1
             for b in engine.evaluate_bet(xg_h, xg_a, f['line'], f['home_odds'], f['away_odds']):
                 all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
-                                      when=f['startTime'], **b, hnote=hnote, anote=anote))
+                                      when=f['startTime'], md=md,
+                                      mxh=round(xg_h, 3), mxa=round(xg_a, 3),
+                                      **b, hnote=hnote, anote=anote))
     KELLY_FRAC = 0.125; CAP = 0.20
     for p in all_picks:
         p['stake'] = KELLY_FRAC * p['edge'] / (p['odds'] - 1)
