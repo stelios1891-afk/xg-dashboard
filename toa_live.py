@@ -123,6 +123,7 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
     allfix, rem, cost = fetch_all(leagues)
     all_picks, all_blocked, all_norating = [], [], []
     market_1x2 = {}   # "{home_id}_{away_id}" -> {h,d,a,when} (ολα τα matched fixtures, οχι μονο picks)
+    odds_rows = []    # στιγμιοτυπα γραμμων/αποδοσεων για το odds_history (ολα τα matched fixtures)
     for lg in leagues:
         # ΚΟΙΝΗ λογικη με το dashboard -> build_data.league_ratings()
         # (flat περσινο prior + διορθωμενες νεοφωτιστες + warm-start blend K=K_WARM).
@@ -150,6 +151,11 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
             if f.get('h2h'):   # market 1X2 για ΚΑΘΕ matched fixture (ανεξαρτητα MIN_PRIOR/pick)
                 mh, mdw, ma = f['h2h']
                 market_1x2[f"{H}_{A}"] = dict(h=round(mh, 2), d=round(mdw, 2), a=round(ma, 2), when=f['startTime'])
+            if f.get('line') is not None:   # ιστορικο τιμων: πληρες στιγμιοτυπο ανα fixture (2026-08-28)
+                odds_rows.append(dict(lg=lg, hid=H, aid=A, home=hfot, away=afot,
+                                      ko=f.get('startTime'), line=f['line'],
+                                      oh=f.get('home_odds'), oa=f.get('away_odds'),
+                                      h2h=[round(x, 2) for x in f['h2h']] if f.get('h2h') else None))
             rh = blended.get(H); ra = blended.get(A)
             if rh is None or ra is None:
                 all_norating.append((lg, f, f"{hfot}/{afot}", 'χωρις rating (prior/in-season)')); continue
@@ -167,7 +173,7 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
         p['stake_final'] = p['stake'] * scale
     return dict(picks=all_picks, blocked=all_blocked, norating=all_norating,
                 gross=gross, scale=scale, cap=CAP, credits_remaining=rem, credits_cost=cost,
-                market_1x2=market_1x2)
+                market_1x2=market_1x2, odds_rows=odds_rows)
 
 if __name__ == '__main__':
     res = compute_picks_toa(list(SPORT), sys.argv[1] if len(sys.argv) > 1 else '2526')

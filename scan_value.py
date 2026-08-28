@@ -17,6 +17,8 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 STATE_F = os.path.join(ROOT, 'value_scan_state.json')
 LATEST_F = os.path.join(ROOT, 'value_picks_latest.json')
 MARKET_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 για ΟΛΑ τα fixtures (dashboard)
+HIST_F = os.path.join(ROOT, 'odds_history.jsonl')         # ιστορικο τιμων: μια γραμμη ανα ΑΛΛΑΓΗ (2026-08-28)
+HSTATE_F = os.path.join(ROOT, 'odds_history_state.json')  # τελευταιο στιγμιοτυπο ανα ματς (για ανιχνευση αλλαγης)
 RATINGS_SEASON = '2526'   # warm-start· αλλαξε σε '2627' οταν μαζευτουν φετινα ματς
 ODDS_DELTA = 0.05         # κατωφλι αλλαγης αποδοσης για re-alert
 
@@ -70,11 +72,39 @@ def _build_msg(new_alerts, changed_alerts):
             out.append(_pick_line(p, prev))
     return "\n".join(out)
 
+
+def log_odds_history(odds_rows, now_utc):
+    """Γραφει στο odds_history.jsonl ΜΟΝΟ τις αλλαγες (γραμμη/αποδοσεις/1Χ2) ανα ματς.
+    Κραταει το τελευταιο στιγμιοτυπο στο HSTATE_F. Επιστρεφει ποσες αλλαγες γραφτηκαν."""
+    hstate = _load(HSTATE_F, {})
+    wrote = 0
+    with open(HIST_F, 'a', encoding='utf-8') as fh:
+        for r in odds_rows:
+            key = f"{r['hid']}_{r['aid']}"
+            sig = [r.get('line'), r.get('oh'), r.get('oa'), r.get('h2h')]
+            if hstate.get(key, {}).get('sig') == sig:
+                continue
+            rec = dict(t=now_utc, **r)
+            fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
+            hstate[key] = dict(sig=sig, t=now_utc)
+            wrote += 1
+    # καθαρισμος state: κρατα μονο ματς με προσφατη καταγραφη (30 μερες) — το jsonl μενει ανεπαφο
+    cutoff = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=30)).isoformat()
+    hstate = {k: v for k, v in hstate.items() if v.get('t', '') >= cutoff}
+    _save(HSTATE_F, hstate)
+    return wrote
+
 def scan(notify_tg=True):
     import toa_live
     res = toa_live.compute_picks_toa(list(toa_live.SPORT), RATINGS_SEASON)   # The Odds API (πληρωμενο)
     picks = res['picks']
     now = datetime.datetime.now().isoformat(timespec='minutes')
+    now_utc = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='minutes')
+    try:
+        n_hist = log_odds_history(res.get('odds_rows', []), now_utc)
+        print(f"odds_history: {n_hist} αλλαγες καταγραφηκαν ({len(res.get('odds_rows', []))} fixtures)")
+    except Exception as e:
+        print(f"odds_history ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
     state = _load(STATE_F, {})
 
     new_alerts, changed_alerts = [], []
