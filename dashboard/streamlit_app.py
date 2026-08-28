@@ -358,11 +358,21 @@ def render_moves(league):
     names = {k: f"{d['meta']['home']} – {d['meta']['away']} ({mv._kofmt(ko)})" for k, d, ko in ups}
     sel_m = st.selectbox("Ματς", [k for k, _, _ in ups], format_func=lambda k: names[k], key='mw_match')
     D = {k: d for k, d, _ in ups}[sel_m]
-    tabs = st.tabs(["1Χ2", "Ασιατικο χαντικαπ"])
+    st.components.v1.html(mv.outcome_cards_html(D), height=130)
+    c1, c2 = st.columns([2, 2])
+    with c1:
+        mode = st.radio("Προβολη", ['ΑΠΟΔΟΣΕΙΣ', '% ΜΕΤΑΒΟΛΗ', 'IMPLIED %'], horizontal=True, key='mw_mode')
+    with c2:
+        rng = st.radio("Παραθυρο", ['6H', '12H', '24H', '48H', 'ΟΛΑ'], index=4, horizontal=True, key='mw_rng')
+    hrs = {'6H': 6, '12H': 12, '24H': 24, '48H': 48, 'ΟΛΑ': None}[rng]
+    tabs = st.tabs(["1Χ2", "Ασιατικο χαντικαπ", "Ιστορικο αλλαγων"])
     with tabs[0]:
-        st.plotly_chart(mv.match_fig(D, '1x2'), use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(mv.match_fig(D, '1x2', mode, hrs), use_container_width=True, config={'displayModeBar': False})
     with tabs[1]:
-        st.plotly_chart(mv.match_fig(D, 'ah'), use_container_width=True, config={'displayModeBar': False})
+        st.components.v1.html(mv.ah_cards_html(D), height=175)
+        st.plotly_chart(mv.match_fig(D, 'ah', mode, hrs), use_container_width=True, config={'displayModeBar': False})
+    with tabs[2]:
+        st.components.v1.html(mv.history_html(D), height=min(len(D['snaps']) * 38 + 90, 700), scrolling=True)
 
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,

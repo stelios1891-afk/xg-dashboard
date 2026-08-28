@@ -281,7 +281,7 @@ def _last_scan_hours():
 def auto():
     """Καλειται καθε 30' απο το Task Scheduler· κανει TOA scan ΜΟΝΟ οταν πρεπει."""
     h = _nearest_kickoff_hours()
-    gap = 24.0 if h > 72 else (2.0 if h > 12 else 0.5)   # matchday 30' · <3μερες 2h · αλλιως 1×/μερα
+    gap = 24.0 if h > 72 else (1.0 if h > 24 else 0.5)   # <24h καθε 30' · <3μερες καθε 1h · αλλιως 1×/μερα (2026-08-29)
     since = _last_scan_hours()
     if since >= gap:
         scan(notify_tg=True)
