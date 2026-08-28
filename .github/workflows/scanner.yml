@@ -55,6 +55,7 @@ jobs:
         run: |
           git config user.name "scanner-bot"
           git config user.email "actions@github.com"
+          for f in clv_bets.jsonl clv_ledger.jsonl; do [ -f "$f" ] || : > "$f"; done
           git add value_scan_state.json value_picks_latest.json market_1x2_latest.json odds_history.jsonl odds_history_state.json clv_bets.jsonl clv_ledger.jsonl
           if git diff --cached --quiet -- value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl; then
             echo "no pick/market changes — skip commit"
