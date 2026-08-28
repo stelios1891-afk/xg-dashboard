@@ -95,6 +95,67 @@ def log_odds_history(odds_rows, now_utc):
     _save(HSTATE_F, hstate)
     return wrote
 
+RFLAG_F = os.path.join(ROOT, 'red_flag_state.json')      # ποια picks εχουν ηδη ειδοποιηθει (κοκκινο φαναρι)
+
+def red_flags(odds_rows, notify_tg=True):
+    """ΚΟΚΚΙΝΟ ΦΑΝΑΡΙ (2026-08-29): για καταγεγραμμενα picks (clv_bets) με σεντρα σε <2h,
+    αν η αγορα εχει κινηθει ΚΟΝΤΡΑ στην πλευρα μας απο την τιμη εισοδου -> μια ειδοποιηση.
+    Βασιζεται στο ευρημα 2526: οψιμο dump στον αουτσαιντερ μας = ROI −2.2% αντι +7.7%.
+    Alert-only — καμια αυτοματη ενεργεια."""
+    cur = {f"{r['hid']}_{r['aid']}": r for r in odds_rows}
+    seen = _load(RFLAG_F, {})
+    now = datetime.datetime.now(datetime.timezone.utc)
+    flags = []
+    try:
+        with open(os.path.join(ROOT, 'clv_bets.jsonl'), encoding='utf-8') as fh:
+            bets = [json.loads(x) for x in fh if x.strip()]
+    except FileNotFoundError:
+        return 0
+    for b in bets:
+        k = f"{b['lg']}|{b['home']}|{b['away']}|{b['side']}|{b['hcap']:g}"
+        if k in seen:
+            continue
+        try:
+            ko = datetime.datetime.fromisoformat(str(b.get('ko'))).replace(tzinfo=datetime.timezone.utc)
+        except ValueError:
+            continue
+        mins = (ko - now).total_seconds() / 60
+        if not (-10 <= mins <= 120):
+            continue                       # μονο το τελικο 2ωρο πριν τη σεντρα
+        r = cur.get(f"{b.get('hid')}_{b.get('aid')}")
+        if not r or r.get('line') is None:
+            continue
+        our_line = float(r['line']) if b['side'] == 1 else -float(r['line'])
+        our_odds = r.get('oh') if b['side'] == 1 else r.get('oa')
+        if our_odds is None:
+            continue
+        reason = None
+        if our_line > b['hcap'] + 0.01:    # μας δινουν ΠΕΡΙΣΣΟΤΕΡΟ χαντικαπ = επεσε η πλευρα μας
+            reason = f"γραμμη {b['hcap']:+g} → {our_line:+g}"
+        elif abs(our_line - b['hcap']) < 0.01 and float(our_odds) - b['odds'] >= 0.05:
+            reason = f"αποδοση {b['odds']:.2f} → {float(our_odds):.2f}"
+        if reason:
+            team = b['home'] if b['side'] == 1 else b['away']
+            flags.append((b, team, reason, mins))
+            seen[k] = dict(t=now.isoformat(timespec='minutes'), reason=reason)
+    # καθαρισμος state (κρατα 3 μερες)
+    cutoff = (now - datetime.timedelta(days=3)).isoformat()
+    seen = {k: v for k, v in seen.items() if v.get('t', '') >= cutoff}
+    _save(RFLAG_F, seen)
+    if flags and notify_tg:
+        L = [f"🚨 ΚΟΚΚΙΝΟ ΦΑΝΑΡΙ — η αγορα κινειται ΚΟΝΤΡΑ σε {len(flags)} pick(s) λιγο πριν τη σεντρα:"]
+        for b, team, reason, mins in flags:
+            L.append(f"\n{b['lg']} · {b['home']} – {b['away']} (σε {mins:.0f}′)\n"
+                     f"{team} {b['hcap']:+g} @{b['odds']:.2f} → {reason}\n"
+                     f"Ιστορικο 2526: τετοια bets εκαναν −2.2% αντι +7.7% — σκεψου ξεφορτωμα/αποφυγη.")
+        try:
+            import notify
+            notify.send("\n".join(L))
+        except Exception as e:
+            print("Telegram σφαλμα (red flag):", e)
+    return len(flags)
+
+
 def scan(notify_tg=True):
     import toa_live
     res = toa_live.compute_picks_toa(list(toa_live.SPORT), RATINGS_SEASON)   # The Odds API (πληρωμενο)
@@ -106,6 +167,12 @@ def scan(notify_tg=True):
         print(f"odds_history: {n_hist} αλλαγες καταγραφηκαν ({len(res.get('odds_rows', []))} fixtures)")
     except Exception as e:
         print(f"odds_history ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
+    try:
+        n_rf = red_flags(res.get('odds_rows', []), notify_tg=notify_tg)
+        if n_rf:
+            print(f"🚨 κοκκινα φαναρια: {n_rf}")
+    except Exception as e:
+        print(f"red_flags ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
     state = _load(STATE_F, {})
 
     new_alerts, changed_alerts = [], []

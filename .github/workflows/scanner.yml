@@ -30,6 +30,7 @@ jobs:
             value_last_scan.txt
             value_fixtures_cache.json
             clv_report_last.txt
+            red_flag_state.json
           key: scanner-state-${{ github.run_id }}
           restore-keys: |
             scanner-state-
