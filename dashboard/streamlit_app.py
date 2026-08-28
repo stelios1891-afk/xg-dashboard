@@ -38,11 +38,12 @@ LEAGUE_LOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}
 PAGES = [('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 'Pi Rating', '🔵'),
          ('team', 'Team Rating', '🛡️'), ('scatter', 'Scatter Plots', '✳️'),
          ('ave', 'Actual vs Expected', '🎯'), ('value', 'Value Picks', '💰'),
+         ('ledger', 'Pick History', '📒'),
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -277,8 +278,51 @@ def render_value(league):
     shown = picks if sel_lg == 'Όλα' else [p for p in picks if p['lg'] == sel_lg]
     st.components.v1.html(value_view.picks_html(shown), height=min(len(shown) * 150 + 40, 4000), scrolling=True)
 
+@st.cache_data(ttl=15 * 60)
+def _ledger_data():
+    import ledger_view
+    return ledger_view.prepare(build_data.CURRENT_SEASON)
+
+def render_ledger(league):
+    import ledger_view
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f3c74b">📒 PICK HISTORY</div>'
+                '<div class="co">ΟΛΑ ΤΑ PICKS ΤΟΥ SCANNER · CLV vs ΚΛΕΙΣΙΜΟ · ΚΡΙΣΗ ΜΕ ΤΕΛΙΚΑ xG</div></div></div>',
+                unsafe_allow_html=True)
+    st.caption("Τιμη = Pinnacle/Matchbook τη στιγμη του alert · Κλεισιμο = τελευταια καταγραφη πριν τη σεντρα · "
+               "CLV+ = νικησαμε το κλεισιμο · **xG value** = ποσο καλυτερη ηταν η τιμη μας απο τη «δικαιη» "
+               "με βαση τα ΤΕΛΙΚΑ xG του ματς (κριση της διαδικασιας, οχι του σκορ).")
+    try:
+        settled, pending = _ledger_data()
+    except Exception as e:
+        st.error(f"Σφαλμα φορτωσης: {e}")
+        return
+    if not settled and not pending:
+        st.info("Δεν υπαρχουν ακομα καταγεγραμμενα picks — γεμιζει αυτοματα με τα alerts του scanner (απο 29/8/2026).")
+        return
+    import ledger_view as lv
+    s = lv.summary(settled)
+    m = st.columns(5)
+    m[0].metric("Settled picks", s['n'], help=f"+{len(pending)} εκκρεμη")
+    m[1].metric("Μοναδες", f"{s['units']:+.2f}", f"{s['roi']*100:+.1f}% ROI" if s['n'] else None)
+    m[2].metric("Μεσο CLV", f"{s['clv']*100:+.1f}%" if s['clv'] is not None else "—",
+                help="+ = παιρνουμε καλυτερη τιμη απο το κλεισιμο (ιδια γραμμη)")
+    m[3].metric("Νικες vs κλεισιμο", f"{s['beat']}/{s['nclv']}" if s['nclv'] else "—")
+    m[4].metric("Μεσο xG value", f"{s['xgv']*100:+.1f}%" if s['xgv'] is not None else "—",
+                help="+ = οι τιμες μας ηταν καλυτερες απο το «δικαιο» των τελικων xG")
+    lgs = sorted({r['lg'] for r in settled} | {r['lg'] for r in pending})
+    sel = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs, key='led_lg')
+    if sel != 'Όλα':
+        settled = [r for r in settled if r['lg'] == sel]
+        pending = [r for r in pending if r['lg'] == sel]
+    fig = lv.cum_fig(settled)
+    if fig is not None and len(settled) >= 3:
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.components.v1.html(lv.table_html(settled, pending),
+                          height=min((len(settled) + len(pending)) * 52 + 60, 5000), scrolling=True)
+
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
-          'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value}
+          'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
+          'ledger': render_ledger}
 if page in RENDER:
     RENDER[page](league)
 else:
