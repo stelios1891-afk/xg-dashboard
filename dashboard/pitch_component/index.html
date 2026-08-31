@@ -5,33 +5,32 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf8;overflow:hidden;}
-.wrap{display:flex;flex-direction:column;gap:12px;padding:4px;}
-.row{display:flex;gap:8px;}
-.bench{width:186px;background:#0d1426;border:1px solid #1a2540;border-radius:10px;padding:6px;
-       max-height:400px;overflow-y:auto;flex-shrink:0;}
+.wrap{display:flex;gap:6px;padding:4px;}
+.bench{width:158px;background:#0d1426;border:1px solid #1a2540;border-radius:10px;padding:5px;
+       max-height:520px;overflow-y:auto;flex-shrink:0;}
 .bench h4{font-size:9px;color:#6b7fa3;letter-spacing:1px;text-transform:uppercase;padding:2px 4px 6px;}
-.pitchbox{flex:1;display:flex;flex-direction:column;}
-.tname{font-size:11px;font-weight:700;text-align:center;padding:2px 0 5px;color:#cdd8ee;}
-.pitch{flex:1;min-height:370px;border-radius:10px;position:relative;display:flex;gap:0;
-       background:repeating-linear-gradient(90deg,#0f2b1c 0 42px,#113620 42px 84px);
-       border:2px solid #1e4a33;}
-.pitch.away{background:repeating-linear-gradient(90deg,#113620 0 42px,#0f2b1c 42px 84px);}
-.col{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;padding:6px 2px;}
-.chip{background:#111827ee;border:1px solid #2d4470;border-radius:9px;padding:4px 6px;width:92%;
-      cursor:grab;text-align:center;transition:border-color .1s, background .1s;}
+.pitchbox{flex:1;display:flex;flex-direction:column;min-width:0;}
+.tname{font-size:11.5px;font-weight:700;text-align:center;padding:2px 0 5px;color:#cdd8ee;}
+.pitch{flex:1;min-height:480px;border-radius:10px;display:flex;flex-direction:column;
+       background:repeating-linear-gradient(0deg,#0f2b1c 0 48px,#113620 48px 96px);
+       border:2px solid #1e4a33;position:relative;}
+.pitch::before{content:'';position:absolute;left:50%;top:8px;bottom:8px;width:0;}
+.line{flex:1;display:flex;justify-content:space-evenly;align-items:center;padding:2px 4px;gap:3px;}
+.chip{background:#111827ee;border:1px solid #2d4470;border-radius:8px;padding:3px 4px;
+      cursor:grab;text-align:center;transition:border-color .1s, background .1s;
+      flex:1;min-width:0;max-width:118px;}
 .chip.dragover{border-color:#f3c74b;background:#2b2410ee;}
-.chip .nm{font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.chip .meta{font-size:9px;color:#8fa3c8;font-family:'JetBrains Mono',monospace;}
+.chip .nm{font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chip .meta{font-size:8.5px;color:#8fa3c8;font-family:'JetBrains Mono',monospace;}
 .chip .meta b{color:#e8edf8;}
-.bchip{background:#111827;border:1px solid #26324e;border-radius:8px;padding:4px 6px;margin-bottom:4px;cursor:grab;}
+.bchip{background:#111827;border:1px solid #26324e;border-radius:8px;padding:3px 5px;margin-bottom:4px;cursor:grab;}
 .bchip:hover{border-color:#4b7cf3;}
-.bchip .nm{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.bchip .meta{font-size:9px;color:#6b7fa3;font-family:'JetBrains Mono',monospace;}
-.postag{display:inline-block;font-size:8px;border-radius:3px;padding:0 3px;margin-right:3px;font-weight:700;}
+.bchip .nm{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bchip .meta{font-size:8.5px;color:#6b7fa3;font-family:'JetBrains Mono',monospace;}
+.postag{display:inline-block;font-size:8px;border-radius:3px;padding:0 3px;margin-right:2px;font-weight:700;}
 .p0{background:#2b2410;color:#f3c74b;} .p1{background:#10251b;color:#34d17a;}
 .p2{background:#16203a;color:#7ea2ff;} .p3{background:#2a1418;color:#e05563;}
 .newdot{color:#f3c74b;font-size:9px;}
-.centerline{width:2px;background:#1e4a33;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -39,17 +38,16 @@ body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf
 <script>
 "use strict";
 const POS=['GK','DEF','MID','ATT'];
-let state=null;      // {home:{name,players,xi}, away:{...}} · xi = λιστα ids
-let dragSrc=null;    // {side,'bench'|'pitch', id}
+let state=null;
+let dragSrc=null;
 
 function send(){
-  const value={home: state.home.xi.slice(), away: state.away.xi.slice()};
   window.parent.postMessage({isStreamlitMessage:true,type:"streamlit:setComponentValue",
-                             dataType:"json", value:value},"*");
+    dataType:"json", value:{home:state.home.xi.slice(),away:state.away.xi.slice()}},"*");
 }
 function setH(h){window.parent.postMessage({isStreamlitMessage:true,type:"streamlit:setFrameHeight",height:h},"*");}
 
-function chipHTML(p,cls){
+function chipHTML(p){
   const tag=`<span class="postag p${p.pos}">${POS[p.pos]||'?'}</span>`;
   const nd=p.new?` <span class="newdot" title="χωρις ιστορικο">●</span>`:'';
   return `<div class="nm">${tag}${p.nm}${nd}</div><div class="meta"><b>${p.rt.toFixed(2)}</b> · ${p.st15}/15</div>`;
@@ -58,11 +56,10 @@ function chipHTML(p,cls){
 function render(){
   const root=document.getElementById('root');
   root.innerHTML='';
-  const r1=document.createElement('div'); r1.className='row';
-  r1.appendChild(benchEl('home')); r1.appendChild(pitchEl('home'));
-  const r2=document.createElement('div'); r2.className='row';
-  r2.appendChild(pitchEl('away')); r2.appendChild(benchEl('away'));
-  root.appendChild(r1); root.appendChild(r2);
+  root.appendChild(benchEl('home'));
+  root.appendChild(pitchEl('home'));
+  root.appendChild(pitchEl('away'));
+  root.appendChild(benchEl('away'));
   setH(document.body.scrollHeight+8);
 }
 
@@ -71,13 +68,12 @@ function pmap(side){const m={}; state[side].players.forEach(p=>m[p.id]=p); retur
 function pitchEl(side){
   const box=document.createElement('div'); box.className='pitchbox';
   const t=document.createElement('div'); t.className='tname'; t.textContent=state[side].name; box.appendChild(t);
-  const pitch=document.createElement('div'); pitch.className='pitch'+(side==='away'?' away':'');
+  const pitch=document.createElement('div'); pitch.className='pitch';
   const pm=pmap(side);
   const groups=[[],[],[],[]];
   state[side].xi.forEach(id=>{const p=pm[id]; if(p) groups[Math.min(p.pos,3)].push(p);});
-  const order = side==='home' ? [0,1,2,3] : [3,2,1,0];   // GK απο τη δικη του εστια προς τη σεντρα
-  order.forEach(gi=>{
-    const col=document.createElement('div'); col.className='col';
+  [3,2,1,0].forEach(gi=>{                       // ΑΤΤ πανω ... GK κατω
+    const line=document.createElement('div'); line.className='line';
     groups[gi].forEach(p=>{
       const c=document.createElement('div'); c.className='chip'; c.draggable=true;
       c.innerHTML=chipHTML(p);
@@ -88,12 +84,12 @@ function pitchEl(side){
         e.preventDefault(); c.classList.remove('dragover');
         if(!dragSrc||dragSrc.side!==side||dragSrc.id===p.id) return;
         const xi=state[side].xi;
-        if(dragSrc.where==='bench'){ xi[xi.indexOf(p.id)]=dragSrc.id; }          // αλλαγη: μπαινει ο παγκος, βγαινει αυτος
+        if(dragSrc.where==='bench'){ xi[xi.indexOf(p.id)]=dragSrc.id; }
         dragSrc=null; render(); send();
       });
-      col.appendChild(c);
+      line.appendChild(c);
     });
-    pitch.appendChild(col);
+    pitch.appendChild(line);
   });
   box.appendChild(pitch);
   return box;
@@ -129,7 +125,7 @@ window.addEventListener('message',ev=>{
   }
 });
 window.parent.postMessage({isStreamlitMessage:true,type:"streamlit:componentReady",apiVersion:1},"*");
-setH(820);
+setH(540);
 </script>
 </body>
 </html>
