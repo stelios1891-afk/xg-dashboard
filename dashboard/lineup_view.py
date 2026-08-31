@@ -19,20 +19,26 @@ def load_scenarios():
         return {}
 
 
-def save_scenario(mkey, home_ids, away_ids, f_h, f_a):
+def save_side(mkey, side, ids, formation):
+    """Αποθηκευση σεναριου ΜΙΑΣ ομαδας (side: 'home'/'away')."""
     import datetime
     sc = load_scenarios()
-    sc[mkey] = dict(home=list(home_ids), away=list(away_ids), f_h=f_h, f_a=f_a,
-                    saved=datetime.datetime.now().isoformat(timespec='minutes'))
+    ent = sc.get(mkey) or {}
+    ent[side] = dict(xi=list(ids), f=formation,
+                     saved=datetime.datetime.now().isoformat(timespec='minutes'))
+    sc[mkey] = ent
     cutoff = (datetime.datetime.now() - datetime.timedelta(days=14)).isoformat()
-    sc = {k: v for k, v in sc.items() if v.get('saved', '') >= cutoff}
+    sc = {k: v for k, v in sc.items()
+          if max((v.get(s, {}).get('saved', '') for s in ('home', 'away')), default='') >= cutoff}
     json.dump(sc, open(SCEN_F, 'w', encoding='utf-8'), ensure_ascii=False)
 
 
-def delete_scenario(mkey):
+def delete_side(mkey, side):
     sc = load_scenarios()
-    if mkey in sc:
-        del sc[mkey]
+    if mkey in sc and side in sc[mkey]:
+        del sc[mkey][side]
+        if not sc[mkey]:
+            del sc[mkey]
         json.dump(sc, open(SCEN_F, 'w', encoding='utf-8'), ensure_ascii=False)
 
 

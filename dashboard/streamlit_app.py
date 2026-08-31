@@ -414,21 +414,30 @@ def render_lineup(league):
         st.warning("Λειπει η βαση παικτων για καποια απο τις ομαδες.")
         return
     base_key = f"{m['home_id']}_{m['away_id']}"
-    saved = lv.load_scenarios().get(base_key)
+    saved = lv.load_scenarios().get(base_key) or {}
+    sv_h, sv_a = saved.get('home'), saved.get('away')
+    keep = st.session_state.pop(f'll_keep_{base_key}', {})
     flist = list(lv.FORMATIONS)
     fc = st.columns(2)
     with fc[0]:
         f_h = st.selectbox(f"Συστημα — {m['home']}", flist,
-                           index=flist.index(saved['f_h']) if saved and saved.get('f_h') in flist else 0,
+                           index=flist.index(sv_h['f']) if sv_h and sv_h.get('f') in flist else 0,
                            key=f"llf_h_{m['home_id']}")
     with fc[1]:
         f_a = st.selectbox(f"Συστημα — {m['away']}", flist,
-                           index=flist.index(saved['f_a']) if saved and saved.get('f_a') in flist else 0,
+                           index=flist.index(sv_a['f']) if sv_a and sv_a.get('f') in flist else 0,
                            key=f"llf_a_{m['away_id']}")
-    if saved and saved.get('f_h') == f_h and saved.get('f_a') == f_a:
-        xi_h, xi_a = saved['home'], saved['away']       # αποθηκευμενο σεναριο
+    if 'home' in keep:
+        xi_h = keep['home']
+    elif sv_h and sv_h.get('f') == f_h:
+        xi_h = sv_h['xi']
     else:
         xi_h = lv.default_xi(th, lv.FORMATIONS[f_h])
+    if 'away' in keep:
+        xi_a = keep['away']
+    elif sv_a and sv_a.get('f') == f_a:
+        xi_a = sv_a['xi']
+    else:
         xi_a = lv.default_xi(ta, lv.FORMATIONS[f_a])
     nonce = st.session_state.get(f'll_nonce_{base_key}', 0)
     mkey = f"{base_key}_{f_h}_{f_a}_{nonce}"
@@ -441,16 +450,27 @@ def render_lineup(league):
                         default={'home': xi_h, 'away': xi_a}, key=f'pitch_{mkey}')
     sel_h = (val or {}).get('home') or xi_h
     sel_a = (val or {}).get('away') or xi_a
-    bc = st.columns([1.2, 1.2, 4])
-    if bc[0].button('💾 Αποθηκευση σεναριου', key=f'll_save_{base_key}'):
-        lv.save_scenario(base_key, sel_h, sel_a, f_h, f_a)
-        st.toast('Το σεναριο αποθηκευτηκε — θα σε περιμενει οταν ξαναμπεις.')
-    if bc[1].button('↺ Επαναφορα αρχικης', key=f'll_reset_{base_key}'):
-        lv.delete_scenario(base_key)
+    bc = st.columns([0.7, 0.7, 2.3, 2.3, 0.7, 0.7])
+    if bc[0].button('Save', key=f'll_sv_h_{base_key}', help=f"Αποθηκευση 11αδας — {m['home']}"):
+        lv.save_side(base_key, 'home', sel_h, f_h)
+        st.toast(f"Σεναριο {m['home']} αποθηκευτηκε.")
+    if bc[1].button('Reset', key=f'll_rs_h_{base_key}', help=f"Επαναφορα αρχικης — {m['home']}"):
+        lv.delete_side(base_key, 'home')
+        st.session_state[f'll_keep_{base_key}'] = {'away': sel_a}
         st.session_state[f'll_nonce_{base_key}'] = nonce + 1
         st.rerun()
-    if saved:
-        bc[2].caption(f"αποθηκευμενο σεναριο: {saved.get('saved','')}")
+    if sv_h:
+        bc[2].caption(f"💾 {m['home']}: {sv_h.get('saved','')}")
+    if sv_a:
+        bc[3].caption(f"💾 {m['away']}: {sv_a.get('saved','')}")
+    if bc[4].button('Save ', key=f'll_sv_a_{base_key}', help=f"Αποθηκευση 11αδας — {m['away']}"):
+        lv.save_side(base_key, 'away', sel_a, f_a)
+        st.toast(f"Σεναριο {m['away']} αποθηκευτηκε.")
+    if bc[5].button('Reset ', key=f'll_rs_a_{base_key}', help=f"Επαναφορα αρχικης — {m['away']}"):
+        lv.delete_side(base_key, 'away')
+        st.session_state[f'll_keep_{base_key}'] = {'home': sel_h}
+        st.session_state[f'll_nonce_{base_key}'] = nonce + 1
+        st.rerun()
     xh0, xa0 = m['home_adj_xg'], m['away_adj_xg']
     d_h = (lv.xi_strength(th, sel_h) or th['base']) - th['base']
     d_a = (lv.xi_strength(ta, sel_a) or ta['base']) - ta['base']
