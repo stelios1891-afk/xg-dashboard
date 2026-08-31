@@ -90,6 +90,46 @@ for d, mid, kind in all_matches:
 POS_MU = {k: pos_sum[k] / pos_n[k] for k in pos_n if pos_n[k] >= 200}
 GMU = sum(pos_sum.values()) / sum(pos_n.values())
 
+# 1β. ΦΕΤΙΝΑ ματς (2627) — μετα το αρχειο, ωστε να ειναι τα πιο προσφατα και στο st15
+try:
+    PM27 = json.load(open('player_matches_2627.json', encoding='utf-8'))
+    SQ27 = json.load(open('squads_2627.json', encoding='utf-8'))
+    TGc = pd.read_csv('teamgame_inputs.csv')
+    TGc['season'] = TGc.season.astype(str); TGc['mid'] = TGc['mid'].astype(str)
+    TGc = TGc[TGc.season == '2627']
+    mid_lg27 = TGc.groupby('mid').league.first().to_dict()
+    mid_dt27 = TGc.groupby('mid').date.first().to_dict()
+    n27 = 0
+    for mid, rec in sorted(PM27.items(), key=lambda kv: mid_dt27.get(kv[0], '2026-08-15')):
+        if not rec:
+            continue
+        o = off_of(mid_lg27.get(mid)) if mid_lg27.get(mid) else DEFAULT_OFF
+        d = mid_dt27.get(mid) or '2026-08-15'
+        mm = {}
+        for sk in ('h', 'a'):
+            s = (SQ27.get(mid) or {}).get(sk)
+            if s:
+                for pid, mn in s['p'].items():
+                    mm[int(pid)] = mn
+        for sk in ('h', 'a'):
+            side = rec.get(sk)
+            if not side:
+                continue
+            tid = side.get('t')
+            started = {p[0] for p in side['p'] if p[4] == 1}
+            for pid, rt, mv, pos, stt in side['p']:
+                team_starts[tid][pid].append(1 if pid in started else 0)
+                if pos is not None:
+                    ppos[pid] = pos
+                if rt is None:
+                    continue
+                units[pid].append((d, rt - o, mm.get(pid, 60) / 90.0))
+                papp[pid] += 1
+                n27 += 1
+    print(f'φετινα 2627: {len(PM27)} ματς · {n27} εμφανισεις με βαθμο', flush=True)
+except FileNotFoundError:
+    print('χωρις φετινα player αρχεια (τρεξε player_fetch_2627.py)', flush=True)
+
 # 2. backfill 12μηνου (ανα ματς)
 n_bf = 0
 for line in open('player_backfill.jsonl', encoding='utf-8'):

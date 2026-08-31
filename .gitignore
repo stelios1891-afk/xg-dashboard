@@ -25,6 +25,7 @@ totals_odds.json
 # ── ολα τα CSV εκτος απο το teamgame_inputs.csv ──
 *.csv
 !teamgame_inputs.csv
+!teamgame_inputs_5s.csv
 
 # ── raw shot JSONs: μονο οι 9 λιγκες (2526) ──
 data_*.json
@@ -61,8 +62,8 @@ value_fixtures_cache.json
 value_last_scan.txt
 oddspapi_keymap.json
 lineup_lab_squads.json
-player_backfill.jsonl
-player_career.jsonl
 player_career_debuts.jsonl
 debut_targets.json
 lineup_scenarios.json
+
+# ── Lineup Lab: inputs που χρειαζεται το cloud rebuild ──
