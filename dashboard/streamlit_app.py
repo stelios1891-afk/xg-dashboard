@@ -57,7 +57,9 @@ st.markdown("""
 header[data-testid="stHeader"]{background:transparent;}
 header [data-testid="stToolbar"],[data-testid="stDecoration"],[data-testid="stStatusWidget"]{visibility:hidden;}
 .block-container{padding-top:1rem;max-width:1250px;}
-section[data-testid="stSidebar"]{background:#0d1426;border-right:1px solid #1a2540;}
+section[data-testid="stSidebar"]{background:#0d1426;border-right:1px solid #1a2540;
+  display:block !important;visibility:visible !important;transform:none !important;
+  min-width:280px !important;margin-left:0 !important;}
 [data-testid="stSidebarCollapseButton"],[data-testid="stSidebarCollapsedControl"]{display:none !important;}
 h1,h2,h3{color:#e8edf8;font-family:'DM Sans',sans-serif;}
 /* league logos bar */
@@ -97,33 +99,6 @@ league = qp.get('league') or (avail_lgs[0] if avail_lgs else 'EPL')
 if league not in avail_lgs:
     league = avail_lgs[0] if avail_lgs else 'EPL'
 page = qp.get('page') or 'projections'
-# ---- δικο μας κουμπι ανοιγμα/κλεισιμο μενου (fixed πανω-αριστερα, χωρις reload) ----
-import streamlit.components.v1 as _stc
-_stc.html("""
-<script>
-const P = window.parent.document;
-if(!P.getElementById('xg-navtog')){
-  const b=P.createElement('div');
-  b.id='xg-navtog';
-  b.style.cssText='position:fixed;top:8px;left:8px;z-index:999999;width:40px;height:36px;'+
-   'background:#182444;border:1px solid #2d4470;border-radius:9px;display:flex;align-items:center;'+
-   'justify-content:center;color:#7ea2ff;font:700 19px sans-serif;cursor:pointer;user-select:none';
-  P.body.appendChild(b);
-  const sb=()=>P.querySelector('[data-testid="stSidebar"]');
-  const isOpen=()=>{const s=sb(); return !!s && s.style.display!=='none' &&
-    s.getAttribute('aria-expanded')!=='false' && s.offsetWidth>80;};
-  const refresh=()=>{b.textContent=isOpen()?'\\u00AB':'\\u00BB';};
-  b.onclick=()=>{
-    const s=sb();
-    if(!s) return;
-    s.style.display = isOpen() ? 'none' : '';
-    setTimeout(refresh,150);
-  };
-  setInterval(refresh,700); refresh();
-}
-</script>
-""", height=0)
-
 # ---------- SIDEBAR: brand + page menu ----------
 with st.sidebar:
     st.markdown('<div class="brand">xG<span>MODEL</span></div>'
