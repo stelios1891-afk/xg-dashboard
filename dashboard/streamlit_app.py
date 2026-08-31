@@ -24,8 +24,9 @@ import xgstats
 import xgstats_view
 import value_view
 
+_nav_open = st.query_params.get('nav') != '0'
 st.set_page_config(page_title="xG Model — Live", page_icon="⚽", layout="wide",
-                   initial_sidebar_state="expanded")
+                   initial_sidebar_state="expanded" if _nav_open else "collapsed")
 
 LEAGUE_LABELS = {'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
                  'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
@@ -83,6 +84,10 @@ h1,h2,h3{color:#e8edf8;font-family:'DM Sans',sans-serif;}
 .lg-title img{width:40px;height:40px;object-fit:contain;}
 .lg-title .nm{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1.5px;color:#e8edf8;line-height:1;}
 .lg-title .co{font-size:10px;color:#6b7fa3;letter-spacing:2px;}
+.navtog{position:fixed;top:8px;left:8px;z-index:9999;background:#182444;border:1px solid #2d4470;
+        border-radius:9px;padding:3px 12px;color:#7ea2ff;font-size:18px;font-weight:700;
+        text-decoration:none;line-height:1.5;}
+.navtog:hover{background:#22335c;color:#cdd8ee;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 """, unsafe_allow_html=True)
@@ -96,6 +101,9 @@ league = qp.get('league') or (avail_lgs[0] if avail_lgs else 'EPL')
 if league not in avail_lgs:
     league = avail_lgs[0] if avail_lgs else 'EPL'
 page = qp.get('page') or 'projections'
+_nav_q = '1' if _nav_open else '0'
+st.markdown(f'<a class="navtog" href="?league={league}&page={page}&nav={"0" if _nav_open else "1"}" '
+            f'target="_self" title="μενου">{"«" if _nav_open else "»"}</a>', unsafe_allow_html=True)
 
 # ---------- SIDEBAR: brand + page menu ----------
 with st.sidebar:
@@ -105,7 +113,7 @@ with st.sidebar:
     for pid, label, icon in PAGES:
         cls = 'on' if pid == page else ('soon' if pid not in ACTIVE_PAGES else '')
         tag = '' if pid in ACTIVE_PAGES else '<span class="tag">soon</span>'
-        items += f'<a class="{cls}" href="?league={league}&page={pid}" target="_self"><span class="mi">{icon}</span>{label}{tag}</a>'
+        items += f'<a class="{cls}" href="?league={league}&page={pid}&nav={_nav_q}" target="_self"><span class="mi">{icon}</span>{label}{tag}</a>'
     st.markdown(f'<div class="menu">{items}</div>', unsafe_allow_html=True)
 
 # ---------- TOP: league logos ----------
@@ -113,7 +121,7 @@ bar = '<div class="lgbar">'
 for lg in avail_lgs:
     fid = build_data.LEAGUE_FOTMOB[lg]
     cls = 'active' if lg == league else ''
-    bar += (f'<a class="lgbtn {cls}" href="?league={lg}&page={page}" target="_self" title="{LEAGUE_LABELS.get(lg, lg)}">'
+    bar += (f'<a class="lgbtn {cls}" href="?league={lg}&page={page}&nav={_nav_q}" target="_self" title="{LEAGUE_LABELS.get(lg, lg)}">'
             f'<img src="{LEAGUE_LOGO.format(fid)}" onerror="this.style.opacity=0"></a>')
 bar += '</div>'
 st.markdown(bar, unsafe_allow_html=True)
