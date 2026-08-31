@@ -409,16 +409,23 @@ def render_lineup(league):
     if not th or not ta or th.get('base') is None or ta.get('base') is None:
         st.warning("Λειπει η βαση παικτων για καποια απο τις ομαδες.")
         return
-    mkey = f"{m['home_id']}_{m['away_id']}"
+    fc = st.columns(2)
+    with fc[0]:
+        f_h = st.selectbox(f"Συστημα — {m['home']}", list(lv.FORMATIONS), key=f"llf_h_{m['home_id']}")
+    with fc[1]:
+        f_a = st.selectbox(f"Συστημα — {m['away']}", list(lv.FORMATIONS), key=f"llf_a_{m['away_id']}")
+    xi_h = lv.default_xi(th, lv.FORMATIONS[f_h])
+    xi_a = lv.default_xi(ta, lv.FORMATIONS[f_a])
+    mkey = f"{m['home_id']}_{m['away_id']}_{f_h}_{f_a}"
     st.caption("🖐 Σερνεις παικτη απο τον παγκο πανω σε παικτη του γηπεδου για να τον αντικαταστησει. "
-               "Γηπεδουχος αριστερα · φιλοξενουμενη δεξια · στηλες GK → DEF → MID → ATT προς τη σεντρα. "
-               "● = χωρις ιστορικο.")
+               "Αλλαγη συστηματος ξαναστηνει την προτεινομενη 11αδα (χανονται οι χειροκινητες αλλαγες). "
+               "Γηπεδουχος αριστερα · φιλοξενουμενη δεξια · στηλες GK → DEF → MID → ATT. ● = χωρις ιστορικο.")
     val = _lineup_pitch(matchKey=mkey,
-                        home=dict(name=m['home'], players=th['players'], xi=th['xi']),
-                        away=dict(name=m['away'], players=ta['players'], xi=ta['xi']),
-                        default={'home': th['xi'], 'away': ta['xi']}, key=f'pitch_{mkey}')
-    sel_h = (val or {}).get('home') or th['xi']
-    sel_a = (val or {}).get('away') or ta['xi']
+                        home=dict(name=m['home'], players=th['players'], xi=xi_h),
+                        away=dict(name=m['away'], players=ta['players'], xi=xi_a),
+                        default={'home': xi_h, 'away': xi_a}, key=f'pitch_{mkey}')
+    sel_h = (val or {}).get('home') or xi_h
+    sel_a = (val or {}).get('away') or xi_a
     xh0, xa0 = m['home_adj_xg'], m['away_adj_xg']
     d_h = (lv.xi_strength(th, sel_h) or th['base']) - th['base']
     d_a = (lv.xi_strength(ta, sel_a) or ta['base']) - ta['base']

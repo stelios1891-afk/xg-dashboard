@@ -32,6 +32,27 @@ def options(team):
     return [(labels[p['id']], p['id']) for p in ordered]
 
 
+FORMATIONS = {'Αυτοματο': None, '4-3-3': (4, 3, 3), '4-4-2': (4, 4, 2), '4-2-3-1': (4, 5, 1),
+              '4-5-1': (4, 5, 1), '3-5-2': (3, 5, 2), '3-4-3': (3, 4, 3),
+              '5-3-2': (5, 3, 2), '5-4-1': (5, 4, 1)}
+
+
+def default_xi(team, counts=None):
+    """Προτεινομενη 11αδα: αν counts=(DEF,MID,ATT) γεμιζει καθε γραμμη με τους
+    κορυφαιους της (συμμετοχες βασικου -> ρειτινγκ)· αλλιως η αποθηκευμενη."""
+    if counts is None:
+        return list(team['xi'])
+    players = team['players']
+    rank = sorted(players, key=lambda p: (-p['st15'], -p['rt']))
+    gks = [p for p in rank if p['pos'] == 0]
+    xi = [gks[0]['id']] if gks else []
+    for pos, need in zip((1, 2, 3), counts):
+        xi += [p['id'] for p in rank if p['pos'] == pos][:need]
+    if len(xi) < 11:                      # συμπληρωμα αν δεν φτανουν σε καποια γραμμη
+        xi += [p['id'] for p in rank if p['id'] not in set(xi) and p['pos'] != 0][:11 - len(xi)]
+    return xi[:11]
+
+
 def xi_strength(team, ids):
     pmap = {p['id']: p for p in team['players']}
     vals = [pmap[i]['rt'] for i in ids if i in pmap]
