@@ -46,14 +46,15 @@ jobs:
         run: |
           python player_fetch_2627.py || echo "player fetch 2627 failed (μη κρισιμο)"
           python lineup_lab_data.py || echo "lineup_lab rebuild failed (μη κρισιμο)"
+          python predicted11_fetch.py || echo "predicted11 συλλογη failed (μη κρισιμο)"
 
       - name: Commit if raw data changed
         run: |
           git config user.name "data-refresh-bot"
           git config user.email "actions@github.com"
-          git add teamgame_inputs.csv data_*_2627.json player_matches_2627.json squads_2627.json lineup_lab.json
+          git add teamgame_inputs.csv data_*_2627.json player_matches_2627.json squads_2627.json lineup_lab.json projected_lineups.jsonl
           # commit ΜΟΝΟ αν αλλαξαν τα raw data (νεα ματς / Opta revisions) — οχι μονο float-noise στο csv
-          if git diff --cached --quiet -- data_*_2627.json player_matches_2627.json; then
+          if git diff --cached --quiet -- data_*_2627.json player_matches_2627.json projected_lineups.jsonl; then
             echo "no raw-data changes — skip commit"
           else
             git commit -m "data refresh 2627 [skip ci]"
