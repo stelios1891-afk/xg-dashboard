@@ -147,7 +147,8 @@ def red_flags(odds_rows, notify_tg=True):
         for b, team, reason, mins in flags:
             L.append(f"\n{b['lg']} · {b['home']} – {b['away']} (σε {mins:.0f}′)\n"
                      f"{team} {b['hcap']:+g} @{b['odds']:.2f} → {reason}\n"
-                     f"Ιστορικο 2526: τετοια bets εκαναν −2.2% αντι +7.7% — σκεψου ξεφορτωμα/αποφυγη.")
+                     f"Ιστορικο 2 σεζον: ΑΝ ΔΕΝ το επαιξες → αποφυγη. ΑΝ το επαιξες → ΚΡΑΤΑ το "
+                     f"(κρατημα −3.4% vs ξεφορτωμα −7 εως −10%).")
         try:
             import notify
             notify.send("\n".join(L))
