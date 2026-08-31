@@ -490,21 +490,15 @@ def render_lineup(league):
                           height=250)
     if mk and mk.get('line') is not None:
         line = float(mk['line'])
-        rows = []
-        for side, nm2, mo in ((1, f"{m['home']} {line:+g}", mk.get('oh')), (-1, f"{m['away']} {-line:+g}", mk.get('oa'))):
-            hcap = line if side == 1 else -line
-            fair = lv.ah_fair(xh, xa, side, hcap)
-            if fair and mo:
-                edge = (float(mo) / fair - 1) * 100
-                rows.append((nm2, mo, fair, edge))
-        if rows:
-            st.markdown("##### Ασιατικη γραμμη vs το σεναριο σου")
-            t = "| Πλευρα | Αγορα | Fair (με τις 11αδες σου) | Αξια |\n|---|---|---|---|\n"
-            for nm2, mo, fair, edge in rows:
-                flag = ' 🟢' if edge >= 5 else (' 🔴' if edge <= -5 else '')
-                t += f"| {nm2} | {float(mo):.2f} | {fair:.2f} | {edge:+.1f}%{flag} |\n"
-            st.markdown(t)
-            st.caption(f"γραμμη/αποδοσεις: τελευταιο σκαναρισμα Pinnacle/Matchbook ({mk.get('t','')[:16]})")
+        f0h = lv.ah_fair(xh0, xa0, 1, line); f1h = lv.ah_fair(xh, xa, 1, line)
+        f0a = lv.ah_fair(xh0, xa0, -1, -line); f1a = lv.ah_fair(xh, xa, -1, -line)
+        if f0h and f1h and f0a and f1a:
+            st.components.v1.html(
+                lv.ah_table_html(m['home'], m['away'], line,
+                                 float(mk['oh']) if mk.get('oh') else None,
+                                 float(mk['oa']) if mk.get('oa') else None,
+                                 f0h, f1h, f0a, f1a, str(mk.get('t', ''))[:16]),
+                height=240)
     else:
         st.caption("Δεν υπαρχει ακομα καταγεγραμμενη αγορα για αυτο το ματς (θα φανει μολις το πιασει ο scanner).")
 
