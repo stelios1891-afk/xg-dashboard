@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf8;overflow:hidden;}
+.wrap{display:flex;gap:8px;padding:4px;}
+.bench{width:172px;background:#0d1426;border:1px solid #1a2540;border-radius:10px;padding:6px;
+       max-height:430px;overflow-y:auto;flex-shrink:0;}
+.bench h4{font-size:9px;color:#6b7fa3;letter-spacing:1px;text-transform:uppercase;padding:2px 4px 6px;}
+.pitchbox{flex:1;display:flex;flex-direction:column;}
+.tname{font-size:11px;font-weight:700;text-align:center;padding:2px 0 5px;color:#cdd8ee;}
+.pitch{flex:1;min-height:400px;border-radius:10px;position:relative;display:flex;gap:0;
+       background:repeating-linear-gradient(90deg,#0f2b1c 0 42px,#113620 42px 84px);
+       border:2px solid #1e4a33;}
+.pitch.away{background:repeating-linear-gradient(90deg,#113620 0 42px,#0f2b1c 42px 84px);}
+.col{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;padding:6px 2px;}
+.chip{background:#111827ee;border:1px solid #2d4470;border-radius:9px;padding:4px 6px;width:92%;
+      cursor:grab;text-align:center;transition:border-color .1s, background .1s;}
+.chip.dragover{border-color:#f3c74b;background:#2b2410ee;}
+.chip .nm{font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chip .meta{font-size:9px;color:#8fa3c8;font-family:'JetBrains Mono',monospace;}
+.chip .meta b{color:#e8edf8;}
+.bchip{background:#111827;border:1px solid #26324e;border-radius:8px;padding:4px 6px;margin-bottom:4px;cursor:grab;}
+.bchip:hover{border-color:#4b7cf3;}
+.bchip .nm{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bchip .meta{font-size:9px;color:#6b7fa3;font-family:'JetBrains Mono',monospace;}
+.postag{display:inline-block;font-size:8px;border-radius:3px;padding:0 3px;margin-right:3px;font-weight:700;}
+.p0{background:#2b2410;color:#f3c74b;} .p1{background:#10251b;color:#34d17a;}
+.p2{background:#16203a;color:#7ea2ff;} .p3{background:#2a1418;color:#e05563;}
+.newdot{color:#f3c74b;font-size:9px;}
+.centerline{width:2px;background:#1e4a33;flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="wrap" id="root"></div>
+<script>
+"use strict";
+const POS=['GK','DEF','MID','ATT'];
+let state=null;      // {home:{name,players,xi}, away:{...}} · xi = λιστα ids
+let dragSrc=null;    // {side,'bench'|'pitch', id}
+
+function send(){
+  const value={home: state.home.xi.slice(), away: state.away.xi.slice()};
+  window.parent.postMessage({isStreamlitMessage:true,type:"streamlit:setComponentValue",
+                             dataType:"json", value:value},"*");
+}
+function setH(h){window.parent.postMessage({isStreamlitMessage:true,type:"streamlit:setFrameHeight",height:h},"*");}
+
+function chipHTML(p,cls){
+  const tag=`<span class="postag p${p.pos}">${POS[p.pos]||'?'}</span>`;
+  const nd=p.new?` <span class="newdot" title="χωρις ιστορικο">●</span>`:'';
+  return `<div class="nm">${tag}${p.nm}${nd}</div><div class="meta"><b>${p.rt.toFixed(2)}</b> · ${p.st15}/15</div>`;
+}
+
+function render(){
+  const root=document.getElementById('root');
+  root.innerHTML='';
+  root.appendChild(benchEl('home'));
+  root.appendChild(pitchEl('home'));
+  const cl=document.createElement('div'); cl.className='centerline'; root.appendChild(cl);
+  root.appendChild(pitchEl('away'));
+  root.appendChild(benchEl('away'));
+  setH(document.body.scrollHeight+8);
+}
+
+function pmap(side){const m={}; state[side].players.forEach(p=>m[p.id]=p); return m;}
+
+function pitchEl(side){
+  const box=document.createElement('div'); box.className='pitchbox';
+  const t=document.createElement('div'); t.className='tname'; t.textContent=state[side].name; box.appendChild(t);
+  const pitch=document.createElement('div'); pitch.className='pitch'+(side==='away'?' away':'');
+  const pm=pmap(side);
+  const groups=[[],[],[],[]];
+  state[side].xi.forEach(id=>{const p=pm[id]; if(p) groups[Math.min(p.pos,3)].push(p);});
+  const order = side==='home' ? [0,1,2,3] : [3,2,1,0];   // GK απο τη δικη του εστια προς τη σεντρα
+  order.forEach(gi=>{
+    const col=document.createElement('div'); col.className='col';
+    groups[gi].forEach(p=>{
+      const c=document.createElement('div'); c.className='chip'; c.draggable=true;
+      c.innerHTML=chipHTML(p);
+      c.addEventListener('dragstart',()=>{dragSrc={side:side,where:'pitch',id:p.id};});
+      c.addEventListener('dragover',e=>{if(dragSrc&&dragSrc.side===side){e.preventDefault();c.classList.add('dragover');}});
+      c.addEventListener('dragleave',()=>c.classList.remove('dragover'));
+      c.addEventListener('drop',e=>{
+        e.preventDefault(); c.classList.remove('dragover');
+        if(!dragSrc||dragSrc.side!==side||dragSrc.id===p.id) return;
+        const xi=state[side].xi;
+        if(dragSrc.where==='bench'){ xi[xi.indexOf(p.id)]=dragSrc.id; }          // αλλαγη: μπαινει ο παγκος, βγαινει αυτος
+        dragSrc=null; render(); send();
+      });
+      col.appendChild(c);
+    });
+    pitch.appendChild(col);
+  });
+  box.appendChild(pitch);
+  return box;
+}
+
+function benchEl(side){
+  const b=document.createElement('div'); b.className='bench';
+  b.innerHTML=`<h4>Παγκος — ${state[side].name}</h4>`;
+  const inXI=new Set(state[side].xi);
+  const bench=state[side].players.filter(p=>!inXI.has(p.id))
+    .sort((a,z)=>a.pos-z.pos || z.st15-a.st15 || z.rt-a.rt);
+  bench.forEach(p=>{
+    const c=document.createElement('div'); c.className='bchip'; c.draggable=true;
+    c.innerHTML=chipHTML(p);
+    c.addEventListener('dragstart',()=>{dragSrc={side:side,where:'bench',id:p.id};});
+    b.appendChild(c);
+  });
+  return b;
+}
+
+window.addEventListener('message',ev=>{
+  const d=ev.data;
+  if(d.type==='streamlit:render'){
+    const a=d.args;
+    if(!state || a.matchKey!==state.matchKey){
+      state={matchKey:a.matchKey, home:a.home, away:a.away};
+      state.home.xi=a.home.xi.slice(); state.away.xi=a.away.xi.slice();
+    }else{
+      state.home.players=a.home.players; state.away.players=a.away.players;
+      state.home.name=a.home.name; state.away.name=a.away.name;
+    }
+    render();
+  }
+});
+window.parent.postMessage({isStreamlitMessage:true,type:"streamlit:componentReady",apiVersion:1},"*");
+setH(460);
+</script>
+</body>
+</html>

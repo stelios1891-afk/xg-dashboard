@@ -380,6 +380,10 @@ def _lab():
     import lineup_view
     return lineup_view.load_lab()
 
+import streamlit.components.v1 as _components
+_lineup_pitch = _components.declare_component(
+    "lineup_pitch", path=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pitch_component'))
+
 def render_lineup(league):
     import lineup_view as lv
     import build_data as bd
@@ -405,21 +409,19 @@ def render_lineup(league):
     if not th or not ta or th.get('base') is None or ta.get('base') is None:
         st.warning("Λειπει η βαση παικτων για καποια απο τις ομαδες.")
         return
-    cols = st.columns(2)
-    sel_ids = {}
-    for col, team, side_nm in ((cols[0], th, m['home']), (cols[1], ta, m['away'])):
-        with col:
-            opts = lv.options(team)
-            id_by_label = {l: i for l, i in opts}
-            default = [l for l, i in opts if i in set(team['xi'])]
-            chosen = st.multiselect(f"Ενδεκαδα — {side_nm}", [l for l, _ in opts],
-                                    default=default, key=f"ll_{m['home_id']}_{m['away_id']}_{team['name']}")
-            sel_ids[side_nm] = [id_by_label[l] for l in chosen]
-            if len(chosen) != 11:
-                st.caption(f"⚠ {len(chosen)}/11 παικτες")
+    mkey = f"{m['home_id']}_{m['away_id']}"
+    st.caption("🖐 Σερνεις παικτη απο τον παγκο πανω σε παικτη του γηπεδου για να τον αντικαταστησει. "
+               "Γηπεδουχος αριστερα · φιλοξενουμενη δεξια · στηλες GK → DEF → MID → ATT προς τη σεντρα. "
+               "● = χωρις ιστορικο.")
+    val = _lineup_pitch(matchKey=mkey,
+                        home=dict(name=m['home'], players=th['players'], xi=th['xi']),
+                        away=dict(name=m['away'], players=ta['players'], xi=ta['xi']),
+                        default={'home': th['xi'], 'away': ta['xi']}, key=f'pitch_{mkey}')
+    sel_h = (val or {}).get('home') or th['xi']
+    sel_a = (val or {}).get('away') or ta['xi']
     xh0, xa0 = m['home_adj_xg'], m['away_adj_xg']
-    d_h = (lv.xi_strength(th, sel_ids[m['home']]) or th['base']) - th['base']
-    d_a = (lv.xi_strength(ta, sel_ids[m['away']]) or ta['base']) - ta['base']
+    d_h = (lv.xi_strength(th, sel_h) or th['base']) - th['base']
+    d_a = (lv.xi_strength(ta, sel_a) or ta['base']) - ta['base']
     xh, xa = lv.adjust_xg(xh0, xa0, d_h, d_a, lab.get('slope_gd', 0.9))
     st.markdown(lv.strength_bar_html(m['home'], d_h, m['away'], d_a), unsafe_allow_html=True)
     if m.get('promoted'):
