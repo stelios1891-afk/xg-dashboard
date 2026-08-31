@@ -439,13 +439,14 @@ def render_lineup(league):
         st.caption("⚠ Ματς με νεοφωτιστη: εδω η αβεβαιοτητα ειναι στην ΟΜΑΔΑ, οχι στην 11αδα — "
                    "το Δ προβλεπει λιγοτερα (μετρημενο).")
     p0 = bd.one_x_two(xh0, xa0); p1 = bd.one_x_two(xh, xa)
-    c = st.columns(4)
-    c[0].metric("Προβλεπομενο σκορ", f"{xh:.2f} – {xa:.2f}", f"απο {xh0:.2f} – {xa0:.2f}", delta_color="off")
-    c[1].metric(f"1 ({m['home'][:12]})", f"{p1['hw']:.0f}%", f"{p1['hw']-p0['hw']:+.1f}")
-    c[2].metric("X", f"{p1['d']:.0f}%", f"{p1['d']-p0['d']:+.1f}")
-    c[3].metric(f"2 ({m['away'][:12]})", f"{p1['aw']:.0f}%", f"{p1['aw']-p0['aw']:+.1f}")
-    # ---- συγκριση με αγορα ----
     mk = lv.latest_market(m['home_id'], m['away_id'])
+    mkt_1x2 = None
+    if mk and mk.get('h2h'):
+        mkt_1x2 = tuple(mk['h2h'])
+    elif m.get('mkt_hw_odds'):
+        mkt_1x2 = (m.get('mkt_hw_odds'), m.get('mkt_d_odds'), m.get('mkt_aw_odds'))
+    st.components.v1.html(lv.results_table_html(m['home'], m['away'], xh0, xa0, xh, xa, p0, p1, mkt_1x2),
+                          height=250)
     if mk and mk.get('line') is not None:
         line = float(mk['line'])
         rows = []
@@ -465,10 +466,6 @@ def render_lineup(league):
             st.caption(f"γραμμη/αποδοσεις: τελευταιο σκαναρισμα Pinnacle/Matchbook ({mk.get('t','')[:16]})")
     else:
         st.caption("Δεν υπαρχει ακομα καταγεγραμμενη αγορα για αυτο το ματς (θα φανει μολις το πιασει ο scanner).")
-    if mk and mk.get('h2h'):
-        h2 = mk['h2h']
-        st.caption(f"Αγορα 1Χ2: {h2[0]:.2f} / {h2[1]:.2f} / {h2[2]:.2f} — δικο μας (με 11αδες): "
-                   f"{p1['hw_odds']:.2f} / {p1['d_odds']:.2f} / {p1['aw_odds']:.2f}")
 
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
