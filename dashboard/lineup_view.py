@@ -9,6 +9,33 @@ TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
 POS_ORD = {0: 0, 1: 1, 2: 2, 3: 3}
 
 
+SCEN_F = os.path.join(ROOT, 'lineup_scenarios.json')
+
+
+def load_scenarios():
+    try:
+        return json.load(open(SCEN_F, encoding='utf-8'))
+    except Exception:
+        return {}
+
+
+def save_scenario(mkey, home_ids, away_ids, f_h, f_a):
+    import datetime
+    sc = load_scenarios()
+    sc[mkey] = dict(home=list(home_ids), away=list(away_ids), f_h=f_h, f_a=f_a,
+                    saved=datetime.datetime.now().isoformat(timespec='minutes'))
+    cutoff = (datetime.datetime.now() - datetime.timedelta(days=14)).isoformat()
+    sc = {k: v for k, v in sc.items() if v.get('saved', '') >= cutoff}
+    json.dump(sc, open(SCEN_F, 'w', encoding='utf-8'), ensure_ascii=False)
+
+
+def delete_scenario(mkey):
+    sc = load_scenarios()
+    if mkey in sc:
+        del sc[mkey]
+        json.dump(sc, open(SCEN_F, 'w', encoding='utf-8'), ensure_ascii=False)
+
+
 def load_lab():
     return json.load(open(os.path.join(ROOT, 'lineup_lab.json'), encoding='utf-8'))
 
