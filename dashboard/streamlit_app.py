@@ -53,8 +53,9 @@ def load_matches():
 st.markdown("""
 <style>
 .stApp{background:#0a0f1e;}
-#MainMenu,footer,header{visibility:hidden;}
-[data-testid="stSidebarCollapsedControl"],[data-testid="collapsedControl"]{visibility:visible !important;}
+#MainMenu,footer{visibility:hidden;}
+header[data-testid="stHeader"]{background:transparent;}
+header [data-testid="stToolbar"],[data-testid="stDecoration"],[data-testid="stStatusWidget"]{visibility:hidden;}
 .block-container{padding-top:1rem;max-width:1250px;}
 section[data-testid="stSidebar"]{background:#0d1426;border-right:1px solid #1a2540;}
 h1,h2,h3{color:#e8edf8;font-family:'DM Sans',sans-serif;}
