@@ -39,11 +39,12 @@ PAGES = [('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 
          ('team', 'Team Rating', '🛡️'), ('scatter', 'Scatter Plots', '✳️'),
          ('ave', 'Actual vs Expected', '🎯'), ('value', 'Value Picks', '💰'),
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
+         ('lineup', 'Lineup Lab', '🧪'),
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -374,9 +375,91 @@ def render_moves(league):
     with tabs[2]:
         st.components.v1.html(mv.history_html(D), height=min(len(D['snaps']) * 38 + 90, 700), scrolling=True)
 
+@st.cache_data(ttl=6 * 3600)
+def _lab():
+    import lineup_view
+    return lineup_view.load_lab()
+
+def render_lineup(league):
+    import lineup_view as lv
+    import build_data as bd
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#b17af3">🧪 LINEUP LAB</div>'
+                '<div class="co">PROJECTED LINEUPS → ΔΙΟΡΘΩΜΕΝΑ PROJECTIONS · ΠΡΙΝ ΤΟ ΔΕΙ Η ΑΓΟΡΑ</div></div></div>',
+                unsafe_allow_html=True)
+    st.caption("Διαλεξε ματς → πειραξε τις 11αδες (πχ οταν πηγη σου λεει ποιος λειπει) → το projection "
+               "ανανεωνεται ζωντανα με τη μετρημενη ζυγαρια (0.9 γκολ διαφορας ανα +1.0 Δ ενδεκαδας). "
+               "Ρειτινγκ = 2σεζονο ιστορικο + ξενες λιγκες με συντελεστη επιπεδου (validated).")
+    try:
+        lab = _lab()
+    except Exception as e:
+        st.error(f"Δεν φορτωθηκε η βαση παικτων: {e}")
+        return
+    fx = [m for m in proj if m['league'] == league and m.get('projectable')]
+    if not fx:
+        st.info("Δεν υπαρχουν επερχομενα ματς με projection εδω.")
+        return
+    names = {i: f"{m['home']} – {m['away']} (GW{m['gw']} · {str(m['utc'])[:16]})" for i, m in enumerate(fx)}
+    sel = st.selectbox("Ματς", list(names), format_func=lambda i: names[i], key=f'll_m_{league}')
+    m = fx[sel]
+    th = lv.team_of(lab, m['home_id']); ta = lv.team_of(lab, m['away_id'])
+    if not th or not ta or th.get('base') is None or ta.get('base') is None:
+        st.warning("Λειπει η βαση παικτων για καποια απο τις ομαδες.")
+        return
+    cols = st.columns(2)
+    sel_ids = {}
+    for col, team, side_nm in ((cols[0], th, m['home']), (cols[1], ta, m['away'])):
+        with col:
+            opts = lv.options(team)
+            id_by_label = {l: i for l, i in opts}
+            default = [l for l, i in opts if i in set(team['xi'])]
+            chosen = st.multiselect(f"Ενδεκαδα — {side_nm}", [l for l, _ in opts],
+                                    default=default, key=f"ll_{m['home_id']}_{m['away_id']}_{team['name']}")
+            sel_ids[side_nm] = [id_by_label[l] for l in chosen]
+            if len(chosen) != 11:
+                st.caption(f"⚠ {len(chosen)}/11 παικτες")
+    xh0, xa0 = m['home_adj_xg'], m['away_adj_xg']
+    d_h = (lv.xi_strength(th, sel_ids[m['home']]) or th['base']) - th['base']
+    d_a = (lv.xi_strength(ta, sel_ids[m['away']]) or ta['base']) - ta['base']
+    xh, xa = lv.adjust_xg(xh0, xa0, d_h, d_a, lab.get('slope_gd', 0.9))
+    st.markdown(lv.strength_bar_html(m['home'], d_h, m['away'], d_a), unsafe_allow_html=True)
+    if m.get('promoted'):
+        st.caption("⚠ Ματς με νεοφωτιστη: εδω η αβεβαιοτητα ειναι στην ΟΜΑΔΑ, οχι στην 11αδα — "
+                   "το Δ προβλεπει λιγοτερα (μετρημενο).")
+    p0 = bd.one_x_two(xh0, xa0); p1 = bd.one_x_two(xh, xa)
+    c = st.columns(4)
+    c[0].metric("Προβλεπομενο σκορ", f"{xh:.2f} – {xa:.2f}", f"απο {xh0:.2f} – {xa0:.2f}", delta_color="off")
+    c[1].metric(f"1 ({m['home'][:12]})", f"{p1['hw']:.0f}%", f"{p1['hw']-p0['hw']:+.1f}")
+    c[2].metric("X", f"{p1['d']:.0f}%", f"{p1['d']-p0['d']:+.1f}")
+    c[3].metric(f"2 ({m['away'][:12]})", f"{p1['aw']:.0f}%", f"{p1['aw']-p0['aw']:+.1f}")
+    # ---- συγκριση με αγορα ----
+    mk = lv.latest_market(m['home_id'], m['away_id'])
+    if mk and mk.get('line') is not None:
+        line = float(mk['line'])
+        rows = []
+        for side, nm2, mo in ((1, f"{m['home']} {line:+g}", mk.get('oh')), (-1, f"{m['away']} {-line:+g}", mk.get('oa'))):
+            hcap = line if side == 1 else -line
+            fair = lv.ah_fair(xh, xa, side, hcap)
+            if fair and mo:
+                edge = (float(mo) / fair - 1) * 100
+                rows.append((nm2, mo, fair, edge))
+        if rows:
+            st.markdown("##### Ασιατικη γραμμη vs το σεναριο σου")
+            t = "| Πλευρα | Αγορα | Fair (με τις 11αδες σου) | Αξια |\n|---|---|---|---|\n"
+            for nm2, mo, fair, edge in rows:
+                flag = ' 🟢' if edge >= 5 else (' 🔴' if edge <= -5 else '')
+                t += f"| {nm2} | {float(mo):.2f} | {fair:.2f} | {edge:+.1f}%{flag} |\n"
+            st.markdown(t)
+            st.caption(f"γραμμη/αποδοσεις: τελευταιο σκαναρισμα Pinnacle/Matchbook ({mk.get('t','')[:16]})")
+    else:
+        st.caption("Δεν υπαρχει ακομα καταγεγραμμενη αγορα για αυτο το ματς (θα φανει μολις το πιασει ο scanner).")
+    if mk and mk.get('h2h'):
+        h2 = mk['h2h']
+        st.caption(f"Αγορα 1Χ2: {h2[0]:.2f} / {h2[1]:.2f} / {h2[2]:.2f} — δικο μας (με 11αδες): "
+                   f"{p1['hw_odds']:.2f} / {p1['d_odds']:.2f} / {p1['aw_odds']:.2f}")
+
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
-          'ledger': render_ledger, 'moves': render_moves}
+          'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup}
 if page in RENDER:
     RENDER[page](league)
 else:
