@@ -20,6 +20,16 @@ FIX = [
     (5836795, '2026-09-01T19:00:00Z', 'Stoke - Norwich'),
 ]
 OUT = 'lineup_timing.jsonl'
+LS = {5836791: 1802383, 5836792: 1802363, 5836793: 1802377, 5836794: 1802364,
+      5836796: 1802365, 5836797: 1802366, 5836790: 1802368, 5836795: 1802367}
+
+
+def fetch_ls(eid):
+    raw = urllib.request.urlopen(urllib.request.Request(
+        f'https://prod-public-api.livescore.com/v1/api/app/lineups/soccer/{eid}', headers=HDR), timeout=20).read()
+    if raw[:2] == b'\x1f\x8b':
+        raw = gzip.decompress(raw)
+    return json.loads(raw)
 
 
 def fetch(fid):
@@ -37,7 +47,7 @@ if os.path.exists(OUT):
     for line in open(OUT, encoding='utf-8'):
         try:
             r = json.loads(line)
-            seen[(r['fid'], r['side'])] = True
+            seen[(r['fid'], 'ls' if r.get('src')=='livescore' else r['side'])] = True
         except Exception:
             pass
 
@@ -52,29 +62,49 @@ while datetime.datetime.now(UTC) < last_end:
         time.sleep(min(120, (first_win - now).total_seconds()))
         continue
     for fid, u, n in FIX:
-        if (fid, 'h') in seen and (fid, 'a') in seen:
+        if (fid, 'h') in seen and (fid, 'a') in seen and (fid, 'ls') in seen:
             continue
         if not (ko[fid] - datetime.timedelta(minutes=100) <= now <= ko[fid]):
             continue
-        try:
-            j = fetch(fid)
-        except Exception as e:
-            print(f'  ερρ {fid}: {type(e).__name__}', flush=True)
-            continue
-        lu = (j.get('content') or {}).get('lineup') or {}
-        for side, k in (('homeTeam', 'h'), ('awayTeam', 'a')):
-            if (fid, k) in seen:
-                continue
-            st = [p for p in ((lu.get(side) or {}).get('starters') or []) if p.get('id')]
-            if len(st) == 11:
-                t = datetime.datetime.now(UTC)
-                mins_before = (ko[fid] - t).total_seconds() / 60
-                rec = dict(fid=fid, match=nm[fid], side=k, seen=t.isoformat(timespec='seconds'),
-                           ko=u, mins_before_ko=round(mins_before, 2))
-                fh.write(json.dumps(rec, ensure_ascii=False) + '\n'); fh.flush()
-                seen[(fid, k)] = True
-                print(f'ΕΝΔΕΚΑΔΑ: {nm[fid]} [{k}] στο -{mins_before:.1f}min', flush=True)
-        time.sleep(1.2)
+        # --- FOTMOB ---
+        if (fid, 'h') not in seen or (fid, 'a') not in seen:
+            try:
+                j = fetch(fid)
+                lu = (j.get('content') or {}).get('lineup') or {}
+                for side, k in (('homeTeam', 'h'), ('awayTeam', 'a')):
+                    if (fid, k) in seen:
+                        continue
+                    st = [p for p in ((lu.get(side) or {}).get('starters') or []) if p.get('id')]
+                    if len(st) == 11:
+                        t = datetime.datetime.now(UTC)
+                        mins_before = (ko[fid] - t).total_seconds() / 60
+                        rec = dict(src='fotmob', fid=fid, match=nm[fid], side=k,
+                                   seen=t.isoformat(timespec='seconds'), ko=u,
+                                   mins_before_ko=round(mins_before, 2))
+                        fh.write(json.dumps(rec, ensure_ascii=False) + '\n'); fh.flush()
+                        seen[(fid, k)] = True
+                        print(f'ΕΝΔΕΚΑΔΑ fotmob: {nm[fid]} [{k}] στο -{mins_before:.1f}min', flush=True)
+            except Exception as e:
+                print(f'  ερρ fotmob {fid}: {type(e).__name__}', flush=True)
+        # --- LIVESCORE ---
+        if (fid, 'ls') not in seen and fid in LS:
+            try:
+                d = fetch_ls(LS[fid])
+                lu2 = d.get('Lu') or []
+                if len(lu2) == 2 and all(len(t2.get('Ps') or []) >= 11 for t2 in lu2):
+                    t = datetime.datetime.now(UTC)
+                    mins_before = (ko[fid] - t).total_seconds() / 60
+                    rec = dict(src='livescore', fid=fid, match=nm[fid], side='both',
+                               seen=t.isoformat(timespec='seconds'), ko=u,
+                               mins_before_ko=round(mins_before, 2))
+                    fh.write(json.dumps(rec, ensure_ascii=False) + '\n'); fh.flush()
+                    seen[(fid, 'ls')] = True
+                    print(f'ΕΝΔΕΚΑΔΑ livescore: {nm[fid]} στο -{mins_before:.1f}min', flush=True)
+            except urllib.error.HTTPError:
+                pass
+            except Exception as e:
+                print(f'  ερρ livescore {fid}: {type(e).__name__}', flush=True)
+        time.sleep(1.0)
     time.sleep(22)
 fh.close()
 print('ΤΕΛΟΣ χρονομετρησης', flush=True)
