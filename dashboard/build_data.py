@@ -24,6 +24,10 @@ RATINGS_SEASON_DEFAULT = '2526'   # περσινη πληρης σεζον (prio
 CURRENT_SEASON = '2627'           # φετινη in-season (blend-άρεται πανω στο prior)
 CURRENT_FOTMOB_SEASON = '2026%2F2027'
 K_WARM = 8.0                      # warm-start blend: βαρος_φετινου = n/(n+K). K=8 (2026-08-26, k_final.py): με ΔΙΟΡΘΩΜΕΝΕΣ νεοφωτιστες το βελτιστο μετακινηθηκε 6→8 (RPS ολικο ελαχιστο· LOSO διαλεξε >=8 σε 4/4 folds). Πλατο K=4-12 — η διαφορα 6 vs 8 ειναι 1/15 του τυπικου σφαλματος, δηλ. αδιαφορη.
+KN_NORM = 20.0                     # "χαρακας" λιγκας (lg_shots/lg_xgps): ραμπα περσινος->φετινος, βαρος_φετινου = nc/(nc+20)
+                                  # (2026-09-01, norm_switch_test): πριν ητανε ΠΑΝΤΑ περσινος -> σφαλμα 5.4% ΟΛΗ τη σεζον.
+                                  # Με τα φετινα ματς: 1.6% απο την 7η αγων. (3.4x ακριβεστερος). Πλατο Kn=10-40 αδιαφορο.
+                                  # Ραμπα, οχι σκαλι: στις 1-3 αγων. τα φετινα ειναι πολυ λιγα (σκετος φετινος = 7.9% σφαλμα).
 MARKET_1X2_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 απο τον scanner (scan_value.py)
 
 def _market_1x2():
@@ -153,6 +157,7 @@ def fetch_upcoming(league):
             continue
         h, a = m.get('home', {}), m.get('away', {})
         out.append(dict(gw=int(m.get('round') or 0), utc=st.get('utcTime', ''),
+                        fid=m.get('id'),
                         home_name=h.get('name'), home_id=h.get('id'),
                         away_name=a.get('name'), away_id=a.get('id')))
     return out
@@ -269,7 +274,16 @@ def league_ratings(lg, Mp, Mc, ratings_season=RATINGS_SEASON_DEFAULT,
         name2id.setdefault(nm, tid); promoted.add(tid)
     histp = flatten_warmstart(histp, lg)                         # flat περσινο prior
     prior_r = {tid: _rating(h) for tid, h in histp.items() if h.get('sf')}
-    histc, _, _, _ = picks.league_state(Mc, lg, current_season)   # φετινο rolling (in-season)
+    histc, cur_shots, cur_xgps, _ = picks.league_state(Mc, lg, current_season)  # φετινο rolling (in-season)
+    # ---------- χαρακας λιγκας: ραμπα περσινος -> φετινος (KN_NORM) ----------
+    # Ολη η προβλεψη ειναι "ποσες φορες τον μεσο ορο" (= $B$22/$Q$22 του αρχικου Google Sheet),
+    # οποτε ο μεσος ορος πρεπει να ειναι της ΙΔΙΑΣ εποχης με τα ratings — αλλιως ολα βγαινουν
+    # κλιμακωμενα λαθος. Τα SF/SA του blended ειναι ηδη κυριως φετινα· ο χαρακας ακολουθει.
+    nc = sum(len(h['sf']) for h in histc.values())
+    if nc and cur_shots and cur_xgps:
+        w = nc / (nc + KN_NORM)
+        lg_shots = lg_shots * (cur_shots / lg_shots) ** w
+        lg_xgps = lg_xgps * (cur_xgps / lg_xgps) ** w
     blended, ns = blend_league(prior_r, histc)                    # warm-start blend K=K_WARM
     if picks.SOS:                        # SoS: διορθωση για τη δυσκολια του ΦΕΤΙΝΟΥ προγραμματος
         blended = {tid: picks.sos_adjust(r, histc.get(tid, {}).get('opp', []),
@@ -299,7 +313,7 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, current_season=CURRENT_
             H = name2id.get(f['home_name']); A = name2id.get(f['away_name'])
             if H is None and f['home_id'] and int(f['home_id']) in blended: H = int(f['home_id'])
             if A is None and f['away_id'] and int(f['away_id']) in blended: A = int(f['away_id'])
-            rec = dict(league=lg, gw=f['gw'], utc=f['utc'],
+            rec = dict(league=lg, gw=f['gw'], utc=f['utc'], fid=f.get('fid'),
                        home=f['home_name'], away=f['away_name'],
                        home_id=f['home_id'], away_id=f['away_id'], projectable=False,
                        promoted=(H in promoted or A in promoted))
