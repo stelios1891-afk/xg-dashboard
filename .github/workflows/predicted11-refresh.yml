@@ -37,6 +37,10 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
         run: python fantasycoach_fetch.py || echo "fantasy-coach failed (μη κρισιμο)"
+      - name: Fetch ligainsider (Bundesliga)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python ligainsider_fetch.py || echo "ligainsider failed (μη κρισιμο)"
       - name: Commit if changed
         run: |
           git config user.name "predicted11-bot"

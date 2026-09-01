@@ -287,7 +287,7 @@ def _load_projected_fc(home_id, away_id):
     h, a = latest.get(str(home_id)), latest.get(str(away_id))
     if not h or not a:
         return None
-    out = {'ts': min(h.get('ts') or '', a.get('ts') or ''), 'src': 'fantasy-coach'}
+    out = {'ts': min(h.get('ts') or '', a.get('ts') or ''), 'src': h.get('src') or 'fantasy-coach'}
     for key, rec in (('home', h), ('away', a)):
         pids = []
         for p in (rec.get('xi') or []):

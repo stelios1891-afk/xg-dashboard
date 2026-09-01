@@ -48,6 +48,7 @@ jobs:
           python lineup_lab_data.py || echo "lineup_lab rebuild failed (μη κρισιμο)"
           python predicted11_fetch.py || echo "predicted11 συλλογη failed (μη κρισιμο)"
           python fantasycoach_fetch.py || echo "fantasy-coach συλλογη failed (μη κρισιμο)"
+          python ligainsider_fetch.py || echo "ligainsider συλλογη failed (μη κρισιμο)"
 
       - name: Commit if raw data changed
         run: |
