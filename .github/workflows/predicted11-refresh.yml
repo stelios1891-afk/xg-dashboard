@@ -1,0 +1,48 @@
+name: predicted11-refresh
+
+# Εξτρα ανανεωσεις projected lineups την ΠΑΡΑΣΚΕΥΗ (συνεντευξεις τυπου -> νεα ενδεκαδων)
+# και το Σαββατο πρωι. Το κανονικο καθημερινο τρεξιμο (data-refresh, 05:00 UTC ~ 08:00 Ελλαδας)
+# καλυπτει το πρωινο σλοτ· εδω μονο τα επιπλεον. Τρεχει ΜΟΝΟ τον συλλεκτη (stdlib, ~1 λεπτο).
+# Ωρες σε UTC· Ελλαδα = UTC+3 θερος / +2 χειμωνα (μικρη μετατοπιση τον χειμωνα, αποδεκτη).
+
+on:
+  schedule:
+    - cron: '0 7,9,11,13,15,17,19 * * 5'   # Παρασκευη ~10:00 12:00 14:00 16:00 18:00 20:00 22:00 Ελλαδας
+    - cron: '0 7,9 * * 6'                  # Σαββατο ~10:00 και 12:00 Ελλαδας
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: predicted11-refresh
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch projected lineups
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python predicted11_fetch.py
+      - name: Commit if changed
+        run: |
+          git config user.name "predicted11-bot"
+          git config user.email "actions@github.com"
+          git add projected_lineups.jsonl
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "projected lineups intraday [skip ci]"
+            for i in 1 2 3; do
+              git pull --rebase --autostash origin main && git push && break || sleep 5
+            done
+          fi
