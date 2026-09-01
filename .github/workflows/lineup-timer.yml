@@ -6,7 +6,7 @@ name: lineup-timer
 
 on:
   schedule:
-    - cron: '50 16 1 9 *'     # 16:50 UTC σημερα (το GitHub μπορει να αργησει λιγα λεπτα)
+    - cron: '40 16 2 9 *'     # 16:50 UTC σημερα (το GitHub μπορει να αργησει λιγα λεπτα)
   workflow_dispatch: {}
 
 permissions:
@@ -15,13 +15,13 @@ permissions:
 jobs:
   timer:
     runs-on: ubuntu-latest
-    timeout-minutes: 140
+    timeout-minutes: 160
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Run timer (πολινγκ ως 18:40 UTC)
+      - name: Run timer (πολινγκ ως 18:55 UTC)
         env:
           PYTHONIOENCODING: utf-8
         run: python lineup_timer.py
@@ -31,6 +31,6 @@ jobs:
           git config user.email "actions@github.com"
           git add lineup_timing.jsonl
           if git diff --cached --quiet; then echo "no results"; else
-            git commit -m "lineup timing πειραμα 1/9 [skip ci]"
+            git commit -m "lineup timing πειραμα v2 2/9 [skip ci]"
             git pull --rebase --autostash origin main && git push
           fi
