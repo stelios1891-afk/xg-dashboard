@@ -255,11 +255,42 @@ def load_projected(home_id, away_id):
     except FileNotFoundError:
         return None
     if not best:
-        return None
+        return _load_projected_fc(home_id, away_id)
     out = {'ts': best.get('ts'), 'ko': best.get('ko'), 'src': best.get('src')}
     for side, key in (('xi_home', 'home'), ('xi_away', 'away')):
         pids = []
         for p in (best.get(side) or []):
+            if p.get('pid') and int(p['pid']) not in pids:
+                pids.append(int(p['pid']))
+        out[key] = pids
+    return out
+
+
+PROJ_FC_F = os.path.join(ROOT, 'projected_fc.jsonl')
+
+
+def _load_projected_fc(home_id, away_id):
+    """Εφεδρικη πηγη fantasy-coach (Ligue 1): per-ΟΜΑΔΑ snapshots -> ζευγαρωμα εδω."""
+    latest = {}
+    try:
+        with open(PROJ_FC_F, encoding='utf-8') as fh:
+            for line in fh:
+                try:
+                    r = json.loads(line)
+                except ValueError:
+                    continue
+                t = r.get('tid')
+                if t and (t not in latest or (r.get('ts') or '') >= (latest[t].get('ts') or '')):
+                    latest[t] = r
+    except FileNotFoundError:
+        return None
+    h, a = latest.get(str(home_id)), latest.get(str(away_id))
+    if not h or not a:
+        return None
+    out = {'ts': min(h.get('ts') or '', a.get('ts') or ''), 'src': 'fantasy-coach'}
+    for key, rec in (('home', h), ('away', a)):
+        pids = []
+        for p in (rec.get('xi') or []):
             if p.get('pid') and int(p['pid']) not in pids:
                 pids.append(int(p['pid']))
         out[key] = pids

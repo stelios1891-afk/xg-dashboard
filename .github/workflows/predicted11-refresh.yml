@@ -33,11 +33,15 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
         run: python predicted11_fetch.py
+      - name: Fetch fantasy-coach (Ligue 1)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python fantasycoach_fetch.py || echo "fantasy-coach failed (μη κρισιμο)"
       - name: Commit if changed
         run: |
           git config user.name "predicted11-bot"
           git config user.email "actions@github.com"
-          git add projected_lineups.jsonl
+          git add projected_lineups.jsonl projected_fc.jsonl
           if git diff --cached --quiet; then
             echo "no changes"
           else

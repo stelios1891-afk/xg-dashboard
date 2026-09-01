@@ -459,9 +459,9 @@ def render_lineup(league):
         st.rerun()
     if prj is None:
         pc[1].caption('projected: δεν υπαρχει αποθηκευμενη προβλεψη γι αυτο το ματς '
-                      '(καλυπτονται LaLiga + EPL · ανανεωση καθε πρωι ~08:00)')
+                      '(καλυπτονται LaLiga + EPL + SerieA + Ligue1 · ανανεωση καθε πρωι ~08:00, Παρασκευη ανα 2ωρο)')
     else:
-        pc[1].caption(f"projected snapshot: {str(prj.get('ts'))[:16].replace('T', ' ')} UTC · πηγη predicted11 "
+        pc[1].caption(f"projected snapshot: {str(prj.get('ts'))[:16].replace('T', ' ')} UTC · πηγη {prj.get('src') or 'predicted11'} "
                       f"· πατωντας το αντικαθισταται τυχον αποθηκευμενο σεναριο")
     if SHOW_OFFICIAL_XI_BTN and m.get('fid'):
         oc = st.columns([2.4, 4.6])
