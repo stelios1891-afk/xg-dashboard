@@ -10,7 +10,7 @@ predicted11_fetch.py — Συλλεκτης projected lineups απο predicted11
 import sys, os, json, re, gzip, time, datetime, unicodedata, urllib.request
 sys.stdout.reconfigure(encoding='utf-8')
 
-LEAGUES = {'laliga': 'LaLiga', 'premier-league': 'EPL'}
+LEAGUES = {'laliga': 'LaLiga', 'premier-league': 'EPL', 'serie-a': 'SerieA'}
 OUT = 'projected_lineups.jsonl'
 HDR = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36',
        'Accept': 'text/html,*/*', 'Accept-Encoding': 'gzip'}
