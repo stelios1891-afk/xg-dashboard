@@ -235,6 +235,73 @@ def ah_table_html(home, away, line, oh, oa, f0h, f1h, f0a, f1a, when=''):
         '% αξιας εναντι του fair με τις 11αδες σου.</div>')
 
 
+PROJ_F = os.path.join(ROOT, 'projected_lineups.jsonl')
+
+
+def load_projected(home_id, away_id):
+    """Τελευταιο snapshot προβλεπομενων 11αδων για το ζευγαρι (projected_lineups.jsonl,
+    μαζευεται καθημερινα απο predicted11 στο data-refresh). {'home':[pids],'away':[...],'ts',...}"""
+    best = None
+    try:
+        with open(PROJ_F, encoding='utf-8') as fh:
+            for line in fh:
+                try:
+                    r = json.loads(line)
+                except ValueError:
+                    continue
+                if r.get('home_tid') == str(home_id) and r.get('away_tid') == str(away_id):
+                    if best is None or (r.get('ts') or '') >= (best.get('ts') or ''):
+                        best = r
+    except FileNotFoundError:
+        return None
+    if not best:
+        return None
+    out = {'ts': best.get('ts'), 'ko': best.get('ko'), 'src': best.get('src')}
+    for side, key in (('xi_home', 'home'), ('xi_away', 'away')):
+        pids = []
+        for p in (best.get(side) or []):
+            if p.get('pid') and int(p['pid']) not in pids:
+                pids.append(int(p['pid']))
+        out[key] = pids
+    return out
+
+
+def fill_xi(team, pids):
+    """Κρατα οσους projected ειναι στο ροστερ μας, συμπληρωσε ως τους 11 απο την αναμενομενη.
+    -> (xi 11 ids, ποσοι ταιριασαν)"""
+    known = {p['id'] for p in team['players']}
+    xi = [i for i in pids if i in known][:11]
+    matched = len(xi)
+    for i in default_xi(team):
+        if len(xi) >= 11:
+            break
+        if i not in xi:
+            xi.append(i)
+    return xi, matched
+
+
+def fetch_official_xi(fid):
+    """Ανακοινωμενες ενδεκαδες απο FotMob matchDetails (βγαινουν ~60-75' πριν).
+    Επιστρεφει {'home':[11 ids], 'away':[...]} μονο για πλευρες με πληρη 11αδα."""
+    import build_data
+    try:
+        j = build_data._fotmob(f'https://www.fotmob.com/api/data/matchDetails?matchId={fid}')
+    except Exception:
+        return None
+    lu = (j.get('content') or {}).get('lineup') or {}
+    # ΚΡΙΣΙΜΟ (ευρημα 1/9/2026): το FotMob σερβιρει lineupType='lastStarting11' (περσινη
+    # 11αδα-placeholder) ΜΕΡΕΣ πριν το ματς, και 'predicted' προβλεψεις. ΜΟΝΟ επιβεβαιωμενη.
+    if (lu.get('lineupType') or '').lower() in ('laststarting11', 'predicted'):
+        return None
+    out = {}
+    for side, k in (('homeTeam', 'home'), ('awayTeam', 'away')):
+        t = lu.get(side) or {}
+        ids = [int(p['id']) for p in (t.get('starters') or []) if p.get('id')]
+        if len(ids) == 11:
+            out[k] = ids
+    return out or None
+
+
 def strength_bar_html(nm_h, d_h, nm_a, d_a):
     def cell(nm, d):
         col = '#34d17a' if d > 0.015 else ('#e05563' if d < -0.015 else '#8fa3c8')

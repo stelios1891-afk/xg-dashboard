@@ -27,6 +27,10 @@ import value_view
 st.set_page_config(page_title="xG Model — Live", page_icon="⚽", layout="wide",
                    initial_sidebar_state="expanded")
 
+# Κουμπι ανακοινωμενων 11αδων: ΠΑΡΚΑΡΙΣΜΕΝΟ (αποφαση Στελιου) μεχρι το πειραμα
+# χρονομετρησης (ποσο γρηγορα ανεβαινουν στο FotMob vs Twitter). ΜΗΝ ανοιξει χωρις εντολη.
+SHOW_OFFICIAL_XI_BTN = False
+
 LEAGUE_LABELS = {'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
                  'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
                  'PrimeiraLiga': 'Primeira Liga'}
@@ -441,6 +445,46 @@ def render_lineup(league):
         xi_a = lv.default_xi(ta, lv.FORMATIONS[f_a])
     nonce = st.session_state.get(f'll_nonce_{base_key}', 0)
     mkey = f"{base_key}_{f_h}_{f_a}_{nonce}"
+    prj = lv.load_projected(m['home_id'], m['away_id'])
+    pc = st.columns([2.4, 4.6])
+    if pc[0].button('📋 Load projected XI', key=f'll_prj_{base_key}', disabled=prj is None,
+                    help='Οι προβλεπομενες 11αδες δημοσιογραφων (predicted11) — κατεβαινουν αυτοματα καθε πρωι'):
+        xh, okh = lv.fill_xi(th, prj.get('home') or [])
+        xa, oka = lv.fill_xi(ta, prj.get('away') or [])
+        lv.save_side(base_key, 'home', xh, f_h)
+        lv.save_side(base_key, 'away', xa, f_a)
+        st.session_state[f'll_nonce_{base_key}'] = nonce + 1
+        st.toast(f'Projected 11αδες: ταιριασαν {okh}/11 + {oka}/11'
+                 + ('' if okh == 11 and oka == 11 else ' (οι υπολοιποι απο την αναμενομενη)'))
+        st.rerun()
+    if prj is None:
+        pc[1].caption('projected: δεν υπαρχει αποθηκευμενη προβλεψη γι αυτο το ματς '
+                      '(καλυπτονται LaLiga + EPL · ανανεωση καθε πρωι ~08:00)')
+    else:
+        pc[1].caption(f"projected snapshot: {str(prj.get('ts'))[:16].replace('T', ' ')} UTC · πηγη predicted11 "
+                      f"· πατωντας το αντικαθισταται τυχον αποθηκευμενο σεναριο")
+    if SHOW_OFFICIAL_XI_BTN and m.get('fid'):
+        oc = st.columns([2.4, 4.6])
+        if oc[0].button('⚡ Φορτωσε ΑΝΑΚΟΙΝΩΜΕΝΕΣ ενδεκαδες', key=f'll_off_{base_key}',
+                        help='Τραβαει τις επισημες 11αδες (βγαινουν ~60-75 λεπτα πριν τη σεντρα)'):
+            off = lv.fetch_official_xi(m['fid'])
+            if off:
+                known_h = {p['id'] for p in th['players']}; known_a = {p['id'] for p in ta['players']}
+                if 'home' in off:
+                    lv.save_side(base_key, 'home', off['home'], f_h)
+                if 'away' in off:
+                    lv.save_side(base_key, 'away', off['away'], f_a)
+                miss = len([i for i in off.get('home', []) if i not in known_h]) + \
+                       len([i for i in off.get('away', []) if i not in known_a])
+                st.session_state[f'll_nonce_{base_key}'] = nonce + 1
+                msg = 'Φορτωθηκαν οι επισημες ενδεκαδες' + ('' if len(off) == 2 else ' (μονο της μιας ομαδας)')
+                if miss:
+                    msg += f' · {miss} παικτες εκτος βασης (αγνοουνται στο Δ)'
+                st.toast(msg)
+                st.rerun()
+            else:
+                st.toast('Δεν εχουν ανακοινωθει ακομα — βγαινουν ~60-75 λεπτα πριν τη σεντρα.')
+        oc[1].caption(f"οπτικος ελεγχος: [το ματς στο FotMob](https://www.fotmob.com/match/{m['fid']})")
     st.caption("🖐 Σερνεις παικτη απο τον παγκο πανω σε παικτη του γηπεδου για να τον αντικαταστησει. "
                "Αλλαγη συστηματος ξαναστηνει την προτεινομενη 11αδα (χανονται οι χειροκινητες αλλαγες). "
                "Γηπεδουχος αριστερα · φιλοξενουμενη δεξια · στηλες GK → DEF → MID → ATT. ● = χωρις ιστορικο.")
