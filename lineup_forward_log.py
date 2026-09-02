@@ -17,6 +17,9 @@ OUT = 'lineup_forward.jsonl'
 HORIZON_DAYS = 5
 
 import build_data  # noqa: E402  (φερνει και το FotMob layer)
+import picks       # noqa: E402
+
+SLOPE = 0.9        # shift = SLOPE*(dh-da)/2 (ιδιο με predicted11_retro / Lineup Lab)
 
 LAB = json.load(open('lineup_lab.json', encoding='utf-8'))
 
@@ -79,11 +82,18 @@ if __name__ == '__main__':
     now = datetime.datetime.now(datetime.timezone.utc)
     ts = now.isoformat(timespec='minutes')
     horizon = now + datetime.timedelta(days=HORIZON_DAYS)
+    # ratings ΧΩΡΙΣ ενδεκαδες (live engine) — κλειδωνονται ΚΑΙ αυτα τη στιγμη της προβλεψης,
+    # ωστε η συγκριση ΧΩΡΙΣ vs ΜΕ να μη χρειαζεται καμια αναδρομικη ανακατασκευη.
+    Mp, id2name = picks.load_matches(list(build_data.LEAGUE_FOTMOB), [build_data.RATINGS_SEASON_DEFAULT])
+    Mc, id2c = picks.load_matches(list(build_data.LEAGUE_FOTMOB), [build_data.CURRENT_SEASON])
+    id2name.update(id2c)
+    name2id = {v: k for k, v in id2name.items()}
     n = 0
     with open(OUT, 'a', encoding='utf-8') as fh:
         for lg in list(build_data.LEAGUE_FOTMOB):
             try:
-                fixtures = build_data.fetch_upcoming(lg)
+                LR = build_data.league_ratings(lg, Mp, Mc, id2name=id2name, name2id=name2id)
+                fixtures = LR['fixtures']
             except Exception as e:
                 print(f'{lg}: fixtures σφαλμα {type(e).__name__}', flush=True)
                 continue
@@ -109,11 +119,20 @@ if __name__ == '__main__':
                 aa, na = xi_ability(aid, pa)
                 if None in (bh, ba, ah, aa) or nh < 8 or na < 8:
                     continue
+                # xg μοντελου ΧΩΡΙΣ ενδεκαδες (live engine, κλειδωμα τωρα) + ΜΕ (shift)
+                xh = xa = x2h = x2a = None
+                rh = LR['blended'].get(int(hid)); ra = LR['blended'].get(int(aid))
+                if rh and ra:
+                    pf = build_data._predict_ratings(rh, ra, LR['lg_shots'], LR['lg_xgps'], LR['hf'])
+                    xh, xa = pf['home_adj_xg'], pf['away_adj_xg']
+                    sh = SLOPE * ((ah - bh) - (aa - ba)) / 2
+                    x2h = round(max(xh + sh, 0.05), 3); x2a = round(max(xa - sh, 0.05), 3)
                 fh.write(json.dumps(dict(
                     ts=ts, snap_ts=pts, src=src, lg=lg, fid=f.get('fid'),
                     home_id=int(hid), away_id=int(aid),
                     home=f.get('home_name'), away=f.get('away_name'), ko=str(f.get('utc')),
                     dh=round(ah - bh, 4), da=round(aa - ba, 4),
-                    nh=nh, na=na), ensure_ascii=False) + '\n')
+                    nh=nh, na=na,
+                    xg_h=xh, xg_a=xa, xg2_h=x2h, xg2_a=x2a), ensure_ascii=False) + '\n')
                 n += 1
     print(f'lineup_forward: {n} ματς καταγραφηκαν ({ts})')
