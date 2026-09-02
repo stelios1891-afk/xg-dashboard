@@ -143,8 +143,8 @@ def render_projections(league):
     ws = [m['warm_cur'] for m in sel if 'warm_cur' in m]
     if ws:
         cur = sum(ws) / len(ws) * 100
-        st.caption(f"⚖ Warm-start (K=6): **{cur:.0f}% φετινη 26/27** · **{100-cur:.0f}% περσινη 25/26** "
-                   "— το βαρος της φετινης ανεβαινει οσο παιζονται ματς (n/(n+6)).")
+        st.caption(f"⚖ Warm-start (K=8): **{cur:.0f}% φετινη 26/27** · **{100-cur:.0f}% περσινη 25/26** "
+                   "— το βαρος της φετινης ανεβαινει οσο παιζονται ματς (n/(n+8)).")
     st.components.v1.html(cards.cards_block(sel), height=min(len(sel) * 118 + 40, 6000), scrolling=True)
 
 def _lg_header(league, sub):
