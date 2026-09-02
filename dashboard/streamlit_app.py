@@ -572,18 +572,25 @@ def render_results(league):
     all_gws = sorted({m['gw'] for m in allm if m['gw']})
     qp_gw = st.query_params.get('rgw')
     default_gw = int(qp_gw) if qp_gw and qp_gw.isdigit() and int(qp_gw) in all_gws else fin_gws[-1]
-    c1, c2 = st.columns([1, 3])
-    with c1:
-        gw = st.selectbox('Αγωνιστικη', all_gws, index=all_gws.index(default_gw),
-                          format_func=lambda x: f'GW {x}', key=f'res_gw_{league}')
-    gm = [m for m in allm if m['gw'] == gw]
     sel = st.query_params.get('rfid')
-    if sel and not any(m['fid'] == sel for m in allm):
-        sel = None
-    st.markdown(results_view.round_list_html(gm, league, gw, sel), unsafe_allow_html=True)
-    if not sel:
+    selm = next((m for m in allm if m['fid'] == sel), None) if sel else None
+    if not selm:
+        # ---- προβολη ΛΙΣΤΑΣ (χωρις λεπτομερειες) ----
+        c1, c2 = st.columns([1, 3])
+        with c1:
+            gw = st.selectbox('Αγωνιστικη', all_gws, index=all_gws.index(default_gw),
+                              format_func=lambda x: f'GW {x}', key=f'res_gw_{league}')
+        gm = [m for m in allm if m['gw'] == gw]
+        st.markdown(results_view.round_list_html(gm, league, gw, None), unsafe_allow_html=True)
         st.caption('👆 Κλικ σε τελειωμενο ματς για λεπτομερειες + xG chart.')
         return
+    # ---- προβολη ΜΑΤΣ (μονο στατιστικα + πισω) ----
+    back_gw = selm['gw'] or default_gw
+    st.markdown(f'<a href="?league={league}&page=results&rgw={back_gw}" target="_self" '
+                'style="display:inline-block;color:#8fa3c8;text-decoration:none;font-size:13px;'
+                'background:#111827;border:1px solid #1e2d47;border-radius:9px;padding:6px 14px;">'
+                f'‹ Πισω στα αποτελεσματα (GW {back_gw})</a>', unsafe_allow_html=True)
+    st.caption(f"GW {selm['gw']} · {str(selm['utc'])[:10]}")
     try:
         det = _match_detail(sel)
     except Exception as e:
