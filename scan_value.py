@@ -280,9 +280,11 @@ def _last_scan_hours():
         return 999.0
 
 def auto():
-    """Καλειται καθε 30' απο το Task Scheduler· κανει TOA scan ΜΟΝΟ οταν πρεπει."""
+    """Καλειται καθε 15' απο το cron· κανει TOA scan ΜΟΝΟ οταν πρεπει."""
     h = _nearest_kickoff_hours()
     gap = 24.0 if h > 72 else (1.0 if h > 24 else 0.5)   # <24h καθε 30' · <3μερες καθε 1h · αλλιως 1×/μερα (2026-08-29)
+    if 0 < h <= 25 / 60:   # ματς σε <=25' -> snapshot ΚΛΕΙΣΙΜΑΤΟΣ: αφησε και το 15' τικ να γραψει (2026-09-02)
+        gap = 0.2          # το CLV ledger παιρνει ως closing την τελευταια εγγραφη προ σεντρας
     since = _last_scan_hours()
     if since >= gap:
         scan(notify_tg=True)

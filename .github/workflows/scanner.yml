@@ -2,7 +2,9 @@ name: value-scanner
 
 on:
   schedule:
-    - cron: '*/30 * * * *'      # καθε ~30' (UTC· το GitHub μπορει να αργησει λιγο)
+    - cron: '*/15 * * * *'      # καθε ~15' (UTC· το GitHub μπορει να αργησει λιγο). Τα «σκετα» τικ
+                                # ειναι δωρεαν (gating skip, 0 TOA credits)· το 15αλεπτο χρειαζεται
+                                # για το snapshot κλεισιματος λιγο πριν καθε σεντρα (2026-09-02)
   workflow_dispatch: {}          # + χειροκινητο κουμπι "Run workflow"
 
 permissions:
