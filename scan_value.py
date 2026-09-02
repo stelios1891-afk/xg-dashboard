@@ -283,8 +283,9 @@ def auto():
     """Καλειται καθε 15' απο το cron· κανει TOA scan ΜΟΝΟ οταν πρεπει."""
     h = _nearest_kickoff_hours()
     gap = 24.0 if h > 72 else (1.0 if h > 24 else 0.5)   # <24h καθε 30' · <3μερες καθε 1h · αλλιως 1×/μερα (2026-08-29)
-    if 0 < h <= 25 / 60:   # ματς σε <=25' -> snapshot ΚΛΕΙΣΙΜΑΤΟΣ: αφησε και το 15' τικ να γραψει (2026-09-02)
-        gap = 0.2          # το CLV ledger παιρνει ως closing την τελευταια εγγραφη προ σεντρας
+    if 0 < h <= 2.0:       # ΤΕΛΙΚΟ 2ΩΡΟ προ σεντρας: καθε 15' (2026-09-02, ~+4k credits/μηνα)
+        gap = 0.2          # τρεφει: red_flags (validated T3), Market Watch σκαλια γραμμης,
+                           # και το snapshot ΚΛΕΙΣΙΜΑΤΟΣ (CLV ledger = τελευταια εγγραφη προ ΚΟ)
     since = _last_scan_hours()
     if since >= gap:
         scan(notify_tg=True)
