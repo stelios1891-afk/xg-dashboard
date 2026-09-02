@@ -142,6 +142,42 @@ def round_table_html(matches):
     return css + '<table>' + ''.join(rows) + '</table>'
 
 
+def round_list_html(matches, league, gw, sel_fid=None):
+    """Κλικαμπλ λιστα ματς (για st.markdown στο ΚΥΡΙΟ document — τα links αλλαζουν query params).
+    Τελειωμενα ματς = ολοκληρη η γραμμη link· επερχομενα = μη κλικαμπλ."""
+    rows = []
+    for m in sorted(matches, key=lambda x: x['utc']):
+        fin = m['finished'] and m['hs'] is not None
+        sc = '%d – %d' % (m['hs'], m['aw']) if m['hs'] is not None else str(m['utc'])[11:16]
+        on = ' rl-on' if (sel_fid and m['fid'] == sel_fid) else ''
+        inner = (f'<span class="rl-d">{str(m["utc"])[5:10]}</span>'
+                 f'<span class="rl-t rl-r">{_h.escape(m["home"] or "")}</span>'
+                 f'<span class="rl-s">{sc}</span>'
+                 f'<span class="rl-t">{_h.escape(m["away"] or "")}</span>'
+                 + ('<span class="rl-go">›</span>' if fin else '<span class="rl-go"></span>'))
+        if fin:
+            rows.append(f'<a class="rl-row{on}" target="_self" '
+                        f'href="?league={league}&page=results&rgw={gw}&rfid={m["fid"]}">{inner}</a>')
+        else:
+            rows.append(f'<div class="rl-row rl-off">{inner}</div>')
+    css = """<style>
+    .rl-wrap{background:#111827;border:1px solid #1e2d47;border-radius:12px;overflow:hidden;margin-bottom:6px;}
+    .rl-wrap a.rl-row, .rl-wrap div.rl-row{display:flex !important;align-items:center;gap:10px;
+            padding:8px 12px;border-bottom:1px solid #121b30;
+            text-decoration:none !important;transition:background .12s;}
+    .rl-wrap a.rl-row:hover{background:#16203a;text-decoration:none !important;}
+    .rl-wrap .rl-row.rl-on{background:#1c2a42;box-shadow:inset 3px 0 0 #4b7cf3;}
+    .rl-wrap .rl-row.rl-off{opacity:.65;}
+    .rl-wrap .rl-d{color:#5a6b8c !important;font-size:11px;width:48px;flex:none;}
+    .rl-wrap .rl-t{color:#e8edf8 !important;font-size:13.5px;flex:1;font-family:'DM Sans',sans-serif;}
+    .rl-wrap .rl-t.rl-r{text-align:right;}
+    .rl-wrap .rl-s{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#e8edf8 !important;
+          background:#0d1526;border-radius:7px;padding:3px 9px;flex:none;min-width:64px;text-align:center;}
+    .rl-wrap .rl-go{color:#4b7cf3 !important;font-size:15px;width:12px;flex:none;text-align:right;}
+    </style>"""
+    return css + '<div class="rl-wrap">' + ''.join(rows) + '</div>'
+
+
 def chances_html(det):
     def side_rows(side, color):
         tid = det[side]['id']

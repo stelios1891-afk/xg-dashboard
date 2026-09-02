@@ -569,20 +569,21 @@ def render_results(league):
     if not fin_gws:
         st.info('Δεν εχουν ολοκληρωθει ματς ακομα φετος.')
         return
+    all_gws = sorted({m['gw'] for m in allm if m['gw']})
+    qp_gw = st.query_params.get('rgw')
+    default_gw = int(qp_gw) if qp_gw and qp_gw.isdigit() and int(qp_gw) in all_gws else fin_gws[-1]
     c1, c2 = st.columns([1, 3])
     with c1:
-        gw = st.selectbox('Αγωνιστικη', sorted({m['gw'] for m in allm if m['gw']}),
-                          index=sorted({m['gw'] for m in allm if m['gw']}).index(fin_gws[-1]),
+        gw = st.selectbox('Αγωνιστικη', all_gws, index=all_gws.index(default_gw),
                           format_func=lambda x: f'GW {x}', key=f'res_gw_{league}')
     gm = [m for m in allm if m['gw'] == gw]
-    fin = [m for m in gm if m['finished']]
-    st.components.v1.html(results_view.round_table_html(gm), height=len(gm) * 38 + 30, scrolling=False)
-    if not fin:
-        st.caption('Κανενα ολοκληρωμενο ματς σε αυτη την αγωνιστικη ακομα.')
+    sel = st.query_params.get('rfid')
+    if sel and not any(m['fid'] == sel for m in allm):
+        sel = None
+    st.markdown(results_view.round_list_html(gm, league, gw, sel), unsafe_allow_html=True)
+    if not sel:
+        st.caption('👆 Κλικ σε τελειωμενο ματς για λεπτομερειες + xG chart.')
         return
-    names = {m['fid']: f"{m['home']} {m['hs']}–{m['aw']} {m['away']}" for m in sorted(fin, key=lambda x: x['utc'])}
-    sel = st.selectbox('Ματς (λεπτομερειες + xG chart)', list(names), format_func=lambda k: names[k],
-                       key=f'res_m_{league}')
     try:
         det = _match_detail(sel)
     except Exception as e:
