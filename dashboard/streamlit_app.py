@@ -23,6 +23,7 @@ import scatter_view
 import xgstats
 import xgstats_view
 import value_view
+import results_view
 
 st.set_page_config(page_title="xG Model — Live", page_icon="⚽", layout="wide",
                    initial_sidebar_state="expanded")
@@ -42,13 +43,14 @@ LEAGUE_LOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}
 PAGES = [('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 'Pi Rating', '🔵'),
          ('team', 'Team Rating', '🛡️'), ('scatter', 'Scatter Plots', '✳️'),
          ('ave', 'Actual vs Expected', '🎯'), ('value', 'Value Picks', '💰'),
+         ('results', 'Results', '🏁'),
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
          ('lineup', 'Lineup Lab', '🧪'),
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -546,9 +548,74 @@ def render_lineup(league):
     else:
         st.caption("Δεν υπαρχει ακομα καταγεγραμμενη αγορα για αυτο το ματς (θα φανει μολις το πιασει ο scanner).")
 
+
+
+@st.cache_data(ttl=1800)
+def _season_matches(league):
+    return results_view.season_matches(league)
+
+@st.cache_data(ttl=24 * 3600)
+def _match_detail(fid):
+    return results_view.match_detail(fid)
+
+def render_results(league):
+    _lg_header(league, 'ΑΠΟΤΕΛΕΣΜΑΤΑ · ΤΕΛΙΚΟ ΣΚΟΡ + ΠΡΑΓΜΑΤΙΚΟ XG ΑΝΑ ΛΕΠΤΟ')
+    try:
+        allm = _season_matches(league)
+    except Exception as e:
+        st.error(f'Δεν φορτωσαν τα ματς: {e}')
+        return
+    fin_gws = sorted({m['gw'] for m in allm if m['finished']})
+    if not fin_gws:
+        st.info('Δεν εχουν ολοκληρωθει ματς ακομα φετος.')
+        return
+    c1, c2 = st.columns([1, 3])
+    with c1:
+        gw = st.selectbox('Αγωνιστικη', sorted({m['gw'] for m in allm if m['gw']}),
+                          index=sorted({m['gw'] for m in allm if m['gw']}).index(fin_gws[-1]),
+                          format_func=lambda x: f'GW {x}', key=f'res_gw_{league}')
+    gm = [m for m in allm if m['gw'] == gw]
+    fin = [m for m in gm if m['finished']]
+    st.components.v1.html(results_view.round_table_html(gm), height=len(gm) * 38 + 30, scrolling=False)
+    if not fin:
+        st.caption('Κανενα ολοκληρωμενο ματς σε αυτη την αγωνιστικη ακομα.')
+        return
+    names = {m['fid']: f"{m['home']} {m['hs']}–{m['aw']} {m['away']}" for m in sorted(fin, key=lambda x: x['utc'])}
+    sel = st.selectbox('Ματς (λεπτομερειες + xG chart)', list(names), format_func=lambda k: names[k],
+                       key=f'res_m_{league}')
+    try:
+        det = _match_detail(sel)
+    except Exception as e:
+        st.error(f'Δεν φορτωσε το ματς: {e}')
+        return
+    if not det or not det['shots']:
+        st.caption('Δεν υπαρχει shotmap για αυτο το ματς.')
+        return
+    sh_, sa_ = results_view.team_stats(det, 'home'), results_view.team_stats(det, 'away')
+    st.markdown(f"### <span style='color:{results_view.HOME_C}'>{det['home']['name']}</span> "
+                f"{det['home']['score']} – {det['away']['score']} "
+                f"<span style='color:{results_view.AWAY_C}'>{det['away']['name']}</span>",
+                unsafe_allow_html=True)
+    mc = st.columns(5)
+    for col, lbl, vh, va in ((mc[0], 'xG', f"{sh_['xg']:.2f}", f"{sa_['xg']:.2f}"),
+                             (mc[1], 'xGOT', f"{sh_['xgot']:.2f}", f"{sa_['xgot']:.2f}"),
+                             (mc[2], 'Σουτ', sh_['shots'], sa_['shots']),
+                             (mc[3], 'Στοχο', sh_['ontarget'], sa_['ontarget']),
+                             (mc[4], 'Μεγ.φασεις', sh_['big'], sa_['big'])):
+        col.markdown(f"<div style='text-align:center;color:#6b7fa3;font-size:10px;text-transform:uppercase'>{lbl}</div>"
+                     f"<div style='text-align:center;font-family:monospace;font-size:15px'>"
+                     f"<span style='color:{results_view.HOME_C}'>{vh}</span> · "
+                     f"<span style='color:{results_view.AWAY_C}'>{va}</span></div>", unsafe_allow_html=True)
+    if sh_['pens'] or sa_['pens']:
+        st.caption(f"Πεναλτι: {det['home']['name']} {sh_['pens']} · {det['away']['name']} {sa_['pens']} "
+                   '(στο xG μετρανε με την πραγματικη τους αξια ~0.79 — ΟΧΙ τη διορθωση 0.25 του μοντελου).')
+    st.plotly_chart(results_view.xg_fig(det), use_container_width=True,
+                    config={'displayModeBar': False})
+    st.components.v1.html(results_view.chances_html(det), height=270, scrolling=False)
+
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
-          'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup}
+          'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results}
 if page in RENDER:
     RENDER[page](league)
 else:
