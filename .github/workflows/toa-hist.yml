@@ -1,0 +1,49 @@
+name: toa-hist-pull
+
+# Ιστορικα snapshots The Odds API για παιγμενα ματς 26/27 (συγκριση με nowgoal).
+# Τρεχει χειροκινητα (Run workflow) Η οταν αλλαξει το toa_hist_request.txt (trigger αρχειο).
+# Κοστος ~10 credits/snapshot — δες toa_hist_pull.py.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'toa_hist_request.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: toa-hist
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Pull historical snapshots
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_hist_pull.py
+
+      - name: Commit snapshots
+        run: |
+          git config user.name "toa-hist-bot"
+          git config user.email "actions@github.com"
+          git add toa_hist_2627.jsonl
+          if git diff --cached --quiet; then
+            echo "no new snapshots"
+          else
+            git commit -m "toa hist snapshots 2627 [skip ci]"
+            git push
+          fi
