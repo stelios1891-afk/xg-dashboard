@@ -41,11 +41,15 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
         run: python ligainsider_fetch.py || echo "ligainsider failed (μη κρισιμο)"
+      - name: Forward log (Δ ενδεκαδων τη στιγμη της προβλεψης)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python lineup_forward_log.py || echo "forward log failed (μη κρισιμο)"
       - name: Commit if changed
         run: |
           git config user.name "predicted11-bot"
           git config user.email "actions@github.com"
-          git add projected_lineups.jsonl projected_fc.jsonl
+          git add projected_lineups.jsonl projected_fc.jsonl lineup_forward.jsonl
           if git diff --cached --quiet; then
             echo "no changes"
           else
