@@ -100,6 +100,66 @@ def movers_rows(H, hours=48, top=12, min_move=0.01):
     return rows[:top]
 
 
+def line_change_rows(H, horizon_days=8):
+    """Ματς (μελλοντικα) οπου η ΑΣΙΑΤΙΚΗ ΓΡΑΜΜΗ αλλαξε απο την πρωτη καταγραφη.
+    -> [dict] ταξινομημενα κατα ποτε εγινε η ΤΕΛΕΥΤΑΙΑ αλλαγη (πιο προσφατα πρωτα)."""
+    import datetime as _dtm
+    now = _dtm.datetime.now(_dtm.timezone.utc)
+    out = []
+    for _key, d, _ko in upcoming(H, horizon_days):
+        sn = [x for x in d['snaps'] if x.get('line') is not None]
+        if len(sn) < 2:
+            continue
+        chain = [sn[0]]
+        for x in sn[1:]:
+            if x['line'] != chain[-1]['line']:
+                chain.append(x)
+        if len(chain) < 2:
+            continue
+        last = chain[-1]
+        hrs = (now - last['t']).total_seconds() / 3600
+        out.append(dict(meta=d['meta'], chain=[c['line'] for c in chain],
+                        line0=chain[0]['line'], line1=last['line'],
+                        oh=sn[-1].get('oh'), oa=sn[-1].get('oa'),
+                        moved_hrs=hrs, nsteps=len(chain) - 1))
+    out.sort(key=lambda r: r['moved_hrs'])
+    return out
+
+
+def line_change_html(rows):
+    body = ''
+    for r in rows:
+        m = r['meta']
+        steps = ' → '.join(('%+g' % c) for c in r['chain'])
+        big = abs((r['line1'] or 0) - (r['line0'] or 0)) >= 0.5
+        hl = 'color:#ffb84d;font-weight:700;' if big else 'color:#e8edf8;font-weight:700;'
+        when = ('%dλ' % round(r['moved_hrs'] * 60)) if r['moved_hrs'] < 1 else ('%dω' % round(r['moved_hrs']))
+        body += (
+            '<tr>'
+            f'<td class="mt"><div class="nm">{_h.escape(m.get("home") or "")} – {_h.escape(m.get("away") or "")}</div>'
+            f'<div class="sub">{_h.escape(m.get("lg") or "")} · {_kofmt(_dt(m.get("ko")))}</div></td>'
+            f'<td class="ch" style="{hl}">{steps}</td>'
+            f'<td class="od">{(r["oh"] or 0):.2f} / {(r["oa"] or 0):.2f}</td>'
+            f'<td class="wh">πριν {when}</td>'
+            '</tr>')
+    css = """<style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf8;padding:2px;}
+    table{width:100%;border-collapse:collapse;background:#111827;border:1px solid #1e2d47;border-radius:12px;overflow:hidden;}
+    td{padding:9px 12px;border-bottom:1px solid #121b30;font-size:13px;}
+    td.mt .nm{font-weight:600;font-size:13.5px;}
+    td.mt .sub{color:#5a6b8c;font-size:10.5px;margin-top:1px;}
+    td.ch{font-family:'JetBrains Mono',monospace;font-size:13.5px;white-space:nowrap;}
+    td.od{font-family:'JetBrains Mono',monospace;color:#8fa3c8;white-space:nowrap;width:110px;}
+    td.wh{color:#5a6b8c;font-size:11px;width:70px;text-align:right;}
+    </style><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">"""
+    head = ('<tr><td class="mt" style="color:#6b7fa3;font-size:10px;text-transform:uppercase;letter-spacing:1px">ΜΑΤΣ</td>'
+            '<td class="ch" style="color:#6b7fa3;font-size:10px;letter-spacing:1px">ΓΡΑΜΜΗ (γηπεδουχος)</td>'
+            '<td class="od" style="color:#6b7fa3;font-size:10px;letter-spacing:1px">ΤΩΡΑ</td>'
+            '<td class="wh" style="color:#6b7fa3;font-size:10px">ΠΟΤΕ</td></tr>')
+    return css + '<table>' + head + body + '</table>'
+
+
 def _spark_svg(vals, color='#34d17a', w=96, h=26):
     if len(vals) < 2:
         return ''

@@ -354,6 +354,13 @@ def render_moves(league):
         st.components.v1.html(mv.movers_html(rows), height=min(len(rows) * 52 + 50, 900), scrolling=True)
     else:
         st.caption("Καμια αξιολογη κινηση ακομα (χρειαζονται ≥2 καταγραφες ανα ματς).")
+    # ---- 1β. Αλλαγες ΑΣΙΑΤΙΚΗΣ γραμμης (ολη η ιστορια, οχι μονο 48h) ----
+    lc = mv.line_change_rows(H)
+    if lc:
+        st.markdown("#### 🔀 Αλλαγες γραμμης (ασιατικο) — απο την πρωτη καταγραφη")
+        st.caption("Σκαλια της γραμμης του γηπεδουχου, με το ποτε εγινε το τελευταιο. "
+                   "Πορτοκαλι = συνολικη μετατοπιση ≥ μισο γκολ.")
+        st.components.v1.html(mv.line_change_html(lc), height=min(len(lc) * 48 + 50, 620), scrolling=True)
     # ---- 2. Ανα πρωταθλημα ----
     st.markdown("#### Ολα τα επερχομενα ανα πρωταθλημα")
     lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg')},
