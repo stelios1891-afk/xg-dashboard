@@ -47,7 +47,7 @@ for t_, g in cur.groupby('team'):
 
 now = datetime.datetime.now(datetime.timezone.utc)
 done = []; up = []
-for (hid, aid, koiso), (_, r, ko) in rows.items():
+for (hid, aid), (_, r, ko) in rows.items():
     gd = res.get((hid, aid))
     if ko < now and gd is not None:
         done.append((r, gd))
