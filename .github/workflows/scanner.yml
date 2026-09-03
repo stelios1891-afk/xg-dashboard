@@ -59,14 +59,21 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python shadow_scan.py || echo "shadow failed (μη κρισιμο)"
 
+      # σκιωδης Βραζιλια (paper — καθαρο in-season 15η+, ~1 credit μονο οταν εχει ματς)
+      - name: Brazil shadow
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python brazil_shadow.py || echo "brazil shadow failed (μη κρισιμο)"
+
       # commit ΜΟΝΟ οταν αλλαξαν τα picks (state) → το dashboard ανανεωνεται μονο σε νεα/αλλαγες
       - name: Commit picks if changed
         run: |
           git config user.name "scanner-bot"
           git config user.email "actions@github.com"
-          for f in clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json; do [ -f "$f" ] || : > "$f"; done
-          git add value_scan_state.json value_picks_latest.json market_1x2_latest.json odds_history.jsonl odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json
-          if git diff --cached --quiet -- value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl; then
+          for f in clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json; do [ -f "$f" ] || : > "$f"; done
+          git add value_scan_state.json value_picks_latest.json market_1x2_latest.json odds_history.jsonl odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json
+          if git diff --cached --quiet -- value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl brazil_shadow.jsonl; then
             echo "no pick/market changes — skip commit"
           else
             git commit -m "picks/market update [skip ci]"

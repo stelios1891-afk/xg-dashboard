@@ -50,14 +50,15 @@ jobs:
           python fantasycoach_fetch.py || echo "fantasy-coach συλλογη failed (μη κρισιμο)"
           python ligainsider_fetch.py || echo "ligainsider συλλογη failed (μη κρισιμο)"
           python lineup_forward_log.py || echo "forward log failed (μη κρισιμο)"
+          python brazil_refresh.py || echo "brazil refresh failed (μη κρισιμο)"
 
       - name: Commit if raw data changed
         run: |
           git config user.name "data-refresh-bot"
           git config user.email "actions@github.com"
-          git add teamgame_inputs.csv data_*_2627.json player_matches_2627.json squads_2627.json lineup_lab.json projected_lineups.jsonl projected_fc.jsonl lineup_forward.jsonl
+          git add teamgame_inputs.csv data_*_2627.json data_Brazil_2026.json player_matches_2627.json squads_2627.json lineup_lab.json projected_lineups.jsonl projected_fc.jsonl lineup_forward.jsonl
           # commit ΜΟΝΟ αν αλλαξαν τα raw data (νεα ματς / Opta revisions) — οχι μονο float-noise στο csv
-          if git diff --cached --quiet -- data_*_2627.json player_matches_2627.json projected_lineups.jsonl; then
+          if git diff --cached --quiet -- data_*_2627.json data_Brazil_2026.json player_matches_2627.json projected_lineups.jsonl; then
             echo "no raw-data changes — skip commit"
           else
             git commit -m "data refresh 2627 [skip ci]"
