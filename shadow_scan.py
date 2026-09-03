@@ -72,6 +72,10 @@ if __name__ == '__main__':
     Mc, id2c = picks.load_matches(list(build_data.LEAGUE_FOTMOB), [build_data.CURRENT_SEASON])
     id2name.update(id2c)
     name2id = {v: k for k, v in id2name.items()}
+    # in-season κατασταση ανα λιγκα (για το I-σκελος: καθαρο φετινο, n>=14 και οι δυο —
+    # W∩I συμφωνια μετρηθηκε 4/4 σεζον +7.2% vs +5.3% στο backtest, 3/9/2026)
+    INS = {lg: picks.league_state(Mc, lg, build_data.CURRENT_SEASON)
+           for lg in build_data.LEAGUE_FOTMOB}
 
     now = datetime.datetime.now(datetime.timezone.utc)
     ts = now.isoformat(timespec='minutes')
@@ -120,6 +124,16 @@ if __name__ == '__main__':
                 # φαβορι (συμπληρωμα των διορθωμενων πιθανοτητων του dog)
                 pwSf = max(1.0 - pwS - ppQ, 0.0)
                 e_B2f = edge_of(pwSf, ppQ, o_fav)
+                # I-σκελος: καθαρο in-season (μονο οταν και οι 2 εχουν >=14 φετινα ματς)
+                e_I = None
+                ihist, ils, ilx, ihf = INS[lg]
+                hh_i = ihist.get(H); ha_i = ihist.get(A)
+                if hh_i and ha_i and len(hh_i['sf']) >= 14 and len(ha_i['sf']) >= 14 \
+                        and ils and ilx:
+                    xhi, xai = picks.predict(hh_i, ha_i, ils, ilx, ihf)
+                    di = picks.gd_dist(min(max(xhi, 0.05), 6.0), min(max(xai, 0.05), 6.0))
+                    pwI, ppI = picks.p_cover(di, dside, ud)
+                    e_I = edge_of(pwI, ppI, o_dog)
                 isA = bool(in_band(o_dog) and e_A >= picks.EDGE)
                 isC = bool(in_band(o_dog) and lt in ('x.0', 'x.5') and e_C >= picks.EDGE)
                 keep = isA or isC or (in_band(o_dog) and e_B2 >= EDGE_FLOOR_B2) \
@@ -137,6 +151,7 @@ if __name__ == '__main__':
                     line=line, oh=oh, oa=oa, xh=round(xh, 3), xa=round(xa, 3),
                     dside=dside, ud=ud, lt=lt,
                     e_A=round(e_A, 4), e_C=round(e_C, 4), e_B2=round(e_B2, 4),
+                    e_I=(round(e_I, 4) if e_I is not None else None),
                     isA=isA, isC=isC,
                     o_fav=o_fav, e_B2f=round(e_B2f, 4),
                     pwA=round(pwA, 4), pwQ=round(pwQ, 4), pwS=round(pwS, 4), ppQ=round(ppQ, 4)),

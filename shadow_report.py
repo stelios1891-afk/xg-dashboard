@@ -82,6 +82,9 @@ if done:
     for thr in (0.02, 0.04):
         k = [s['pnl'] for s in sysrows if s['r']['isA'] and s['r']['isC'] and s['r']['e_B2'] >= thr]
         print(f"  ΣΥΜΦΩΝΙΑ Α∩C∩B2>={thr*100:.0f}% : {cell(k)}")
+    wi = [s['pnl'] for s in sysrows
+          if s['r']['isA'] and (s['r'].get('e_I') or -1) >= picks.EDGE]
+    print(f"  W∩I (live ∩ in-season)  : {cell(wi)}   [ενεργο απο τη 15η — πριν, e_I κενο]")
     f2 = [picks.settle(s['gd'], -s['r']['dside'], -s['r']['ud'], s['r']['o_fav'])
           for s in sysrows
           if s['r']['e_B2f'] >= 0.02 and picks.OMIN <= s['r']['o_fav'] <= picks.OMAX]
