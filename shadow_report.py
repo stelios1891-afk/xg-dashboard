@@ -22,8 +22,12 @@ for line in open('shadow_picks.jsonl', encoding='utf-8'):
         continue
     if t > ko:
         continue
-    key = (r['hid'], r['aid'], r['ko'])
+    key = (r['hid'], r['aid'])          # ενα ανα ματς — αν αλλαξε το ΚΟ, κραταμε το νεοτερο ΚΟ
     d = abs((t - (ko - datetime.timedelta(hours=24))).total_seconds())
+    if key in rows and rows[key][2] != ko:
+        if ko > rows[key][2]:
+            rows[key] = (d, r, ko)      # νεο ΚΟ αντικαθιστα το παλιο
+        continue
     if key not in rows or d < rows[key][0]:
         rows[key] = (d, r, ko)
 
