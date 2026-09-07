@@ -45,12 +45,12 @@ PAGES = [('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 
          ('ave', 'Actual vs Expected', '🎯'), ('value', 'Value Picks', '💰'),
          ('results', 'Results', '🏁'),
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
-         ('lineup', 'Lineup Lab', '🧪'),
+         ('lineup', 'Lineup Lab', '🧪'), ('europe', 'Europe', '🌍'),
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -557,6 +557,43 @@ def render_lineup(league):
 
 
 
+def render_europe(league):
+    import europe_view as ev
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#7ea2ff">🌍 EUROPE</div>'
+                '<div class="co">UCL · UEL · UECL — LEAGUE PHASE 2026/27 · V4 CROSS-LEAGUE ENGINE</div></div></div>',
+                unsafe_allow_html=True)
+    data = ev.load()
+    if not data:
+        st.info('Δεν υπαρχουν ακομα projections — τρεξε τοπικα `python euro_live_projections.py` και κανε push.')
+        return
+    st.caption(f"Εγχωρια ratings (warm-start K=8) + διορθωση δυναμικοτητας λιγκας (player-bridges → ClubElo) + "
+               f"HFA Ευρωπης. Πηγη rating ανα ομαδα στο badge: xG πληρες (FotMob) / xG Opta (Ben Griffis) / "
+               f"γκολ+Elo / μονο γκολ. Υπολογισμος: **{str(data.get('generated', ''))[:16].replace('T', ' ')} UTC** "
+               "— στατικο snapshot, ανανεωνεται με το επομενο push.")
+    st.caption("⚠ Ενημερωτικο: στο backtest 2223-2526 το μοντελο ειναι ~0.05 γκολ ΠΙΣΩ απο την αγορα στην ακρη, "
+               "και στις ομαδες χωρις πληρες xG υπερεκτιμα συστηματικα (+0.3 γκολ) — τα cards με κοκκινα/κιτρινα "
+               "badges θελουν αλατι.")
+    comps = ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague']
+    tabs = st.tabs([ev.COMP_LABEL[c] for c in comps])
+    for tab, comp in zip(tabs, comps):
+        with tab:
+            cm = [m for m in data['matches'] if m.get('comp') == comp]
+            if not cm:
+                st.info('Δεν βρεθηκαν ματς.')
+                continue
+            rounds = sorted({str(m.get('round') or '?') for m in cm}, key=lambda r: (len(r), r))
+            # προεπιλογη: πρωτη αγωνιστικη με ματς που δεν εχουν τελειωσει
+            open_r = next((r for r in rounds
+                           if any(not m.get('finished') for m in cm if str(m.get('round')) == r)), rounds[0])
+            rr = st.selectbox('Αγωνιστικη', rounds, index=rounds.index(open_r),
+                              format_func=lambda x: f'Αγωνιστικη {x}', key=f'eu_r_{comp}')
+            sel = sorted([m for m in cm if str(m.get('round')) == rr], key=lambda m: str(m.get('utc')))
+            ncov = sum(1 for m in sel if m.get('covered'))
+            if ncov < len(sel):
+                st.caption(f'{len(sel) - ncov} ματς χωρις projection (ακαλυπτη ομαδα).')
+            st.components.v1.html(ev.cards_block(sel), height=min(len(sel) * 150 + 40, 6000), scrolling=True)
+
+
 @st.cache_data(ttl=1800)
 def _season_matches(league):
     return results_view.season_matches(league)
@@ -630,7 +667,8 @@ def render_results(league):
 
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
-          'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results}
+          'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
+          'europe': render_europe}
 if page in RENDER:
     RENDER[page](league)
 else:
