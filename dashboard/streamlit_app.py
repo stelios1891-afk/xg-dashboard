@@ -591,7 +591,8 @@ def render_europe(league):
             ncov = sum(1 for m in sel if m.get('covered'))
             if ncov < len(sel):
                 st.caption(f'{len(sel) - ncov} ματς χωρις projection (ακαλυπτη ομαδα).')
-            st.components.v1.html(ev.cards_block(sel), height=min(len(sel) * 150 + 40, 6000), scrolling=True)
+            st.components.v1.html(ev.cards_block(sel, ev.load_odds()),
+                                  height=min(len(sel) * 165 + 40, 6000), scrolling=True)
 
 
 @st.cache_data(ttl=1800)

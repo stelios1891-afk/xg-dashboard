@@ -8,8 +8,9 @@ import os, json, html, datetime
 
 import cards  # CSS/FONTS/LOGO απο τα κοινα match cards
 
-_PROJ_F = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                       'euro_projections.json')
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_PROJ_F = os.path.join(_ROOT, 'euro_projections.json')
+_ODDS_F = os.path.join(_ROOT, 'euro_odds_latest.json')
 
 COMP_LABEL = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League',
               'ConferenceLeague': 'Conference League'}
@@ -25,6 +26,15 @@ def load():
         return None
     with open(_PROJ_F, encoding='utf-8') as fh:
         return json.load(fh)
+
+
+def load_odds():
+    """{mid: {h,d,a,line,oh,oa,when}} απο τον scanner (euro_odds_scan.py)· {} αν λειπει."""
+    try:
+        with open(_ODDS_F, encoding='utf-8') as fh:
+            return json.load(fh).get('odds', {})
+    except Exception:
+        return {}
 
 
 def esc(s):
@@ -46,7 +56,21 @@ def _ko_fmt(utc):
         return str(utc)[:16]
 
 
-def card_html(m):
+def _mkt_span(our, mkt):
+    """Οπως cards._mkt_span: πρασινο = η αγορα πληρωνει καλυτερα απο το fair μας (value),
+    κοκκινο = η αγορα πιο σιγουρη απο εμας."""
+    if not mkt:
+        return '<span class="mo none">—</span>'
+    if our < mkt * 0.97:
+        c = 'val'
+    elif our > mkt * 1.03:
+        c = 'against'
+    else:
+        c = 'near'
+    return f'<span class="mo {c}">{mkt:.2f}</span>'
+
+
+def card_html(m, mk=None):
     if not m.get('covered'):
         return (f'<div class="card" style="opacity:.55"><div class="sum">'
                 f'<div class="team"><div class="thead">{cards._logo(m.get("hid"))}'
@@ -64,8 +88,12 @@ def card_html(m):
     if m.get('finished') and m.get('score'):
         fin = (f'<span style="font-family:monospace;font-weight:700;color:#e8edf8;'
                f'font-size:13px">{esc(m["score"])}</span>')
-    odds = (f'<div class="oddsrow"><span class="rl">fair</span><div class="odds">'
+    odds = (f'<div class="oddsrow"><span class="rl">μοντ</span><div class="odds">'
             f'<span>{m["o1"]:.2f}</span><span>{m["ox"]:.2f}</span><span>{m["o2"]:.2f}</span></div></div>')
+    if mk and mk.get('h'):
+        odds += (f'<div class="oddsrow"><span class="rl">αγορ</span><div class="odds">'
+                 f'{_mkt_span(m["o1"], mk.get("h"))}{_mkt_span(m["ox"], mk.get("d"))}'
+                 f'{_mkt_span(m["o2"], mk.get("a"))}</div></div>')
     return f"""
 <div class="card"><div class="sum">
   <div class="team">
@@ -95,9 +123,17 @@ def card_html(m):
     <div class="row"><span>Φετινα ματς</span><b>{m.get('n_a', 0)}</b></div>
     <div class="row"><span>Neutral xG</span><b>{m['xga0']:.3f}</b></div>
     <div class="row"><span>Adj xG</span><b class="acc">{m['xga']:.3f}</b></div></div>
-</div><div class="time">{_ko_fmt(m.get('utc'))} · αγωνιστικη {esc(m.get('round') or '?')}</div></details></div>"""
+</div><div class="time">{_ko_fmt(m.get('utc'))} · αγωνιστικη {esc(m.get('round') or '?')}{_ah_note(mk)}</div></details></div>"""
 
 
-def cards_block(matches):
+def _ah_note(mk):
+    if not mk or mk.get('line') is None:
+        return ''
+    return (f' · ασιατικο {mk["line"]:+.2f} @{mk.get("oh", 0):.2f}/{mk.get("oa", 0):.2f}'
+            f' ({str(mk.get("when", ""))[:16].replace("T", " ")} UTC)')
+
+
+def cards_block(matches, odds=None):
+    odds = odds or {}
     return cards.CARD_CSS + cards.FONTS + '<div class="wrap">' + \
-        ''.join(card_html(m) for m in matches) + '</div>'
+        ''.join(card_html(m, odds.get(str(m.get('mid')))) for m in matches) + '</div>'
