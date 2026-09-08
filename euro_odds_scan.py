@@ -17,6 +17,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 PROJ_F = os.path.join(ROOT, 'euro_projections.json')
 OUT_F = os.path.join(ROOT, 'euro_odds_latest.json')
 
+LIVE_HOURS = 2.5     # in-play καταγραφη σε euro_live_odds.jsonl εως 2.5h μετα το ΚΟ (αιτημα 9/9)
 HOURS_AHEAD = 96     # αιτημα Στελιου 9/9: απο ΔΕΥΤΕΡΑ αποδοσεις για ΟΛΗ την ευρωπαικη εβδομαδα
                      # (Τρ+Τετ+Πεμ)· 96h ωστε τα ματς της Πεμπτης να πιανονται απο Δευτερα πρωι.
                      # Κοστος: ~3 credits/scan μονο τις μερες Δευ-Πεμ ευρωπαικων εβδομαδων.
@@ -180,6 +181,7 @@ def main():
     except Exception:
         pass
     upc = {}
+    livefx = {}      # ματς ΣΕ ΕΞΕΛΙΞΗ (εως LIVE_HOURS μετα το ΚΟ): καταγραφη in-play σε ΧΩΡΙΣΤΟ αρχειο
     for m in P.get('matches', []):
         try:
             ko = _pdt(m['utc'])
@@ -187,15 +189,19 @@ def main():
             continue
         if m.get('finished'):
             continue
-        # ΜΟΝΟ ματς που ΔΕΝ εχουν σεντραρει: μετα το ΚΟ η εγγραφη παγωνει στην τελευταια
-        # προ-ΚΟ τιμη (= το «κλεισιμο» μας)· αλλιως in-play τιμες πατανε το pre-match.
-        if 0 <= (ko - now).total_seconds() <= HOURS_AHEAD * 3600:
+        dt_s = (ko - now).total_seconds()
+        # ΜΟΝΟ ματς που ΔΕΝ εχουν σεντραρει μπαινουν στο κυριο αρχειο: μετα το ΚΟ η εγγραφη
+        # παγωνει στην τελευταια προ-ΚΟ τιμη (= το «κλεισιμο» μας).
+        if 0 <= dt_s <= HOURS_AHEAD * 3600:
             upc.setdefault(m['comp'], []).append(dict(mid=m['mid'], ko=ko,
                                                       home=m['home'], away=m['away']))
+        elif -LIVE_HOURS * 3600 <= dt_s < 0:
+            livefx.setdefault(m['comp'], []).append(dict(mid=m['mid'], ko=ko,
+                                                         home=m['home'], away=m['away']))
     # prune παλιες εγγραφες
     odds = {k: v for k, v in old.items()
             if v.get('ko') and (now - _pdt(v['ko'])).total_seconds() < PRUNE_H * 3600}
-    if not upc:
+    if not upc and not livefx:
         print('κανενα ευρωπαϊκο ματς στο παραθυρο — 0 credits')
         json.dump(dict(scanned_at=now.isoformat()[:16], odds=odds, note='no upcoming'),
                   open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False)
@@ -208,17 +214,20 @@ def main():
         age_min = (now - _pdt(last + ':00+00:00' if len(str(last)) == 16 else last)).total_seconds() / 60
     except Exception:
         age_min = 1e9
-    nearest_h = min((f['ko'] - now).total_seconds() / 3600
-                    for fs in upc.values() for f in fs)
+    nearest_h = min([(f['ko'] - now).total_seconds() / 3600
+                     for fs in upc.values() for f in fs] or [1e9])
     has_lad = (not odds) or any('ah' in v for v in odds.values())
-    if age_min < 45 and nearest_h > 6 and has_lad:
+    if age_min < 45 and nearest_h > 6 and has_lad and not livefx:
         print(f'φρεσκο αρχειο ({age_min:.0f}λ) και κοντινοτερο ΚΟ σε {nearest_h:.1f}h — skip (0 credits)')
         return
     if not os.environ.get('TOA_KEY'):
         print('TOA_KEY δεν υπαρχει (τοπικο τρεξιμο;) — δεν γινεται fetch, το αρχειο μενει ως εχει')
         return
     rem = None; nmatch = 0; unmatched = []
-    for comp, fixtures in upc.items():
+    live_rows = []
+    comps_all = sorted(set(upc) | set(livefx))
+    for comp in comps_all:
+        fixtures = upc.get(comp, [])
         sport = SPORT_EU[comp]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
                          params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',
@@ -235,6 +244,27 @@ def main():
                 continue
             ht = ALIAS_EU.get(g.get('home_team'), g.get('home_team'))
             at = ALIAS_EU.get(g.get('away_team'), g.get('away_team'))
+            # --- LIVE ματς: καταγραφη σε χωριστο append-only αρχειο, ΟΧΙ στο κυριο ---
+            lcands = [f for f in livefx.get(comp, [])
+                      if abs((f['ko'] - gko).total_seconds()) <= 1200]
+            lbest = None; lbs = 0.0
+            for f in lcands:
+                s = sim(ht, f['home']) + sim(at, f['away'])
+                if s > lbs:
+                    lbs, lbest = s, f
+            if lbest is not None and lbs >= 1.1:
+                h2 = _h2h(g); sp = _spread(g); tt = _total(g)
+                lr = dict(t=now.isoformat()[:16], mid=lbest['mid'],
+                          min_ko=round((now - lbest['ko']).total_seconds() / 60))
+                if h2:
+                    lr.update(h=round(h2[0], 2), d=round(h2[1], 2), a=round(h2[2], 2))
+                if sp:
+                    lr.update(line=sp[0], oh=round(sp[1], 2), oa=round(sp[2], 2))
+                if tt:
+                    lr.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
+                if h2 or sp or tt:
+                    live_rows.append(lr)
+                continue
             cands = [f for f in fixtures if abs((f['ko'] - gko).total_seconds()) <= 1200]
             best = None; bs = 0.0
             for f in cands:
@@ -312,6 +342,12 @@ def main():
                    credits_remaining=rem, unmatched=unmatched[:20]),
               open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False)
     print(f'σκαλες: ανανεωθηκαν {n_alt} ματς (per-event alternates)')
+    if live_rows:
+        with open(os.path.join(os.path.dirname(OUT_F), 'euro_live_odds.jsonl'),
+                  'a', encoding='utf-8') as lf:
+            for lr in live_rows:
+                lf.write(json.dumps(lr, ensure_ascii=False) + '\n')
+        print(f'live καταγραφη: {len(live_rows)} γραμμες (in-play, χωριστο αρχειο)')
     print(f'ματς στο παραθυρο: {sum(len(v) for v in upc.values())} · ταιριασαν {nmatch} · '
           f'unmatched {len(unmatched)} · credits left {rem}')
     if unmatched:
