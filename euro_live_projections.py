@@ -477,6 +477,7 @@ def team_elo(name, lg):
 # ως w=2 «εγχωρια» παρατηρηση, διορθωμενο για ποιοτητα αντιπαλου/offsets/εδρα (μηχανικη ιδια
 # με το τεστ). Υπολογισμος ΟΛΩΝ πρωτα, εγγραφη στα eng.PRIOR μετα (οχι μολυνση των opp_q).
 W_EU = 2.0
+EU_DRAW_SCALE = 0.85
 P_EU_SEA = '2526'
 b_blend = picks.blend_at(None)
 lhf_eu = math.log(HF_LIVE)
@@ -633,6 +634,13 @@ for key in sorted(fx):
         p1 = sum(p for k_, p in dist.items() if k_ > 0)
         px = dist.get(0, 0.0)
         p2 = 1.0 - p1 - px
+        # ΔΙΟΡΘΩΣΗ ΙΣΟΠΑΛΙΩΝ ΕΥΡΩΠΗΣ (9/9/2026, euro_testB + dc_draw_test): η Ευρωπη βγαζει
+        # λιγοτερα Χ απ' οσα το εγχωριο DC boost 1.13 προβλεπει (actual 18-20% vs pred 24.8%,
+        # μονοτονη πτωση 5/5 σεζον)· LOSO ρ=0.78-0.86, βελτιωση RPS 4/4 → συντηρητικο 0.85.
+        # Εφαρμοζεται ΜΟΝΟ εδω (ευρωπαικα)· το εγχωριο 1.13 μενει ως εχει.
+        px_new = EU_DRAW_SCALE * px
+        k_win = (1.0 - px_new) / max(1.0 - px, 1e-9)
+        p1 *= k_win; p2 *= k_win; px = px_new
         rec.update(covered=True, note='· '.join(notes),
                    xgh=round(xgh, 3), xga=round(xga, 3),
                    xgh0=round(xgh0, 3), xga0=round(xga0, 3),
