@@ -263,11 +263,11 @@ def _render_euro_value():
     import europe_view as ev
     st.markdown('#### 🌍 Ευρωπαϊκά picks (beta)')
     st.caption('UCL/UEL/UECL · ΜΟΝΟ ματς με πλήρες FotMob xG και στις 2 πλευρές · '
-               'κατώφλια: **φαβορί edge ≥4%** / **outsider ≥10%** (αντισταθμίζουν τη μετρημένη '
-               'μεροληψία των δηλωμένων edges ανά πλευρά) · 🎯 = γραμμή −0.75, το κελί που '
-               'επιβεβαιώθηκε τυφλά σε Crown+Pinnacle · τιμές Pinnacle/Matchbook. '
-               'BETA — backtest εντός θορύβου (~0.7 SE), κρίνεται στη φετινή σκιά· προτεινόμενο '
-               'stake ερευνητικό (~¼ μονάδας).')
+               'κατώφλια: **φαβορί ≥4%** / **outsider ≥10%** / **over ≥4%** (τα φαβορί/over '
+               'αντισταθμίζουν τη μετρημένη μεροληψία των δηλωμένων edges) · 🎯 = γραμμή −0.75, '
+               'το κελί που επιβεβαιώθηκε τυφλά σε Crown+Pinnacle · overs = σύνθεση πλήρους '
+               'πέναλτι (W2) · τιμές Pinnacle/Matchbook. BETA — backtest εντός θορύβου '
+               '(~0.7-1 SE), κρίνεται στη φετινή σκιά· προτεινόμενο stake ερευνητικό (~¼ μονάδας).')
     pk = ev_res.get('picks', [])
     st.components.v1.html(ev.euro_value_html(pk), height=min(len(pk) * 48 + 30, 800), scrolling=True)
     st.caption(f"🕒 euro scan: {ev_res.get('scanned_at', '—')}")

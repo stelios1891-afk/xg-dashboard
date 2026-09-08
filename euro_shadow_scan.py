@@ -139,7 +139,9 @@ def main():
     # OUTSIDERS: παιρνει >=0.5 & edge >= 10% · ΦΑΒΟΡΙ: δινει >=0.5 & edge >= 4%
     # (τα κατωφλια αντισταθμιζουν τη γνωστη μεροληψια των δηλωμενων edges ανα πλευρα).
     # Σημανση 🎯 στη γραμμη -0.75 των φαβορι (το τυφλο ευρημα Crown+Pinnacle).
-    EDGE_DOG, EDGE_FAV = 0.10, 0.04
+    EDGE_DOG, EDGE_FAV, EDGE_OVER = 0.10, 0.04, 0.04
+    # OVERS στα picks (εντολη Στελιου 10/9): συνθεση W2 (πεναλτι 0.76, ζευγος xgh_ou/xga_ou),
+    # ΜΟΝΟ FotMob ματς, καθαρο quarter pricing στη γραμμη της αγορας, κατωφλι 4%.
     picks_out = []
     for m in P.get('matches', []):
         if not m.get('covered') or m.get('finished'):
@@ -174,6 +176,20 @@ def main():
                     edge=round(edge, 4), role=role,
                     tag75=bool(role == 'fav' and abs(ln + 0.75) < 0.01),
                     xgh=m['xgh'], xga=m['xga'], when=mk.get('when')))
+        # --- OVERS (W2) ---
+        if (m.get('xgh_ou') is not None and mk.get('tl') is not None and mk.get('to')
+                and 1.70 <= float(mk['to']) <= 2.10):
+            td = tot_dist(m['xgh_ou'], m['xga_ou'])
+            po, pu = p_over(td, float(mk['tl']))
+            e_o = po * (float(mk['to']) - 1) * (1 - picks.MARGIN) - pu
+            if e_o >= EDGE_OVER:
+                picks_out.append(dict(
+                    mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
+                    home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
+                    team=f"Over {float(mk['tl']):.2f}", side=0,
+                    line=round(float(mk['tl']), 2), odds=round(float(mk['to']), 2),
+                    edge=round(e_o, 4), role='over', tag75=False,
+                    xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when')))
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, zone=[1.70, 2.10],
