@@ -169,10 +169,27 @@ def _pick_rows(ladder, center, extra, span=1.01, cap=7):
     return [(ln, have.get(ln)) for ln in sorted(keep)]
 
 
-def _ladder_html(title, rows, fair_fn, main_ln, model_ln, signed):
+def _overround(pair):
+    """Συνολικο implied % ενος ζευγους αποδοσεων (γκανιοτα αγορας)."""
+    try:
+        return 1.0 / pair[0] + 1.0 / pair[1]
+    except (TypeError, ZeroDivisionError, IndexError):
+        return None
+
+
+def _vig(fair, S):
+    """Φορεσε γκανιοτα S στο fair ζευγος (ισομερης κατανομη): Σ(1/o') = S."""
+    if not fair or not S:
+        return fair
+    return [o / S for o in fair]
+
+
+def _ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=None):
     body = ''
     for ln, mo in rows:
         fp = fair_fn(ln)
+        S = _overround(mo) or s_fallback or 1.025
+        fp = _vig(fp, S)
         tag = '●' if main_ln is not None and abs(ln - main_ln) < 0.01 else \
               ('◆' if abs(ln - model_ln) < 0.01 else '')
         tagc = '#f5b731' if tag == '●' else '#7ea2ff'
@@ -207,12 +224,16 @@ def _odds_pane(m, mk, draw_scale):
     main_ah = mk.get('line'); main_ou = mk.get('tl')
     rows_ah = _pick_rows(ah_lad, main_ah if main_ah is not None else ml_ah, ml_ah)
     rows_ou = _pick_rows(ou_lad, main_ou if main_ou is not None else ml_ou, ml_ou)
-    t1 = _ladder_html('ΑΣΙΑΤΙΚΟ (γηπ/φιλοξ)', rows_ah, lambda ln: _fair_pair(dist, ln), main_ah, ml_ah, True)
-    t2 = _ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: _fair_ou(tot, ln), main_ou, ml_ou, False)
+    s_ah = _overround((mk.get('oh'), mk.get('oa'))) if mk.get('oh') else None
+    s_ou = _overround((mk.get('to'), mk.get('tu'))) if mk.get('to') else None
+    t1 = _ladder_html('ΑΣΙΑΤΙΚΟ (γηπ/φιλοξ)', rows_ah, lambda ln: _fair_pair(dist, ln),
+                      main_ah, ml_ah, True, s_ah)
+    t2 = _ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: _fair_ou(tot, ln),
+                      main_ou, ml_ou, False, s_ou)
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
-           'μοντ = fair χωρις γκανιοτα</div>')
+           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη)</div>')
     return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
             f'padding:9px 0 4px">{t1}{t2}</div>{leg}')
 
@@ -284,12 +305,17 @@ def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
     if m.get('finished') and m.get('score'):
         fin = (f'<span style="font-family:monospace;font-weight:700;color:#e8edf8;'
                f'font-size:13px">{esc(m["score"])}</span>')
+    # 1Χ2 μοντελου ΜΕ τη γκανιοτα της αγορας (οταν υπαρχει) ωστε οι 2 γραμμες να συγκρινονται αμεσα
+    s3 = None
+    if mk and mk.get('h') and mk.get('d') and mk.get('a'):
+        s3 = 1.0 / mk['h'] + 1.0 / mk['d'] + 1.0 / mk['a']
+    mo1, mox, mo2 = (m['o1'] / s3, m['ox'] / s3, m['o2'] / s3) if s3 else (m['o1'], m['ox'], m['o2'])
     odds = (f'<div class="oddsrow"><span class="rl">μοντ</span><div class="odds">'
-            f'<span>{m["o1"]:.2f}</span><span>{m["ox"]:.2f}</span><span>{m["o2"]:.2f}</span></div></div>')
+            f'<span>{mo1:.2f}</span><span>{mox:.2f}</span><span>{mo2:.2f}</span></div></div>')
     if mk and mk.get('h'):
         odds += (f'<div class="oddsrow"><span class="rl">αγορ</span><div class="odds">'
-                 f'{_mkt_span(m["o1"], mk.get("h"))}{_mkt_span(m["ox"], mk.get("d"))}'
-                 f'{_mkt_span(m["o2"], mk.get("a"))}</div></div>')
+                 f'{_mkt_span(mo1, mk.get("h"))}{_mkt_span(mox, mk.get("d"))}'
+                 f'{_mkt_span(mo2, mk.get("a"))}</div></div>')
     return f"""
 <div class="card"><div class="sum">
   <div class="team">
