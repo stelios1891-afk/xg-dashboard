@@ -187,7 +187,9 @@ def main():
             continue
         if m.get('finished'):
             continue
-        if -HOURS_BACK * 3600 <= (ko - now).total_seconds() <= HOURS_AHEAD * 3600:
+        # ΜΟΝΟ ματς που ΔΕΝ εχουν σεντραρει: μετα το ΚΟ η εγγραφη παγωνει στην τελευταια
+        # προ-ΚΟ τιμη (= το «κλεισιμο» μας)· αλλιως in-play τιμες πατανε το pre-match.
+        if 0 <= (ko - now).total_seconds() <= HOURS_AHEAD * 3600:
             upc.setdefault(m['comp'], []).append(dict(mid=m['mid'], ko=ko,
                                                       home=m['home'], away=m['away']))
     # prune παλιες εγγραφες
