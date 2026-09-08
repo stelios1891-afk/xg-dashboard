@@ -208,7 +208,8 @@ def main():
         age_min = 1e9
     nearest_h = min((f['ko'] - now).total_seconds() / 3600
                     for fs in upc.values() for f in fs)
-    if age_min < 45 and nearest_h > 6:
+    has_lad = (not odds) or any('ah' in v for v in odds.values())
+    if age_min < 45 and nearest_h > 6 and has_lad:
         print(f'φρεσκο αρχειο ({age_min:.0f}λ) και κοντινοτερο ΚΟ σε {nearest_h:.1f}h — skip (0 credits)')
         return
     if not os.environ.get('TOA_KEY'):
