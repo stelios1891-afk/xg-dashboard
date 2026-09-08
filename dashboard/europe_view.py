@@ -135,6 +135,88 @@ def _fair_ou(tot, line):
 _LT_CELL = ('display:inline-block;text-align:center;font-family:monospace;font-size:10px;')
 
 
+def _model_ah_line(dist):
+    """Η «δικη μας» γραμμη: αυτη οπου το fair ζευγος ειναι το πιο ισορροπημενο."""
+    best, bd = 0.0, 9e9
+    for q in range(-16, 17):
+        ln = q / 4.0
+        pw, pp = _cover_q(dist, 1, ln)
+        pl = 1.0 - pw - pp
+        if pw > 0 and abs(pw - pl) < bd:
+            bd, best = abs(pw - pl), ln
+    return best
+
+
+def _model_ou_line(tot):
+    best, bd = 2.5, 9e9
+    for q in range(4, 25):
+        ln = q / 4.0
+        po, pu = _p_over(tot, ln)
+        if po > 0 and pu > 0 and abs(po - pu) < bd:
+            bd, best = abs(po - pu), ln
+    return best
+
+
+def _pick_rows(ladder, center, extra, span=1.01, cap=7):
+    """Γραμμες αγορας γυρω απο το center (±span), συν η extra (γραμμη μοντελου)."""
+    lines = [r[0] for r in ladder]
+    keep = [ln for ln in lines if center is None or abs(ln - center) <= span]
+    if len(keep) > cap:
+        keep = sorted(keep, key=lambda x: abs(x - (center or 0)))[:cap]
+    if extra is not None and extra not in keep:
+        keep.append(extra)
+    have = {r[0]: (r[1], r[2]) for r in ladder}
+    return [(ln, have.get(ln)) for ln in sorted(keep)]
+
+
+def _ladder_html(title, rows, fair_fn, main_ln, model_ln, signed):
+    body = ''
+    for ln, mo in rows:
+        fp = fair_fn(ln)
+        tag = '●' if main_ln is not None and abs(ln - main_ln) < 0.01 else \
+              ('◆' if abs(ln - model_ln) < 0.01 else '')
+        tagc = '#f5b731' if tag == '●' else '#7ea2ff'
+        lnc = tagc if tag else '#e8edf8'
+        ln_s = f'{ln:+.2f}' if signed else f'{ln:.2f}'
+        fp_s = f'{fp[0]:.2f}/{fp[1]:.2f}' if fp else '—'
+        mo_s = f'{mo[0]:.2f}/{mo[1]:.2f}' if mo else '—'
+        body += (f'<div style="display:flex;gap:7px;align-items:baseline">'
+                 f'<span style="{_LT_CELL}width:10px;color:{tagc};font-size:8px">{tag}</span>'
+                 f'<span style="{_LT_CELL}width:42px;color:{lnc};font-weight:700">{ln_s}</span>'
+                 f'<span style="{_LT_CELL}width:76px;color:#7ea2ff">{fp_s}</span>'
+                 f'<span style="{_LT_CELL}width:76px;color:#8fa3c8">{mo_s}</span></div>')
+    head = (f'<div style="display:flex;gap:7px">'
+            f'<span style="{_LT_CELL}width:10px"></span>'
+            f'<span style="{_LT_CELL}width:42px;font-size:8px;color:#5a6b8c">ΓΡΑΜΜΗ</span>'
+            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΜΟΝΤ</span>'
+            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span></div>')
+    return (f'<div style="display:flex;flex-direction:column;gap:4px">'
+            f'<div style="font-size:9px;color:#6b7fa3;letter-spacing:1.5px;text-align:center">{title}</div>'
+            f'{head}{body}</div>')
+
+
+def _odds_pane(m, mk, draw_scale):
+    """Το κουτι Match Odds: σκαλες γραμμων ασιατικου & γκολ, μοντελο vs αγορα."""
+    mk = mk or {}
+    dist = _eu_dist(m['xgh'], m['xga'], draw_scale)
+    tot = _tot_dist(m['xgh'], m['xga'])
+    ml_ah = _model_ah_line(dist)
+    ml_ou = _model_ou_line(tot)
+    ah_lad = mk.get('ah') or ([[mk['line'], mk['oh'], mk['oa']]] if mk.get('line') is not None else [])
+    ou_lad = mk.get('ou') or ([[mk['tl'], mk['to'], mk['tu']]] if mk.get('tl') is not None else [])
+    main_ah = mk.get('line'); main_ou = mk.get('tl')
+    rows_ah = _pick_rows(ah_lad, main_ah if main_ah is not None else ml_ah, ml_ah)
+    rows_ou = _pick_rows(ou_lad, main_ou if main_ou is not None else ml_ou, ml_ou)
+    t1 = _ladder_html('ΑΣΙΑΤΙΚΟ (γηπ/φιλοξ)', rows_ah, lambda ln: _fair_pair(dist, ln), main_ah, ml_ah, True)
+    t2 = _ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: _fair_ou(tot, ln), main_ou, ml_ou, False)
+    leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
+           '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
+           '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
+           'μοντ = fair χωρις γκανιοτα</div>')
+    return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
+            f'padding:9px 0 4px">{t1}{t2}</div>{leg}')
+
+
 def _lines_table(m, mk, draw_scale):
     """Μινι-πινακας δεξια απο το 1Χ2: γραμμη | μοντελο | αγορα, για ασιατικο & total."""
     mk = mk or {}
@@ -228,9 +310,7 @@ def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
   <button class="tbtn" onclick="tg('{m['mid']}','od',this)">Match odds</button>
   <button class="tbtn" onclick="tg('{m['mid']}','su',this)">Match summary</button>
 </div>
-<div id="od_{m['mid']}" class="pane" hidden>
-  <div style="display:flex;justify-content:center;padding:8px 0 10px">{_lines_table(m, mk, draw_scale)}</div>
-</div>
+<div id="od_{m['mid']}" class="pane" hidden>{_odds_pane(m, mk, draw_scale)}</div>
 <div id="su_{m['mid']}" class="pane" hidden><div class="detail">
   <div class="inp"><div class="h">{esc(m['home'])} (home)</div>
     <div class="row"><span>Λιγκα</span><b>{esc(m.get('lg_h') or '—')}</b></div>

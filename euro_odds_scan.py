@@ -126,6 +126,46 @@ def _spread(g, bks=('pinnacle', 'matchbook')):
     return None
 
 
+def _ladders(g, bks=('pinnacle', 'matchbook')):
+    """ΟΛΕΣ οι γραμμες (κυριες + alternates) του πρωτου book που εχει: -> (ah, ou)
+    ah = sorted [[line, oh, oa]], ou = sorted [[line, over, under]]."""
+    ht, at = g.get('home_team'), g.get('away_team')
+    for bk in bks:
+        ah = {}; ou = {}
+        for b in g.get('bookmakers', []):
+            if b.get('key') != bk:
+                continue
+            for m in b.get('markets', []):
+                key = m.get('key')
+                if key in ('spreads', 'alternate_spreads'):
+                    for o in m.get('outcomes', []):
+                        pt = o.get('point'); pr = o.get('price')
+                        if pt is None or not pr:
+                            continue
+                        if o.get('name') == ht:
+                            ah.setdefault(float(pt), [None, None])[0] = float(pr)
+                        elif o.get('name') == at:
+                            # το point του away ειναι το αντιθετο της γραμμης του home
+                            ah.setdefault(-float(pt), [None, None])[1] = float(pr)
+                elif key in ('totals', 'alternate_totals'):
+                    for o in m.get('outcomes', []):
+                        pt = o.get('point'); pr = o.get('price')
+                        if pt is None or not pr:
+                            continue
+                        nm = str(o.get('name', '')).lower()
+                        if nm == 'over':
+                            ou.setdefault(float(pt), [None, None])[0] = float(pr)
+                        elif nm == 'under':
+                            ou.setdefault(float(pt), [None, None])[1] = float(pr)
+        ah_l = sorted([ln, round(v[0], 2), round(v[1], 2)] for ln, v in ah.items()
+                      if v[0] and v[1])
+        ou_l = sorted([ln, round(v[0], 2), round(v[1], 2)] for ln, v in ou.items()
+                      if v[0] and v[1])
+        if ah_l or ou_l:
+            return ah_l, ou_l
+    return [], []
+
+
 def main():
     now = datetime.datetime.now(datetime.timezone.utc)
     try:
@@ -159,6 +199,18 @@ def main():
                   open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False)
         return
 
+    # gating συχνοτητας (κοστος 5 markets/comp πλεον): μακρια απο σεντρα φτανει ~45λεπτο refresh·
+    # μεσα στο 6ωρο προ ΚΟ γυρναμε σε καθε scan (κλεισιμο γραμμων)
+    try:
+        last = json.load(open(OUT_F, encoding='utf-8')).get('scanned_at')
+        age_min = (now - _pdt(last + ':00+00:00' if len(str(last)) == 16 else last)).total_seconds() / 60
+    except Exception:
+        age_min = 1e9
+    nearest_h = min((f['ko'] - now).total_seconds() / 3600
+                    for fs in upc.values() for f in fs)
+    if age_min < 45 and nearest_h > 6:
+        print(f'φρεσκο αρχειο ({age_min:.0f}λ) και κοντινοτερο ΚΟ σε {nearest_h:.1f}h — skip (0 credits)')
+        return
     if not os.environ.get('TOA_KEY'):
         print('TOA_KEY δεν υπαρχει (τοπικο τρεξιμο;) — δεν γινεται fetch, το αρχειο μενει ως εχει')
         return
@@ -166,7 +218,8 @@ def main():
     for comp, fixtures in upc.items():
         sport = SPORT_EU[comp]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',
+                         params=dict(apiKey=_key(), regions='eu',
+                                     markets='h2h,spreads,totals,alternate_spreads,alternate_totals',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -191,6 +244,7 @@ def main():
                     unmatched.append(f"{g.get('home_team')} vs {g.get('away_team')} ({bs:.2f})")
                 continue
             h2 = _h2h(g); sp = _spread(g); tt = _total(g)
+            ahl, oul = _ladders(g)
             rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16])
             if h2:
                 rec.update(h=round(h2[0], 2), d=round(h2[1], 2), a=round(h2[2], 2))
@@ -198,6 +252,10 @@ def main():
                 rec.update(line=sp[0], oh=round(sp[1], 2), oa=round(sp[2], 2))
             if tt:
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
+            if ahl:
+                rec['ah'] = ahl
+            if oul:
+                rec['ou'] = oul
             if h2 or sp or tt:
                 odds[best['mid']] = rec; nmatch += 1
         time.sleep(0.3)
