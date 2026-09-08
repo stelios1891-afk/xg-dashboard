@@ -75,7 +75,7 @@ def s_player(lg):
     return -GAMMA_PLAYER * POFF[lg] if lg in POFF else None
 
 # ---------------- Griffis — ιδιος κωδικας με euro_expand_test ----------------
-def load_griffis():
+def load_griffis(pen_f=0.25):
     df = pd.read_csv('griffis_matches.csv')
     nmap = json.load(open('griffis_name_map.json', encoding='utf-8'))
     name2id = {}
@@ -106,7 +106,7 @@ def load_griffis():
                                          (tids[1], r.ag, r.xg_a, r.npxg_a, r.shots_a)]:
             n_pen = int(round(max(xg - npxg, 0.0) / PEN_XG))
             rows.append(dict(date=dt, team=tid, gf=float(gf),
-                             xg_model=float(npxg + 0.25 * n_pen),
+                             xg_model=float(npxg + pen_f * n_pen),
                              ns_eff=float(max(shots, 1.0))))
     return {k: pd.DataFrame(v) for k, v in out.items()}
 
@@ -124,7 +124,8 @@ def _sea_label_ok(sea, med_dt):
     return (y0 + 0.4) <= my <= (y0 + 1.6)
 
 class GEngine(Engine):
-    def __init__(self, griffis=None, skip_sea=frozenset(), verbose=False):
+    def __init__(self, griffis=None, skip_sea=frozenset(), verbose=False, pen_f=0.25):
+        self.PEN_F = pen_f
         self.griffis = griffis or {}
         self.skip_sea = set(skip_sea)
         self.BAD_SEASONS = []
@@ -206,7 +207,7 @@ class GEngine(Engine):
                         g['ns_eff'] = NS_CONST
                     else:
                         sf = g.np_raw.sum() / max(g.np_comp.sum(), EPS)
-                        g['xg_model'] = g['np_comp'] * sf + 0.25 * g['pen'] + g['red_xg']
+                        g['xg_model'] = g['np_comp'] * sf + self.PEN_F * g['pen'] + g['red_xg']
                         g['ns_eff'] = g['ns'] + g['pen'] + g['red_xg'].abs() / 0.10
                 if len(g) == 0:
                     continue
@@ -573,6 +574,13 @@ print(f'ΠΕΡΣΙΝΑ ΕΥΡΩΠΑΪΚΑ ΣΤΟ PRIOR (w={W_EU:.0f}): εμπλ�
 for _, nm_, a0, a1, d0_, d1, ne_ in _ex[:6]:
     print(f'  {nm_:22s} n_eu={ne_:2d}  xGF prior {a0:.2f}->{a1:.2f}  xGA {d0_:.2f}->{d1:.2f}')
 
+# ================================================================ OU engine (συνθεση W2)
+# ΜΟΝΟ για τα fair γκολ της οθονης/σκιας (αποφαση Στελιου 10/9): πεναλτι 0.76 αντι 0.25
+# στα ratings — τιποτα αλλο (euro_ou_comp: κλεινει το μισο χασμα βαθμονομησης γκολ, 1Χ2
+# ανεπηρεαστο). Χωρις prior-EU enrichment εδω (μετρημενα αμελητεο)· fits s_v4/HFA κοινα.
+print('[build] GEngine OU (πεναλτι 0.76 — μονο fair γκολ)...', flush=True)
+ENG_OU = GEngine(griffis=load_griffis(pen_f=0.76), skip_sea=set(), verbose=False, pen_f=0.76)
+
 # ================================================================ 2627 fixtures -> projections
 SRC_LABEL = {'shots': 'FotMob', 'griffis': 'Ben'}
 matches = []
@@ -630,6 +638,19 @@ for key in sorted(fx):
         xga0 = math.exp(lXs + att_a + leak_h - RHO * D)
         xgh = xgh0 * HF_LIVE
         xga = xga0 / HF_LIVE
+        # fair γκολ (συνθεση W2, πεναλτι 0.76) — μονο για display/shadow των totals
+        try:
+            sh2 = ENG_OU.side_state(int(m['hid']), d)
+            sa2 = ENG_OU.side_state(int(m['aid']), d)
+            if sh2 and sa2:
+                att_h2, leak_h2, SLh2, XLh2, _ = side_terms(ENG_OU, sh2, d, GKEYS)
+                att_a2, leak_a2, SLa2, XLa2, _ = side_terms(ENG_OU, sa2, d, GKEYS)
+                lXs2 = math.log(((SLh2 * SLa2) ** 0.5) * ((XLh2 * XLa2) ** 0.5))
+                D2 = s_v4(sh2['lg']) - s_v4(sa2['lg'])
+                rec['xgh_ou'] = round(math.exp(lXs2 + att_h2 + leak_a2 + RHO * D2) * HF_LIVE, 3)
+                rec['xga_ou'] = round(math.exp(lXs2 + att_a2 + leak_h2 - RHO * D2) / HF_LIVE, 3)
+        except Exception:
+            pass
         dist = picks.gd_dist(max(xgh, 0.05), max(xga, 0.05))
         p1 = sum(p for k_, p in dist.items() if k_ > 0)
         px = dist.get(0, 0.0)

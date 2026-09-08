@@ -216,7 +216,8 @@ def _odds_pane(m, mk, draw_scale):
     """Το κουτι Match Odds: σκαλες γραμμων ασιατικου & γκολ, μοντελο vs αγορα."""
     mk = mk or {}
     dist = _eu_dist(m['xgh'], m['xga'], draw_scale)
-    tot = _tot_dist(m['xgh'], m['xga'])
+    # γκολ: συνθεση W2 (πεναλτι 0.76) οπου υπαρχει — διορθωνει τη μετρημενη Under-κλιση ~3%
+    tot = _tot_dist(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'])
     ml_ah = _model_ah_line(dist)
     ml_ou = _model_ou_line(tot)
     ah_lad = mk.get('ah') or ([[mk['line'], mk['oh'], mk['oa']]] if mk.get('line') is not None else [])
@@ -233,7 +234,8 @@ def _odds_pane(m, mk, draw_scale):
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
-           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη)</div>')
+           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη) · '
+           'γκολ: συνθεση πληρους πεναλτι (W2)</div>')
     return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
             f'padding:9px 0 4px">{t1}{t2}</div>{leg}')
 

@@ -47,6 +47,31 @@ def edge_of(pw, pp, o):
     return pw * (o - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
 
 
+def tot_dist(lh, la):
+    import math
+    F = [math.factorial(i) for i in range(13)]
+    ph = [math.exp(-max(lh, .05)) * max(lh, .05) ** i / F[i] for i in range(13)]
+    pa = [math.exp(-max(la, .05)) * max(la, .05) ** j / F[j] for j in range(13)]
+    tot = {}; s = 0.0
+    for i in range(13):
+        for j in range(13):
+            p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
+            tot[i + j] = tot.get(i + j, 0.0) + p; s += p
+    return {t: p / s for t, p in tot.items()}
+
+
+def p_over(tot, line):
+    parts = [line] if (line * 4) % 2 == 0 else [line - 0.25, line + 0.25]
+    po = pu = 0.0
+    for L in parts:
+        for t, p in tot.items():
+            if t > L + 0.01:
+                po += p / len(parts)
+            elif t < L - 0.01:
+                pu += p / len(parts)
+    return po, pu
+
+
 def main():
     now = datetime.datetime.now(datetime.timezone.utc)
     try:
@@ -90,6 +115,15 @@ def main():
                 pw2, pp2 = cover_q(dist, side, ln)
                 rec[f'e_clean_{tag}'] = round(edge_of(pw2, pp2, o), 4)
             rec['dside'] = 1 if lf > 0 else (-1 if lf < 0 else (1 if oh > oa else -1))
+            # σκια OVERS (συνθεση W2 πεναλτι-0.76, καθαρο quarter pricing) — γραμμη σκιας 10/9
+            if mk.get('tl') is not None and m.get('xgh_ou') is not None:
+                td = tot_dist(m['xgh_ou'], m['xga_ou'])
+                po, pu = p_over(td, float(mk['tl']))
+                rec['xgh_ou'] = m['xgh_ou']; rec['xga_ou'] = m['xga_ou']
+                if mk.get('to'):
+                    rec['e_ov_w2'] = round(po * (mk['to'] - 1) * (1 - picks.MARGIN) - pu, 4)
+                if mk.get('tu'):
+                    rec['e_un_w2'] = round(pu * (mk['tu'] - 1) * (1 - picks.MARGIN) - po, 4)
             sig = f"{lf}|{oh}|{oa}|{rec['xgh']:.2f}|{rec['xga']:.2f}"
             if st.get(rec['mid']) == sig:
                 continue
