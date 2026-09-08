@@ -17,7 +17,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 PROJ_F = os.path.join(ROOT, 'euro_projections.json')
 OUT_F = os.path.join(ROOT, 'euro_odds_latest.json')
 
-HOURS_AHEAD = 36     # "συντομα": σεντρα εντος 36 ωρων
+HOURS_AHEAD = 48     # "συντομα": σεντρα εντος 48 ωρων (καλυπτει ολο το 2ημερο μιας αγωνιστικης)
 HOURS_BACK = 3       # κρατα και ματς που μολις αρχισαν (για το τελευταιο snapshot)
 PRUNE_H = 48         # ποσο κρατιουνται παλιες εγγραφες στο αρχειο
 
@@ -165,7 +165,8 @@ def main():
                 if s > bs:
                     bs, best = s, f
             if best is None or bs < 1.1:      # ~0.55 μεσος ορος ανα πλευρα
-                unmatched.append(f"{g.get('home_team')} vs {g.get('away_team')} ({bs:.2f})")
+                if cands:                     # TOA event εκτος παραθυρου μας = οχι πραγματικο mismatch
+                    unmatched.append(f"{g.get('home_team')} vs {g.get('away_team')} ({bs:.2f})")
                 continue
             h2 = _h2h(g); sp = _spread(g)
             rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16])
