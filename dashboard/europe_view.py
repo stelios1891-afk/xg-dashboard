@@ -167,8 +167,7 @@ def _lines_table(m, mk, draw_scale):
             f'<span style="{_LT_CELL}width:38px;font-size:8px;color:#5a6b8c;text-transform:uppercase">γραμμη</span>'
             f'<span style="{_LT_CELL}width:72px;font-size:8px;color:#5a6b8c;text-transform:uppercase">μοντ</span>'
             f'<span style="{_LT_CELL}width:72px;font-size:8px;color:#5a6b8c;text-transform:uppercase">αγορ</span></div>')
-    return (f'<div style="display:flex;flex-direction:column;gap:3px;padding:2px 0 0 12px;'
-            f'border-left:1px solid #1e2d47">{head}{body}</div>')
+    return f'<div style="display:flex;flex-direction:column;gap:4px">{head}{body}</div>'
 
 
 def _mkt_span(our, mkt):
@@ -214,21 +213,25 @@ def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
   <div class="team">
     <div class="thead">{cards._logo(m.get('hid'))}<div class="tn">{esc(m['home'])}</div></div>
     <div class="meta"><span class="xg">xG {m['xgh']:.2f}</span>{_src_badge(m.get('src_h'))}</div></div>
-  <div class="mid" style="flex-direction:row;gap:0;align-items:center;min-width:430px">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:210px">
-      <div class="lbls"><span>Home</span><span>Draw</span><span>Away</span></div>
-      <div class="pills"><div class="pill" style="background:{hbg};color:{hc};border:1px solid {hc}44">{hw:.0f}%</div>
-        <div class="pill pd">{dw:.0f}%</div><div class="pill" style="background:{abg};color:{ac};border:1px solid {ac}44">{aw:.0f}%</div></div>
-      <div class="oddswrap">{odds}</div>{fin}
-    </div>
-    {_lines_table(m, mk, draw_scale)}
+  <div class="mid">
+    <div class="lbls"><span>Home</span><span>Draw</span><span>Away</span></div>
+    <div class="pills"><div class="pill" style="background:{hbg};color:{hc};border:1px solid {hc}44">{hw:.0f}%</div>
+      <div class="pill pd">{dw:.0f}%</div><div class="pill" style="background:{abg};color:{ac};border:1px solid {ac}44">{aw:.0f}%</div></div>
+    <div class="oddswrap">{odds}</div>{fin}
   </div>
   <div class="team away">
     <div class="thead">{cards._logo(m.get('aid'))}<div class="tn">{esc(m['away'])}</div></div>
     <div class="meta">{_src_badge(m.get('src_a'))}<span class="xg">xG {m['xga']:.2f}</span></div></div>
 </div>
 <div class="pbar"><div style="width:{hw}%"></div><div style="width:{dw}%"></div><div style="width:{aw}%"></div></div>
-<details><summary>▾ model inputs</summary><div class="detail">
+<div class="tabs2">
+  <button class="tbtn" onclick="tg('{m['mid']}','od',this)">Match odds</button>
+  <button class="tbtn" onclick="tg('{m['mid']}','su',this)">Match summary</button>
+</div>
+<div id="od_{m['mid']}" class="pane" hidden>
+  <div style="display:flex;justify-content:center;padding:8px 0 10px">{_lines_table(m, mk, draw_scale)}</div>
+</div>
+<div id="su_{m['mid']}" class="pane" hidden><div class="detail">
   <div class="inp"><div class="h">{esc(m['home'])} (home)</div>
     <div class="row"><span>Λιγκα</span><b>{esc(m.get('lg_h') or '—')}</b></div>
     <div class="row"><span>Πηγη rating</span><b>{esc(m.get('src_h') or '—')}</b></div>
@@ -241,14 +244,33 @@ def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
     <div class="row"><span>Φετινα ματς</span><b>{m.get('n_a', 0)}</b></div>
     <div class="row"><span>Neutral xG</span><b>{m['xga0']:.3f}</b></div>
     <div class="row"><span>Adj xG</span><b class="acc">{m['xga']:.3f}</b></div></div>
-</div><div class="time">{_ko_fmt(m.get('utc'))} · αγωνιστικη {esc(m.get('round') or '?')}{_ah_note(mk)}</div></details></div>"""
+</div><div class="time">{_ko_fmt(m.get('utc'))} · αγωνιστικη {esc(m.get('round') or '?')}</div></div></div>"""
 
 
-def _ah_note(mk):
-    if not mk or mk.get('line') is None:
-        return ''
-    return (f' · ασιατικο {mk["line"]:+.2f} @{mk.get("oh", 0):.2f}/{mk.get("oa", 0):.2f}'
-            f' ({str(mk.get("when", ""))[:16].replace("T", " ")} UTC)')
+_TABS_CSS = """
+<style>
+.tabs2{display:flex;border-top:1px solid #1e2d47;}
+.tbtn{flex:1;background:none;border:none;cursor:pointer;padding:5px;font-size:9px;color:#6b7fa3;
+      letter-spacing:1px;text-transform:uppercase;font-family:'DM Sans',sans-serif;transition:all .12s;}
+.tbtn:hover{color:#cdd8ee;background:#131c31;}
+.tbtn.on{color:#e8edf8;background:#16203a;font-weight:600;}
+.tbtn+.tbtn{border-left:1px solid #1e2d47;}
+.pane{border-top:1px solid #16203a;}
+</style>
+<script>
+function tg(mid, which, btn){
+  var other = (which === 'od') ? 'su' : 'od';
+  var me = document.getElementById(which + '_' + mid);
+  var ot = document.getElementById(other + '_' + mid);
+  var open = me.hidden;
+  me.hidden = !open;
+  if (ot) ot.hidden = true;
+  var row = btn.parentElement;
+  Array.prototype.forEach.call(row.children, function(b){ b.classList.remove('on'); });
+  if (open) btn.classList.add('on');
+}
+</script>
+"""
 
 
 def cards_block(matches, odds=None, draw_scale=None):
@@ -256,5 +278,5 @@ def cards_block(matches, odds=None, draw_scale=None):
     if draw_scale is None:
         d = load()
         draw_scale = float((d or {}).get('eu_draw_scale', EU_DRAW_SCALE_DEF))
-    return cards.CARD_CSS + cards.FONTS + '<div class="wrap">' + \
+    return cards.CARD_CSS + cards.FONTS + _TABS_CSS + '<div class="wrap">' + \
         ''.join(card_html(m, odds.get(str(m.get('mid'))), draw_scale) for m in matches) + '</div>'
