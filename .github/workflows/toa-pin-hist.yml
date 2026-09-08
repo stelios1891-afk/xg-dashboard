@@ -1,0 +1,50 @@
+name: toa-pin-hist
+
+# Ιστορικο Pinnacle closing (h2h + AH) για UCL/UEL/UECL 2223-2526 απο The Odds API
+# HISTORICAL endpoints. ΜΟΝΟ χειροκινητα (Run workflow) — ΚΑΝΕΝΑ cron.
+# Κοστος: ~444 snapshots × 20 credits = ~8.9k (δες toa_pin_hist_fetch.py --plan).
+# Idempotent: αν κοπει (π.χ. credits < 30k), ξανατρεξιμο συνεχιζει απο το state.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: toa-pin-hist
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Fetch Pinnacle historical snapshots
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_pin_hist_fetch.py
+
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "toa-pin-hist-bot"
+          git config user.email "actions@github.com"
+          git pull --rebase --autostash || true
+          git add toa_pin_hist.jsonl toa_pin_hist_state.json
+          if git diff --cached --quiet; then
+            echo "no new data"
+          else
+            git commit -m "toa pinnacle historical euro closing [skip ci]"
+            git push
+          fi
