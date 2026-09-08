@@ -1,0 +1,40 @@
+name: toa-pin-ou
+
+on:
+  workflow_dispatch: {}    # ΜΟΝΟ χειροκινητο — one-off ιστορικο Pinnacle TOTALS (O/U)
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Fetch Pinnacle historical totals
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_pin_hist_fetch.py --totals
+
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "toa-hist-bot"
+          git config user.email "actions@github.com"
+          git pull --rebase --autostash origin main || true
+          git add toa_pin_hist_ou.jsonl toa_pin_hist_ou_state.json || true
+          if git diff --cached --quiet; then
+            echo "no new data"
+          else
+            git commit -m "pinnacle historical totals [skip ci]"
+            git push
+          fi

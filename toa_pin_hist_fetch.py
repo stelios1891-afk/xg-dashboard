@@ -26,7 +26,10 @@ OUT_F = os.path.join(ROOT, 'toa_pin_hist.jsonl')
 STATE_F = os.path.join(ROOT, 'toa_pin_hist_state.json')
 
 # συμβασεις ονοματων/parsers απο τον live euro scanner (ιδιο matcher παντου)
-from euro_odds_scan import norm, sim, ALIAS_EU, _h2h, _spread, _pdt, SPORT_EU
+from euro_odds_scan import norm, sim, ALIAS_EU, _h2h, _spread, _total, _pdt, SPORT_EU
+
+MARKETS = 'h2h,spreads'   # --totals: γινεται 'totals' (ξεχωριστα αρχεια εξοδου _ou)
+TOTALS_MODE = False
 
 SEASONS = ('2223', '2324', '2425', '2526')
 COMPS = ('ChampionsLeague', 'EuropaLeague', 'ConferenceLeague')
@@ -131,13 +134,19 @@ def match_events(events, fixtures):
 
 
 def rec_from_event(f, g, snap_iso):
-    """Γραμμη jsonl απο fixture+event: pinnacle h2h + κυριο spread (home-persp)."""
+    """Γραμμη jsonl απο fixture+event: pinnacle h2h+spread (default) ή totals (--totals)."""
+    rec = dict(mid=f['mid'], sea=f['sea'], comp=f['comp'], ko=f['ko'].isoformat(),
+               snap_ts=snap_iso, eid=g.get('id'), ct=g.get('commence_time'))
+    if TOTALS_MODE:
+        tt = _total(g, bks=('pinnacle',))
+        if not tt:
+            return None
+        rec.update(tl=tt[0], to=round(tt[1], 3), tu=round(tt[2], 3))
+        return rec
     h2 = _h2h(g, bks=('pinnacle',))
     sp = _spread(g, bks=('pinnacle',))
     if not h2 and not sp:
         return None
-    rec = dict(mid=f['mid'], sea=f['sea'], comp=f['comp'], ko=f['ko'].isoformat(),
-               snap_ts=snap_iso, eid=g.get('id'), ct=g.get('commence_time'))
     if h2:
         rec.update(h=round(h2[0], 3), d=round(h2[1], 3), a=round(h2[2], 3))
     if sp:
@@ -226,7 +235,7 @@ def main_fetch(snaps):
             snap_iso = s['snap'].isoformat().replace('+00:00', 'Z')
             r = requests.get(
                 f'https://api.the-odds-api.com/v4/historical/sports/{sport}/odds',
-                params=dict(apiKey=key, regions='eu', markets='h2h,spreads',
+                params=dict(apiKey=key, regions='eu', markets=MARKETS,
                             bookmakers='pinnacle', oddsFormat='decimal', date=snap_iso),
                 timeout=60)
             rem = r.headers.get('x-requests-remaining', rem)
@@ -235,7 +244,7 @@ def main_fetch(snaps):
                 time.sleep(5)
                 r = requests.get(
                     f'https://api.the-odds-api.com/v4/historical/sports/{sport}/odds',
-                    params=dict(apiKey=key, regions='eu', markets='h2h,spreads',
+                    params=dict(apiKey=key, regions='eu', markets=MARKETS,
                                 bookmakers='pinnacle', oddsFormat='decimal', date=snap_iso),
                     timeout=60)
                 rem = r.headers.get('x-requests-remaining', rem)
@@ -288,10 +297,20 @@ def main_fetch(snaps):
 
 
 def main():
+    global MARKETS, TOTALS_MODE, COST_PER_SNAP, OUT_F, STATE_F
     ap = argparse.ArgumentParser()
     ap.add_argument('--plan', action='store_true', help='μονο πλανο snapshots/κοστος (offline)')
     ap.add_argument('--selftest', action='store_true', help='dry-run matcher (offline)')
+    ap.add_argument('--totals', action='store_true',
+                    help='ιστορικο Pinnacle TOTALS αντι h2h+spreads (εξοδος toa_pin_hist_ou.*)')
     a = ap.parse_args()
+    if a.totals:
+        TOTALS_MODE = True
+        MARKETS = 'totals'
+        COST_PER_SNAP = 10          # 10 × 1 market × 1 region
+        OUT_F = os.path.join(ROOT, 'toa_pin_hist_ou.jsonl')
+        STATE_F = os.path.join(ROOT, 'toa_pin_hist_ou_state.json')
+        print('MODE: TOTALS (Pinnacle O/U) -> toa_pin_hist_ou.jsonl')
     if a.selftest:
         selftest()
         return 0
