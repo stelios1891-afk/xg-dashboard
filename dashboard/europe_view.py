@@ -4,9 +4,12 @@
 ανα πηγη FotMob/Ben/γκολ + διαλιγκικα offsets + warm-start K=8) και κανουν commit ως JSON —
 το dashboard απλως τα δειχνει.
 """
-import os, json, html, datetime
+import os, json, html, math, datetime
 
 import cards  # CSS/FONTS/LOGO απο τα κοινα match cards
+import picks  # gd_dist / p_cover για fair τιμες στις γραμμες αγορας
+
+EU_DRAW_SCALE_DEF = 0.85   # fallback· η τρεχουσα τιμη ερχεται απο το euro_projections.json
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _PROJ_F = os.path.join(_ROOT, 'euro_projections.json')
@@ -56,6 +59,99 @@ def _ko_fmt(utc):
         return str(utc)[:16]
 
 
+def _eu_dist(xgh, xga, draw_scale):
+    """gd_dist με την ευρωπαικη κλιμακωση ισοπαλιων (Χ ×scale, renorm τα υπολοιπα)."""
+    dist = picks.gd_dist(max(xgh, 0.05), max(xga, 0.05))
+    px = dist.get(0, 0.0)
+    if px <= 0 or px >= 1:
+        return dist
+    k = (1.0 - draw_scale * px) / (1.0 - px)
+    return {g: (p * draw_scale if g == 0 else p * k) for g, p in dist.items()}
+
+
+def _tot_dist(xgh, xga):
+    """Κατανομη ΣΥΝΟΛΟΥ γκολ (ιδιος πυρηνας με gd_dist: Poisson × draw boost διαγωνιου)."""
+    lh, la = max(xgh, 0.05), max(xga, 0.05)
+    F = [math.factorial(i) for i in range(13)]
+    ph = [math.exp(-lh) * lh ** i / F[i] for i in range(13)]
+    pa = [math.exp(-la) * la ** j / F[j] for j in range(13)]
+    tot = {}
+    s = 0.0
+    for i in range(13):
+        for j in range(13):
+            p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
+            tot[i + j] = tot.get(i + j, 0.0) + p
+            s += p
+    return {t: p / s for t, p in tot.items()}
+
+
+def _cover_q(dist, side, line):
+    """ΣΩΣΤΟ quarter-aware cover (σπαει x.25/x.75 σε 2 μισες γραμμες — ΟΧΙ το picks.p_cover
+    που εχει το γνωστο quarter-bug· εδω ειναι καθαρη οθονη, οχι μηχανη picks)."""
+    parts = [line] if (line * 4) % 2 == 0 else [line - 0.25, line + 0.25]
+    pw = pp = 0.0
+    for L in parts:
+        for k, p in dist.items():
+            m = (k if side == 1 else -k) + L
+            if m > 0.01:
+                pw += p / len(parts)
+            elif abs(m) <= 0.01:
+                pp += p / len(parts)
+    return pw, pp
+
+
+def _fair_pair(dist, line):
+    """Fair αποδοσεις (χωρις γκανιοτα) για γηπεδουχο/φιλοξενουμενο στη γραμμη line (home persp)."""
+    out = []
+    for side, ln in ((1, line), (-1, -line)):
+        pw, pp = _cover_q(dist, side, ln)
+        if pw <= 0:
+            return None
+        out.append(1.0 + (1.0 - pw - pp) / pw)
+    return out
+
+
+def _p_over(tot, line):
+    parts = [line] if (line * 4) % 2 == 0 else [line - 0.25, line + 0.25]
+    po = pu = 0.0
+    for L in parts:
+        for t, p in tot.items():
+            if t > L + 0.01:
+                po += p / len(parts)
+            elif t < L - 0.01:
+                pu += p / len(parts)
+    return po, pu
+
+
+def _fair_ou(tot, line):
+    po, pu = _p_over(tot, line)
+    if po <= 0 or pu <= 0:
+        return None
+    push = max(1.0 - po - pu, 0.0)
+    return (1.0 + pu / po, 1.0 + po / pu) if push == 0 else \
+           (1.0 + (1.0 - po - push) / po, 1.0 + (1.0 - pu - push) / pu)
+
+
+def _lines_strip(m, mk, draw_scale):
+    """Μινι-γραμμη: ασιατικο & total, μοντελο vs αγορα, με fair τιμες στη γραμμη αγορας."""
+    mline = -(m['xgh'] - m['xga'])            # συμβαση αγορας: αρνητικο = ο γηπεδουχος δινει
+    mtot = m['xgh'] + m['xga']
+    ah = f'<b>ασιατ</b> μοντ {mline:+.2f}'
+    if mk and mk.get('line') is not None:
+        fp = _fair_pair(_eu_dist(m['xgh'], m['xga'], draw_scale), float(mk['line']))
+        ah += (f' · αγορ {mk["line"]:+.2f} @{mk.get("oh", 0):.2f}/{mk.get("oa", 0):.2f}'
+               + (f' <span style="color:#6b7fa3">(fair {fp[0]:.2f}/{fp[1]:.2f})</span>' if fp else ''))
+    gl = f'<b>γκολ</b> μοντ {mtot:.2f}'
+    if mk and mk.get('tl') is not None:
+        fo = _fair_ou(_tot_dist(m['xgh'], m['xga']), float(mk['tl']))
+        gl += (f' · αγορ {mk["tl"]:.2f} O{mk.get("to", 0):.2f}/U{mk.get("tu", 0):.2f}'
+               + (f' <span style="color:#6b7fa3">(fair O{fo[0]:.2f}/U{fo[1]:.2f})</span>' if fo else ''))
+    return (f'<div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;'
+            f'font-family:monospace;font-size:9.5px;color:#8fa3c8;padding:4px 8px 5px;'
+            f'border-top:1px solid #16203a">'
+            f'<span>{ah}</span><span>{gl}</span></div>')
+
+
 def _mkt_span(our, mkt):
     """Οπως cards._mkt_span: πρασινο = η αγορα πληρωνει καλυτερα απο το fair μας (value),
     κοκκινο = η αγορα πιο σιγουρη απο εμας."""
@@ -70,7 +166,7 @@ def _mkt_span(our, mkt):
     return f'<span class="mo {c}">{mkt:.2f}</span>'
 
 
-def card_html(m, mk=None):
+def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
     if not m.get('covered'):
         return (f'<div class="card" style="opacity:.55"><div class="sum">'
                 f'<div class="team"><div class="thead">{cards._logo(m.get("hid"))}'
@@ -110,6 +206,7 @@ def card_html(m, mk=None):
     <div class="meta">{_src_badge(m.get('src_a'))}<span class="xg">xG {m['xga']:.2f}</span></div></div>
 </div>
 <div class="pbar"><div style="width:{hw}%"></div><div style="width:{dw}%"></div><div style="width:{aw}%"></div></div>
+{_lines_strip(m, mk, draw_scale)}
 <details><summary>▾ model inputs</summary><div class="detail">
   <div class="inp"><div class="h">{esc(m['home'])} (home)</div>
     <div class="row"><span>Λιγκα</span><b>{esc(m.get('lg_h') or '—')}</b></div>
@@ -133,7 +230,10 @@ def _ah_note(mk):
             f' ({str(mk.get("when", ""))[:16].replace("T", " ")} UTC)')
 
 
-def cards_block(matches, odds=None):
+def cards_block(matches, odds=None, draw_scale=None):
     odds = odds or {}
+    if draw_scale is None:
+        d = load()
+        draw_scale = float((d or {}).get('eu_draw_scale', EU_DRAW_SCALE_DEF))
     return cards.CARD_CSS + cards.FONTS + '<div class="wrap">' + \
-        ''.join(card_html(m, odds.get(str(m.get('mid')))) for m in matches) + '</div>'
+        ''.join(card_html(m, odds.get(str(m.get('mid'))), draw_scale) for m in matches) + '</div>'

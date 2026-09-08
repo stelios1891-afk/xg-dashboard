@@ -652,6 +652,7 @@ for key in sorted(fx):
         matches.append(rec)
 
 out = dict(generated=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+           eu_draw_scale=EU_DRAW_SCALE, w_eu_prior=W_EU,
            engine='euro V4 — bridges ρ=1.0 + ClubElo offsets, warm-start K=8',
            hfa=round(HF_LIVE, 4),
            matches=matches)

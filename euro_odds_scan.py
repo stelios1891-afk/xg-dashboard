@@ -87,6 +87,26 @@ def _h2h(g, bks=('pinnacle', 'matchbook')):
     return None
 
 
+def _total(g, bks=('pinnacle', 'matchbook')):
+    """Κυρια γραμμη total -> (line, over_odds, under_odds)."""
+    for bk in bks:
+        for b in g.get('bookmakers', []):
+            if b.get('key') != bk:
+                continue
+            for m in b.get('markets', []):
+                if m.get('key') == 'totals':
+                    tl = to = tu = None
+                    for o in m.get('outcomes', []):
+                        nm = str(o.get('name', '')).lower()
+                        if nm == 'over':
+                            tl = o.get('point'); to = o.get('price')
+                        elif nm == 'under':
+                            tu = o.get('price')
+                    if tl is not None and to and tu:
+                        return (float(tl), float(to), float(tu))
+    return None
+
+
 def _spread(g, bks=('pinnacle', 'matchbook')):
     ht, at = g.get('home_team'), g.get('away_team')
     for bk in bks:
@@ -146,7 +166,7 @@ def main():
     for comp, fixtures in upc.items():
         sport = SPORT_EU[comp]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads',
+                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -170,13 +190,15 @@ def main():
                 if cands:                     # TOA event εκτος παραθυρου μας = οχι πραγματικο mismatch
                     unmatched.append(f"{g.get('home_team')} vs {g.get('away_team')} ({bs:.2f})")
                 continue
-            h2 = _h2h(g); sp = _spread(g)
+            h2 = _h2h(g); sp = _spread(g); tt = _total(g)
             rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16])
             if h2:
                 rec.update(h=round(h2[0], 2), d=round(h2[1], 2), a=round(h2[2], 2))
             if sp:
                 rec.update(line=sp[0], oh=round(sp[1], 2), oa=round(sp[2], 2))
-            if h2 or sp:
+            if tt:
+                rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
+            if h2 or sp or tt:
                 odds[best['mid']] = rec; nmatch += 1
         time.sleep(0.3)
 
