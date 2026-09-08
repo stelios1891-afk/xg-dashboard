@@ -132,24 +132,43 @@ def _fair_ou(tot, line):
            (1.0 + (1.0 - po - push) / po, 1.0 + (1.0 - pu - push) / pu)
 
 
-def _lines_strip(m, mk, draw_scale):
-    """Μινι-γραμμη: ασιατικο & total, μοντελο vs αγορα, με fair τιμες στη γραμμη αγορας."""
-    mline = -(m['xgh'] - m['xga'])            # συμβαση αγορας: αρνητικο = ο γηπεδουχος δινει
-    mtot = m['xgh'] + m['xga']
-    ah = f'<b>ασιατ</b> μοντ {mline:+.2f}'
-    if mk and mk.get('line') is not None:
-        fp = _fair_pair(_eu_dist(m['xgh'], m['xga'], draw_scale), float(mk['line']))
-        ah += (f' · αγορ {mk["line"]:+.2f} @{mk.get("oh", 0):.2f}/{mk.get("oa", 0):.2f}'
-               + (f' <span style="color:#6b7fa3">(fair {fp[0]:.2f}/{fp[1]:.2f})</span>' if fp else ''))
-    gl = f'<b>γκολ</b> μοντ {mtot:.2f}'
-    if mk and mk.get('tl') is not None:
-        fo = _fair_ou(_tot_dist(m['xgh'], m['xga']), float(mk['tl']))
-        gl += (f' · αγορ {mk["tl"]:.2f} O{mk.get("to", 0):.2f}/U{mk.get("tu", 0):.2f}'
-               + (f' <span style="color:#6b7fa3">(fair O{fo[0]:.2f}/U{fo[1]:.2f})</span>' if fo else ''))
-    return (f'<div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;'
-            f'font-family:monospace;font-size:9.5px;color:#8fa3c8;padding:4px 8px 5px;'
-            f'border-top:1px solid #16203a">'
-            f'<span>{ah}</span><span>{gl}</span></div>')
+_LT_CELL = ('display:inline-block;text-align:center;font-family:monospace;font-size:10px;')
+
+
+def _lines_table(m, mk, draw_scale):
+    """Μινι-πινακας δεξια απο το 1Χ2: γραμμη | μοντελο | αγορα, για ασιατικο & total."""
+    mk = mk or {}
+    rows = []
+    if mk.get('line') is not None:
+        ln = float(mk['line'])
+        fp = _fair_pair(_eu_dist(m['xgh'], m['xga'], draw_scale), ln)
+        rows.append(('AH', f'{ln:+.2f}',
+                     f'{fp[0]:.2f}/{fp[1]:.2f}' if fp else '—',
+                     f'{mk.get("oh", 0):.2f}/{mk.get("oa", 0):.2f}'))
+    else:
+        rows.append(('AH', f'{-(m["xgh"] - m["xga"]):+.2f}', 'μοντ γραμμη', '—'))
+    if mk.get('tl') is not None:
+        tl = float(mk['tl'])
+        fo = _fair_ou(_tot_dist(m['xgh'], m['xga']), tl)
+        rows.append(('O/U', f'{tl:.2f}',
+                     f'{fo[0]:.2f}/{fo[1]:.2f}' if fo else '—',
+                     f'{mk.get("to", 0):.2f}/{mk.get("tu", 0):.2f}'))
+    else:
+        rows.append(('O/U', f'{m["xgh"] + m["xga"]:.2f}', 'μοντ συνολο', '—'))
+    body = ''.join(
+        f'<div style="display:flex;gap:7px;align-items:baseline">'
+        f'<span style="{_LT_CELL}width:24px;color:#5a6b8c;font-size:8px;text-align:right">{lbl}</span>'
+        f'<span style="{_LT_CELL}width:38px;color:#e8edf8;font-weight:700">{ln}</span>'
+        f'<span style="{_LT_CELL}width:72px;color:#7ea2ff">{mo}</span>'
+        f'<span style="{_LT_CELL}width:72px;color:#8fa3c8">{ag}</span></div>'
+        for lbl, ln, mo, ag in rows)
+    head = (f'<div style="display:flex;gap:7px">'
+            f'<span style="{_LT_CELL}width:24px"></span>'
+            f'<span style="{_LT_CELL}width:38px;font-size:8px;color:#5a6b8c;text-transform:uppercase">γραμμη</span>'
+            f'<span style="{_LT_CELL}width:72px;font-size:8px;color:#5a6b8c;text-transform:uppercase">μοντ</span>'
+            f'<span style="{_LT_CELL}width:72px;font-size:8px;color:#5a6b8c;text-transform:uppercase">αγορ</span></div>')
+    return (f'<div style="display:flex;flex-direction:column;gap:3px;padding:2px 0 0 12px;'
+            f'border-left:1px solid #1e2d47">{head}{body}</div>')
 
 
 def _mkt_span(our, mkt):
@@ -195,18 +214,20 @@ def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
   <div class="team">
     <div class="thead">{cards._logo(m.get('hid'))}<div class="tn">{esc(m['home'])}</div></div>
     <div class="meta"><span class="xg">xG {m['xgh']:.2f}</span>{_src_badge(m.get('src_h'))}</div></div>
-  <div class="mid">
-    <div class="lbls"><span>Home</span><span>Draw</span><span>Away</span></div>
-    <div class="pills"><div class="pill" style="background:{hbg};color:{hc};border:1px solid {hc}44">{hw:.0f}%</div>
-      <div class="pill pd">{dw:.0f}%</div><div class="pill" style="background:{abg};color:{ac};border:1px solid {ac}44">{aw:.0f}%</div></div>
-    <div class="oddswrap">{odds}</div>{fin}
+  <div class="mid" style="flex-direction:row;gap:0;align-items:center;min-width:430px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:210px">
+      <div class="lbls"><span>Home</span><span>Draw</span><span>Away</span></div>
+      <div class="pills"><div class="pill" style="background:{hbg};color:{hc};border:1px solid {hc}44">{hw:.0f}%</div>
+        <div class="pill pd">{dw:.0f}%</div><div class="pill" style="background:{abg};color:{ac};border:1px solid {ac}44">{aw:.0f}%</div></div>
+      <div class="oddswrap">{odds}</div>{fin}
+    </div>
+    {_lines_table(m, mk, draw_scale)}
   </div>
   <div class="team away">
     <div class="thead">{cards._logo(m.get('aid'))}<div class="tn">{esc(m['away'])}</div></div>
     <div class="meta">{_src_badge(m.get('src_a'))}<span class="xg">xG {m['xga']:.2f}</span></div></div>
 </div>
 <div class="pbar"><div style="width:{hw}%"></div><div style="width:{dw}%"></div><div style="width:{aw}%"></div></div>
-{_lines_strip(m, mk, draw_scale)}
 <details><summary>▾ model inputs</summary><div class="detail">
   <div class="inp"><div class="h">{esc(m['home'])} (home)</div>
     <div class="row"><span>Λιγκα</span><b>{esc(m.get('lg_h') or '—')}</b></div>
