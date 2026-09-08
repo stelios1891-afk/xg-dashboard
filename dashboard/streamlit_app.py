@@ -145,7 +145,15 @@ def render_projections(league):
         cur = sum(ws) / len(ws) * 100
         st.caption(f"⚖ Warm-start (K=8): **{cur:.0f}% φετινη 26/27** · **{100-cur:.0f}% περσινη 25/26** "
                    "— το βαρος της φετινης ανεβαινει οσο παιζονται ματς (n/(n+8)).")
-    st.components.v1.html(cards.cards_block(sel), height=min(len(sel) * 118 + 40, 6000), scrolling=True)
+    dom_odds = {}
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                               'dom_odds_latest.json'), encoding='utf-8') as fh:
+            dom_odds = json.load(fh).get('odds', {})
+    except Exception:
+        pass
+    st.components.v1.html(cards.cards_block(sel, dom_odds),
+                          height=min(len(sel) * 132 + 40, 6000), scrolling=True)
 
 def _lg_header(league, sub):
     fid = build_data.LEAGUE_FOTMOB[league]

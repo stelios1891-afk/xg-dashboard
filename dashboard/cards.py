@@ -1,6 +1,8 @@
 """cards.py — HTML/CSS για τα match cards (κοινο για το Streamlit app & το static preview)."""
 import html
 
+import lines_common as lc
+
 FONTS = ('<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&'
          'family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">')
 
@@ -74,16 +76,21 @@ def _mkt_span(our, mkt):
     return f'<span class="mo {c}">{mkt:.2f}</span>'
 
 def _odds_block(m):
-    """Δυο γραμμες odds: 'μοντ' (fair μοντελου) + 'αγορ' (market 1X2, χρωμα διαφωνιας)."""
+    """Δυο γραμμες odds: 'μοντ' (μοντελο ΜΕ τη γκανιοτα της αγορας οταν υπαρχει — αμεσα
+    συγκρισιμο) + 'αγορ' (market 1X2, χρωμα διαφωνιας)."""
     fh, fd, fa = m['hw_odds'], m['d_odds'], m['aw_odds']
+    mh, md, ma = m.get('mkt_hw_odds'), m.get('mkt_d_odds'), m.get('mkt_aw_odds')
+    if mh and md and ma:
+        s3 = 1.0 / mh + 1.0 / md + 1.0 / ma
+        fh, fd, fa = fh / s3, fd / s3, fa / s3
     model = f'<div class="odds"><span>{fh:.2f}</span><span>{fd:.2f}</span><span>{fa:.2f}</span></div>'
-    market = (f'<div class="odds">{_mkt_span(fh, m.get("mkt_hw_odds"))}'
-              f'{_mkt_span(fd, m.get("mkt_d_odds"))}{_mkt_span(fa, m.get("mkt_aw_odds"))}</div>')
+    market = (f'<div class="odds">{_mkt_span(fh, mh)}'
+              f'{_mkt_span(fd, md)}{_mkt_span(fa, ma)}</div>')
     return (f'<div class="oddswrap">'
             f'<div class="oddsrow"><span class="rl">μοντ</span>{model}</div>'
             f'<div class="oddsrow"><span class="rl">αγορ</span>{market}</div></div>')
 
-def card_html(m):
+def card_html(m, mk=None):
     hw, dw, aw = m['hw'], m['d'], m['aw']
     hc = '#34d17a' if hw > aw else ('#f04f5a' if hw < aw else '#8fa3c8')
     ac = '#34d17a' if aw > hw else ('#f04f5a' if aw < hw else '#8fa3c8')
@@ -105,7 +112,12 @@ def card_html(m):
     <div class="meta"><span>{m['away_exp_shots']:.1f} sh</span><span class="xg">xG {m['away_adj_xg']:.2f}</span></div></div>
 </div>
 <div class="pbar"><div style="width:{hw}%"></div><div style="width:{dw}%"></div><div style="width:{aw}%"></div></div>
-<details><summary>▾ model inputs</summary><div class="detail">
+<div class="tabs2">
+  <button class="tbtn" onclick="tg('{_ckey(m)}','od',this)">Match odds</button>
+  <button class="tbtn" onclick="tg('{_ckey(m)}','su',this)">Match summary</button>
+</div>
+<div id="od_{_ckey(m)}" class="pane" hidden>{lc.odds_pane(m['home_adj_xg'], m['away_adj_xg'], mk)}</div>
+<div id="su_{_ckey(m)}" class="pane" hidden><div class="detail">
   <div class="inp"><div class="h">{esc(m['home'])} (home)</div>
     <div class="row"><span>Exp Shots</span><b class="acc">{m['home_exp_shots']:.2f}</b></div>
     <div class="row"><span>npxG / Shot</span><b>{m['home_xg_shot']:.4f}</b></div>
@@ -116,8 +128,14 @@ def card_html(m):
     <div class="row"><span>npxG / Shot</span><b>{m['away_xg_shot']:.4f}</b></div>
     <div class="row"><span>Neutral xG</span><b>{m['away_xg']:.3f}</b></div>
     <div class="row"><span>Adj xG</span><b class="acc">{m['away_adj_xg']:.3f}</b></div></div>
-</div><div class="time">{esc(day)}</div></details></div>"""
+</div><div class="time">{esc(day)}</div></div></div>"""
 
-def cards_block(matches):
-    """Το CSS + fonts + όλα τα cards σε <div class=wrap> (για components.html ή static)."""
-    return CARD_CSS + FONTS + '<div class="wrap">' + ''.join(card_html(m) for m in matches) + '</div>'
+def _ckey(m):
+    return f"{m.get('home_id') or ''}_{m.get('away_id') or ''}"
+
+def cards_block(matches, odds=None):
+    """Το CSS + fonts + όλα τα cards σε <div class=wrap> (για components.html ή static).
+    odds: προαιρετικο dict "{home_id}_{away_id}" -> γραμμες αγορας (dom_odds_latest.json)."""
+    odds = odds or {}
+    return CARD_CSS + FONTS + lc.TABS_CSS + '<div class="wrap">' + \
+        ''.join(card_html(m, odds.get(_ckey(m))) for m in matches) + '</div>'
