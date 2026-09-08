@@ -252,39 +252,43 @@ def render_xgstats(league):
 
 _LATEST_F = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'value_picks_latest.json')
 
-def _render_euro_value():
-    """Ευρωπαϊκα value picks (beta) — τροφοδοτειται απο euro_shadow_scan στον scanner."""
+def _euro_picks():
+    """Ευρωπαϊκα value picks (beta, απο euro_shadow_scan) σε μορφη καρτας value_view,
+    ωστε να μπαινουν στην ιδια λιστα με τα εγχωρια σε χρονολογικη σειρα."""
     try:
         with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                'euro_value_latest.json'), encoding='utf-8') as fh:
             ev_res = json.load(fh)
     except Exception:
-        return
-    import europe_view as ev
-    st.markdown('#### 🌍 Ευρωπαϊκά picks (beta)')
-    st.caption('UCL/UEL/UECL · ΜΟΝΟ ματς με πλήρες FotMob xG και στις 2 πλευρές · '
-               'κατώφλια: **φαβορί ≥4%** / **outsider ≥10%** / **over ≥4%** (τα φαβορί/over '
-               'αντισταθμίζουν τη μετρημένη μεροληψία των δηλωμένων edges) · 🎯 = γραμμή −0.75, '
-               'το κελί που επιβεβαιώθηκε τυφλά σε Crown+Pinnacle · overs = σύνθεση πλήρους '
-               'πέναλτι (W2) · τιμές Pinnacle/Matchbook. BETA — backtest εντός θορύβου '
-               '(~0.7-1 SE), κρίνεται στη φετινή σκιά· προτεινόμενο stake ερευνητικό (~¼ μονάδας).')
-    pk = ev_res.get('picks', [])
-    st.components.v1.html(ev.euro_value_html(pk), height=min(len(pk) * 48 + 30, 800), scrolling=True)
-    st.caption(f"🕒 euro scan: {ev_res.get('scanned_at', '—')}")
+        return [], None
+    out = []
+    for p in ev_res.get('picks', []):
+        q = dict(lg=p['comp'], home=p['home'], away=p['away'],
+                 home_id=p.get('hid'), away_id=p.get('aid'),
+                 side=p['side'], hcap=p['line'], odds=p['odds'], edge=p['edge'],
+                 proj_odds=p.get('proj_odds'), when=str(p.get('ko') or '').replace('Z', '')[:16],
+                 eu=True, tag75=bool(p.get('tag75')))
+        if p.get('role') == 'over':
+            q['bet'] = p['team']          # π.χ. "Over 3.00"
+        out.append(q)
+    return out, ev_res.get('scanned_at')
 
 def render_value(league):
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#34d17a">💰 VALUE PICKS</div>'
                 '<div class="co">LIVE · THE ODDS API · PINNACLE/MATCHBOOK AH</div></div></div>', unsafe_allow_html=True)
     st.caption("Μοντελο +handicap value bets · edge ≥10% · odds 1.70–2.10 · staking ⅛ Kelly + cap 20% · "
                "auto-scan (Task Scheduler) → Telegram για νεα/αλλαγες · το dashboard δειχνει το τελευταιο scan.")
-    if not os.path.exists(_LATEST_F):
-        st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
-        _render_euro_value()
-        return
-    with open(_LATEST_F, encoding='utf-8') as fh:
-        res = json.load(fh)
+    res = {}
+    if os.path.exists(_LATEST_F):
+        with open(_LATEST_F, encoding='utf-8') as fh:
+            res = json.load(fh)
     picks = res.get('picks', [])
-    if os.environ.get('TOA_KEY'):   # τοπικα μονο· στο cloud σκαναρει το GitHub Actions
+    eu_picks, eu_scan = _euro_picks()
+    if not res:
+        st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
+        if not eu_picks:
+            return
+    elif os.environ.get('TOA_KEY'):   # τοπικα μονο· στο cloud σκαναρει το GitHub Actions
         top = st.columns([3, 1])
         top[0].caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')}")
         if top[1].button("🔄 Scan τωρα"):
@@ -294,31 +298,36 @@ def render_value(league):
                 st.rerun()
             except Exception as e:
                 st.error(f"Σφαλμα scan: {e}")
-    else:
+    elif res:
         st.caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')} "
                    "· auto-scan καθε 30' (GitHub Actions)")
-    if not picks:
+    if not picks and not eu_picks:
         st.info("Καμια value pick στο τελευταιο scan (αναμενομενο προεποχικα / χαμηλη ρευστοτητα Betfair).")
-        _render_euro_value()
         return
-    gr, sc, cap = res.get('gross', 0), res.get('scale', 1), res.get('cap', 0.2)
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Picks", len(picks))
-    m2.metric("Συνολικη εκθεση", f"{min(gr, cap)*100:.0f}%", help="⅛ Kelly, μετα το cap 20%")
-    m3.metric("Καλυτερο edge", f"{max(p['edge'] for p in picks)*100:.0f}%")
-    if res.get('n_new') or res.get('n_changed'):
-        st.caption(f"τελευταιο scan: {res.get('n_new', 0)} νεα · {res.get('n_changed', 0)} με αλλαγη odds")
-    if sc < 1.0:
-        st.caption(f"⚙ Συνολικη εκθεση {gr*100:.0f}% > cap {cap*100:.0f}% → μειωση ολων ×{sc:.2f}.")
+    if picks:
+        gr, sc, cap = res.get('gross', 0), res.get('scale', 1), res.get('cap', 0.2)
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Picks", len(picks) + len(eu_picks))
+        m2.metric("Συνολικη εκθεση", f"{min(gr, cap)*100:.0f}%", help="⅛ Kelly στα εγχωρια, μετα το cap 20% · τα ευρωπαϊκα (EU beta) μενουν εκτος, stake ~¼ μοναδας")
+        m3.metric("Καλυτερο edge", f"{max(p['edge'] for p in picks)*100:.0f}%")
+        if res.get('n_new') or res.get('n_changed'):
+            st.caption(f"τελευταιο scan: {res.get('n_new', 0)} νεα · {res.get('n_changed', 0)} με αλλαγη odds")
+        if sc < 1.0:
+            st.caption(f"⚙ Συνολικη εκθεση {gr*100:.0f}% > cap {cap*100:.0f}% → μειωση ολων ×{sc:.2f}.")
     # ---- φιλτρο ανα πρωταθλημα (default: ολα μαζι) ----
-    order = list(build_data.LEAGUE_FOTMOB)
-    lgs_present = sorted({p['lg'] for p in picks}, key=lambda x: order.index(x) if x in order else 99)
+    combined = picks + eu_picks
+    order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague']
+    lgs_present = sorted({p['lg'] for p in combined}, key=lambda x: order.index(x) if x in order else 99)
     sel_lg = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs_present,
                           format_func=lambda x: 'Όλα τα πρωταθληματα' if x == 'Όλα' else value_view.LEAGUE_LABELS.get(x, x),
                           key='vp_league')
-    shown = picks if sel_lg == 'Όλα' else [p for p in picks if p['lg'] == sel_lg]
+    shown = combined if sel_lg == 'Όλα' else [p for p in combined if p['lg'] == sel_lg]
     st.components.v1.html(value_view.picks_html(shown), height=min(len(shown) * 150 + 40, 4000), scrolling=True)
-    _render_euro_value()
+    if eu_picks:
+        st.caption('🌍 **EU beta** = ευρωπαϊκα picks (UCL/UEL/UECL) · μονο ματς με πληρες FotMob xG · '
+                   'κατωφλια φαβορι ≥4% / outsider ≥10% / over ≥4% · 🎯 = γραμμη −0.75 (το τυφλο ευρημα '
+                   'Crown+Pinnacle) · overs = συνθεση πληρους πεναλτι (W2) · εκτος Kelly, stake ερευνητικο '
+                   f'~¼ μοναδας · euro scan: {eu_scan or "—"}')
 
 @st.cache_data(ttl=15 * 60)
 def _ledger_data():

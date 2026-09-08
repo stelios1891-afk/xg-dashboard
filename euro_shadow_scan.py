@@ -174,6 +174,7 @@ def main():
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
                     team=team, side=int(side), line=round(ln, 2), odds=round(float(o), 2),
                     edge=round(edge, 4), role=role,
+                    proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
                     tag75=bool(role == 'fav' and abs(ln + 0.75) < 0.01),
                     xgh=m['xgh'], xga=m['xga'], when=mk.get('when')))
         # --- OVERS (W2) ---
@@ -188,7 +189,9 @@ def main():
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
                     team=f"Over {float(mk['tl']):.2f}", side=0,
                     line=round(float(mk['tl']), 2), odds=round(float(mk['to']), 2),
-                    edge=round(e_o, 4), role='over', tag75=False,
+                    edge=round(e_o, 4), role='over',
+                    proj_odds=round((1 - max(1 - po - pu, 0)) / po, 3) if po > 0 else None,
+                    tag75=False,
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when')))
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,

@@ -6,7 +6,10 @@ TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
 LLOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}.png'
 LEAGUE_LABELS = {'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
                  'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
-                 'PrimeiraLiga': 'Primeira'}
+                 'PrimeiraLiga': 'Primeira',
+                 'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League',
+                 'ConferenceLeague': 'Conference League'}
+EURO_FOTMOB = {'ChampionsLeague': 42, 'EuropaLeague': 73, 'ConferenceLeague': 10216}
 
 CSS = """
 <style>
@@ -35,6 +38,9 @@ body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf
 .tag{font-size:8.5px;padding:1px 6px;border-radius:4px;margin-left:6px;}
 .tag.watch{background:rgba(245,183,49,.14);color:#f5b731;border:1px solid rgba(245,183,49,.3);}
 .tag.lc{background:rgba(240,79,90,.12);color:#f04f5a;border:1px solid rgba(240,79,90,.3);}
+.tag.eu{background:rgba(126,162,255,.12);color:#7ea2ff;border:1px solid rgba(126,162,255,.3);}
+.tag.t75{background:rgba(52,209,122,.12);color:#34d17a;border:1px solid rgba(52,209,122,.3);}
+.bet.ov{color:#3ec98f;border-color:#2d6e57;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 """
@@ -46,16 +52,28 @@ def _logo(tid, cls='', tpl=TLOGO):
 
 def pick_card(p):
     side = p['side']
-    pick_team = p['home'] if side == 1 else p['away']
+    over = side == 0                     # ευρωπαϊκο pick στα γκολ (Over)
     hcls = 'pick' if side == 1 else 'dim'
     acls = 'pick' if side == -1 else 'dim'
     hi = 'hi' if p['edge'] >= 0.15 else ''
-    lid = build_data.LEAGUE_FOTMOB.get(p['lg'])
+    lid = build_data.LEAGUE_FOTMOB.get(p['lg']) or EURO_FOTMOB.get(p['lg'])
     tags = ''
     if p['lg'] in WATCH:
         tags += '<span class="tag watch">watch</span>'
     if p.get('hnote') or p.get('anote'):
         tags += '<span class="tag lc">low-conf</span>'
+    if p.get('eu'):
+        tags += '<span class="tag eu">EU beta</span>'
+    if p.get('tag75'):
+        tags += '<span class="tag t75">🎯 −0.75</span>'
+    if over:
+        bet = _h.escape(p.get('bet') or f"Over {p['hcap']:g}")
+    else:
+        pick_team = p['home'] if side == 1 else p['away']
+        bet = f"{_h.escape(pick_team)} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
+    proj = f"{p['proj_odds']:.2f}" if p.get('proj_odds') else '—'
+    stake_k, stake_v = ('Ποντ.', '~¼ μον.') if p.get('eu') else \
+        ('Ποντ. (καβα)', f"{p['stake_final']*100:.1f}%")
     return f"""
 <div class="pc {hi}">
   <div class="top">
@@ -66,13 +84,13 @@ def pick_card(p):
     <div class="tm {hcls}">{_logo(p.get('home_id'))}{_h.escape(p['home'])}</div>
     <span class="vs">vs</span>
     <div class="tm {acls}">{_logo(p.get('away_id'))}{_h.escape(p['away'])}</div>
-    <div class="bet">{_h.escape(pick_team)} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}</div>
+    <div class="bet {'ov' if over else ''}">{bet}</div>
   </div>
   <div class="stats">
-    <div class="st"><span class="k">Projection</span><span class="v">{p['proj_odds']:.2f}</span></div>
+    <div class="st"><span class="k">Projection</span><span class="v">{proj}</span></div>
     <div class="st"><span class="k">Market</span><span class="v">{p['odds']:.2f}</span></div>
     <div class="st"><span class="k">Edge</span><span class="v edge">{p['edge']*100:.0f}%</span></div>
-    <div class="st"><span class="k">Ποντ. (καβα)</span><span class="v stake">{p['stake_final']*100:.1f}%</span></div>
+    <div class="st"><span class="k">{stake_k}</span><span class="v stake">{stake_v}</span></div>
   </div>
 </div>"""
 
