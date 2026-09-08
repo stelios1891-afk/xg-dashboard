@@ -483,7 +483,7 @@ n_goals_sub = n_goals_raw = 0
 for key in sorted(fx):
     comp = key.rsplit('_', 1)[0]
     for m in fx[key]:
-        d = datetime.strptime(m['utc'], '%Y-%m-%dT%H:%M:%SZ')
+        d = datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00')).replace(tzinfo=None)
         rec = dict(mid=str(m['mid']), comp=comp, round=m.get('round'), utc=m['utc'],
                    home=m['hname'], away=m['aname'], hid=int(m['hid']), aid=int(m['aid']),
                    finished=bool(m.get('finished')), score=m.get('score') or '')
