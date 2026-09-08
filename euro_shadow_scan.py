@@ -99,6 +99,58 @@ def main():
     json.dump(st, open(ST_F, 'w', encoding='utf-8'))
     print(f'euro shadow: {n_new} νεες/αλλαγμενες εγγραφες')
 
+    # ---------------- VALUE PICKS (beta) για το dashboard ----------------
+    # Μηχανισμος οπως συμφωνηθηκε 10/9/2026 (Στελιος): ΜΟΝΟ ματς FotMob+FotMob,
+    # τιμολογηση as-live (P(X)x0.85 + p_cover ως εχει), ζωνη 1.70-2.10,
+    # OUTSIDERS: παιρνει >=0.5 & edge >= 10% · ΦΑΒΟΡΙ: δινει >=0.5 & edge >= 4%
+    # (τα κατωφλια αντισταθμιζουν τη γνωστη μεροληψια των δηλωμενων edges ανα πλευρα).
+    # Σημανση 🎯 στη γραμμη -0.75 των φαβορι (το τυφλο ευρημα Crown+Pinnacle).
+    EDGE_DOG, EDGE_FAV = 0.10, 0.04
+    picks_out = []
+    for m in P.get('matches', []):
+        if not m.get('covered') or m.get('finished'):
+            continue
+        if m.get('src_h') != 'FotMob' or m.get('src_a') != 'FotMob':
+            continue
+        mk = O.get(str(m['mid']))
+        if not mk or mk.get('line') is None:
+            continue
+        try:
+            ko = datetime.datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00'))
+        except Exception:
+            continue
+        if ko < now:
+            continue
+        lf = float(mk['line'])
+        dist = eu_dist(m['xgh'], m['xga'], scale)
+        for side, ln, o, team in ((1, lf, mk.get('oh'), m['home']),
+                                  (-1, -lf, mk.get('oa'), m['away'])):
+            if not o or not (1.70 <= o <= 2.10):
+                continue
+            pw, pp = picks.p_cover(dist, side, ln)
+            edge = edge_of(pw, pp, o)
+            role = 'fav' if ln <= -0.5 else ('dog' if ln >= 0.5 else None)
+            if role is None:
+                continue
+            if (role == 'dog' and edge >= EDGE_DOG) or (role == 'fav' and edge >= EDGE_FAV):
+                picks_out.append(dict(
+                    mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
+                    home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
+                    team=team, side=int(side), line=round(ln, 2), odds=round(float(o), 2),
+                    edge=round(edge, 4), role=role,
+                    tag75=bool(role == 'fav' and abs(ln + 0.75) < 0.01),
+                    xgh=m['xgh'], xga=m['xga'], when=mk.get('when')))
+    picks_out.sort(key=lambda p: p['ko'])
+    json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
+                   rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, zone=[1.70, 2.10],
+                              src='FotMob+FotMob', pricing='as-live (w2 + X x0.85 + p_cover)')),
+              open(os.path.join(ROOT, 'euro_value_latest.json'), 'w', encoding='utf-8'),
+              ensure_ascii=False)
+    print(f'euro value picks (beta): {len(picks_out)} '
+          f'({sum(1 for p in picks_out if p["role"]=="fav")} fav / '
+          f'{sum(1 for p in picks_out if p["role"]=="dog")} dog, '
+          f'{sum(1 for p in picks_out if p["tag75"])} στο -0.75)')
+
 
 if __name__ == '__main__':
     main()

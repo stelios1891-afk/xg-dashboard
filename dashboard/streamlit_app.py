@@ -252,6 +252,26 @@ def render_xgstats(league):
 
 _LATEST_F = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'value_picks_latest.json')
 
+def _render_euro_value():
+    """Ευρωπαϊκα value picks (beta) — τροφοδοτειται απο euro_shadow_scan στον scanner."""
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                               'euro_value_latest.json'), encoding='utf-8') as fh:
+            ev_res = json.load(fh)
+    except Exception:
+        return
+    import europe_view as ev
+    st.markdown('#### 🌍 Ευρωπαϊκά picks (beta)')
+    st.caption('UCL/UEL/UECL · ΜΟΝΟ ματς με πλήρες FotMob xG και στις 2 πλευρές · '
+               'κατώφλια: **φαβορί edge ≥4%** / **outsider ≥10%** (αντισταθμίζουν τη μετρημένη '
+               'μεροληψία των δηλωμένων edges ανά πλευρά) · 🎯 = γραμμή −0.75, το κελί που '
+               'επιβεβαιώθηκε τυφλά σε Crown+Pinnacle · τιμές Pinnacle/Matchbook. '
+               'BETA — backtest εντός θορύβου (~0.7 SE), κρίνεται στη φετινή σκιά· προτεινόμενο '
+               'stake ερευνητικό (~¼ μονάδας).')
+    pk = ev_res.get('picks', [])
+    st.components.v1.html(ev.euro_value_html(pk), height=min(len(pk) * 48 + 30, 800), scrolling=True)
+    st.caption(f"🕒 euro scan: {ev_res.get('scanned_at', '—')}")
+
 def render_value(league):
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#34d17a">💰 VALUE PICKS</div>'
                 '<div class="co">LIVE · THE ODDS API · PINNACLE/MATCHBOOK AH</div></div></div>', unsafe_allow_html=True)
@@ -259,6 +279,7 @@ def render_value(league):
                "auto-scan (Task Scheduler) → Telegram για νεα/αλλαγες · το dashboard δειχνει το τελευταιο scan.")
     if not os.path.exists(_LATEST_F):
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
+        _render_euro_value()
         return
     with open(_LATEST_F, encoding='utf-8') as fh:
         res = json.load(fh)
@@ -278,6 +299,7 @@ def render_value(league):
                    "· auto-scan καθε 30' (GitHub Actions)")
     if not picks:
         st.info("Καμια value pick στο τελευταιο scan (αναμενομενο προεποχικα / χαμηλη ρευστοτητα Betfair).")
+        _render_euro_value()
         return
     gr, sc, cap = res.get('gross', 0), res.get('scale', 1), res.get('cap', 0.2)
     m1, m2, m3 = st.columns(3)
@@ -296,6 +318,7 @@ def render_value(league):
                           key='vp_league')
     shown = picks if sel_lg == 'Όλα' else [p for p in picks if p['lg'] == sel_lg]
     st.components.v1.html(value_view.picks_html(shown), height=min(len(shown) * 150 + 40, 4000), scrolling=True)
+    _render_euro_value()
 
 @st.cache_data(ttl=15 * 60)
 def _ledger_data():

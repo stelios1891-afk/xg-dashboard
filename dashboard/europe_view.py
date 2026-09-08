@@ -353,6 +353,27 @@ def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
 </div><div class="time">{_ko_fmt(m.get('utc'))} · αγωνιστικη {esc(m.get('round') or '?')}</div></div></div>"""
 
 
+def euro_value_html(picks):
+    """Συμπαγης λιστα ευρωπαϊκων value picks (beta) για τη σελιδα Value Picks."""
+    rows = ''
+    for p in picks:
+        role = ('<span style="color:#f5b731;font-weight:700">ΦΑΒΟΡΙ</span>' if p['role'] == 'fav'
+                else '<span style="color:#7ea2ff;font-weight:700">OUTSIDER</span>')
+        tag = ' <span title="γραμμη -0.75 — το επιβεβαιωμενο σε Crown+Pinnacle κελι">🎯</span>' if p.get('tag75') else ''
+        comp = {'ChampionsLeague': 'UCL', 'EuropaLeague': 'UEL', 'ConferenceLeague': 'UECL'}.get(p['comp'], p['comp'])
+        rows += (f'<div style="display:flex;gap:10px;align-items:center;background:#111827;'
+                 f'border:1px solid #1e2d47;border-radius:10px;padding:9px 13px;margin-bottom:7px;'
+                 f'font-family:\'DM Sans\',sans-serif;font-size:12.5px;color:#cdd8ee">'
+                 f'<span style="width:38px;color:#6b7fa3;font-size:10px">{comp}</span>'
+                 f'<span style="width:88px;color:#6b7fa3;font-size:10px">{_ko_fmt(p["ko"])}</span>'
+                 f'<span style="flex:1">{esc(p["home"])} – {esc(p["away"])}</span>'
+                 f'<span style="width:200px;font-family:monospace">{esc(p["team"])} '
+                 f'<b>{p["line"]:+.2f}</b> @{p["odds"]:.2f}</span>'
+                 f'<span style="width:64px;font-family:monospace;color:#34d17a">edge {p["edge"]*100:.0f}%</span>'
+                 f'<span style="width:86px;font-size:10px">{role}{tag}</span></div>')
+    return rows or '<div style="color:#6b7fa3;font-size:12px">Κανενα ευρωπαϊκο pick αυτη τη στιγμη.</div>'
+
+
 _TABS_CSS = """
 <style>
 .tabs2{display:flex;border-top:1px solid #1e2d47;}
