@@ -646,10 +646,11 @@ for key in sorted(fx):
         xga0 = math.exp(lXs + att_a + leak_h - RHO * D)
         xgh = xgh0 * HF_LIVE
         xga = xga0 / HF_LIVE
-        # fair γκολ (συνθεση W2, πεναλτι 0.76) — μονο για display/shadow των totals
+        # fair γκολ (συνθεση W2, πεναλτι 0.76) — ΜΟΝΟ FotMob+FotMob ματς (το OU πασο
+        # δεν κανει Elo-αντικατασταση· στα γκολ/Ben ματς μενει το κυριο ζευγος)
         try:
-            sh2 = ENG_OU.side_state(int(m['hid']), d)
-            sa2 = ENG_OU.side_state(int(m['aid']), d)
+            sh2 = ENG_OU.side_state(int(m['hid']), d) if (sr_h == 'shots' and sr_a == 'shots') else None
+            sa2 = ENG_OU.side_state(int(m['aid']), d) if sh2 else None
             if sh2 and sa2:
                 att_h2, leak_h2, SLh2, XLh2, _ = side_terms(ENG_OU, sh2, d, GKEYS)
                 att_a2, leak_a2, SLa2, XLa2, _ = side_terms(ENG_OU, sa2, d, GKEYS)
