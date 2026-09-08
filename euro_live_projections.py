@@ -499,87 +499,95 @@ for r in EU_ALL[EU_ALL.sea == P_EU_SEA].itertuples():
     EU_BY_TEAM.setdefault(r.hid, []).append((r.mid, r.date, 1, r.xgh_act, r.xga_act, r.gh, r.ga, r.aid, r.comp))
     EU_BY_TEAM.setdefault(r.aid, []).append((r.mid, r.date, 0, r.xga_act, r.xgh_act, r.ga, r.gh, r.hid, r.comp))
 
-def _opp_q(oid, mid, is_opp_home, d):
-    st_o = eng.side_state(oid, d)
-    if st_o is None:
-        return None
-    att_o, leak_o, SL_o, XL_o, src_o = side_terms(eng, st_o, d, GKEYS)
-    s_o = s_v4(st_o['lg'])
-    if src_o == 'goals':
-        el = ELO_MID.get(str(mid), (np.nan, np.nan))[0 if is_opp_home else 1]
-        try:
-            el = float(el)
-        except (TypeError, ValueError):
-            el = float('nan')
-        if not math.isnan(el):
-            u = A_CAL + B_CAL * el / 100.0 - RHO * s_o
-            att_o, leak_o = u, -u
-    lnXmO = math.log(max(SL_o * XL_o, 1e-9))
-    return (0.5 * lnXmO + leak_o - RHO * s_o, 0.5 * lnXmO + att_o + RHO * s_o)
+def apply_prior_eu(E, announce=False):
+    """Εμπλουτισμος των priors του engine E με τα περσινα ευρωπαικα (w=2) — ιδια μηχανικη
+    με euro_prior_eu_test. Καλειται και για το κυριο engine ΚΑΙ για το OU (πεναλτι 0.76)."""
+    def _opp_q(oid, mid, is_opp_home, d):
+        st_o = E.side_state(oid, d)
+        if st_o is None:
+            return None
+        att_o, leak_o, SL_o, XL_o, src_o = side_terms(E, st_o, d, GKEYS)
+        s_o = s_v4(st_o['lg'])
+        if src_o == 'goals':
+            el = ELO_MID.get(str(mid), (np.nan, np.nan))[0 if is_opp_home else 1]
+            try:
+                el = float(el)
+            except (TypeError, ValueError):
+                el = float('nan')
+            if not math.isnan(el):
+                u = A_CAL + B_CAL * el / 100.0 - RHO * s_o
+                att_o, leak_o = u, -u
+        lnXmO = math.log(max(SL_o * XL_o, 1e-9))
+        return (0.5 * lnXmO + leak_o - RHO * s_o, 0.5 * lnXmO + att_o + RHO * s_o)
 
-_cm_acc = {}
-for r in EU_ALL[EU_ALL.sea == P_EU_SEA].itertuples():
-    for oid_, ish_ in [(r.hid, True), (r.aid, False)]:
-        q_ = _opp_q(oid_, r.mid, ish_, r.date)
-        if q_ is not None:
-            _cm_acc.setdefault(r.comp, []).append(q_)
-CMEAN_EU = {c: (float(np.mean([v[0] for v in vv])), float(np.mean([v[1] for v in vv])))
-            for c, vv in _cm_acc.items()}
+    _cm_acc = {}
+    for r in EU_ALL[EU_ALL.sea == P_EU_SEA].itertuples():
+        for oid_, ish_ in [(r.hid, True), (r.aid, False)]:
+            q_ = _opp_q(oid_, r.mid, ish_, r.date)
+            if q_ is not None:
+                _cm_acc.setdefault(r.comp, []).append(q_)
+    CMEAN = {c: (float(np.mean([v[0] for v in vv])), float(np.mean([v[1] for v in vv])))
+             for c, vv in _cm_acc.items()}
 
-_enr = {}
-_ex = []
-for tid_, d0 in _teams_2627.items():
-    st_ = eng.side_state(tid_, d0)
-    if st_ is None:
-        continue
-    lg_, sea_ = st_['lg'], st_['sea']
-    p_dom = eng.PRV.get((lg_, sea_))
-    if p_dom is None:
-        continue
-    prior = eng.PRIOR.get((lg_, p_dom), {}).get(tid_)
-    if prior is None or tid_ not in EU_BY_TEAM:
-        continue
-    n_dom = len(eng.H[(lg_, p_dom)][tid_]['dates'])
-    sT = s_v4(lg_)
-    obs = []
-    for (mid_, dm, ish, xgf, xga, gf, ga, oid_, comp_) in EU_BY_TEAM[tid_]:
-        q_ = _opp_q(oid_, mid_, ish == 0, dm)
-        if q_ is None:
-            q_ = CMEAN_EU.get(comp_)
+    _enr = {}; _ex = []
+    for tid_, d0 in _teams_2627.items():
+        st_ = E.side_state(tid_, d0)
+        if st_ is None:
+            continue
+        lg_, sea_ = st_['lg'], st_['sea']
+        p_dom = E.PRV.get((lg_, sea_))
+        if p_dom is None:
+            continue
+        prior = E.PRIOR.get((lg_, p_dom), {}).get(tid_)
+        if prior is None or tid_ not in EU_BY_TEAM:
+            continue
+        n_dom = len(E.H[(lg_, p_dom)][tid_]['dates'])
+        sT = s_v4(lg_)
+        obs = []
+        for (mid_, dm, ish, xgf, xga, gf, ga, oid_, comp_) in EU_BY_TEAM[tid_]:
+            q_ = _opp_q(oid_, mid_, ish == 0, dm)
             if q_ is None:
-                continue
-        qd, qa = q_
-        SLt, XLt = eng.ruler(lg_, p_dom, dm)
-        lnXmT = math.log(max(SLt * XLt, 1e-9))
-        hterm = lhf_eu if ish else -lhf_eu
-        raw_att = b_blend * xgf + (1 - b_blend) * gf
-        raw_def = b_blend * xga + (1 - b_blend) * ga
-        obs.append((raw_att * math.exp(0.5 * lnXmT - qd - RHO * sT - hterm),
-                    raw_def * math.exp(0.5 * lnXmT - qa + RHO * sT + hterm)))
-    if not obs:
-        continue
-    Patt = prior[0] * prior[2]; Pdef = prior[1] * prior[3]
-    s_att = sum(o[0] for o in obs); s_def = sum(o[1] for o in obs)
-    na = (n_dom * Patt + W_EU * s_att) / (n_dom + W_EU * len(obs))
-    nd = (n_dom * Pdef + W_EU * s_def) / (n_dom + W_EU * len(obs))
-    _enr[(lg_, p_dom, tid_)] = (na / max(prior[2], 1e-9), nd / max(prior[3], 1e-9), prior[2], prior[3])
-    _ex.append((abs(math.log(max(na, 1e-9) / max(Patt, 1e-9))) +
-                abs(math.log(max(nd, 1e-9) / max(Pdef, 1e-9))),
-                eng.id2name.get(tid_, str(tid_)), Patt, na, Pdef, nd, len(obs)))
-for (lg_, p_dom, tid_), tup in _enr.items():
-    eng.PRIOR[(lg_, p_dom)][tid_] = tup
-_ex.sort(reverse=True)
-print(f'ΠΕΡΣΙΝΑ ΕΥΡΩΠΑΪΚΑ ΣΤΟ PRIOR (w={W_EU:.0f}): εμπλουτιστηκαν {len(_enr)} ομαδες '
-      f'({sum(e[6] for e in _ex)} ματς 2526)· μεγαλυτερες αλλαγες:')
-for _, nm_, a0, a1, d0_, d1, ne_ in _ex[:6]:
-    print(f'  {nm_:22s} n_eu={ne_:2d}  xGF prior {a0:.2f}->{a1:.2f}  xGA {d0_:.2f}->{d1:.2f}')
+                q_ = CMEAN.get(comp_)
+                if q_ is None:
+                    continue
+            qd, qa = q_
+            SLt, XLt = E.ruler(lg_, p_dom, dm)
+            lnXmT = math.log(max(SLt * XLt, 1e-9))
+            hterm = lhf_eu if ish else -lhf_eu
+            raw_att = b_blend * xgf + (1 - b_blend) * gf
+            raw_def = b_blend * xga + (1 - b_blend) * ga
+            obs.append((raw_att * math.exp(0.5 * lnXmT - qd - RHO * sT - hterm),
+                        raw_def * math.exp(0.5 * lnXmT - qa + RHO * sT + hterm)))
+        if not obs:
+            continue
+        Patt = prior[0] * prior[2]; Pdef = prior[1] * prior[3]
+        s_att = sum(o[0] for o in obs); s_def = sum(o[1] for o in obs)
+        na = (n_dom * Patt + W_EU * s_att) / (n_dom + W_EU * len(obs))
+        nd = (n_dom * Pdef + W_EU * s_def) / (n_dom + W_EU * len(obs))
+        _enr[(lg_, p_dom, tid_)] = (na / max(prior[2], 1e-9), nd / max(prior[3], 1e-9),
+                                    prior[2], prior[3])
+        _ex.append((abs(math.log(max(na, 1e-9) / max(Patt, 1e-9))) +
+                    abs(math.log(max(nd, 1e-9) / max(Pdef, 1e-9))),
+                    E.id2name.get(tid_, str(tid_)), Patt, na, Pdef, nd, len(obs)))
+    for (lg_, p_dom, tid_), tup in _enr.items():
+        E.PRIOR[(lg_, p_dom)][tid_] = tup
+    if announce:
+        _ex.sort(reverse=True)
+        print(f'ΠΕΡΣΙΝΑ ΕΥΡΩΠΑΪΚΑ ΣΤΟ PRIOR (w={W_EU:.0f}): εμπλουτιστηκαν {len(_enr)} ομαδες '
+              f'({sum(e[6] for e in _ex)} ματς 2526)· μεγαλυτερες αλλαγες:')
+        for _, nm_, a0, a1, d0_, d1, ne_ in _ex[:6]:
+            print(f'  {nm_:22s} n_eu={ne_:2d}  xGF prior {a0:.2f}->{a1:.2f}  xGA {d0_:.2f}->{d1:.2f}')
+
+
+apply_prior_eu(eng, announce=True)
 
 # ================================================================ OU engine (συνθεση W2)
 # ΜΟΝΟ για τα fair γκολ της οθονης/σκιας (αποφαση Στελιου 10/9): πεναλτι 0.76 αντι 0.25
 # στα ratings — τιποτα αλλο (euro_ou_comp: κλεινει το μισο χασμα βαθμονομησης γκολ, 1Χ2
-# ανεπηρεαστο). Χωρις prior-EU enrichment εδω (μετρημενα αμελητεο)· fits s_v4/HFA κοινα.
+# ανεπηρεαστο). ΜΕ prior-EU enrichment και εδω (ιδιο stack, μονο το πεναλτι αλλαζει).
 print('[build] GEngine OU (πεναλτι 0.76 — μονο fair γκολ)...', flush=True)
 ENG_OU = GEngine(griffis=load_griffis(pen_f=0.76), skip_sea=set(), verbose=False, pen_f=0.76)
+apply_prior_eu(ENG_OU)
 
 # ================================================================ 2627 fixtures -> projections
 SRC_LABEL = {'shots': 'FotMob', 'griffis': 'Ben'}
