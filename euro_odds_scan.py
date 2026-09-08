@@ -219,8 +219,7 @@ def main():
     for comp, fixtures in upc.items():
         sport = SPORT_EU[comp]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu',
-                                     markets='h2h,spreads,totals,alternate_spreads,alternate_totals',
+                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -245,25 +244,72 @@ def main():
                     unmatched.append(f"{g.get('home_team')} vs {g.get('away_team')} ({bs:.2f})")
                 continue
             h2 = _h2h(g); sp = _spread(g); tt = _total(g)
-            ahl, oul = _ladders(g)
-            rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16])
+            old_rec = odds.get(best['mid']) or {}
+            rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16],
+                       eid=g.get('id'), sport=sport)
+            # κρατα τις σκαλες του προηγουμενου scan (ανανεωνονται με δικο τους ρυθμο)
+            for k in ('ah', 'ou', 'alt_when'):
+                if k in old_rec:
+                    rec[k] = old_rec[k]
             if h2:
                 rec.update(h=round(h2[0], 2), d=round(h2[1], 2), a=round(h2[2], 2))
             if sp:
                 rec.update(line=sp[0], oh=round(sp[1], 2), oa=round(sp[2], 2))
             if tt:
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
-            if ahl:
-                rec['ah'] = ahl
-            if oul:
-                rec['ou'] = oul
             if h2 or sp or tt:
                 odds[best['mid']] = rec; nmatch += 1
         time.sleep(0.3)
 
+    # ---- ΣΚΑΛΕΣ (alternate lines): per-event endpoint του TOA, με δικο τους ρυθμο ----
+    ALT_REFRESH_MIN = 120     # μακρια απο ΚΟ: ανανεωση ανα 2ωρο (2 credits/ματς)
+    ALT_NEAR_MIN = 30         # <3h προ ΚΟ: ανα 30'
+    n_alt = 0
+    for mid, rec in odds.items():
+        eid, sport = rec.get('eid'), rec.get('sport')
+        if not eid or not sport:
+            continue
+        try:
+            ko = _pdt(rec['ko']); h_to_ko = (ko - now).total_seconds() / 3600
+        except Exception:
+            continue
+        if h_to_ko < -HOURS_BACK:
+            continue
+        try:
+            aw = _pdt(rec['alt_when'] + ':00+00:00' if len(str(rec.get('alt_when', ''))) == 16
+                      else rec['alt_when'])
+            age = (now - aw).total_seconds() / 60
+        except Exception:
+            age = 1e9
+        need = age > (ALT_NEAR_MIN if 0 <= h_to_ko <= 3 else ALT_REFRESH_MIN)
+        if not need:
+            continue
+        r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/events/{eid}/odds',
+                         params=dict(apiKey=_key(), regions='eu',
+                                     markets='alternate_spreads,alternate_totals',
+                                     bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
+                         timeout=45)
+        rem = r.headers.get('x-requests-remaining', rem)
+        if r.status_code != 200:
+            continue
+        ahl, oul = _ladders(r.json())
+        # σιγουρεψε οτι η ΚΥΡΙΑ γραμμη υπαρχει στη σκαλα
+        if rec.get('line') is not None and not any(abs(x[0] - rec['line']) < 0.01 for x in ahl):
+            ahl = sorted(ahl + [[rec['line'], rec.get('oh'), rec.get('oa')]])
+        if rec.get('tl') is not None and not any(abs(x[0] - rec['tl']) < 0.01 for x in oul):
+            oul = sorted(oul + [[rec['tl'], rec.get('to'), rec.get('tu')]])
+        if ahl:
+            rec['ah'] = ahl
+        if oul:
+            rec['ou'] = oul
+        rec['alt_when'] = now.isoformat()[:16]
+        n_alt += 1
+        time.sleep(0.2)
+
     json.dump(dict(scanned_at=now.isoformat()[:16], odds=odds,
                    credits_remaining=rem, unmatched=unmatched[:20]),
               open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False)
+    print(f'σκαλες: ανανεωθηκαν {n_alt} ματς (per-event alternates)')
     print(f'ματς στο παραθυρο: {sum(len(v) for v in upc.values())} · ταιριασαν {nmatch} · '
           f'unmatched {len(unmatched)} · credits left {rem}')
     if unmatched:
