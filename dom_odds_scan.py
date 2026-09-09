@@ -61,13 +61,15 @@ def _hist_append(fh_list, now, kid, rec, old_rec):
         pass
     fh_list.append(row)
 
-HOURS_AHEAD = 72      # παραθυρο ΚΟ για bulk (72h)
+HOURS_AHEAD = 96      # παραθυρο ΚΟ για bulk (96h, οπως τα ευρωπαικα — αιτημα Στελιου 9/9)
 HOURS_BACK = 3        # κρατα και ματς που μολις αρχισαν (τελευταιο snapshot)
 PRUNE_H = 24          # εγγραφες >24h μετα το ΚΟ πετιουνται
-BULK_REFRESH_MIN = 45  # bulk ανα λιγκα το πολυ ανα 45'
+BULK_REFRESH_MIN = 45  # bulk ανα λιγκα το πολυ ανα 45' (ΚΟ εντος 48h)
+BULK_FAR_MIN = 180    # ΚΟ 48-96h: bulk ανα 3h (κρατα τα credits χαμηλα)
 NEAR_H = 6            # ΚΟ εντος 6h -> bulk σε καθε τρεξιμο
-ALT_HOURS = 30        # σκαλες μονο για ΚΟ εντος 30h
-ALT_REFRESH_MIN = 180  # refresh σκαλων ανα 3h
+ALT_HOURS = 96        # σκαλες σε ολο το παραθυρο (οπως τα ευρωπαικα)
+ALT_REFRESH_MIN = 180  # refresh σκαλων ανα 3h (ΚΟ εντος 30h)
+ALT_FAR_MIN = 360     # ΚΟ 30-96h: σκαλες ανα 6h
 ALT_NEAR_MIN = 30     # <3h προ ΚΟ: ανα 30'
 FIX_TTL_H = 6         # FotMob fixtures cache TTL
 FIX_KEEP_H = 8 * 24   # κρατα στο cache μονο fixtures εως 8 μερες μπροστα (μικρο αρχειο)
@@ -168,7 +170,8 @@ def _alt_due(rec, now):
         age = (now - _dt(rec['alt_when'])).total_seconds() / 60
     except Exception:
         age = 1e9
-    return age > (ALT_NEAR_MIN if 0 <= h <= 3 else ALT_REFRESH_MIN)
+    lim = ALT_NEAR_MIN if 0 <= h <= 3 else (ALT_REFRESH_MIN if h <= 30 else ALT_FAR_MIN)
+    return age > lim
 
 
 def main(dry=False):
@@ -227,7 +230,8 @@ def main(dry=False):
             age_min = (now - _dt(lg_when.get(lg))).total_seconds() / 60
         except Exception:
             age_min = 1e9
-        if nearest <= NEAR_H or age_min > BULK_REFRESH_MIN:
+        need_min = BULK_REFRESH_MIN if nearest <= 48 else BULK_FAR_MIN
+        if nearest <= NEAR_H or age_min > need_min:
             fetch_lgs.append(lg)
     alt_pending = any(_alt_due(v, now) for v in odds.values())
     if not fetch_lgs and not alt_pending:
