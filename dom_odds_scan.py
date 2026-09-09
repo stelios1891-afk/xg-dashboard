@@ -38,6 +38,28 @@ import euro_odds_scan as eos    # parsers: _h2h/_spread/_total/_ladders/_pdt (ι
 
 OUT_F = os.path.join(ROOT, 'dom_odds_latest.json')
 FIXC_F = os.path.join(ROOT, 'dom_fix_cache.json')   # FotMob fixtures cache (TTL 6h)
+HIST_F = os.path.join(ROOT, 'dom_odds_hist.jsonl')  # διαδρομες γραμμων: append-on-change
+                                                    # (εντολη Στελιου 9/9: κραταμε ΟΛΕΣ τις
+                                                    # αποδοσεις που τραβαμε, οχι μονο το latest)
+
+
+def _hist_sig(rec):
+    return tuple(rec.get(k) for k in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu'))
+
+
+def _hist_append(fh_list, now, kid, rec, old_rec):
+    if _hist_sig(rec) == _hist_sig(old_rec):
+        return
+    row = dict(t=now.isoformat()[:16], k=kid, lg=rec.get('lg'), ko=rec.get('ko'))
+    for f in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu'):
+        if rec.get(f) is not None:
+            row[f] = rec[f]
+    try:
+        if eos._pdt(rec['ko']) < now:
+            row['inplay'] = 1   # μετα το ΚΟ: κραταμε αλλα με σημαια (live τεστ, οχι closing)
+    except Exception:
+        pass
+    fh_list.append(row)
 
 HOURS_AHEAD = 72      # παραθυρο ΚΟ για bulk (72h)
 HOURS_BACK = 3        # κρατα και ματς που μολις αρχισαν (τελευταιο snapshot)
@@ -218,6 +240,7 @@ def main(dry=False):
 
     # ---- bulk ανα λιγκα: h2h + κυρια spread + κυριο total ----
     rem = data.get('credits_remaining'); cost = 0; nmatch = 0; unmatched_all = []
+    hist_rows = []
     for lg in fetch_lgs:
         sport = toa_live.SPORT[lg]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
@@ -259,6 +282,7 @@ def main(dry=False):
             if tt:
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
             if h2 or sp or tt:
+                _hist_append(hist_rows, now, kid, rec, old_rec)
                 odds[kid] = rec; nmatch += 1
         lg_when[lg] = now.isoformat()[:16]
         time.sleep(0.3)
@@ -294,10 +318,14 @@ def main(dry=False):
         n_alt += 1
         time.sleep(0.2)
 
+    if hist_rows:
+        with open(HIST_F, 'a', encoding='utf-8') as fh:
+            for row in hist_rows:
+                fh.write(json.dumps(row, ensure_ascii=False) + '\n')
     _save(OUT_F, dict(scanned_at=now.isoformat()[:16], odds=odds, lg_when=lg_when,
                       credits_remaining=rem, unmatched=unmatched_all[:20]))
     print(f'bulk: {len(fetch_lgs)} λιγκες ({", ".join(fetch_lgs) or "—"}) · ταιριασαν {nmatch} ματς · '
-          f'σκαλες {n_alt} ματς')
+          f'σκαλες {n_alt} ματς · hist +{len(hist_rows)}')
     print(f'credits αυτου του scan ~{cost} (x-requests-last: bulk 3/λιγκα + alt 2/ματς) · left {rem}')
     if unmatched_all:
         print('  unmatched (θελουν DOM_ALIAS):', '; '.join(unmatched_all[:8]))

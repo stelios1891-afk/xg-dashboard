@@ -180,6 +180,7 @@ def main():
         old = json.load(open(OUT_F, encoding='utf-8')).get('odds', {})
     except Exception:
         pass
+    hist_rows = []   # διαδρομες γραμμων -> euro_odds_hist.jsonl (append-on-change)
     upc = {}
     livefx = {}      # ματς ΣΕ ΕΞΕΛΙΞΗ (εως LIVE_HOURS μετα το ΚΟ): καταγραφη in-play σε ΧΩΡΙΣΤΟ αρχειο
     for m in P.get('matches', []):
@@ -290,6 +291,13 @@ def main():
             if tt:
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
             if h2 or sp or tt:
+                # διαδρομη γραμμων: append-on-change (εντολη Στελιου 9/9 — κραταμε ΟΛΑ τα snapshots)
+                sig = lambda r: tuple(r.get(x) for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu'))
+                if sig(rec) != sig(old_rec):
+                    row = dict(t=now.isoformat()[:16], mid=best['mid'], comp=comp, ko=rec['ko'])
+                    row.update({x: rec[x] for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu')
+                                if rec.get(x) is not None})
+                    hist_rows.append(row)
                 odds[best['mid']] = rec; nmatch += 1
         time.sleep(0.3)
 
@@ -341,7 +349,12 @@ def main():
     json.dump(dict(scanned_at=now.isoformat()[:16], odds=odds,
                    credits_remaining=rem, unmatched=unmatched[:20]),
               open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False)
-    print(f'σκαλες: ανανεωθηκαν {n_alt} ματς (per-event alternates)')
+    if hist_rows:
+        with open(os.path.join(os.path.dirname(OUT_F), 'euro_odds_hist.jsonl'),
+                  'a', encoding='utf-8') as hf:
+            for row in hist_rows:
+                hf.write(json.dumps(row, ensure_ascii=False) + '\n')
+    print(f'σκαλες: ανανεωθηκαν {n_alt} ματς (per-event alternates) · hist +{len(hist_rows)}')
     if live_rows:
         with open(os.path.join(os.path.dirname(OUT_F), 'euro_live_odds.jsonl'),
                   'a', encoding='utf-8') as lf:
