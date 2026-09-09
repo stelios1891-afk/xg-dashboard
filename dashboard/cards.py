@@ -1,5 +1,7 @@
 """cards.py — HTML/CSS για τα match cards (κοινο για το Streamlit app & το static preview)."""
 import html
+import json
+import os
 
 import lines_common as lc
 
@@ -90,7 +92,7 @@ def _odds_block(m):
             f'<div class="oddsrow"><span class="rl">μοντ</span>{model}</div>'
             f'<div class="oddsrow"><span class="rl">αγορ</span>{market}</div></div>')
 
-def card_html(m, mk=None):
+def card_html(m, mk=None, ou_pair=None):
     hw, dw, aw = m['hw'], m['d'], m['aw']
     hc = '#34d17a' if hw > aw else ('#f04f5a' if hw < aw else '#8fa3c8')
     ac = '#34d17a' if aw > hw else ('#f04f5a' if aw < hw else '#8fa3c8')
@@ -116,7 +118,7 @@ def card_html(m, mk=None):
   <button class="tbtn" onclick="tg('{_ckey(m)}','od',this)">Match odds</button>
   <button class="tbtn" onclick="tg('{_ckey(m)}','su',this)">Match summary</button>
 </div>
-<div id="od_{_ckey(m)}" class="pane" hidden>{lc.odds_pane(m['home_adj_xg'], m['away_adj_xg'], mk)}</div>
+<div id="od_{_ckey(m)}" class="pane" hidden>{lc.odds_pane(m['home_adj_xg'], m['away_adj_xg'], mk, ou_pair=ou_pair)}</div>
 <div id="su_{_ckey(m)}" class="pane" hidden><div class="detail">
   <div class="inp"><div class="h">{esc(m['home'])} (home)</div>
     <div class="row"><span>Exp Shots</span><b class="acc">{m['home_exp_shots']:.2f}</b></div>
@@ -133,9 +135,25 @@ def card_html(m, mk=None):
 def _ckey(m):
     return f"{m.get('home_id') or ''}_{m.get('away_id') or ''}"
 
+def _uncomp_pairs():
+    """Συνθεση αποσυμπιεσης-φαβορι για τις τιμες ΓΚΟΛ (dom_uncomp_pairs.json απο τον
+    scanner/dom_fav_shadow — 10/9: ο μονος μηχανισμος γκολ με Brier καλυτερο 4/4).
+    Ματς χωρις εγγραφη (ισορροπημενα/χωρις γραμμη): κανονικο ζευγος."""
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                               'dom_uncomp_pairs.json'), encoding='utf-8') as fh:
+            return json.load(fh).get('pairs', {})
+    except Exception:
+        return {}
+
+
 def cards_block(matches, odds=None):
     """Το CSS + fonts + όλα τα cards σε <div class=wrap> (για components.html ή static).
     odds: προαιρετικο dict "{home_id}_{away_id}" -> γραμμες αγορας (dom_odds_latest.json)."""
     odds = odds or {}
+    up = _uncomp_pairs()
+    def _op(m):
+        p = up.get(_ckey(m))
+        return (p['xh'], p['xa']) if p else None
     return CARD_CSS + FONTS + lc.TABS_CSS + '<div class="wrap">' + \
-        ''.join(card_html(m, odds.get(_ckey(m))) for m in matches) + '</div>'
+        ''.join(card_html(m, odds.get(_ckey(m)), ou_pair=_op(m)) for m in matches) + '</div>'

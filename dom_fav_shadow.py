@@ -341,6 +341,7 @@ def main():
 
     n_seen = n_preko = n_fav = n_cand = n_new = 0
     cands = []
+    uncomp_pairs = {}   # key -> υβριδικο ζευγος λ (ΧΩΡΙΣ tilt) για τις τιμες ΓΚΟΛ του dashboard
     with open(OUT, 'a', encoding='utf-8') as fh:
         for key, v in odds.items():
             n_seen += 1
@@ -378,6 +379,8 @@ def main():
             swap = abs(line) > 0.5
             lam_h = xh_s2 if (swap and side == 1) else xh_b
             lam_a = xa_s2 if (swap and side == -1) else xa_b
+            if swap:   # συνθεση γκολ dashboard: λ_fav αποσυμπιεσμενο, ντογκ base, χωρις tilt
+                uncomp_pairs[key] = dict(xh=round(lam_h, 3), xa=round(lam_a, 3))
             e_s2, pw, pp, _, _ = price_s2(lam_h, lam_a, side, ud, o)
             e_b, _, _ = price_base(xh_b, xa_b, side, ud, o)
             c = dict(t=ts, key=key, lg=lg, ko=str(v.get('ko')),
@@ -405,6 +408,8 @@ def main():
 
     with open(STATE_F, 'w', encoding='utf-8') as fh:
         json.dump(state, fh)
+    with open('dom_uncomp_pairs.json', 'w', encoding='utf-8') as fh:
+        json.dump(dict(scanned_at=ts, pairs=uncomp_pairs), fh, ensure_ascii=False)
 
     print(f'ματς στο αρχειο odds: {n_seen} · pre-KO με γραμμη: {n_preko} · '
           f'με σαφες φαβορι (|line|>=0.5): {n_fav} · S2 candidates '

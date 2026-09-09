@@ -155,11 +155,13 @@ def ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=None
             f'{head}{body}</div>')
 
 
-def odds_pane(xgh, xga, mk, draw_scale=1.0):
-    """Το κουτι Match Odds: σκαλες AH & O/U, μοντελο (με γκανιοτα αγορας) vs αγορα."""
+def odds_pane(xgh, xga, mk, draw_scale=1.0, ou_pair=None):
+    """Το κουτι Match Odds: σκαλες AH & O/U, μοντελο (με γκανιοτα αγορας) vs αγορα.
+    ou_pair: προαιρετικο (xgh, xga) ΜΟΝΟ για τα γκολ — π.χ. συνθεση αποσυμπιεσης
+    φαβορι εγχωρια (10/9: το μονο 4/4 στο Brier) η W2 ευρωπαικα. Το 1Χ2/ΑΗ ανεγγιχτο."""
     mk = mk or {}
     dist = match_dist(xgh, xga, draw_scale)
-    tot = tot_dist(xgh, xga)
+    tot = tot_dist(*ou_pair) if ou_pair else tot_dist(xgh, xga)
     ml_ah = model_ah_line(dist)
     ml_ou = model_ou_line(tot)
     ah_lad = mk.get('ah') or ([[mk['line'], mk['oh'], mk['oa']]] if mk.get('line') is not None else [])
@@ -173,10 +175,11 @@ def odds_pane(xgh, xga, mk, draw_scale=1.0):
                      main_ah, ml_ah, True, s_ah)
     t2 = ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: fair_ou(tot, ln),
                      main_ou, ml_ou, False, s_ou)
+    ou_note = ' &nbsp;·&nbsp; γκολ: συνθεση αποσυμπιεσης (φαβορι)' if ou_pair else ''
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
-           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη)</div>')
+           f'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη){ou_note}</div>')
     return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
             f'padding:9px 0 4px">{t1}{t2}</div>{leg}')
 
