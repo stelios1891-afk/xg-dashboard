@@ -479,6 +479,7 @@ def team_elo(name, lg):
 # με το τεστ). Υπολογισμος ΟΛΩΝ πρωτα, εγγραφη στα eng.PRIOR μετα (οχι μολυνση των opp_q).
 W_EU = 2.0
 EU_DRAW_SCALE = 0.85
+GAMMA_LG_DEFLATE = -0.470   # lg_deflate_test 10/9: full-4σ fit (LOSO folds -0.40..-0.54)
 P_EU_SEA = '2526'
 b_blend = picks.blend_at(None)
 lhf_eu = math.log(HF_LIVE)
@@ -646,6 +647,14 @@ for key in sorted(fx):
         xga0 = math.exp(lXs + att_a + leak_h - RHO * D)
         xgh = xgh0 * HF_LIVE
         xga = xga0 / HF_LIVE
+        # ΞΕΦΟΥΣΚΩΜΑ ΑΝΑ ΔΙΑΦΟΡΑ ΔΥΝΑΜΗΣ ΛΙΓΚΑΣ (10/9/2026, lg_deflate_test — αποφαση Στελιου):
+        # η πλευρα της αδυναμης λιγκας υπερ-εκτιμαται κλιμακωτα (FM-μικρη +0.17, γκολ +0.28,
+        # Ben +0.56)· ενα γ μηδενιζει τα 2/3 tiers, RPS −0.0020 (t −3.35) 4/4 σεζον, as-live
+        # φρουροι ΟΚ, −0.75 φαβορι +4.7→+7.0. m' = m − γ·D (γ<0 => ο αδυναμος ξεφουσκωνει).
+        # Το υπολοιπο +0.35 του Ben μενει ανοιχτο (παρακολουθηση στη σκια 2627).
+        c_lg = GAMMA_LG_DEFLATE * D
+        xgh = max(xgh - c_lg / 2.0, 0.05)
+        xga = max(xga + c_lg / 2.0, 0.05)
         # fair γκολ (συνθεση W2, πεναλτι 0.76) — ΜΟΝΟ FotMob+FotMob ματς (το OU πασο
         # δεν κανει Elo-αντικατασταση· στα γκολ/Ben ματς μενει το κυριο ζευγος)
         try:
@@ -682,7 +691,7 @@ for key in sorted(fx):
         matches.append(rec)
 
 out = dict(generated=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-           eu_draw_scale=EU_DRAW_SCALE, w_eu_prior=W_EU,
+           eu_draw_scale=EU_DRAW_SCALE, w_eu_prior=W_EU, lg_deflate=GAMMA_LG_DEFLATE,
            engine='euro V4 — bridges ρ=1.0 + ClubElo offsets, warm-start K=8',
            hfa=round(HF_LIVE, 4),
            matches=matches)
