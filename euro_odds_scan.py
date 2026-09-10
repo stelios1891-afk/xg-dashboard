@@ -18,7 +18,8 @@ PROJ_F = os.path.join(ROOT, 'euro_projections.json')
 OUT_F = os.path.join(ROOT, 'euro_odds_latest.json')
 
 LIVE_HOURS = 2.5     # in-play καταγραφη σε euro_live_odds.jsonl εως 2.5h μετα το ΚΟ (αιτημα 9/9)
-HOURS_AHEAD = 96     # αιτημα Στελιου 9/9: απο ΔΕΥΤΕΡΑ αποδοσεις για ΟΛΗ την ευρωπαικη εβδομαδα
+HOURS_AHEAD = 200    # 10/9: 8+ μερες μπροστα (αιτημα Στελιου — trajectory επομενης αγωνιστικης απο ΤΩΡΑ)
+ALT_MAX_H = 96       # σκαλες (2 credits/ματς) ΜΟΝΟ εντος 96h — οι κυριες γραμμες αρκουν για το trajectory
                      # (Τρ+Τετ+Πεμ)· 96h ωστε τα ματς της Πεμπτης να πιανονται απο Δευτερα πρωι.
                      # Κοστος: ~3 credits/scan μονο τις μερες Δευ-Πεμ ευρωπαικων εβδομαδων.
 HOURS_BACK = 3       # κρατα και ματς που μολις αρχισαν (για το τελευταιο snapshot)
@@ -313,7 +314,7 @@ def main():
             ko = _pdt(rec['ko']); h_to_ko = (ko - now).total_seconds() / 3600
         except Exception:
             continue
-        if h_to_ko < -HOURS_BACK:
+        if h_to_ko < -HOURS_BACK or h_to_ko > ALT_MAX_H:
             continue
         try:
             aw = _pdt(rec['alt_when'] + ':00+00:00' if len(str(rec.get('alt_when', ''))) == 16
