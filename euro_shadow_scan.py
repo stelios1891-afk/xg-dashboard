@@ -142,8 +142,16 @@ def main():
     # UCL ΦΑΒΟΡΙ @10 (11/9/2026, αποφαση Στελιου με το UCL_FAV_SCALE=1.16): τα εξτρα
     # fav edges 4-10% που γενναει η κλιμακα ειναι δημοσια πληροφορια (~0 μειον γκανιοτα,
     # backtest −6.4%±12)· στο @10 τα νεα picks ηταν +1.0% και τα κοινα +29%.
+    # UCL DOGS @4 (11/9/2026, ετυμηγορια Fable 5.1 — αποφαση απο ΑΡΧΗ, οχι απο τα 6 ματς):
+    # το @10 ηταν αντιβαρο στα φουσκωμενα dog edges· το κ ΕΙΝΑΙ η διορθωση του φουσκωματος
+    # (bias @4 +0.28→+0.15 ns, κοινα edges 27→19) => @10 πανω σε ξεφουσκωμενη κλιμακα =
+    # διπλη συσφιξη. Η ζωνη 4-10% σημαινεται band='4-10' ως χωριστο ρευμα· ΚΑΝΟΝΑΣ
+    # (προ-γραμμενος): επανεξεταση ΜΟΝΟ σε n>=15 με CLV (αρνητικο t<−1.5 => πισω στο @10)·
+    # το ROI της ζωνης γραφεται αλλα ΔΕΝ αποφασιζει· προ Ιανουαριου αλλαγη ΜΟΝΟ προς
+    # αυστηροτερο. UEL/UECL dogs μενουν @10.
     EDGE_DOG, EDGE_FAV, EDGE_OVER = 0.10, 0.04, 0.04
     EDGE_FAV_UCL = 0.10
+    EDGE_DOG_UCL = 0.04
     # OVERS στα picks (εντολη Στελιου 10/9): συνθεση W2 (πεναλτι 0.76, ζευγος xgh_ou/xga_ou),
     # ΜΟΝΟ FotMob ματς, καθαρο quarter pricing στη γραμμη της αγορας, κατωφλι 4%.
     picks_out = []
@@ -173,12 +181,15 @@ def main():
             if role is None:
                 continue
             thr_fav = EDGE_FAV_UCL if m['comp'] == 'ChampionsLeague' else EDGE_FAV
-            if (role == 'dog' and edge >= EDGE_DOG) or (role == 'fav' and edge >= thr_fav):
+            thr_dog = EDGE_DOG_UCL if m['comp'] == 'ChampionsLeague' else EDGE_DOG
+            if (role == 'dog' and edge >= thr_dog) or (role == 'fav' and edge >= thr_fav):
                 picks_out.append(dict(
                     mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
                     team=team, side=int(side), line=round(ln, 2), odds=round(float(o), 2),
                     edge=round(edge, 4), role=role,
+                    band=('4-10' if (role == 'dog' and m['comp'] == 'ChampionsLeague'
+                                     and edge < EDGE_DOG) else None),
                     proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
                     tag75=bool(role == 'fav' and abs(ln + 0.75) < 0.01),
                     xgh=m['xgh'], xga=m['xga'], when=mk.get('when')))
@@ -201,6 +212,7 @@ def main():
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
+                              edge_dog_ucl=EDGE_DOG_UCL,
                               zone=[1.70, 2.10],
                               src='FotMob+FotMob', pricing='as-live (w2 + X x0.85 + p_cover)')),
               open(os.path.join(ROOT, 'euro_value_latest.json'), 'w', encoding='utf-8'),
