@@ -139,7 +139,11 @@ def main():
     # OUTSIDERS: παιρνει >=0.5 & edge >= 10% · ΦΑΒΟΡΙ: δινει >=0.5 & edge >= 4%
     # (τα κατωφλια αντισταθμιζουν τη γνωστη μεροληψια των δηλωμενων edges ανα πλευρα).
     # Σημανση 🎯 στη γραμμη -0.75 των φαβορι (το τυφλο ευρημα Crown+Pinnacle).
+    # UCL ΦΑΒΟΡΙ @10 (11/9/2026, αποφαση Στελιου με το UCL_FAV_SCALE=1.16): τα εξτρα
+    # fav edges 4-10% που γενναει η κλιμακα ειναι δημοσια πληροφορια (~0 μειον γκανιοτα,
+    # backtest −6.4%±12)· στο @10 τα νεα picks ηταν +1.0% και τα κοινα +29%.
     EDGE_DOG, EDGE_FAV, EDGE_OVER = 0.10, 0.04, 0.04
+    EDGE_FAV_UCL = 0.10
     # OVERS στα picks (εντολη Στελιου 10/9): συνθεση W2 (πεναλτι 0.76, ζευγος xgh_ou/xga_ou),
     # ΜΟΝΟ FotMob ματς, καθαρο quarter pricing στη γραμμη της αγορας, κατωφλι 4%.
     picks_out = []
@@ -168,7 +172,8 @@ def main():
             role = 'fav' if ln <= -0.5 else ('dog' if ln >= 0.5 else None)
             if role is None:
                 continue
-            if (role == 'dog' and edge >= EDGE_DOG) or (role == 'fav' and edge >= EDGE_FAV):
+            thr_fav = EDGE_FAV_UCL if m['comp'] == 'ChampionsLeague' else EDGE_FAV
+            if (role == 'dog' and edge >= EDGE_DOG) or (role == 'fav' and edge >= thr_fav):
                 picks_out.append(dict(
                     mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
@@ -195,7 +200,8 @@ def main():
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when')))
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
-                   rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, zone=[1.70, 2.10],
+                   rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
+                              zone=[1.70, 2.10],
                               src='FotMob+FotMob', pricing='as-live (w2 + X x0.85 + p_cover)')),
               open(os.path.join(ROOT, 'euro_value_latest.json'), 'w', encoding='utf-8'),
               ensure_ascii=False)
