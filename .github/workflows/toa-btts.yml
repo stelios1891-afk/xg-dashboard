@@ -1,0 +1,49 @@
+name: toa-btts-oneoff
+
+# ONE-OFF: closing BTTS (Goal/No Goal) Bayern-Bodø απο The Odds API historical.
+# Τρεχει με το push του toa_btts_pull.py ή χειροκινητα. Κοστος ~20 credits.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'toa_btts_pull.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: toa-btts
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Pull BTTS closing
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_btts_pull.py
+
+      - name: Commit result
+        run: |
+          git config user.name "toa-btts-bot"
+          git config user.email "actions@github.com"
+          git add toa_btts_out.txt
+          if git diff --cached --quiet; then
+            echo "no result"
+          else
+            git commit -m "toa btts closing Bayern-Bodo [skip ci]"
+            git pull --rebase
+            git push
+          fi
