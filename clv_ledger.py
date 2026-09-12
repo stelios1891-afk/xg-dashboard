@@ -99,6 +99,129 @@ def _league_results(lg):
     return res
 
 
+# ---------- πληρες pregame ιστορικο ανα ματς (ledger πακετο 5.1, 13/9) ----------
+def _history_index():
+    """{'hid_aid': [ολες οι pregame εγγραφες, ταξινομημενες κατα t]} — το κλεισιμο
+    ειναι η τελευταια. Τρεφει και τον εμπλουτισμο (snapshots/κινηση/προελευση)."""
+    idx = {}
+    for r in _jsonl(HIST_F):
+        t = _dt(r.get('t')); ko = _dt(r.get('ko'))
+        if t is None:
+            continue
+        if ko is not None and t > ko + datetime.timedelta(minutes=10):
+            continue                     # μετα τη σεντρα δεν ειναι pregame
+        idx.setdefault(f"{r.get('hid')}_{r.get('aid')}", []).append(r)
+    for k in idx:
+        idx[k].sort(key=lambda r: _dt(r['t']))
+    return idx
+
+
+def _at_or_before(rows, ts, need=None):
+    """Τελευταια εγγραφη με t <= ts (και μη-κενο πεδιο need αν δοθει).
+    Το αρχειο ειναι changes-only, αρα «τελευταια γνωστη» = ισχυουσα τιμη στο ts."""
+    best = None
+    for r in rows:
+        t = _dt(r.get('t'))
+        if t is not None and t <= ts and (need is None or r.get(need)):
+            best = r
+    return best
+
+
+def _pq(dist, sd, line):
+    """p_cover με σωστο χειρισμο quarter-γραμμων (μεσος των δυο μισων)."""
+    import picks
+    parts = [line] if (line * 4) % 2 == 0 else [line - 0.25, line + 0.25]
+    pw = pp = 0.0
+    for L in parts:
+        w, p = picks.p_cover(dist, sd, L)
+        pw += w / len(parts); pp += p / len(parts)
+    return pw, pp
+
+
+def _enrich(rec, b, rows, ko):
+    """Τα ΑΥΤΟΜΑΤΑ πεδια του πακετου ledger (ετυμηγορια Fable 5.1, 13/9) — ολα
+    ΚΑΤΑΓΡΑΦΗ, καμια οδηγια: (1) προελευση πρωιμο/γεννημενο, (2) κινηση −12h→closing
+    ολισθηση/αλμα/καμια + total οποιασδηποτε κατευθυνσης >=0.25 (ιδιοι ορισμοι με το
+    dom_move_class 13/9), (3) «πεθαμενο» = το closing ξανατιμολογημενο με το μοντελο
+    της στιγμης του bet δεν πιανει το κατωφλι, (4) Pinnacle snapshots −12/−6/−2/closing,
+    (5) CLV πανω στην Pinnacle −6h (η καθαροτερη δικαιη γραμμη — η Crown φαρδαινει
+    στις ενδεκαδες, η Pinnacle οχι), (6) ωρα ενδεκαδων (ΚΟ−60') vs pick/τοποθετηση.
+    Χειροκινητα μενουν μονο τα ποσα (stake_asked/accepted/book/placed_at)."""
+    import picks
+    H = datetime.timedelta(hours=1)
+    seen = _dt(b.get('seen'))
+    rec['origin'] = None if seen is None else ('πρωιμο' if seen <= ko - 12 * H else 'γεννημενο')
+    if seen is not None:
+        rec['seen_vs_xi'] = 'πριν' if seen < ko - H else 'μετα'
+    pa = _dt(b.get('placed_at'))
+    if pa is not None:
+        rec['placed_vs_xi'] = 'πριν' if pa < ko - H else 'μετα'
+    if not rows:
+        return
+    close = rows[-1]
+    r12 = _at_or_before(rows, ko - 12 * H)
+    # Pinnacle snapshots: [line, oh, oa, t] η καμια
+    for lbl, ts in (('pin12', ko - 12 * H), ('pin6', ko - 6 * H),
+                    ('pin2', ko - 2 * H), ('pinc', ko)):
+        rp = _at_or_before(rows, ts, need='pin')
+        rec[lbl] = (list(rp['pin']) + [rp.get('t')]) if rp else None
+    # CLV σε Pinnacle −6h
+    if rec.get('pin6'):
+        pl, poh, poa = rec['pin6'][0], rec['pin6'][1], rec['pin6'][2]
+        our_l = pl if b['side'] == 1 else -pl
+        po = poh if b['side'] == 1 else poa
+        if po:
+            if abs(our_l - b['hcap']) < 0.01:
+                rec['clv_pin6'] = round(b['odds'] - float(po), 3)
+                rec['clv_pin6_pct'] = round(b['odds'] / float(po) - 1, 4)
+            elif b.get('mxh') is not None and b.get('mxa') is not None:
+                try:
+                    eq = _equiv_close_odds(b['mxh'], b['mxa'], b['side'], b['hcap'],
+                                           our_l, float(po),
+                                           float(poa if b['side'] == 1 else poh))
+                except Exception:
+                    eq = None
+                if eq:
+                    rec['clv_pin6_est'] = round(b['odds'] / eq - 1, 4)
+    # κινηση −12h→closing
+    cl = close.get('line')
+    if cl is not None and r12 is not None and r12.get('line') is not None:
+        sgn = 1.0 if float(cl) > 0 else (-1.0 if float(cl) < 0 else 0.0)
+        w = [r for r in rows if _dt(r['t']) >= _dt(r12['t']) and r.get('line') is not None]
+        jump = False
+        if sgn:
+            for i in range(1, len(w)):
+                j = i - 1
+                while j >= 0 and (_dt(w[i]['t']) - _dt(w[j]['t'])) <= 2 * H:
+                    if (float(w[i]['line']) - float(w[j]['line'])) * sgn >= 0.5:
+                        jump = True
+                        break
+                    j -= 1
+                if jump:
+                    break
+        drift = (float(cl) - float(r12['line'])) * sgn if sgn else 0.0
+        rec['move'] = 'αλμα' if jump else ('ολισθηση' if drift >= 0.25 else 'καμια')
+        rec['move_net'] = round(drift, 2)
+        o1 = (r12.get('ou') or [None])[0]
+        o2 = (close.get('ou') or [None])[0]
+        rec['tot_moved'] = (abs(float(o2) - float(o1)) >= 0.25) \
+            if (o1 is not None and o2 is not None) else None
+    # «πεθαμενο»: θα ηταν ακομα pick στο κλεισιμο;
+    if (b.get('mxh') is not None and b.get('mxa') is not None
+            and close.get('line') is not None and close.get('oh') and close.get('oa')):
+        try:
+            our_cl = float(close['line']) if b['side'] == 1 else -float(close['line'])
+            co = float(close['oh'] if b['side'] == 1 else close['oa'])
+            dist = picks.gd_dist(min(max(float(b['mxh']), 0.05), 6.0),
+                                 min(max(float(b['mxa']), 0.05), 6.0))
+            pw, pp = _pq(dist, b['side'], our_cl)
+            ec = pw * (co - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+            rec['edge_close'] = round(ec, 4)
+            rec['dead'] = bool(ec < picks.EDGE)
+        except Exception:
+            pass
+
+
 # ---------- ισοδυναμο κλεισιμο οταν αλλαξε η γραμμη ----------
 def _equiv_close_odds(mxh, mxa, side, our_line, close_line_our, co_our, co_opp):
     """Η γραμμη εκλεισε αλλου (πχ παιξαμε +0.5, εκλεισε +0.25): βρες ποια «δυναμη»
@@ -164,13 +287,14 @@ def settle_pending(verbose=True):
         done.add(k)                      # μην το ξαναδουμε δυο φορες στο ιδιο τρεξιμο
     if not pend:
         return 0
-    cidx = _closing_index()
+    hidx = _history_index()
     n = 0
     with open(LEDGER_F, 'a', encoding='utf-8') as fh:
         for b in pend:
             rec = dict(b)                # lg,home,away,hid,aid,ko,side,hcap,odds,edge,seen
-            # --- κλεισιμο (ιδιο feed) ---
-            c = cidx.get(f"{b.get('hid')}_{b.get('aid')}")
+            rows = hidx.get(f"{b.get('hid')}_{b.get('aid')}", [])
+            # --- κλεισιμο (ιδιο feed) = τελευταια pregame εγγραφη ---
+            c = rows[-1] if rows else None
             if c and c.get('line') is not None and c.get('oh') and c.get('oa'):
                 cl = float(c['line'])
                 our_close_line = cl if b['side'] == 1 else -cl
@@ -209,6 +333,11 @@ def settle_pending(verbose=True):
                     rec['pnl_close'] = round(picks.settle(r['gd'], b['side'], b['hcap'], rec['close_odds']), 4)
             else:
                 rec['gd'] = None; rec['pnl'] = None
+            # --- εμπλουτισμος ledger (πακετο 5.1, 13/9 — μη κρισιμος) ---
+            try:
+                _enrich(rec, b, rows, _dt(b.get('ko')))
+            except Exception as e:
+                rec['enrich_err'] = f'{type(e).__name__}: {e}'
             rec['settled_at'] = now.isoformat(timespec='minutes')
             fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
             n += 1

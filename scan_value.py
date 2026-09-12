@@ -83,7 +83,7 @@ def log_odds_history(odds_rows, now_utc):
     with open(HIST_F, 'a', encoding='utf-8') as fh, open(DLIVE_F, 'a', encoding='utf-8') as fl:
         for r in odds_rows:
             key = f"{r['hid']}_{r['aid']}"
-            sig = [r.get('line'), r.get('oh'), r.get('oa'), r.get('h2h'), r.get('pin'), r.get('mb')]
+            sig = [r.get('line'), r.get('oh'), r.get('oa'), r.get('h2h'), r.get('pin'), r.get('mb'), r.get('ou')]
             if hstate.get(key, {}).get('sig') == sig:
                 continue
             rec = dict(t=now_utc, **r)

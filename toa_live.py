@@ -49,6 +49,27 @@ def _pb(g, bk):
                     return (float(hp), float(ha), float(aa))
     return None
 
+def _tot(g, bk):
+    """Γραμμη total (totals) ενος bookmaker -> (line, over_odds, under_odds).
+    13/9 (ledger πακετο 5.1): η κινηση του total ειναι ο διαχωριστης ειδηση/ροη
+    (ταξινομηση κινησεων + διαβαθμιση Τ3) — πρεπει να καταγραφεται απο ΤΩΡΑ,
+    δεν ανακατασκευαζεται αναδρομικα. Κοστος: +1 market/λιγκα/scan."""
+    for b in g.get('bookmakers', []):
+        if b.get('key') != bk:
+            continue
+        for m in b.get('markets', []):
+            if m.get('key') == 'totals':
+                pt = ov = un = None
+                for o in m.get('outcomes', []):
+                    nm = str(o.get('name', '')).lower()
+                    if nm == 'over':
+                        pt = o.get('point'); ov = o.get('price')
+                    elif nm == 'under':
+                        un = o.get('price')
+                if pt is not None and ov and un:
+                    return (float(pt), float(ov), float(un))
+    return None
+
 def _h2h(g, bk):
     """1X2 (h2h) ενος bookmaker -> (home_odds, draw_odds, away_odds)."""
     ht, at = g.get('home_team'), g.get('away_team')
@@ -78,7 +99,7 @@ def fetch_all(leagues):
         if not sport:
             out[lg] = []; continue
         r = requests.get(f'{BASE}/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu', markets='spreads,h2h',
+                         params=dict(apiKey=_key(), regions='eu', markets='spreads,h2h,totals',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'), timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
         try:
@@ -116,7 +137,8 @@ def fetch_all(leagues):
                            inplay=inplay,
                            # 13/9 (ledger πακετο 5.1): PINNACLE ΧΩΡΙΣΤΑ — το CLV της 2627
                            # θα μετριεται σε Pinnacle −6h· το blend best-of δεν αρκει.
-                           pin=pin, mb=mb))
+                           pin=pin, mb=mb,
+                           ou=_tot(g, 'pinnacle') or _tot(g, 'matchbook')))
         out[lg] = fx
         time.sleep(0.3)
     return out, rem, cost
@@ -175,7 +197,8 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                                       h2h=[round(x, 2) for x in f['h2h']] if f.get('h2h') else None,
                                       inplay=bool(f.get('inplay')),
                                       pin=list(f['pin']) if f.get('pin') else None,
-                                      mb=list(f['mb']) if f.get('mb') else None))
+                                      mb=list(f['mb']) if f.get('mb') else None,
+                                      ou=list(f['ou']) if f.get('ou') else None))
             if f.get('inplay'):
                 continue   # in-play: καταγραφη μονο — ΟΧΙ picks
             rh = blended.get(H); ra = blended.get(A)
