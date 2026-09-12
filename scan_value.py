@@ -115,6 +115,11 @@ def red_flags(odds_rows, notify_tg=True):
     except FileNotFoundError:
         return 0
     for b in bets:
+        # 13/9: το ημερολογιο γραφει πλεον απο την 1η αγωνιστικη (paper tracking),
+        # αλλα το Τ3 alert κραταει το παλιο πεδιο του (md>=7) — οχι θορυβος για
+        # picks που ρητα ΔΕΝ παιζονται τοσο νωρις.
+        if b.get('md') is not None and b['md'] < 7:
+            continue
         k = f"{b['lg']}|{b['home']}|{b['away']}|{b['side']}|{b['hcap']:g}"
         if k in seen:
             continue
@@ -203,8 +208,11 @@ def scan(notify_tg=True):
     try:
         with open(CLVBETS_F, 'a', encoding='utf-8') as fh:
             for p in new_alerts:
-                if p.get('md') is not None and p['md'] < 7:
-                    continue          # ημερολογιο ΜΟΝΟ απο την 7η αγωνιστικη (2026-08-29 Στελιος)
+                # 13/9 Στελιος: καταγραφη απο την 1η αγωνιστικη (πριν: μονο md>=7) —
+                # να δουμε ΣΤΗΝ ΠΡΑΞΗ πως παει το μοντελο νωρις. paper=True σημαινει
+                # «καταγραφη μονο, ΔΕΝ παιζεται» (παιζουμε 15η+)· τα χειροκινητα πεδια
+                # (placed_at/stake/book) δειχνουν τι παιχτηκε πραγματικα.
+                md = p.get('md')
                 rec = dict(seen=now_utc, lg=p['lg'], home=p['home'], away=p['away'],
                            hid=p.get('home_id'), aid=p.get('away_id'), ko=p.get('when'),
                            side=p['side'], hcap=p['hcap'], odds=p['odds'],
@@ -214,6 +222,9 @@ def scan(notify_tg=True):
                            # (τα υπολοιπα — προελευση/κινηση/CLV Pin−6h/πεθαμενα — βγαινουν
                            # post-hoc απο odds_history με το ledger_enrich, οχι εδω)
                            zone=('deep' if abs(p['hcap']) >= 1 else 'mid'),
+                           window=(None if md is None else
+                                   ('1-6' if md < 7 else ('7-14' if md < 15 else '15+'))),
+                           paper=(None if md is None else bool(md < 15)),
                            placed_at=None, stake_asked=None, stake_accepted=None, book=None)
                 fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
     except Exception as e:
