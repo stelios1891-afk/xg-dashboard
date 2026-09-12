@@ -143,18 +143,42 @@ def red_flags(odds_rows, notify_tg=True):
         elif abs(our_line - b['hcap']) < 0.01 and float(our_odds) - b['odds'] >= 0.05:
             reason = f"αποδοση {b['odds']:.2f} → {float(our_odds):.2f}"
         if reason:
+            # Διαβαθμιση 5.1 (13/9): ΚΟΚΚΙΝΟ = το κοντρασμα συνοδευεται απο κινηση
+            # total >=0.25 ΟΠΟΙΑΣΔΗΠΟΤΕ κατευθυνσης (προφιλ ΕΙΔΗΣΗΣ — πχ ενδεκαδα)·
+            # ΚΙΤΡΙΝΟ = total ακινητο (προφιλ ροης, ιστορικα πιο αθωο).
+            # + ελεγχος Pinnacle: κινηση ΜΟΝΟ στο blend χωρις Pinnacle = πιθανη
+            # γκανιοτα/θορυβος. ΟΛΑ καταγραφη/πληροφορια — καμια αυτοματη ενεργεια.
+            grade, gnote = '🟡 ΚΙΤΡΙΝΟ', 'total αγνωστο'
+            t0, ou = b.get('tot'), r.get('ou')
+            if t0 is not None and ou:
+                if abs(float(ou[0]) - float(t0)) >= 0.25:
+                    grade, gnote = '🔴 ΚΟΚΚΙΝΟ', f'total {float(t0):g}→{float(ou[0]):g} = προφιλ ΕΙΔΗΣΗΣ'
+                else:
+                    gnote = 'total ακινητο = προφιλ ροης'
+            pnote = None
+            p0, p1 = b.get('pin'), r.get('pin')
+            if p0 and p1:
+                ol0 = float(p0[0]) if b['side'] == 1 else -float(p0[0])
+                ol1 = float(p1[0]) if b['side'] == 1 else -float(p1[0])
+                po0 = p0[1] if b['side'] == 1 else p0[2]
+                po1 = p1[1] if b['side'] == 1 else p1[2]
+                pmoved = (ol1 > ol0 + 0.01) or (abs(ol1 - ol0) < 0.01 and po0 and po1
+                                                and float(po1) - float(po0) >= 0.05)
+                pnote = ('η Pinnacle κινηθηκε κι αυτη' if pmoved
+                         else 'η Pinnacle ΔΕΝ κινηθηκε — πιθανη γκανιοτα, οχι σημα')
             team = b['home'] if b['side'] == 1 else b['away']
-            flags.append((b, team, reason, mins))
-            seen[k] = dict(t=now.isoformat(timespec='minutes'), reason=reason)
+            flags.append((b, team, reason, mins, grade, gnote, pnote))
+            seen[k] = dict(t=now.isoformat(timespec='minutes'), reason=reason, grade=grade)
     # καθαρισμος state (κρατα 3 μερες)
     cutoff = (now - datetime.timedelta(days=3)).isoformat()
     seen = {k: v for k, v in seen.items() if v.get('t', '') >= cutoff}
     _save(RFLAG_F, seen)
     if flags and notify_tg:
-        L = [f"🚨 ΚΟΚΚΙΝΟ ΦΑΝΑΡΙ — η αγορα κινειται ΚΟΝΤΡΑ σε {len(flags)} pick(s) λιγο πριν τη σεντρα:"]
-        for b, team, reason, mins in flags:
-            L.append(f"\n{b['lg']} · {b['home']} – {b['away']} (σε {mins:.0f}′)\n"
-                     f"{team} {b['hcap']:+g} @{b['odds']:.2f} → {reason}\n"
+        L = [f"🚦 Τ3 — η αγορα κινειται ΚΟΝΤΡΑ σε {len(flags)} pick(s) λιγο πριν τη σεντρα (καταγραφη, οχι οδηγια):"]
+        for b, team, reason, mins, grade, gnote, pnote in flags:
+            L.append(f"\n{grade} · {b['lg']} · {b['home']} – {b['away']} (σε {mins:.0f}′)\n"
+                     f"{team} {b['hcap']:+g} @{b['odds']:.2f} → {reason} · {gnote}"
+                     + (f" · {pnote}" if pnote else "") + "\n"
                      f"Ιστορικο 2 σεζον: ΑΝ ΔΕΝ το επαιξες → αποφυγη. ΑΝ το επαιξες → ΚΡΑΤΑ το "
                      f"(κρατημα −3.4% vs ξεφορτωμα −7 εως −10%).")
         try:
@@ -206,6 +230,10 @@ def scan(notify_tg=True):
 
     # ---- CLV ημερολογιο: καθε ΝΕΟ pick = η τιμη εισοδου μας (κρινεται στο κλεισιμο) ----
     try:
+        # 13/9 (Τ3 διαβαθμιση 5.1): total & Pinnacle ΤΗ ΣΤΙΓΜΗ του pick — τα σημεια
+        # αναφορας του alert (εκινηθη το total; εκινηθη και η Pinnacle;).
+        orow = {f"{r['hid']}_{r['aid']}": r
+                for r in res.get('odds_rows', []) if not r.get('inplay')}
         with open(CLVBETS_F, 'a', encoding='utf-8') as fh:
             for p in new_alerts:
                 # 13/9 Στελιος: καταγραφη απο την 1η αγωνιστικη (πριν: μονο md>=7) —
@@ -213,7 +241,9 @@ def scan(notify_tg=True):
                 # «καταγραφη μονο, ΔΕΝ παιζεται» (παιζουμε 15η+)· τα χειροκινητα πεδια
                 # (placed_at/stake/book) δειχνουν τι παιχτηκε πραγματικα.
                 md = p.get('md')
+                o = orow.get(f"{p.get('home_id')}_{p.get('away_id')}") or {}
                 rec = dict(seen=now_utc, lg=p['lg'], home=p['home'], away=p['away'],
+                           tot=(o.get('ou') or [None])[0], pin=o.get('pin'),
                            hid=p.get('home_id'), aid=p.get('away_id'), ko=p.get('when'),
                            side=p['side'], hcap=p['hcap'], odds=p['odds'],
                            edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4),
