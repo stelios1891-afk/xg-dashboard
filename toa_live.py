@@ -7,7 +7,7 @@ toa_live.py — LIVE value picks μεσω The Odds API (TOA· πληρωμενη
 
 TOA_KEY: inline env var (NEVER σε αρχειο). Κοστος: markets=spreads × region=eu = 1 credit/λιγκα.
 """
-import os, sys, time
+import os, sys, time, datetime
 from collections import defaultdict
 import requests
 
@@ -88,7 +88,18 @@ def fetch_all(leagues):
         if r.status_code != 200:
             out[lg] = []; continue
         fx = []
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
         for g in r.json():
+            # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ (12/9/2026, bug report Στελιου): το TOA επιστρεφει και ματς
+            # ΣΕ ΕΞΕΛΙΞΗ με in-play τιμες → ψευτικα edges 20-30% στα picks + μολυνση του
+            # odds_history. Ο,τι εχει αρχισει ΔΕΝ μπαινει πουθενα (picks/1x2/history).
+            try:
+                ct = datetime.datetime.fromisoformat(
+                    str(g.get('commence_time', '')).replace('Z', '+00:00'))
+                if ct <= now_utc:
+                    continue
+            except (ValueError, TypeError):
+                continue
             pin = _pb(g, 'pinnacle'); mb = _pb(g, 'matchbook')
             if pin and mb and abs(pin[0] - mb[0]) < 0.01:
                 c = (pin[0], max(pin[1], mb[1]), max(pin[2], mb[2]))   # best price και των δυο

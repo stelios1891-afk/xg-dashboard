@@ -284,6 +284,15 @@ def render_value(league):
             res = json.load(fh)
     picks = res.get('picks', [])
     eu_picks, eu_scan = _euro_picks()
+    # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
+    # ως pick, ακομα κι αν το αρχειο του scan ειναι παλιοτερο απο τη σεντρα.
+    import datetime as _dt
+    _now = _dt.datetime.now(_dt.timezone.utc).strftime('%Y-%m-%dT%H:%M')
+    def _upcoming(p):
+        w = str(p.get('when') or '')[:16]
+        return (not w) or (w > _now)   # UTC ISO συγκριση ως string
+    picks = [p for p in picks if _upcoming(p)]
+    eu_picks = [p for p in eu_picks if _upcoming(p)]
     if not res:
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
         if not eu_picks:
