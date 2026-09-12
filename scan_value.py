@@ -19,6 +19,7 @@ LATEST_F = os.path.join(ROOT, 'value_picks_latest.json')
 MARKET_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 για ΟΛΑ τα fixtures (dashboard)
 HIST_F = os.path.join(ROOT, 'odds_history.jsonl')         # ιστορικο τιμων: μια γραμμη ανα ΑΛΛΑΓΗ (2026-08-28)
 HSTATE_F = os.path.join(ROOT, 'odds_history_state.json')  # τελευταιο στιγμιοτυπο ανα ματς (για ανιχνευση αλλαγης)
+DLIVE_F = os.path.join(ROOT, 'dom_live_odds.jsonl')       # in-play καταγραφη (12/9: εως ΚΟ+150', ΧΩΡΙΣΤΑ απο το pregame)
 CLVBETS_F = os.path.join(ROOT, 'clv_bets.jsonl')          # CLV ημερολογιο: μια γραμμη ανα ΝΕΟ pick (2026-08-29)
 RATINGS_SEASON = '2526'   # warm-start· αλλαξε σε '2627' οταν μαζευτουν φετινα ματς
 ODDS_DELTA = 0.05         # κατωφλι αλλαγης αποδοσης για re-alert
@@ -79,14 +80,16 @@ def log_odds_history(odds_rows, now_utc):
     Κραταει το τελευταιο στιγμιοτυπο στο HSTATE_F. Επιστρεφει ποσες αλλαγες γραφτηκαν."""
     hstate = _load(HSTATE_F, {})
     wrote = 0
-    with open(HIST_F, 'a', encoding='utf-8') as fh:
+    with open(HIST_F, 'a', encoding='utf-8') as fh, open(DLIVE_F, 'a', encoding='utf-8') as fl:
         for r in odds_rows:
             key = f"{r['hid']}_{r['aid']}"
             sig = [r.get('line'), r.get('oh'), r.get('oa'), r.get('h2h')]
             if hstate.get(key, {}).get('sig') == sig:
                 continue
             rec = dict(t=now_utc, **r)
-            fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
+            # in-play -> ΞΕΧΩΡΙΣΤΟ αρχειο (12/9): το pregame ιστορικο μενει καθαρο,
+            # οι live τιμες κρατιουνται για τα live τεστ του Στελιου (οπως euro_live_odds).
+            (fl if r.get('inplay') else fh).write(json.dumps(rec, ensure_ascii=False) + chr(10))
             hstate[key] = dict(sig=sig, t=now_utc)
             wrote += 1
     # καθαρισμος state: κρατα μονο ματς με προσφατη καταγραφη (30 μερες) — το jsonl μενει ανεπαφο
@@ -169,7 +172,8 @@ def scan(notify_tg=True):
     except Exception as e:
         print(f"odds_history ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
     try:
-        n_rf = red_flags(res.get('odds_rows', []), notify_tg=notify_tg)
+        n_rf = red_flags([r for r in res.get('odds_rows', []) if not r.get('inplay')],
+                         notify_tg=notify_tg)
         if n_rf:
             print(f"🚨 κοκκινα φαναρια: {n_rf}")
     except Exception as e:

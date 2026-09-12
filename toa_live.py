@@ -90,16 +90,18 @@ def fetch_all(leagues):
         fx = []
         now_utc = datetime.datetime.now(datetime.timezone.utc)
         for g in r.json():
-            # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ (12/9/2026, bug report Στελιου): το TOA επιστρεφει και ματς
-            # ΣΕ ΕΞΕΛΙΞΗ με in-play τιμες → ψευτικα edges 20-30% στα picks + μολυνση του
-            # odds_history. Ο,τι εχει αρχισει ΔΕΝ μπαινει πουθενα (picks/1x2/history).
+            # ΣΕΝΤΡΑ (12/9/2026, Στελιος): το TOA επιστρεφει και ματς ΣΕ ΕΞΕΛΙΞΗ με in-play
+            # τιμες. Τα ΚΡΑΤΑΜΕ για καταγραφη (dom_live_odds, εως ΚΟ+150') με σημαια
+            # inplay=True, αλλα ΔΕΝ επηρεαζουν picks / market 1X2 / pregame odds_history.
             try:
                 ct = datetime.datetime.fromisoformat(
                     str(g.get('commence_time', '')).replace('Z', '+00:00'))
-                if ct <= now_utc:
-                    continue
             except (ValueError, TypeError):
                 continue
+            mins_in = (now_utc - ct).total_seconds() / 60
+            if mins_in > 150:
+                continue                      # τελειωμενα: τιποτα
+            inplay = mins_in > 0
             pin = _pb(g, 'pinnacle'); mb = _pb(g, 'matchbook')
             if pin and mb and abs(pin[0] - mb[0]) < 0.01:
                 c = (pin[0], max(pin[1], mb[1]), max(pin[2], mb[2]))   # best price και των δυο
@@ -110,7 +112,8 @@ def fetch_all(leagues):
             fx.append(dict(home_toa=g.get('home_team'), away_toa=g.get('away_team'),
                            line=c[0], home_odds=c[1], away_odds=c[2],
                            h2h=_h2h(g, 'pinnacle') or _h2h(g, 'matchbook'),   # 1X2 (Pinnacle preferred)
-                           startTime=(g.get('commence_time') or '')[:16]))
+                           startTime=(g.get('commence_time') or '')[:16],
+                           inplay=inplay))
         out[lg] = fx
         time.sleep(0.3)
     return out, rem, cost
@@ -159,14 +162,17 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
             H = name2id.get(hfot); A = name2id.get(afot)
             if H is None or A is None:
                 all_norating.append((lg, f, hfot if H is None else afot, 'δεν υπαρχει στα ratings')); continue
-            if f.get('h2h'):   # market 1X2 για ΚΑΘΕ matched fixture (ανεξαρτητα MIN_PRIOR/pick)
+            if f.get('h2h') and not f.get('inplay'):   # market 1X2: ΜΟΝΟ pregame (καρτες)
                 mh, mdw, ma = f['h2h']
                 market_1x2[f"{H}_{A}"] = dict(h=round(mh, 2), d=round(mdw, 2), a=round(ma, 2), when=f['startTime'])
             if f.get('line') is not None:   # ιστορικο τιμων: πληρες στιγμιοτυπο ανα fixture (2026-08-28)
                 odds_rows.append(dict(lg=lg, hid=H, aid=A, home=hfot, away=afot,
                                       ko=f.get('startTime'), line=f['line'],
                                       oh=f.get('home_odds'), oa=f.get('away_odds'),
-                                      h2h=[round(x, 2) for x in f['h2h']] if f.get('h2h') else None))
+                                      h2h=[round(x, 2) for x in f['h2h']] if f.get('h2h') else None,
+                                      inplay=bool(f.get('inplay'))))
+            if f.get('inplay'):
+                continue   # in-play: καταγραφη μονο — ΟΧΙ picks
             rh = blended.get(H); ra = blended.get(A)
             if rh is None or ra is None:
                 all_norating.append((lg, f, f"{hfot}/{afot}", 'χωρις rating (prior/in-season)')); continue
