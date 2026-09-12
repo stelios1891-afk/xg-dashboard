@@ -113,7 +113,10 @@ def fetch_all(leagues):
                            line=c[0], home_odds=c[1], away_odds=c[2],
                            h2h=_h2h(g, 'pinnacle') or _h2h(g, 'matchbook'),   # 1X2 (Pinnacle preferred)
                            startTime=(g.get('commence_time') or '')[:16],
-                           inplay=inplay))
+                           inplay=inplay,
+                           # 13/9 (ledger πακετο 5.1): PINNACLE ΧΩΡΙΣΤΑ — το CLV της 2627
+                           # θα μετριεται σε Pinnacle −6h· το blend best-of δεν αρκει.
+                           pin=pin, mb=mb))
         out[lg] = fx
         time.sleep(0.3)
     return out, rem, cost
@@ -170,7 +173,9 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                                       ko=f.get('startTime'), line=f['line'],
                                       oh=f.get('home_odds'), oa=f.get('away_odds'),
                                       h2h=[round(x, 2) for x in f['h2h']] if f.get('h2h') else None,
-                                      inplay=bool(f.get('inplay'))))
+                                      inplay=bool(f.get('inplay')),
+                                      pin=list(f['pin']) if f.get('pin') else None,
+                                      mb=list(f['mb']) if f.get('mb') else None))
             if f.get('inplay'):
                 continue   # in-play: καταγραφη μονο — ΟΧΙ picks
             rh = blended.get(H); ra = blended.get(A)

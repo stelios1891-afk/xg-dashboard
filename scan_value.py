@@ -83,7 +83,7 @@ def log_odds_history(odds_rows, now_utc):
     with open(HIST_F, 'a', encoding='utf-8') as fh, open(DLIVE_F, 'a', encoding='utf-8') as fl:
         for r in odds_rows:
             key = f"{r['hid']}_{r['aid']}"
-            sig = [r.get('line'), r.get('oh'), r.get('oa'), r.get('h2h')]
+            sig = [r.get('line'), r.get('oh'), r.get('oa'), r.get('h2h'), r.get('pin'), r.get('mb')]
             if hstate.get(key, {}).get('sig') == sig:
                 continue
             rec = dict(t=now_utc, **r)
@@ -209,7 +209,12 @@ def scan(notify_tg=True):
                            hid=p.get('home_id'), aid=p.get('away_id'), ko=p.get('when'),
                            side=p['side'], hcap=p['hcap'], odds=p['odds'],
                            edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4),
-                           md=p.get('md'), mxh=p.get('mxh'), mxa=p.get('mxa'))
+                           md=p.get('md'), mxh=p.get('mxh'), mxa=p.get('mxa'),
+                           # 13/9 (ledger πακετο 5.1): ζωνη + χειροκινητα πεδια εκτελεσης
+                           # (τα υπολοιπα — προελευση/κινηση/CLV Pin−6h/πεθαμενα — βγαινουν
+                           # post-hoc απο odds_history με το ledger_enrich, οχι εδω)
+                           zone=('deep' if abs(p['hcap']) >= 1 else 'mid'),
+                           placed_at=None, stake_asked=None, stake_accepted=None, book=None)
                 fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
     except Exception as e:
         print(f"clv_bets ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
