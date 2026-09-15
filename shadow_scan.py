@@ -136,7 +136,13 @@ if __name__ == '__main__':
                     e_I = edge_of(pwI, ppI, o_dog)
                 isA = bool(in_band(o_dog) and e_A >= picks.EDGE)
                 isC = bool(in_band(o_dog) and lt in ('x.0', 'x.5') and e_C >= picks.EDGE)
+                # 16/9 (#5 ετυμηγοριας 5.1 — σκια κατωφλιων ανα ζωνη): καταγραφουμε και
+                # dogs με δηλωμενο edge >= 6% (κατω απο το live @10) ωστε το κατεβασμα
+                # πηχη ανα ζωνη να κρινεται με πληρες δειγμα (πριν: χανονταν οσα ειχαν
+                # e_B2 < 0). Καλυψη sub-10% ξεκιναει 16/9 — τα delta κελια του report
+                # δεν εχουν δεδομενα πριν απο αυτο.
                 keep = isA or isC or (in_band(o_dog) and e_B2 >= EDGE_FLOOR_B2) \
+                    or (in_band(o_dog) and e_A >= 0.06) \
                     or (in_band(o_fav) and e_B2f >= 0.02)
                 if not keep:
                     continue
