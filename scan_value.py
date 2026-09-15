@@ -98,95 +98,14 @@ def log_odds_history(odds_rows, now_utc):
     _save(HSTATE_F, hstate)
     return wrote
 
-RFLAG_F = os.path.join(ROOT, 'red_flag_state.json')      # ποια picks εχουν ηδη ειδοποιηθει (κοκκινο φαναρι)
-
-def red_flags(odds_rows, notify_tg=True):
-    """ΚΟΚΚΙΝΟ ΦΑΝΑΡΙ (2026-08-29): για καταγεγραμμενα picks (clv_bets) με σεντρα σε <2h,
-    αν η αγορα εχει κινηθει ΚΟΝΤΡΑ στην πλευρα μας απο την τιμη εισοδου -> μια ειδοποιηση.
-    Βασιζεται στο ευρημα 2526: οψιμο dump στον αουτσαιντερ μας = ROI −2.2% αντι +7.7%.
-    Alert-only — καμια αυτοματη ενεργεια."""
-    cur = {f"{r['hid']}_{r['aid']}": r for r in odds_rows}
-    seen = _load(RFLAG_F, {})
-    now = datetime.datetime.now(datetime.timezone.utc)
-    flags = []
-    try:
-        with open(os.path.join(ROOT, 'clv_bets.jsonl'), encoding='utf-8') as fh:
-            bets = [json.loads(x) for x in fh if x.strip()]
-    except FileNotFoundError:
-        return 0
-    for b in bets:
-        # 13/9: το ημερολογιο γραφει πλεον απο την 1η αγωνιστικη (paper tracking),
-        # αλλα το Τ3 alert κραταει το παλιο πεδιο του (md>=7) — οχι θορυβος για
-        # picks που ρητα ΔΕΝ παιζονται τοσο νωρις.
-        if b.get('md') is not None and b['md'] < 7:
-            continue
-        k = f"{b['lg']}|{b['home']}|{b['away']}|{b['side']}|{b['hcap']:g}"
-        if k in seen:
-            continue
-        try:
-            ko = datetime.datetime.fromisoformat(str(b.get('ko'))).replace(tzinfo=datetime.timezone.utc)
-        except ValueError:
-            continue
-        mins = (ko - now).total_seconds() / 60
-        if not (-10 <= mins <= 120):
-            continue                       # μονο το τελικο 2ωρο πριν τη σεντρα
-        r = cur.get(f"{b.get('hid')}_{b.get('aid')}")
-        if not r or r.get('line') is None:
-            continue
-        our_line = float(r['line']) if b['side'] == 1 else -float(r['line'])
-        our_odds = r.get('oh') if b['side'] == 1 else r.get('oa')
-        if our_odds is None:
-            continue
-        reason = None
-        if our_line > b['hcap'] + 0.01:    # μας δινουν ΠΕΡΙΣΣΟΤΕΡΟ χαντικαπ = επεσε η πλευρα μας
-            reason = f"γραμμη {b['hcap']:+g} → {our_line:+g}"
-        elif abs(our_line - b['hcap']) < 0.01 and float(our_odds) - b['odds'] >= 0.05:
-            reason = f"αποδοση {b['odds']:.2f} → {float(our_odds):.2f}"
-        if reason:
-            # Διαβαθμιση 5.1 (13/9): ΚΟΚΚΙΝΟ = το κοντρασμα συνοδευεται απο κινηση
-            # total >=0.25 ΟΠΟΙΑΣΔΗΠΟΤΕ κατευθυνσης (προφιλ ΕΙΔΗΣΗΣ — πχ ενδεκαδα)·
-            # ΚΙΤΡΙΝΟ = total ακινητο (προφιλ ροης, ιστορικα πιο αθωο).
-            # + ελεγχος Pinnacle: κινηση ΜΟΝΟ στο blend χωρις Pinnacle = πιθανη
-            # γκανιοτα/θορυβος. ΟΛΑ καταγραφη/πληροφορια — καμια αυτοματη ενεργεια.
-            grade, gnote = '🟡 ΚΙΤΡΙΝΟ', 'total αγνωστο'
-            t0, ou = b.get('tot'), r.get('ou')
-            if t0 is not None and ou:
-                if abs(float(ou[0]) - float(t0)) >= 0.25:
-                    grade, gnote = '🔴 ΚΟΚΚΙΝΟ', f'total {float(t0):g}→{float(ou[0]):g} = προφιλ ΕΙΔΗΣΗΣ'
-                else:
-                    gnote = 'total ακινητο = προφιλ ροης'
-            pnote = None
-            p0, p1 = b.get('pin'), r.get('pin')
-            if p0 and p1:
-                ol0 = float(p0[0]) if b['side'] == 1 else -float(p0[0])
-                ol1 = float(p1[0]) if b['side'] == 1 else -float(p1[0])
-                po0 = p0[1] if b['side'] == 1 else p0[2]
-                po1 = p1[1] if b['side'] == 1 else p1[2]
-                pmoved = (ol1 > ol0 + 0.01) or (abs(ol1 - ol0) < 0.01 and po0 and po1
-                                                and float(po1) - float(po0) >= 0.05)
-                pnote = ('η Pinnacle κινηθηκε κι αυτη' if pmoved
-                         else 'η Pinnacle ΔΕΝ κινηθηκε — πιθανη γκανιοτα, οχι σημα')
-            team = b['home'] if b['side'] == 1 else b['away']
-            flags.append((b, team, reason, mins, grade, gnote, pnote))
-            seen[k] = dict(t=now.isoformat(timespec='minutes'), reason=reason, grade=grade)
-    # καθαρισμος state (κρατα 3 μερες)
-    cutoff = (now - datetime.timedelta(days=3)).isoformat()
-    seen = {k: v for k, v in seen.items() if v.get('t', '') >= cutoff}
-    _save(RFLAG_F, seen)
-    if flags and notify_tg:
-        L = [f"🚦 Τ3 — η αγορα κινειται ΚΟΝΤΡΑ σε {len(flags)} pick(s) λιγο πριν τη σεντρα (καταγραφη, οχι οδηγια):"]
-        for b, team, reason, mins, grade, gnote, pnote in flags:
-            L.append(f"\n{grade} · {b['lg']} · {b['home']} – {b['away']} (σε {mins:.0f}′)\n"
-                     f"{team} {b['hcap']:+g} @{b['odds']:.2f} → {reason} · {gnote}"
-                     + (f" · {pnote}" if pnote else "") + "\n"
-                     f"Ιστορικο 2 σεζον: ΑΝ ΔΕΝ το επαιξες → αποφυγη. ΑΝ το επαιξες → ΚΡΑΤΑ το "
-                     f"(κρατημα −3.4% vs ξεφορτωμα −7 εως −10%).")
-        try:
-            import notify
-            notify.send("\n".join(L))
-        except Exception as e:
-            print("Telegram σφαλμα (red flag):", e)
-    return len(flags)
+# Τ3 «κοκκινο φαναρι»: ΚΟΠΗΚΕ 15/9/2026 (αποφαση Στελιου, μετα την ετυμηγορια 5.1).
+# Ιστορικο: 29/8 alert validated σε closing-picks (−0.73% vs +13.2%)· 13/9 δυο
+# αναδρομικα με εισοδο −12h (t3_grade_retro / t3_narrow_retro, προ-δηλωμενα κριτηρια):
+# καθε κοντρασμα +8.9%, αποτομο σκαλι >=0.25 στο τελ. 2ωρο +15.0% (και στις 2 σεζον)
+# -> ΚΑΝΕΝΑ επικυρωμενο αρνητικο σημα για θεσεις που κρατιουνται απο νωρις.
+# Αν ξαναχρειαστει (πχ κριση Μαιου 2027), η αναλυση βγαινει αναδρομικα απο το
+# odds_history.jsonl (γραμμη/total/Pinnacle με ωρα για ολα τα ματς) — δεν χρειαζεται
+# live μηχανισμος.
 
 
 def scan(notify_tg=True):
@@ -200,13 +119,6 @@ def scan(notify_tg=True):
         print(f"odds_history: {n_hist} αλλαγες καταγραφηκαν ({len(res.get('odds_rows', []))} fixtures)")
     except Exception as e:
         print(f"odds_history ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
-    try:
-        n_rf = red_flags([r for r in res.get('odds_rows', []) if not r.get('inplay')],
-                         notify_tg=notify_tg)
-        if n_rf:
-            print(f"🚨 κοκκινα φαναρια: {n_rf}")
-    except Exception as e:
-        print(f"red_flags ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
     state = _load(STATE_F, {})
 
     new_alerts, changed_alerts = [], []
@@ -230,8 +142,8 @@ def scan(notify_tg=True):
 
     # ---- CLV ημερολογιο: καθε ΝΕΟ pick = η τιμη εισοδου μας (κρινεται στο κλεισιμο) ----
     try:
-        # 13/9 (Τ3 διαβαθμιση 5.1): total & Pinnacle ΤΗ ΣΤΙΓΜΗ του pick — τα σημεια
-        # αναφορας του alert (εκινηθη το total; εκινηθη και η Pinnacle;).
+        # 13/9 (ledger πακετο 5.1): total & Pinnacle ΤΗ ΣΤΙΓΜΗ του pick — σημεια
+        # αναφορας για τις μετα-το-ματς αναλυσεις (κινηση total/Pinnacle απο εισοδο).
         orow = {f"{r['hid']}_{r['aid']}": r
                 for r in res.get('odds_rows', []) if not r.get('inplay')}
         with open(CLVBETS_F, 'a', encoding='utf-8') as fh:
@@ -334,8 +246,9 @@ def auto():
     h = _nearest_kickoff_hours()
     gap = 24.0 if h > 72 else (1.0 if h > 24 else 0.5)   # <24h καθε 30' · <3μερες καθε 1h · αλλιως 1×/μερα (2026-08-29)
     if 0 < h <= 2.0:       # ΤΕΛΙΚΟ 2ΩΡΟ προ σεντρας: καθε 15' (2026-09-02, ~+4k credits/μηνα)
-        gap = 0.2          # τρεφει: red_flags (validated T3), Market Watch σκαλια γραμμης,
-                           # και το snapshot ΚΛΕΙΣΙΜΑΤΟΣ (CLV ledger = τελευταια εγγραφη προ ΚΟ)
+        gap = 0.2          # τρεφει: Market Watch σκαλια γραμμης, πυκνο ιστορικο τελικου 2ωρου
+                           # (γραμμη/total/Pinnacle) και το snapshot ΚΛΕΙΣΙΜΑΤΟΣ (CLV ledger =
+                           # τελευταια εγγραφη προ ΚΟ). [Τ3 κοπηκε 15/9 — δεν τρεφει πια αυτο]
     since = _last_scan_hours()
     if since >= gap:
         scan(notify_tg=True)
