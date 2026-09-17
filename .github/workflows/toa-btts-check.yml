@@ -1,0 +1,39 @@
+name: toa-btts-check
+
+# ONE-OFF (17/9): ποια βιβλια δινουν BTTS στο TOA (regions=eu, χωρις bookmaker filter).
+# Κοστος ~4 credits. Τρεχει με push του toa_btts_check.py.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'toa_btts_check.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: toa-btts-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install requests
+      - name: Check BTTS bookmakers
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_btts_check.py
+      - name: Commit result
+        run: |
+          git config user.name "toa-btts-bot"
+          git config user.email "actions@github.com"
+          git add toa_btts_check_out.txt
+          git diff --cached --quiet || (git commit -m "btts bookmaker check [skip ci]" && git pull --rebase && git push)
