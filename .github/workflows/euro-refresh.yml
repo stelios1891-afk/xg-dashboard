@@ -75,7 +75,7 @@ jobs:
         run: |
           git config user.name "euro-refresh-bot"
           git config user.email "actions@github.com"
-          git add data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json
+          git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json   # -f: νεες λιγκες ειναι gitignored (data_*.json)
           if git diff --cached --quiet; then
             echo "no changes — skip commit"
           else
