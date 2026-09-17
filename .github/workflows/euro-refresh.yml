@@ -1,0 +1,86 @@
+name: euro-refresh
+
+# ΚΑΘΗΜΕΡΙΝΗ (+βραδια ευρωπαικων) ανανεωση δεδομενων ευρωπαικου engine (εντολη Στελιου 10/9):
+#   1. euro_refresh.py  -> data_{lg}_{2627|2026}.json 30 ευρω-λιγκων (FotMob),
+#                          griffis_matches.csv (Ben, 9 λιγκες φετος),
+#                          clubelo_current.csv (σελιδες χωρων clubelo.com)
+#   2. euro_live_projections.py -> φρεσκο euro_projections.json (dashboard)
+# Commit ΜΟΝΟ αν αλλαξε κατι, με [skip ci]. Τα CORE7 ΔΕΝ αγγιζονται (data-refresh.yml καθημερινα).
+# ΠΡΟΫΠΟΘΕΣΗ CLOUD: τα inputs του euro engine (euro_engine.py, europe_fixtures_2627.json,
+# clubelo_europe.csv, griffis_name_map.json, data_Europe_*.json, ιστορικα data_*.json των
+# ευρω-λιγκων) πρεπει να ειναι committed στο repo — το guard step το ελεγχει και τα λεει.
+on:
+  schedule:
+    - cron: '0 6 * * *'      # ΚΑΘΗΜΕΡΙΝΑ 06:00 UTC (~9πμ Ελλαδας), μετα το data-refresh των 05:00
+    - cron: '0 23 * * 2,3,4' # + Τρ/Τετ/Πεμ 23:00 UTC: αμεσως μετα τα ευρωπαικα βραδινα (17/9 Στελιος:
+                             #   «να ανανεωνονται οταν προστιθενται παιχνιδια»)
+  workflow_dispatch: {}       # + χειροκινητο "Run workflow"
+  push:
+    paths:
+      - 'euro_refresh_trigger.txt'   # χειροκινητη πυροδοτηση με push (οπως euro-scan-now)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: euro-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # πληρες ιστορικο -> καθαρο rebase-before-push
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Guard — inputs του euro engine στο repo
+        run: |
+          missing=""
+          for f in euro_refresh.py euro_live_projections.py euro_engine.py picks.py \
+                   europe_fixtures_2627.json clubelo_europe.csv clubelo_current.csv \
+                   griffis_matches.csv griffis_name_map.json league_offsets.json \
+                   data_Europe_2122.json data_Europe_2526.json; do
+            [ -f "$f" ] || missing="$missing $f"
+          done
+          n_hist=$(ls data_*_2425.json 2>/dev/null | wc -l)
+          if [ -n "$missing" ]; then
+            echo "::error::Λειπουν απο το repo:$missing — commit τα inputs του euro engine πρωτα."
+            exit 1
+          fi
+          if [ "$n_hist" -lt 20 ]; then
+            echo "::error::Μονο $n_hist data_*_2425.json στο repo — τα ιστορικα data των ευρω-λιγκων δεν ειναι committed."
+            exit 1
+          fi
+          echo "guard OK (ιστορικα 2425: $n_hist αρχεια)"
+
+      - name: Euro refresh (FotMob 30 λιγκες + Griffis + ClubElo)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python euro_refresh.py
+
+      - name: Fresh euro projections
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python euro_live_projections.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "euro-refresh-bot"
+          git config user.email "actions@github.com"
+          git add data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json
+          if git diff --cached --quiet; then
+            echo "no changes — skip commit"
+          else
+            git commit -m "euro refresh (weekly) [skip ci]"
+            for i in 1 2 3; do
+              git pull --rebase --autostash origin main && git push && break || sleep 5
+            done
+          fi
