@@ -1,0 +1,57 @@
+name: euro-scan-now
+
+# ΧΕΙΡΟΚΙΝΗΤΟ τρεξιμο του ευρωπαικου odds scan (17/9, αιτημα Στελιου):
+# φρεσκες αποδοσεις χαντικαπ/γκολ/BTTS εκτος προγραμματος του scanner.
+# Πυροδοτηση: push αυτου του αρχειου Ή του euro_scan_trigger.txt Ή κουμπι
+# Run workflow. Κοστος: ~4 credits/διοργανωση + σκαλες οπου χρειαζεται.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '.github/workflows/euro-scan-now.yml'
+      - 'euro_scan_trigger.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: value-scanner        # ιδιο group με τον scanner — οχι διπλα τρεξιματα/races
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Euro odds (AH/OU/BTTS)
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python euro_odds_scan.py
+
+      - name: Euro shadow picks
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python euro_shadow_scan.py || echo "euro shadow failed (μη κρισιμο)"
+
+      - name: Commit results
+        run: |
+          git config user.name "euro-scan-bot"
+          git config user.email "actions@github.com"
+          git add euro_odds_latest.json euro_odds_hist.jsonl euro_live_odds.jsonl euro_value_latest.json euro_shadow.jsonl euro_shadow_state.json
+          if git diff --cached --quiet; then
+            echo "καμια αλλαγη"
+          else
+            git commit -m "euro scan (manual) [skip ci]"
+            git pull --rebase
+            git push
+          fi
