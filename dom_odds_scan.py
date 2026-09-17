@@ -44,14 +44,14 @@ HIST_F = os.path.join(ROOT, 'dom_odds_hist.jsonl')  # διαδρομες γρα�
 
 
 def _hist_sig(rec):
-    return tuple(rec.get(k) for k in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu'))
+    return tuple(rec.get(k) for k in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn'))
 
 
 def _hist_append(fh_list, now, kid, rec, old_rec):
     if _hist_sig(rec) == _hist_sig(old_rec):
         return
     row = dict(t=now.isoformat()[:16], k=kid, lg=rec.get('lg'), ko=rec.get('ko'))
-    for f in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu'):
+    for f in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn'):
         if rec.get(f) is not None:
             row[f] = rec[f]
     try:
@@ -248,7 +248,7 @@ def main(dry=False):
     for lg in fetch_lgs:
         sport = toa_live.SPORT[lg]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=apikey, regions='eu', markets='h2h,spreads,totals',
+                         params=dict(apiKey=apikey, regions='eu', markets='h2h,spreads,totals,btts',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -271,7 +271,7 @@ def main(dry=False):
         unmatched_all += [f'[{lg}] {u}' for u in unm]
         for g, f in pairs:
             kid = f"{f['home_id']}_{f['away_id']}"
-            h2 = eos._h2h(g); sp = eos._spread(g); tt = eos._total(g)
+            h2 = eos._h2h(g); sp = eos._spread(g); tt = eos._total(g); bt = eos._btts(g)
             old_rec = odds.get(kid) or {}
             rec = dict(ko=f['ko'].isoformat(), when=now.isoformat()[:16], lg=lg,
                        eid=g.get('id'), sport=sport)
@@ -285,7 +285,9 @@ def main(dry=False):
                 rec.update(line=sp[0], oh=round(sp[1], 2), oa=round(sp[2], 2))
             if tt:
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
-            if h2 or sp or tt:
+            if bt:
+                rec.update(by=round(bt[0], 2), bn=round(bt[1], 2))
+            if h2 or sp or tt or bt:
                 _hist_append(hist_rows, now, kid, rec, old_rec)
                 odds[kid] = rec; nmatch += 1
         lg_when[lg] = now.isoformat()[:16]

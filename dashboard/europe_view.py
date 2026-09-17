@@ -231,13 +231,16 @@ def _odds_pane(m, mk, draw_scale):
                       main_ah, ml_ah, True, s_ah)
     t2 = _ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: _fair_ou(tot, ln),
                       main_ou, ml_ou, False, s_ou)
+    # BTTS (17/9 Στελιος): ιδιο ζευγος xg με τα γκολ (W2), αγορα by/bn απο euro_odds_scan
+    import lines_common
+    t3 = lines_common.btts_html(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'], mk)
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
            'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη) · '
            'γκολ: συνθεση πληρους πεναλτι (W2)</div>')
     return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
-            f'padding:9px 0 4px">{t1}{t2}</div>{leg}')
+            f'padding:9px 0 4px">{t1}{t2}{t3}</div>{leg}')
 
 
 def _lines_table(m, mk, draw_scale):

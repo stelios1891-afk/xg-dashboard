@@ -83,6 +83,44 @@ def fair_ou(tot, line):
     return (1.0 + (1.0 - po - push) / po, 1.0 + (1.0 - pu - push) / pu)
 
 
+def btts_probs(xgh, xga):
+    """P(σκοραρουν και οι δυο) / P(οχι) — ιδιος πυρηνας με tot_dist (Poisson × draw boost)."""
+    lh, la = max(xgh, 0.05), max(xga, 0.05)
+    F = [math.factorial(i) for i in range(13)]
+    ph = [math.exp(-lh) * lh ** i / F[i] for i in range(13)]
+    pa = [math.exp(-la) * la ** j / F[j] for j in range(13)]
+    s = yes = 0.0
+    for i in range(13):
+        for j in range(13):
+            p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
+            s += p
+            if i >= 1 and j >= 1:
+                yes += p
+    py = yes / s
+    return py, 1.0 - py
+
+
+def btts_html(xgh, xga, mk, s_fallback=1.025):
+    """Μια γραμμη BTTS Ναι/Οχι: μοντελο (με γκανιοτα αγορας) vs αγορα (17/9 Στελιος)."""
+    py, pn = btts_probs(xgh, xga)
+    by, bn = mk.get('by'), mk.get('bn')
+    S = overround((by, bn)) if by and bn else None
+    fp = vig((1.0 / py, 1.0 / pn), S or s_fallback) if 0 < py < 1 else None
+    fp_s = f'{fp[0]:.2f}/{fp[1]:.2f}' if fp else '—'
+    mo_s = f'{by:.2f}/{bn:.2f}' if by and bn else '—'
+    head = (f'<div style="display:flex;gap:7px">'
+            f'<span style="{_LT_CELL}width:42px;font-size:8px;color:#5a6b8c">ΝΑΙ/ΟΧΙ</span>'
+            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΜΟΝΤ</span>'
+            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span></div>')
+    row = (f'<div style="display:flex;gap:7px;align-items:baseline">'
+           f'<span style="{_LT_CELL}width:42px;color:#e8edf8;font-weight:700">G/G</span>'
+           f'<span style="{_LT_CELL}width:76px;color:#7ea2ff">{fp_s}</span>'
+           f'<span style="{_LT_CELL}width:76px;color:#8fa3c8">{mo_s}</span></div>')
+    return (f'<div style="display:flex;flex-direction:column;gap:4px">'
+            f'<div style="font-size:9px;color:#6b7fa3;letter-spacing:1.5px;text-align:center">BTTS</div>'
+            f'{head}{row}</div>')
+
+
 def model_ah_line(dist):
     best, bd = 0.0, 9e9
     for q in range(-16, 17):
@@ -175,13 +213,15 @@ def odds_pane(xgh, xga, mk, draw_scale=1.0, ou_pair=None):
                      main_ah, ml_ah, True, s_ah)
     t2 = ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: fair_ou(tot, ln),
                      main_ou, ml_ou, False, s_ou)
+    # BTTS (17/9): ιδιο ζευγος xg με τα γκολ (αποσυμπιεση οπου ισχυει), αγορα by/bn
+    t3 = btts_html(*(ou_pair or (xgh, xga)), mk)
     ou_note = ' &nbsp;·&nbsp; γκολ: συνθεση αποσυμπιεσης (φαβορι)' if ou_pair else ''
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
            f'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη){ou_note}</div>')
     return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
-            f'padding:9px 0 4px">{t1}{t2}</div>{leg}')
+            f'padding:9px 0 4px">{t1}{t2}{t3}</div>{leg}')
 
 
 TABS_CSS = """

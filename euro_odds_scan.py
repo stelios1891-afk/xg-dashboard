@@ -109,6 +109,26 @@ def _total(g, bks=('pinnacle', 'matchbook')):
     return None
 
 
+def _btts(g, bks=('pinnacle', 'matchbook')):
+    """BTTS (Yes/No) -> (yes_odds, no_odds). 17/9 αιτημα Στελιου: εμφανιση στα Match Odds."""
+    for bk in bks:
+        for b in g.get('bookmakers', []):
+            if b.get('key') != bk:
+                continue
+            for m in b.get('markets', []):
+                if m.get('key') == 'btts':
+                    y = n = None
+                    for o in m.get('outcomes', []):
+                        nm = str(o.get('name', '')).lower()
+                        if nm == 'yes':
+                            y = o.get('price')
+                        elif nm == 'no':
+                            n = o.get('price')
+                    if y and n:
+                        return (float(y), float(n))
+    return None
+
+
 def _spread(g, bks=('pinnacle', 'matchbook')):
     ht, at = g.get('home_team'), g.get('away_team')
     for bk in bks:
@@ -232,7 +252,7 @@ def main():
         fixtures = upc.get(comp, [])
         sport = SPORT_EU[comp]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',
+                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals,btts',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -255,7 +275,7 @@ def main():
                 if s > lbs:
                     lbs, lbest = s, f
             if lbest is not None and lbs >= 1.1:
-                h2 = _h2h(g); sp = _spread(g); tt = _total(g)
+                h2 = _h2h(g); sp = _spread(g); tt = _total(g); bt = _btts(g)
                 lr = dict(t=now.isoformat()[:16], mid=lbest['mid'],
                           min_ko=round((now - lbest['ko']).total_seconds() / 60))
                 if h2:
@@ -264,7 +284,9 @@ def main():
                     lr.update(line=sp[0], oh=round(sp[1], 2), oa=round(sp[2], 2))
                 if tt:
                     lr.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
-                if h2 or sp or tt:
+                if bt:
+                    lr.update(by=round(bt[0], 2), bn=round(bt[1], 2))
+                if h2 or sp or tt or bt:
                     live_rows.append(lr)
                 continue
             cands = [f for f in fixtures if abs((f['ko'] - gko).total_seconds()) <= 1200]
@@ -277,7 +299,7 @@ def main():
                 if cands:                     # TOA event εκτος παραθυρου μας = οχι πραγματικο mismatch
                     unmatched.append(f"{g.get('home_team')} vs {g.get('away_team')} ({bs:.2f})")
                 continue
-            h2 = _h2h(g); sp = _spread(g); tt = _total(g)
+            h2 = _h2h(g); sp = _spread(g); tt = _total(g); bt = _btts(g)
             old_rec = odds.get(best['mid']) or {}
             rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16],
                        eid=g.get('id'), sport=sport)
@@ -291,12 +313,14 @@ def main():
                 rec.update(line=sp[0], oh=round(sp[1], 2), oa=round(sp[2], 2))
             if tt:
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
-            if h2 or sp or tt:
+            if bt:
+                rec.update(by=round(bt[0], 2), bn=round(bt[1], 2))
+            if h2 or sp or tt or bt:
                 # διαδρομη γραμμων: append-on-change (εντολη Στελιου 9/9 — κραταμε ΟΛΑ τα snapshots)
-                sig = lambda r: tuple(r.get(x) for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu'))
+                sig = lambda r: tuple(r.get(x) for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn'))
                 if sig(rec) != sig(old_rec):
                     row = dict(t=now.isoformat()[:16], mid=best['mid'], comp=comp, ko=rec['ko'])
-                    row.update({x: rec[x] for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu')
+                    row.update({x: rec[x] for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn')
                                 if rec.get(x) is not None})
                     hist_rows.append(row)
                 odds[best['mid']] = rec; nmatch += 1
