@@ -252,7 +252,7 @@ def main():
         fixtures = upc.get(comp, [])
         sport = SPORT_EU[comp]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals,btts',
+                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',   # btts ΔΕΝ γινεται εδω (422) — μονο per-event
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -304,7 +304,7 @@ def main():
             rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16],
                        eid=g.get('id'), sport=sport)
             # κρατα τις σκαλες του προηγουμενου scan (ανανεωνονται με δικο τους ρυθμο)
-            for k in ('ah', 'ou', 'alt_when'):
+            for k in ('ah', 'ou', 'alt_when', 'by', 'bn'):
                 if k in old_rec:
                     rec[k] = old_rec[k]
             if h2:
@@ -351,13 +351,17 @@ def main():
             continue
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/events/{eid}/odds',
                          params=dict(apiKey=_key(), regions='eu',
-                                     markets='alternate_spreads,alternate_totals',
+                                     markets='alternate_spreads,alternate_totals,btts',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
         if r.status_code != 200:
             continue
-        ahl, oul = _ladders(r.json())
+        _g = r.json()
+        bt = _btts(_g)
+        if bt:
+            rec['by'], rec['bn'] = round(bt[0], 2), round(bt[1], 2)
+        ahl, oul = _ladders(_g)
         # σιγουρεψε οτι η ΚΥΡΙΑ γραμμη υπαρχει στη σκαλα
         if rec.get('line') is not None and not any(abs(x[0] - rec['line']) < 0.01 for x in ahl):
             ahl = sorted(ahl + [[rec['line'], rec.get('oh'), rec.get('oa')]])

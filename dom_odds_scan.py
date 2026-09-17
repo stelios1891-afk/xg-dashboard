@@ -248,7 +248,7 @@ def main(dry=False):
     for lg in fetch_lgs:
         sport = toa_live.SPORT[lg]
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=apikey, regions='eu', markets='h2h,spreads,totals,btts',
+                         params=dict(apiKey=apikey, regions='eu', markets='h2h,spreads,totals',   # btts μονο per-event (422 στο bulk — 17/9)
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -271,12 +271,12 @@ def main(dry=False):
         unmatched_all += [f'[{lg}] {u}' for u in unm]
         for g, f in pairs:
             kid = f"{f['home_id']}_{f['away_id']}"
-            h2 = eos._h2h(g); sp = eos._spread(g); tt = eos._total(g); bt = eos._btts(g)
+            h2 = eos._h2h(g); sp = eos._spread(g); tt = eos._total(g); bt = None   # btts δεν υπαρχει στο bulk — ερχεται απο το per-event (σκαλες)
             old_rec = odds.get(kid) or {}
             rec = dict(ko=f['ko'].isoformat(), when=now.isoformat()[:16], lg=lg,
                        eid=g.get('id'), sport=sport)
             # κρατα τις σκαλες του προηγουμενου scan (ανανεωνονται με δικο τους ρυθμο)
-            for k in ('ah', 'ou', 'alt_when'):
+            for k in ('ah', 'ou', 'alt_when', 'by', 'bn'):
                 if k in old_rec:
                     rec[k] = old_rec[k]
             if h2:
@@ -300,7 +300,7 @@ def main(dry=False):
             continue
         r = requests.get(f"https://api.the-odds-api.com/v4/sports/{rec['sport']}/events/{rec['eid']}/odds",
                          params=dict(apiKey=apikey, regions='eu',
-                                     markets='alternate_spreads,alternate_totals',
+                                     markets='alternate_spreads,alternate_totals,btts',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
         rem = r.headers.get('x-requests-remaining', rem)
@@ -310,7 +310,11 @@ def main(dry=False):
             pass
         if r.status_code != 200:
             continue
-        ahl, oul = eos._ladders(r.json())
+        _g = r.json()
+        bt = eos._btts(_g)
+        if bt:
+            rec['by'], rec['bn'] = round(bt[0], 2), round(bt[1], 2)
+        ahl, oul = eos._ladders(_g)
         # σιγουρεψε οτι η ΚΥΡΙΑ γραμμη υπαρχει στη σκαλα
         if rec.get('line') is not None and not any(abs(x[0] - rec['line']) < 0.01 for x in ahl):
             ahl = sorted(ahl + [[rec['line'], rec.get('oh'), rec.get('oa')]])
