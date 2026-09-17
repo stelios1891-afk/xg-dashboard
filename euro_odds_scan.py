@@ -23,6 +23,7 @@ ALT_MAX_H = 96       # σκαλες (2 credits/ματς) ΜΟΝΟ εντος 96h
                      # (Τρ+Τετ+Πεμ)· 96h ωστε τα ματς της Πεμπτης να πιανονται απο Δευτερα πρωι.
                      # Κοστος: ~3 credits/scan μονο τις μερες Δευ-Πεμ ευρωπαικων εβδομαδων.
 HOURS_BACK = 3       # κρατα και ματς που μολις αρχισαν (για το τελευταιο snapshot)
+FORCE = os.environ.get('EURO_FORCE') == '1'   # 17/9: το χειροκινητο workflow παρακαμπτει το gating
 PRUNE_H = 48         # ποσο κρατιουνται παλιες εγγραφες στο αρχειο
 
 SPORT_EU = {'ChampionsLeague': 'soccer_uefa_champs_league',
@@ -239,7 +240,7 @@ def main():
     nearest_h = min([(f['ko'] - now).total_seconds() / 3600
                      for fs in upc.values() for f in fs] or [1e9])
     has_lad = (not odds) or any('ah' in v for v in odds.values())
-    if age_min < 45 and nearest_h > 6 and has_lad and not livefx:
+    if age_min < 45 and nearest_h > 6 and has_lad and not livefx and not FORCE:
         print(f'φρεσκο αρχειο ({age_min:.0f}λ) και κοντινοτερο ΚΟ σε {nearest_h:.1f}h — skip (0 credits)')
         return
     if not os.environ.get('TOA_KEY'):
@@ -346,7 +347,7 @@ def main():
             age = (now - aw).total_seconds() / 60
         except Exception:
             age = 1e9
-        need = age > (ALT_NEAR_MIN if 0 <= h_to_ko <= 3 else ALT_REFRESH_MIN)
+        need = FORCE or age > (ALT_NEAR_MIN if 0 <= h_to_ko <= 3 else ALT_REFRESH_MIN)
         if not need:
             continue
         r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/events/{eid}/odds',

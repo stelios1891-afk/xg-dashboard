@@ -36,6 +36,7 @@ jobs:
         env:
           TOA_KEY: ${{ secrets.TOA_KEY }}
           PYTHONIOENCODING: utf-8
+          EURO_FORCE: '1'
         run: python euro_odds_scan.py
 
       - name: Euro shadow picks
