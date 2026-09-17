@@ -79,7 +79,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "no changes — skip commit"
           else
-            git commit -m "euro refresh (weekly) [skip ci]"
+            git commit -m "euro refresh [skip ci]"
             for i in 1 2 3; do
               git pull --rebase --autostash origin main && git push && break || sleep 5
             done
