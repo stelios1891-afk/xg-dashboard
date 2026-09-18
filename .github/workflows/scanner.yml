@@ -2,12 +2,14 @@ name: value-scanner
 
 on:
   schedule:
-    - cron: '4,19,34,49 * * * *'  # καθε ~15' σε «ακυρα» λεπτα (τα :00/:15/:30/:45 εχουν συνωστισμο
-                                  # στο GitHub και τα scheduled αραιωνουν αγρια — 8/9/2026 ειδαμε
-                                  # κενα 3-5 ωρων). Τα «σκετα» τικ
-                                # ειναι δωρεαν (gating skip, 0 TOA credits)· το 15αλεπτο χρειαζεται
-                                # για το snapshot κλεισιματος λιγο πριν καθε σεντρα (2026-09-02)
-  workflow_dispatch: {}          # + χειροκινητο κουμπι "Run workflow"
+    - cron: '4,19,34,49 * * * *'  # καθε ~15' σε «ακυρα» λεπτα. ΣΗΜΕΙΩΣΗ 18/9: τα scheduled
+                                  # αραιωνονται αγρια (κενα 1-5h) — γι' αυτο καθε run πλεον
+                                  # μενει ζωντανο ~1 ωρα και σκαναρει σε βροχη καθε 5'
+                                  # (scanner_tick.sh)· το cron ειναι απλως η ανα-εκκινηση.
+                                  # Repo public => Actions λεπτα δωρεαν. Concurrency: οσο
+                                  # τρεχει ενα run, το επομενο περιμενει στην ουρα και
+                                  # ξεκιναει μολις τελειωσει => συνεχης καλυψη.
+  workflow_dispatch: {}          # + χειροκινητο κουμπι "Run workflow" (χωρις βροχη — γρηγορο)
 
 permissions:
   contents: write                # για commit των αποτελεσματων πισω στο repo
@@ -19,6 +21,12 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      TOA_KEY: ${{ secrets.TOA_KEY }}
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      PYTHONIOENCODING: utf-8
     steps:
       - uses: actions/checkout@v4
 
@@ -43,68 +51,24 @@ jobs:
       - name: Install deps
         run: pip install -r requirements.txt
 
-      - name: Run scanner (adaptive)
-        env:
-          TOA_KEY: ${{ secrets.TOA_KEY }}
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          PYTHONIOENCODING: utf-8
+      # πρωτο περασμα αμεσως (χειροκινητο = force, χωρις gating)
+      - name: Scanner pass
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            python scan_value.py            # manual = force scan τωρα (για τεστ/επιβεβαιωση)
+            bash scanner_tick.sh force
           else
-            python scan_value.py auto       # scheduled = adaptive gating
+            bash scanner_tick.sh auto
           fi
 
-      # σκιωδης καταγραφη A/C/B2 (μη κρισιμη — δεν αγγιζει το live)
-      - name: Shadow scan
-        env:
-          PYTHONIOENCODING: utf-8
-        run: python shadow_scan.py || echo "shadow failed (μη κρισιμο)"
-
-      # σκιωδης Βραζιλια (paper — καθαρο in-season 15η+, ~1 credit μονο οταν εχει ματς)
-      - name: Brazil shadow
-        env:
-          TOA_KEY: ${{ secrets.TOA_KEY }}
-          PYTHONIOENCODING: utf-8
-        run: python brazil_shadow.py || echo "brazil shadow failed (μη κρισιμο)"
-
-      # αποδοσεις ευρωπαϊκων (UCL/UEL/UECL) για το Europe tab — 0 credits οταν δεν εχει κοντινο ματς
-      - name: Euro odds
-        env:
-          TOA_KEY: ${{ secrets.TOA_KEY }}
-          PYTHONIOENCODING: utf-8
-        run: python euro_odds_scan.py || echo "euro odds failed (μη κρισιμο)"
-
-      # αποδοσεις εγχωριων CORE7 (σκαλες AH/OU για Match Odds στα projections) — gated, 0 credits οταν δεν χρειαζεται
-      - name: Domestic odds ladders
-        env:
-          TOA_KEY: ${{ secrets.TOA_KEY }}
-          PYTHONIOENCODING: utf-8
-        run: python dom_odds_scan.py || echo "dom odds failed (μη κρισιμο)"
-
-      # σκια FAV S2 (κομπο: 2 λαθη + game-state + αποσυμπιεση, μονο φαβορι ≤−0.5) — καμια επαφη με live picks
-      - name: Fav S2 shadow
-        env:
-          PYTHONIOENCODING: utf-8
-        run: python dom_fav_shadow.py || echo "fav shadow failed (μη κρισιμο)"
-
-      # σκιωδης καταγραφη ευρωπαικων picks (ledger για την κριση της League Phase)
-      - name: Euro shadow
-        env:
-          PYTHONIOENCODING: utf-8
-        run: python euro_shadow_scan.py || echo "euro shadow failed (μη κρισιμο)"
-
-      # commit ΜΟΝΟ οταν αλλαξαν τα picks (state) → το dashboard ανανεωνεται μονο σε νεα/αλλαγες
-      - name: Commit picks if changed
+      # ANTI-THINNING LOOP (18/9): ο runner μενει ζωντανος ~55-70 λεπτα, τικ καθε 5'.
+      # Το gating συχνοτητας/credits ζει μεσα στα scripts (σκετα τικ = 0 credits).
+      # Στο χειροκινητο τρεξιμο ΔΕΝ τρεχει (γρηγορος ελεγχος).
+      - name: Anti-thinning loop
+        if: github.event_name != 'workflow_dispatch'
         run: |
-          git config user.name "scanner-bot"
-          git config user.email "actions@github.com"
-          for f in clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_shadow_state.json euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json; do [ -f "$f" ] || : > "$f"; done
-          git add value_scan_state.json value_picks_latest.json market_1x2_latest.json odds_history.jsonl odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_shadow_state.json euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json
-          if git diff --cached --quiet -- value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl brazil_shadow.jsonl euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json; then
-            echo "no pick/market changes — skip commit"
-          else
-            git commit -m "picks/market update [skip ci]"
-            git push
-          fi
+          for i in $(seq 1 10); do
+            sleep 300
+            echo "=== loop tick $i/10 ($(date -u +%H:%M)) ==="
+            git pull --rebase --autostash || true
+            bash scanner_tick.sh auto
+          done
