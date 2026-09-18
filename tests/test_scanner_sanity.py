@@ -10,7 +10,7 @@ data-refresh) και να μπλοκαρει τα προφανη:
       + MIN_PRIOR: cloud=6 (committed), τοπικα 6 ή 14
   (c) λογικη picks πανω στο τρεχον value_picks_latest.json
   (d) αναπαραγωγη pricing (golden values απο picks.evaluate_bet, 18/9/2026)
-  (e) ευρωπαικα picks (euro_value_latest.json)
+  (e) ευρωπαικα picks (euro_value_latest.json) — UEL μονο ως σκια (no_play=True)
 
 ΧΩΡΙΣ δικτυο. Εξαρτησεις: pytest (+ οτι ηδη χρειαζεται το picks.py: pandas/numpy).
 Τρεξιμο:  python -m pytest -q tests/test_scanner_sanity.py
@@ -27,7 +27,8 @@ os.chdir(ROOT)
 IS_CLOUD = os.environ.get('GITHUB_ACTIONS') == 'true'
 
 CORE7 = ['EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Eredivisie']
-EURO_ALLOWED = {'ChampionsLeague', 'ConferenceLeague'}        # UEL ΚΛΕΙΣΤΟ 11/9
+EURO_ALLOWED = {'ChampionsLeague', 'ConferenceLeague'}        # παιζονται
+EURO_SHADOW = {'EuropaLeague'}                                # UEL ΚΛΕΙΣΤΟ 11/9 → ορατο ως ΣΚΙΑ (no_play=True), 18/9
 KELLY_FRAC, STAKE_CAP = 0.125, 0.20
 EPS = 1e-9
 
@@ -492,11 +493,24 @@ def test_e_rules_block_matches_live():
     assert not bad, 'euro_value_latest.rules ≠ live κανονες (UCL favs @10, UCL dogs @4, dogs @10, favs @4): ' + ', '.join(bad)
 
 
-def test_e_no_uel_picks():
-    _, P = _euro()
-    bad = [_elab(p) for p in P if p.get('comp') not in EURO_ALLOWED]
-    assert not bad, ('ευρωπαικα picks ΕΚΤΟΣ UCL/UECL (UEL ΚΛΕΙΣΤΟ 11/9 — b=0.02, καμια αξια στο κλεισιμο):\n'
-                     + '\n'.join(bad))
+def test_e_uel_only_as_shadow():
+    """UEL: επιτρεπεται ΜΟΝΟ με no_play=True (σκια — δειχνεται, δεν παιζεται, 18/9). Αλλες λιγκες:
+    ποτε no_play, ποτε εκτος UCL/UEL/UECL."""
+    d, P = _euro()
+    bad = []
+    for p in P:
+        c = p.get('comp')
+        if c in EURO_SHADOW:
+            if p.get('no_play') is not True:
+                bad.append(f'{_elab(p)}: UEL pick ΧΩΡΙΣ no_play=True (UEL κλειστο 11/9, μονο σκια)')
+        elif c in EURO_ALLOWED:
+            if p.get('no_play'):
+                bad.append(f'{_elab(p)}: no_play σε {c} (μονο το UEL ειναι σκια)')
+        else:
+            bad.append(f'{_elab(p)}: αγνωστη διοργανωση {c!r}')
+    assert not bad, 'UEL σκια / διοργανωσεις:' + chr(10) + chr(10).join(bad)
+    assert 'EuropaLeague' in (d.get('rules', {}).get('no_play_comps') or []), (
+        'euro_value_latest.rules.no_play_comps δεν περιεχει EuropaLeague (τρεξε euro_shadow_scan.py)')
 
 
 def test_e_zone_role_and_thresholds():

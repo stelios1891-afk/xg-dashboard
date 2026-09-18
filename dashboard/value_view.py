@@ -40,6 +40,8 @@ body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf
 .tag.lc{background:rgba(240,79,90,.12);color:#f04f5a;border:1px solid rgba(240,79,90,.3);}
 .tag.eu{background:rgba(126,162,255,.12);color:#7ea2ff;border:1px solid rgba(126,162,255,.3);}
 .tag.t75{background:rgba(52,209,122,.12);color:#34d17a;border:1px solid rgba(52,209,122,.3);}
+.tag.np{background:rgba(160,160,160,.14);color:#b9b9b9;border:1px dashed rgba(180,180,180,.45);}
+.pc.np{opacity:.72;}
 .bet.ov{color:#3ec98f;border-color:#2d6e57;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -66,6 +68,8 @@ def pick_card(p):
         tags += '<span class="tag eu">EU beta</span>'
     if p.get('tag75'):
         tags += '<span class="tag t75">🎯 −0.75</span>'
+    if p.get('no_play'):
+        tags += '<span class="tag np" title="UEL κλειστο 11/9 (b=0.02 στο κλεισιμο) — μονο για παρακολουθηση">👁 ΣΚΙΑ · δεν παιζεται</span>'
     if over:
         bet = _h.escape(p.get('bet') or f"Over {p['hcap']:g}")
     else:
@@ -74,8 +78,10 @@ def pick_card(p):
     proj = f"{p['proj_odds']:.2f}" if p.get('proj_odds') else '—'
     stake_k, stake_v = ('Ποντ.', '~¼ μον.') if p.get('eu') else \
         ('Ποντ. (καβα)', f"{p['stake_final']*100:.1f}%")
+    if p.get('no_play'):
+        stake_k, stake_v = 'Ποντ.', '— (σκια)'
     return f"""
-<div class="pc {hi}">
+<div class="pc {hi} {'np' if p.get('no_play') else ''}">
   <div class="top">
     <div class="lg">{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
     <div class="when">{_h.escape((p.get('when') or '').replace('T', ' '))}</div>

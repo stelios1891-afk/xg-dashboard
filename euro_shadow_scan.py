@@ -149,7 +149,11 @@ def main():
     # (προ-γραμμενος): επανεξεταση ΜΟΝΟ σε n>=15 με CLV (αρνητικο t<−1.5 => πισω στο @10)·
     # το ROI της ζωνης γραφεται αλλα ΔΕΝ αποφασιζει· προ Ιανουαριου αλλαγη ΜΟΝΟ προς
     # αυστηροτερο. UEL/UECL dogs μενουν @10.
+    # UEL = ΣΚΙΑ (18/9/2026, εντολη Στελιου «θελω να βλεπω τα picks του Europa ακομα και αν δεν τα
+    # παιζουμε επισημα»): τα UEL picks ΓΡΑΦΟΝΤΑΙ κανονικα (ιδια κατωφλια @10/@4) αλλα φερουν
+    # no_play=True + note — δεν παιζονται (b=0.02 στο κλεισιμο, κλειστο 11/9), δειχνονται μονο.
     EDGE_DOG, EDGE_FAV, EDGE_OVER = 0.10, 0.04, 0.04
+    NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
     EDGE_FAV_UCL = 0.10
     EDGE_DOG_UCL = 0.04
     # OVERS στα picks (εντολη Στελιου 10/9): συνθεση W2 (πεναλτι 0.76, ζευγος xgh_ou/xga_ou),
@@ -192,7 +196,9 @@ def main():
                                      and edge < EDGE_DOG) else None),
                     proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
                     tag75=bool(role == 'fav' and abs(ln + 0.75) < 0.01),
-                    xgh=m['xgh'], xga=m['xga'], when=mk.get('when')))
+                    xgh=m['xgh'], xga=m['xga'], when=mk.get('when'),
+                    no_play=(m['comp'] == 'EuropaLeague'),
+                    note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
         # --- OVERS (W2) ---
         if (m.get('xgh_ou') is not None and mk.get('tl') is not None and mk.get('to')
                 and 1.70 <= float(mk['to']) <= 2.10):
@@ -208,19 +214,23 @@ def main():
                     edge=round(e_o, 4), role='over',
                     proj_odds=round((1 - max(1 - po - pu, 0)) / po, 3) if po > 0 else None,
                     tag75=False,
-                    xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when')))
+                    xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'),
+                    no_play=(m['comp'] == 'EuropaLeague'),
+                    note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
                               edge_dog_ucl=EDGE_DOG_UCL,
                               zone=[1.70, 2.10],
+                              no_play_comps=['EuropaLeague'],
                               src='FotMob+FotMob', pricing='as-live (w2 + X x0.85 + p_cover)')),
               open(os.path.join(ROOT, 'euro_value_latest.json'), 'w', encoding='utf-8'),
               ensure_ascii=False)
     print(f'euro value picks (beta): {len(picks_out)} '
           f'({sum(1 for p in picks_out if p["role"]=="fav")} fav / '
           f'{sum(1 for p in picks_out if p["role"]=="dog")} dog, '
-          f'{sum(1 for p in picks_out if p["tag75"])} στο -0.75)')
+          f'{sum(1 for p in picks_out if p["tag75"])} στο -0.75, '
+          f'{sum(1 for p in picks_out if p.get("no_play"))} UEL σκια/δεν παιζονται)')
 
 
 if __name__ == '__main__':

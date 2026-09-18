@@ -34,7 +34,7 @@ GITHUB_ACTIONS=true python -m pytest -q tests/test_scanner_sanity.py -k min_prio
 | **(b) σταθερές** | `picks.py`: EDGE .10, ζώνη 1.70-2.10, MIN_LINE .5, DRAW_BOOST 1.13, MARGIN .03, BLEND .60, DECAY .96, SOS 1.5 (n=6..13), ράμπα blend (100→60 στη 13η), HFA_FIX CORE7, TOP5=CORE7. `build_data`: CURRENT_SEASON 2627, K_WARM 8, KN_NORM 20. `scan_value`: RATINGS_SEASON 2526, ODDS_DELTA .05. `toa_live`: SPORT=CORE7, KELLY 0.125, CAP 0.20. Ευρωπαϊκά (AST, χωρίς import): γ=−0.47, UCL_FAV_SCALE 1.16, EU_DRAW_SCALE .85, W_EU 2, EDGE_FAV_UCL .10, EDGE_DOG_UCL .04, dogs .10 / favs .04 / overs .04, GAMMA_PLAYER 1.09· header του `euro_projections.json` ίδιο με τον κώδικα. **MIN_PRIOR**: στο cloud (`GITHUB_ACTIONS=true`) πρέπει να είναι 6· τοπικά 6 ή 14· και το **committed HEAD** (`git show HEAD:picks.py`) πρέπει να έχει 6. |
 | **(c) picks** | Πάνω στο τρέχον `value_picks_latest.json`: odds ∈ [1.70, 2.10], hcap ≥ 0.5 (μόνο dog πλευρά), edge ≥ 10%, λίγκα ∈ CORE7, σέντρα στο μέλλον (ανοχή 3h λόγω τοπικής ώρας στο `scanned_at`) και όχι in-play, stake = 0.125·edge/(odds−1), `stake_final = stake·scale`, `scale = min(1, 0.20/gross)`, Σstake_final ≤ 0.20· και ότι edge/proj_odds **αναπαράγονται** από pw/pp με τον τύπο pricing. |
 | **(d) golden pricing** | 5 hardcoded ζεύγη (xg_h, xg_a, line, oh, oa) → `picks.evaluate_bet` συγκρίνεται με τιμές pw/pp/edge/proj_odds υπολογισμένες 18/9/2026 (ανοχή 1e-9). Περιλαμβάνει: πραγματικό pick, βαθιά γραμμή +2.5, ακέραια γραμμή με push, quarter γραμμή που πρέπει να απορριφθεί, οριακό edge 10.04%. Αν αλλάξει το pricing κατά λάθος, σπάει εδώ. |
-| **(e) ευρωπαϊκά** | `euro_value_latest.json`: το `rules` block ίδιο με τα live κατώφλια· **κανένα pick UEL** (μόνο UCL/UECL)· ζώνη odds· ρόλος/γραμμή/κατώφλι ανά comp (UCL favs @10, UCL dogs @4 με `band='4-10'`, αλλιώς dogs @10 / favs @4, overs @4)· το κ=1.16 υπάρχει στο header των projections, τα xG του pick ταυτίζονται με το projection, και στα UCL picks η πλευρά του φαβορί είναι ≥ ουδέτερη·HFA. |
+| **(e) ευρωπαϊκά** | `euro_value_latest.json`: το `rules` block ίδιο με τα live κατώφλια· **UEL μόνο ως ΣΚΙΑ** (`no_play=True`, δείχνεται/δεν παίζεται — 18/9)· UCL/UECL ποτέ `no_play`· ζώνη odds· ρόλος/γραμμή/κατώφλι ανά comp (UCL favs @10, UCL dogs @4 με `band='4-10'`, αλλιώς dogs @10 / favs @4, overs @4)· το κ=1.16 υπάρχει στο header των projections, τα xG του pick ταυτίζονται με το projection, και στα UCL picks η πλευρά του φαβορί είναι ≥ ουδέτερη·HFA. |
 
 Αν λείπει κάποιο αρχείο εξόδου → `skip` (δεν είναι μέρος του checkout). Άδειο JSON (0 bytes)
 → **fail** (το dashboard θα σκάσει).
@@ -103,18 +103,7 @@ repo) το Telegram/Actions log το δείχνει σε κάθε τικ.
   ισχύει μόνο επειδή το hunk δεν έχει γίνει commit. Γι' αυτό υπάρχουν δύο tests: το
   `GITHUB_ACTIONS` (πιάνει το λάθος **στον runner**) και το `git show HEAD:picks.py`
   (πιάνει το λάθος **από το laptop**, πριν φύγει push).
-- **UEL δεν αποκλείεται στον κώδικα.** Το `euro_shadow_scan.py` βγάζει picks και για
-  `EuropaLeague` (dogs @10 / favs @4). Η μνήμη λέει «UEL ΚΛΕΙΣΤΟ 11/9» με την έννοια
-  «καμία νέα δουλειά», όχι «μηδέν picks». Το `test_e_no_uel_picks` υλοποιεί την προδιαγραφή
-  (ΟΧΙ UEL) — σήμερα περνάει επειδή η λίστα euro picks είναι **άδεια**, αλλά θα κοκκινίσει
-  με το πρώτο UEL pick. Απόφαση Στέλιου: ή αποκλεισμός UEL στον scanner, ή χαλάρωση εδώ.
-- **clv_bets: ίδιο ματς/πλευρά σε 11 περιπτώσεις με ΔΙΑΦΟΡΕΤΙΚΗ γραμμή** (π.χ. Bayern–Union
-  −3.0 / −3.25 / −3.5). Είναι by-design (`pick_key` περιλαμβάνει hcap → κάθε κίνηση γραμμής
-  = νέο pick/νέα εγγραφή)· το test ελέγχει διπλότυπα σε (ματς, πλευρά, **γραμμή**) = 0.
-  Αν το ledger πρέπει να μετρά **ένα** bet ανά ματς/πλευρά, αυτό είναι θέμα του
-  `clv_ledger`, όχι του test.
-- `value_picks_latest.json` σήμερα: 29 picks, όλα md ≤ 6 (paper) — περνούν όλους τους
-  κανόνες (ζώνη, edge, staking, cap 0.20 με scale 0.203).
-- `odds_history.jsonl` (10 799 γραμμές): timestamps μονότονα, κανένα conflict marker.
-- Το `scanned_at` γράφεται σε **τοπική** ώρα της μηχανής (runner=UTC, laptop=EEST) χωρίς tz,
-  ενώ τα `when` είναι UTC — γι' αυτό η ανοχή 3h στο test σέντρας.
+- **UEL = σκιά (λύθηκε 18/9).** Ο `euro_shadow_scan.py` βγάζει picks και για `EuropaLeague`
+  (dogs @10 / favs @4) αλλά με `no_play=True` + `note`· το dashboard τα δείχνει με ετικέτα
+  «👁 ΣΚΙΑ · δεν παίζεται» (εντολή Στέλιου: να τα βλέπει χωρίς να παίζονται). Το τεστ (e)
+  απαιτεί το flag αντί για απουσία.

@@ -267,7 +267,7 @@ def _euro_picks():
                  home_id=p.get('hid'), away_id=p.get('aid'),
                  side=p['side'], hcap=p['line'], odds=p['odds'], edge=p['edge'],
                  proj_odds=p.get('proj_odds'), when=str(p.get('ko') or '').replace('Z', '')[:16],
-                 eu=True, tag75=bool(p.get('tag75')))
+                 eu=True, tag75=bool(p.get('tag75')), no_play=bool(p.get('no_play')))
         if p.get('role') == 'over':
             q['bet'] = p['team']          # π.χ. "Over 3.00"
         out.append(q)
@@ -336,6 +336,7 @@ def render_value(league):
         st.caption('🌍 **EU beta** = ευρωπαϊκα picks (UCL/UEL/UECL) · μονο ματς με πληρες FotMob xG · '
                    'κατωφλια φαβορι ≥4% / outsider ≥10% / over ≥4% · 🎯 = γραμμη −0.75 (το τυφλο ευρημα '
                    'Crown+Pinnacle) · overs = συνθεση πληρους πεναλτι (W2) · εκτος Kelly, stake ερευνητικο '
+                   '· 👁 ΣΚΙΑ = UEL: δειχνεται, ΔΕΝ παιζεται (κλειστο 11/9) '
                    f'~¼ μοναδας · euro scan: {eu_scan or "—"}')
 
 @st.cache_data(ttl=15 * 60)
