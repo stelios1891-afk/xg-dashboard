@@ -29,6 +29,12 @@ git add value_scan_state.json value_picks_latest.json market_1x2_latest.json odd
 if git diff --cached --quiet -- value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl brazil_shadow.jsonl euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json; then
   echo "no pick/market changes — skip commit"
 else
+  # ---- sanity gate (2026-09-18): αν σπασει καποιος ελεγχος, ΔΕΝ γινεται commit, το τικ συνεχιζει ----
+  if ! python -m pytest -q -p no:cacheprovider tests/test_scanner_sanity.py; then
+    echo "::warning::SANITY TESTS FAILED — το commit ακυρωνεται (το workflow συνεχιζει)"
+    git reset -q
+    exit 0
+  fi
   git commit -m "picks/market update [skip ci]"
   # rebase πριν το push: μεσα στη βροχη μπορει να τρεχουν παραλληλα euro-refresh/one-offs
   git pull --rebase --autostash || true

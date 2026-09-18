@@ -58,7 +58,7 @@ jobs:
             scanner-state-
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt pytest
 
       # πρωτο περασμα αμεσως (χειροκινητο = force, χωρις gating)
       - name: Scanner pass

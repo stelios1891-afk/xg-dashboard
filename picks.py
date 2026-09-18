@@ -14,7 +14,7 @@ picks.py  -  ΒΗΜΑ 4: μηχανη προβλεψεων & value picks.
   python picks.py picks 2526               # λιστα value picks (μορφη alert) για τη σεζον
   python picks.py picks 2526 EPL           # + φιλτρο λιγκας
 """
-import pandas as pd, numpy as np, json, unicodedata, re, sys
+import pandas as pd, numpy as np, json, unicodedata, re, sys, os
 from math import exp, factorial
 from datetime import datetime
 
@@ -24,7 +24,10 @@ except Exception:
     pass
 
 # ---------- ΚΛΕΙΔΩΜΕΝΕΣ ΣΤΑΘΕΡΕΣ ----------
-BLEND = 0.60; MIN_PRIOR = 6; DECAY = 0.96   # BLEND 0.80→0.60 (2026-08-26, blend_test.py + blend_roi.py): το 80/20 εδινε υπερβολικο βαρος στο xG. RPS: 60/40 καλυτερο σε ΚΑΙ ΤΙΣ 5 φασεις σεζον (0.1953 vs 0.1958), LOSO διαλεξε 50-60 σε 4/4 folds, ποτε 80. ROI @15η+: +5.2% vs +3.6%, συνολικο κερδος 63.2u vs 53.6u (+18%). Καθε τεστ ~1 SE μονο του — πειθει η ΣΥΜΦΩΝΙΑ δυο ανεξαρτητων μετρικων σε μονοτονη καμπυλη. Βλ. memory blend-60-40.
+BLEND = 0.60; DECAY = 0.96   # BLEND 0.80→0.60 (2026-08-26, blend_test.py + blend_roi.py): το 80/20 εδινε υπερβολικο βαρος στο xG. RPS: 60/40 καλυτερο σε ΚΑΙ ΤΙΣ 5 φασεις σεζον (0.1953 vs 0.1958), LOSO διαλεξε 50-60 σε 4/4 folds, ποτε 80. ROI @15η+: +5.2% vs +3.6%, συνολικο κερδος 63.2u vs 53.6u (+18%). Καθε τεστ ~1 SE μονο του — πειθει η ΣΥΜΦΩΝΙΑ δυο ανεξαρτητων μετρικων σε μονοτονη καμπυλη. Βλ. memory blend-60-40.
+# MIN_PRIOR: cloud (GitHub Actions scanner) = 6 → picks απο την 7η αγωνιστικη (χαρτινα <15)· τοπικα (laptop backtests) = 14.
+# 2026-09-18: ΡΗΤΟΣ διακοπτης μεσω env — πριν ηταν uncommitted hunk (14 τοπικα / 6 στο HEAD) και ενα git add θα το εστελνε λαθος.
+MIN_PRIOR = 6 if os.environ.get('GITHUB_ACTIONS') == 'true' else 14
 SOS = 1.5; SOS_MIN_N = 6; SOS_MAX_N = 13   # Strength-of-Schedule (Caley one-pass). 1.5 (2026-08-27, sos_clean_loso.py/blend_ramp.py):
             # md7-14 ROI -10.3% -> +2.8%· md15+ +5.8%->+5.4% αλλα 4/4 σεζον & +40% ογκος (61u -> 80u).
             # ΠΑΡΑΘΥΡΟ n=6..13 (= αγωνιστικες 7-14) ΜΟΝΟ. Αποφαση Stelios 2026-08-27:

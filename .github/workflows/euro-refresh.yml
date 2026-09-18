@@ -71,7 +71,13 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python euro_live_projections.py
 
+      - name: Sanity tests (αποτυχια = ΟΧΙ commit, το workflow συνεχιζει)
+        id: sanity
+        continue-on-error: true
+        run: pip install -q pytest && python -m pytest -q -p no:cacheprovider tests/test_scanner_sanity.py
+
       - name: Commit if changed
+        if: steps.sanity.outcome == 'success'
         run: |
           git config user.name "euro-refresh-bot"
           git config user.email "actions@github.com"
