@@ -9,10 +9,19 @@ on:
                                   # Repo public => Actions λεπτα δωρεαν. Concurrency: οσο
                                   # τρεχει ενα run, το επομενο περιμενει στην ουρα και
                                   # ξεκιναει μολις τελειωσει => συνεχης καλυψη.
-  workflow_dispatch: {}          # + χειροκινητο κουμπι "Run workflow" (χωρις βροχη — γρηγορο)
+  workflow_dispatch:             # χειροκινητο (χωρις βροχη) Ή κρικος της αλυσιδας (chain=yes)
+    inputs:
+      chain:
+        description: 'internal: self-chain link'
+        required: false
+        default: 'no'
+  push:
+    paths:
+      - 'scanner_kick.txt'       # χειροκινητη επαν-εκκινηση της αλυσιδας με push
 
 permissions:
   contents: write                # για commit των αποτελεσματων πισω στο repo
+  actions: write                 # για το self-dispatch της αλυσιδας (18/9)
 
 concurrency:
   group: value-scanner
@@ -64,7 +73,7 @@ jobs:
       # Το gating συχνοτητας/credits ζει μεσα στα scripts (σκετα τικ = 0 credits).
       # Στο χειροκινητο τρεξιμο ΔΕΝ τρεχει (γρηγορος ελεγχος).
       - name: Anti-thinning loop
-        if: github.event_name != 'workflow_dispatch'
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.chain == 'yes'
         run: |
           for i in $(seq 1 10); do
             sleep 300
@@ -72,3 +81,12 @@ jobs:
             git pull --rebase --autostash || true
             bash scanner_tick.sh auto
           done
+
+      # ΑΛΥΣΙΔΑ (18/9): τα scheduled crons επεσαν σε ολικο «κωμα» (κενα 4-5h μετρημενα και
+      # με τα off-minutes). Καθε run ξεκιναει μονο του το επομενο στο τελος της βροχης —
+      # συνεχης καλυψη ανεξαρτητα απο το cron (που μενει ως εφεδρικο προσαναμμα).
+      # Σταματημα αλυσιδας: Actions -> disable workflow.
+      - name: Chain next run
+        if: always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.chain == 'yes')
+        run: |
+          curl -s -X POST             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"             -H "Accept: application/vnd.github+json"             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/scanner.yml/dispatches"             -d '{"ref":"main","inputs":{"chain":"yes"}}'             && echo "επομενος κρικος ζητηθηκε" || echo "chain dispatch failed (το cron θα το πιασει)"
