@@ -162,38 +162,53 @@ def _lg_header(league, sub):
         f'<div><div class="nm">{LEAGUE_LABELS.get(league, league)}</div>'
         f'<div class="co">{sub}</div></div></div>', unsafe_allow_html=True)
 
-@st.cache_data(ttl=6 * 3600)
-def _goal_rows(league, filt):
-    return goal_stats.team_stats(league, filt=filt)
+SEASON_OPTS = ['2627', '2526']            # 19/9 Στελιος: dropdown σεζον στα stats tabs
+SEASON_LABEL = {'2627': '2026/27', '2526': '2025/26'}
+
+def _season_pick(key):
+    return st.selectbox("Σεζον", SEASON_OPTS, format_func=lambda s_: SEASON_LABEL[s_], key=key)
 
 @st.cache_data(ttl=6 * 3600)
-def _goal_timing(league, filt):
-    return goal_stats.team_timing(league, filt=filt)
+def _goal_rows(league, filt, season):
+    return goal_stats.team_stats(league, season, filt=filt)
+
+@st.cache_data(ttl=6 * 3600)
+def _goal_timing(league, filt, season):
+    return goal_stats.team_timing(league, season, filt=filt)
 
 def render_goals(league):
-    _lg_header(league, f"MATCH GOALS STATS · σεζον {goal_stats.SEASON_DEFAULT}")
-    st.caption("Υπολογισμενο απο ολα τα αποτελεσματα 2025/26 · ανανεωση μολις τελειωσει η 1η αγωνιστικη 26/27.")
-    n = len(_goal_rows(league, 'total'))
+    c1, c2 = st.columns([4, 1])
+    with c2:
+        seas = _season_pick(f"gs_sea_{league}")
+    with c1:
+        _lg_header(league, f"MATCH GOALS STATS · σεζον {SEASON_LABEL[seas]}")
+    st.caption(f"Υπολογισμενο απο ολα τα αποτελεσματα {SEASON_LABEL[seas]} ως σημερα"
+               + (" — λιγες αγωνιστικες ακομα, δειγμα μικρο." if seas == '2627' else "."))
+    n = len(_goal_rows(league, 'total', seas))
     h = n * 40 + 130
     tabs = st.tabs(["Total", "Home", "Away", "Last 8", "Timing (15′)"])
     for tab, filt in zip(tabs[:4], ['total', 'home', 'away', 'last8']):
         with tab:
-            st.components.v1.html(goal_view.table_html(_goal_rows(league, filt), filt), height=h, scrolling=True)
+            st.components.v1.html(goal_view.table_html(_goal_rows(league, filt, seas), filt), height=h, scrolling=True)
     with tabs[4]:
         st.caption("Κατανομη γκολ ανα 15λεπτο — ΥΠΕΡ (αριστερα) & ΚΑΤΑ (δεξια). Χρωμα = ενταση.")
         sub = st.tabs(["Συνολο", "Εντος", "Εκτος"])
         for stab, filt in zip(sub, ['total', 'home', 'away']):
             with stab:
-                st.components.v1.html(goal_view.timing_html(_goal_timing(league, filt)), height=h, scrolling=True)
+                st.components.v1.html(goal_view.timing_html(_goal_timing(league, filt, seas)), height=h, scrolling=True)
 
 @st.cache_data(ttl=6 * 3600)
-def _trend_teams(league):
-    return trendline.team_matches(league)
+def _trend_teams(league, season):
+    return trendline.team_matches(league, season)
 
 def render_trend(league):
-    _lg_header(league, "ROLLING TRENDLINE · σεζον " + trendline.SEASON_DEFAULT)
+    c1t, c2t = st.columns([4, 1])
+    with c2t:
+        seas = _season_pick(f"tr_sea_{league}")
+    with c1t:
+        _lg_header(league, "ROLLING TRENDLINE · σεζον " + SEASON_LABEL[seas])
     st.caption("Rolling average xGF/xGA με linear trend · raw npxG (non-penalty, ασυμπιεστο).")
-    data = _trend_teams(league)
+    data = _trend_teams(league, seas)
     names = sorted(data.keys())
     c1, c2, c3 = st.columns([2, 2, 1.2])
     with c1:
@@ -203,31 +218,46 @@ def render_trend(league):
         cmp = st.selectbox("Συγκριση με", others, key=f"tr_cmp_{league}")
     with c3:
         window = st.radio("Rolling window", [5, 10], index=1, horizontal=True, key=f"tr_w_{league}")
-    s1 = trendline.series(data[team], window)
-    s2 = trendline.series(data[cmp], window) if cmp != '— Καμια —' else None
-    st.markdown(trend_view.cards_html(team, s1, cmp, s2, window), unsafe_allow_html=True)
-    st.plotly_chart(trend_view.make_fig(s1, team, s2, cmp, window),
+    avail = len(data[team]['xgf'])
+    w_eff = min(window, max(avail - 1, 2))       # λιγα ματς (αρχη σεζον): μικροτερο παραθυρο
+    if w_eff < window:
+        st.caption(f"⚠ {avail} ματς διαθεσιμα — το rolling window περιοριστηκε σε {w_eff}.")
+    s1 = trendline.series(data[team], w_eff)
+    s2 = trendline.series(data[cmp], w_eff) if cmp != '— Καμια —' else None
+    st.markdown(trend_view.cards_html(team, s1, cmp, s2, w_eff), unsafe_allow_html=True)
+    st.plotly_chart(trend_view.make_fig(s1, team, s2, cmp, w_eff),
                     use_container_width=True, config={'displayModeBar': False})
 
 def render_scatter(league):
-    _lg_header(league, "SCATTER · npxG For vs Against · σεζον " + trendline.SEASON_DEFAULT)
+    c1s, c2s = st.columns([4, 1])
+    with c2s:
+        seas = _season_pick(f"sc_sea_{league}")
+    with c1s:
+        _lg_header(league, "SCATTER · npxG For vs Against · σεζον " + SEASON_LABEL[seas])
     st.caption("Μεσο npxG υπερ (x) vs κατα (y). **Πανω-δεξια = καλυτερο** (πολλα υπερ, λιγα κατα).")
-    data = _trend_teams(league)
+    data = _trend_teams(league, seas)
     maxg = scatter_view.max_games(data)
     c1, _ = st.columns([2, 3])
     with c1:
-        lo, hi = st.slider("Αγωνιστικες (απο — εως)", 1, maxg, (1, maxg), key=f"sc_gw_{league}")
+        if maxg >= 2:
+            lo, hi = st.slider("Αγωνιστικες (απο — εως)", 1, maxg, (1, maxg), key=f"sc_gw_{league}_{seas}")
+        else:
+            lo, hi = 1, maxg
     st.caption(f"Αγωνιστικες {lo}–{hi}" + ("  ·  full season" if (lo, hi) == (1, maxg) else ""))
     st.plotly_chart(scatter_view.scatter_fig(data, lo, hi),
                     use_container_width=True, config={'displayModeBar': False})
 
 @st.cache_data(ttl=6 * 3600)
-def _xgstats(league):
-    return xgstats.compute(league)
+def _xgstats(league, season):
+    return xgstats.compute(league, season)
 
 def render_xgstats(league):
-    _lg_header(league, "XG STATS · σεζον " + xgstats.SEASON_DEFAULT + " · all averages per game")
-    data = _xgstats(league)
+    c1x, c2x = st.columns([4, 1])
+    with c2x:
+        seas = _season_pick(f"xg_sea_{league}")
+    with c1x:
+        _lg_header(league, "XG STATS · σεζον " + SEASON_LABEL[seas] + " · all averages per game")
+    data = _xgstats(league, seas)
     VLABEL = [('total', 'Overall'), ('home', 'Home'), ('away', 'Away')]
     view = st.tabs(["xG Rankings", "xGD Table"])
     with view[0]:
