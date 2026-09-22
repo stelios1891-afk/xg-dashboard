@@ -1,0 +1,50 @@
+name: toa-outrights
+
+# Outright αποδοσεις (πρωταθλητης / υποβιβασμος / top-4 οπου υπαρχουν) The Odds API για τις CORE7,
+# για συγκριση με τις season projections (Monte Carlo). 22/9/2026.
+# Τρεχει χειροκινητα (Run workflow) Η οταν αλλαξει το toa_outrights_request.txt (trigger αρχειο).
+# Κοστος <200 credits/τρεξιμο — δες toa_outrights_fetch.py.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'toa_outrights_request.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: toa-outrights
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Fetch outrights
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_outrights_fetch.py | tee toa_outrights_fetch.log
+
+      - name: Commit outrights
+        run: |
+          git config user.name "toa-outrights-bot"
+          git config user.email "actions@github.com"
+          git add -f toa_outrights_2627.json toa_outrights_2627.csv toa_outrights_fetch.log
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "toa outrights 2627 [skip ci]"
+            git push
+          fi
