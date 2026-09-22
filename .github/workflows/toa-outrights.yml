@@ -41,10 +41,16 @@ jobs:
         run: |
           git config user.name "toa-outrights-bot"
           git config user.email "actions@github.com"
-          git add -f toa_outrights_2627.json toa_outrights_2627.csv toa_outrights_fetch.log
+          for f in toa_outrights_2627.json toa_outrights_2627.csv toa_outrights_fetch.log; do
+            [ -f "$f" ] && git add -f "$f"
+          done
           if git diff --cached --quiet; then
             echo "no changes"
           else
             git commit -m "toa outrights 2627 [skip ci]"
-            git push
+            # ο scanner κανει commit καθε λιγα λεπτα -> rebase πριν το push, με επαναληψη
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main && git push && break
+              echo "push retry $i"; sleep 20
+            done
           fi
