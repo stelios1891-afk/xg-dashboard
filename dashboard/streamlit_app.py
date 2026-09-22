@@ -40,7 +40,8 @@ LEAGUE_COUNTRY = {'EPL': 'ENGLAND', 'LaLiga': 'SPAIN', 'SerieA': 'ITALY', 'Bunde
 LEAGUE_LOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}.png'  # dark-mode variant (ανοιχτοχρωμο σε σκουρο φοντο)
 
 # (id, label, icon)· ενεργα: projections, goals
-PAGES = [('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 'Pi Rating', '🔵'),
+PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δουλευει καθε μοντελο + συμπερασματα backtests
+         ('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 'Pi Rating', '🔵'),
          ('team', 'Team Rating', '🛡️'), ('scatter', 'Scatter Plots', '✳️'),
          ('ave', 'Actual vs Expected', '🎯'), ('value', 'Value Picks', '💰'),
          ('results', 'Results', '🏁'),
@@ -50,7 +51,7 @@ PAGES = [('summary', 'Summary', '📊'), ('trend', 'Trendline', '📈'), ('pi', 
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -746,10 +747,15 @@ def render_results(league):
                     config={'displayModeBar': False})
     st.components.v1.html(results_view.chances_html(det), height=270, scrolling=False)
 
+def render_guide(league):
+    import model_guide
+    model_guide.render()
+
+
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
-          'europe': render_europe}
+          'europe': render_europe, 'guide': render_guide}
 if page in RENDER:
     RENDER[page](league)
 else:
