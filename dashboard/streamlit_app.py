@@ -51,7 +51,7 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -752,10 +752,34 @@ def render_guide(league):
     model_guide.render()
 
 
+def render_season(league):
+    import season_view as sv
+    _lg_header(league, 'SEASON PROJECTIONS · MONTE CARLO ΤΕΛΟΥΣ ΣΕΖΟΝ 2026/27')
+    data = sv.load()
+    if not data or league not in data.get('leagues', {}):
+        st.info('Δεν υπαρχουν ακομα προβολες σεζον — τρεξε `python season_sim_2627.py` και κανε push.')
+        return
+    L = data['leagues'][league]
+    st.caption(f"**{data.get('n_runs', 0):,} προσομοιωσεις** της υπολοιπης σεζον με τα ratings του dashboard "
+               f"(warm-start K=8) → Poisson σκορ (draw boost {data.get('draw_boost')}) → κριτηρια ισοβαθμιας λιγκας. "
+               f"Μεθοδος **{data.get('method')}**: αβεβαιοτητα ratings (s0={data.get('s0')}) + ελαφρυ regression προς τον μεσο "
+               f"(ρ={data.get('rho')}) — η μεθοδος που περασε την επικυρωση 5 σεζον. "
+               f"Παιγμενα {L.get('played_matches')} · υπολοιπα {L.get('remaining')} · υπολογισμος **{data.get('generated')}**.")
+    st.components.v1.html(sv.table_html(league, L), height=min(len(L['teams']) * 33 + 90, 900), scrolling=True)
+    st.caption('Rating: Total = xG υπερ − xG κατα ανα ματς vs μεσο λιγκας · Att/Def = αναμενομενα xG υπερ/κατα ανα ματς. '
+               'Pts = μεσος τελικων βαθμων, 80% = 10ο–90ο εκατοστημοριο. Γραμμες: μπλε = UCL, κιτρινη = Ευρωπη, κοκκινη = υποβιβασμος.')
+    st.markdown('#### Κατανομη τελικης θεσης')
+    st.plotly_chart(sv.heatmap_fig(league, L), use_container_width=True, config={'displayModeBar': False})
+    st.caption('⚖ Ιστορικη βαθμονομηση (2223-2526, 7 λιγκες, ολα τα cutoffs): οταν το μοντελο λεει 9% UCL βγαινει 8%, '
+               '39% → 40%, 80% → 86%, 98% → 99%· υποβιβασμος 9% → 7%, 40% → 37%, 80% → 87%. '
+               'Νωρις στη σεζον (4η-7η αγων.) το 80% ευρος βαθμων ειναι στενο (πιανει ~65-75%). '
+               'Λεπτομερειες: season_sim_validate_out.txt.')
+
+
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
-          'europe': render_europe, 'guide': render_guide}
+          'europe': render_europe, 'guide': render_guide, 'season': render_season}
 if page in RENDER:
     RENDER[page](league)
 else:
