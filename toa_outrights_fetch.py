@@ -64,6 +64,21 @@ def main():
     print(f"x-requests-remaining={hdrs.get('x-requests-remaining')} x-requests-used={hdrs.get('x-requests-used')}")
     if not matches:
         print("ΚΑΝΕΝΑ market winner/relegation/top4 δεν βρεθηκε για CORE7 λιγκες.")
+    # διαγνωστικο: ΟΛΑ τα soccer keys με outrights (για να δουμε πως ονομαζονται)
+    try:
+        r_all = requests.get(f'{BASE}/sports/', params=dict(apiKey=_key(), all='true'), timeout=30).json()
+        print('=== ΟΛΑ τα soccer sports με has_outrights=True ===')
+        for s_ in r_all:
+            if str(s_.get('key', '')).startswith('soccer') and s_.get('has_outrights'):
+                print(f"  {s_.get('key')} | {s_.get('title')} | active={s_.get('active')}")
+        print('=== soccer keys που περιεχουν winner/relegation/top ===')
+        for s_ in r_all:
+            k_ = str(s_.get('key', ''))
+            if k_.startswith('soccer') and any(t in k_ for t in ('winner', 'relegation', 'top')):
+                print(f"  {k_} | {s_.get('title')} | active={s_.get('active')} | outrights={s_.get('has_outrights')}")
+        print(f"(συνολο sports: {len(r_all)}, soccer: {sum(1 for s_ in r_all if str(s_.get('key', '')).startswith('soccer'))})")
+    except Exception as e_:
+        print('diag error', e_)
     by_league = {}
     for lg, s in matches:
         by_league.setdefault(lg, []).append(s)
