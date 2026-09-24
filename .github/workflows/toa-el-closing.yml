@@ -1,0 +1,43 @@
+name: toa-el-closing
+
+# CLOSING αποδοσεις Ευρωλιγκας απο TOA historical (24/9, project Ευρωλιγκας).
+# Σεζον E2025,E2024,E2023 (~17k credits), δικλιδα: σταματα κατω απο 25k credits. Resumable.
+# Πυροδοτηση: push αυτου του αρχειου ή του el_closing_trigger.txt.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '.github/workflows/toa-el-closing.yml'
+      - 'el_closing_trigger.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - name: Pull closing odds
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+          EL_SEASONS: 'E2025,E2024,E2023'
+          TOA_FLOOR: '25000'
+        run: python toa_el_closing.py
+      - name: Commit result
+        if: always()
+        run: |
+          git config user.name "toa-el-bot"
+          git config user.email "actions@github.com"
+          git add -f toa_el_closing.jsonl el_closing_done.json
+          if git diff --cached --quiet; then echo "τιποτα"; else
+            git commit -m "EL closing odds [skip ci]"
+            for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          fi
