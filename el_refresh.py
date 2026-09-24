@@ -15,6 +15,7 @@ LAM = 8                                          # βαρος περσινης �
 # ΔΥΟ ΜΗΧΑΝΕΣ (αποφαση Στελιου 25/9, μετα LOSO + ROI με edge σε 6 σεζον):
 ENG_SPREAD = dict(luck=0.5, HL=120, carry=0.7, mu_w=5.0, h=6.0)    # χαντικαπ/1-2 = v1 (ROI καλυτερο απο v2 σε ολα τα edge)
 ENG_TOTAL = dict(luck=0.25, HL=9999, carry=0.7, mu_w=50.0, h=6.0)  # συνολο = v2 (LOSO b .314 vs .272· edge>=8% +5.5% 6/6 vs +2.0%)
+OT_ADD = 1.1   # παρατασεις (25/9, τεστ C / V1): το μοντελο προβλεπει 40′· μεσος ορος 2020-25 = 4.6% ματς × ~24 π. = +1.1 π./ματς
 NEWCOMER_PRIOR = {'BES': (-1.0, 1.0, 0.0)}      # (επιθεση, αμυνα, ρυθμος) ποντοι/100 — Μπεσικτας −2 net (συμφωνια 25/9)
 SIGMA_MARGIN, SIGMA_TOTAL = 11.5, 16.7          # διασπορα γυρω απο την αγορα, E2023-25
 HDR = {'User-Agent': 'Mozilla/5.0 Chrome/120.0', 'Accept': 'application/json'}
@@ -186,6 +187,7 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     neu = is_neutral(x)
     mg, tt1, poss = predict(state_at(CTX, cut), hcode, acode, neu, ENG_SPREAD['h'])
     _, tt, _ = predict(state_at(CTX_T, cut), hcode, acode, neu, ENG_TOTAL['h'])
+    tt += OT_ADD
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], utc=x['utc'], home=x['home'], away=x['away'], hcode=hcode, acode=acode,
                venue=x.get('vname'), neutral=neu, pts_h=round((tt + mg) / 2, 1), pts_a=round((tt - mg) / 2, 1),
                margin=round(mg, 2), total=round(tt, 1), poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3),
@@ -201,7 +203,7 @@ for L in S.values():
 ratings = sorted([dict(code=t, name=names.get(t, t), O=round(state['O'][t], 2), D=round(state['D'][t], 2), net=round(state['O'][t] - state['D'][t], 2),
                        pace=round(state['P'][t], 2), games=state['n'][t]) for t in state['O']], key=lambda r: -r['net'])
 json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=SEASON,
-               model='v2: χαντικαπ/1-2 = v1 (HL120, λ8, carry0.7, εδρα 6/100, τυχη 3P/FT 50%) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
+               model='v2: χαντικαπ/1-2 = v1 (HL120, λ8, carry0.7, εδρα 6/100, τυχη 3P/FT 50%) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + παρατασεις 1.1 π. · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
                sigma_margin=SIGMA_MARGIN, sigma_total=SIGMA_TOTAL, mu=round(state['mu'], 2), pace=round(state['pm'], 2),
                games=games, ratings=ratings), open('el_projections.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(f'el_projections.json: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα, με προβλεψη «πριν το ματς») · ratings {len(ratings)} ομαδων')
