@@ -46,6 +46,7 @@ jobs:
         run: |
           git config user.name "intl-scan-bot"
           git config user.email "actions@github.com"
+          for f in intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_closing.jsonl intl_projections_dashboard.json; do [ -f "$f" ] || : > "$f"; done
           git add -f intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_closing.jsonl intl_projections_dashboard.json
           if git diff --cached --quiet; then
             echo "καμια αλλαγη"
