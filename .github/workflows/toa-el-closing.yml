@@ -1,7 +1,7 @@
 name: toa-el-closing
 
 # CLOSING αποδοσεις Ευρωλιγκας απο TOA historical (24/9, project Ευρωλιγκας).
-# Σεζον E2025,E2024,E2023 (~17k credits), δικλιδα: σταματα κατω απο 25k credits. Resumable.
+# 24/9 (2ος γυρος): σεζον E2022,E2021,E2020 (~16k credits), δικλιδα 8k. Resumable (el_closing_done.json).
 # Πυροδοτηση: push αυτου του αρχειου ή του el_closing_trigger.txt.
 
 on:
@@ -28,8 +28,8 @@ jobs:
         env:
           TOA_KEY: ${{ secrets.TOA_KEY }}
           PYTHONIOENCODING: utf-8
-          EL_SEASONS: 'E2025,E2024,E2023'
-          TOA_FLOOR: '25000'
+          EL_SEASONS: 'E2022,E2021,E2020'
+          TOA_FLOOR: '8000'
         run: python toa_el_closing.py
       - name: Commit result
         if: always()
