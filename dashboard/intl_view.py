@@ -1,39 +1,45 @@
 """
 intl_view.py — 🌐 INTERNATIONAL tab (25/9/2026, εντολη Στελιου): προβολες εθνικων (Nations League 2026-27 A-D + προκριματικα
-AFCON 2027) με ΤΡΕΙΣ εκδοχες μοντελου διπλα-διπλα και την αγορα. ΣΚΙΑ / ΧΑΡΤΙΝΟ — δεν παιζεται live.
+AFCON 2027) σε MATCH CARDS οπως τα Europe / Match Projections tabs (ιδιο CSS απο cards.py).
 Διαβαζει intl_projections_dashboard.json (intl_dashboard_build.py — απο 25/9 τρεχει ΚΑΙ στο Actions μεσω scanner_tick.sh).
-  H  = rating H3 + στρωμα αξιας ροστερ  ·  A = αγκυρα αγορας (λ=0.3) ΧΩΡΙΣ αξια  ·  AV = αγκυρα + αξια
-ΑΓΟΡΑ (25/9, εντολη Στελιου): TOA Pinnacle (αλλιως Matchbook) απο τον scanner (intl_odds_scan.py) οταν υπαρχει για το ματς — badge πηγης
-+ ωρα snapshot ανα ματς· αλλιως Nowgoal Crown/SBOBET (fallback). Οταν υπαρχουν και τα δυο, η Nowgoal φαινεται ως δευτερευουσα γραμμη.
-Ενας πινακας ανα διοργανωση: ματς (λογοτυπα, ωρα UTC, ✝ νεκρη, ⚠ κλησεις) · ΑΓΟΡΑ (1Χ2, AH, O/U) · ανα εκδοχη: 1/Χ/2 %, xG,
-fair AH στη γραμμη της πηγης με edge χρωματιστο, badge pick · συνοψη picks ανα εκδοχη + κοινα.
+  Μοντελο 1 = H (rating H3 + στρωμα αξιας ροστερ) · Μοντελο 2 = A (αγκυρα αγορας λ=0.3 χωρις αξια) · Μοντελο 3 = AV (αγκυρα + αξια)
+Καθε καρτα: ομαδες + Elo · ΚΑΘΕΤΑ οι 3 εκδοχες (1/Χ/2 %) και απο κατω η ΑΓΟΡΑ (implied % + τιμες) · picks (badges ανα εκδοχη)
+· πανελ «Γραμμες & picks» (fair AH/over ανα εκδοχη στη γραμμη της πηγης + αγορα) και «Ratings» (Elo, αξια, xG, T).
+ΑΓΟΡΑ (25/9, εντολη Στελιου): TOA Pinnacle (αλλιως Matchbook) απο τον scanner (intl_odds_scan.py) οταν υπαρχει για το ματς —
+badge πηγης + ωρα snapshot· αλλιως Nowgoal Crown/SBOBET (fallback). ΣΚΙΑ / ΧΑΡΤΙΝΟ — δεν παιζεται live.
 """
-import os, json, re
+import os, json, re, datetime
+
+import cards  # CARD_CSS / FONTS / _logo / esc — τα κοινα match cards
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_F = os.path.join(ROOT, 'intl_projections_dashboard.json')
-LOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
+LOGO = cards.LOGO
 
 COMPS = ['NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
 COMP_LABEL = {'NL A': 'Nations League A', 'NL B': 'Nations League B', 'NL C': 'Nations League C', 'NL D': 'Nations League D',
               'AFCONQ': 'AFCON 2027 προκριματικα'}
 VERS = [('H', 'H + αξια'), ('A', 'Αγκυρα'), ('AV', 'Αγκυρα + αξια')]
+VER_NUM = {'H': 'Μοντελο 1', 'A': 'Μοντελο 2', 'AV': 'Μοντελο 3'}
+VER_COLOR = {'H': '#7ea2ff', 'A': '#f5b731', 'AV': '#3ec98f'}
 OVER_KEY = {'H': 'over', 'A': 'over_A', 'AV': 'over_AV'}
 HOWTO = [
-    '**Τρεις εκδοχες:** **H + αξια** = rating H3 (Elo+xElo, πραγματικες εδρες, HFA ομοσπονδιας) + στρωμα αξιας ροστερ · '
-    '**Αγκυρα** = rating δεμενο στην αγορα (λ=0.3) χωρις αξια · **Αγκυρα + αξια** = αγκυρα + το ιδιο στρωμα αξιας. '
-    'Ολες βλεπουν την ΙΔΙΑ αγορα· fair AH = τιμη μοντελου στη γραμμη της πηγης, edge = αναμενομενη αποδοση.',
+    '**Τρια μοντελα, καθετα:** **Μοντελο 1 = H + αξια** (rating H3: Elo+xElo, πραγματικες εδρες, HFA ομοσπονδιας, + στρωμα αξιας ροστερ) · '
+    '**Μοντελο 2 = Αγκυρα** (rating δεμενο στην αγορα, λ=0.3, χωρις αξια) · **Μοντελο 3 = Αγκυρα + αξια**. '
+    'Απο κατω η **Αγορα** (implied % χωρις γκανιοτα + τιμες). Ολα βλεπουν την ΙΔΙΑ αγορα.',
     '**Αγορα (πηγη ανα ματς, badge):** **Pinnacle** (αλλιως **Matchbook**) απο το Odds API μεσω του scanner (GitHub Actions, οπως το υπολοιπο '
     'dashboard· ~45λεπτο refresh μακρια απο ΚΟ, καθε τικ στο 6ωρο προ ΚΟ)· οταν δεν υπαρχει TOA γραμμη (π.χ. AFCON προκριματικα — δεν εχει '
-    'key στο TOA — ή παυση scanner) → **Crown/SBOBET** (Nowgoal, snapshot laptop). Η ωρα του snapshot φαινεται στο badge (hover). '
-    'Οταν υπαρχουν και τα δυο, η Crown γραμμη μενει ως δευτερευουσα (μικρα γραμματα) για συγκριση.',
+    'key στο TOA — ή παυση scanner) → **Crown/SBOBET** (Nowgoal, snapshot laptop). Η ωρα του snapshot φαινεται στο badge (hover).',
+    '**Γραμμες & picks:** fair AH = τιμη του καθε μοντελου στη γραμμη της πηγης, edge = αναμενομενη αποδοση· '
+    'κανονες pick (ιδιοι σε καθε πηγη): AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · 1Χ2 φαβορι ≥75% · '
+    'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
     '**ΣΚΙΑ / ΧΑΡΤΙΝΟ:** τιποτα εδω δεν παιζεται live — καταγραφη για κριση με πραγματικα δεδομενα (ledger). '
-    'Κανονες pick (ιδιοι σε καθε πηγη, υπολογισμενοι στη γραμμη της πηγης): AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · 1Χ2 φαβορι ≥75% · '
-    'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η εκδοχη «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
-    '**AFCONQ:** αγκυρα μη διαθεσιμη για CAF → μονο εκδοχη H (HFA 80)· αγορα μονο Nowgoal.',
+    '**AFCONQ:** αγκυρα μη διαθεσιμη για CAF → μονο Μοντελο 1 (HFA 80)· αγορα μονο Nowgoal.',
 ]
 SRC_LABEL = {'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'crown': 'Crown', 'sbobet': 'SBOBET'}
 SRC_CLASS = {'pinnacle': 'pin', 'matchbook': 'mbk', 'crown': 'ng', 'sbobet': 'ng'}
+
+esc = cards.esc
 
 
 def market_src(m):
@@ -67,6 +73,10 @@ def has_anchor(matches):
     return any((m.get('versions') or {}).get('A') for m in matches)
 
 
+def versions_for(matches):
+    return [x for x in VERS if x[0] == 'H' or has_anchor(matches)]
+
+
 def _real(p):
     return bool(p) and not p.startswith('ΟΧΙ') and not p.startswith('(')
 
@@ -89,6 +99,16 @@ def _fmt_line(x):
     return '0.00' if abs(x) < 1e-9 else f'{x:+.2f}'
 
 
+def _ko_fmt(utc):
+    """ωρα Ελλαδας (καλοκαιρι UTC+3) οπως στο Europe tab."""
+    try:
+        d = datetime.datetime.fromisoformat(str(utc).replace('Z', '+00:00').replace('+00:00', ''))
+        d = d + datetime.timedelta(hours=3)
+        return d.strftime('%a %d/%m %H:%M')
+    except Exception:
+        return str(utc)[:16]
+
+
 def _badge_parts(pick):
     """pick string -> λιστα (cls, κειμενο, title)."""
     out = []
@@ -100,7 +120,7 @@ def _badge_parts(pick):
         elif part.startswith('FAV'):
             cls = 'fav'
         elif part.startswith('1Χ2') or part.startswith('1X2'):
-            cls = 'x12'; core = core.replace(' φαβ ', ' φαβ ').replace('≥75%', '').replace('  ', ' ')
+            cls = 'x12'; core = core.replace('≥75%', '').replace('  ', ' ')
         elif part.startswith('OVER'):
             cls = 'over'
         elif part.startswith('ΟΧΙ'):
@@ -113,12 +133,14 @@ def _badge_parts(pick):
     return out
 
 
-def _badges(*picks):
+def _badges(*picks, real_only=False):
     h = ''
     for p in picks:
         for cls, core, note in _badge_parts(p):
-            h += f'<span class="bd {cls}" title="{note}">{core}</span>'
-    return h or '<span class="e dim">—</span>'
+            if real_only and cls in ('oor', 'dead'):
+                continue
+            h += f'<span class="bd {cls}" title="{esc(note)}">{esc(core)}</span>'
+    return h
 
 
 def _pick_keys(m, v):
@@ -137,7 +159,7 @@ def _pick_keys(m, v):
 
 
 def summary(matches):
-    vers = [v for v, _ in VERS if (v == 'H' or has_anchor(matches))]
+    vers = [v for v, _ in versions_for(matches)]
     s = {'n': len(matches), 'vers': vers,
          'ah': {v: sum(_real(m['picks'].get(v, '')) for m in matches) for v in vers},
          'over': {v: sum(_real(m['picks'].get(OVER_KEY[v], '')) for m in matches) for v in vers},
@@ -155,45 +177,55 @@ def summary(matches):
 
 def summary_html(matches):
     s = summary(matches)
-    lab = dict(VERS)
-    parts = [f'<b>{lab[v]}</b>: {s["ah"][v]} AH/1Χ2 + {s["over"][v]} over' for v in s['vers']]
-    h = (f'<div class="sum">Picks (χαρτινα) σε {s["n"]} ματς ({s["with_line"]} με γραμμη AH · {s["toa"]} με αγορα TOA Pinnacle/Matchbook, '
-         f'{s["with_line"] - min(s["toa"], s["with_line"])} Nowgoal · {s["dead"]} νεκρα): ' + ' · '.join(parts))
+    parts = [f'<b style="color:{VER_COLOR[v]}">{VER_NUM[v]}</b> {s["ah"][v]} AH/1Χ2 + {s["over"][v]} over' for v in s['vers']]
+    h = (f'<div class="isum">Picks (χαρτινα) σε {s["n"]} ματς · {s["with_line"]} με γραμμη AH · {s["toa"]} με αγορα Pinnacle/Matchbook, '
+         f'{s["with_line"] - min(s["toa"], s["with_line"])} Nowgoal · {s["dead"]} νεκρα &nbsp;|&nbsp; ' + ' · '.join(parts))
     if 'common_all' in s:
-        h += (f' &nbsp;|&nbsp; <b>κοινα και στις 3</b> (ιδιο pick): {s["common_all"]} · '
-              + ' · '.join(f'{k} {v}' for k, v in s['pairs'].items()))
+        h += (f' &nbsp;|&nbsp; <b>κοινα και στα 3</b>: {s["common_all"]} · '
+              + ' · '.join(f'{k.replace("H", "Μ1").replace("AV", "Μ3").replace("A", "Μ2")} {v}' for k, v in s['pairs'].items()))
     return h + '</div>'
 
 
-CSS = """<meta charset="utf-8"><style>
-body{margin:0;background:#0a0f1e;font-family:'DM Sans',sans-serif;color:#cdd8ee;}
-table{border-collapse:collapse;width:100%;font-size:11px;table-layout:auto;}
-th{background:#16203a;color:#8fa3c8;font-weight:600;padding:4px 3px;text-align:center;font-size:9px;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid #26324e;white-space:nowrap;}
-th.l{text-align:left;} th.grp{background:#0f1830;color:#6b7fa3;border-bottom:none;font-size:9px;letter-spacing:1.2px;border-left:2px solid #26324e;}
-th.grp.h{color:#7ea2ff;} th.grp.a{color:#f3c74b;} th.grp.av{color:#34d17a;} th.grp.mk{color:#cdd8ee;}
-td{padding:3px 4px;border-bottom:1px solid #1a2540;text-align:center;font-family:monospace;white-space:nowrap;vertical-align:middle;}
-td.sep{border-left:2px solid #26324e;}
-td.t{text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;color:#e8edf8;padding-right:8px;}
-td.t img{width:16px;height:16px;vertical-align:middle;margin-right:4px;}
-td.t .vs{color:#5a6b8c;font-weight:400;margin:0 4px;}
-td.t .meta{display:block;color:#6b7fa3;font-weight:400;font-size:9.5px;margin-top:1px;}
-td.t .dead{color:#ff6b6b;font-weight:700;} td.t .call{color:#f3c74b;cursor:help;}
-td.mk{color:#cdd8ee;} td.mk .ln{color:#e8edf8;font-weight:700;} td.mk .sub{display:block;color:#6b7fa3;font-size:9.5px;}
-td.p{color:#e8edf8;} td.p .b{font-weight:700;}
-td.xg .sub{display:block;color:#6b7fa3;font-size:9.5px;}
-.e{font-weight:700;} .e.g{color:#34d17a;} .e.y{color:#f3c74b;} .e.n{color:#6b7fa3;font-weight:400;} .e.r{color:#ff6b6b;font-weight:400;} .e.dim{color:#3d4a66;font-weight:400;}
-.fair{color:#cdd8ee;} .fair small{color:#6b7fa3;}
-.bd{display:inline-block;padding:1px 6px;border-radius:8px;font-weight:700;font-size:9.5px;letter-spacing:.3px;margin:1px 2px;color:#0a0f1e;cursor:help;}
+# ---------------------------------------------------------------- CSS (συμπληρωμα στο cards.CARD_CSS)
+INTL_CSS = """
+<style>
+.mid{min-width:300px;}
+.vrow{display:flex;align-items:center;gap:6px;}
+.vrow .vl{width:74px;text-align:right;font-size:8px;letter-spacing:.3px;text-transform:uppercase;color:#5a6b8c;line-height:1.1;}
+.vrow .vl b{display:block;font-size:9px;letter-spacing:.5px;}
+.vrow .pills .pill{font-size:12px;padding:3px 0;}
+.vrow.mk .pill{background:#0f1830;border:1px solid #26324e;color:#cdd8ee;}
+.vrow.mk .pill small{display:block;font-size:8.5px;color:#6b7fa3;font-weight:400;line-height:1;}
+.vrow.mk .pill.val{color:#34d17a;} .vrow.mk .pill.against{color:#f04f5a;}
+.pill.fav{font-weight:800;} .pill.dimp{opacity:.55;}
+.vsep{width:100%;border-top:1px dashed #1e2d47;margin:2px 0 1px;}
+.flags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:6px 12px 2px;font-size:10px;}
+.flags .dead{color:#ff6b6b;font-weight:700;} .flags .call{color:#f3c74b;cursor:help;}
+.pkrow{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;padding:5px 12px 7px;font-size:9px;color:#5a6b8c;}
+.pkrow .vk{font-weight:700;letter-spacing:.4px;}
+.bd{display:inline-block;padding:1px 6px;border-radius:8px;font-weight:700;font-size:9.5px;letter-spacing:.3px;margin:1px 2px;color:#0a0f1e;cursor:help;font-family:'DM Sans',sans-serif;}
 .bd.dog{background:#34d17a;} .bd.fav{background:#4b7cf3;color:#fff;} .bd.x12{background:#f3c74b;} .bd.over{background:#b17af3;color:#fff;}
 .bd.dead{background:#2a1a1f;color:#ff6b6b;border:1px solid #ff6b6b;font-weight:600;} .bd.oor{background:#151c2e;color:#6b7fa3;border:1px solid #26324e;font-weight:400;}
-.sum{margin-top:8px;padding:7px 10px;background:#0f1830;border:1px solid #26324e;border-radius:9px;color:#8fa3c8;font-size:11px;}
-.sum b{color:#e8edf8;}
-.note{margin:6px 0;color:#f3c74b;font-size:11px;}
+.e{font-weight:700;font-family:'JetBrains Mono',monospace;} .e.g{color:#34d17a;} .e.y{color:#f3c74b;} .e.n{color:#6b7fa3;font-weight:400;} .e.r{color:#ff6b6b;font-weight:400;} .e.dim{color:#3d4a66;font-weight:400;}
 .src{display:inline-block;padding:0 5px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;cursor:help;vertical-align:middle;}
 .src.pin{background:#1d3b6e;color:#9cc0ff;border:1px solid #2f5aa8;} .src.mbk{background:#2a3d1f;color:#a8e07a;border:1px solid #4d7a33;}
 .src.ng{background:#3a2a12;color:#f3c74b;border:1px solid #7a5a1a;} .src.none{background:#151c2e;color:#3d4a66;border:1px solid #26324e;}
-td.mk .sec{display:block;color:#6b7fa3;font-size:9.5px;} td.mk .sec b{color:#8fa3c8;font-weight:600;}
-</style>"""
+table.lt{border-collapse:collapse;margin:8px auto 4px;font-size:11px;font-family:'JetBrains Mono',monospace;}
+table.lt th{font-size:8px;color:#5a6b8c;letter-spacing:.8px;text-transform:uppercase;font-weight:600;padding:3px 9px;border-bottom:1px solid #1e2d47;font-family:'DM Sans',sans-serif;}
+table.lt td{padding:4px 9px;text-align:center;color:#cdd8ee;border-bottom:1px solid #141d33;white-space:nowrap;}
+table.lt td.vn{text-align:left;font-family:'DM Sans',sans-serif;font-weight:700;font-size:10px;letter-spacing:.3px;}
+table.lt td.vn small{display:block;font-weight:400;color:#5a6b8c;font-size:8.5px;letter-spacing:0;}
+table.lt tr.mkr td{border-top:2px solid #26324e;color:#e8edf8;background:#0d1426;}
+table.lt tr.mkr td.vn{color:#cdd8ee;}
+table.lt .ln{color:#f5b731;font-weight:700;} table.lt .fair{color:#7ea2ff;}
+table.lt .sec{display:block;color:#5a6b8c;font-size:9px;font-weight:400;}
+.leg{font-size:8px;color:#5a6b8c;text-align:center;padding:2px 10px 8px;}
+.isum{margin-top:4px;padding:7px 10px;background:#0f1830;border:1px solid #26324e;border-radius:9px;color:#8fa3c8;font-size:11px;font-family:'DM Sans',sans-serif;}
+.isum b{color:#e8edf8;}
+.note{margin:0 0 6px;color:#f3c74b;font-size:11px;font-family:'DM Sans',sans-serif;}
+.detail{grid-template-columns:1fr 1fr;}
+</style>
+"""
 
 
 def _src_badge(m):
@@ -203,89 +235,217 @@ def _src_badge(m):
     if not src:
         return '<span class="src none" title="χωρις γραμμη">—</span>'
     tip = f'{SRC_LABEL[src]} · snapshot {ts} UTC' if ts else SRC_LABEL[src]
-    if src in ('pinnacle', 'matchbook'):
-        tip += ' · Odds API (scanner)'
-    else:
-        tip += ' · Nowgoal (laptop)'
-    return f'<span class="src {SRC_CLASS[src]}" title="{tip}">{SRC_LABEL[src]}</span>'
+    tip += ' · Odds API (scanner)' if src in ('pinnacle', 'matchbook') else ' · Nowgoal (laptop)'
+    return f'<span class="src {SRC_CLASS[src]}" title="{esc(tip)}">{SRC_LABEL[src]}</span>'
 
 
-def _match_cell(m):
-    lh = f'<img src="{LOGO.format(m["hid"])}" onerror="this.style.display=\'none\'">' if m.get('hid') else ''
-    la = f'<img src="{LOGO.format(m["aid"])}" onerror="this.style.display=\'none\'">' if m.get('aid') else ''
-    meta = f'{m["utc"][5:]} UTC'
-    if m.get('dead'):
-        meta += f' <span class="dead" title="νεκρη: {m["dead"]}">✝ νεκρη {m["dead"]}</span>'
-    if m.get('callups'):
-        meta += f' <span class="call" title="{m["callups"]}">⚠ κλησεις</span>'
-    return f'<td class="t">{lh}{m["home"]}<span class="vs">v</span>{la}{m["away"]}<span class="meta">{meta}</span></td>'
+def _pill(v, fav, color=None):
+    """pill πιθανοτητας μοντελου: χρωμα φαβορι (πρασινο/κοκκινο οπως cards) στο μεγαλυτερο."""
+    if v is None:
+        return '<div class="pill dimp" style="background:#0f1830;color:#3d4a66">—</div>'
+    if color:
+        bg = cards._BG.get(color, 'rgba(143,163,200,.10)')
+        cls = 'pill fav' if fav else 'pill'
+        return f'<div class="{cls}" style="background:{bg};color:{color};border:1px solid {color}44">{v:.0f}%</div>'
+    return f'<div class="pill pd">{v:.0f}%</div>'
 
 
-def _market_cells(m):
+def _model_row(v, V, lead=None):
+    """μια καθετη σειρα μοντελου: ετικετα αριστερα + 3 pills 1/Χ/2 (%)."""
+    lab = f'<span class="vl" style="color:{VER_COLOR[v]}"><b>{VER_NUM[v]}</b>{dict(VERS)[v]}</span>'
+    if not V:
+        return f'<div class="vrow">{lab}<div class="pills">{_pill(None, False)}{_pill(None, False)}{_pill(None, False)}</div></div>'
+    p1, px, p2 = V['p1'], V['px'], V['p2']
+    hc = '#34d17a' if p1 > p2 else ('#f04f5a' if p1 < p2 else '#8fa3c8')
+    ac = '#34d17a' if p2 > p1 else ('#f04f5a' if p2 < p1 else '#8fa3c8')
+    fav = max(p1, px, p2)
+    return (f'<div class="vrow">{lab}<div class="pills">{_pill(p1, p1 == fav, hc)}{_pill(px, px == fav)}'
+            f'{_pill(p2, p2 == fav, ac)}</div></div>')
+
+
+def _market_row(m, ref):
+    """σειρα ΑΓΟΡΑΣ: implied % (χωρις γκανιοτα) + τιμη· χρωμα vs Μοντελο 1 (πρασινο = αγορα πληρωνει καλυτερα)."""
     src, c = market_src(m)
-    badge = _src_badge(m)
+    lab = (f'<span class="vl" style="color:#cdd8ee"><b>Αγορα</b>{SRC_LABEL.get(src, "—")}</span>')
+    if not c.get('o1'):
+        return f'<div class="vrow mk">{lab}<div class="pills">{_pill(None, False)}{_pill(None, False)}{_pill(None, False)}</div></div>'
+    o = (c['o1'], c['ox'], c['o2'])
+    s3 = sum(1.0 / x for x in o)
+    imp = [100.0 / x / s3 for x in o]
+    pills = ''
+    for i, (pr, od) in enumerate(zip(imp, o)):
+        cls = ''
+        if ref:
+            our = (ref['p1'], ref['px'], ref['p2'])[i]
+            cls = 'val' if pr < our * 0.9 else ('against' if pr > our * 1.1 else '')
+        pills += f'<div class="pill {cls}">{pr:.0f}%<small>{od:.2f}</small></div>'
+    return f'<div class="vrow mk">{lab}<div class="pills">{pills}</div></div>'
+
+
+def _flags(m):
+    out = []
+    if m.get('dead'):
+        out.append(f'<span class="dead" title="{esc(m["dead"])}">✝ νεκρη: {esc(m["dead"])}</span>')
+    if m.get('callups'):
+        out.append(f'<span class="call" title="{esc(m["callups"])}">⚠ κλησεις (hover)</span>')
+    return f'<div class="flags">{"".join(out)}</div>' if out else ''
+
+
+def _picks_row(m, vers):
+    parts = []
+    for v, _ in vers:
+        b = _badges(m['picks'].get(v, ''), m['picks'].get(OVER_KEY[v], ''), real_only=True)
+        if b:
+            parts.append(f'<span class="vk" style="color:{VER_COLOR[v]}">Μ{list(VER_NUM).index(v) + 1}</span>{b}')
+    dead = _badges(m['picks'].get('H', '')) if m.get('dead') else ''
+    if not parts:
+        return f'<div class="pkrow">{dead or "κανενα pick"}</div>'
+    return f'<div class="pkrow">{"".join(parts)}</div>'
+
+
+def _lines_pane(m, vers):
+    """Πανελ «Γραμμες & picks»: μια σειρα ανα μοντελο (xG, fair AH @γραμμη πηγης + edge, over edge, picks) και απο κατω η αγορα."""
+    src, c = market_src(m)
+    ln = c.get('ah_line')
+    ou = c.get('ou_line')
+    h = ('<table class="lt"><tr><th></th><th>xG · T</th>'
+         f'<th>fair γηπ {_fmt_line(ln)}</th><th>fair φιλοξ {_fmt_line(-ln) if ln is not None else "—"}</th>'
+         f'<th>over {ou:g}</th><th>pick</th></tr>' if ou is not None else
+         '<table class="lt"><tr><th></th><th>xG · T</th>'
+         f'<th>fair γηπ {_fmt_line(ln)}</th><th>fair φιλοξ {_fmt_line(-ln) if ln is not None else "—"}</th>'
+         '<th>over</th><th>pick</th></tr>')
+    for v, lab in vers:
+        V = (m.get('versions') or {}).get(v)
+        name = f'<td class="vn" style="color:{VER_COLOR[v]}">{VER_NUM[v]}<small>{lab}</small></td>'
+        if not V:
+            h += f'<tr>{name}<td colspan="5" class="e dim">—</td></tr>'
+            continue
+        e = ((m.get('edges') or {}).get(v) or {}).get(src) or {}
+        xg = f'{V["xg_h"]:.2f}-{V["xg_a"]:.2f}' + (f' <span class="sec">T {V["T"]:.2f}</span>' if V.get('T') is not None else '')
+        if e.get('fair_h') is not None:
+            fh = f'<span class="fair">{e["fair_h"]:.2f}</span> {_edge_span(e["ah_home"])}'
+            fa = f'<span class="fair">{e["fair_a"]:.2f}</span> {_edge_span(e["ah_away"])}'
+        else:
+            fh = fa = '<span class="e dim">—</span>'
+        ov = _edge_span(e.get('over')) if e.get('over') is not None else '<span class="e dim">—</span>'
+        if e.get('p_over') is not None:
+            ov = f'{e["p_over"]:.0f}% {ov}'
+        b = _badges(m['picks'].get(v, ''), m['picks'].get(OVER_KEY[v], '')) or '<span class="e dim">—</span>'
+        h += f'<tr>{name}<td>{xg}</td><td>{fh}</td><td>{fa}</td><td>{ov}</td><td>{b}</td></tr>'
+    # αγορα απο κατω
     x12 = f'{c["o1"]:.2f} / {c["ox"]:.2f} / {c["o2"]:.2f}' if c.get('o1') else '—'
-    ah = f'<span class="ln">{_fmt_line(c.get("ah_line"))}</span> {c["oh"]:.2f}/{c["oa"]:.2f}' if c.get('ah_line') is not None else '—'
-    ah_sub = f'<span class="sub">αρχ. {m["init_ah"]}</span>' if m.get('init_ah') and m['init_ah'] not in ('—', 'nan') else ''
-    ou = f'<span class="ln">{c["ou_line"]:g}</span> {c["over"]:.2f}/{c["under"]:.2f}' if c.get('ou_line') is not None else '—'
-    # δευτερευουσα Nowgoal γραμμη (Crown) οταν η πηγη ειναι TOA — για συγκριση
-    x12_sec = ah_sec = ou_sec = ''
+    ah = f'<span class="ln">{_fmt_line(ln)}</span> {c["oh"]:.2f} / {c["oa"]:.2f}' if ln is not None else '—'
+    if m.get('init_ah') and m['init_ah'] not in ('—', 'nan'):
+        ah += f'<span class="sec">αρχικη {esc(m["init_ah"])}</span>'
+    out = f'<span class="ln">{ou:g}</span> {c["over"]:.2f} / {c["under"]:.2f}' if ou is not None else '—'
+    sec = ''
     if src in ('pinnacle', 'matchbook'):
         n = (m.get('market') or {}).get('crown') or {}
-        if n.get('o1'):
-            x12_sec = f'<span class="sec"><b>Crown</b> {n["o1"]:.2f}/{n["ox"]:.2f}/{n["o2"]:.2f}</span>'
         if n.get('ah_line') is not None:
-            ah_sec = f'<span class="sec"><b>Crown</b> {_fmt_line(n["ah_line"])} {n["oh"]:.2f}/{n["oa"]:.2f}</span>'
-        if n.get('ou_line') is not None:
-            ou_sec = f'<span class="sec"><b>Crown</b> {n["ou_line"]:g} {n["over"]:.2f}/{n["under"]:.2f}</span>'
-    return (f'<td class="mk sep">{badge}</td><td class="mk">{x12}{x12_sec}</td>'
-            f'<td class="mk">{ah}{ah_sub}{ah_sec}</td><td class="mk">{ou}{ou_sec}</td>')
-
-
-def _version_cells(m, v):
-    V = (m.get('versions') or {}).get(v)
-    if not V:
-        return '<td class="sep e dim">—</td><td class="e dim">—</td><td class="e dim">—</td><td class="e dim">—</td>'
-    fav = max(V['p1'], V['px'], V['p2'])
-    p = ' / '.join(f'<span class="b">{x}</span>' if x == fav and x >= 50 else f'{x}' for x in (V['p1'], V['px'], V['p2']))
-    src, _ = market_src(m)
-    e = ((m.get('edges') or {}).get(v) or {}).get(src) or {}
-    ov = _edge_span(e.get('over')) if e.get('over') is not None else '<span class="e dim">—</span>'
-    xg = f'<td class="xg">{V["xg_h"]:.2f}-{V["xg_a"]:.2f}<span class="sub">T {V["T"]:.2f} · O {ov}</span></td>' if V.get('T') is not None \
-        else f'<td class="xg">{V["xg_h"]:.2f}-{V["xg_a"]:.2f}<span class="sub">O {ov}</span></td>'
-    if e.get('fair_h') is not None:
-        fair = (f'<span class="fair">{e["fair_h"]:.2f}</span> {_edge_span(e["ah_home"])} <small>|</small> '
-                f'<span class="fair">{e["fair_a"]:.2f}</span> {_edge_span(e["ah_away"])}')
-    else:
-        fair = '<span class="e dim">—</span>'
-    badges = _badges(m['picks'].get(v, ''), m['picks'].get(OVER_KEY[v], ''))
-    return f'<td class="p sep">{p}</td>{xg}<td>{fair}</td><td>{badges}</td>'
-
-
-def table_html(comp, matches):
-    vers = [x for x in VERS if x[0] == 'H' or has_anchor(matches)]
-    h = CSS
-    if not matches:
-        return h + '<div class="sum">Δεν βρεθηκαν ματς.</div>'
-    if len(vers) == 1:
-        h += '<div class="note">Αγκυρα: μη διαθεσιμη για CAF (δεν εχει τρεξει intl_mkt_anchor) — μονο εκδοχη H + αξια, HFA 80.</div>'
-    n_toa = sum(1 for m in matches if market_src(m)[0] in ('pinnacle', 'matchbook'))
-    mk_title = 'Αγορα · Pinnacle/Matchbook (Odds API) · αλλιως Crown (Nowgoal)' if n_toa else 'Αγορα · Crown (Nowgoal) — χωρις TOA γραμμες ακομα'
-    h += f'<table><tr><th class="grp"></th><th class="grp mk" colspan="4">{mk_title}</th>'
-    for v, lab in vers:
-        h += f'<th class="grp {v.lower()}" colspan="4">{lab}</th>'
-    h += '</tr><tr><th class="l">Ματς</th><th>Πηγη</th><th>1 / Χ / 2</th><th>AH γραμμη · τιμες</th><th>O/U · over/under</th>'
-    for v, _ in vers:
-        h += '<th>1 / Χ / 2 %</th><th>xG · T</th><th>fair AH @πηγη · edge</th><th>Pick</th>'
-    h += '</tr>'
-    for m in matches:
-        h += '<tr>' + _match_cell(m) + _market_cells(m)
-        for v, _ in vers:
-            h += _version_cells(m, v)
-        h += '</tr>'
-    h += '</table>' + summary_html(matches)
+            sec = (f'<span class="sec">Crown {_fmt_line(n["ah_line"])} {n["oh"]:.2f}/{n["oa"]:.2f}'
+                   + (f' · O/U {n["ou_line"]:g} {n["over"]:.2f}/{n["under"]:.2f}' if n.get('ou_line') is not None else '') + '</span>')
+    h += (f'<tr class="mkr"><td class="vn">Αγορα {_src_badge(m)}<small>1 / Χ / 2 · AH · O/U</small></td>'
+          f'<td>{x12}</td><td colspan="2">{ah}{sec}</td><td>{out}</td><td></td></tr></table>')
+    h += ('<div class="leg">fair = τιμη μοντελου στη γραμμη της πηγης · edge = αναμενομενη αποδοση (πρασινο ≥10%, κιτρινο ≥5%) · '
+          'over: P(over) μοντελου + edge</div>')
     return h
 
 
+def _ratings_pane(m, vers):
+    Vh = (m.get('versions') or {}).get('H') or {}
+    Va = (m.get('versions') or {}).get('A') or {}
+    def col(side, name):
+        rows = ''
+        rh = f'R_{side}'
+        rows += f'<div class="row"><span>Elo (H3)</span><b class="acc">{Vh.get(rh, 0):.0f}</b></div>'
+        if Va:
+            rows += f'<div class="row"><span>Elo αγκυρας</span><b>{Va.get(rh, 0):.0f}</b></div>'
+        for v, lab in vers:
+            V = (m.get('versions') or {}).get(v) or {}
+            if V:
+                rows += (f'<div class="row"><span style="color:{VER_COLOR[v]}">xG {VER_NUM[v][-1]}</span>'
+                         f'<b>{V.get("xg_h" if side == "h" else "xg_a", 0):.2f}</b></div>')
+        return f'<div class="inp"><div class="h">{esc(name)} ({"home" if side == "h" else "away"})</div>{rows}</div>'
+    diff = ''.join(f'<span style="color:{VER_COLOR[v]}">{VER_NUM[v][-1]}: {((m.get("versions") or {}).get(v) or {}).get("diff", 0):+.0f}</span>&nbsp; '
+                   for v, _ in vers if (m.get('versions') or {}).get(v))
+    vadj = Vh.get('vadj')
+    extra = (f'<div class="time" style="padding:0 12px 4px">Δ Elo (γηπ−φιλοξ, με εδρα): {diff}'
+             + (f' · στρωμα αξιας {vadj:+.0f} Elo' if vadj is not None else '') + '</div>')
+    return f'<div class="detail">{col("h", m["home"])}{col("a", m["away"])}</div>{extra}'
+
+
+def card_html(m, vers, key):
+    Vh = (m.get('versions') or {}).get('H') or {}
+    hw, dw, aw = Vh.get('p1', 0), Vh.get('px', 0), Vh.get('p2', 0)
+    rows = ''.join(_model_row(v, (m.get('versions') or {}).get(v)) for v, _ in vers)
+    rows += '<div class="vsep"></div>' + _market_row(m, Vh)
+    return f"""
+<div class="card"><div class="sum">
+  <div class="team">
+    <div class="thead">{cards._logo(m.get('hid'))}<div class="tn">{esc(m['home'])}</div></div>
+    <div class="meta"><span class="xg">Elo {Vh.get('R_h', 0):.0f}</span><span>xG {Vh.get('xg_h', 0):.2f}</span></div></div>
+  <div class="mid">
+    <div class="lbls"><span style="flex:none;width:80px"></span><span>Home</span><span>Draw</span><span>Away</span></div>
+    {rows}
+  </div>
+  <div class="team away">
+    <div class="thead">{cards._logo(m.get('aid'))}<div class="tn">{esc(m['away'])}</div></div>
+    <div class="meta"><span>xG {Vh.get('xg_a', 0):.2f}</span><span class="xg">Elo {Vh.get('R_a', 0):.0f}</span></div></div>
+</div>
+<div class="pbar"><div style="width:{hw}%"></div><div style="width:{dw}%"></div><div style="width:{aw}%"></div></div>
+{_flags(m)}{_picks_row(m, vers)}
+<div class="tabs2">
+  <button class="tbtn" onclick="tg('{key}','od',this)">Γραμμες &amp; picks</button>
+  <button class="tbtn" onclick="tg('{key}','su',this)">Ratings</button>
+</div>
+<div id="od_{key}" class="pane" hidden>{_lines_pane(m, vers)}</div>
+<div id="su_{key}" class="pane" hidden>{_ratings_pane(m, vers)}<div class="time">{_ko_fmt(m.get('utc'))}</div></div></div>"""
+
+
+_TABS_CSS = """
+<style>
+.tabs2{display:flex;border-top:1px solid #1e2d47;}
+.tbtn{flex:1;background:none;border:none;cursor:pointer;padding:5px;font-size:9px;color:#6b7fa3;
+      letter-spacing:1px;text-transform:uppercase;font-family:'DM Sans',sans-serif;transition:all .12s;}
+.tbtn:hover{color:#cdd8ee;background:#131c31;}
+.tbtn.on{color:#e8edf8;background:#16203a;font-weight:600;}
+.tbtn+.tbtn{border-left:1px solid #1e2d47;}
+.pane{border-top:1px solid #16203a;}
+</style>
+<script>
+function tg(mid, which, btn){
+  var other = (which === 'od') ? 'su' : 'od';
+  var me = document.getElementById(which + '_' + mid);
+  var ot = document.getElementById(other + '_' + mid);
+  var open = me.hidden;
+  me.hidden = !open;
+  if (ot) ot.hidden = true;
+  var row = btn.parentElement;
+  Array.prototype.forEach.call(row.children, function(b){ b.classList.remove('on'); });
+  if (open) btn.classList.add('on');
+}
+</script>
+"""
+
+
+def cards_block(comp, matches):
+    """CSS + fonts + ολες οι καρτες της διοργανωσης (για components.html)."""
+    vers = versions_for(matches)
+    h = cards.CARD_CSS + cards.FONTS + _TABS_CSS + INTL_CSS
+    if not matches:
+        return h + '<div class="isum">Δεν βρεθηκαν ματς.</div>'
+    if len(vers) == 1:
+        h += '<div class="note">Αγκυρα: μη διαθεσιμη για CAF (δεν εχει τρεξει intl_mkt_anchor) — μονο Μοντελο 1 (H + αξια, HFA 80).</div>'
+    ck = re.sub(r'\W+', '_', comp)
+    h += '<div class="wrap">' + ''.join(card_html(m, vers, f'{ck}_{i}') for i, m in enumerate(matches)) + '</div>'
+    return h + summary_html(matches)
+
+
+def table_html(comp, matches):
+    """συμβατοτητα: παλιο ονομα → καρτες."""
+    return cards_block(comp, matches)
+
+
 def table_height(matches):
-    return min(len(matches) * 40 + 130, 6000)
+    vers = 1 if not has_anchor(matches) else 3
+    return min(len(matches) * (150 + 26 * vers) + 90, 8000)

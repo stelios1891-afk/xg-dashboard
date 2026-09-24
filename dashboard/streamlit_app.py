@@ -783,7 +783,7 @@ def render_season(league):
 
 
 def render_intl(league):
-    """🌐 Εθνικες (25/9/2026): NL A-D + AFCONQ, 3 εκδοχες μοντελου ξεχωριστα + αγορα Nowgoal. ΣΚΙΑ — αγνοει το league."""
+    """🌐 Εθνικες (25/9/2026): NL A-D + AFCONQ σε match cards (Μοντελο 1/2/3 καθετα + αγορα). ΣΚΙΑ — αγνοει το league."""
     import intl_view as iv
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#7ea2ff">🌐 INTERNATIONAL</div>'
                 '<div class="co">ΕΘΝΙΚΕΣ · NATIONS LEAGUE 2026/27 + AFCON 2027 ΠΡΟΚΡΙΜΑΤΙΚΑ · ΣΚΙΑ (ΧΑΡΤΙΝΟ)</div></div></div>',
@@ -792,7 +792,7 @@ def render_intl(league):
     if not data:
         st.info('Δεν υπαρχουν ακομα προβολες εθνικων — τρεξε τοπικα `python intl_dashboard_build.py` και κανε push.')
         return
-    st.caption(f"Τρεις εκδοχες μοντελου διπλα-διπλα (**H + αξια** / **Αγκυρα** / **Αγκυρα + αξια**) και η ιδια αγορα "
+    st.caption(f"Καρτες οπως στα Europe / Match Projections: καθετα **Μοντελο 1 = H + αξια** / **Μοντελο 2 = Αγκυρα** / **Μοντελο 3 = Αγκυρα + αξια** και απο κατω η ιδια αγορα "
                f"(Odds API Pinnacle/Matchbook απο τον scanner· αλλιως Nowgoal Crown/SBOBET). "
                f"Υπολογισμος **{data.get('generated')} UTC**"
                + (f" · TOA scan **{data.get('toa_scanned')} UTC** ({data.get('toa_matches')} ματς)" if data.get('toa_scanned') else ' · TOA: καμια γραμμη ακομα (παυση scanner / εκτος παραθυρου)')
@@ -807,7 +807,7 @@ def render_intl(league):
     for tab, comp in zip(tabs, comps):
         with tab:
             ms = iv.comp_matches(data, comp)
-            st.components.v1.html(iv.table_html(comp, ms), height=iv.table_height(ms), scrolling=True)
+            st.components.v1.html(iv.cards_block(comp, ms), height=iv.table_height(ms), scrolling=True)
     st.markdown('#### Πως διαβαζεται')
     for line in iv.HOWTO:
         st.markdown(f'- {line}')
