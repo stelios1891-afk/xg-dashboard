@@ -47,7 +47,7 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('results', 'Results', '🏁'),
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
          ('lineup', 'Lineup Lab', '🧪'), ('europe', 'Europe', '🌍'),
-         ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο v1 vs αγορα (TOA)
+         ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο (χαντικαπ v1 + συνολο v2) vs αγορα (TOA)
          ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
@@ -691,7 +691,7 @@ def render_euroleague(league):
     import euroleague_view as elv
     data = _el_data(elv.files_mtime())
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 EUROLEAGUE</div>'
-                '<div class="co">ΕΥΡΩΛΙΓΚΑ 2026/27 · ΜΟΝΤΕΛΟ v1 · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ</div></div></div>',
+                '<div class="co">ΕΥΡΩΛΙΓΚΑ 2026/27 · ΜΟΝΤΕΛΟ v2 (χάντικαπ v1 · σύνολο v2) · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ</div></div></div>',
                 unsafe_allow_html=True)
     if not data:
         st.info('Δεν υπαρχουν ακομα προβλεψεις — τρεξε τοπικα `python el_refresh.py` και κανε push.')
