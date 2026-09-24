@@ -32,3 +32,33 @@ for e in sorted(od, key=lambda x: x.get('commence_time', '')):
     pin = 'PIN' if 'pinnacle' in bks else '---'
     mbk = 'MBK' if 'matchbook' in bks else '---'
     print(f"  {e.get('commence_time','')[:16]}  {pin} {mbk}  {len(bks):2d} βιβλια  {e.get('home_team')} - {e.get('away_team')}   [{', '.join(bks[:8])}{' …' if len(bks) > 8 else ''}]")
+
+# 4) (25/9) Pinnacle vs Betfair Exchange: ποιες αγορες εχει το καθε βιβλιο + γκανιοτα (overround) ανα αγορα. 3 credits.
+import statistics as st
+r = requests.get(f'{B}/sports/{SPORT}/odds', params=dict(apiKey=K, regions='eu', markets='h2h,spreads,totals',
+                 bookmakers='pinnacle,betfair_ex_eu', oddsFormat='decimal'), timeout=45)
+od = r.json() if r.status_code == 200 else []
+print(f"\n=== 4) Pinnacle vs Betfair Exchange (h2h/spreads/totals): {len(od)} ματς  [status {r.status_code}, credits left {r.headers.get('x-requests-remaining')}, κοστος {r.headers.get('x-requests-last')}] ===")
+mg = {}
+def over(outs):
+    ps = [o.get('price') for o in outs if o.get('price')]
+    return sum(1 / p for p in ps) - 1 if len(ps) >= 2 else None
+for e in sorted(od, key=lambda x: x.get('commence_time', '')):
+    line = f"  {e.get('commence_time','')[:16]}  {e.get('home_team')} - {e.get('away_team')}:"
+    for b in e.get('bookmakers', []):
+        parts = []
+        for m in b.get('markets', []):
+            v = over(m.get('outcomes', []))
+            pt = ''
+            if m['key'] == 'spreads':
+                pt = f" {[o.get('point') for o in m['outcomes'] if o.get('name') == e.get('home_team')]}"
+            elif m['key'] == 'totals':
+                pt = f" {m['outcomes'][0].get('point')}"
+            parts.append(f"{m['key']}{pt} {v*100:+.1f}%" if v is not None else m['key'])
+            if v is not None:
+                mg.setdefault((b['key'], m['key']), []).append(v)
+        line += f"  [{b['key']}: {', '.join(parts)}]"
+    print(line)
+print('\n=== ΜΕΣΗ ΓΚΑΝΙΟΤΑ (overround) ανα βιβλιο/αγορα ===')
+for (bk, mk), vs in sorted(mg.items()):
+    print(f"  {bk:14s} {mk:8s} n={len(vs):2d}  μεση {st.mean(vs)*100:5.2f}%  διαμεσος {st.median(vs)*100:5.2f}%  min {min(vs)*100:5.2f}%  max {max(vs)*100:5.2f}%")
