@@ -47,11 +47,12 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('results', 'Results', '🏁'),
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
          ('lineup', 'Lineup Lab', '🧪'), ('europe', 'Europe', '🌍'),
+         ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -781,10 +782,38 @@ def render_season(league):
                'Λεπτομερειες: season_sim_validate_out.txt.')
 
 
+def render_intl(league):
+    """🌐 Εθνικες (25/9/2026): NL A-D + AFCONQ, 3 εκδοχες μοντελου ξεχωριστα + αγορα Nowgoal. ΣΚΙΑ — αγνοει το league."""
+    import intl_view as iv
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#7ea2ff">🌐 INTERNATIONAL</div>'
+                '<div class="co">ΕΘΝΙΚΕΣ · NATIONS LEAGUE 2026/27 + AFCON 2027 ΠΡΟΚΡΙΜΑΤΙΚΑ · ΣΚΙΑ (ΧΑΡΤΙΝΟ)</div></div></div>',
+                unsafe_allow_html=True)
+    data = iv.load()
+    if not data:
+        st.info('Δεν υπαρχουν ακομα προβολες εθνικων — τρεξε τοπικα `python intl_dashboard_build.py` και κανε push.')
+        return
+    st.caption(f"Τρεις εκδοχες μοντελου διπλα-διπλα (**H + αξια** / **Αγκυρα** / **Αγκυρα + αξια**) και η ιδια αγορα (Nowgoal Crown/SBOBET). "
+               f"Υπολογισμος **{data.get('generated')} UTC** · snapshot γραμμων Nowgoal **{data.get('ng_snapshot')} UTC**"
+               + (f" (AFCONQ {data.get('ng_snapshot_afconq')} UTC)" if data.get('ng_snapshot_afconq') else '')
+               + " · **Δεν παιζεται live — χαρτινο ledger.**")
+    comps = [c for c in iv.COMPS if iv.comp_matches(data, c)]
+    if not comps:
+        st.info('Δεν βρεθηκαν ματς.')
+        return
+    tabs = st.tabs([iv.COMP_LABEL.get(c, c) for c in comps])
+    for tab, comp in zip(tabs, comps):
+        with tab:
+            ms = iv.comp_matches(data, comp)
+            st.components.v1.html(iv.table_html(comp, ms), height=iv.table_height(ms), scrolling=True)
+    st.markdown('#### Πως διαβαζεται')
+    for line in iv.HOWTO:
+        st.markdown(f'- {line}')
+
+
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
-          'europe': render_europe, 'guide': render_guide, 'season': render_season}
+          'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl}
 if page in RENDER:
     RENDER[page](league)
 else:
