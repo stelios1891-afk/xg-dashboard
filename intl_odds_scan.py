@@ -251,8 +251,7 @@ def close_passed(odds, now, path=CLOSE_F):
     if rows:
         with open(path, 'a', encoding='utf-8') as fh:
             for row in rows:
-                fh.write(json.dumps(row, ensure_ascii=False) + '
-')
+                fh.write(json.dumps(row, ensure_ascii=False) + '\n')
     return rows
 
 
