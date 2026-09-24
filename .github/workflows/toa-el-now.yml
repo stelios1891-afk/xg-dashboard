@@ -1,0 +1,28 @@
+name: toa-el-now
+# Τρεχουσες γραμμες Ευρωλιγκας (~2 credits). Πυροδοτηση: push του el_now_trigger.txt ή Run workflow.
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '.github/workflows/toa-el-now.yml'
+      - 'el_now_trigger.txt'
+permissions:
+  contents: write
+jobs:
+  now:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_el_now.py
+      - run: |
+          git config user.name "toa-el-bot"; git config user.email "actions@github.com"
+          git add -f toa_el_now.json
+          git commit -m "EL odds now [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
