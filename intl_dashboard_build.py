@@ -132,6 +132,8 @@ def toa_market(rec):
             r.update(ou_line=round(float(b['ou_line']), 2), over=round(float(b['over']), 2), under=round(float(b['under']), 2))
         if b.get('h') and b.get('d') and b.get('a'):
             r.update(o1=round(float(b['h']), 2), ox=round(float(b['d']), 2), o2=round(float(b['a']), 2))
+            for f in ('raw_h', 'raw_d', 'raw_a', 'raw_over', 'pin_margin'):      # Betfair: ωμες back τιμες (για hover)
+                if b.get(f) is not None: r[f] = b[f]
         out[bk] = r or None
     return out
 
