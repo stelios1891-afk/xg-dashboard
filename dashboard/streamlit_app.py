@@ -47,12 +47,13 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('results', 'Results', '🏁'),
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
          ('lineup', 'Lineup Lab', '🧪'), ('europe', 'Europe', '🌍'),
+         ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο v1 vs αγορα (TOA)
          ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -677,6 +678,61 @@ def render_europe(league):
                                   height=min(len(sel) * 165 + 40, 6000), scrolling=True)
 
 
+@st.cache_data(ttl=15 * 60)
+def _el_data(mtimes):
+    """🏀 Ευρωλιγκα: ολα τα αρχεια της σελιδας (κλειδι cache = mtimes -> νεο commit = νεα δεδομενα)."""
+    import euroleague_view as elv
+    return elv.load_all()
+
+
+def render_euroleague(league):
+    """🏀 Euroleague (25/9/2026): προβλεψεις μοντελου v1 vs αγορα (TOA Pinnacle). Αγνοει το league."""
+    import euroleague_view as elv
+    data = _el_data(elv.files_mtime())
+    if not data:
+        st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 EUROLEAGUE</div></div></div>',
+                    unsafe_allow_html=True)
+        st.info('Δεν υπαρχουν ακομα προβλεψεις — τρεξε τοπικα `python el_refresh.py` και κανε push.')
+        return
+    proj = data['proj']
+    season = str(proj.get('season', ''))
+    season_s = f"{season[1:]}/{str(int(season[1:]) + 1)[2:]}" if season[1:].isdigit() else season
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 EUROLEAGUE</div>'
+                f'<div class="co">ΕΥΡΩΛΙΓΚΑ {season_s} · ΜΟΝΤΕΛΟ vs ΑΓΟΡΑ (PINNACLE)</div></div></div>',
+                unsafe_allow_html=True)
+    scan = data.get('scanned_at')
+    st.caption(f"Μοντελο: {proj.get('model', '')}. "
+               f"Τελευταια ενημερωση προβλεψεων **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
+               + (f" · γραμμες αγορας (scanner) **{str(scan)[:16].replace('T', ' ')} UTC**" if scan
+                  else ' · γραμμες αγορας: καμια τρεχουσα ακομα (ο scanner τις πιανει 48h πριν το τζαμπολ)')
+               + ". Για παιγμενα ματς: η PRE-GAME προβλεψη (με οσα ματς ειχαν παιχτει ως τοτε) + τελικο σκορ.")
+    keys = elv.rounds(proj)
+    if not keys:
+        st.info('Δεν βρεθηκαν ματς.')
+        return
+    dflt = elv.default_round(proj, keys)
+    key = st.selectbox('Αγωνιστικη', keys, index=keys.index(dflt),
+                       format_func=lambda k: elv.round_label(proj, k), key='el_round')
+    games = elv.round_games(proj, key)
+    summ = elv.round_summary(games, data)
+    if summ:
+        st.caption(summ)
+    st.components.v1.html(elv.cards_block(games, data), height=elv.block_height(games), scrolling=True)
+    st.caption('Handicap = γραμμη ΓΗΠΕΔΟΥΧΟΥ (−2.5 = δινει 2.5). «γραμμη μας» = −(προβλεπομενη διαφορα) και προβλεπομενο '
+               'συνολο, στρογγυλεμενα στο 0.5 · «διαφωνια» = γραμμη μας − γραμμη αγορας σε ποντους (αρνητικο στο handicap = '
+               'βλεπουμε τον γηπεδουχο καλυτερα απο την αγορα· θετικο στο συνολο = περιμενουμε περισσοτερους ποντους). '
+               'Edge = αναμενομενη αποδοση στην τιμη της αγορας (Κανονικη κατανομη, σ απο την αγορα)· '
+               '**πρασινο = edge ≥5%**.')
+    st.markdown('#### Ratings ομαδων')
+    st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
+    st.caption('Net = επιθεση − αμυνα σε ποντους/100 κατοχες vs μεσο ορο (ο μεσος ≈ '
+               f"{proj.get('mu', '—')}/100) · O = ποντοι που βαζει πανω απο τον μεσο · D = ποντοι που δεχεται πανω απο τον "
+               f"μεσο (αρνητικο = καλη αμυνα) · Ρυθμος = κατοχες ανα ματς ± (μεσος {proj.get('pace', '—')}).")
+    st.markdown('#### Σημειωσεις')
+    for line in elv.NOTES:
+        st.markdown(f'- {line}')
+
+
 @st.cache_data(ttl=1800)
 def _season_matches(league):
     return results_view.season_matches(league)
@@ -816,7 +872,8 @@ def render_intl(league):
 RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': render_trend,
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
-          'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl}
+          'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl,
+          'euroleague': render_euroleague}
 if page in RENDER:
     RENDER[page](league)
 else:
