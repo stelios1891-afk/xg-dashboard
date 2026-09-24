@@ -1,0 +1,58 @@
+name: intl-scan-now
+
+# ΧΕΙΡΟΚΙΝΗΤΟ τραβηγμα αποδοσεων ΕΘΝΙΚΩΝ (Nations League) απο το Odds API (25/9, αιτημα Στελιου):
+# π.χ. λιγο πριν το ΚΟ για closing. Πυροδοτηση: push του intl_scan_trigger.txt Ή κουμπι Run workflow.
+# Κοστος: 3 credits ανα τρεξιμο. Δικο του concurrency group (δεν περιμενει τον scanner).
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'intl_scan_trigger.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: intl-scan-now
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Intl odds (TOA, force)
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+          INTL_FORCE: '1'
+        run: python intl_odds_scan.py
+
+      - name: Intl dashboard build
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python intl_dashboard_build.py || echo "intl build failed (μη κρισιμο)"
+
+      - name: Commit results
+        run: |
+          git config user.name "intl-scan-bot"
+          git config user.email "actions@github.com"
+          git add -f intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_closing.jsonl intl_projections_dashboard.json
+          if git diff --cached --quiet; then
+            echo "καμια αλλαγη"
+          else
+            git commit -m "intl scan (manual) [skip ci]"
+            for i in 1 2 3 4 5; do
+              git pull --rebase && git push && break
+              sleep 10
+            done
+          fi

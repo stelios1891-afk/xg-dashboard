@@ -22,11 +22,12 @@ FIX_F = os.path.join(ROOT, 'intl_projections.csv')
 OUT_F = os.path.join(ROOT, 'intl_odds_latest.json')
 HIST_F = os.path.join(ROOT, 'intl_odds_hist.jsonl')
 LIVE_F = os.path.join(ROOT, 'intl_live_odds.jsonl')
+CLOSE_F = os.path.join(ROOT, 'intl_closing.jsonl')   # 25/9 (Στελιος): CLOSING = τελευταια προ-ΚΟ γραμμη ανα ματς, μια φορα
 
 SPORT = 'soccer_uefa_nations_league'     # ενεργο key (επιβεβαιωση 24/9, toa_outrights_fetch.log)
 BOOKS = ('pinnacle', 'matchbook')        # σειρα προτεραιοτητας
 MARKETS = 'h2h,spreads,totals'
-LIVE_HOURS = 2.5     # in-play καταγραφη σε intl_live_odds.jsonl εως 2.5h μετα το ΚΟ (οπως euro)
+LIVE_HOURS = 0.0     # 25/9 (Στελιος): ΣΤΟΠ στο ΚΟ — καμια in-play καταγραφη/εμφανιση για εθνικες (ηταν 2.5h οπως euro)
 HOURS_AHEAD = 200    # 8+ μερες μπροστα (trajectory ολου του παραθυρου εθνικων)
 HOURS_BACK = 3       # κρατα και ματς που μολις αρχισαν (οπως euro — για συμμετρια gating)
 KO_TOL = 1800        # ταιριασμα ΚΟ ±30'
@@ -217,6 +218,44 @@ def process(games, upc, livefx, old, now):
     return odds, hist_rows, live_rows, unmatched
 
 
+def close_passed(odds, now, path=CLOSE_F):
+    """Ματς που σεντραρισαν: η ΤΕΛΕΥΤΑΙΑ προ-ΚΟ εγγραφη (οπως εχει παγωσει στο intl_odds_latest.json) γραφεται ΜΙΑ φορα
+    στο intl_closing.jsonl (append-only). Επιστρεφει τις νεες γραμμες. Τρεχει σε καθε τικ, 0 credits."""
+    done = set()
+    if os.path.exists(path):
+        with open(path, encoding='utf-8') as fh:
+            for ln in fh:
+                try:
+                    done.add(json.loads(ln)['key'])
+                except Exception:
+                    pass
+    rows = []
+    for key, v in odds.items():
+        if key in done or not v.get('ko'):
+            continue
+        try:
+            if _pdt(v['ko']) > now:
+                continue
+        except Exception:
+            continue
+        row = dict(key=key, comp=v.get('comp'), ko=v['ko'], home=v.get('home'), away=v.get('away'),
+                   hid=v.get('hid'), aid=v.get('aid'), closed_at=v.get('when'), book=v.get('book'),
+                   min_before_ko=None)
+        try:
+            row['min_before_ko'] = round((_pdt(v['ko']) - _pdt(v['when'])).total_seconds() / 60)
+        except Exception:
+            pass
+        row.update({x: v[x] for x in FIELDS if v.get(x) is not None})
+        row['books'] = v.get('books') or {}
+        rows.append(row)
+    if rows:
+        with open(path, 'a', encoding='utf-8') as fh:
+            for row in rows:
+                fh.write(json.dumps(row, ensure_ascii=False) + '
+')
+    return rows
+
+
 def write_out(now, odds, rem=None, unmatched=(), note=None, hist_rows=(), live_rows=()):
     d = dict(scanned_at=now.isoformat()[:16], sport=SPORT, odds=odds, credits_remaining=rem, unmatched=list(unmatched)[:20])
     if note:
@@ -234,8 +273,7 @@ def write_out(now, odds, rem=None, unmatched=(), note=None, hist_rows=(), live_r
 
 def main():
     now = datetime.datetime.now(datetime.timezone.utc)
-    if now < datetime.datetime(2026, 10, 6, tzinfo=datetime.timezone.utc) and not os.environ.get('EURO_FORCE'):
-        print('ΠΑΥΣΗ TOA ως 6/10 (διακοπη εθνικων, Στελιος 24/9) — 0 credits'); return
+    # 25/9 (Στελιος): η παυση TOA ως 6/10 αφορα ΜΟΝΟ τα πρωταθληματα (scan_value/euro/dom) — οι εθνικες τραβανε κανονικα.
     fixtures = load_fixtures()
     if not fixtures:
         print('χωρις intl_projections.csv (ή χωρις ματς NL) — τιποτα να κανω, 0 credits')
@@ -255,6 +293,10 @@ def main():
             upc.append(f)
         elif -LIVE_HOURS * 3600 <= dt_s < 0:
             livefx.append(f)
+    # CLOSING (25/9): οσα ματς περασαν το ΚΟ -> η παγωμενη τελευταια προ-ΚΟ γραμμη στο intl_closing.jsonl (μια φορα)
+    closed = close_passed(old, now)
+    if closed:
+        print(f'closing +{len(closed)}: ' + '; '.join(f"{r['home']}-{r['away']} {r.get('line')}@{r.get('oh')}/{r.get('oa')} ({r.get('book')}, {r.get('min_before_ko')}λ προ ΚΟ)" for r in closed[:6]))
     # prune παλιες εγγραφες
     odds = {k: v for k, v in old.items()
             if v.get('ko') and (now - _pdt(v['ko'])).total_seconds() < PRUNE_H * 3600}
