@@ -20,14 +20,18 @@ python euro_odds_scan.py || echo "euro odds failed (μη κρισιμο)"
 python dom_odds_scan.py || echo "dom odds failed (μη κρισιμο)"
 python dom_fav_shadow.py || echo "fav shadow failed (μη κρισιμο)"
 python euro_shadow_scan.py || echo "euro shadow failed (μη κρισιμο)"
+# 25/9: 🌐 International — TOA (Nations League) odds + rebuild του tab json (fallback Nowgoal αν δεν υπαρχει TOA)
+python intl_odds_scan.py || echo "intl odds failed (μη κρισιμο)"
+python intl_dashboard_build.py || echo "intl build failed (μη κρισιμο)"
 
 # ---- commit ΜΟΝΟ οταν αλλαξαν picks/market (ιδιο gate με πριν) ----
 git config user.name "scanner-bot"
 git config user.email "actions@github.com"
-for f in clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_shadow_state.json euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json; do [ -f "$f" ] || : > "$f"; done
+for f in clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_shadow_state.json euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_projections_dashboard.json; do [ -f "$f" ] || : > "$f"; done
 git add -f value_last_scan.txt 2>/dev/null || true   # ποτε εγινε το τελευταιο TOA scan — χωρις αυτο καθε runner ξαναπληρωνε (24/9)
+git add -f intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_projections_dashboard.json 2>/dev/null || true   # 25/9 intl (δεν ειναι gitignored· -f για σιγουρια)
 git add value_scan_state.json value_picks_latest.json market_1x2_latest.json odds_history.jsonl odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_shadow_state.json euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json
-if git diff --cached --quiet -- value_last_scan.txt value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl brazil_shadow.jsonl euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json; then
+if git diff --cached --quiet -- value_last_scan.txt value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl brazil_shadow.jsonl euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_uncomp_pairs.json intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_projections_dashboard.json; then
   echo "no pick/market changes — skip commit"
 else
   # ---- sanity gate (2026-09-18): αν σπασει καποιος ελεγχος, ΔΕΝ γινεται commit, το τικ συνεχιζει ----

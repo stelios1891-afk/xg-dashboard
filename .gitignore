@@ -68,3 +68,12 @@ debut_targets.json
 lineup_scenarios.json
 
 # ── Lineup Lab: inputs που χρειαζεται το cloud rebuild ──
+nowgoal_inplay/
+nowgoal_intl_odds/
+
+# ── 🌐 International tab (25/9): inputs του intl_dashboard_build.py στο Actions (εξαιρεσεις απο *.csv) ──
+!intl_projections.csv
+!intl_nl_shadow_2627.csv
+!intl_nl_overs_2627.csv
+!intl_afconq_shadow_2627.csv
+!intl_afconq_overs_2627.csv

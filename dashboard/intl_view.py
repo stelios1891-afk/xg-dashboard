@@ -1,10 +1,12 @@
 """
 intl_view.py — 🌐 INTERNATIONAL tab (25/9/2026, εντολη Στελιου): προβολες εθνικων (Nations League 2026-27 A-D + προκριματικα
-AFCON 2027) με ΤΡΕΙΣ εκδοχες μοντελου διπλα-διπλα και την αγορα (Nowgoal Crown/SBOBET). ΣΚΙΑ / ΧΑΡΤΙΝΟ — δεν παιζεται live.
-Διαβαζει intl_projections_dashboard.json (intl_dashboard_build.py, τρεχει τοπικα — ΟΧΙ στο Actions).
+AFCON 2027) με ΤΡΕΙΣ εκδοχες μοντελου διπλα-διπλα και την αγορα. ΣΚΙΑ / ΧΑΡΤΙΝΟ — δεν παιζεται live.
+Διαβαζει intl_projections_dashboard.json (intl_dashboard_build.py — απο 25/9 τρεχει ΚΑΙ στο Actions μεσω scanner_tick.sh).
   H  = rating H3 + στρωμα αξιας ροστερ  ·  A = αγκυρα αγορας (λ=0.3) ΧΩΡΙΣ αξια  ·  AV = αγκυρα + αξια
-Ενας πινακας ανα διοργανωση: ματς (λογοτυπα, ωρα UTC, ✝ νεκρη, ⚠ κλησεις) · ΑΓΟΡΑ Crown (1Χ2, AH, O/U) · ανα εκδοχη: 1/Χ/2 %, xG,
-fair AH στη γραμμη Crown με edge χρωματιστο, badge pick · συνοψη picks ανα εκδοχη + κοινα.
+ΑΓΟΡΑ (25/9, εντολη Στελιου): TOA Pinnacle (αλλιως Matchbook) απο τον scanner (intl_odds_scan.py) οταν υπαρχει για το ματς — badge πηγης
++ ωρα snapshot ανα ματς· αλλιως Nowgoal Crown/SBOBET (fallback). Οταν υπαρχουν και τα δυο, η Nowgoal φαινεται ως δευτερευουσα γραμμη.
+Ενας πινακας ανα διοργανωση: ματς (λογοτυπα, ωρα UTC, ✝ νεκρη, ⚠ κλησεις) · ΑΓΟΡΑ (1Χ2, AH, O/U) · ανα εκδοχη: 1/Χ/2 %, xG,
+fair AH στη γραμμη της πηγης με edge χρωματιστο, badge pick · συνοψη picks ανα εκδοχη + κοινα.
 """
 import os, json, re
 
@@ -20,13 +22,30 @@ OVER_KEY = {'H': 'over', 'A': 'over_A', 'AV': 'over_AV'}
 HOWTO = [
     '**Τρεις εκδοχες:** **H + αξια** = rating H3 (Elo+xElo, πραγματικες εδρες, HFA ομοσπονδιας) + στρωμα αξιας ροστερ · '
     '**Αγκυρα** = rating δεμενο στην αγορα (λ=0.3) χωρις αξια · **Αγκυρα + αξια** = αγκυρα + το ιδιο στρωμα αξιας. '
-    'Ολες βλεπουν την ΙΔΙΑ αγορα (Crown/SBOBET, Nowgoal)· fair AH = τιμη μοντελου στη γραμμη Crown, edge = αναμενομενη αποδοση.',
+    'Ολες βλεπουν την ΙΔΙΑ αγορα· fair AH = τιμη μοντελου στη γραμμη της πηγης, edge = αναμενομενη αποδοση.',
+    '**Αγορα (πηγη ανα ματς, badge):** **Pinnacle** (αλλιως **Matchbook**) απο το Odds API μεσω του scanner (GitHub Actions, οπως το υπολοιπο '
+    'dashboard· ~45λεπτο refresh μακρια απο ΚΟ, καθε τικ στο 6ωρο προ ΚΟ)· οταν δεν υπαρχει TOA γραμμη (π.χ. AFCON προκριματικα — δεν εχει '
+    'key στο TOA — ή παυση scanner) → **Crown/SBOBET** (Nowgoal, snapshot laptop). Η ωρα του snapshot φαινεται στο badge (hover). '
+    'Οταν υπαρχουν και τα δυο, η Crown γραμμη μενει ως δευτερευουσα (μικρα γραμματα) για συγκριση.',
     '**ΣΚΙΑ / ΧΑΡΤΙΝΟ:** τιποτα εδω δεν παιζεται live — καταγραφη για κριση με πραγματικα δεδομενα (ledger). '
-    'Κανονες pick: AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · 1Χ2 φαβορι ≥75% · νεκρη ομαδα = κανενα pick · '
-    'OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η εκδοχη «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
-    '**Snapshot:** οι γραμμες ειναι στιγμιοτυπο Nowgoal απο laptop (ημερομηνια στο caption) — δεν ανανεωνονται αυτοματα· '
-    'AFCONQ: αγκυρα μη διαθεσιμη για CAF → μονο εκδοχη H (HFA 80).',
+    'Κανονες pick (ιδιοι σε καθε πηγη, υπολογισμενοι στη γραμμη της πηγης): AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · 1Χ2 φαβορι ≥75% · '
+    'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η εκδοχη «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
+    '**AFCONQ:** αγκυρα μη διαθεσιμη για CAF → μονο εκδοχη H (HFA 80)· αγορα μονο Nowgoal.',
 ]
+SRC_LABEL = {'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'crown': 'Crown', 'sbobet': 'SBOBET'}
+SRC_CLASS = {'pinnacle': 'pin', 'matchbook': 'mbk', 'crown': 'ng', 'sbobet': 'ng'}
+
+
+def market_src(m):
+    """(label πηγης, εγγραφη γραμμων της πηγης) — TOA πρωτα, αλλιως Nowgoal· ('', {}) αν τιποτα."""
+    mk = m.get('market') or {}
+    src = mk.get('source')
+    if src and mk.get(src):
+        return src, mk[src]
+    for lab in ('pinnacle', 'matchbook', 'crown', 'sbobet'):      # παλιο json χωρις 'source'
+        if mk.get(lab):
+            return lab, mk[lab]
+    return '', {}
 
 
 def load():
@@ -123,7 +142,8 @@ def summary(matches):
          'ah': {v: sum(_real(m['picks'].get(v, '')) for m in matches) for v in vers},
          'over': {v: sum(_real(m['picks'].get(OVER_KEY[v], '')) for m in matches) for v in vers},
          'dead': sum(1 for m in matches if m.get('dead')),
-         'with_line': sum(1 for m in matches if (m.get('market', {}).get('crown') or {}).get('ah_line') is not None)}
+         'with_line': sum(1 for m in matches if market_src(m)[1].get('ah_line') is not None),
+         'toa': sum(1 for m in matches if market_src(m)[0] in ('pinnacle', 'matchbook'))}
     keys = {v: [_pick_keys(m, v) for m in matches] for v in vers}
     s['any'] = {v: sum(1 for k in keys[v] if k) for v in vers}
     if len(vers) == 3:
@@ -137,7 +157,8 @@ def summary_html(matches):
     s = summary(matches)
     lab = dict(VERS)
     parts = [f'<b>{lab[v]}</b>: {s["ah"][v]} AH/1Χ2 + {s["over"][v]} over' for v in s['vers']]
-    h = f'<div class="sum">Picks (χαρτινα) σε {s["n"]} ματς ({s["with_line"]} με γραμμη Crown, {s["dead"]} νεκρα): ' + ' · '.join(parts)
+    h = (f'<div class="sum">Picks (χαρτινα) σε {s["n"]} ματς ({s["with_line"]} με γραμμη AH · {s["toa"]} με αγορα TOA Pinnacle/Matchbook, '
+         f'{s["with_line"] - min(s["toa"], s["with_line"])} Nowgoal · {s["dead"]} νεκρα): ' + ' · '.join(parts))
     if 'common_all' in s:
         h += (f' &nbsp;|&nbsp; <b>κοινα και στις 3</b> (ιδιο pick): {s["common_all"]} · '
               + ' · '.join(f'{k} {v}' for k, v in s['pairs'].items()))
@@ -168,7 +189,25 @@ td.xg .sub{display:block;color:#6b7fa3;font-size:9.5px;}
 .sum{margin-top:8px;padding:7px 10px;background:#0f1830;border:1px solid #26324e;border-radius:9px;color:#8fa3c8;font-size:11px;}
 .sum b{color:#e8edf8;}
 .note{margin:6px 0;color:#f3c74b;font-size:11px;}
+.src{display:inline-block;padding:0 5px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;cursor:help;vertical-align:middle;}
+.src.pin{background:#1d3b6e;color:#9cc0ff;border:1px solid #2f5aa8;} .src.mbk{background:#2a3d1f;color:#a8e07a;border:1px solid #4d7a33;}
+.src.ng{background:#3a2a12;color:#f3c74b;border:1px solid #7a5a1a;} .src.none{background:#151c2e;color:#3d4a66;border:1px solid #26324e;}
+td.mk .sec{display:block;color:#6b7fa3;font-size:9.5px;} td.mk .sec b{color:#8fa3c8;font-weight:600;}
 </style>"""
+
+
+def _src_badge(m):
+    src, rec = market_src(m)
+    mk = m.get('market') or {}
+    ts = mk.get('ts') or ''
+    if not src:
+        return '<span class="src none" title="χωρις γραμμη">—</span>'
+    tip = f'{SRC_LABEL[src]} · snapshot {ts} UTC' if ts else SRC_LABEL[src]
+    if src in ('pinnacle', 'matchbook'):
+        tip += ' · Odds API (scanner)'
+    else:
+        tip += ' · Nowgoal (laptop)'
+    return f'<span class="src {SRC_CLASS[src]}" title="{tip}">{SRC_LABEL[src]}</span>'
 
 
 def _match_cell(m):
@@ -183,12 +222,24 @@ def _match_cell(m):
 
 
 def _market_cells(m):
-    c = (m.get('market') or {}).get('crown') or {}
+    src, c = market_src(m)
+    badge = _src_badge(m)
     x12 = f'{c["o1"]:.2f} / {c["ox"]:.2f} / {c["o2"]:.2f}' if c.get('o1') else '—'
     ah = f'<span class="ln">{_fmt_line(c.get("ah_line"))}</span> {c["oh"]:.2f}/{c["oa"]:.2f}' if c.get('ah_line') is not None else '—'
     ah_sub = f'<span class="sub">αρχ. {m["init_ah"]}</span>' if m.get('init_ah') and m['init_ah'] not in ('—', 'nan') else ''
     ou = f'<span class="ln">{c["ou_line"]:g}</span> {c["over"]:.2f}/{c["under"]:.2f}' if c.get('ou_line') is not None else '—'
-    return f'<td class="mk sep">{x12}</td><td class="mk">{ah}{ah_sub}</td><td class="mk">{ou}</td>'
+    # δευτερευουσα Nowgoal γραμμη (Crown) οταν η πηγη ειναι TOA — για συγκριση
+    x12_sec = ah_sec = ou_sec = ''
+    if src in ('pinnacle', 'matchbook'):
+        n = (m.get('market') or {}).get('crown') or {}
+        if n.get('o1'):
+            x12_sec = f'<span class="sec"><b>Crown</b> {n["o1"]:.2f}/{n["ox"]:.2f}/{n["o2"]:.2f}</span>'
+        if n.get('ah_line') is not None:
+            ah_sec = f'<span class="sec"><b>Crown</b> {_fmt_line(n["ah_line"])} {n["oh"]:.2f}/{n["oa"]:.2f}</span>'
+        if n.get('ou_line') is not None:
+            ou_sec = f'<span class="sec"><b>Crown</b> {n["ou_line"]:g} {n["over"]:.2f}/{n["under"]:.2f}</span>'
+    return (f'<td class="mk sep">{badge}</td><td class="mk">{x12}{x12_sec}</td>'
+            f'<td class="mk">{ah}{ah_sub}{ah_sec}</td><td class="mk">{ou}{ou_sec}</td>')
 
 
 def _version_cells(m, v):
@@ -197,7 +248,8 @@ def _version_cells(m, v):
         return '<td class="sep e dim">—</td><td class="e dim">—</td><td class="e dim">—</td><td class="e dim">—</td>'
     fav = max(V['p1'], V['px'], V['p2'])
     p = ' / '.join(f'<span class="b">{x}</span>' if x == fav and x >= 50 else f'{x}' for x in (V['p1'], V['px'], V['p2']))
-    e = ((m.get('edges') or {}).get(v) or {}).get('crown') or {}
+    src, _ = market_src(m)
+    e = ((m.get('edges') or {}).get(v) or {}).get(src) or {}
     ov = _edge_span(e.get('over')) if e.get('over') is not None else '<span class="e dim">—</span>'
     xg = f'<td class="xg">{V["xg_h"]:.2f}-{V["xg_a"]:.2f}<span class="sub">T {V["T"]:.2f} · O {ov}</span></td>' if V.get('T') is not None \
         else f'<td class="xg">{V["xg_h"]:.2f}-{V["xg_a"]:.2f}<span class="sub">O {ov}</span></td>'
@@ -217,12 +269,14 @@ def table_html(comp, matches):
         return h + '<div class="sum">Δεν βρεθηκαν ματς.</div>'
     if len(vers) == 1:
         h += '<div class="note">Αγκυρα: μη διαθεσιμη για CAF (δεν εχει τρεξει intl_mkt_anchor) — μονο εκδοχη H + αξια, HFA 80.</div>'
-    h += '<table><tr><th class="grp"></th><th class="grp mk" colspan="3">Αγορα · Crown (Nowgoal)</th>'
+    n_toa = sum(1 for m in matches if market_src(m)[0] in ('pinnacle', 'matchbook'))
+    mk_title = 'Αγορα · Pinnacle/Matchbook (Odds API) · αλλιως Crown (Nowgoal)' if n_toa else 'Αγορα · Crown (Nowgoal) — χωρις TOA γραμμες ακομα'
+    h += f'<table><tr><th class="grp"></th><th class="grp mk" colspan="4">{mk_title}</th>'
     for v, lab in vers:
         h += f'<th class="grp {v.lower()}" colspan="4">{lab}</th>'
-    h += '</tr><tr><th class="l">Ματς</th><th>1 / Χ / 2</th><th>AH γραμμη · τιμες</th><th>O/U · over/under</th>'
+    h += '</tr><tr><th class="l">Ματς</th><th>Πηγη</th><th>1 / Χ / 2</th><th>AH γραμμη · τιμες</th><th>O/U · over/under</th>'
     for v, _ in vers:
-        h += '<th>1 / Χ / 2 %</th><th>xG · T</th><th>fair AH @Crown · edge</th><th>Pick</th>'
+        h += '<th>1 / Χ / 2 %</th><th>xG · T</th><th>fair AH @πηγη · edge</th><th>Pick</th>'
     h += '</tr>'
     for m in matches:
         h += '<tr>' + _match_cell(m) + _market_cells(m)

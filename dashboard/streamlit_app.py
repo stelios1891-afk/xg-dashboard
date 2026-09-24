@@ -792,8 +792,11 @@ def render_intl(league):
     if not data:
         st.info('Δεν υπαρχουν ακομα προβολες εθνικων — τρεξε τοπικα `python intl_dashboard_build.py` και κανε push.')
         return
-    st.caption(f"Τρεις εκδοχες μοντελου διπλα-διπλα (**H + αξια** / **Αγκυρα** / **Αγκυρα + αξια**) και η ιδια αγορα (Nowgoal Crown/SBOBET). "
-               f"Υπολογισμος **{data.get('generated')} UTC** · snapshot γραμμων Nowgoal **{data.get('ng_snapshot')} UTC**"
+    st.caption(f"Τρεις εκδοχες μοντελου διπλα-διπλα (**H + αξια** / **Αγκυρα** / **Αγκυρα + αξια**) και η ιδια αγορα "
+               f"(Odds API Pinnacle/Matchbook απο τον scanner· αλλιως Nowgoal Crown/SBOBET). "
+               f"Υπολογισμος **{data.get('generated')} UTC**"
+               + (f" · TOA scan **{data.get('toa_scanned')} UTC** ({data.get('toa_matches')} ματς)" if data.get('toa_scanned') else ' · TOA: καμια γραμμη ακομα (παυση scanner / εκτος παραθυρου)')
+               + (f" · snapshot Nowgoal **{data.get('ng_snapshot')} UTC**" if data.get('ng_snapshot') else '')
                + (f" (AFCONQ {data.get('ng_snapshot_afconq')} UTC)" if data.get('ng_snapshot_afconq') else '')
                + " · **Δεν παιζεται live — χαρτινο ledger.**")
     comps = [c for c in iv.COMPS if iv.comp_matches(data, c)]
