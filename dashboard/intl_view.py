@@ -228,6 +228,15 @@ table.lt .sec{display:block;color:#5a6b8c;font-size:9px;font-weight:400;}
 """
 
 
+def _started(m):
+    """True αν το ΚΟ περασε (UTC) — τοτε η γραμμη που δειχνουμε ειναι η ΠΑΓΩΜΕΝΗ προ-ΚΟ = closing (καμια in-play τιμη)."""
+    try:
+        ko = datetime.datetime.fromisoformat(str(m.get('utc'))[:16]).replace(tzinfo=datetime.timezone.utc)
+        return datetime.datetime.now(datetime.timezone.utc) >= ko
+    except Exception:
+        return False
+
+
 def _src_badge(m):
     src, rec = market_src(m)
     mk = m.get('market') or {}
@@ -236,7 +245,11 @@ def _src_badge(m):
         return '<span class="src none" title="χωρις γραμμη">—</span>'
     tip = f'{SRC_LABEL[src]} · snapshot {ts} UTC' if ts else SRC_LABEL[src]
     tip += ' · Odds API (scanner)' if src in ('pinnacle', 'matchbook') else ' · Nowgoal (laptop)'
-    return f'<span class="src {SRC_CLASS[src]}" title="{esc(tip)}">{SRC_LABEL[src]}</span>'
+    lab = SRC_LABEL[src]
+    if _started(m):
+        tip += ' · ΚΟ περασε: τελευταια προ-ΚΟ γραμμη (closing), οχι in-play'
+        lab += ' · closing'
+    return f'<span class="src {SRC_CLASS[src]}" title="{esc(tip)}">{lab}</span>'
 
 
 def _pill(v, fav, color=None):
@@ -266,7 +279,7 @@ def _model_row(v, V, lead=None):
 def _market_row(m, ref):
     """σειρα ΑΓΟΡΑΣ: implied % (χωρις γκανιοτα) + τιμη· χρωμα vs Μοντελο 1 (πρασινο = αγορα πληρωνει καλυτερα)."""
     src, c = market_src(m)
-    lab = (f'<span class="vl" style="color:#cdd8ee"><b>Αγορα</b>{SRC_LABEL.get(src, "—")}</span>')
+    lab = (f'<span class="vl" style="color:#cdd8ee"><b>Αγορα</b>{SRC_LABEL.get(src, "—")}{" · closing" if src and _started(m) else ""}</span>')
     if not c.get('o1'):
         return f'<div class="vrow mk">{lab}<div class="pills">{_pill(None, False)}{_pill(None, False)}{_pill(None, False)}</div></div>'
     o = (c['o1'], c['ox'], c['o2'])
