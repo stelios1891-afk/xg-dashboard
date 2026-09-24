@@ -35,12 +35,15 @@ HOWTO = [
     'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
     '**ΣΚΙΑ / ΧΑΡΤΙΝΟ:** τιποτα εδω δεν παιζεται live — καταγραφη για κριση με πραγματικα δεδομενα (ledger). '
     '**AFCONQ:** αγκυρα μη διαθεσιμη για CAF → μονο Μοντελο 1 (HFA 80)· αγορα μονο Nowgoal.',
-    '**Betfair (με αστερισκο)** (NL B-D, 25/9): οπου δεν υπαρχει Pinnacle, το **1Χ2** ερχεται απο Betfair Exchange (Odds API) με **προστιθεμενη τη μεση γκανιοτα 1Χ2 '
+    '**Bovada** (NL B-D, 25/9): οπου δεν υπαρχει Pinnacle, 1Χ2 + AH + O/U απο Bovada (Odds API) με **μειωμενη γκανιοτα**: '
+    'αφαιρειται η διαφορα γκανιοτας Bovada − Pinnacle ανα αγορα, μετρημενη στα ματς League A της **ιδιας μερας** (κοντα στη σεντρα ~2 μοναδες, '
+    '3-5 μερες πριν ~0.5)· ετσι ενα group με ακριβοτερο Bovada κραταει την επιπλεον γκανιοτα του. Hover στο badge = ωμες τιμες & γκανιοτες.',
+    '**Betfair (με αστερισκο)** (NL B-D, 25/9): οπου δεν υπαρχει ουτε Pinnacle ουτε Bovada, το **1Χ2** ερχεται απο Betfair Exchange (Odds API) με **προστιθεμενη τη μεση γκανιοτα 1Χ2 '
     'του Pinnacle** (~4.4%) ωστε να συγκρινεται· το Betfair στο Odds API ΔΕΝ εχει handicap/γκολ → AH & O/U μενουν Crown (Nowgoal). '
     'Ρηχες αγορες Betfair (γκανιοτα back >6%) αγνοουνται. Hover στο «Αγορα» δειχνει τις ωμες τιμες.',
 ]
-SRC_LABEL = {'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'crown': 'Crown', 'sbobet': 'SBOBET', 'betfair_ex_eu': 'Betfair'}
-SRC_CLASS = {'pinnacle': 'pin', 'matchbook': 'mbk', 'crown': 'ng', 'sbobet': 'ng', 'betfair_ex_eu': 'bf'}
+SRC_LABEL = {'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'crown': 'Crown', 'sbobet': 'SBOBET', 'betfair_ex_eu': 'Betfair', 'bovada': 'Bovada'}
+SRC_CLASS = {'pinnacle': 'pin', 'matchbook': 'mbk', 'crown': 'ng', 'sbobet': 'ng', 'betfair_ex_eu': 'bf', 'bovada': 'bov'}
 
 esc = cards.esc
 
@@ -51,7 +54,7 @@ def market_src(m):
     src = mk.get('source')
     if src and mk.get(src):
         return src, mk[src]
-    for lab in ('pinnacle', 'matchbook', 'crown', 'sbobet', 'betfair_ex_eu'):      # παλιο json χωρις 'source'
+    for lab in ('pinnacle', 'matchbook', 'bovada', 'crown', 'sbobet', 'betfair_ex_eu'):      # παλιο json χωρις 'source'
         if mk.get(lab):
             return lab, mk[lab]
     return '', {}
@@ -66,8 +69,25 @@ def x12_src(m):
     return market_src(m)
 
 
+def _bov_tip(m):
+    """hover Bovada: ωμες τιμες + γκανιοτα πριν/μετα + διαφορα Bovada−Pinnacle της μερας (League A)."""
+    b = (m.get('market') or {}).get('bovada') or {}
+    if not b:
+        return ''
+    out = ['Bovada (Odds API) με γκανιοτα «σαν Pinnacle»: αφαιρεθηκε η διαφορα Bovada−Pinnacle των ματς League A της ιδιας μερας']
+    for mk, lab, fs in (('h2h', '1Χ2', ('h', 'd', 'a')), ('spreads', 'AH', ('oh', 'oa')), ('totals', 'O/U', ('over', 'under'))):
+        if b.get(f'gap_{mk}') is None:
+            continue
+        raw = '/'.join(str(b.get('raw_' + f, '?')) for f in fs)
+        day = b.get(f'gap_{mk}_day'); day = 'προεπιλογη' if day == 'default' else day
+        out.append(f"{lab}: ωμες {raw} · γκανιοτα {b.get(f'over_{mk}')}% → {b.get(f'over_{mk}_adj')}% (−{b.get(f'gap_{mk}')} μον., μετρηση {day})")
+    return ' | '.join(out)
+
+
 def _x12_tip(m, lab):
     mk = m.get('market') or {}
+    if lab == 'bovada':
+        return _bov_tip(m)
     if lab != 'betfair_ex_eu':
         return ''
     b = mk.get(lab) or {}
@@ -187,7 +207,7 @@ def summary(matches):
          'over': {v: sum(_real(m['picks'].get(OVER_KEY[v], '')) for m in matches) for v in vers},
          'dead': sum(1 for m in matches if m.get('dead')),
          'with_line': sum(1 for m in matches if market_src(m)[1].get('ah_line') is not None),
-         'toa': sum(1 for m in matches if market_src(m)[0] in ('pinnacle', 'matchbook'))}
+         'toa': sum(1 for m in matches if market_src(m)[0] in ('pinnacle', 'matchbook', 'bovada'))}
     keys = {v: [_pick_keys(m, v) for m in matches] for v in vers}
     s['any'] = {v: sum(1 for k in keys[v] if k) for v in vers}
     if len(vers) == 3:
@@ -200,7 +220,7 @@ def summary(matches):
 def summary_html(matches):
     s = summary(matches)
     parts = [f'<b style="color:{VER_COLOR[v]}">{VER_NUM[v]}</b> {s["ah"][v]} AH/1Χ2 + {s["over"][v]} over' for v in s['vers']]
-    h = (f'<div class="isum">Picks (χαρτινα) σε {s["n"]} ματς · {s["with_line"]} με γραμμη AH · {s["toa"]} με αγορα Pinnacle/Matchbook, '
+    h = (f'<div class="isum">Picks (χαρτινα) σε {s["n"]} ματς · {s["with_line"]} με γραμμη AH · {s["toa"]} με αγορα Odds API (Pinnacle/Bovada), '
          f'{s["with_line"] - min(s["toa"], s["with_line"])} Nowgoal · {s["dead"]} νεκρα &nbsp;|&nbsp; ' + ' · '.join(parts))
     if 'common_all' in s:
         h += (f' &nbsp;|&nbsp; <b>κοινα και στα 3</b>: {s["common_all"]} · '
@@ -231,7 +251,7 @@ INTL_CSS = """
 .e{font-weight:700;font-family:'JetBrains Mono',monospace;} .e.g{color:#34d17a;} .e.y{color:#f3c74b;} .e.n{color:#6b7fa3;font-weight:400;} .e.r{color:#ff6b6b;font-weight:400;} .e.dim{color:#3d4a66;font-weight:400;}
 .src{display:inline-block;padding:0 5px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;cursor:help;vertical-align:middle;}
 .src.pin{background:#1d3b6e;color:#9cc0ff;border:1px solid #2f5aa8;} .src.mbk{background:#2a3d1f;color:#a8e07a;border:1px solid #4d7a33;}
-.src.ng{background:#3a2a12;color:#f3c74b;border:1px solid #7a5a1a;} .src.bf{background:#3a2412;color:#ffb36b;border:1px solid #8a5a2a;} .src.none{background:#151c2e;color:#3d4a66;border:1px solid #26324e;}
+.src.ng{background:#3a2a12;color:#f3c74b;border:1px solid #7a5a1a;} .src.bf{background:#3a2412;color:#ffb36b;border:1px solid #8a5a2a;} .src.bov{background:#2e1f3d;color:#c9a3ff;border:1px solid #5e3f8a;} .src.none{background:#151c2e;color:#3d4a66;border:1px solid #26324e;}
 table.lt{border-collapse:collapse;margin:8px auto 4px;font-size:11px;font-family:'JetBrains Mono',monospace;}
 table.lt th{font-size:8px;color:#5a6b8c;letter-spacing:.8px;text-transform:uppercase;font-weight:600;padding:3px 9px;border-bottom:1px solid #1e2d47;font-family:'DM Sans',sans-serif;}
 table.lt td{padding:4px 9px;text-align:center;color:#cdd8ee;border-bottom:1px solid #141d33;white-space:nowrap;}
@@ -266,7 +286,9 @@ def _src_badge(m):
     if not src:
         return '<span class="src none" title="χωρις γραμμη">—</span>'
     tip = f'{SRC_LABEL[src]} · snapshot {ts} UTC' if ts else SRC_LABEL[src]
-    tip += ' · Odds API (scanner)' if src in ('pinnacle', 'matchbook') else ' · Nowgoal (laptop)'
+    tip += ' · Odds API (scanner)' if src in ('pinnacle', 'matchbook', 'bovada') else ' · Nowgoal (laptop)'
+    if src == 'bovada':
+        tip += ' · ' + _bov_tip(m)
     lab = SRC_LABEL[src]
     if _started(m):
         tip += ' · ΚΟ περασε: τελευταια προ-ΚΟ γραμμη (closing), οχι in-play'
@@ -379,7 +401,7 @@ def _lines_pane(m, vers):
         ah += f'<span class="sec">αρχικη {esc(m["init_ah"])}</span>'
     out = f'<span class="ln">{ou:g}</span> {c["over"]:.2f} / {c["under"]:.2f}' if ou is not None else '—'
     sec = ''
-    if src in ('pinnacle', 'matchbook'):
+    if src in ('pinnacle', 'matchbook', 'bovada'):
         n = (m.get('market') or {}).get('crown') or {}
         if n.get('ah_line') is not None:
             sec = (f'<span class="sec">Crown {_fmt_line(n["ah_line"])} {n["oh"]:.2f}/{n["oa"]:.2f}'

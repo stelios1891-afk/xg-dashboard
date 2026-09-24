@@ -20,9 +20,9 @@ OUT = 'intl_projections_dashboard.json'
 TOA_F = 'intl_odds_latest.json'
 VERS = ('H', 'A', 'AV')
 BOOKS = (('3', 'crown'), ('31', 'sbobet'))              # Nowgoal
-TOA_BOOKS = ('pinnacle', 'matchbook', 'betfair_ex_eu')   # TOA, σειρα προτεραιοτητας (Betfair = μονο 1Χ2 + γκανιοτα Pinnacle, 25/9)
-SRC_BOOKS = ('pinnacle', 'matchbook')                    # TOA βιβλια με AH/OU = «κυρια πηγη» γραμμων
-LAB = {'crown': 'Crown', 'sbobet': 'SBOBET', 'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'betfair_ex_eu': 'Betfair'}
+TOA_BOOKS = ('pinnacle', 'matchbook', 'bovada', 'betfair_ex_eu')   # TOA, σειρα προτεραιοτητας (25/9: Bovada με γκανιοτα «Pinnacle», Betfair μονο 1Χ2)
+SRC_BOOKS = ('pinnacle', 'matchbook', 'bovada')                    # TOA βιβλια με AH/OU = «κυρια πηγη» γραμμων
+LAB = {'crown': 'Crown', 'sbobet': 'SBOBET', 'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'betfair_ex_eu': 'Betfair', 'bovada': 'Bovada'}
 RULES = {'ah': 'AH: dog/φαβορι ≥0.5, τιμη 1.70-2.10, edge ≥10% (Pinnacle πρωτα, μετα Matchbook· χωρις TOA: Crown, μετα SBOBET)',
          'x12': '1Χ2: φαβορι με P ≥75% (και 1/τιμη <0.95)', 'dead': 'νεκρη ομαδα (αδιαφορη για 1η/υποβιβασμο) = κανενα pick',
          'over': 'OVER: edge ≥8% ΚΑΙ (νοκ-αουτ ή |ΔElo| <150 = «κοντινο»)· αλλιως «εκτος κανονα»',
@@ -132,8 +132,9 @@ def toa_market(rec):
             r.update(ou_line=round(float(b['ou_line']), 2), over=round(float(b['over']), 2), under=round(float(b['under']), 2))
         if b.get('h') and b.get('d') and b.get('a'):
             r.update(o1=round(float(b['h']), 2), ox=round(float(b['d']), 2), o2=round(float(b['a']), 2))
-            for f in ('raw_h', 'raw_d', 'raw_a', 'raw_over', 'pin_margin'):      # Betfair: ωμες back τιμες (για hover)
-                if b.get(f) is not None: r[f] = b[f]
+        for f, val in b.items():      # Betfair/Bovada: ωμες τιμες + γκανιοτες (για hover)
+            if (f.startswith('raw_') or f.startswith('gap_') or f.startswith('over_') or f == 'pin_margin') and val is not None:
+                r[f] = val
         out[bk] = r or None
     return out
 

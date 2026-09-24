@@ -25,7 +25,15 @@ LIVE_F = os.path.join(ROOT, 'intl_live_odds.jsonl')
 CLOSE_F = os.path.join(ROOT, 'intl_closing.jsonl')   # 25/9 (Στελιος): CLOSING = τελευταια προ-ΚΟ γραμμη ανα ματς, μια φορα
 
 SPORT = 'soccer_uefa_nations_league'     # ενεργο key (επιβεβαιωση 24/9, toa_outrights_fetch.log)
-BOOKS = ('pinnacle', 'matchbook', 'betfair_ex_eu')   # σειρα προτεραιοτητας· Betfair (25/9, Στελιος) = εφεδρεια για NL B-D
+BOOKS = ('pinnacle', 'matchbook', 'bovada', 'betfair_ex_eu')   # σειρα προτεραιοτητας (25/9, Στελιος): Bovada = 1Χ2+AH+OU για NL B-D, Betfair = μονο 1Χ2
+# BOVADA (25/9, εντολη Στελιου «μειωσε τη γκανιοτα σαν να ηταν Pinnacle, ιδια μερα»): το Pinnacle δεν τιμολογει B-D, αρα μετραμε
+# ΤΗ ΔΙΑΦΟΡΑ γκανιοτας Bovada − Pinnacle ανα αγορα στα ματς League A με ΚΟ την ΙΔΙΑ ΜΕΡΑ (UTC) και την αφαιρουμε απο το Bovada:
+# νεα γκανιοτα = γκανιοτα Bovada του ματς − διαφορα της μερας (κατω οριο 0.5%), αναλογικα: τιμη = 1 / (p_fair × (1 + νεα)).
+# Ετσι ενα ματς group C με ακριβοτερο Bovada κραταει την επιπλεον γκανιοτα του group του. Αν δεν υπαρχει ματς A την ιδια μερα →
+# η πλησιεστερη μερα με ματς A· αν κανενα → BOV_GAP_DEF. Μετρηση 24/9 (intl_toa_books.log): διαφορα AH +2.0/+2.2 την παραμονη, +0.6/+0.8 3-5 μερες πριν.
+BOV = 'bovada'
+BOV_GAP_DEF = {'h2h': 0.020, 'spreads': 0.012, 'totals': 0.008}
+BOV_MIN_OVER = 0.005
 # Betfair Exchange (ελεγχος 24/9, intl_toa_check.log): στο TOA εχει ΜΟΝΟ 1Χ2 (h2h/h2h_lay), ΟΧΙ spreads/totals.
 # Οι back τιμες του ειναι σχεδον χωρις γκανιοτα → κανονικοποιουνται και τους «προστιθεται» η ΜΕΣΗ γκανιοτα 1Χ2 του Pinnacle
 # (απο τα προ-ΚΟ ματς του ιδιου response· αλλιως PIN_M1X2_DEF), αναλογικα: τιμη = 1 / (p_fair × (1 + m)). Ετσι συγκρινεται με Pinnacle.
@@ -110,6 +118,71 @@ def pin_margin_1x2(games, now):
         if b.get('h') and b.get('d') and b.get('a'):
             vs.append(1 / b['h'] + 1 / b['d'] + 1 / b['a'] - 1)
     return (sum(vs) / len(vs), len(vs)) if vs else (PIN_M1X2_DEF, 0)
+
+
+MK_FIELDS = {'h2h': ('h', 'd', 'a'), 'spreads': ('oh', 'oa'), 'totals': ('over', 'under')}
+
+
+def _over(b, mk):
+    fs = MK_FIELDS[mk]
+    if not b or not all(b.get(f) for f in fs):
+        return None
+    return sum(1 / b[f] for f in fs) - 1
+
+
+def bov_gaps(games, now):
+    """{ημερα 'YYYY-MM-DD': {αγορα: μεση (γκαν Bovada − γκαν Pinnacle)}} απο τα προ-ΚΟ ματς που εχουν ΚΑΙ τα δυο (League A)."""
+    acc = {}
+    for g in games:
+        try:
+            ko = _pdt(g.get('commence_time'))
+        except Exception:
+            continue
+        if ko <= now:
+            continue
+        pn, bv = _book(g, 'pinnacle'), _book(g, BOV)
+        if not pn or not bv:
+            continue
+        for mk in MK_FIELDS:
+            op, ob = _over(pn, mk), _over(bv, mk)
+            if op is None or ob is None:
+                continue
+            if mk == 'spreads' and pn.get('line') != bv.get('line'):
+                continue                  # διαφορετικη γραμμη = οχι συγκρισιμη γκανιοτα
+            if mk == 'totals' and pn.get('ou_line') != bv.get('ou_line'):
+                continue
+            acc.setdefault(ko.date().isoformat(), {}).setdefault(mk, []).append(ob - op)
+    return {d: {mk: sum(v) / len(v) for mk, v in m.items()} for d, m in acc.items()}
+
+
+def gap_for(gaps, day, mk):
+    """διαφορα της ιδιας μερας· αλλιως της πλησιεστερης μερας με μετρηση· αλλιως BOV_GAP_DEF. -> (τιμη, απο-ποια-μερα)."""
+    if gaps.get(day, {}).get(mk) is not None:
+        return gaps[day][mk], day
+    cands = [d for d in gaps if gaps[d].get(mk) is not None]
+    if cands:
+        dd = min(cands, key=lambda d: abs((datetime.date.fromisoformat(d) - datetime.date.fromisoformat(day)).days))
+        return gaps[dd][mk], dd
+    return BOV_GAP_DEF[mk], 'default'
+
+
+def bov_adjust(b, gaps, day):
+    """Bovada -> ιδιες γραμμες, τιμες με γκανιοτα μειωμενη κατα τη διαφορα Bovada−Pinnacle της μερας (ανα αγορα). Κραταει τις ωμες."""
+    if not b:
+        return None
+    out = dict(b)
+    for mk, fs in MK_FIELDS.items():
+        S1 = _over(b, mk)
+        if S1 is None:
+            continue
+        gp, src = gap_for(gaps, day, mk)
+        new = max(S1 - gp, BOV_MIN_OVER)
+        for f in fs:
+            out['raw_' + f] = b[f]
+            out[f] = round(1 / ((1 / b[f]) / (1 + S1) * (1 + new)), 2)
+        out[f'gap_{mk}'] = round(gp * 100, 2); out[f'gap_{mk}_day'] = src
+        out[f'over_{mk}'] = round(S1 * 100, 2); out[f'over_{mk}_adj'] = round(new * 100, 2)
+    return out
 
 
 def bf_adjust(b, m):
@@ -205,6 +278,7 @@ def process(games, upc, livefx, old, now):
     upc/livefx = λιστες fixtures, old = προηγουμενο odds dict (prune ηδη), now = aware UTC."""
     odds = dict(old); hist_rows = []; live_rows = []; unmatched = []
     pm, pm_n = pin_margin_1x2(games, now)
+    gaps = bov_gaps(games, now)
     for g in games:
         try:
             gko = _pdt(g.get('commence_time'))
@@ -229,13 +303,15 @@ def process(games, upc, livefx, old, now):
             continue
         books = {bk: _book(g, bk) for bk in BOOKS}
         books[BF] = bf_adjust(books.get(BF), pm)     # Betfair: μονο 1Χ2, με τη γκανιοτα του Pinnacle
+        books[BOV] = bov_adjust(books.get(BOV), gaps, gko.date().isoformat())   # Bovada: γκανιοτα −(Bovada−Pinnacle ιδιας μερας)
         books = {k: v for k, v in books.items() if v}
         if not books:
             continue
         old_rec = odds.get(best['key']) or {}
         rec = dict(home=best['home'], away=best['away'], hid=best['hid'], aid=best['aid'], comp=best['comp'],
                    ko=best['ko'].isoformat()[:16], when=now.isoformat()[:16], eid=g.get('id'), sport=SPORT,
-                   toa_home=g.get('home_team'), toa_away=g.get('away_team'), pin_margin=round(pm * 100, 2), pin_margin_n=pm_n)
+                   toa_home=g.get('home_team'), toa_away=g.get('away_team'), pin_margin=round(pm * 100, 2), pin_margin_n=pm_n,
+                   bov_gaps={d: {k: round(v * 100, 2) for k, v in m.items()} for d, m in gaps.items()})
         # κορυφαια γραμμη = Pinnacle αν εχει, αλλιως Matchbook (ανα πεδιο: αν ο Pinnacle δεν εχει π.χ. totals, το παιρνει απο Matchbook)
         prim = next(bk for bk in BOOKS if bk in books)
         rec['book'] = prim
