@@ -36,7 +36,8 @@ if g and g.get('data'):
                       tz=x.get('localTimeZone'), played=x.get('played'), neutral=x.get('isNeutralVenue'),
                       venue=(x.get('venue') or {}).get('code'), vname=(x.get('venue') or {}).get('name'), aud=x.get('audience'),
                       hcode=x['local']['club']['code'], acode=x['road']['club']['code'],
-                      home=x['local']['club']['name'], away=x['road']['club']['name'], hs=x['local']['score'], as_=x['road']['score'])
+                      home=x['local']['club']['name'], away=x['road']['club']['name'], hs=x['local']['score'], as_=x['road']['score'],
+                      hcrest=((x['local']['club'].get('images') or {}).get('crest')), acrest=((x['road']['club'].get('images') or {}).get('crest')))
                  for x in g['data']]
     json.dump(S, open('el_sched.json', 'w', encoding='utf-8'), ensure_ascii=False)
 print(f'{SEASON}: {len(S.get(SEASON, []))} ματς στο προγραμμα · παιχτηκαν {sum(1 for x in S.get(SEASON, []) if x["played"])}')
@@ -151,7 +152,7 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], utc=x['utc'], home=x['home'], away=x['away'], hcode=hcode, acode=acode,
                venue=x.get('vname'), neutral=neu, pts_h=round(poss * eh / 100, 1), pts_a=round(poss * ea / 100, 1),
                margin=round(mg, 2), total=round(tt, 1), poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3),
-               played=played, version='v1')
+               played=played, version='v1', hcrest=x.get('hcrest'), acrest=x.get('acrest'))
     if played:
         rec.update(hs=x['hs'], as_=x['as_'])
     games.append(rec)

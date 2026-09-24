@@ -686,51 +686,39 @@ def _el_data(mtimes):
 
 
 def render_euroleague(league):
-    """🏀 Euroleague (25/9/2026): προβλεψεις μοντελου v1 vs αγορα (TOA Pinnacle). Αγνοει το league."""
+    """🏀 Euroleague (25/9/2026): ιδιο στησιμο με Europe / Match Projections — 1-2 μοντελου διπλα στην αγορα,
+    «Match odds» = σκαλες handicap & συνολου. Επερχομενα ματς + η 1η αγωνιστικη (για συγκριση εκδοσεων)."""
     import euroleague_view as elv
     data = _el_data(elv.files_mtime())
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 EUROLEAGUE</div>'
+                '<div class="co">ΕΥΡΩΛΙΓΚΑ 2026/27 · ΜΟΝΤΕΛΟ v1 · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ</div></div></div>',
+                unsafe_allow_html=True)
     if not data:
-        st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 EUROLEAGUE</div></div></div>',
-                    unsafe_allow_html=True)
         st.info('Δεν υπαρχουν ακομα προβλεψεις — τρεξε τοπικα `python el_refresh.py` και κανε push.')
         return
     proj = data['proj']
-    season = str(proj.get('season', ''))
-    season_s = f"{season[1:]}/{str(int(season[1:]) + 1)[2:]}" if season[1:].isdigit() else season
-    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 EUROLEAGUE</div>'
-                f'<div class="co">ΕΥΡΩΛΙΓΚΑ {season_s} · ΜΟΝΤΕΛΟ vs ΑΓΟΡΑ (PINNACLE)</div></div></div>',
-                unsafe_allow_html=True)
     scan = data.get('scanned_at')
-    st.caption(f"Μοντελο: {proj.get('model', '')}. "
-               f"Τελευταια ενημερωση προβλεψεων **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
-               + (f" · γραμμες αγορας (scanner) **{str(scan)[:16].replace('T', ' ')} UTC**" if scan
-                  else ' · γραμμες αγορας: καμια τρεχουσα ακομα (ο scanner τις πιανει 48h πριν το τζαμπολ)')
-               + ". Για παιγμενα ματς: η PRE-GAME προβλεψη (με οσα ματς ειχαν παιχτει ως τοτε) + τελικο σκορ.")
-    keys = elv.rounds(proj)
+    st.caption(f"Ratings επιθεσης/αμυνας/ρυθμου ανα ομαδα (box scores, διορθωση αντιπαλου, εδρα) → κατοχες × ποντοι/κατοχη. "
+               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
+               + (f" · αγορα (scanner): **{str(scan)[:16].replace('T', ' ')} UTC**" if scan
+                  else ' · αγορα: ο scanner πιανει γραμμες 48h πριν το τζαμπολ')
+               + ". Η 1η αγωνιστικη μενει ορατη με την προβλεψη που θα εβγαζε το τρεχον μοντελο.")
+    vis = dict(proj, games=elv.visible_games(proj))
+    keys = elv.rounds(vis)
     if not keys:
         st.info('Δεν βρεθηκαν ματς.')
         return
-    dflt = elv.default_round(proj, keys)
+    dflt = elv.default_round(vis, keys)
     key = st.selectbox('Αγωνιστικη', keys, index=keys.index(dflt),
-                       format_func=lambda k: elv.round_label(proj, k), key='el_round')
-    games = elv.round_games(proj, key)
-    summ = elv.round_summary(games, data)
-    if summ:
-        st.caption(summ)
+                       format_func=lambda k: f'Αγωνιστικη {k[1]}', key='el_round')
+    games = elv.round_games(vis, key)
     st.components.v1.html(elv.cards_block(games, data), height=elv.block_height(games), scrolling=True)
-    st.caption('Handicap = γραμμη ΓΗΠΕΔΟΥΧΟΥ (−2.5 = δινει 2.5). «γραμμη μας» = −(προβλεπομενη διαφορα) και προβλεπομενο '
-               'συνολο, στρογγυλεμενα στο 0.5 · «διαφωνια» = γραμμη μας − γραμμη αγορας σε ποντους (αρνητικο στο handicap = '
-               'βλεπουμε τον γηπεδουχο καλυτερα απο την αγορα· θετικο στο συνολο = περιμενουμε περισσοτερους ποντους). '
-               'Edge = αναμενομενη αποδοση στην τιμη της αγορας (Κανονικη κατανομη, σ απο την αγορα)· '
-               '**πρασινο = edge ≥5%**.')
-    st.markdown('#### Ratings ομαδων')
-    st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
-    st.caption('Net = επιθεση − αμυνα σε ποντους/100 κατοχες vs μεσο ορο (ο μεσος ≈ '
-               f"{proj.get('mu', '—')}/100) · O = ποντοι που βαζει πανω απο τον μεσο · D = ποντοι που δεχεται πανω απο τον "
-               f"μεσο (αρνητικο = καλη αμυνα) · Ρυθμος = κατοχες ανα ματς ± (μεσος {proj.get('pace', '—')}).")
-    st.markdown('#### Σημειωσεις')
-    for line in elv.NOTES:
-        st.markdown(f'- {line}')
+    with st.expander('Ratings ομαδων & σημειωσεις μοντελου'):
+        st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
+        st.caption('Net = επιθεση − αμυνα σε ποντους/100 κατοχες vs μεσο ορο · O = ποντοι που βαζει πανω απο τον μεσο · '
+                   'D = ποντοι που δεχεται πανω απο τον μεσο (αρνητικο = καλη αμυνα) · Ρυθμος = κατοχες ανα ματς ±.')
+        for line in elv.NOTES:
+            st.markdown(f'- {line}')
 
 
 @st.cache_data(ttl=1800)

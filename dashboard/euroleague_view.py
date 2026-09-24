@@ -372,199 +372,182 @@ def _ratings_map(proj):
     return {r['code']: r for r in proj.get('ratings', [])}
 
 
-def _team_meta(r):
-    if not r:
-        return ''
-    return (f'<span>net <b style="color:{"#34d17a" if r["net"] >= 0 else "#f04f5a"}">{r["net"]:+.1f}</b></span>'
-            f'<span>O {r["O"]:+.1f}</span><span>D {r["D"]:+.1f}</span>')
+# ---------------- ΚΑΡΤΑ — ιδιο στησιμο με Europe / Match Projections ----------------
+_LT = 'display:inline-block;text-align:center;font-family:monospace;font-size:10px;'
 
 
-def _lines_table(g, mk, vers, sm, st, gr_by_ver):
-    """Πινακας γραμμων: ανα αγορα (handicap/συνολο) × εκδοση μοντελου."""
-    has_mk = bool(mk)
-    played = bool(g.get('played'))
-    head = ('<tr><th></th><th>εκδ.</th><th>γραμμη μας</th><th>αγορα</th><th>διαφωνια</th><th>τιμες αγορας</th>'
-            '<th>fair μας</th><th>edge γηπ/over</th><th>edge φιλ/under</th>'
-            + ('<th>αποτελεσμα</th>' if played else '') + '</tr>')
-    rows = ''
-    for i, (v, p, a) in enumerate(vers):
-        gr = gr_by_ver.get(v)
-        # --- handicap ---
-        if has_mk and mk.get('line') is not None:
-            mk_s = f'{float(mk["line"]):+.1f}'
-            pr_s = f'{mk.get("oh") or 0:.2f} / {mk.get("oa") or 0:.2f}'
-            fr_s = f'{a["sp_fh"]:.2f} / {a["sp_fa"]:.2f}' if a.get('sp_fh') and a.get('sp_fa') else '—'
-            eh, ea, df = _edge_span(a.get('sp_eh')), _edge_span(a.get('sp_ea')), _sgn(a.get('sp_diff'))
-        else:
-            mk_s = pr_s = fr_s = '—'; eh = ea = _edge_span(None); df = '—'
-        res = ''
-        if played:
-            if gr and gr.get('sp_res'):
-                res = (f'κάλυψε <b>{_SIDE_GR[gr["sp_res"]]}</b> · δικη μας πλευρα '
-                       f'({_SIDE_GR.get(a.get("sp_side"), "—")}) {_ok(gr.get("sp_ok"))}')
-            elif gr:
-                res = f'vs γραμμη μας: <b>{_SIDE_GR[gr["our_sp_res"]]}</b>'
-            res = f'<td class="l">{res}</td>'
-        rows += (f'<tr><td class="l">Handicap γηπ</td><td class="l">{esc(v)}</td>'
-                 f'<td class="our">{a["fair_line"]:+.1f}</td><td class="mk">{mk_s}</td><td>{df}</td>'
-                 f'<td>{pr_s}</td><td>{fr_s}</td><td>{eh}</td><td>{ea}</td>{res}</tr>')
-        # --- συνολο ---
-        if has_mk and mk.get('tl') is not None:
-            mk_s = f'{float(mk["tl"]):.1f}'
-            pr_s = f'{mk.get("to") or 0:.2f} / {mk.get("tu") or 0:.2f}'
-            fr_s = f'{a["t_fo"]:.2f} / {a["t_fu"]:.2f}' if a.get('t_fo') and a.get('t_fu') else '—'
-            eo, eu, df = _edge_span(a.get('t_eo')), _edge_span(a.get('t_eu')), _sgn(a.get('t_diff'))
-        else:
-            mk_s = pr_s = fr_s = '—'; eo = eu = _edge_span(None); df = '—'
-        res = ''
-        if played:
-            if gr and gr.get('t_res'):
-                res = (f'<b>{_SIDE_GR[gr["t_res"]]}</b> · δικη μας πλευρα '
-                       f'({_SIDE_GR.get(a.get("t_side"), "—")}) {_ok(gr.get("t_ok"))}')
-            elif gr:
-                res = f'vs γραμμη μας: <b>{_SIDE_GR[gr["our_t_res"]]}</b>'
-            res = f'<td class="l">{res}</td>'
-        rows += (f'<tr><td class="l">Συνολο</td><td class="l">{esc(v)}</td>'
-                 f'<td class="our">{a["fair_tot"]:.1f}</td><td class="mk">{mk_s}</td><td>{df}</td>'
-                 f'<td>{pr_s}</td><td>{fr_s}</td><td>{eo}</td><td>{eu}</td>{res}</tr>')
-    return f'<div class="lwrap"><table class="ltab">{head}{rows}</table></div>'
+def _logo(url):
+    return f'<img class="logo" src="{esc(url)}" loading="lazy" onerror="this.style.visibility=\'hidden\'">' if url else ''
 
 
-def _market_pane(mk):
-    if not mk:
-        return ('<div style="padding:10px 16px;font-size:11px;color:#6b7fa3">Δεν υπαρχει ακομα γραμμη αγορας για αυτο το '
-                'ματς (ο scanner την πιανει οταν το ματς μπει στο 48ωρο).</div>')
-    pin, best = mk.get('pin') or {}, mk.get('best') or {}
-
-    def v(d, k, f='{:.2f}'):
-        return f.format(d[k]) if d.get(k) is not None else '—'
-
-    def bk(k):
-        return f' <span style="color:#5a6b8c;font-size:8.5px">{esc(best.get(k + "_bk"))}</span>' if best.get(k + '_bk') else ''
-    rows = (f'<tr><td class="l">Pinnacle</td><td>{v(pin, "line", "{:+.1f}")}</td><td>{v(pin, "oh")} / {v(pin, "oa")}</td>'
-            f'<td>{v(pin, "tl", "{:.1f}")}</td><td>{v(pin, "to")} / {v(pin, "tu")}</td><td>{v(pin, "mh")} / {v(pin, "ma")}</td></tr>'
-            f'<tr><td class="l">Καλυτερη τιμη (ολα τα βιβλια, ιδια γραμμη)</td><td>{v(best, "line", "{:+.1f}")}</td>'
-            f'<td>{v(best, "oh")}{bk("oh")} / {v(best, "oa")}{bk("oa")}</td><td>{v(best, "tl", "{:.1f}")}</td>'
-            f'<td>{v(best, "to")}{bk("to")} / {v(best, "tu")}{bk("tu")}</td>'
-            f'<td>{v(best, "mh")}{bk("mh")} / {v(best, "ma")}{bk("ma")}</td></tr>'
-            f'<tr><td class="l">Διαμεσος γραμμη βιβλιων</td>'
-            f'<td>{v(mk, "cons_line", "{:+.1f}")}</td><td></td>'
-            f'<td>{v(mk, "cons_tl", "{:.1f}")}</td><td></td><td></td></tr>')
-    head = ('<tr><th></th><th>handicap γηπ</th><th>γηπ / φιλ</th><th>συνολο</th><th>over / under</th>'
-            '<th>νικη γηπ / φιλ</th></tr>')
-    nb = f' · {mk["n_books"]} βιβλια' if mk.get('n_books') else ''
-    return (f'<div style="padding:6px 16px 10px"><table class="btab">{head}{rows}</table>'
-            f'<div class="mkrow">{esc(mk.get("label", ""))}{nb}</div></div>')
+def _vig2(fair_pair, mkt_pair):
+    """Φορεσε τη γκανιοτα της αγορας (ισομερως) στο fair ζευγος μας -> αμεσα συγκρισιμες τιμες."""
+    if not fair_pair or None in fair_pair:
+        return fair_pair
+    try:
+        S = 1.0 / mkt_pair[0] + 1.0 / mkt_pair[1]
+    except Exception:
+        S = 1.025
+    return (fair_pair[0] / S, fair_pair[1] / S)
 
 
-def _summary_pane(g, rm, vers, sm, st):
-    rh, ra = rm.get(g['hcode']), rm.get(g['acode'])
+def _sp_fair(m, L, sm):
+    pw, pp, pl = spread_probs(m, L, sm)
+    return (fair(pw, pl), fair(pl, pw))
 
-    def inp(r, nm, side):
-        if not r:
-            return f'<div class="inp"><div class="h">{esc(nm)} ({side})</div><div class="row"><span>—</span></div></div>'
-        return (f'<div class="inp"><div class="h">{esc(nm)} ({side})</div>'
-                f'<div class="row"><span>Net (ποντοι/100)</span><b class="acc">{r["net"]:+.2f}</b></div>'
-                f'<div class="row"><span>Επιθεση O</span><b>{r["O"]:+.2f}</b></div>'
-                f'<div class="row"><span>Αμυνα D (αρνητικο = καλη)</span><b>{r["D"]:+.2f}</b></div>'
-                f'<div class="row"><span>Ρυθμος (κατοχες ±)</span><b>{r["pace"]:+.2f}</b></div>'
-                f'<div class="row"><span>Ματς φετος</span><b>{r["games"]}</b></div></div>')
-    p = vers[0][1]
-    extra = (f'<div class="row"><span>Κατοχες (προβλ.)</span><b>{p.get("poss", "—")}</b></div>'
-             f'<div class="row"><span>σ διαφορας / συνολου</span><b>{sm} / {st}</b></div>'
-             f'<div class="row"><span>Εδρα</span><b>{"ουδετερο (0)" if g.get("neutral") else "κανονικη"}</b></div>')
-    return (f'<div class="detail">{inp(rh, g["home"], "home")}{inp(ra, g["away"], "away")}</div>'
-            f'<div style="padding:0 16px 12px"><div class="inp">{extra}</div></div>')
+
+def _tot_fair(T, TL, st):
+    po, pp, pu = total_probs(T, TL, st)
+    return (fair(po, pu), fair(pu, po))
+
+
+def _ladder(title, lines, fair_fn, main_ln, main_px, model_ln, signed):
+    head = (f'<div style="display:flex;gap:7px"><span style="{_LT}width:10px"></span>'
+            f'<span style="{_LT}width:44px;font-size:8px;color:#5a6b8c">ΓΡΑΜΜΗ</span>'
+            f'<span style="{_LT}width:76px;font-size:8px;color:#5a6b8c">ΜΟΝΤ</span>'
+            f'<span style="{_LT}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span></div>')
+    body = ''
+    for ln in lines:
+        on_main = main_ln is not None and abs(ln - main_ln) < 0.01
+        fp = _vig2(fair_fn(ln), main_px if main_px and None not in main_px else (1.95, 1.95))
+        tag = '●' if on_main else ('◆' if abs(ln - model_ln) < 0.01 else '')
+        tagc = '#f5b731' if tag == '●' else '#7ea2ff'
+        lnc = tagc if tag else '#e8edf8'
+        fp_s = f'{fp[0]:.2f}/{fp[1]:.2f}' if fp and None not in fp else '—'
+        mo_s = f'{main_px[0]:.2f}/{main_px[1]:.2f}' if on_main and main_px and None not in main_px else '—'
+        ln_s = f'{ln:+.1f}' if signed else f'{ln:.1f}'
+        body += (f'<div style="display:flex;gap:7px;align-items:baseline">'
+                 f'<span style="{_LT}width:10px;color:{tagc};font-size:8px">{tag}</span>'
+                 f'<span style="{_LT}width:44px;color:{lnc};font-weight:700">{ln_s}</span>'
+                 f'<span style="{_LT}width:76px;color:#7ea2ff">{fp_s}</span>'
+                 f'<span style="{_LT}width:76px;color:#8fa3c8">{mo_s}</span></div>')
+    return (f'<div style="display:flex;flex-direction:column;gap:4px">'
+            f'<div style="font-size:9px;color:#6b7fa3;letter-spacing:1.5px;text-align:center">{title}</div>{head}{body}</div>')
+
+
+def _odds_pane(g, mk, sm, st):
+    """Match odds: σκαλα handicap (γηπ/φιλοξ) και συνολου (over/under), μοντελο ΜΕ τη γκανιοτα της αγορας vs αγορα."""
+    mk = mk or {}
+    m, T = float(g['margin']), float(g['total'])
+    ml_sp, ml_t = round_half(-m), round_half(T)
+    c_sp = mk.get('line') if mk.get('line') is not None else ml_sp
+    c_t = mk.get('tl') if mk.get('tl') is not None else ml_t
+    sp_lines = sorted({round(c_sp + k, 1) for k in (-2, -1, 0, 1, 2)} | {ml_sp})
+    t_lines = sorted({round(c_t + k, 1) for k in (-4, -2, 0, 2, 4)} | {ml_t})
+    t1 = _ladder('HANDICAP (γηπ/φιλοξ)', sp_lines, lambda L: _sp_fair(m, L, sm), mk.get('line'),
+                 (mk.get('oh'), mk.get('oa')) if mk.get('oh') else None, ml_sp, True)
+    t2 = _ladder('ΣΥΝΟΛΟ ΠΟΝΤΩΝ (over/under)', t_lines, lambda L: _tot_fair(T, L, st), mk.get('tl'),
+                 (mk.get('to'), mk.get('tu')) if mk.get('to') else None, ml_t, False)
+    src = f' · αγορα: {esc(mk.get("label"))}' if mk.get('label') else ' · αγορα: καμια γραμμη ακομα'
+    leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
+           '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; <span style="color:#7ea2ff">◆</span> γραμμη μοντελου &nbsp;·&nbsp; '
+           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη)' + src + '</div>')
+    return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;padding:9px 0 4px">'
+            f'{t1}{t2}</div>{leg}')
+
+
+def _summary_pane(g, rm):
+    def side(code, name, lab):
+        r = rm.get(code) or {}
+        return (f'<div class="inp"><div class="h">{esc(name)} ({lab})</div>'
+                f'<div class="row"><span>Rating (net)</span><b class="acc">{r.get("net", 0):+.2f}</b></div>'
+                f'<div class="row"><span>Επιθεση O</span><b>{r.get("O", 0):+.2f}</b></div>'
+                f'<div class="row"><span>Αμυνα D</span><b>{r.get("D", 0):+.2f}</b></div>'
+                f'<div class="row"><span>Ρυθμος</span><b>{r.get("pace", 0):+.2f}</b></div>'
+                f'<div class="row"><span>Φετινα ματς</span><b>{r.get("games", 0)}</b></div></div>')
+    vers = ''.join(f'<div class="row"><span>Εκδοση {esc(v)}</span><b>{float(p["pts_h"]):.1f} – {float(p["pts_a"]):.1f} · '
+                   f'γραμμη {round_half(-float(p["margin"])):+.1f} · συνολο {round_half(float(p["total"])):.1f}</b></div>'
+                   for v, p in versions_of(g))
+    return (f'<div class="detail">{side(g["hcode"], g["home"], "home")}{side(g["acode"], g["away"], "away")}</div>'
+            f'<div class="detail" style="padding-top:0"><div class="inp" style="flex:1">{vers}</div></div>')
 
 
 def card_html(g, data, rm, now=None):
     proj = data['proj']
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
-    mk = market_for(g, data, now)
-    vers = [(v, p, analyse(p, mk, sm, st)) for v, p in versions_of(g)]
-    gr_by_ver = {v: grade(g, mk, a) for v, p, a in vers}
-    v0, p0, a0 = vers[0]
-    hw = a0['p_home'] * 100; aw = 100 - hw
+    mk = market_for(g, data, now) or {}
+    ph = float(g.get('p_home') or Phi(float(g['margin']) / sm)); pa = 1 - ph
+    hw, aw = ph * 100, pa * 100
     hc = '#34d17a' if hw > aw else ('#f04f5a' if hw < aw else '#8fa3c8')
     ac = '#34d17a' if aw > hw else ('#f04f5a' if aw < hw else '#8fa3c8')
     hbg, abg = cards._BG[hc], cards._BG[ac]
-    # προβλεπομενο σκορ ανα εκδοση (στηλες) — v2 κλπ μπαινουν διπλα αυτοματα
-    scores = ''.join(f'<div class="score"><small>{esc(v)}</small>{p["pts_h"]:.1f} – {p["pts_a"]:.1f}</div>'
-                     for v, p, _ in vers)
-    fin = ''
-    if g.get('played') and g.get('hs') is not None:
-        fin = f'<div class="final">ΤΕΛΙΚΟ {g["hs"]} – {g["as_"]}</div>'
-    # νικη: fair μοντελου (με τη γκανιοτα της αγορας, οπως στα αλλα tabs) vs αγορα
-    ph = a0['p_home']
-    s2 = (1.0 / mk['mh'] + 1.0 / mk['ma']) if mk and mk.get('mh') and mk.get('ma') else None
-    fo_h, fo_a = (1 / ph, 1 / (1 - ph)) if 0 < ph < 1 else (None, None)
-    if s2 and fo_h:
-        fo_h, fo_a = fo_h / s2, fo_a / s2
+    f1, f2 = 1 / max(ph, 1e-6), 1 / max(pa, 1e-6)
+    if mk.get('mh') and mk.get('ma'):
+        f1, f2 = _vig2((f1, f2), (mk['mh'], mk['ma']))
     odds = (f'<div class="oddsrow"><span class="rl">μοντ</span><div class="odds">'
-            f'<span>{fo_h:.2f}</span><span>{fo_a:.2f}</span></div></div>') if fo_h else ''
-    if mk and mk.get('mh'):
+            f'<span>{f1:.2f}</span><span>{f2:.2f}</span></div></div>')
+    if mk.get('mh'):
         odds += (f'<div class="oddsrow"><span class="rl">αγορ</span><div class="odds">'
-                 f'{cards._mkt_span(fo_h, mk.get("mh"))}{cards._mkt_span(fo_a, mk.get("ma"))}</div></div>')
-    # badges
-    badges = f'<span class="badge b-ver">μοντελο {esc(" + ".join(v for v, _, _ in vers))}</span>'
-    if g.get('neutral'):
-        badges += ' <span class="badge b-neu">ουδετερο γηπεδο</span>'
-    if mk:
-        cls = 'b-mor' if mk.get('kind') == 'morning' else 'b-mk'
-        src = mk.get('src_sp') or mk.get('src_tot') or ''
-        badges += f' <span class="badge {cls}" title="{esc(mk.get("label", ""))}">{esc(src)} · {esc(mk.get("label", ""))}</span>'
-    else:
-        badges += ' <span class="badge b-mk">χωρις γραμμη αγορας</span>'
-    vals = []
-    for side, key, lbl in (('sp_eh', 'line', 'ΓΗΠ'), ('sp_ea', 'line', 'ΦΙΛ'), ('t_eo', 'tl', 'OVER'), ('t_eu', 'tl', 'UNDER')):
-        e = a0.get(side)
-        if e is not None and e >= EDGE_HI:
-            vals.append(f'{lbl} {e * 100:+.0f}%')
-    if vals and not g.get('played'):
-        badges += f' <span class="badge b-val">edge ≥5%: {esc(" · ".join(vals))}</span>'
-    k = f'el{g["code"]}'
+                 f'{cards._mkt_span(f1, mk.get("mh"))}{cards._mkt_span(f2, mk.get("ma"))}</div></div>')
+    rh, ra = rm.get(g['hcode']) or {}, rm.get(g['acode']) or {}
+    uid = f"el{g['code']}"
+    neu = ' · <span style="color:#f5b731">ουδετερο γηπεδο</span>' if g.get('neutral') else ''
     return f"""
 <div class="card"><div class="sum">
   <div class="team">
-    <div class="thead"><span class="code">{esc(g['hcode'])}</span><div class="tn">{esc(g['home'])}</div></div>
-    <div class="meta">{_team_meta(rm.get(g['hcode']))}</div></div>
+    <div class="thead">{_logo(g.get('hcrest'))}<div class="tn">{esc(g['home'])}</div></div>
+    <div class="meta"><span class="xg">προβλ. {float(g['pts_h']):.1f}</span><span class="xg" style="opacity:.7">rating {rh.get('net', 0):+.1f}</span></div></div>
   <div class="mid">
     <div class="lbls"><span>Home</span><span>Away</span></div>
     <div class="pills"><div class="pill" style="background:{hbg};color:{hc};border:1px solid {hc}44">{hw:.0f}%</div>
       <div class="pill" style="background:{abg};color:{ac};border:1px solid {ac}44">{aw:.0f}%</div></div>
-    <div style="display:flex;gap:14px;justify-content:center">{scores}</div>{fin}
     <div class="oddswrap">{odds}</div>
   </div>
   <div class="team away">
-    <div class="thead"><span class="code">{esc(g['acode'])}</span><div class="tn">{esc(g['away'])}</div></div>
-    <div class="meta">{_team_meta(rm.get(g['acode']))}</div></div>
+    <div class="thead">{_logo(g.get('acrest'))}<div class="tn">{esc(g['away'])}</div></div>
+    <div class="meta"><span class="xg" style="opacity:.7">rating {ra.get('net', 0):+.1f}</span><span class="xg">προβλ. {float(g['pts_a']):.1f}</span></div></div>
 </div>
-<div class="pbar2"><div style="width:{hw}%"></div><div style="width:{aw}%"></div></div>
-{_lines_table(g, mk, vers, sm, st, gr_by_ver)}
-<div class="mkrow">{badges}</div>
+<div class="pbar"><div style="width:{hw}%"></div><div style="width:{aw}%"></div></div>
 <div class="tabs2">
-  <button class="tbtn" onclick="tg('{k}','od',this)">Αγορα αναλυτικα</button>
-  <button class="tbtn" onclick="tg('{k}','su',this)">Στοιχεια ομαδων</button>
+  <button class="tbtn" onclick="tg('{uid}','od',this)">Match odds</button>
+  <button class="tbtn" onclick="tg('{uid}','su',this)">Match summary</button>
 </div>
-<div id="od_{k}" class="pane" hidden>{_market_pane(mk)}</div>
-<div id="su_{k}" class="pane" hidden>{_summary_pane(g, rm, [(v, p) for v, p, _ in vers], sm, st)}</div>
-<div class="time" style="padding:4px 0 7px">{tip_fmt(g.get('utc'))} (ωρα Ελλαδας) · {esc(g.get('venue') or '—')} ·
-  αγωνιστικη {esc(g.get('round'))}{'' if g.get('phase') in (None, 'RS') else ' · ' + esc(PHASE_LABEL.get(g['phase'], g['phase']))}</div>
-</div>"""
+<div id="od_{uid}" class="pane" hidden>{_odds_pane(g, mk, sm, st)}</div>
+<div id="su_{uid}" class="pane" hidden>{_summary_pane(g, rm)}</div>
+<div class="time">{tip_fmt(g.get('utc'))} · {esc(g.get('venue') or '')}{neu} · αγωνιστικη {esc(g.get('round'))}</div></div>"""
+
+
+_TABS_CSS = """
+<style>
+.tabs2{display:flex;border-top:1px solid #1e2d47;}
+.tbtn{flex:1;background:none;border:none;cursor:pointer;padding:5px;font-size:9px;color:#6b7fa3;
+      letter-spacing:1px;text-transform:uppercase;font-family:'DM Sans',sans-serif;transition:all .12s;}
+.tbtn:hover{color:#cdd8ee;background:#131c31;}
+.tbtn.on{color:#e8edf8;background:#16203a;font-weight:600;}
+.tbtn+.tbtn{border-left:1px solid #1e2d47;}
+.pane{border-top:1px solid #16203a;}
+.pbar div:nth-child(2){background:#f04f5a;}
+</style>
+<script>
+function tg(mid, which, btn){
+  var other = (which === 'od') ? 'su' : 'od';
+  var me = document.getElementById(which + '_' + mid);
+  var ot = document.getElementById(other + '_' + mid);
+  var open = me.hidden;
+  me.hidden = !open;
+  if (ot) ot.hidden = true;
+  var row = btn.parentElement;
+  Array.prototype.forEach.call(row.children, function(b){ b.classList.remove('on'); });
+  if (open) btn.classList.add('on');
+}
+</script>
+"""
 
 
 def cards_block(games, data, now=None):
     rm = _ratings_map(data['proj'])
-    return (cards.CARD_CSS + cards.FONTS + lc.TABS_CSS + EL_CSS + '<div class="wrap">'
+    return (cards.CARD_CSS + cards.FONTS + _TABS_CSS + '<div class="wrap">'
             + ''.join(card_html(g, data, rm, now) for g in games) + '</div>')
 
 
 def block_height(games):
-    h = 40
-    for g in games:
-        nv = len(versions_of(g))
-        h += 250 + 44 * (nv - 1) + (22 if g.get('played') else 0)
-    return min(h, 9000)
+    return min(len(games) * 150 + 40, 6000)
+
+
+def visible_games(proj):
+    """Επερχομενα ματς + ΜΟΝΟ η 1η αγωνιστικη απο τα παιγμενα (αιτημα Στελιου 25/9: για να φαινεται
+    πως αλλαζει η προβλεψη με καθε βελτιωση του μοντελου — οχι αποτελεσματα)."""
+    return [g for g in proj.get('games', []) if not g.get('played') or (g.get('phase', 'RS') == 'RS' and g.get('round') == 1)]
 
 
 # ---------------- αγωνιστικες ----------------
