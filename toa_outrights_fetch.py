@@ -77,6 +77,10 @@ def main():
             if k_.startswith('soccer') and any(t in k_ for t in ('winner', 'relegation', 'top')):
                 print(f"  {k_} | {s_.get('title')} | active={s_.get('active')} | outrights={s_.get('has_outrights')}")
         print(f"(συνολο sports: {len(r_all)}, soccer: {sum(1 for s_ in r_all if str(s_.get('key', '')).startswith('soccer'))})")
+        print('=== ΟΛΑ τα soccer sports (key | title | active) ===')
+        for s_ in r_all:
+            if str(s_.get('key', '')).startswith('soccer'):
+                print(f"  {s_.get('key')} | {s_.get('title')} | active={s_.get('active')}")
     except Exception as e_:
         print('diag error', e_)
     by_league = {}
