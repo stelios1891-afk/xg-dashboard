@@ -7,7 +7,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 K = os.environ['TOA_KEY']; SPORT = 'soccer_uefa_nations_league'
 now = datetime.datetime.now(datetime.timezone.utc)
 r = requests.get(f'https://api.the-odds-api.com/v4/sports/{SPORT}/odds',
-                 params=dict(apiKey=K, regions='eu,uk', markets='h2h,spreads,totals', oddsFormat='decimal'), timeout=60)
+                 params=dict(apiKey=K, regions=os.environ.get('REGIONS', 'eu,uk'), markets='h2h,spreads,totals', oddsFormat='decimal'), timeout=60)
 print(f"status {r.status_code} · credits left {r.headers.get('x-requests-remaining')} · κοστος {r.headers.get('x-requests-last')}")
 ev = [e for e in r.json() if datetime.datetime.fromisoformat(e['commence_time'].replace('Z', '+00:00')) > now]
 isA = {e['id']: any(b['key'] == 'pinnacle' for b in e['bookmakers']) for e in ev}

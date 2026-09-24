@@ -28,7 +28,10 @@ jobs:
         env:
           TOA_KEY: ${{ secrets.TOA_KEY }}
           PYTHONIOENCODING: utf-8
-        run: python intl_toa_books.py | tee intl_toa_books.log
+        run: |
+          python intl_toa_books.py | tee intl_toa_books.log
+          echo '=== REGIONS us,us2,au ===' | tee -a intl_toa_books.log
+          REGIONS=us,us2,au python intl_toa_books.py | tee -a intl_toa_books.log
       - name: Commit log
         run: |
           git config user.name "intl-toa-books-bot"
