@@ -192,7 +192,9 @@ def scan(notify_tg=True):
 
 # ---------- ADAPTIVE gating (πυκνα κοντα σε ματς, αραια μεσοβδομαδα) ----------
 FIX_CACHE = os.path.join(ROOT, 'value_fixtures_cache.json')   # πλησιεστερα kickoffs (FotMob, cached 6h)
-LAST_SCAN = os.path.join(ROOT, 'value_last_scan.txt')
+LAST_SCAN = os.path.join(ROOT, 'value_last_scan.txt')   # ΠΡΕΠΕΙ να γινεται commit (scanner_tick): καθε runner ειναι καινουργιος
+# Διακοπη εθνικων (Στελιος 24/9/2026): κανενα TOA scan ως 6/10 (πρωτα ματς CORE7 9/10 -> το παραθυρο 72h ανοιγει ~6/10)
+PAUSE_UNTIL = datetime.datetime(2026, 10, 6, 0, 0, tzinfo=datetime.timezone.utc)
 
 def _now_utc():
     return datetime.datetime.now(datetime.timezone.utc)
@@ -250,6 +252,10 @@ def auto():
                            # (γραμμη/total/Pinnacle) και το snapshot ΚΛΕΙΣΙΜΑΤΟΣ (CLV ledger =
                            # τελευταια εγγραφη προ ΚΟ). [Τ3 κοπηκε 15/9 — δεν τρεφει πια αυτο]
     since = _last_scan_hours()
+    if _now_utc() < PAUSE_UNTIL:
+        print(f"[{_now_utc().isoformat(timespec='minutes')}] ΠΑΥΣΗ TOA scans ως {PAUSE_UNTIL:%d/%m %H:%M} UTC "
+              f"(διακοπη εθνικων) · πλησιεστερο ματς {h:.1f}h")
+        since = -1.0
     if since >= gap:
         scan(notify_tg=True)
         with open(LAST_SCAN, 'w', encoding='utf-8') as fh:

@@ -191,6 +191,8 @@ def _ladders(g, bks=('pinnacle', 'matchbook')):
 
 def main():
     now = datetime.datetime.now(datetime.timezone.utc)
+    if now < datetime.datetime(2026, 10, 6, tzinfo=datetime.timezone.utc) and not os.environ.get('EURO_FORCE'):
+        print('ΠΑΥΣΗ TOA ως 6/10 (διακοπη εθνικων, Στελιος 24/9) — 0 credits'); return
     try:
         P = json.load(open(PROJ_F, encoding='utf-8'))
     except Exception as e:
