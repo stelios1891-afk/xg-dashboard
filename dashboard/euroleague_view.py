@@ -75,8 +75,9 @@ def _pdt(s):
 def _closing_from_hist():
     """{code: τελευταια γραμμη hist με t < commence}."""
     out = {}
-    try:
-        with open(HIST_F, encoding='utf-8') as fh:
+    for path in (HIST_F, os.path.join(ROOT, 'el_closing_backfill.jsonl')):   # scanner + συμπληρωμα ιστορικου (toa_el_backfill_closing.py)
+      try:
+        with open(path, encoding='utf-8') as fh:
             for ln in fh:
                 ln = ln.strip()
                 if not ln:
@@ -90,7 +91,7 @@ def _closing_from_hist():
                 k = str(r.get('code'))
                 if k not in out or str(r['t']) >= str(out[k]['t']):
                     out[k] = r
-    except Exception:
+      except Exception:
         pass
     return out
 

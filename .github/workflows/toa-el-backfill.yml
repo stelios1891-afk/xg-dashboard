@@ -1,0 +1,37 @@
+name: toa-el-backfill
+
+# Closing Pinnacle για ματς Ευρωλιγκας που ξεκινησαν χωρις καταγραφη (24/9). ~30 credits ανα ωρα τζαμπολ.
+# Πυροδοτηση: push αυτου του αρχειου / του el_backfill_trigger.txt ή Run workflow.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '.github/workflows/toa-el-backfill.yml'
+      - 'el_backfill_trigger.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - name: Backfill closing
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python toa_el_backfill_closing.py
+      - name: Commit
+        run: |
+          git config user.name "toa-el-bot"; git config user.email "actions@github.com"
+          git add -f el_closing_backfill.jsonl
+          if git diff --cached --quiet; then echo "τιποτα"; else
+            git commit -m "EL closing backfill [skip ci]"
+            for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+          fi
