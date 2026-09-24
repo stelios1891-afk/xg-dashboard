@@ -1,0 +1,42 @@
+name: intl-toa-check
+
+# ΔΙΑΓΝΩΣΤΙΚΟ (25/9): ποια ματς Nations League εχει το Odds API και με ποια βιβλια. ~2 credits.
+# Πυροδοτηση: push του intl_toa_check_request.txt Ή κουμπι Run workflow. Αποτελεσμα: intl_toa_check.log στο repo.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'intl_toa_check_request.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: intl-toa-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Check
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python intl_toa_check.py | tee intl_toa_check.log
+      - name: Commit log
+        run: |
+          git config user.name "intl-toa-check-bot"
+          git config user.email "actions@github.com"
+          git add -f intl_toa_check.log
+          if git diff --cached --quiet; then echo "no changes"; else
+            git commit -m "intl toa check log [skip ci]"
+            for i in 1 2 3 4 5; do git pull --rebase origin main && git push && break; sleep 15; done
+          fi
