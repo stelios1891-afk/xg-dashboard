@@ -1,5 +1,5 @@
 {
- "chosen": "M2_r0.15_s0.10",
+ "chosen": "D1_p1_c0.05",
  "candidates": [
   [
    "M2_r0.15_s0.10",
@@ -87,5 +87,8 @@
   "Ligue1": 5,
   "Eredivisie": 7,
   "PrimeiraLiga": 7
- }
+ },
+ "fallback": "M2_r0.15_s0.10",
+ "base_of_chosen": "M2_r0.15_s0.10",
+ "decision": "Στελιος 24/9/2026: D1 = M2 (ρ=.15,s0=.10) + P1 opponent-adjusted xG φετινο (πληρες, SoS OFF) + αξια ροστερ c=.05· season_sim_tests/combo/fade: LL train .1302->.1263 (+.0038±.0014, 3/4 σεζον), 2526 .1288->.1231, cov80 .759->.779· P1 σβησιμο και SoS δεν βελτιωνουν"
 }

@@ -760,10 +760,15 @@ def render_season(league):
         st.info('Δεν υπαρχουν ακομα προβολες σεζον — τρεξε `python season_sim_2627.py` και κανε push.')
         return
     L = data['leagues'][league]
+    extra = ''
+    if data.get('p1'):
+        extra = (f" Επιπλεον (24/9, επικυρωμενο 5σ): **διορθωση αντιπαλου ανα ματς (P1)** στα φετινα xG αντι SoS, και "
+                 f"**στρωμα αξιας ροστερ** c={data.get('c_value')} (V_full {data.get('vfull_asof', '')}, "
+                 f"{L.get('n_with_vfull', '?')}/{L.get('n_teams', '?')} ομαδες με αξια).")
     st.caption(f"**{data.get('n_runs', 0):,} προσομοιωσεις** της υπολοιπης σεζον με τα ratings του dashboard "
                f"(warm-start K=8) → Poisson σκορ (draw boost {data.get('draw_boost')}) → κριτηρια ισοβαθμιας λιγκας. "
                f"Μεθοδος **{data.get('method')}**: αβεβαιοτητα ratings (s0={data.get('s0')}) + ελαφρυ regression προς τον μεσο "
-               f"(ρ={data.get('rho')}) — η μεθοδος που περασε την επικυρωση 5 σεζον. "
+               f"(ρ={data.get('rho')}) — η μεθοδος που περασε την επικυρωση 5 σεζον.{extra} "
                f"Παιγμενα {L.get('played_matches')} · υπολοιπα {L.get('remaining')} · υπολογισμος **{data.get('generated')}**.")
     st.components.v1.html(sv.table_html(league, L), height=min(len(L['teams']) * 33 + 90, 900), scrolling=True)
     st.caption('Rating: Total = xG υπερ − xG κατα ανα ματς vs μεσο λιγκας · Att/Def = αναμενομενα xG υπερ/κατα ανα ματς. '
