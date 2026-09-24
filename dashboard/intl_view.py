@@ -35,9 +35,12 @@ HOWTO = [
     'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
     '**ΣΚΙΑ / ΧΑΡΤΙΝΟ:** τιποτα εδω δεν παιζεται live — καταγραφη για κριση με πραγματικα δεδομενα (ledger). '
     '**AFCONQ:** αγκυρα μη διαθεσιμη για CAF → μονο Μοντελο 1 (HFA 80)· αγορα μονο Nowgoal.',
+    '**Betfair (με αστερισκο)** (NL B-D, 25/9): οπου δεν υπαρχει Pinnacle, το **1Χ2** ερχεται απο Betfair Exchange (Odds API) με **προστιθεμενη τη μεση γκανιοτα 1Χ2 '
+    'του Pinnacle** (~4.4%) ωστε να συγκρινεται· το Betfair στο Odds API ΔΕΝ εχει handicap/γκολ → AH & O/U μενουν Crown (Nowgoal). '
+    'Ρηχες αγορες Betfair (γκανιοτα back >6%) αγνοουνται. Hover στο «Αγορα» δειχνει τις ωμες τιμες.',
 ]
-SRC_LABEL = {'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'crown': 'Crown', 'sbobet': 'SBOBET'}
-SRC_CLASS = {'pinnacle': 'pin', 'matchbook': 'mbk', 'crown': 'ng', 'sbobet': 'ng'}
+SRC_LABEL = {'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'crown': 'Crown', 'sbobet': 'SBOBET', 'betfair_ex_eu': 'Betfair'}
+SRC_CLASS = {'pinnacle': 'pin', 'matchbook': 'mbk', 'crown': 'ng', 'sbobet': 'ng', 'betfair_ex_eu': 'bf'}
 
 esc = cards.esc
 
@@ -48,10 +51,29 @@ def market_src(m):
     src = mk.get('source')
     if src and mk.get(src):
         return src, mk[src]
-    for lab in ('pinnacle', 'matchbook', 'crown', 'sbobet'):      # παλιο json χωρις 'source'
+    for lab in ('pinnacle', 'matchbook', 'crown', 'sbobet', 'betfair_ex_eu'):      # παλιο json χωρις 'source'
         if mk.get(lab):
             return lab, mk[lab]
     return '', {}
+
+
+def x12_src(m):
+    """(label, εγγραφη) για το 1Χ2: Betfair (+γκανιοτα Pinnacle) οταν η κυρια πηγη δεν ειναι Pinnacle/Matchbook (25/9)."""
+    mk = m.get('market') or {}
+    lab = mk.get('x12_source')
+    if lab and mk.get(lab) and mk[lab].get('o1'):
+        return lab, mk[lab]
+    return market_src(m)
+
+
+def _x12_tip(m, lab):
+    mk = m.get('market') or {}
+    if lab != 'betfair_ex_eu':
+        return ''
+    b = mk.get(lab) or {}
+    pm = mk.get('pin_margin')
+    return (f'Betfair Exchange 1Χ2 (Odds API, {mk.get("x12_ts") or ""} UTC)· ωμες back {b.get("raw_h", "?")}/{b.get("raw_d", "?")}/{b.get("raw_a", "?")} '
+            f'+ μεση γκανιοτα 1Χ2 Pinnacle {pm if pm is not None else "4.4"}%')
 
 
 def load():
@@ -209,7 +231,7 @@ INTL_CSS = """
 .e{font-weight:700;font-family:'JetBrains Mono',monospace;} .e.g{color:#34d17a;} .e.y{color:#f3c74b;} .e.n{color:#6b7fa3;font-weight:400;} .e.r{color:#ff6b6b;font-weight:400;} .e.dim{color:#3d4a66;font-weight:400;}
 .src{display:inline-block;padding:0 5px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;cursor:help;vertical-align:middle;}
 .src.pin{background:#1d3b6e;color:#9cc0ff;border:1px solid #2f5aa8;} .src.mbk{background:#2a3d1f;color:#a8e07a;border:1px solid #4d7a33;}
-.src.ng{background:#3a2a12;color:#f3c74b;border:1px solid #7a5a1a;} .src.none{background:#151c2e;color:#3d4a66;border:1px solid #26324e;}
+.src.ng{background:#3a2a12;color:#f3c74b;border:1px solid #7a5a1a;} .src.bf{background:#3a2412;color:#ffb36b;border:1px solid #8a5a2a;} .src.none{background:#151c2e;color:#3d4a66;border:1px solid #26324e;}
 table.lt{border-collapse:collapse;margin:8px auto 4px;font-size:11px;font-family:'JetBrains Mono',monospace;}
 table.lt th{font-size:8px;color:#5a6b8c;letter-spacing:.8px;text-transform:uppercase;font-weight:600;padding:3px 9px;border-bottom:1px solid #1e2d47;font-family:'DM Sans',sans-serif;}
 table.lt td{padding:4px 9px;text-align:center;color:#cdd8ee;border-bottom:1px solid #141d33;white-space:nowrap;}
@@ -278,8 +300,10 @@ def _model_row(v, V, lead=None):
 
 def _market_row(m, ref):
     """σειρα ΑΓΟΡΑΣ: implied % (χωρις γκανιοτα) + τιμη· χρωμα vs Μοντελο 1 (πρασινο = αγορα πληρωνει καλυτερα)."""
-    src, c = market_src(m)
-    lab = (f'<span class="vl" style="color:#cdd8ee"><b>Αγορα</b>{SRC_LABEL.get(src, "—")}{" · closing" if src and _started(m) else ""}</span>')
+    src, c = x12_src(m)
+    tip = _x12_tip(m, src)
+    lab = (f'<span class="vl" style="color:#cdd8ee" title="{esc(tip)}"><b>Αγορα</b>{SRC_LABEL.get(src, "—")}'
+           f'{"*" if src == "betfair_ex_eu" else ""}{" · closing" if src and _started(m) else ""}</span>')
     if not c.get('o1'):
         return f'<div class="vrow mk">{lab}<div class="pills">{_pill(None, False)}{_pill(None, False)}{_pill(None, False)}</div></div>'
     o = (c['o1'], c['ox'], c['o2'])
@@ -346,7 +370,10 @@ def _lines_pane(m, vers):
         b = _badges(m['picks'].get(v, ''), m['picks'].get(OVER_KEY[v], '')) or '<span class="e dim">—</span>'
         h += f'<tr>{name}<td>{xg}</td><td>{fh}</td><td>{fa}</td><td>{ov}</td><td>{b}</td></tr>'
     # αγορα απο κατω
-    x12 = f'{c["o1"]:.2f} / {c["ox"]:.2f} / {c["o2"]:.2f}' if c.get('o1') else '—'
+    xs, xc = x12_src(m)
+    x12 = f'{xc["o1"]:.2f} / {xc["ox"]:.2f} / {xc["o2"]:.2f}' if xc.get('o1') else '—'
+    if xs != src and xc.get('o1'):
+        x12 += f'<span class="sec" title="{esc(_x12_tip(m, xs))}">{SRC_LABEL.get(xs, xs)}* · AH/OU {SRC_LABEL.get(src, "—")}</span>'
     ah = f'<span class="ln">{_fmt_line(ln)}</span> {c["oh"]:.2f} / {c["oa"]:.2f}' if ln is not None else '—'
     if m.get('init_ah') and m['init_ah'] not in ('—', 'nan'):
         ah += f'<span class="sec">αρχικη {esc(m["init_ah"])}</span>'

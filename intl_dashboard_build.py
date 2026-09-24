@@ -20,8 +20,9 @@ OUT = 'intl_projections_dashboard.json'
 TOA_F = 'intl_odds_latest.json'
 VERS = ('H', 'A', 'AV')
 BOOKS = (('3', 'crown'), ('31', 'sbobet'))              # Nowgoal
-TOA_BOOKS = ('pinnacle', 'matchbook')                    # TOA, σειρα προτεραιοτητας
-LAB = {'crown': 'Crown', 'sbobet': 'SBOBET', 'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook'}
+TOA_BOOKS = ('pinnacle', 'matchbook', 'betfair_ex_eu')   # TOA, σειρα προτεραιοτητας (Betfair = μονο 1Χ2 + γκανιοτα Pinnacle, 25/9)
+SRC_BOOKS = ('pinnacle', 'matchbook')                    # TOA βιβλια με AH/OU = «κυρια πηγη» γραμμων
+LAB = {'crown': 'Crown', 'sbobet': 'SBOBET', 'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'betfair_ex_eu': 'Betfair'}
 RULES = {'ah': 'AH: dog/φαβορι ≥0.5, τιμη 1.70-2.10, edge ≥10% (Pinnacle πρωτα, μετα Matchbook· χωρις TOA: Crown, μετα SBOBET)',
          'x12': '1Χ2: φαβορι με P ≥75% (και 1/τιμη <0.95)', 'dead': 'νεκρη ομαδα (αδιαφορη για 1η/υποβιβασμο) = κανενα pick',
          'over': 'OVER: edge ≥8% ΚΑΙ (νοκ-αουτ ή |ΔElo| <150 = «κοντινο»)· αλλιως «εκτος κανονα»',
@@ -136,8 +137,8 @@ def toa_market(rec):
 
 
 def pick_source(mk):
-    """πηγη αγορας: πρωτο TOA book με γραμμη, αλλιως Crown, αλλιως SBOBET, αλλιως None."""
-    for lab in TOA_BOOKS + tuple(l for _, l in BOOKS):
+    """πηγη αγορας: Pinnacle/Matchbook, αλλιως Crown, αλλιως SBOBET, αλλιως Betfair (μονο 1Χ2), αλλιως None."""
+    for lab in SRC_BOOKS + tuple(l for _, l in BOOKS) + ('betfair_ex_eu',):
         b = mk.get(lab)
         if b and (b.get('ah_line') is not None or b.get('ou_line') is not None or b.get('o1')):
             return lab
@@ -204,6 +205,19 @@ def pick_over(T, close, mk, order):
             return (f'OVER {b["ou_line"]:g} @{b["over"]:.2f} ({LAB[lab]}, {e*100:+.0f}%)' if close
                     else f'(εκτος κανονα: αναντιστοιχια, edge {e*100:+.0f}% {LAB[lab]})')
     return ''
+
+
+def x12_reprice(pick, bf):
+    """pick κειμενο σκιας (Crown) -> το κομματι «1Χ2 φαβ …» με τιμη Betfair (+γκανιοτα Pinnacle)· ιδιος κανονας 1/τιμη < .95."""
+    out = []
+    for part in [p.strip() for p in str(pick or '').split(' · ') if p.strip()]:
+        if part.startswith('1Χ2 φαβ'):
+            o = bf.get('o1') if 'γηπ' in part else bf.get('o2')
+            if not o or 1 / o >= .95:
+                continue
+            part = re.sub(r'@\d+(\.\d+)?', f'@{o:.2f} (Betfair)', part)
+        out.append(part)
+    return ' · '.join(out)
 
 
 def over_edges(T, mk, labs):
@@ -284,6 +298,11 @@ for r in P.itertuples():
     mk['source'] = source
     mk['ts'] = (str(trec.get('when', '')).replace('T', ' ') if is_toa else ng_when) if source else None
     mk['ng_ts'] = ng_when
+    # --- 1Χ2 (25/9): οταν η πηγη δεν ειναι Pinnacle/Matchbook, το 1Χ2 ερχεται απο Betfair (+ γκανιοτα Pinnacle) αν υπαρχει ---
+    bf = mk.get('betfair_ex_eu') or {}
+    mk['x12_source'] = 'betfair_ex_eu' if (source not in SRC_BOOKS and bf.get('o1')) else source
+    if trec: mk['pin_margin'] = trec.get('pin_margin')
+    mk['x12_ts'] = str(trec.get('when', '')).replace('T', ' ') if (trec and mk['x12_source'] == 'betfair_ex_eu') else mk['ts']
     # --- T ανα εκδοχη (ιδιος τυπος με intl_nl_overs) ---
     T_H, close_H = T_of(r.diff, r.R_home, r.R_away)
     T_A, close_A = T_of(rget(r, 'diff_A'), rget(r, 'R_home_A'), rget(r, 'R_away_A'))
@@ -332,6 +351,9 @@ for r in P.itertuples():
     else:
         pk_d = dict(H=str(sget(sh, 'PICK_χαρτι', '')), A=str(sget(sh, 'PICK_αγκυρα', '')), AV=str(sget(sh, 'PICK_αγκυρα_αξια', '')),
                     over=str(sget(ov, 'PICK_over', '')), over_A=str(sget(ov, 'PICK_over_A', '')), over_AV=str(sget(ov, 'PICK_over_AV', '')))
+        if mk['x12_source'] == 'betfair_ex_eu':
+            for v in ('H', 'A', 'AV'):
+                pk_d[v] = x12_reprice(pk_d[v], bf)
     comps[r.comp].append(dict(utc=r.utc[:16].replace('T', ' '), home=r.home, away=r.away, hid=int(r.hid), aid=int(r.aid), dead=dead,
                               callups=str(sget(sh, 'απουσιες_κλησης', '')), init_ah=str(sget(sh, 'αρχικη_AH', '')), init_ou=str(sget(ov, 'αρχικη_OU', '')),
                               versions=vers, market=mk, edges=edges, picks=pk_d))

@@ -25,7 +25,13 @@ LIVE_F = os.path.join(ROOT, 'intl_live_odds.jsonl')
 CLOSE_F = os.path.join(ROOT, 'intl_closing.jsonl')   # 25/9 (Στελιος): CLOSING = τελευταια προ-ΚΟ γραμμη ανα ματς, μια φορα
 
 SPORT = 'soccer_uefa_nations_league'     # ενεργο key (επιβεβαιωση 24/9, toa_outrights_fetch.log)
-BOOKS = ('pinnacle', 'matchbook')        # σειρα προτεραιοτητας
+BOOKS = ('pinnacle', 'matchbook', 'betfair_ex_eu')   # σειρα προτεραιοτητας· Betfair (25/9, Στελιος) = εφεδρεια για NL B-D
+# Betfair Exchange (ελεγχος 24/9, intl_toa_check.log): στο TOA εχει ΜΟΝΟ 1Χ2 (h2h/h2h_lay), ΟΧΙ spreads/totals.
+# Οι back τιμες του ειναι σχεδον χωρις γκανιοτα → κανονικοποιουνται και τους «προστιθεται» η ΜΕΣΗ γκανιοτα 1Χ2 του Pinnacle
+# (απο τα προ-ΚΟ ματς του ιδιου response· αλλιως PIN_M1X2_DEF), αναλογικα: τιμη = 1 / (p_fair × (1 + m)). Ετσι συγκρινεται με Pinnacle.
+BF = 'betfair_ex_eu'
+PIN_M1X2_DEF = 0.044   # μεση γκανιοτα 1Χ2 Pinnacle NL League A, τελευταια προ-ΚΟ γραμμη 24/9 (16 ματς, 3.2-5.9%)
+BF_MAX_OVER = 0.06     # ελεγχος ποιοτητας: αν οι back τιμες του Betfair αθροιζουν >6% γκανιοτα = ρηχη/αδεια αγορα → δεν χρησιμοποιειται
 MARKETS = 'h2h,spreads,totals'
 LIVE_HOURS = 0.0     # 25/9 (Στελιος): ΣΤΟΠ στο ΚΟ — καμια in-play καταγραφη/εμφανιση για εθνικες (ηταν 2.5h οπως euro)
 HOURS_AHEAD = 200    # 8+ μερες μπροστα (trajectory ολου του παραθυρου εθνικων)
@@ -89,6 +95,33 @@ def _pdt(s):
         s += ':00+00:00'
     d = datetime.datetime.fromisoformat(s.replace('Z', '+00:00'))
     return d.replace(tzinfo=datetime.timezone.utc) if d.tzinfo is None else d
+
+
+def pin_margin_1x2(games, now):
+    """μεση γκανιοτα 1Χ2 Pinnacle στα ματς του response που ΔΕΝ εχουν αρχισει (αλλιως PIN_M1X2_DEF)."""
+    vs = []
+    for g in games:
+        try:
+            if _pdt(g.get('commence_time')) <= now:
+                continue
+        except Exception:
+            continue
+        b = _book(g, 'pinnacle') or {}
+        if b.get('h') and b.get('d') and b.get('a'):
+            vs.append(1 / b['h'] + 1 / b['d'] + 1 / b['a'] - 1)
+    return (sum(vs) / len(vs), len(vs)) if vs else (PIN_M1X2_DEF, 0)
+
+
+def bf_adjust(b, m):
+    """Betfair back 1Χ2 -> τιμες με γκανιοτα m (Pinnacle). None αν δεν εχει 1Χ2 ή αν η αγορα ειναι ρηχη."""
+    if not b or not (b.get('h') and b.get('d') and b.get('a')):
+        return None
+    raw = (b['h'], b['d'], b['a']); S = sum(1 / x for x in raw)
+    if S - 1 > BF_MAX_OVER:
+        return None
+    adj = [round(1 / ((1 / x) / S * (1 + m)), 2) for x in raw]
+    return dict(h=adj[0], d=adj[1], a=adj[2], raw_h=raw[0], raw_d=raw[1], raw_a=raw[2],
+                raw_over=round((S - 1) * 100, 2), pin_margin=round(m * 100, 2))
 
 
 def _book(g, bk):
@@ -171,6 +204,7 @@ def process(games, upc, livefx, old, now):
     """ΚΑΘΑΡΗ λογικη (testable χωρις δικτυο): TOA events -> (odds, hist_rows, live_rows, unmatched).
     upc/livefx = λιστες fixtures, old = προηγουμενο odds dict (prune ηδη), now = aware UTC."""
     odds = dict(old); hist_rows = []; live_rows = []; unmatched = []
+    pm, pm_n = pin_margin_1x2(games, now)
     for g in games:
         try:
             gko = _pdt(g.get('commence_time'))
@@ -194,13 +228,14 @@ def process(games, upc, livefx, old, now):
                 unmatched.append(f"{g.get('home_team')} vs {g.get('away_team')} ({bs:.2f})")
             continue
         books = {bk: _book(g, bk) for bk in BOOKS}
+        books[BF] = bf_adjust(books.get(BF), pm)     # Betfair: μονο 1Χ2, με τη γκανιοτα του Pinnacle
         books = {k: v for k, v in books.items() if v}
         if not books:
             continue
         old_rec = odds.get(best['key']) or {}
         rec = dict(home=best['home'], away=best['away'], hid=best['hid'], aid=best['aid'], comp=best['comp'],
                    ko=best['ko'].isoformat()[:16], when=now.isoformat()[:16], eid=g.get('id'), sport=SPORT,
-                   toa_home=g.get('home_team'), toa_away=g.get('away_team'))
+                   toa_home=g.get('home_team'), toa_away=g.get('away_team'), pin_margin=round(pm * 100, 2), pin_margin_n=pm_n)
         # κορυφαια γραμμη = Pinnacle αν εχει, αλλιως Matchbook (ανα πεδιο: αν ο Pinnacle δεν εχει π.χ. totals, το παιρνει απο Matchbook)
         prim = next(bk for bk in BOOKS if bk in books)
         rec['book'] = prim
