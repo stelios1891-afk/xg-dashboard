@@ -4,9 +4,11 @@ name: intl-callups
 # Καθε 4 ωρες, ΜΟΝΟ οταν υπαρχει ματς εθνικων στις επομενες 72 ωρες: Transfermarkt (τρεχουσα κληση — βγαζει οσους αποχωρουν, π.χ. Brobbey 24/9)
 # → intl_project (αξια κλησης στο Μ1/Μ3) → σκιες → dashboard → επαληθευση λιστας με αποστολες FotMob. 0 credits Odds API.
 # Χειροκινητα: Run workflow Ή push του intl_callups_trigger.txt (το commit ΧΩΡΙΣ [skip ci]).
+# 25/9: το Transfermarkt ΜΠΛΟΚΑΡΕΙ τους servers του GitHub (σελιδες με 0 παικτες, intl_callups_run.log) → το χρονοδιαγραμμα ΣΕ ΠΑΥΣΗ·
+# η κληση τραβιεται απο το laptop (python intl_callups_tm.py → intl_project → σκιες → dashboard → push).
 on:
-  schedule:
-    - cron: '20 */4 * * *'
+  # schedule:
+  #   - cron: '20 */4 * * *'
   workflow_dispatch: {}
   push:
     paths:
