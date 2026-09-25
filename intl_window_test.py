@@ -28,6 +28,9 @@ if OVER_ALL:
 AH_MINLINE = float(os.environ.get('AH_MINLINE', '0.5'))   # 25/9: 0 = και DNB (γραμμη 0) και ±0.25 (ερωτηση Στελιου)· live = 0.5
 if AH_MINLINE != 0.5:
     SUF = SUF + f'_min{AH_MINLINE:g}'
+IMP_S4 = os.environ.get('IMP_S4') == '1'     # 25/9: σημασια παικτη Σ4 (συμμετοχες×rating×αρχηγος) στο diff, συντελεστης LOSO ανα σεζον (intl_imp_s4_export.py)
+if IMP_S4:
+    SUF = SUF + '_s4'
 GD_FIX = os.environ.get('GD_FIX', 'none')   # 25/9 διορθωση dogs: none | slope (κλιση υπεροχης ανα μοντελο, LOSO) | shape (slope + κοινα γκολ λ3, LOSO)
 if GD_FIX != 'none':
     SUF = SUF + '_gd' + GD_FIX
@@ -155,6 +158,12 @@ def model_dist(r, m, T, diff):
     return picks.gd_dist(max((T + s_) / 2 - l3, .10), max((T - s_) / 2 - l3, .10))
 
 
+S4_D, S4_COEF = {}, {}
+if IMP_S4:
+    S4_D = dict(pd.read_csv('intl_imp_s4.csv', dtype={'mid': str}).values.tolist()); S4_COEF = json.load(open('intl_imp_s4_coef.json', encoding='utf-8'))
+    print(f'Σ4: {len(S4_D)} ματς με dW6', flush=True)
+
+
 bets = []
 WINS = (('closing', None), ('72ω', 72), ('48ω', 48), ('24ω', 24))
 if os.environ.get('WIN_HOURS'):      # καμπυλη: π.χ. WIN_HOURS=72,64,56,48 (25/9, ερωτηση Στελιου «ποτε ακριβως διακρινεται η αλλαγη»)
@@ -173,7 +182,7 @@ for r in D.itertuples():
             Tc = cl_ou[1] if cl_ou else 2.6; sc = sup_from_line(cl_ah[1], cl_ah[2], cl_ah[3], Tc)
             cdist = picks.gd_dist(max((Tc + sc) / 2, .15), max((Tc - sc) / 2, .15))
         for m in MODELS:
-            diff = getattr(r, f'd_{m}'); T = T_of(diff, r)
+            diff = getattr(r, f'd_{m}') + (S4_COEF.get(str(r.season), {}).get(m, 0.0) * S4_D.get(str(r.mid), 0.0) if IMP_S4 else 0.0); T = T_of(diff, r)
             dist = model_dist(r, m, T, diff)      # 25/9: GD_FIX (none = ιδιο με πριν)
             dist_deep = None
             if GD_FIX == 'deepfav':
