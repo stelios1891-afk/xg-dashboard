@@ -618,3 +618,15 @@ def test_f_intl_venue_flags_one_row_per_match():
     if not os.path.exists(p):
         pytest.skip('intl_venue_flags.csv δεν υπαρχει εδω (τοπικο)')
     intl_dedupe.assert_unique_mid(pd.read_csv(p, dtype={'mid': str}), where='intl_venue_flags.csv')
+
+
+def test_f_intl_elo_walk_starts_after_seed():
+    """Ο υπολογισμος Elo εθνικων ξεκινα ΑΚΡΙΒΩΣ μετα την αφετηρια eloratings (τελος 2019 → 1/1/2020)· οχι επικαλυψη (bug 25/9: απο 1/7/2019)."""
+    for f, needle in (('intl_rating.py', "WALK_START = f'{int(SEED_YEAR) + 1}-01-01'"),
+                      ('intl_rating2_hist.py', "CUTOFF = pd.Timestamp('2020-01-01')")):
+        p = os.path.join(ROOT, f)
+        if not os.path.exists(p):
+            pytest.skip(f'{f} ζει μονο τοπικα')
+        src = open(p, encoding='utf-8').read()
+        assert needle in src, f'{f}: η εναρξη του υπολογισμου δεν ειναι η επομενη μερα της αφετηριας eloratings'
+        assert "'2019-07-01'" not in src.replace("ηταν '2019-07-01'", ''), f'{f}: εμεινε εναρξη 1/7/2019 (επικαλυψη με την αφετηρια)'
