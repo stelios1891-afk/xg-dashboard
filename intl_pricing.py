@@ -71,3 +71,13 @@ def ah_fair(dist, side, ud):
     for L in _parts(ud):
         pw, pp = picks.p_cover(dist, side, L); sw += pw; sl += 1 - pw - pp
     return round(1 + sl / sw, 2) if sw > 0 else None
+
+
+def settle_over(total, line, odds):
+    """Αποτελεσμα (μοναδες ανα 1 πονταρισμα) ενος over: x.5 κερδος/ηττα, ακεραια push = 0, x.25/x.75 μισο/μισο."""
+    q = round(float(line) * 4) / 4
+    if abs(q * 2 - round(q * 2)) > 1e-9:
+        return 0.5 * settle_over(total, q - 0.25, odds) + 0.5 * settle_over(total, q + 0.25, odds)
+    if total > q:
+        return odds - 1
+    return 0.0 if abs(total - q) < 1e-9 else -1.0

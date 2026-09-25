@@ -285,6 +285,47 @@ def render_xgstats(league):
 
 _LATEST_F = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'value_picks_latest.json')
 
+def _intl_picks():
+    """Κανονικα picks εθνικων (25/9/2026, αποφαση Στελιου): συναινεση ≥2 απο 3 μοντελα (handicap + over), ματς ≤72ω πριν τη σεντρα.
+    Η πρωτη εμφανιση / σημειωση «μπηκε λιγο πριν» απο το intl_picks_ledger.jsonl (scanner)."""
+    import datetime as _dt
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    try:
+        with open(os.path.join(root, 'intl_projections_dashboard.json'), encoding='utf-8') as fh:
+            d = json.load(fh)
+    except Exception:
+        return [], None
+    led = {}
+    try:
+        with open(os.path.join(root, 'intl_picks_ledger.jsonl'), encoding='utf-8') as fh:
+            for ln in fh:
+                if ln.strip():
+                    r = json.loads(ln); led[r['key']] = r
+    except Exception:
+        pass
+    now = _dt.datetime.now(_dt.timezone.utc); out = []
+    for c in d.get('comps', []):
+        for m in c.get('matches', []):
+            try:
+                ko = _dt.datetime.fromisoformat(m['utc']).replace(tzinfo=_dt.timezone.utc)
+            except Exception:
+                continue
+            hrs = (ko - now).total_seconds() / 3600
+            if hrs <= 0 or hrs > 72:
+                continue
+            for x in m.get('consensus') or []:
+                key = f"{c['comp']}|{m['home']}|{m['away']}|{m['utc']}|ΣΥΝΑΙΝΕΣΗ|{x['mkt']}|{x['side']}"
+                L = led.get(key, {})
+                q = dict(lg=c['comp'], home=m['home'], away=m['away'], home_id=m.get('hid'), away_id=m.get('aid'),
+                         side=0 if x['mkt'] == 'OVER' else (1 if x['side'] == 1 else -1), hcap=x['line'], odds=x['odds'],
+                         edge=x['edge'], proj_odds=round(x['odds'] / (1 + x['edge']), 2), when=m['utc'].replace(' ', 'T'), intl=True,
+                         models=x.get('models'), late=L.get('late', ''))
+                if x['mkt'] == 'OVER':
+                    q['bet'] = f"Over {x['line']:g}"
+                out.append(q)
+    return out, d.get('generated')
+
+
 def _euro_picks():
     """Ευρωπαϊκα value picks (beta, απο euro_shadow_scan) σε μορφη καρτας value_view,
     ωστε να μπαινουν στην ιδια λιστα με τα εγχωρια σε χρονολογικη σειρα."""
@@ -317,6 +358,7 @@ def render_value(league):
             res = json.load(fh)
     picks = res.get('picks', [])
     eu_picks, eu_scan = _euro_picks()
+    in_picks, in_scan = _intl_picks()
     # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
     # ως pick, ακομα κι αν το αρχειο του scan ειναι παλιοτερο απο τη σεντρα.
     import datetime as _dt
@@ -326,6 +368,8 @@ def render_value(league):
         return (not w) or (w > _now)   # UTC ISO συγκριση ως string
     picks = [p for p in picks if _upcoming(p)]
     eu_picks = [p for p in eu_picks if _upcoming(p)]
+    in_picks = [p for p in in_picks if _upcoming(p)]
+    eu_picks = eu_picks + in_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
     if not res:
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
         if not eu_picks:
@@ -358,7 +402,7 @@ def render_value(league):
             st.caption(f"⚙ Συνολικη εκθεση {gr*100:.0f}% > cap {cap*100:.0f}% → μειωση ολων ×{sc:.2f}.")
     # ---- φιλτρο ανα πρωταθλημα (default: ολα μαζι) ----
     combined = picks + eu_picks
-    order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague']
+    order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague', 'NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
     lgs_present = sorted({p['lg'] for p in combined}, key=lambda x: order.index(x) if x in order else 99)
     sel_lg = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs_present,
                           format_func=lambda x: 'Όλα τα πρωταθληματα' if x == 'Όλα' else value_view.LEAGUE_LABELS.get(x, x),
@@ -371,6 +415,11 @@ def render_value(league):
                    'Crown+Pinnacle) · overs = συνθεση πληρους πεναλτι (W2) · εκτος Kelly, stake ερευνητικο '
                    '· 👁 ΣΚΙΑ = UEL: δειχνεται, ΔΕΝ παιζεται (κλειστο 11/9) '
                    f'~¼ μοναδας · euro scan: {eu_scan or "—"}')
+    if in_picks:
+        st.caption('🌐 **ΕΘΝ.** = εθνικες (Nations League) · κανονικο pick οταν συμφωνουν **≥2 απο τα 3 μοντελα** (Μ1 H+αξια / Μ2 Αγκυρα / Μ3 Αγκυρα+αξια) '
+                   'σε handicap ή over (over μονο σε κοντινα ματς / νοκ-αουτ) · edge = το μικροτερο απο τα μοντελα που συμφωνουν · '
+                   'μπαινει με την πρωτη εμφανιση μεσα στις 72 ωρες· αν εμφανιστει στις 2 τελευταιες ωρες φαινεται η σημειωση · stake ~¼ μοναδας · '
+                   f'υπολογισμος {in_scan or "—"} UTC')
 
 @st.cache_data(ttl=15 * 60)
 def _ledger_data():

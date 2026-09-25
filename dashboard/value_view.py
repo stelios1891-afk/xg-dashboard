@@ -66,6 +66,10 @@ def pick_card(p):
         tags += '<span class="tag lc">low-conf</span>'
     if p.get('eu'):
         tags += '<span class="tag eu">EU beta</span>'
+    if p.get('intl'):
+        tags += f'<span class="tag eu" title="συναινεση μοντελων εθνικων">ΕΘΝ. · {_h.escape(p.get("models") or "")}</span>'
+        if p.get('late'):
+            tags += f'<span class="tag lc">{_h.escape(p["late"])}</span>'
     if p.get('tag75'):
         tags += '<span class="tag t75">🎯 −0.75</span>'
     if p.get('no_play'):
@@ -76,7 +80,7 @@ def pick_card(p):
         pick_team = p['home'] if side == 1 else p['away']
         bet = f"{_h.escape(pick_team)} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
     proj = f"{p['proj_odds']:.2f}" if p.get('proj_odds') else '—'
-    stake_k, stake_v = ('Ποντ.', '~¼ μον.') if p.get('eu') else \
+    stake_k, stake_v = ('Ποντ.', '~¼ μον.') if (p.get('eu') or p.get('intl')) else \
         ('Ποντ. (καβα)', f"{p['stake_final']*100:.1f}%")
     if p.get('no_play'):
         stake_k, stake_v = 'Ποντ.', '— (σκια)'

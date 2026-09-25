@@ -247,6 +247,7 @@ INTL_CSS = """
 .pkrow .vk{font-weight:700;letter-spacing:.4px;}
 .bd{display:inline-block;padding:1px 6px;border-radius:8px;font-weight:700;font-size:9.5px;letter-spacing:.3px;margin:1px 2px;color:#0a0f1e;cursor:help;font-family:'DM Sans',sans-serif;}
 .bd.dog{background:#34d17a;} .bd.fav{background:#4b7cf3;color:#fff;} .bd.x12{background:#f3c74b;} .bd.over{background:#b17af3;color:#fff;}
+.bd.cons{background:#123524;color:#7ee2a8;border:1px solid #34d17a;font-size:10px;padding:2px 8px;} .pkrow.cons{padding-bottom:2px;}
 .bd.dead{background:#2a1a1f;color:#ff6b6b;border:1px solid #ff6b6b;font-weight:600;} .bd.oor{background:#151c2e;color:#6b7fa3;border:1px solid #26324e;font-weight:400;}
 .e{font-weight:700;font-family:'JetBrains Mono',monospace;} .e.g{color:#34d17a;} .e.y{color:#f3c74b;} .e.n{color:#6b7fa3;font-weight:400;} .e.r{color:#ff6b6b;font-weight:400;} .e.dim{color:#3d4a66;font-weight:400;}
 .src{display:inline-block;padding:0 5px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;cursor:help;vertical-align:middle;}
@@ -348,6 +349,23 @@ def _flags(m):
     if m.get('callups'):
         out.append(f'<span class="call" title="{esc(m["callups"])}">⚠ κλησεις (hover)</span>')
     return f'<div class="flags">{"".join(out)}</div>' if out else ''
+
+
+def _consensus_row(m):
+    """25/9 (αποφαση Στελιου): το ΚΑΝΟΝΙΚΟ pick = συναινεση ≥2 απο 3 μοντελα (handicap + over)."""
+    cs = m.get('consensus') or []
+    if not cs:
+        return ''
+    items = []
+    for c in cs:
+        if c['mkt'] == 'OVER':
+            txt = f"Over {c['line']:g} @{c['odds']:.2f}"
+        else:
+            team = m['home'] if c['side'] == 1 else m['away']
+            txt = f"{esc(team)} {c['line']:+g} @{c['odds']:.2f}"
+        items.append(f'<span class="bd cons" title="edge ανα μοντελο: ' + esc(', '.join(f"{k} {v*100:+.0f}%" for k, v in (c.get('edges') or {}).items()))
+                     + f'">✅ {txt} · edge ≥{c["edge"]*100:.0f}% · {esc(c.get("models", ""))}</span>')
+    return f'<div class="pkrow cons"><span class="vk" style="color:#34d17a">PICK (συναινεση)</span>{"".join(items)}</div>'
 
 
 def _picks_row(m, vers):
@@ -455,7 +473,7 @@ def card_html(m, vers, key):
     <div class="meta"><span>xG {Vh.get('xg_a', 0):.2f}</span><span class="xg">Elo {Vh.get('R_a', 0):.0f}</span></div></div>
 </div>
 <div class="pbar"><div style="width:{hw}%"></div><div style="width:{dw}%"></div><div style="width:{aw}%"></div></div>
-{_flags(m)}{_picks_row(m, vers)}
+{_flags(m)}{_consensus_row(m)}{_picks_row(m, vers)}
 <div class="tabs2">
   <button class="tbtn" onclick="tg('{key}','od',this)">Γραμμες &amp; picks</button>
   <button class="tbtn" onclick="tg('{key}','su',this)">Ratings</button>

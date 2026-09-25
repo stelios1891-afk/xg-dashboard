@@ -655,3 +655,23 @@ def test_f_intl_ah_quarters_split():
     assert abs(ip.ah_ev(dist, 1, -0.75, ip.ah_fair(dist, 1, -0.75), 0.0)) < 0.01, 'fair τιμη τεταρτου δεν δινει ~0'
     src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
     assert 'intl_pricing.ah_ev' in src and 'picks.p_cover(dist, side, ud); e = pw' not in src, 'το dashboard build δεν χρησιμοποιει σωστα τεταρτα AH'
+
+
+def test_f_intl_consensus_and_ledger():
+    """Κανονικα picks εθνικων (25/9): συναινεση ≥2/3 (handicap + over, οχι 1Χ2/εκτος κανονα), πρωτη εμφανιση ≤72ω, σημειωση <2ω."""
+    import datetime as dt
+    import intl_consensus as ic, intl_picks_ledger as L
+    pk = {'H': 'DOG 2 +1.25 @1.90 (Bovada, +14%) · 1Χ2 φαβ γηπ ≥75% @1.20', 'A': 'DOG 2 +1.25 @1.90 (Bovada, +11%)', 'AV': 'FAV 1 -1.25 @1.95 (Bovada, +12%)',
+          'over': 'OVER 2.25 @2.00 (Bovada, +20%)', 'over_A': '(εκτος κανονα: αναντιστοιχια, edge +9% Bovada)', 'over_AV': 'OVER 2.25 @2.00 (Bovada, +15%)'}
+    cs = ic.consensus(pk)
+    assert [(c['mkt'], c['side'], c['models']) for c in cs] == [('AH', 2, 'Μ1+Μ2'), ('OVER', 0, 'Μ1+Μ3')], cs
+    assert abs(cs[0]['edge'] - 0.11) < 1e-9, 'edge συναινεσης = το μικροτερο'
+    assert ic.late_note(1.5) and ic.late_note(0.4) and not ic.late_note(5)
+    now = dt.datetime(2026, 9, 25, 17, 0, tzinfo=dt.timezone.utc)
+    dash = {'comps': [{'comp': 'NL B', 'matches': [dict(home='X', away='Y', utc='2026-09-25 18:45', picks=pk),
+                                                   dict(home='Z', away='W', utc='2026-09-29 18:45', picks=pk)]}]}
+    known = set(); rows = L.new_entries(dash, known, now)
+    cons = [r for r in rows if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ']
+    assert len(cons) == 2 and all(r['home'] == 'X' for r in rows), 'μονο ματς ≤72ω'
+    assert all(r['late'] for r in cons), 'pick 1.75ω πριν πρεπει να εχει σημειωση'
+    assert L.new_entries(dash, known, now) == [], 'δευτερη φορα: καμια νεα εγγραφη (πρωτη εμφανιση μονο)'

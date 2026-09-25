@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-25 13:04",
+ "generated": "2026-09-25 13:08",
  "toa_scanned": "2026-09-25 13:04",
  "toa_matches": 33,
  "ng_snapshot": "2026-09-24 16:42",
@@ -264,7 +264,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 18:45",
@@ -522,7 +523,24 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "dog",
+       "side": 1,
+       "line": 1.5,
+       "odds": 2.04,
+       "book": "Pinnacle",
+       "edge": 0.21,
+       "models": "Μ1+Μ2",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.28,
+        "Μ2": 0.21
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-26 18:45",
@@ -762,7 +780,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 18:45",
@@ -1020,7 +1039,24 @@
       "over": "",
       "over_A": "OVER 2.75 @2.04 (Pinnacle, +8%)",
       "over_AV": "OVER 2.75 @2.04 (Pinnacle, +8%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.75,
+       "odds": 2.04,
+       "book": "Pinnacle",
+       "edge": 0.08,
+       "models": "Μ2+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ2": 0.08,
+        "Μ3": 0.08
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-27 16:00",
@@ -1251,7 +1287,8 @@
       "over": "",
       "over_A": "",
       "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +11% Pinnacle)"
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-27 16:00",
@@ -1482,7 +1519,24 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "dog",
+       "side": 1,
+       "line": 1.25,
+       "odds": 1.97,
+       "book": "Pinnacle",
+       "edge": 0.1,
+       "models": "Μ1+Μ2",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.1,
+        "Μ2": 0.11
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-27 18:45",
@@ -1713,7 +1767,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-27 18:45",
@@ -1926,7 +1981,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 18:45",
@@ -2139,7 +2195,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 18:45",
@@ -2370,7 +2427,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -2574,7 +2632,8 @@
       "over": "(εκτος κανονα: αναντιστοιχια, edge +9% Pinnacle)",
       "over_A": "",
       "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +22% Pinnacle)"
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -2805,7 +2864,24 @@
       "over": "(εκτος κανονα: αναντιστοιχια, edge +19% Pinnacle)",
       "over_A": "(εκτος κανονα: αναντιστοιχια, edge +15% Pinnacle)",
       "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +23% Pinnacle)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "fav",
+       "side": 1,
+       "line": -1.5,
+       "odds": 1.89,
+       "book": "Pinnacle",
+       "edge": 0.16,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.16,
+        "Μ3": 0.18
+       }
+      }
+     ]
     }
    ]
   },
@@ -3037,7 +3113,25 @@
       "over": "OVER 2.25 @2.03 (Bovada, +20%)",
       "over_A": "OVER 2.25 @2.03 (Bovada, +9%)",
       "over_AV": "OVER 2.25 @2.03 (Bovada, +16%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.25,
+       "odds": 2.03,
+       "book": "Bovada",
+       "edge": 0.09,
+       "models": "Μ1+Μ2+Μ3",
+       "n": 3,
+       "edges": {
+        "Μ1": 0.2,
+        "Μ2": 0.09,
+        "Μ3": 0.16
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-25 18:45",
@@ -3264,7 +3358,25 @@
       "over": "OVER 2.25 @1.98 (Bovada, +8%)",
       "over_A": "OVER 2.25 @1.98 (Bovada, +16%)",
       "over_AV": "OVER 2.25 @1.98 (Bovada, +14%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.25,
+       "odds": 1.98,
+       "book": "Bovada",
+       "edge": 0.08,
+       "models": "Μ1+Μ2+Μ3",
+       "n": 3,
+       "edges": {
+        "Μ1": 0.08,
+        "Μ2": 0.16,
+        "Μ3": 0.14
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-25 18:45",
@@ -3491,7 +3603,24 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "dog",
+       "side": 2,
+       "line": 1.0,
+       "odds": 1.95,
+       "book": "Bovada",
+       "edge": 0.16,
+       "models": "Μ2+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ2": 0.23,
+        "Μ3": 0.16
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-25 18:45",
@@ -3718,7 +3847,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 13:00",
@@ -3945,7 +4075,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 18:45",
@@ -4172,7 +4303,24 @@
       "over": "(εκτος κανονα: αναντιστοιχια, edge +11% Bovada)",
       "over_A": "",
       "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +15% Bovada)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "fav",
+       "side": 2,
+       "line": -1.25,
+       "odds": 1.89,
+       "book": "Bovada",
+       "edge": 0.13,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.13,
+        "Μ3": 0.19
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-27 16:00",
@@ -4354,7 +4502,25 @@
       "over": "OVER 2.5 @1.84 (Bovada, +14%)",
       "over_A": "OVER 2.5 @1.84 (Bovada, +9%)",
       "over_AV": "OVER 2.5 @1.84 (Bovada, +13%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.5,
+       "odds": 1.84,
+       "book": "Bovada",
+       "edge": 0.09,
+       "models": "Μ1+Μ2+Μ3",
+       "n": 3,
+       "edges": {
+        "Μ1": 0.14,
+        "Μ2": 0.09,
+        "Μ3": 0.13
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-27 18:45",
@@ -4501,7 +4667,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 16:00",
@@ -4648,7 +4815,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 18:45",
@@ -4845,7 +5013,24 @@
       "over": "",
       "over_A": "OVER 2 @1.90 (Bovada, +16%)",
       "over_AV": "OVER 2 @1.90 (Bovada, +22%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.0,
+       "odds": 1.9,
+       "book": "Bovada",
+       "edge": 0.16,
+       "models": "Μ2+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ2": 0.16,
+        "Μ3": 0.22
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-28 18:45",
@@ -5018,7 +5203,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 18:45",
@@ -5191,7 +5377,8 @@
       "over": "",
       "over_A": "",
       "over_AV": "OVER 2.5 @1.83 (Bovada, +10%)"
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -5391,7 +5578,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -5564,7 +5752,40 @@
       "over": "OVER 2.25 @1.91 (Bovada, +30%)",
       "over_A": "OVER 2.25 @1.91 (Bovada, +19%)",
       "over_AV": "OVER 2.25 @1.91 (Bovada, +31%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "fav",
+       "side": 1,
+       "line": -0.75,
+       "odds": 1.88,
+       "book": "Bovada",
+       "edge": 0.12,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.12,
+        "Μ3": 0.15
+       }
+      },
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.25,
+       "odds": 1.91,
+       "book": "Bovada",
+       "edge": 0.19,
+       "models": "Μ1+Μ2+Μ3",
+       "n": 3,
+       "edges": {
+        "Μ1": 0.3,
+        "Μ2": 0.19,
+        "Μ3": 0.31
+       }
+      }
+     ]
     }
    ]
   },
@@ -5760,7 +5981,39 @@
       "over": "OVER 2.25 @1.90 (Bovada, +24%)",
       "over_A": "",
       "over_AV": "OVER 2.25 @1.90 (Bovada, +22%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "fav",
+       "side": 1,
+       "line": -0.5,
+       "odds": 1.86,
+       "book": "Bovada",
+       "edge": 0.24,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.24,
+        "Μ3": 0.25
+       }
+      },
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.25,
+       "odds": 1.9,
+       "book": "Bovada",
+       "edge": 0.22,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.24,
+        "Μ3": 0.22
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-25 18:45",
@@ -5987,7 +6240,40 @@
       "over": "OVER 2.25 @1.85 (Bovada, +16%)",
       "over_A": "OVER 2.25 @1.85 (Bovada, +10%)",
       "over_AV": "OVER 2.25 @1.85 (Bovada, +16%)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "fav",
+       "side": 1,
+       "line": -0.75,
+       "odds": 2.02,
+       "book": "Bovada",
+       "edge": 0.13,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.14,
+        "Μ3": 0.13
+       }
+      },
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.25,
+       "odds": 1.85,
+       "book": "Bovada",
+       "edge": 0.1,
+       "models": "Μ1+Μ2+Μ3",
+       "n": 3,
+       "edges": {
+        "Μ1": 0.16,
+        "Μ2": 0.1,
+        "Μ3": 0.16
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-26 16:00",
@@ -6214,7 +6500,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 16:00",
@@ -6441,7 +6728,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 16:00",
@@ -6668,7 +6956,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 16:00",
@@ -6877,7 +7166,24 @@
       "over": "(εκτος κανονα: αναντιστοιχια, edge +23% Bovada)",
       "over_A": "",
       "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +17% Bovada)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "fav",
+       "side": 2,
+       "line": -2.5,
+       "odds": 1.99,
+       "book": "Bovada",
+       "edge": 0.31,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.4,
+        "Μ3": 0.31
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-26 18:45",
@@ -7086,7 +7392,8 @@
       "over": "OVER 2.25 @2.01 (Bovada, +33%)",
       "over_A": "(εκτος κανονα: αναντιστοιχια, edge +8% Bovada)",
       "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +28% Bovada)"
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 18:45",
@@ -7295,7 +7602,24 @@
       "over": "(εκτος κανονα: αναντιστοιχια, edge +17% Bovada)",
       "over_A": "",
       "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +20% Bovada)"
-     }
+     },
+     "consensus": [
+      {
+       "mkt": "AH",
+       "role": "fav",
+       "side": 1,
+       "line": -2.0,
+       "odds": 1.97,
+       "book": "Bovada",
+       "edge": 0.23,
+       "models": "Μ1+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ1": 0.23,
+        "Μ3": 0.28
+       }
+      }
+     ]
     },
     {
      "utc": "2026-09-28 16:00",
@@ -7400,7 +7724,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 16:00",
@@ -7505,7 +7830,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 16:00",
@@ -7610,7 +7936,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 16:00",
@@ -7715,7 +8042,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -7820,7 +8148,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -7925,7 +8254,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -8030,7 +8360,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 18:45",
@@ -8135,7 +8466,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     }
    ]
   },
@@ -8333,7 +8665,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-27 16:00",
@@ -8476,7 +8809,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     }
    ]
   },
@@ -8487,8 +8821,8 @@
      "utc": "2026-09-24 13:00",
      "home": "Namibia",
      "away": "Congo",
-     "hid": null,
-     "aid": null,
+     "hid": 5802,
+     "aid": 5801,
      "dead": "",
      "callups": "",
      "init_ah": "-0.25",
@@ -8564,14 +8898,15 @@
       "over": "OVER 2 @2.06 (SBOBET, +30%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-24 16:00",
      "home": "DR Congo",
      "away": "Equatorial Guinea",
-     "hid": null,
-     "aid": null,
+     "hid": 6321,
+     "aid": 8323,
      "dead": "",
      "callups": "",
      "init_ah": "-1.50",
@@ -8655,14 +8990,15 @@
       "over": "(εκτος κανονα: οχι κοντινο, edge +37%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-24 16:00",
      "home": "Mauritania",
      "away": "Central African Republic",
-     "hid": null,
-     "aid": null,
+     "hid": 68374,
+     "aid": 230693,
      "dead": "",
      "callups": "",
      "init_ah": "-0.75",
@@ -8738,14 +9074,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-24 16:00",
      "home": "Libya",
      "away": "Botswana",
-     "hid": null,
-     "aid": null,
+     "hid": 6328,
+     "aid": 5887,
      "dead": "",
      "callups": "",
      "init_ah": "-0.75",
@@ -8821,14 +9158,15 @@
       "over": "OVER 2 @1.93 (SBOBET, +25%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-24 19:00",
      "home": "Ivory Coast",
      "away": "Ghana",
-     "hid": null,
-     "aid": null,
+     "hid": 6709,
+     "aid": 6714,
      "dead": "",
      "callups": "",
      "init_ah": "-0.75",
@@ -8912,14 +9250,15 @@
       "over": "(εκτος κανονα: οχι κοντινο, edge +21%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-24 19:00",
      "home": "Sierra Leone",
      "away": "Zimbabwe",
-     "hid": null,
-     "aid": null,
+     "hid": 5803,
+     "aid": 6290,
      "dead": "",
      "callups": "",
      "init_ah": "-0.00",
@@ -8995,14 +9334,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-24 19:00",
      "home": "Cameroon",
      "away": "Comoros",
-     "hid": null,
-     "aid": null,
+     "hid": 6629,
+     "aid": 230692,
      "dead": "",
      "callups": "",
      "init_ah": "-1.25",
@@ -9086,14 +9426,15 @@
       "over": "(εκτος κανονα: οχι κοντινο, edge +37%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-24 19:00",
      "home": "Tunisia",
      "away": "Uganda",
-     "hid": null,
-     "aid": null,
+     "hid": 6719,
+     "aid": 5890,
      "dead": "",
      "callups": "",
      "init_ah": "-1.00",
@@ -9177,14 +9518,15 @@
       "over": "OVER 2.25 @1.89 (SBOBET, +20%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 13:00",
      "home": "Mozambique",
      "away": "Senegal",
-     "hid": null,
-     "aid": null,
+     "hid": 5965,
+     "aid": 6395,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9243,14 +9585,15 @@
       "over": "(εκτος κανονα: οχι κοντινο, edge +22%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 13:00",
      "home": "Tanzania",
      "away": "Guinea-Bissau",
-     "hid": null,
-     "aid": null,
+     "hid": 7941,
+     "aid": 230700,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9304,14 +9647,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 15:00",
      "home": "Niger",
      "away": "Lesotho",
-     "hid": null,
-     "aid": null,
+     "hid": 121281,
+     "aid": 4167,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9370,14 +9714,15 @@
       "over": "OVER 2.25 @1.85 (Crown, +12%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 16:00",
      "home": "Malawi",
      "away": "South Sudan",
-     "hid": null,
-     "aid": null,
+     "hid": 6020,
+     "aid": 408231,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9431,14 +9776,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 16:00",
      "home": "Gambia",
      "away": "Somalia",
-     "hid": null,
-     "aid": null,
+     "hid": 5979,
+     "aid": 287978,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9497,14 +9843,15 @@
       "over": "(εκτος κανονα: οχι κοντινο, edge +31%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 16:00",
      "home": "Togo",
      "away": "Burundi",
-     "hid": null,
-     "aid": null,
+     "hid": 7740,
+     "aid": 121284,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9558,14 +9905,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 16:00",
      "home": "Sudan",
      "away": "Ethiopia",
-     "hid": null,
-     "aid": null,
+     "hid": 5805,
+     "aid": 121282,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9619,14 +9967,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 16:00",
      "home": "Rwanda",
      "away": "Liberia",
-     "hid": null,
-     "aid": null,
+     "hid": 5885,
+     "aid": 5804,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9680,14 +10029,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 16:00",
      "home": "Nigeria",
      "away": "Madagascar",
-     "hid": null,
-     "aid": null,
+     "hid": 6346,
+     "aid": 5809,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9741,14 +10091,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 19:00",
      "home": "Egypt",
      "away": "Angola",
-     "hid": null,
-     "aid": null,
+     "hid": 10255,
+     "aid": 6712,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9802,14 +10153,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 19:00",
      "home": "Burkina Faso",
      "away": "Benin",
-     "hid": null,
-     "aid": null,
+     "hid": 6323,
+     "aid": 5883,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9863,14 +10215,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 19:00",
      "home": "Algeria",
      "away": "Zambia",
-     "hid": null,
-     "aid": null,
+     "hid": 6317,
+     "aid": 6277,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9929,14 +10282,15 @@
       "over": "(εκτος κανονα: οχι κοντινο, edge +29%)",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 19:00",
      "home": "Mali",
      "away": "Cape Verde",
-     "hid": null,
-     "aid": null,
+     "hid": 5815,
+     "aid": 5888,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -9990,14 +10344,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-25 20:00",
      "home": "Morocco",
      "away": "Gabon",
-     "hid": null,
-     "aid": null,
+     "hid": 6262,
+     "aid": 5889,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10051,14 +10406,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 13:00",
      "home": "South Africa",
      "away": "Guinea",
-     "hid": null,
-     "aid": null,
+     "hid": 6316,
+     "aid": 6289,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10108,14 +10464,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-26 13:00",
      "home": "Kenya",
      "away": "Eritrea",
-     "hid": null,
-     "aid": null,
+     "hid": 5884,
+     "aid": 6011,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10165,14 +10522,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 16:00",
      "home": "Equatorial Guinea",
      "away": "Sierra Leone",
-     "hid": null,
-     "aid": null,
+     "hid": 8323,
+     "aid": 5803,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10222,14 +10580,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 16:00",
      "home": "Zimbabwe",
      "away": "DR Congo",
-     "hid": null,
-     "aid": null,
+     "hid": 6290,
+     "aid": 6321,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10279,14 +10638,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 16:00",
      "home": "Central African Republic",
      "away": "Burkina Faso",
-     "hid": null,
-     "aid": null,
+     "hid": 230693,
+     "aid": 6323,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10336,14 +10696,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-28 19:00",
      "home": "Botswana",
      "away": "Tunisia",
-     "hid": null,
-     "aid": null,
+     "hid": 5887,
+     "aid": 6719,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10393,14 +10754,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 11:00",
      "home": "Comoros",
      "away": "Namibia",
-     "hid": null,
-     "aid": null,
+     "hid": 230692,
+     "aid": 5802,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10450,14 +10812,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 13:00",
      "home": "Lesotho",
      "away": "Morocco",
-     "hid": null,
-     "aid": null,
+     "hid": 4167,
+     "aid": 6262,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10507,14 +10870,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 13:00",
      "home": "South Sudan",
      "away": "Egypt",
-     "hid": null,
-     "aid": null,
+     "hid": 408231,
+     "aid": 10255,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10564,14 +10928,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 13:00",
      "home": "Burundi",
      "away": "Algeria",
-     "hid": null,
-     "aid": null,
+     "hid": 121284,
+     "aid": 6317,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10621,14 +10986,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 13:00",
      "home": "Ethiopia",
      "away": "Senegal",
-     "hid": null,
-     "aid": null,
+     "hid": 121282,
+     "aid": 6395,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10678,14 +11044,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 13:00",
      "home": "Mozambique",
      "away": "Sudan",
-     "hid": null,
-     "aid": null,
+     "hid": 5965,
+     "aid": 5805,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10735,14 +11102,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 13:00",
      "home": "Madagascar",
      "away": "Tanzania",
-     "hid": null,
-     "aid": null,
+     "hid": 5809,
+     "aid": 7941,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10792,14 +11160,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 16:00",
      "home": "Ghana",
      "away": "Gambia",
-     "hid": null,
-     "aid": null,
+     "hid": 6714,
+     "aid": 5979,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10849,14 +11218,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 16:00",
      "home": "Uganda",
      "away": "Libya",
-     "hid": null,
-     "aid": null,
+     "hid": 5890,
+     "aid": 6328,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10906,14 +11276,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 16:00",
      "home": "Zambia",
      "away": "Togo",
-     "hid": null,
-     "aid": null,
+     "hid": 6277,
+     "aid": 7740,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -10963,14 +11334,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 16:00",
      "home": "Cape Verde",
      "away": "Rwanda",
-     "hid": null,
-     "aid": null,
+     "hid": 5888,
+     "aid": 5885,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11020,14 +11392,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 16:00",
      "home": "Guinea-Bissau",
      "away": "Nigeria",
-     "hid": null,
-     "aid": null,
+     "hid": 230700,
+     "aid": 6346,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11077,14 +11450,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 19:00",
      "home": "Gabon",
      "away": "Niger",
-     "hid": null,
-     "aid": null,
+     "hid": 5889,
+     "aid": 121281,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11134,14 +11508,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 19:00",
      "home": "Somalia",
      "away": "Ivory Coast",
-     "hid": null,
-     "aid": null,
+     "hid": 287978,
+     "aid": 6709,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11191,14 +11566,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 19:00",
      "home": "Benin",
      "away": "Mauritania",
-     "hid": null,
-     "aid": null,
+     "hid": 5883,
+     "aid": 68374,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11248,14 +11624,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 19:00",
      "home": "Congo",
      "away": "Cameroon",
-     "hid": null,
-     "aid": null,
+     "hid": 5801,
+     "aid": 6629,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11305,14 +11682,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-29 19:00",
      "home": "Liberia",
      "away": "Mali",
-     "hid": null,
-     "aid": null,
+     "hid": 5804,
+     "aid": 5815,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11362,14 +11740,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-09-30 16:00",
      "home": "Eritrea",
      "away": "South Africa",
-     "hid": null,
-     "aid": null,
+     "hid": 6011,
+     "aid": 6316,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11419,14 +11798,15 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     },
     {
      "utc": "2026-10-01 16:00",
      "home": "Guinea",
      "away": "Kenya",
-     "hid": null,
-     "aid": null,
+     "hid": 6289,
+     "aid": 5884,
      "dead": "",
      "callups": "",
      "init_ah": "—",
@@ -11476,7 +11856,8 @@
       "over": "",
       "over_A": "",
       "over_AV": ""
-     }
+     },
+     "consensus": []
     }
    ]
   }

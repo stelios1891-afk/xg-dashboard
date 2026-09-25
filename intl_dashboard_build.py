@@ -408,6 +408,11 @@ def _snap(all_ms):
     return max(ts) if ts else None
 
 
+# 25/9 (αποφαση Στελιου): ΚΑΝΟΝΙΚΟ pick = συναινεση ≥2 απο 3 μοντελα (handicap + over) — intl_consensus
+import intl_consensus
+for _c, _ms in comps.items():
+    for _m in _ms:
+        _m['consensus'] = intl_consensus.consensus(_m['picks'])
 nl_ms = [m for c, ms in comps.items() if c != 'AFCONQ' for m in ms]
 out = dict(generated=dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%d %H:%M'),
            toa_scanned=(str(TOA.get('scanned_at', '')).replace('T', ' ') or None) if TOA_ODDS else None, toa_matches=n_toa,
