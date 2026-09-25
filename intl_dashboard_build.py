@@ -270,7 +270,8 @@ def toks(s):
 
 ALIAS = {'Turkiye': 'Turkey', 'Czechia': 'Czech Republic', 'Bosnia and Herzegovina': 'Bosnia', 'Ireland': 'Republic of Ireland', 'North Macedonia': 'Macedonia', 'Faroe Islands': 'Faroe'}
 ng_by_key = {}
-for ng, o in NG.items(): ng_by_key[(NAMES.get(str(o['hid']), ''), NAMES.get(str(o['aid']), ''))] = o
+for ng, o in NG.items(): ng_by_key.setdefault((NAMES.get(str(o['hid']), ''), NAMES.get(str(o['aid']), '')), []).append(o)   # 25/9: λιστα (ιδιο ζευγος σε 2 αγωνιστικες)
+import intl_dedupe
 
 
 def resolve(fm):
@@ -290,8 +291,9 @@ for r in P.itertuples():
     # --- Nowgoal (fallback / δευτερευουσα) ---
     o = None; flipped = False
     if ng_by_key:
-        h, a = resolve(r.home), resolve(r.away); o = ng_by_key.get((h, a))
-        if o is None and ng_by_key.get((a, h)) is not None: o = ng_by_key[(a, h)]; flipped = True
+        h, a = resolve(r.home), resolve(r.away); o = intl_dedupe.ng_pick(ng_by_key.get((h, a)), r.utc)      # 25/9: ΜΟΝΟ με ιδια ημερομηνια (οχι ο ρεβανς)
+        if o is None:
+            o = intl_dedupe.ng_pick(ng_by_key.get((a, h)), r.utc); flipped = o is not None
     mk = market_of(o, flipped) if o else {'crown': None, 'sbobet': None}
     ng_when = ng_ts(o) if o else None
     # --- TOA (κυρια) ---

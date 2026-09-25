@@ -705,3 +705,8 @@ def test_g_intl_refresh_guards():
     assert 'run(0.3, keep=True)' in anc and 'intl_closing.jsonl' in anc and 'intl_close_hist.json' in anc
     if os.path.exists(os.path.join(ROOT, 'intl_hfa_config.json')):
         assert json.load(open(os.path.join(ROOT, 'intl_hfa_config.json'), encoding='utf-8'))['variant'] == 'H3'
+    # 25/9: Nowgoal ταιριαζει ΜΟΝΟ με ιδια ημερομηνια (ωρα Πεκινου) — ο ρεβανς του ιδιου ζευγους δεν παιρνει τις γραμμες του αλλου ματς
+    assert intl_dedupe.ng_same_fixture('2026-09-25 02:45', '2026-09-24T18:45')
+    assert not intl_dedupe.ng_same_fixture('2026-09-28 00:00', '2026-10-04T18:45')
+    rec = [{'dt': '2026-09-28 00:00', 'x': 1}]
+    assert intl_dedupe.ng_pick(rec, '2026-09-27 16:00') and intl_dedupe.ng_pick(rec, '2026-10-04 18:45') is None

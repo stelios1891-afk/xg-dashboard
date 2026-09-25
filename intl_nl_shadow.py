@@ -34,7 +34,8 @@ def toks(s):
 ALIAS = {'Turkiye': 'Turkey', 'Czechia': 'Czech Republic', 'Bosnia and Herzegovina': 'Bosnia', 'Ireland': 'Republic of Ireland', 'North Macedonia': 'Macedonia', 'Faroe Islands': 'Faroe'}
 ng_by_key = {}
 for ng, o in NG.items():
-    ng_by_key[(NAMES.get(str(o['hid']), ''), NAMES.get(str(o['aid']), ''))] = (ng, o)
+    ng_by_key.setdefault((NAMES.get(str(o['hid']), ''), NAMES.get(str(o['aid']), '')), []).append((ng, o))   # 25/9: λιστα (ιδιο ζευγος σε 2 αγωνιστικες)
+import intl_dedupe
 def resolve(fm):
     cands = list(ng_by_key.keys()); t = toks(ALIAS.get(fm, fm)) | toks(fm)
     best = None; bs = 0
@@ -52,7 +53,9 @@ def line_of(s):
 rows = []
 for r in P.itertuples():
     if pd.isna(getattr(r, 'diff', np.nan)): continue
-    h, a = resolve(r.home), resolve(r.away); key = (h, a); hit = ng_by_key.get(key) or ng_by_key.get((a, h))
+    h, a = resolve(r.home), resolve(r.away); key = (h, a); hit = intl_dedupe.ng_pick(ng_by_key.get(key), r.utc, lambda x: x[1].get('dt')); flipped = False   # 25/9: ιδια ημερομηνια
+    if not hit:
+        hit = intl_dedupe.ng_pick(ng_by_key.get((a, h)), r.utc, lambda x: x[1].get('dt')); flipped = bool(hit)   # 25/9: ηταν «key != (h, a)» = παντα False
     rec = dict(comp=r.comp, utc=r.utc[:16], ματς=f'{r.home} - {r.away}', diff=int(r.diff), λ=f'{r.xg_h:.2f}-{r.xg_a:.2f}', p1X2=f'{r.P1}/{r.PX}/{r.P2}', diff_A=(int(r.diff_A) if pd.notna(r.diff_A) else np.nan), λ_A=(f'{r.xg_h_A:.2f}-{r.xg_a_A:.2f}' if pd.notna(r.xg_h_A) else '—'), p1X2_A=(f'{r.P1_A:.0f}/{r.PX_A:.0f}/{r.P2_A:.0f}' if pd.notna(r.P1_A) else '—'),
                diff_AV=(int(r.diff_AV) if pd.notna(r.diff_AV) else np.nan), λ_AV=(f'{r.xg_h_AV:.2f}-{r.xg_a_AV:.2f}' if pd.notna(r.xg_h_AV) else '—'), p1X2_AV=(f'{r.P1_AV:.0f}/{r.PX_AV:.0f}/{r.P2_AV:.0f}' if pd.notna(r.P1_AV) else '—'))
     distA = picks.gd_dist(max(r.xg_h_A, .05), max(r.xg_a_A, .05)) if pd.notna(r.xg_h_A) else None; pickA = ''
@@ -62,7 +65,7 @@ for r in P.itertuples():
         rec['απουσιες_κλησης'] = (f'{r.home}: {fh_}' if fh_ else '') + (' | ' if fh_ and fa_ else '') + (f'{r.away}: {fa_}' if fa_ else '')
     if not hit:
         rec['Crown'] = '—'; rows.append(rec); continue
-    ng, o = hit; flipped = key != (h, a)
+    ng, o = hit
     ia = line_of(o.get('init_ah')); rec['αρχικη_AH'] = (f'{(-ia if not flipped else ia):+.2f}' if pd.notna(ia) else '—')
     dist = picks.gd_dist(max(r.xg_h, .05), max(r.xg_a, .05)); pick = ''
     for cid, lab in (('3', 'Crown'), ('31', 'SBOBET')):

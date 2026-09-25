@@ -8,7 +8,8 @@ P = pd.read_csv('intl_projections.csv'); AD = json.load(open('intl_xg_attdef.jso
 def toks(s): s = re.sub(r'[^a-z ]', ' ', str(s).lower()); return set(w for w in s.split() if len(w) > 2)
 ALIAS = {'Turkiye': 'Turkey', 'Czechia': 'Czech Republic', 'Bosnia and Herzegovina': 'Bosnia', 'Ireland': 'Republic of Ireland', 'North Macedonia': 'Macedonia', 'Faroe Islands': 'Faroe'}
 ng_by_key = {}
-for ng, o in NG.items(): ng_by_key[(NAMES.get(str(o['hid']), ''), NAMES.get(str(o['aid']), ''))] = o
+for ng, o in NG.items(): ng_by_key.setdefault((NAMES.get(str(o['hid']), ''), NAMES.get(str(o['aid']), '')), []).append(o)   # 25/9: λιστα (ιδιο ζευγος σε 2 αγωνιστικες)
+import intl_dedupe
 def resolve(fm):
     t = toks(ALIAS.get(fm, fm)) | toks(fm); best = None; bs = 0
     for k in ng_by_key:
@@ -36,7 +37,7 @@ for r in P.itertuples():
         lhx = MU * (ah_['att'] / MU) * (aa_['dfn'] / MU) * HF; lax = MU * (aa_['att'] / MU) * (ah_['dfn'] / MU) / HF; T_mix = 0.28 + 0.72 * (lhx + lax) + 0.26 * abs(r.diff) / 100 + 0.41 * close
     else:
         T_mix = np.nan
-    h, a = resolve(r.home), resolve(r.away); o = ng_by_key.get((h, a)) or ng_by_key.get((a, h))
+    h, a = resolve(r.home), resolve(r.away); o = intl_dedupe.ng_pick(ng_by_key.get((h, a)), r.utc) or intl_dedupe.ng_pick(ng_by_key.get((a, h)), r.utc)   # 25/9: ιδια ημερομηνια
     rec = dict(comp=r.comp, utc=r.utc[:16], ματς=f'{r.home} - {r.away}', ΔElo=int(gap), κοντινο='ναι' if close else '', T_μοντ=round(T, 2), T_μαζι=(round(T_mix, 2) if pd.notna(T_mix) else np.nan), T_παλιο=round(2.41 + 0.14 * abs(r.diff) / 100, 2))
     # 25/9: ιδιο T με ratings αγκυρας — εκδοχη A (diff_A) και AV (diff_AV = diff_A + αξια)· κοντινο με ΔElo αγκυρας
     TV = {}

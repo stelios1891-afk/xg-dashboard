@@ -93,3 +93,23 @@ def assert_unique_mid(df, where='', on_index=False):
     n = int(keys.duplicated().sum())
     if n:
         raise AssertionError(f'intl_dedupe{(" [" + where + "]") if where else ""}: {n} γραμμες με ιδιο mid (π.χ. {list(keys[keys.duplicated()][:3])})')
+
+
+def ng_same_fixture(ng_dt, utc, hours=36):
+    """25/9/2026: Nowgoal 'dt' (ωρα Πεκινου, UTC+8) vs FotMob utc — ΙΔΙΟ ματς μονο αν απεχουν ≤ hours.
+    Αλλιως ο ρεβανς του ιδιου ζευγους σε αλλη αγωνιστικη (π.χ. Σερβια−Ολλανδια 27/9 ↔ Ολλανδια−Σερβια 4/10) επαιρνε τις γραμμες του αλλου ματς."""
+    import datetime as _d
+    try:
+        a = _d.datetime.fromisoformat(str(ng_dt)[:16]) - _d.timedelta(hours=8)
+        b = _d.datetime.fromisoformat(str(utc)[:16].replace(' ', 'T'))
+    except Exception:
+        return False
+    return abs((a - b).total_seconds()) <= hours * 3600
+
+
+def ng_pick(cands, utc, get_dt=lambda o: o.get('dt')):
+    """απο τις εγγραφες Nowgoal του ιδιου ζευγους ονοματων, αυτη με ημερομηνια ιδια με το ματς (ή None)."""
+    for o in cands or []:
+        if ng_same_fixture(get_dt(o), utc):
+            return o
+    return None

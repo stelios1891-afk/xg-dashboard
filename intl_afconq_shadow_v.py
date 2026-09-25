@@ -47,7 +47,8 @@ def p_over(T, line):
             if m > 0.01: pw += p / len(parts)
             elif abs(m) < 0.01: pp += p / len(parts)
     return pw, pp
-W = sorted([(k, v) for k, v in NG.items() if '2026-09-24' <= v['dt'][:10] <= '2026-10-02'], key=lambda kv: kv[1]['dt'])
+import datetime as _dt; _d0 = (_dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(days=1)).strftime('%Y-%m-%d'); _d1 = (_dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(days=10)).strftime('%Y-%m-%d')
+W = sorted([(k, v) for k, v in NG.items() if _d0 <= v['dt'][:10] <= _d1], key=lambda kv: kv[1]['dt'])   # 25/9: παραθυρο τρεχον −1/+10 ημερες (ηταν σταθερο 24/9-2/10)
 print(f'ματς παραθυρου (Nowgoal 24/9-2/10): {len(W)}')
 rows = []; orows = []; n_v = 0; n_nor = 0
 for ng, o in W:
