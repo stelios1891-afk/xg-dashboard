@@ -18,7 +18,11 @@ ENG_TOTAL = dict(luck=0.25, HL=9999, carry=0.7, mu_w=50.0, h=6.0)  # συνολ�
 # ΕΙΔΙΚΟΙ στην αρχη σεζον (αποφαση Στελιου 25/9): αρχικο net χαντικαπ = 0.32·ομαδα περσι + 0.42·ειδικοι (τεστ Γ, LOSO 2021-25)
 # v1 αρχικο net = 0.7·περσι → νεο = (0.32/0.7)·(v1 αρχικο) + 0.42·(rating θεσης BasketNews). Μονο χαντικαπ/1-2, οχι συνολο.
 EXPERTS = json.load(open('el_expert_prior.json', encoding='utf-8')) if os.path.exists('el_expert_prior.json') else None
-OT_ADD = 1.1   # παρατασεις (25/9, τεστ C / V1): το μοντελο προβλεπει 40′· μεσος ορος 2020-25 = 4.6% ματς × ~24 π. = +1.1 π./ματς
+# ΚΑΜΠΥΛΗ ΣΚΟΡ (25/9, el_total_curve_test.py «Κ2», αποφαση Στελιου): αντι σταθερου +1.1 (παρατασεις), διορθωση που μεγαλωνει
+# με τον αριθμο αγωνα της σεζον: +0.34 + 0.098×αγωνιστικη (1η +0.4 · 17η +2.0 · 34η +3.7)· τα σκορ ανεβαινουν ~7 π. μεσα στη σεζον.
+# Περιλαμβανει τις παρατασεις. Τεστ: RMSE 16.48→16.44 (5/6) · b .368→.383 · ROI συνολων ≥8% +7.2→+8.2% (6/6).
+CURVE_A, CURVE_B = 0.34, 0.098
+OT_ADD = 1.1   # (παλια σταθερη διορθωση — κρατιεται μονο για αναφορα)
 NEWCOMER_PRIOR = {'BES': (-1.0, 1.0, 0.0)}      # (επιθεση, αμυνα, ρυθμος) ποντοι/100 — Μπεσικτας −2 net (συμφωνια 25/9)
 SIGMA_MARGIN, SIGMA_TOTAL = 11.5, 16.7          # διασπορα γυρω απο την αγορα, E2023-25
 HDR = {'User-Agent': 'Mozilla/5.0 Chrome/120.0', 'Accept': 'application/json'}
@@ -187,6 +191,12 @@ _, CTX_V1 = build(ENG_SPREAD)                        # χαντικαπ/1-2 χω
 _, CTX_T = build(ENG_TOTAL)             # συνολο ποντων
 d0date = D.date.iloc[0]
 today_cut = (dt.date.today() - d0date).days + 1
+GNO, _cnt = {}, {}                      # αριθμος αγωνα της σεζον (max των δυο ομαδων) — οπως στο τεστ της καμπυλης
+for y in sorted(S[SEASON], key=lambda y: y['utc']):
+    if y['phase'] != 'RS': continue
+    for t in (y['hcode'], y['acode']): _cnt[t] = _cnt.get(t, 0) + 1
+    GNO[y['code']] = max(_cnt[y['hcode']], _cnt[y['acode']])
+GMAX = max(GNO.values()) if GNO else 34
 games = []
 for x in sorted(S[SEASON], key=lambda y: y['utc']):
     hcode, acode = x['hcode'], x['acode']
@@ -198,7 +208,7 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     mg, tt1, poss = predict(state_at(CTX, cut), hcode, acode, neu, ENG_SPREAD['h'])
     mg1, tt1, _ = predict(state_at(CTX_V1, cut), hcode, acode, neu, ENG_SPREAD['h'])
     _, tt, _ = predict(state_at(CTX_T, cut), hcode, acode, neu, ENG_TOTAL['h'])
-    tt += OT_ADD
+    tt += CURVE_A + CURVE_B * GNO.get(x['code'], GMAX)
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], utc=x['utc'], home=x['home'], away=x['away'], hcode=hcode, acode=acode,
                venue=x.get('vname'), neutral=neu, pts_h=round((tt + mg) / 2, 1), pts_a=round((tt - mg) / 2, 1),
                margin=round(mg, 2), total=round(tt, 1), poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3),
@@ -214,7 +224,7 @@ for L in S.values():
 ratings = sorted([dict(code=t, name=names.get(t, t), O=round(state['O'][t], 2), D=round(state['D'][t], 2), net=round(state['O'][t] - state['D'][t], 2),
                        pace=round(state['P'][t], 2), games=state['n'][t]) for t in state['O']], key=lambda r: -r['net'])
 json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=SEASON,
-               model='v3: χαντικαπ/1-2 = v1 + ΕΙΔΙΚΟΙ αρχης σεζον (0.32 ομαδα + 0.42 BasketNews) (HL120, λ8, εδρα 6/100, τυχη 3P/FT 50%) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + παρατασεις 1.1 π. · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
+               model='v3: χαντικαπ/1-2 = v1 + ΕΙΔΙΚΟΙ αρχης σεζον (0.32 ομαδα + 0.42 BasketNews) (HL120, λ8, εδρα 6/100, τυχη 3P/FT 50%) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
                sigma_margin=SIGMA_MARGIN, sigma_total=SIGMA_TOTAL, mu=round(state['mu'], 2), pace=round(state['pm'], 2),
                games=games, ratings=ratings), open('el_projections.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(f'el_projections.json: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα, με προβλεψη «πριν το ματς») · ratings {len(ratings)} ομαδων')
