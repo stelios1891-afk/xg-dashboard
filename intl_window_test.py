@@ -117,9 +117,9 @@ def ah_ev(dist, side, ud, odds):
     return e
 
 
-def ah_q(dist, line, oh, oa):
+def ah_q(dist, line, oh, oa, dist_deep=None):
     for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-        e = ah_ev(dist, side, ud, odds)
+        e = ah_ev(dist_deep if (dist_deep is not None and ud <= -2 + 1e-9) else dist, side, ud, odds)   # 25/9 deepfav: σωστη υπεροχη μονο για φαβορι −2 και βαθυτερα
         if 1.70 <= odds <= 2.10 and e >= .10 and abs(ud) >= AH_MINLINE - 1e-9:
             return side, ud, odds, e
     return None
@@ -135,7 +135,7 @@ def _gd_ll(sub, m, a, l3):
         lh_, la_ = max((T_ + s_) / 2 - l3, .10), max((T_ - s_) / 2 - l3, .10)
         ll += math.log(max(picks.gd_dist(lh_, la_).get(int(r.gd), 1e-9), 1e-9))
     return ll
-if GD_FIX != 'none':
+if GD_FIX != 'none':      # (deepfav = slope, αλλα εφαρμοζεται ΜΟΝΟ στα φαβορι −2 και βαθυτερα)
     for sea in SEAS_:
         tr = D[COMP & (D.season != sea)]
         for m in MODELS:
@@ -149,7 +149,7 @@ if GD_FIX != 'none':
 
 
 def model_dist(r, m, T, diff):
-    if GD_FIX == 'none':
+    if GD_FIX in ('none', 'deepfav'):
         s_ = A_GOAL * diff; return picks.gd_dist(max((T + s_) / 2, .15), max((T - s_) / 2, .15))
     a, l3 = GDP[(r.season, m)]; s_ = a * diff
     return picks.gd_dist(max((T + s_) / 2 - l3, .10), max((T - s_) / 2 - l3, .10))
@@ -175,12 +175,16 @@ for r in D.itertuples():
         for m in MODELS:
             diff = getattr(r, f'd_{m}'); T = T_of(diff, r)
             dist = model_dist(r, m, T, diff)      # 25/9: GD_FIX (none = ιδιο με πριν)
+            dist_deep = None
+            if GD_FIX == 'deepfav':
+                a_, _l3 = GDP[(r.season, m)]; s_ = a_ * diff
+                dist_deep = picks.gd_dist(max((T + s_) / 2, .15), max((T - s_) / 2, .15))
             base = dict(mid=r.mid, season=r.season, ctype=r.ctype, model=m, book=book, close=bool(r.close), ko=bool(r.ko))
             for wlab, W in WINS:
                 # --- AH ---
                 cand = [cl_ah] if (W is None and cl_ah) else [z for z in rec['ah'] if z[0] <= (W or 0)]
                 for ci, (h, line, oh, oa) in enumerate(cand):
-                    q = ah_q(dist, line, oh, oa)
+                    q = ah_q(dist, line, oh, oa, dist_deep)
                     if q and W is not None and MODE == 'persist30':
                         # πρεπει να ισχυει συνεχομενα ≥30λ: ολες οι κινησεις των επομενων 30λ περνανε κι αυτες τον κανονα
                         nxt = [z for z in cand[ci + 1:] if h - z[0] <= 0.5]
