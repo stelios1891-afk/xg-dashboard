@@ -69,6 +69,8 @@ C['y'] = np.where(C.gd > 0, 2, np.where(C.gd == 0, 1, 0))
 ol = fit_ol(C['diff'].values, C['y'].values)
 olA = fit_ol(PA['diff_lam0.3'].values, PA['y'].values); aA = float(np.sum(PA['diff_lam0.3'] * PA['gd']) / np.sum(PA['diff_lam0.3'] ** 2))
 a = float(np.sum(C['diff'] * C['gd']) / np.sum(C['diff'] ** 2))          # gd ~ a*diff
+# 25/9 (γ) ΒΑΘΙΑ ΦΑΒΟΡΙ: υπεροχη με a_deep (intl_deepfav_config.json) → στηλες xg_*_D· το intl_pricing.dist_for τις χρησιμοποιει ΜΟΝΟ για φαβορι ≤ −2
+ADEEP = json.load(open('intl_deepfav_config.json', encoding='utf-8'))['a_deep']
 M = pd.read_csv('intl_matches.csv', dtype={'season': str, 'mid': str})
 import intl_dedupe
 M = intl_dedupe.dedupe(M, where='intl_project')   # 25/9: κλειδι ασφαλειας — διπλα ματς δεν μετρανε
@@ -141,15 +143,18 @@ for r in F.itertuples():
         rhA, raA = float(RA.loc[r.hid]), float(RA.loc[r.aid])
         dA = rhA + HFA - raA; phA, pdA, paA = probs(np.array([dA]), olA)[0]
         TA = 0.29 + 0.33 * abs(dA) / 100 + 0.49 * (abs(rhA - raA) < 150) + 0.10 * (rhA + raA) / 2 / 100 - 0.05; sA = aA * dA; lhA = max((TA + sA) / 2, 0.15); laA = max((TA - sA) / 2, 0.15)
+        lhA_D = max((TA + ADEEP['A'] * dA) / 2, 0.15); laA_D = max((TA - ADEEP['A'] * dA) / 2, 0.15)
         # ---- 25/9: εκδοχη AV = αγκυρα + στρωμα αξιας (ιδιος logit olA, ιδιο T με diff_AV) ----
         dAV = dA + vadj; phAV, pdAV, paAV = probs(np.array([dAV]), olA)[0]
         TAV = 0.29 + 0.33 * abs(dAV) / 100 + 0.49 * (abs(rhA - raA) < 150) + 0.10 * (rhA + raA) / 2 / 100 - 0.05; sAV = aA * dAV; lhAV = max((TAV + sAV) / 2, 0.15); laAV = max((TAV - sAV) / 2, 0.15)
+        lhAV_D = max((TAV + ADEEP['AV'] * dAV) / 2, 0.15); laAV_D = max((TAV - ADEEP['AV'] * dAV) / 2, 0.15)
     else:
-        rhA = raA = dA = np.nan; phA = pdA = paA = np.nan; lhA = laA = np.nan
-        dAV = np.nan; phAV = pdAV = paAV = np.nan; lhAV = laAV = np.nan
+        rhA = raA = dA = np.nan; phA = pdA = paA = np.nan; lhA = laA = np.nan; lhA_D = laA_D = np.nan
+        dAV = np.nan; phAV = pdAV = paAV = np.nan; lhAV = laAV = np.nan; lhAV_D = laAV_D = np.nan
     # 22/9 (Στελιος «βαλτο»): συνολο γκολ ΜΕ ΚΑΤΑΣΤΑΣΗ + ΕΠΙΠΕΔΟ (intl_xg_totals, LOSO): T = 0.29 + 0.33·|diff|/100 + 0.26·[KO] + 0.49·[|ΔElo|<150] + 0.10·(R_h+R_a)/2/100 − 0.05·[NL]
     close_m = abs(rh - ra) < 150; T_m = 0.29 + 0.33 * abs(diff) / 100 + 0.49 * close_m + 0.10 * (rh + ra) / 2 / 100 - 0.05
     s = a * diff; lh = max((T_m + s) / 2, 0.15); la = max((T_m - s) / 2, 0.15)
+    lh_D = max((T_m + ADEEP['H'] * diff) / 2, 0.15); la_D = max((T_m - ADEEP['H'] * diff) / 2, 0.15)
     dist = picks.gd_dist(lh, la)
     fair = {}
     for line in (-1.5, -1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5, 0.75, 1.0, 1.5):
@@ -159,7 +164,7 @@ for r in F.itertuples():
     # γραμμη οπου ο γηπεδουχος ~ 50%: η πλησιεστερη σε fair 2.00
     best = min(fair.items(), key=lambda kv: abs((kv[1] or 9) - 2.0))
     out.append(dict(comp=r.comp.replace('NationsLeague', 'NL '), utc=r.utc, home=r.home, away=r.away, hid=r.hid, aid=r.aid, νεκρη=('' if (r.alive_h is not False and r.alive_a is not False) else ('γηπ' if r.alive_h is False else '') + ('εκτος' if r.alive_a is False else '')),
-                    R_home=round(rh), R_away=round(ra), val_adj=round(vadj), val_src=f'{srch}/{srca}', V_h=(round(vh / 1e6, 1) if vh else np.nan), V_a=(round(va / 1e6, 1) if va else np.nan), diff=round(diff), xg_h=round(lh, 2), xg_a=round(la, 2),
+                    R_home=round(rh), R_away=round(ra), val_adj=round(vadj), xg_h_D=round(lh_D, 3), xg_a_D=round(la_D, 3), xg_h_A_D=(round(lhA_D, 3) if pd.notna(lhA_D) else np.nan), xg_a_A_D=(round(laA_D, 3) if pd.notna(laA_D) else np.nan), xg_h_AV_D=(round(lhAV_D, 3) if pd.notna(lhAV_D) else np.nan), xg_a_AV_D=(round(laAV_D, 3) if pd.notna(laAV_D) else np.nan), val_src=f'{srch}/{srca}', V_h=(round(vh / 1e6, 1) if vh else np.nan), V_a=(round(va / 1e6, 1) if va else np.nan), diff=round(diff), xg_h=round(lh, 2), xg_a=round(la, 2),
                     P1=round(ph * 100), PX=round(pdr * 100), P2=round(pa * 100),
                     fair_1=round(1 / ph, 2), fair_X=round(1 / pdr, 2), fair_2=round(1 / pa, 2),
                     fair_line=f'{best[0]:+.2f} @{best[1]}', fair_m05=fair[-0.5], fair_p05=fair[0.5],

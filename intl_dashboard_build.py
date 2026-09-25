@@ -149,17 +149,25 @@ def pick_source(mk):
     return None
 
 
-def ah_edges(xg_h, xg_a, mk):
-    """fair/edge στη γραμμη καθε book για γηπεδουχο (H) και φιλοξενουμενο (A) — ιδιος τυπος με intl_nl_shadow.py."""
+def _deep(deep):
+    """25/9 (γ): κατανομη βαθιων φαβορι απο (xg_h_D, xg_a_D) — None αν λειπει."""
+    if not deep or deep[0] is None or deep[1] is None or pd.isna(deep[0]) or pd.isna(deep[1]): return None
+    return picks.gd_dist(max(float(deep[0]), .05), max(float(deep[1]), .05))
+
+
+def ah_edges(xg_h, xg_a, mk, deep=None):
+    """fair/edge στη γραμμη καθε book για γηπεδουχο (H) και φιλοξενουμενο (A) — ιδιος τυπος με intl_nl_shadow.py.
+    25/9: φαβορι ≤ −2 με την «βαθια» κατανομη (intl_pricing.dist_for)· dog +x.25 με τον παλιο τροπο (intl_pricing, Σχεδιο Β)."""
     if xg_h is None or xg_a is None: return {}
-    dist = picks.gd_dist(max(xg_h, .05), max(xg_a, .05)); out = {}
+    dist = picks.gd_dist(max(xg_h, .05), max(xg_a, .05)); dd = _deep(deep); out = {}
     for lab in mk:
         b = mk.get(lab) or {}
         if b.get('ah_line') is None: out[lab] = None; continue
         line, oh, oa = b['ah_line'], b['oh'], b['oa']; rec = {}
         for side, ud, odds, tag in ((1, line, oh, 'home'), (-1, -line, oa, 'away')):
-            e = intl_pricing.ah_ev(dist, side, ud, odds, picks.MARGIN)
-            rec[f'ah_{tag}'] = round(e * 100, 1); rec[f'fair_{tag[0]}'] = intl_pricing.ah_fair(dist, side, ud)
+            dx = intl_pricing.dist_for(dist, dd, ud)
+            e = intl_pricing.ah_ev(dx, side, ud, odds, picks.MARGIN)
+            rec[f'ah_{tag}'] = round(e * 100, 1); rec[f'fair_{tag[0]}'] = intl_pricing.ah_fair(dx, side, ud)
         out[lab] = rec
     return out
 
@@ -178,17 +186,17 @@ def T_of(diff, Rh, Ra, ko=False, nl=True):
     return 0.29 + 0.33 * abs(diff) / 100 + 0.26 * ko + 0.49 * close + 0.10 * (Rh + Ra) / 2 / 100 - 0.05 * nl, close
 
 
-def pick_ah(xg_h, xg_a, mk, order, p1=None, p2=None, allow_x12=True):
+def pick_ah(xg_h, xg_a, mk, order, p1=None, p2=None, allow_x12=True, deep=None):
     """ΧΑΡΤΙΝΟ pick AH (+1Χ2 φαβ) με τους κανονες του intl_nl_shadow.py, στα books του `order` (πρωτο που περναει).
     Οπως στη σκια: ο ελεγχος 1Χ2 γινεται στο ΠΡΩΤΟ book (και «κλειδωνει» το pick πριν το δευτερο)."""
     if xg_h is None or xg_a is None: return ''
-    dist = picks.gd_dist(max(xg_h, .05), max(xg_a, .05)); pick = ''
+    dist = picks.gd_dist(max(xg_h, .05), max(xg_a, .05)); dd = _deep(deep); pick = ''
     for i, lab in enumerate(order):
         b = mk.get(lab) or {}
         if b.get('ah_line') is not None:
             line, oh, oa = b['ah_line'], b['oh'], b['oa']
             for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-                e = intl_pricing.ah_ev(dist, side, ud, odds, picks.MARGIN)
+                e = intl_pricing.ah_ev(intl_pricing.dist_for(dist, dd, ud), side, ud, odds, picks.MARGIN)
                 if not pick and 1.70 <= odds <= 2.10 and e >= .10 and abs(ud) >= 0.5:
                     pick = f"{'DOG' if ud >= 0.5 else 'FAV'} {'1' if side == 1 else '2'} {ud:+.2f} @{odds:.2f} ({LAB[lab]}, {e*100:+.0f}%)"
         if i == 0 and allow_x12 and b.get('o1'):
@@ -235,10 +243,12 @@ def over_edges(T, mk, labs):
     return out
 
 
-def version(Rh, Ra, vadj, diff, xg_h, xg_a, p1, px, p2, T=None):
+def version(Rh, Ra, vadj, diff, xg_h, xg_a, p1, px, p2, T=None, deep=None):
     if diff is None or pd.isna(diff): return None
     p1, px, p2 = float(p1), float(px), float(p2)
+    dh, da = (deep or (None, None))
     return dict(R_h=jf(Rh, 0), R_a=jf(Ra, 0), vadj=jf(vadj, 0), diff=jf(diff, 0), xg_h=jf(xg_h), xg_a=jf(xg_a), T=jf(T),
+                xg_h_D=(jf(dh, 3) if dh is not None and not pd.isna(dh) else None), xg_a_D=(jf(da, 3) if da is not None and not pd.isna(da) else None),
                 p1=round(p1), px=round(px), p2=round(p2),
                 fair_1=(round(100 / p1, 2) if p1 > 0 else None), fair_x=(round(100 / px, 2) if px > 0 else None), fair_2=(round(100 / p2, 2) if p2 > 0 else None))
 
@@ -317,16 +327,16 @@ for r in P.itertuples():
     TT = {'H': (T_H, close_H), 'A': (T_A, close_A), 'AV': (T_AV, close_A)}
     if ov is not None and T_H is not None and sget(ov, 'T_μοντ', None) is not None and abs(float(ov['T_μοντ']) - T_H) > 0.011:
         t_bad.append((key[2], float(ov['T_μοντ']), round(T_H, 2)))
-    vers = {'H': version(r.R_home, r.R_away, r.val_adj, r.diff, r.xg_h, r.xg_a, r.P1, r.PX, r.P2, T_H),
-            'A': version(rget(r, 'R_home_A'), rget(r, 'R_away_A'), 0, r.diff_A, r.xg_h_A, r.xg_a_A, r.P1_A, r.PX_A, r.P2_A, T_A) if pd.notna(rget(r, 'diff_A')) else None,
-            'AV': version(rget(r, 'R_home_A'), rget(r, 'R_away_A'), r.val_adj, r.diff_AV, r.xg_h_AV, r.xg_a_AV, r.P1_AV, r.PX_AV, r.P2_AV, T_AV) if pd.notna(rget(r, 'diff_AV')) else None}
+    vers = {'H': version(r.R_home, r.R_away, r.val_adj, r.diff, r.xg_h, r.xg_a, r.P1, r.PX, r.P2, T_H, (rget(r, 'xg_h_D'), rget(r, 'xg_a_D'))),
+            'A': version(rget(r, 'R_home_A'), rget(r, 'R_away_A'), 0, r.diff_A, r.xg_h_A, r.xg_a_A, r.P1_A, r.PX_A, r.P2_A, T_A, (rget(r, 'xg_h_A_D'), rget(r, 'xg_a_A_D'))) if pd.notna(rget(r, 'diff_A')) else None,
+            'AV': version(rget(r, 'R_home_A'), rget(r, 'R_away_A'), r.val_adj, r.diff_AV, r.xg_h_AV, r.xg_a_AV, r.P1_AV, r.PX_AV, r.P2_AV, T_AV, (rget(r, 'xg_h_AV_D'), rget(r, 'xg_a_AV_D'))) if pd.notna(rget(r, 'diff_AV')) else None}
     # --- edges ανα εκδοχη, ανα book (Nowgoal over-edges απο CSV = ιδια με σημερα· TOA over-edges υπολογιζονται εδω) ---
     edges = {}
     for v, suf in (('H', ''), ('A', '_A'), ('AV', '_AV')):
         V = vers[v]
         if V is None: edges[v] = None; continue
         books_here = {lab: mk[lab] for lab in TOA_BOOKS + ('crown', 'sbobet')}
-        e = ah_edges(V['xg_h'], V['xg_a'], books_here)
+        e = ah_edges(V['xg_h'], V['xg_a'], books_here, (V.get('xg_h_D'), V.get('xg_a_D')))
         for _, lab in BOOKS:
             L = LAB[lab]
             if e.get(lab) is not None:
@@ -351,7 +361,7 @@ for r in P.itertuples():
         for v, allow in (('H', True), ('A', False), ('AV', True)):
             V = vers[v]
             if V is None: pk[v] = ''; continue
-            pk[v] = pick_ah(V['xg_h'], V['xg_a'], mk, order, V['p1'], V['p2'], allow_x12=allow)
+            pk[v] = pick_ah(V['xg_h'], V['xg_a'], mk, order, V['p1'], V['p2'], allow_x12=allow, deep=(V.get('xg_h_D'), V.get('xg_a_D')))
             if dead: pk[v] = 'ΟΧΙ (νεκρη ' + dead + ')' if v == 'H' else 'ΟΧΙ (νεκρη)'
         pk_over = {v: (pick_over(TT[v][0], TT[v][1], mk, order) if vers[v] is not None else '') for v in VERS}
         pk_d = dict(H=pk['H'], A=pk['A'], AV=pk['AV'], over=pk_over['H'], over_A=pk_over['A'], over_AV=pk_over['AV'])

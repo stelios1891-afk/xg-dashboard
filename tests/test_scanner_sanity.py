@@ -647,12 +647,24 @@ def test_f_intl_ah_quarters_split():
     """AH εθνικων (25/9, αποφαση Στελιου): τεταρτο = μισο/μισο στις διπλανες γραμμες· μισες/ακεραιες ιδιες με το picks.p_cover."""
     import picks, intl_pricing as ip
     dist = picks.gd_dist(1.6, 1.0)
-    for side, ud, o in ((1, -0.75, 1.95), (-1, 1.25, 1.90), (1, -1.25, 2.05), (-1, 0.75, 1.85)):
+    for side, ud, o in ((1, -0.75, 1.95), (1, -1.25, 2.05), (-1, 0.75, 1.85), (1, -2.25, 2.0)):
         avg = (ip.ah_ev(dist, side, ud - .25, o, picks.MARGIN) + ip.ah_ev(dist, side, ud + .25, o, picks.MARGIN)) / 2
         assert abs(ip.ah_ev(dist, side, ud, o, picks.MARGIN) - avg) < 1e-12, f'τεταρτο {ud}: δεν ειναι μισο/μισο'
     pw, pp = picks.p_cover(dist, 1, -0.5); old = pw * (1.95 - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
     assert abs(ip.ah_ev(dist, 1, -0.5, 1.95, picks.MARGIN) - old) < 1e-12, 'μιση γραμμη: διαφορα απο p_cover'
     assert abs(ip.ah_ev(dist, 1, -0.75, ip.ah_fair(dist, 1, -0.75), 0.0)) < 0.01, 'fair τιμη τεταρτου δεν δινει ~0'
+    # 25/9 (β) Σχεδιο Β: dog +x.25 με τον ΠΑΛΙΟ τροπο (p_cover στη γραμμη), τα αλλα τεταρτα σωστα
+    for ud in (0.25, 1.25, 2.25):
+        pw, pp = picks.p_cover(dist, -1, ud); old = pw * (1.9 - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+        assert abs(ip.ah_ev(dist, -1, ud, 1.9, picks.MARGIN) - old) < 1e-12, f'Σχεδιο Β: dog +{ud} δεν τιμολογειται με τον παλιο τροπο'
+    # 25/9 (γ) βαθια φαβορι: dist_for διαλεγει τη «βαθια» κατανομη ΜΟΝΟ για ≤ −2
+    dd = picks.gd_dist(1.4, 1.0)
+    assert ip.dist_for(dist, dd, -2.0) is dd and ip.dist_for(dist, dd, -2.5) is dd and ip.dist_for(dist, dd, -1.75) is dist and ip.dist_for(dist, dd, 1.25) is dist
+    assert ip.dist_for(dist, None, -3.0) is dist
+    cfg = json.load(open(os.path.join(ROOT, 'intl_deepfav_config.json'), encoding='utf-8'))['a_deep']
+    assert 0.0038 < cfg['H'] < 0.0048 and 0.0045 < cfg['A'] < 0.0055 and 0.0038 < cfg['AV'] < 0.0048, cfg
+    import intl_picks_ledger as L
+    assert L.variant_of(dict(mkt='AH', line=1.25)).startswith('Σχ.Β') and L.variant_of(dict(mkt='AH', line=-2.5)).startswith('βαθυ') and L.variant_of(dict(mkt='AH', line=-1.5)) == ''
     src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
     assert 'intl_pricing.ah_ev' in src and 'picks.p_cover(dist, side, ud); e = pw' not in src, 'το dashboard build δεν χρησιμοποιει σωστα τεταρτα AH'
 

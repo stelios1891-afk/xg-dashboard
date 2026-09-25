@@ -40,6 +40,18 @@ def pick_key(comp, m, stream, p):
     return f"{comp}|{m['home']}|{m['away']}|{m['utc']}|{stream}|{p['mkt']}|{p['side']}"
 
 
+def variant_of(p):
+    """25/9: σημαια για τα picks των δυο αλλαγων (παρακολουθηση σε πραγματικα ματς): Σχεδιο Β = dog +x.25 με τον παλιο τροπο · βαθυ φαβορι = ≤ −2 με σωστη υπεροχη."""
+    if p.get('mkt') != 'AH':
+        return ''
+    L = float(p['line'])
+    if L > 0 and abs(L % 1 - 0.25) < 1e-9:
+        return 'Σχ.Β (+x.25 παλιος τροπος)'
+    if L <= -2 + 1e-9:
+        return 'βαθυ φαβορι (σωστη υπεροχη)'
+    return ''
+
+
 def new_entries(dash, known, now):
     """Καθαρη λογικη (testable): νεες εγγραφες για picks που εμφανιζονται τωρα μεσα στο παραθυρο και δεν εχουν καταγραφει."""
     out = []
@@ -64,7 +76,7 @@ def new_entries(dash, known, now):
                                     ko=m['utc'], first_seen=now.strftime('%Y-%m-%d %H:%M'), hours_before=round(hours, 1),
                                     mkt=p['mkt'], role=p['role'], side=p['side'], line=p['line'], odds=p['odds'], book=p['book'],
                                     edge=p['edge'], models=p.get('models', stream), label=ic.label(p, m['home'], m['away']),
-                                    late=ic.late_note(hours), market_ts=(m.get('market') or {}).get('ts')))
+                                    late=ic.late_note(hours), market_ts=(m.get('market') or {}).get('ts'), variant=variant_of(p)))
     return out
 
 
@@ -119,7 +131,7 @@ def tg_new_msg(rs):
         if d != cur:
             out.append(('\n' if cur is None else '') + f"📅 {d}"); cur = d
         out.append(f"{r['comp']} {t.strftime('%H:%M')} · {r['home']} - {r['away']}")
-        out.append(f"{r['label']} ({r['book']}) · edge {r['edge'] * 100:.0f}% · {r['models']} · ~¼ μον.")
+        out.append(f"{r['label']} ({r['book']}) · edge {r['edge'] * 100:.0f}% · {r['models']} · ~¼ μον." + (f" · {r['variant']}" if r.get('variant') else ''))
         if r.get('late'):
             out.append(f"⏱ {r['late']}")
         out.append('')

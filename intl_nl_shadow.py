@@ -59,6 +59,8 @@ for r in P.itertuples():
     rec = dict(comp=r.comp, utc=r.utc[:16], ματς=f'{r.home} - {r.away}', diff=int(r.diff), λ=f'{r.xg_h:.2f}-{r.xg_a:.2f}', p1X2=f'{r.P1}/{r.PX}/{r.P2}', diff_A=(int(r.diff_A) if pd.notna(r.diff_A) else np.nan), λ_A=(f'{r.xg_h_A:.2f}-{r.xg_a_A:.2f}' if pd.notna(r.xg_h_A) else '—'), p1X2_A=(f'{r.P1_A:.0f}/{r.PX_A:.0f}/{r.P2_A:.0f}' if pd.notna(r.P1_A) else '—'),
                diff_AV=(int(r.diff_AV) if pd.notna(r.diff_AV) else np.nan), λ_AV=(f'{r.xg_h_AV:.2f}-{r.xg_a_AV:.2f}' if pd.notna(r.xg_h_AV) else '—'), p1X2_AV=(f'{r.P1_AV:.0f}/{r.PX_AV:.0f}/{r.P2_AV:.0f}' if pd.notna(r.P1_AV) else '—'))
     distA = picks.gd_dist(max(r.xg_h_A, .05), max(r.xg_a_A, .05)) if pd.notna(r.xg_h_A) else None; pickA = ''
+    _dg = lambda h, a: picks.gd_dist(max(h, .05), max(a, .05)) if (pd.notna(h) and pd.notna(a)) else None      # 25/9 (γ) βαθια φαβορι ≤ −2
+    ddH, ddA, ddAV = _dg(getattr(r, 'xg_h_D', np.nan), getattr(r, 'xg_a_D', np.nan)), _dg(getattr(r, 'xg_h_A_D', np.nan), getattr(r, 'xg_a_A_D', np.nan)), _dg(getattr(r, 'xg_h_AV_D', np.nan), getattr(r, 'xg_a_AV_D', np.nan))
     distAV = picks.gd_dist(max(r.xg_h_AV, .05), max(r.xg_a_AV, .05)) if pd.notna(r.xg_h_AV) else None; pickAV = ''          # 25/9: εκδοχη AV = αγκυρα + αξια ροστερ (ιδιοι κανονες)
     fh_, fa_ = call_flag(r.home), call_flag(r.away)
     if fh_ or fa_:
@@ -78,18 +80,18 @@ for r in P.itertuples():
         rec[lab] = f'{line:+.2f} {oh:.2f}/{oa:.2f}'
         if distA is not None:
             for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-                e = intl_pricing.ah_ev(distA, side, ud, odds, picks.MARGIN)
+                e = intl_pricing.ah_ev(intl_pricing.dist_for(distA, ddA, ud), side, ud, odds, picks.MARGIN)
                 rec[f'{lab}_edgeA_{"H" if side == 1 else "A"}'] = f'{e*100:+.0f}%'
                 if not pickA and 1.70 <= odds <= 2.10 and e >= .10 and abs(ud) >= 0.5:
                     pickA = f"{'DOG' if ud >= 0.5 else 'FAV'} {'1' if side==1 else '2'} {ud:+.2f} @{odds:.2f} ({lab}, {e*100:+.0f}%)"
         if distAV is not None:
             for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-                e = intl_pricing.ah_ev(distAV, side, ud, odds, picks.MARGIN)
+                e = intl_pricing.ah_ev(intl_pricing.dist_for(distAV, ddAV, ud), side, ud, odds, picks.MARGIN)
                 rec[f'{lab}_edgeAV_{"H" if side == 1 else "A"}'] = f'{e*100:+.0f}%'
                 if not pickAV and 1.70 <= odds <= 2.10 and e >= .10 and abs(ud) >= 0.5:
                     pickAV = f"{'DOG' if ud >= 0.5 else 'FAV'} {'1' if side==1 else '2'} {ud:+.2f} @{odds:.2f} ({lab}, {e*100:+.0f}%)"
         for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-            e = intl_pricing.ah_ev(dist, side, ud, odds, picks.MARGIN); fo = intl_pricing.ah_fair(dist, side, ud) or 99
+            dx = intl_pricing.dist_for(dist, ddH, ud); e = intl_pricing.ah_ev(dx, side, ud, odds, picks.MARGIN); fo = intl_pricing.ah_fair(dx, side, ud) or 99
             tag = 'H' if side == 1 else 'A'; rec[f'{lab}_fair_{tag}'] = round(fo, 2); rec[f'{lab}_edge_{tag}'] = f'{e*100:+.0f}%'
             if not pick and 1.70 <= odds <= 2.10 and e >= .10:
                 if ud >= 0.5: pick = f"DOG {'1' if side==1 else '2'} {ud:+.2f} @{odds:.2f} ({lab}, {e*100:+.0f}%)"
