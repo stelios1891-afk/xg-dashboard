@@ -16,7 +16,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_F = os.path.join(ROOT, 'intl_projections_dashboard.json')
 LOGO = cards.LOGO
 
-COMPS = ['NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
+COMPS = ['NL A', 'NL B', 'NL C', 'NL D']      # 25/9: AFCONQ αφαιρεθηκε (Αφρικη κλειστη, αποφαση Στελιου)
 COMP_LABEL = {'NL A': 'Nations League A', 'NL B': 'Nations League B', 'NL C': 'Nations League C', 'NL D': 'Nations League D',
               'AFCONQ': 'AFCON 2027 προκριματικα'}
 VERS = [('H', 'H + αξια'), ('A', 'Αγκυρα'), ('AV', 'Αγκυρα + αξια')]
@@ -34,7 +34,6 @@ HOWTO = [
     'κανονες pick (ιδιοι σε καθε πηγη): AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · 1Χ2 φαβορι ≥75% · '
     'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
     '**ΣΚΙΑ / ΧΑΡΤΙΝΟ:** τιποτα εδω δεν παιζεται live — καταγραφη για κριση με πραγματικα δεδομενα (ledger). '
-    '**AFCONQ:** αγκυρα μη διαθεσιμη για CAF → μονο Μοντελο 1 (HFA 80)· αγορα μονο Nowgoal.',
     '**Bovada** (NL B-D, 25/9): οπου δεν υπαρχει Pinnacle, 1Χ2 + AH + O/U απο Bovada (Odds API) με **μειωμενη γκανιοτα**: '
     'αφαιρειται η διαφορα γκανιοτας Bovada − Pinnacle ανα αγορα, μετρημενη στα ματς League A της **ιδιας μερας** (κοντα στη σεντρα ~2 μοναδες, '
     '3-5 μερες πριν ~0.5)· ετσι ενα group με ακριβοτερο Bovada κραταει την επιπλεον γκανιοτα του. Hover στο badge = ωμες τιμες & γκανιοτες.',

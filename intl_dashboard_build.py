@@ -380,8 +380,9 @@ if t_bad: print(f'NL: T_μοντ CSV vs υπολογισμος: {len(t_bad)} α�
 
 # ============================ AFCONQ (μονο H, μονο Nowgoal — χωρις TOA key) ============================
 AQ = _load_csv('intl_afconq_shadow_2627.csv', dtype={'ng': str}); AQO = _load_csv('intl_afconq_overs_2627.csv'); NGQ = _load_json('intl_ng_now_afconq.json', {})
-if AQ is None:
-    print('AFCONQ: παραλειπεται (λειπει intl_afconq_shadow_2627.csv)')
+INCLUDE_AFCONQ = False      # 25/9/2026 αποφαση Στελιου: η Αφρικη ΚΛΕΙΝΕΙ (intl_africa_lab: τιποτα κερδοφορο σε 1.284 ματς) → εκτος dashboard
+if AQ is None or not INCLUDE_AFCONQ:
+    print('AFCONQ: παραλειπεται (Αφρικη κλειστη 25/9)' if not INCLUDE_AFCONQ else 'AFCONQ: παραλειπεται (λειπει intl_afconq_shadow_2627.csv)')
 else:
     AQOD = {}
     if AQO is not None:
@@ -430,7 +431,7 @@ out = dict(generated=dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%d %H:%M')
            toa_scanned=(str(TOA.get('scanned_at', '')).replace('T', ' ') or None) if TOA_ODDS else None, toa_matches=n_toa,
            ng_snapshot=_snap(nl_ms) or (dt.datetime.fromtimestamp(os.path.getmtime('intl_ng_now.json'), dt.timezone.utc).strftime('%Y-%m-%d %H:%M') if os.path.exists('intl_ng_now.json') else None),
            ng_snapshot_afconq=_snap(comps['AFCONQ']),
-           comps=[dict(comp=c, matches=ms) for c, ms in comps.items()], rules=RULES, versions={'H': 'Rating H3 + αξια ροστερ', 'A': 'Αγκυρα αγορας (λ=0.3) χωρις αξια', 'AV': 'Αγκυρα + αξια ροστερ'})
+           comps=[dict(comp=c, matches=ms) for c, ms in comps.items() if c != 'AFCONQ' or INCLUDE_AFCONQ], rules=RULES, versions={'H': 'Rating H3 + αξια ροστερ', 'A': 'Αγκυρα αγορας (λ=0.3) χωρις αξια', 'AV': 'Αγκυρα + αξια ροστερ'})
 # γραψε ΜΟΝΟ αν αλλαξε κατι πέρα απο το 'generated' (στο Actions τρεχει καθε τικ — αλλιως commit καθε 5')
 _prev = _load_json(OUT, None)
 _same = isinstance(_prev, dict) and {k: v for k, v in _prev.items() if k != 'generated'} == json.loads(json.dumps({k: v for k, v in out.items() if k != 'generated'}))
