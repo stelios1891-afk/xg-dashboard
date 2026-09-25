@@ -97,7 +97,9 @@ for comp, lid in COMPS.items():
             if rem[tt] == 0: ok = False
             alive[tt] = ok
 F['alive_h'] = F.hid.map(alive); F['alive_a'] = F.aid.map(alive)
-F = F[F.utc <= '2026-10-01']          # πρωτο παραθυρο
+import datetime as _dt
+_lim = (_dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(days=10)).strftime('%Y-%m-%dT%H:%M')
+F = F[F.utc <= _lim]          # 25/9: τρεχον παραθυρο = ματς των επομενων 10 ημερων (ηταν σταθερο '2026-10-01' → το αυτοματο refresh πιανει και τα επομενα παραθυρα)
 out = []
 for r in F.itertuples():
     if r.hid not in R.index or r.aid not in R.index:

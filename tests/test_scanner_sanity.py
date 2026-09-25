@@ -689,3 +689,19 @@ def test_f_intl_consensus_and_ledger():
         for k, v in old.items():
             if v is not None:
                 os.environ[k] = v
+
+
+def test_g_intl_refresh_guards():
+    """Αυτοματο refresh εθνικων (25/9): βαση χωρις διπλα, Μ1 κλειδωμενο στο H3, λ αγκυρας 0.3, closing Odds API για τα νεα ματς."""
+    import pandas as pd, intl_dedupe
+    f = os.path.join(ROOT, 'intl_matches.csv')
+    if os.path.exists(f):
+        M = pd.read_csv(f, dtype={'mid': str, 'season': str})
+        intl_dedupe.assert_clean(M, where='test')
+        assert M.mid.is_unique, 'διπλα mid στο intl_matches.csv'
+    src = open(os.path.join(ROOT, 'intl_refresh.py'), encoding='utf-8').read()
+    assert "INTL_PIN_VARIANT='H3'" in src, 'το refresh πρεπει να κλειδωνει το Μ1 στο H3'
+    anc = open(os.path.join(ROOT, 'intl_mkt_anchor.py'), encoding='utf-8').read()
+    assert 'run(0.3, keep=True)' in anc and 'intl_closing.jsonl' in anc and 'intl_close_hist.json' in anc
+    if os.path.exists(os.path.join(ROOT, 'intl_hfa_config.json')):
+        assert json.load(open(os.path.join(ROOT, 'intl_hfa_config.json'), encoding='utf-8'))['variant'] == 'H3'
