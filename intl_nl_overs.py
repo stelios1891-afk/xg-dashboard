@@ -21,6 +21,7 @@ def line_of(s):
     s = str(s)
     if '/' in s: a, b = s.split('/'); return (float(a) + float(b)) / 2
     return float(s)
+import intl_pricing   # 25/9 (Στελιος): σωστο edge over (push/μισα)
 def p_over(T, line):
     kmax = int(math.floor(line)); p = 1 - sum(math.exp(-T) * T ** k / math.factorial(k) for k in range(kmax + 1))
     if float(line).is_integer(): p_push = math.exp(-T) * T ** int(line) / math.factorial(int(line)); return p, p_push
@@ -54,11 +55,11 @@ for r in P.itertuples():
             mt, g, u, d, _ = ou[-1]
             try: line = line_of(g); oo = float(u) + 1; ou_ = float(d) + 1
             except Exception: rec[lab] = '—'; continue
-            po, pp = p_over(T, line); e = po * oo - 1 + 0 * pp; rec[lab] = f'{line:g} {oo:.2f}/{ou_:.2f}'; rec[f'{lab}_p_over'] = f'{po*100:.0f}%'; rec[f'{lab}_edge'] = f'{e*100:+.0f}%'
-            if pd.notna(T_mix): pm, _ = p_over(T_mix, line); rec[f'{lab}_edge_μαζι'] = f'{(pm*oo-1)*100:+.0f}%'
+            e = intl_pricing.over_ev(T, line, oo); po = intl_pricing.over_p_equiv(T, line, oo); rec[lab] = f'{line:g} {oo:.2f}/{ou_:.2f}'; rec[f'{lab}_p_over'] = f'{po*100:.0f}%'; rec[f'{lab}_edge'] = f'{e*100:+.0f}%'
+            if pd.notna(T_mix): rec[f'{lab}_edge_μαζι'] = f'{intl_pricing.over_ev(T_mix, line, oo)*100:+.0f}%'
             if e >= .08 and not best: best = (f'OVER {line:g} @{oo:.2f} ({lab}, {e*100:+.0f}%)' if close else f'(εκτος κανονα: αναντιστοιχια, edge {e*100:+.0f}% {lab})')
             for v_, (Tv, closeV) in TV.items():
-                pv, _ = p_over(Tv, line); ev_ = pv * oo - 1; rec[f'{lab}_edge_{v_}'] = f'{ev_*100:+.0f}%'
+                ev_ = intl_pricing.over_ev(Tv, line, oo); rec[f'{lab}_edge_{v_}'] = f'{ev_*100:+.0f}%'
                 if ev_ >= .08 and not bestV[v_]: bestV[v_] = (f'OVER {line:g} @{oo:.2f} ({lab}, {ev_*100:+.0f}%)' if closeV else f'(εκτος κανονα: αναντιστοιχια, edge {ev_*100:+.0f}% {lab})')
         ia = line_of(o.get('init_ou')); rec['αρχικη_OU'] = f'{ia:g}' if pd.notna(ia) else '—'
     rec['PICK_over'] = best

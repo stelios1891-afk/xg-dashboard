@@ -15,6 +15,7 @@ import numpy as np, pandas as pd
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.abspath(__file__)); os.chdir(ROOT); sys.path.insert(0, ROOT)
 import picks
+import intl_pricing   # 25/9 (Στελιος): σωστο edge over (push/μισα)
 
 OUT = 'intl_projections_dashboard.json'
 TOA_F = 'intl_odds_latest.json'
@@ -203,7 +204,7 @@ def pick_over(T, close, mk, order):
     for lab in order:
         b = mk.get(lab) or {}
         if b.get('ou_line') is None: continue
-        po, _ = p_over(T, b['ou_line']); e = po * b['over'] - 1
+        e = intl_pricing.over_ev(T, b['ou_line'], b['over'])      # 25/9: σωστο (ηταν P(>floor)·τιμη−1)
         if e >= .08:
             return (f'OVER {b["ou_line"]:g} @{b["over"]:.2f} ({LAB[lab]}, {e*100:+.0f}%)' if close
                     else f'(εκτος κανονα: αναντιστοιχια, edge {e*100:+.0f}% {LAB[lab]})')
@@ -229,7 +230,8 @@ def over_edges(T, mk, labs):
     for lab in labs:
         b = mk.get(lab) or {}
         if T is None or b.get('ou_line') is None: continue
-        po, _ = p_over(T, b['ou_line']); out[lab] = (round((po * b['over'] - 1) * 100, 1), round(po * 100, 1))
+        e = intl_pricing.over_ev(T, b['ou_line'], b['over']); po = intl_pricing.over_p_equiv(T, b['ou_line'], b['over'])
+        out[lab] = (round(e * 100, 1), round(po * 100, 1))
     return out
 
 

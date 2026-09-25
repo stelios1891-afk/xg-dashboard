@@ -630,3 +630,14 @@ def test_f_intl_elo_walk_starts_after_seed():
         src = open(p, encoding='utf-8').read()
         assert needle in src, f'{f}: η εναρξη του υπολογισμου δεν ειναι η επομενη μερα της αφετηριας eloratings'
         assert "'2019-07-01'" not in src.replace("ηταν '2019-07-01'", ''), f'{f}: εμεινε εναρξη 1/7/2019 (επικαλυψη με την αφετηρια)'
+
+
+def test_f_intl_over_pricing_push_aware():
+    """Over εθνικων (25/9, αποφαση Στελιου): σωστο edge με push/μισα — x.25/x.75 ΔΕΝ ειναι x.5, οι ακεραιες επιστρεφουν στο push."""
+    import intl_pricing as ip
+    for line, exp in ((2.25, 0.154), (2.5, 0.035), (2.75, -0.071), (3.0, -0.177)):
+        got = ip.over_ev(2.8, line, 1.95)
+        assert abs(got - exp) < 0.002, f'over {line} @1.95, T 2.8: edge {got:+.3f}, αναμενομενο {exp:+.3f}'
+    assert abs(ip.over_ev(2.8, 2.5, ip.over_fair(2.8, 2.5))) < 1e-6, 'fair τιμη δεν δινει edge 0'
+    src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
+    assert 'intl_pricing.over_ev' in src and "po, _ = p_over(T, b['ou_line']); e = po" not in src, 'το dashboard build δεν χρησιμοποιει τον σωστο τυπο over'
