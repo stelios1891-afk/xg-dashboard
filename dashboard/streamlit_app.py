@@ -13,6 +13,31 @@ import streamlit as st
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+
+def _reload_changed_modules():
+    """25/9/2026: το Streamlit Cloud κραταει στη μνημη τα modules του project (value_view κλπ) και μετα απο push
+    ξανατρεχει μονο αυτο το αρχειο → νεος κωδικας εδω + παλιος εκει = σφαλματα (KeyError stake_final στα picks εθνικων).
+    Ξαναφορτωνει καθε δικο μας module που αλλαξε στον δισκο (και μια φορα ολα, την πρωτη φορα μετα το deploy)."""
+    import importlib
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for name, mod in list(sys.modules.items()):
+        f = getattr(mod, '__file__', None)
+        if name == '__main__' or not f or not os.path.abspath(f).startswith(root):
+            continue
+        try:
+            mt = os.path.getmtime(f)
+        except OSError:
+            continue
+        if getattr(mod, '_loaded_mtime', None) != mt:
+            try:
+                importlib.reload(mod)
+            except Exception:
+                pass
+            mod._loaded_mtime = mt
+
+
+_reload_changed_modules()
 import build_data
 import cards
 import goal_stats
