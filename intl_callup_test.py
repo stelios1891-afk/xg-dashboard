@@ -172,5 +172,15 @@ for mdl in ('M1', 'M2', 'M3'):
     for bk in ('Crown', 'SBOBET'):
         s = B[(B.model == mdl) & (B.book == bk)]
         P_(f'  {mdl} {bk:6s}: ' + ' · '.join(f"{g}: n{len(x)} {x.pnl.mean() * 100:+.1f}%" for g, x in s.groupby('ομαδα')))
+# 25/9 (Στελιος: «ιδανικα η αξια της αποστολης που επροκειτο να παιξει») — ιδια αναλυση (β) με τις απουσιες του ΙΔΙΟΥ ματς (V_own)
+B2 = pd.read_csv('intl_window_test_proper_ahproper_bets.csv', dtype={'mid': str, 'season': str})
+B2 = B2[(B2.win == '72ω') & B2.rule.str.startswith('AH')].merge(E[['mid', 'l_abs_own']], on='mid', how='inner').replace([np.inf, -np.inf], np.nan).dropna(subset=['l_abs_own'])
+B2['g'] = np.where(B2.side == 1, B2.l_abs_own, -B2.l_abs_own)
+B2['ομαδα'] = np.where(B2.g < -0.10, 'η ΔΙΚΗ μας χωρις βασικους', np.where(B2.g > 0.10, 'ο ΑΝΤΙΠΑΛΟΣ χωρις βασικους', 'παρομοια'))
+P_('\n(β2) ιδιο με (β) αλλα απουσιες = αποστολη του ΙΔΙΟΥ ματς (V_own — «αυτοι που επροκειτο να παιξουν»)')
+for mdl in ('M1', 'M2', 'M3'):
+    for bk in ('Crown', 'SBOBET'):
+        s = B2[(B2.model == mdl) & (B2.book == bk)]
+        P_(f'  {mdl} {bk:6s}: ' + ' · '.join(f"{g}: n{len(x)} {x.pnl.mean() * 100:+.1f}%" for g, x in s.groupby('ομαδα')))
 E.to_csv('intl_callup_test_events.csv', index=False)
 open('intl_callup_test_out.txt', 'w', encoding='utf-8').write('\n'.join(out))

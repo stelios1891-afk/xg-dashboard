@@ -158,11 +158,12 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
     miss = []
     pl = played.get(tid) or {}
     topv = max((latest_val(p) or 0) for p in pl) if pl else 0
-    # 25/9: οσοι ΝΤΥΘΗΚΑΝ σε ματς του τρεχοντος παραθυρου (FotMob) ειναι κληθεντες — ακομα κι αν λειπουν απο τη λιστα TM (αντικαταστασεις, π.χ. Brobbey 24/9)
+    # 25/9 (διορθωση Στελιου): η λιστα TM ΕΙΝΑΙ η αποστολη που θα παιξει — οποιος ντυθηκε σε προηγουμενο ματς του παραθυρου αλλα ΔΕΝ ειναι πια
+    # στη λιστα, ΑΠΟΧΩΡΗΣΕ (π.χ. Brobbey τραυματιστηκε 24/9) → μετραει ως απουσια, με σημειωση left=True.
     dressed_now = {int(p_) for m_, rec_ in SQH.items() if str(mid2date.get(str(m_), ''))[:10] >= WIN0 and mid2teams.get(str(m_))
                    for sk_, t_ in zip(('h', 'a'), mid2teams[str(m_)]) if int(t_) == tid for p_ in ((rec_.get(sk_) or {}).get('p') or {})}
     for pid, nst in pl.items():
-        if nst < 2 or int(pid) in dressed_now:
+        if nst < 2:
             continue
         v = latest_val(pid)
         if not v or not topv or v < 0.30 * topv:
@@ -174,7 +175,7 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
         # ταιριαζει με καποιον της κλησης; (>=2 κοινα tokens Ή ολο το επωνυμο)
         matched = name_in_call(pnm, called_names)      # 25/9: ταιριασμα με επωνυμο/παρομοια γραφη
         if not matched:
-            miss.append(dict(pid=pid, nm=pnm, mv=round(v / 1e6, 1), starts=nst))
+            miss.append(dict(pid=pid, nm=pnm, mv=round(v / 1e6, 1), starts=nst, left=int(pid) in dressed_now))
     miss.sort(key=lambda x: -x['mv'])
     OUT[tid] = dict(nm=nm, tm=f'{slug}/{vid}', v_call_m=v_call, n_sq=len(called_names), missing=miss[:4], dressed_now=len(dressed_now),
                     called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'))   # 25/9: ολη η λιστα (για επαληθευση)

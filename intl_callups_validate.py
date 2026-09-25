@@ -3,7 +3,8 @@ intl_callups_validate.py — ΕΠΑΛΗΘΕΥΣΗ ΟΤΙ Η ΚΛΗΣΗ TRANSFERM
 Για καθε ομαδα που εχει ΗΔΗ παιξει στο τρεχον παραθυρο (FotMob αποστολη = 11 βασικοι + ολος ο παγκος, intl_squads.json):
   καλυψη = ποσοι απο οσους ΝΤΥΘΗΚΑΝ υπαρχουν στη λιστα κλησης TM (intl_vcall_tm.json 'called').
     ≥90% → η λιστα ειναι η τρεχουσα ✓ · 75-90% → ελεγχος · <75% → ΛΑΘΟΣ/παλια λιστα ✗
-  ψευδεις απουσιες = παικτες της σημαιας «λειπουν» που ΟΜΩΣ ντυθηκαν → η σημαια ειναι λαθος.
+  αποχωρησαν = ντυθηκαν σε ματς του παραθυρου ΠΡΙΝ το τραβηγμα αλλα ΔΕΝ ειναι πια στη λιστα TM (τραυματισμος/αποχωρηση, π.χ. Brobbey 24/9 —
+  διορθωση Στελιου: η λιστα TM ειναι η αποστολη που θα παιξει, αυτοι ΛΕΙΠΟΥΝ στο επομενο ματς). Ελεγχος τους με ειδησεις αν ειναι σημαντικοι.
 Ομαδες που δεν εχουν παιξει ακομα: δεν επαληθευονται εδω (ξανατρεχει μετα το 1ο τους ματς).
 Εξοδος: intl_callups_validate_out.txt
 """
@@ -46,12 +47,12 @@ rows.sort(key=lambda x: x['cov'])
 for x in rows:
     verdict = '✓ τρεχουσα' if x['cov'] >= 0.90 else ('? ελεγχος' if x['cov'] >= 0.75 else '✗ ΛΑΘΟΣ/ΠΑΛΙΑ')
     P_(f"  {x['team']:22s} {x['date']} ({x['match']}): ντυθηκαν {x['dressed']:2d} · στη λιστα TM {x['cov'] * 100:5.1f}% · κληση TM {x['n_call']} · {verdict}"
-       + (f" · εκτος λιστας: {', '.join(x['not_in_call'][:5])}" if x['not_in_call'] else '')
-       + (f" · ⚠ ΨΕΥΔΗΣ ΑΠΟΥΣΙΑ (επαιξε): {', '.join(x['false_abs'])}" if x['false_abs'] else ''))
+       + (f" · ντυθηκαν αλλα ΔΕΝ ειναι πια στη λιστα (αποχωρησαν;): {', '.join(x['not_in_call'][:5])}" if x['not_in_call'] else '')
+       + (f" · σημαια «λειπει» για το επομενο ματς: {', '.join(x['false_abs'])}" if x['false_abs'] else ''))
 if rows:
     ok = sum(1 for x in rows if x['cov'] >= 0.90)
     P_(f'\nΣΥΝΟΛΟ: {ok}/{len(rows)} ομαδες-ματς με ≥90% καλυψη · μεση καλυψη {sum(x["cov"] for x in rows) / len(rows) * 100:.1f}% · '
-       f'ψευδεις απουσιες {sum(len(x["false_abs"]) for x in rows)}')
+       f'αποχωρησαν μετα απο ματς του παραθυρου (βασικοι με σημαια) {sum(len(x["false_abs"]) for x in rows)}')
 played = {x['team'] for x in rows}
 P_(f'ομαδες με κληση που ΔΕΝ εχουν παιξει ακομα (ανεπαληθευτες): {sorted(v["nm"] for v in VC.values() if v["nm"] not in played)}')
 open('intl_callups_validate_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
