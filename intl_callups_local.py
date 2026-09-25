@@ -13,7 +13,7 @@ import os, sys, subprocess, datetime as dt, time
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 os.chdir(ROOT)
-PY = sys.executable
+PY = sys.executable.replace('pythonw.exe', 'python.exe')      # τα παιδια με python.exe (κρυφα, CREATE_NO_WINDOW)
 LOG = os.path.join(ROOT, 'intl_callups_local.log')
 FILES = ['intl_vcall_tm.json', 'intl_projections.csv', 'intl_nl_shadow_2627.csv', 'intl_nl_overs_2627.csv',
          'intl_projections_dashboard.json', 'intl_callups_validate_out.txt']
@@ -22,13 +22,17 @@ ENV = dict(os.environ, PYTHONIOENCODING='utf-8')
 
 def log(msg):
     line = f"[{dt.datetime.now().strftime('%Y-%m-%d %H:%M')}] {msg}"
-    print(line, flush=True)
+    try:
+        print(line, flush=True)
+    except Exception:          # pythonw (χωρις κονσολα): δεν υπαρχει stdout
+        pass
     with open(LOG, 'a', encoding='utf-8') as fh:
         fh.write(line + '\n')
 
 
 def run(args, timeout=900):
-    r = subprocess.run(args, cwd=ROOT, env=ENV, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=timeout)
+    r = subprocess.run(args, cwd=ROOT, env=ENV, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=timeout,
+                       creationflags=(0x08000000 if os.name == 'nt' else 0))      # CREATE_NO_WINDOW: χωρις παραθυρα στην οθονη
     return r.returncode, ((r.stdout or '') + (r.stderr or '')).strip()
 
 
