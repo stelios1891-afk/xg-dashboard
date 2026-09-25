@@ -53,7 +53,10 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
         run: |
-          python intl_callups_tm.py
+          # καταγραφη ΠΑΝΤΑ (και σε αποτυχια) → intl_callups_run.log στο repo, για διαγνωση
+          { date -u; python intl_callups_tm.py 2>&1 | tail -15; echo "exit TM: ${PIPESTATUS[0]}"; } > intl_callups_run.log || true
+          cat intl_callups_run.log
+          grep -q "exit TM: 0" intl_callups_run.log || { echo "TM απετυχε — κρατιεται η προηγουμενη κληση"; exit 0; }
           python intl_project.py > /dev/null
           python intl_nl_shadow.py > /dev/null || echo "shadow failed (μη κρισιμο)"
           python intl_nl_overs.py > /dev/null || echo "overs failed (μη κρισιμο)"
@@ -67,13 +70,16 @@ jobs:
         run: pip install -q pytest && python -m pytest -q -p no:cacheprovider tests/test_scanner_sanity.py
 
       - name: Commit
-        if: steps.gate.outputs.run == 'yes' && steps.sanity.outcome == 'success'
+        if: always() && steps.gate.outputs.run == 'yes'
         run: |
           git config user.name "intl-callups-bot"
           git config user.email "actions@github.com"
-          for f in intl_vcall_tm.json intl_projections.csv intl_nl_shadow_2627.csv intl_nl_overs_2627.csv intl_projections_dashboard.json intl_callups_validate_out.txt; do
-            if [ -f "$f" ]; then git add -f "$f"; fi
-          done
+          git add -f intl_callups_run.log 2>/dev/null || true
+          if [ "${{ steps.sanity.outcome }}" = "success" ]; then
+            for f in intl_vcall_tm.json intl_projections.csv intl_nl_shadow_2627.csv intl_nl_overs_2627.csv intl_projections_dashboard.json intl_callups_validate_out.txt; do
+              if [ -f "$f" ]; then git add -f "$f"; fi
+            done
+          fi
           if git diff --cached --quiet; then
             echo "καμια αλλαγη"
           else
