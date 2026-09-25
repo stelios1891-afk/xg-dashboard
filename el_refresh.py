@@ -15,6 +15,9 @@ LAM = 8                                          # βαρος περσινης �
 # ΔΥΟ ΜΗΧΑΝΕΣ (αποφαση Στελιου 25/9, μετα LOSO + ROI με edge σε 6 σεζον):
 ENG_SPREAD = dict(luck=0.5, HL=120, carry=0.7, mu_w=5.0, h=6.0)    # χαντικαπ/1-2 = v1 (ROI καλυτερο απο v2 σε ολα τα edge)
 ENG_TOTAL = dict(luck=0.25, HL=9999, carry=0.7, mu_w=50.0, h=6.0)  # συνολο = v2 (LOSO b .314 vs .272· edge>=8% +5.5% 6/6 vs +2.0%)
+# ΕΙΔΙΚΟΙ στην αρχη σεζον (αποφαση Στελιου 25/9): αρχικο net χαντικαπ = 0.32·ομαδα περσι + 0.42·ειδικοι (τεστ Γ, LOSO 2021-25)
+# v1 αρχικο net = 0.7·περσι → νεο = (0.32/0.7)·(v1 αρχικο) + 0.42·(rating θεσης BasketNews). Μονο χαντικαπ/1-2, οχι συνολο.
+EXPERTS = json.load(open('el_expert_prior.json', encoding='utf-8')) if os.path.exists('el_expert_prior.json') else None
 OT_ADD = 1.1   # παρατασεις (25/9, τεστ C / V1): το μοντελο προβλεπει 40′· μεσος ορος 2020-25 = 4.6% ματς × ~24 π. = +1.1 π./ματς
 NEWCOMER_PRIOR = {'BES': (-1.0, 1.0, 0.0)}      # (επιθεση, αμυνα, ρυθμος) ποντοι/100 — Μπεσικτας −2 net (συμφωνια 25/9)
 SIGMA_MARGIN, SIGMA_TOTAL = 11.5, 16.7          # διασπορα γυρω απο την αγορα, E2023-25
@@ -132,6 +135,12 @@ def build(eng):
         ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
         pr = {t: NEWCOMER_PRIOR[t] if (s == SEASON and t in NEWCOMER_PRIOR and t not in prior) else tuple(CAe * v for v in prior.get(t, (0, 0, 0))) for t in teams}
         o0 = np.array([pr[t][0] for t in teams]); d0 = np.array([pr[t][1] for t in teams]); p0 = np.array([pr[t][2] for t in teams])
+        if eng.get('experts') and EXPERTS and s == EXPERTS['season']:
+            for t, i in ix.items():
+                if t not in EXPERTS['rating']: continue
+                cur = o0[i] - d0[i]
+                new = EXPERTS['w_team'] / EXPERTS['v1_carry'] * cur + EXPERTS['w_exp'] * EXPERTS['rating'][t]
+                o0[i] += (new - cur) / 2; d0[i] -= (new - cur) / 2
         hi = ai = hb = None
         if len(sidx):
             if s not in NEU:
@@ -173,7 +182,8 @@ def predict(st, hcode, acode, neu, h):
     poss = st['pm'] + st['P'][hcode] + st['P'][acode]
     return poss * (eh - ea) / 100, poss * (eh + ea) / 100, poss
 
-state, CTX = build(ENG_SPREAD)          # χαντικαπ/1-2 (+ ratings στον πινακα)
+state, CTX = build(dict(ENG_SPREAD, experts=True))   # χαντικαπ/1-2 ΜΕ ειδικους (+ ratings στον πινακα)
+_, CTX_V1 = build(ENG_SPREAD)                        # χαντικαπ/1-2 χωρις ειδικους (συγκριση)
 _, CTX_T = build(ENG_TOTAL)             # συνολο ποντων
 d0date = D.date.iloc[0]
 today_cut = (dt.date.today() - d0date).days + 1
@@ -186,14 +196,15 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     cut = (gdate - d0date).days if played or gdate <= dt.date.today() else today_cut
     neu = is_neutral(x)
     mg, tt1, poss = predict(state_at(CTX, cut), hcode, acode, neu, ENG_SPREAD['h'])
+    mg1, tt1, _ = predict(state_at(CTX_V1, cut), hcode, acode, neu, ENG_SPREAD['h'])
     _, tt, _ = predict(state_at(CTX_T, cut), hcode, acode, neu, ENG_TOTAL['h'])
     tt += OT_ADD
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], utc=x['utc'], home=x['home'], away=x['away'], hcode=hcode, acode=acode,
                venue=x.get('vname'), neutral=neu, pts_h=round((tt + mg) / 2, 1), pts_a=round((tt - mg) / 2, 1),
                margin=round(mg, 2), total=round(tt, 1), poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3),
-               played=played, version='v2', hcrest=x.get('hcrest'), acrest=x.get('acrest'),
-               versions={'v1': dict(pts_h=round((tt1 + mg) / 2, 1), pts_a=round((tt1 - mg) / 2, 1), margin=round(mg, 2), total=round(tt1, 1),
-                                    p_home=round(Phi(mg / SIGMA_MARGIN), 3))})
+               played=played, version='v3', hcrest=x.get('hcrest'), acrest=x.get('acrest'),
+               versions={'v1': dict(pts_h=round((tt1 + mg1) / 2, 1), pts_a=round((tt1 - mg1) / 2, 1), margin=round(mg1, 2), total=round(tt1, 1),
+                                    p_home=round(Phi(mg1 / SIGMA_MARGIN), 3))})
     if played:
         rec.update(hs=x['hs'], as_=x['as_'])
     games.append(rec)
@@ -203,7 +214,7 @@ for L in S.values():
 ratings = sorted([dict(code=t, name=names.get(t, t), O=round(state['O'][t], 2), D=round(state['D'][t], 2), net=round(state['O'][t] - state['D'][t], 2),
                        pace=round(state['P'][t], 2), games=state['n'][t]) for t in state['O']], key=lambda r: -r['net'])
 json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=SEASON,
-               model='v2: χαντικαπ/1-2 = v1 (HL120, λ8, carry0.7, εδρα 6/100, τυχη 3P/FT 50%) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + παρατασεις 1.1 π. · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
+               model='v3: χαντικαπ/1-2 = v1 + ΕΙΔΙΚΟΙ αρχης σεζον (0.32 ομαδα + 0.42 BasketNews) (HL120, λ8, εδρα 6/100, τυχη 3P/FT 50%) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + παρατασεις 1.1 π. · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
                sigma_margin=SIGMA_MARGIN, sigma_total=SIGMA_TOTAL, mu=round(state['mu'], 2), pace=round(state['pm'], 2),
                games=games, ratings=ratings), open('el_projections.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(f'el_projections.json: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα, με προβλεψη «πριν το ματς») · ratings {len(ratings)} ομαδων')

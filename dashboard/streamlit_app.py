@@ -372,6 +372,23 @@ def _euro_picks():
         out.append(q)
     return out, ev_res.get('scanned_at')
 
+def _el_picks():
+    """Value picks Ευρωλιγκας (25/9/2026): el_picks.py στον scanner · edge ≥8% χαντικαπ/συνολο · Pinnacle."""
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'el_value_latest.json'), encoding='utf-8') as fh:
+            d = json.load(fh)
+    except Exception:
+        return [], None
+    out = []
+    for p in d.get('picks', []):
+        q = dict(lg='Euroleague', home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
+                 proj_odds=p.get('proj_odds'), when=p['when'], el=True)
+        if p.get('bet'):
+            q['bet'] = p['bet']
+        out.append(q)
+    return out, d.get('scanned_at')
+
+
 def render_value(league):
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#34d17a">💰 VALUE PICKS</div>'
                 '<div class="co">LIVE · THE ODDS API · PINNACLE/MATCHBOOK AH</div></div></div>', unsafe_allow_html=True)
@@ -384,6 +401,7 @@ def render_value(league):
     picks = res.get('picks', [])
     eu_picks, eu_scan = _euro_picks()
     in_picks, in_scan = _intl_picks()
+    el_picks, el_scan = _el_picks()
     # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
     # ως pick, ακομα κι αν το αρχειο του scan ειναι παλιοτερο απο τη σεντρα.
     import datetime as _dt
@@ -394,7 +412,8 @@ def render_value(league):
     picks = [p for p in picks if _upcoming(p)]
     eu_picks = [p for p in eu_picks if _upcoming(p)]
     in_picks = [p for p in in_picks if _upcoming(p)]
-    eu_picks = eu_picks + in_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
+    el_picks = [p for p in el_picks if _upcoming(p)]
+    eu_picks = eu_picks + in_picks + el_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
     if not res:
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
         if not eu_picks:
@@ -427,7 +446,7 @@ def render_value(league):
             st.caption(f"⚙ Συνολικη εκθεση {gr*100:.0f}% > cap {cap*100:.0f}% → μειωση ολων ×{sc:.2f}.")
     # ---- φιλτρο ανα πρωταθλημα (default: ολα μαζι) ----
     combined = picks + eu_picks
-    order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague', 'NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
+    order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague', 'Euroleague', 'NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
     lgs_present = sorted({p['lg'] for p in combined}, key=lambda x: order.index(x) if x in order else 99)
     sel_lg = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs_present,
                           format_func=lambda x: 'Όλα τα πρωταθληματα' if x == 'Όλα' else value_view.LEAGUE_LABELS.get(x, x),
@@ -440,6 +459,10 @@ def render_value(league):
                    'Crown+Pinnacle) · overs = συνθεση πληρους πεναλτι (W2) · εκτος Kelly, stake ερευνητικο '
                    '· 👁 ΣΚΙΑ = UEL: δειχνεται, ΔΕΝ παιζεται (κλειστο 11/9) '
                    f'~¼ μοναδας · euro scan: {eu_scan or "—"}')
+    if el_picks:
+        st.caption('🏀 **Euroleague** = μοντελο v3 (χαντικαπ: v1 + ειδικοι αρχης σεζον · συνολο: v2 + παρατασεις) · '
+                   'pick οταν edge ≥8% στην τιμη Pinnacle (χαντικαπ ή over/under) · stake ερευνητικο ~¼ μοναδας · '
+                   f'EL scan: {el_scan or "—"}')
     if in_picks:
         st.caption('🌐 **ΕΘΝ.** = εθνικες (Nations League) · κανονικο pick οταν συμφωνουν **≥2 απο τα 3 μοντελα** (Μ1 H+αξια / Μ2 Αγκυρα / Μ3 Αγκυρα+αξια) '
                    'σε handicap ή over (over μονο σε κοντινα ματς / νοκ-αουτ) · edge = το μικροτερο απο τα μοντελα που συμφωνουν · '
