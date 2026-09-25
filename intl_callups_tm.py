@@ -164,6 +164,13 @@ def parse_val(s):
 RX_PLAYER = re.compile(r'class="hauptlink"[^>]*>\s*<a[^>]*href="/([a-z0-9\-]+)/profil/spieler/(\d+)"')
 RX_VAL = re.compile(r'>(€[\d.,]+[mk])</a>')
 
+# 25/9 ΧΕΙΡΟΚΙΝΗΤΕΣ ΑΠΟΥΣΙΕΣ (Στελιος): intl_absences_manual.json {ομαδα: {"out": [ονοματα], "until": "YYYY-MM-DD", "note": ...}} —
+# οσοι δηλωθουν βγαινουν ΑΜΕΣΩΣ απο την κληση (αξια κλησης + σημαια «λειπει»), χωρις να περιμενουμε το Transfermarkt. Ληγει μονο του (until).
+MANUAL = {}
+if os.path.exists('intl_absences_manual.json'):
+    _today = datetime.date.today().isoformat()
+    MANUAL = {k: v for k, v in json.load(open('intl_absences_manual.json', encoding='utf-8')).items()
+              if not k.startswith('_') and str(v.get('until', '9999')) >= _today}
 OUT = {}
 skipped = []
 for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
@@ -199,6 +206,16 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
         if pid is not None:
             used.add(pid)
         players.append(dict(tm=tm_nm, pid=pid, sci=(latest_val(pid) if pid is not None else None), tm_m=tmv))
+    manual_out = []
+    for mo in (MANUAL.get(nm) or {}).get('out', []):
+        hit = [pl_ for pl_ in players if match_score(mo, pl_['tm']) >= 1.5]
+        for pl_ in hit:
+            players.remove(pl_); manual_out.append(dict(nm=mo, tm=pl_['tm'], mv=round((pl_['sci'] or (pl_['tm_m'] or 0) * 1e6 * 0.69) / 1e6, 1)))
+        called_names = [c for c in called_names if not any(match_score(mo, c) >= 1.5 for _ in [0])]
+        if not hit:
+            manual_out.append(dict(nm=mo, tm=None, mv=None))       # δεν ηταν στη λιστα TM — ηδη εκτος
+    if manual_out:
+        print(f"  {nm}: χειροκινητα εκτος {[m['nm'] for m in manual_out]}", flush=True)
     called_tok = [norm(c) for c in called_names]
     miss = []
     pl = played.get(tid) or {}
@@ -222,7 +239,8 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
         if not matched:
             miss.append(dict(pid=pid, nm=pnm, mv=round(v / 1e6, 1), starts=nst, left=int(pid) in dressed_now))
     miss.sort(key=lambda x: -x['mv'])
-    OUT[tid] = dict(nm=nm, tm=f'{slug}/{vid}', v_call_m=v_call, n_sq=len(called_names), missing=miss[:4], dressed_now=len(dressed_now),
+    miss = [dict(pid=None, nm=m_['nm'], mv=m_['mv'] or 0, starts=None, left=False, manual=True) for m_ in manual_out] + miss      # 25/9: χειροκινητες πρωτες
+    OUT[tid] = dict(nm=nm, tm=f'{slug}/{vid}', v_call_m=v_call, n_sq=len(called_names), missing=miss[:4], dressed_now=len(dressed_now), manual_out=manual_out,
                     called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'), players=players)   # 25/9: ολη η λιστα (για επαληθευση)
     print(f'  {nm:22s} κληση {len(called_names):2d} · V_call {v_call if v_call else chr(8212)}M · λειπουν: '
           + (', '.join(f"{m['nm']}({m['mv']}M)" for m in miss[:3]) if miss else chr(8212)), flush=True)
