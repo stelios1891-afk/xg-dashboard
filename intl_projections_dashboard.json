@@ -1,6 +1,6 @@
 {
- "generated": "2026-09-25 17:11",
- "toa_scanned": "2026-09-25 17:11",
+ "generated": "2026-09-25 17:12",
+ "toa_scanned": "2026-09-25 17:06",
  "toa_matches": 34,
  "ng_snapshot": "2026-09-24 16:42",
  "ng_snapshot_afconq": "2026-09-24 11:43",
@@ -11568,6 +11568,112 @@
        "fair_1": 1.41,
        "fair_x": 5.0,
        "fair_2": 11.11
+      }
+     },
+     "market": {
+      "crown": null,
+      "sbobet": null,
+      "pinnacle": null,
+      "matchbook": null,
+      "bovada": null,
+      "betfair_ex_eu": null,
+      "source": null,
+      "ts": null,
+      "ng_ts": null,
+      "x12_source": null,
+      "x12_ts": null
+     },
+     "edges": {
+      "H": {
+       "pinnacle": null,
+       "matchbook": null,
+       "bovada": null,
+       "betfair_ex_eu": null,
+       "crown": null,
+       "sbobet": null
+      },
+      "A": {
+       "pinnacle": null,
+       "matchbook": null,
+       "bovada": null,
+       "betfair_ex_eu": null,
+       "crown": null,
+       "sbobet": null
+      },
+      "AV": {
+       "pinnacle": null,
+       "matchbook": null,
+       "bovada": null,
+       "betfair_ex_eu": null,
+       "crown": null,
+       "sbobet": null
+      }
+     },
+     "picks": {
+      "H": "",
+      "A": "",
+      "AV": "",
+      "over": "",
+      "over_A": "",
+      "over_AV": ""
+     },
+     "consensus": []
+    },
+    {
+     "utc": "2026-10-05 16:00",
+     "home": "Cyprus",
+     "away": "Latvia",
+     "hid": 5793,
+     "aid": 5795,
+     "dead": "",
+     "callups": "Cyprus: Charalambos Charalambous(1.1M), Nicolas Koutsakos(1.0M) | Latvia: Raimonds Krollis(1.4M)",
+     "init_ah": "",
+     "init_ou": "",
+     "versions": {
+      "H": {
+       "R_h": 1374.0,
+       "R_a": 1339.0,
+       "vadj": 42.0,
+       "diff": 137.0,
+       "xg_h": 1.6,
+       "xg_a": 0.93,
+       "T": 2.54,
+       "p1": 49,
+       "px": 31,
+       "p2": 20,
+       "fair_1": 2.04,
+       "fair_x": 3.23,
+       "fair_2": 5.0
+      },
+      "A": {
+       "R_h": 1365.0,
+       "R_a": 1288.0,
+       "vadj": 0.0,
+       "diff": 137.0,
+       "xg_h": 1.59,
+       "xg_a": 0.92,
+       "T": 2.51,
+       "p1": 49,
+       "px": 31,
+       "p2": 20,
+       "fair_1": 2.04,
+       "fair_x": 3.23,
+       "fair_2": 5.0
+      },
+      "AV": {
+       "R_h": 1365.0,
+       "R_a": 1288.0,
+       "vadj": 42.0,
+       "diff": 179.0,
+       "xg_h": 1.76,
+       "xg_a": 0.89,
+       "T": 2.65,
+       "p1": 54,
+       "px": 29,
+       "p2": 17,
+       "fair_1": 1.85,
+       "fair_x": 3.45,
+       "fair_2": 5.88
       }
      },
      "market": {
