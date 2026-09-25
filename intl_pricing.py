@@ -40,3 +40,34 @@ def over_fair(T, line):
         else:
             hi = mid
     return (lo + hi) / 2
+
+
+# ---------------- HANDICAP (25/9/2026, αποφαση Στελιου: σωστα τεταρτα και στο AH των εθνικων) ----------------
+# Παλια: picks.p_cover στη γραμμη → +x.25 μετρουσε σαν +x.5, −x.75 σαν −x.5 κλπ (τεταρτα = κοντινοτερη μιση).
+# Σωστα: x.25 / x.75 = μισο πονταρισμα σε καθε διπλανη γραμμη (οπως πληρωνει το βιβλιο και οπως εκκαθαριζει το picks.settle).
+# Τεστ 25/9 (intl_window_test.py AH_FORMULA=proper, intl_ah_quarter_out.txt): ROI 72ω +3.6→+5.3% (Crown), +4.2→+5.2% (SBOBET)·
+# κερδιζει φαβορι −x.25, κοβει φαβορι −x.75· ΧΑΝΕΙ dog +x.25 (αντισταθμιστικο λαθος: το μοντελο υποτιμα «φαβορι +1»).
+# ΕΚΚΡΕΜΕΙ: διορθωση του μοντελου στα στενα αποτελεσματα· αν δεν δουλεψει → εξεταση dog +x.25 με τον παλιο τροπο.
+# Τα ΕΓΧΩΡΙΑ μενουν με picks.p_cover (τεστ 21/9 εκει ❌).
+def _parts(ud):
+    return [ud] if (ud * 4) % 2 == 0 else [ud - 0.25, ud + 0.25]
+
+
+def ah_ev(dist, side, ud, odds, margin=0.0):
+    """Edge AH με σωστα τεταρτα. dist = κατανομη διαφορας γκολ (picks.gd_dist), side 1 γηπεδουχος / −1 φιλοξενουμενος,
+    ud = handicap της πλευρας, margin = ποσοστο που αφαιρειται απο το κερδος (picks.MARGIN στο live)."""
+    import picks
+    e = 0.0
+    for L in _parts(ud):
+        pw, pp = picks.p_cover(dist, side, L)
+        e += (pw * (odds - 1) * (1 - margin) - (1 - pw - pp)) / len(_parts(ud))
+    return e
+
+
+def ah_fair(dist, side, ud):
+    """Fair τιμη (edge 0, χωρις margin) της πλευρας στη γραμμη ud, με σωστα τεταρτα. None αν δεν οριζεται."""
+    import picks
+    sw = sl = 0.0
+    for L in _parts(ud):
+        pw, pp = picks.p_cover(dist, side, L); sw += pw; sl += 1 - pw - pp
+    return round(1 + sl / sw, 2) if sw > 0 else None

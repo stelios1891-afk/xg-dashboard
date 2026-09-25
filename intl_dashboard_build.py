@@ -158,8 +158,8 @@ def ah_edges(xg_h, xg_a, mk):
         if b.get('ah_line') is None: out[lab] = None; continue
         line, oh, oa = b['ah_line'], b['oh'], b['oa']; rec = {}
         for side, ud, odds, tag in ((1, line, oh, 'home'), (-1, -line, oa, 'away')):
-            pw, pp = picks.p_cover(dist, side, ud); e = pw * (odds - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
-            rec[f'ah_{tag}'] = round(e * 100, 1); rec[f'fair_{tag[0]}'] = round((1 - pp) / pw, 2) if pw > 0 else None
+            e = intl_pricing.ah_ev(dist, side, ud, odds, picks.MARGIN)
+            rec[f'ah_{tag}'] = round(e * 100, 1); rec[f'fair_{tag[0]}'] = intl_pricing.ah_fair(dist, side, ud)
         out[lab] = rec
     return out
 
@@ -188,7 +188,7 @@ def pick_ah(xg_h, xg_a, mk, order, p1=None, p2=None, allow_x12=True):
         if b.get('ah_line') is not None:
             line, oh, oa = b['ah_line'], b['oh'], b['oa']
             for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-                pw, pp = picks.p_cover(dist, side, ud); e = pw * (odds - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+                e = intl_pricing.ah_ev(dist, side, ud, odds, picks.MARGIN)
                 if not pick and 1.70 <= odds <= 2.10 and e >= .10 and abs(ud) >= 0.5:
                     pick = f"{'DOG' if ud >= 0.5 else 'FAV'} {'1' if side == 1 else '2'} {ud:+.2f} @{odds:.2f} ({LAB[lab]}, {e*100:+.0f}%)"
         if i == 0 and allow_x12 and b.get('o1'):

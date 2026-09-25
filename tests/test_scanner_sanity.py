@@ -641,3 +641,17 @@ def test_f_intl_over_pricing_push_aware():
     assert abs(ip.over_ev(2.8, 2.5, ip.over_fair(2.8, 2.5))) < 1e-6, 'fair τιμη δεν δινει edge 0'
     src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
     assert 'intl_pricing.over_ev' in src and "po, _ = p_over(T, b['ou_line']); e = po" not in src, 'το dashboard build δεν χρησιμοποιει τον σωστο τυπο over'
+
+
+def test_f_intl_ah_quarters_split():
+    """AH εθνικων (25/9, αποφαση Στελιου): τεταρτο = μισο/μισο στις διπλανες γραμμες· μισες/ακεραιες ιδιες με το picks.p_cover."""
+    import picks, intl_pricing as ip
+    dist = picks.gd_dist(1.6, 1.0)
+    for side, ud, o in ((1, -0.75, 1.95), (-1, 1.25, 1.90), (1, -1.25, 2.05), (-1, 0.75, 1.85)):
+        avg = (ip.ah_ev(dist, side, ud - .25, o, picks.MARGIN) + ip.ah_ev(dist, side, ud + .25, o, picks.MARGIN)) / 2
+        assert abs(ip.ah_ev(dist, side, ud, o, picks.MARGIN) - avg) < 1e-12, f'τεταρτο {ud}: δεν ειναι μισο/μισο'
+    pw, pp = picks.p_cover(dist, 1, -0.5); old = pw * (1.95 - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+    assert abs(ip.ah_ev(dist, 1, -0.5, 1.95, picks.MARGIN) - old) < 1e-12, 'μιση γραμμη: διαφορα απο p_cover'
+    assert abs(ip.ah_ev(dist, 1, -0.75, ip.ah_fair(dist, 1, -0.75), 0.0)) < 0.01, 'fair τιμη τεταρτου δεν δινει ~0'
+    src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
+    assert 'intl_pricing.ah_ev' in src and 'picks.p_cover(dist, side, ud); e = pw' not in src, 'το dashboard build δεν χρησιμοποιει σωστα τεταρτα AH'

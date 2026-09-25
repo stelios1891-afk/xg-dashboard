@@ -6,6 +6,7 @@ import sys, json, re, math
 import numpy as np, pandas as pd
 sys.stdout.reconfigure(encoding='utf-8'); sys.path.insert(0, '.')
 import picks
+import intl_pricing   # 25/9: σωστα τεταρτα AH/over
 P = pd.read_csv('intl_projections.csv'); NG = json.load(open('intl_ng_now.json', encoding='utf-8')); NAMES = json.load(open('nowgoal_intl_team_names.json', encoding='utf-8'))
 # 21/9: σημαιες κλησης — πηγη πλεον TRANSFERMARKT (intl_callups_tm.py v2 -> intl_vcall_tm.json).
 # Το FotMob squad ηταν ΜΠΑΓΙΑΤΙΚΟ (προηγουμενη αποστολη — διορθωση Στελιου)· το TM kader
@@ -74,18 +75,18 @@ for r in P.itertuples():
         rec[lab] = f'{line:+.2f} {oh:.2f}/{oa:.2f}'
         if distA is not None:
             for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-                pw, pp = picks.p_cover(distA, side, ud); e = pw * (odds - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+                e = intl_pricing.ah_ev(distA, side, ud, odds, picks.MARGIN)
                 rec[f'{lab}_edgeA_{"H" if side == 1 else "A"}'] = f'{e*100:+.0f}%'
                 if not pickA and 1.70 <= odds <= 2.10 and e >= .10 and abs(ud) >= 0.5:
                     pickA = f"{'DOG' if ud >= 0.5 else 'FAV'} {'1' if side==1 else '2'} {ud:+.2f} @{odds:.2f} ({lab}, {e*100:+.0f}%)"
         if distAV is not None:
             for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-                pw, pp = picks.p_cover(distAV, side, ud); e = pw * (odds - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+                e = intl_pricing.ah_ev(distAV, side, ud, odds, picks.MARGIN)
                 rec[f'{lab}_edgeAV_{"H" if side == 1 else "A"}'] = f'{e*100:+.0f}%'
                 if not pickAV and 1.70 <= odds <= 2.10 and e >= .10 and abs(ud) >= 0.5:
                     pickAV = f"{'DOG' if ud >= 0.5 else 'FAV'} {'1' if side==1 else '2'} {ud:+.2f} @{odds:.2f} ({lab}, {e*100:+.0f}%)"
         for side, ud, odds in ((1, line, oh), (-1, -line, oa)):
-            pw, pp = picks.p_cover(dist, side, ud); e = pw * (odds - 1) * (1 - picks.MARGIN) - (1 - pw - pp); fo = (1 - pp) / pw if pw > 0 else 99
+            e = intl_pricing.ah_ev(dist, side, ud, odds, picks.MARGIN); fo = intl_pricing.ah_fair(dist, side, ud) or 99
             tag = 'H' if side == 1 else 'A'; rec[f'{lab}_fair_{tag}'] = round(fo, 2); rec[f'{lab}_edge_{tag}'] = f'{e*100:+.0f}%'
             if not pick and 1.70 <= odds <= 2.10 and e >= .10:
                 if ud >= 0.5: pick = f"DOG {'1' if side==1 else '2'} {ud:+.2f} @{odds:.2f} ({lab}, {e*100:+.0f}%)"
