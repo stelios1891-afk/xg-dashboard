@@ -1,0 +1,185 @@
+# -*- coding: utf-8 -*-
+"""intl_callups_tm.py — ΤΡΕΧΟΥΣΕΣ ΚΛΗΣΕΙΣ εθνικων απο TRANSFERMARKT (21/9 v2).
+
+Αντικαθιστα το FotMob-based intl_squad_now (η σελιδα squad του FotMob αποδειχθηκε
+ΜΠΑΓΙΑΤΙΚΗ — εδειχνε προηγουμενη αποστολη). Επικυρωση πηγης στην Ελλαδα:
+το TM kader περιεχει Καρετσα+Ιωαννιδη (κληθεντες) που ελειπαν απο FotMob. ✓
+
+v2 (21/9): το quick-search εδινε ΛΑΘΟΣ ομαδες (France->Inter, England->vereinslos).
+ 1) Χαρτης ομαδων απο intl_tm_rank_map.json (211 εθνικες, χτισμενος απο τις σελιδες
+    TM FIFA World Ranking — αυθεντικος, επιβεβαιωμενα France/England/Greece σωστα).
+ 2) Παικτες ΜΟΝΟ απο τις hauptlink γραμμες του squad table (οχι ολα τα λινκ σελιδας).
+ 3) Πυλη μεγεθους 18-35: υποπτη κληση -> ΚΑΜΙΑ σημαια (καλυτερα τιποτα παρα λαθος).
+ 4) MISSING: παικτες που ξεκινησαν >=2 φορες στη διετια (intl_squads + intl_player_values
+    ονοματα) και ΔΕΝ ταιριαζουν με ΚΑΝΕΝΑ ονομα της κλησης (token match, χωρις τονους).
+V_call = 80ο εκατοστημοριο των top-11 TM αξιων της κλησης.
+Εξοδος: intl_vcall_tm.json {fotmob_tid: {nm, tm, v_call_m, n_sq, missing: [...]}}
+"""
+import sys, os, json, re, time, random, datetime, unicodedata
+import urllib.request
+import numpy as np
+import pandas as pd
+sys.stdout.reconfigure(encoding='utf-8')
+
+HDR = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+       'Accept-Language': 'en-US,en;q=0.9', 'Accept': 'text/html,application/xhtml+xml'}
+
+def get(u):
+    time.sleep(0.7 + random.random() * 0.6)
+    return urllib.request.urlopen(urllib.request.Request(u, headers=HDR), timeout=30).read().decode('utf-8', 'replace')
+
+_SPECIAL = str.maketrans({'ı': 'i', 'İ': 'I', 'ø': 'o', 'Ø': 'O', 'ł': 'l', 'Ł': 'L', 'đ': 'd', 'Đ': 'D', 'ß': 'ss', 'æ': 'ae', 'Æ': 'Ae', 'ð': 'd', 'þ': 'th', 'ə': 'a', 'Ə': 'A', "'": '', '’': ''})   # 25/9: γραμματα που το NFD δεν «καθαριζει» (Yıldız → yldz)
+
+def norm(s):
+    s = unicodedata.normalize('NFD', str(s).translate(_SPECIAL))
+    s = ''.join(c for c in s if unicodedata.category(c) != 'Mn').lower()
+    return set(w for w in re.findall(r'[a-z]{3,}', s))
+
+import difflib
+
+
+def name_in_call(name, called_names):
+    """25/9: ειναι ο παικτης (ονομα FotMob) στη λιστα κλησης TM; ≥2 κοινα tokens, ή ιδιο επωνυμο, ή σχεδον ιδια γραφη επωνυμου
+    (Khaybulaev/Khaybulayev, Qurbanli/Qurbanly) — αλλιως «O'Brien», «Andrews/Andreas Tetteh» εβγαιναν ψευδως εκτος κλησης."""
+    t = norm(name)
+    if not t:
+        return False
+    toks = [w for w in re.findall(r'[a-z]{3,}', unicodedata.normalize('NFD', str(name).translate(_SPECIAL)).encode('ascii', 'ignore').decode().lower())]
+    sur = toks[-1] if toks else max(t, key=len)
+    for c in called_names:
+        ct = norm(c); cw = c.split()
+        if len(t & ct) >= 2 or max(t, key=len) in ct or sur in ct:
+            return True
+        if cw and difflib.SequenceMatcher(None, sur, cw[-1]).ratio() >= 0.85 and (len(sur) >= 5 or (toks and toks[0][:1] == cw[0][:1])):
+            return True
+        if cw and len(toks) >= 2 and toks[0] == cw[0] and difflib.SequenceMatcher(None, sur, cw[-1]).ratio() >= 0.70:   # ιδιο μικρο + παρομοιο επωνυμο (Sadıxov/Sadykhov)
+            return True
+    return False
+
+
+# ονομα intl -> ονομα TM rank-map (211 εθνικες απο FIFA ranking σελιδες TM)
+RANKMAP = json.load(open('intl_tm_rank_map.json', encoding='utf-8'))
+TM_ALIAS = {'Bosnia and Herzegovina': 'Bosnia-Herzegovina', 'Ireland': 'Republic of Ireland'}
+
+def tm_team(nm):
+    key = TM_ALIAS.get(nm, nm)
+    hit = RANKMAP.get(key)
+    if hit is None:
+        for k in RANKMAP:                      # χαλαρο ταιριασμα χωρις τονους
+            if norm(k) == norm(key):
+                hit = RANKMAP[k]; break
+    return tuple(hit) if hit else None
+
+PV = json.load(open('intl_player_values.json', encoding='utf-8'))
+SQH = json.load(open('intl_squads.json', encoding='utf-8'))
+P = pd.read_csv('intl_projections.csv')
+M = pd.read_csv('intl_matches.csv', dtype={'mid': str})
+
+NAME2TID = {}
+for r in M.itertuples():
+    NAME2TID[str(r.hn)] = int(r.hid); NAME2TID[str(r.an)] = int(r.aid)
+TIDS = {}
+for r in P.itertuples():
+    for nm in (r.home, r.away):
+        t = NAME2TID.get(str(nm))
+        if t:
+            TIDS[t] = str(nm)
+
+# played-730d: pid -> starts, με ονοματα απο PV
+cut = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d')
+mid2date = dict(zip(M.mid, M.date.astype(str)))
+mid2teams = {r.mid: (r.hid, r.aid) for r in M.itertuples()}
+played = {}
+for mid, rec in SQH.items():
+    if str(mid2date.get(str(mid), ''))[:10] < cut:
+        continue
+    tms = mid2teams.get(str(mid))
+    if not tms:
+        continue
+    for sk, tid in (('h', tms[0]), ('a', tms[1])):
+        for pid in ((rec.get(sk) or {}).get('p') or {}):
+            played.setdefault(int(tid), {})
+            played[int(tid)][int(pid)] = played[int(tid)].get(int(pid), 0) + 1
+
+WIN0 = (datetime.datetime.now() - datetime.timedelta(days=10)).strftime('%Y-%m-%d')   # αρχη τρεχοντος διεθνους παραθυρου (προσεγγιση)
+
+
+def latest_val(pid):
+    rec = PV.get(str(pid))
+    if not rec:
+        return None
+    if rec.get('mv_now'):
+        return float(rec['mv_now'])
+    h = rec.get('hist') or []
+    try:
+        return float(sorted(h, key=lambda x: x[0])[-1][1]) if h else None
+    except Exception:
+        return None
+
+def parse_val(s):
+    s = s.replace(chr(8364), '').strip().lower()
+    try:
+        if s.endswith('m'):
+            return float(s[:-1])
+        if s.endswith('k'):
+            return float(s[:-1]) / 1000
+    except ValueError:
+        pass
+    return None
+
+# hauptlink = η στηλη ονοματος του squad table (δοκιμασμενο: δινει καθαρες γραμμες)
+RX_PLAYER = re.compile(r'class="hauptlink"[^>]*>\s*<a[^>]*href="/([a-z0-9\-]+)/profil/spieler/(\d+)"')
+RX_VAL = re.compile(r'>(€[\d.,]+[mk])</a>')
+
+OUT = {}
+skipped = []
+for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
+    t = tm_team(nm)
+    if not t:
+        print(f'  {nm}: ΔΕΝ βρεθηκε στον rank-map')
+        skipped.append(nm)
+        continue
+    slug, vid = t
+    try:
+        h = get(f'https://www.transfermarkt.com/{slug}/kader/verein/{vid}')
+    except Exception as e:
+        print(f'  {nm}: kader ΣΦΑΛΜΑ {type(e).__name__}')
+        skipped.append(nm)
+        continue
+    rows = RX_PLAYER.findall(h)
+    called_names = sorted({sl.replace('-', ' ') for sl, _ in rows})
+    if not (18 <= len(called_names) <= 35):
+        print(f'  {nm:22s} ΥΠΟΠΤΟ μεγεθος κλησης {len(called_names)} ({slug}/{vid}) — ΠΑΡΑΛΕΙΠΕΤΑΙ, καμια σημαια')
+        skipped.append(nm)
+        continue
+    vals = sorted([v for v in (parse_val(x) for x in RX_VAL.findall(h)) if v], reverse=True)
+    v_call = float(np.percentile(vals[:11], 80)) if len(vals) >= 8 else None
+    called_tok = [norm(c) for c in called_names]
+    miss = []
+    pl = played.get(tid) or {}
+    topv = max((latest_val(p) or 0) for p in pl) if pl else 0
+    # 25/9: οσοι ΝΤΥΘΗΚΑΝ σε ματς του τρεχοντος παραθυρου (FotMob) ειναι κληθεντες — ακομα κι αν λειπουν απο τη λιστα TM (αντικαταστασεις, π.χ. Brobbey 24/9)
+    dressed_now = {int(p_) for m_, rec_ in SQH.items() if str(mid2date.get(str(m_), ''))[:10] >= WIN0 and mid2teams.get(str(m_))
+                   for sk_, t_ in zip(('h', 'a'), mid2teams[str(m_)]) if int(t_) == tid for p_ in ((rec_.get(sk_) or {}).get('p') or {})}
+    for pid, nst in pl.items():
+        if nst < 2 or int(pid) in dressed_now:
+            continue
+        v = latest_val(pid)
+        if not v or not topv or v < 0.30 * topv:
+            continue
+        pnm = (PV.get(str(pid)) or {}).get('name', '')
+        ptok = norm(pnm)
+        if not ptok:
+            continue
+        # ταιριαζει με καποιον της κλησης; (>=2 κοινα tokens Ή ολο το επωνυμο)
+        matched = name_in_call(pnm, called_names)      # 25/9: ταιριασμα με επωνυμο/παρομοια γραφη
+        if not matched:
+            miss.append(dict(pid=pid, nm=pnm, mv=round(v / 1e6, 1), starts=nst))
+    miss.sort(key=lambda x: -x['mv'])
+    OUT[tid] = dict(nm=nm, tm=f'{slug}/{vid}', v_call_m=v_call, n_sq=len(called_names), missing=miss[:4], dressed_now=len(dressed_now),
+                    called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'))   # 25/9: ολη η λιστα (για επαληθευση)
+    print(f'  {nm:22s} κληση {len(called_names):2d} · V_call {v_call if v_call else chr(8212)}M · λειπουν: '
+          + (', '.join(f"{m['nm']}({m['mv']}M)" for m in miss[:3]) if miss else chr(8212)), flush=True)
+
+json.dump(OUT, open('intl_vcall_tm.json', 'w', encoding='utf-8'), ensure_ascii=False)
+print(f'ΟΚ {len(OUT)}/{len(TIDS)} ομαδες -> intl_vcall_tm.json' + (f' · ΕΚΤΟΣ: {skipped}' if skipped else ''))

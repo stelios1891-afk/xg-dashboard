@@ -30,7 +30,8 @@ CUR = {   # μονο οι σεζον που «τρεχουν» τωρα (οι π
     'AFCONQ': (10608, ['2026/2027']), 'Friendlies': (114, ['2026']),
 }
 CRITICAL = ['intl_build.py', 'intl_rating2_hist.py', 'intl_mkt_anchor.py', 'intl_project.py']
-OPTIONAL = ['intl_nl_shadow.py', 'intl_nl_overs.py', 'intl_afconq_shadow_v.py', 'intl_dashboard_build.py']
+OPTIONAL = ['intl_nl_shadow.py', 'intl_nl_overs.py', 'intl_afconq_shadow_v.py', 'intl_dashboard_build.py',
+            'intl_callups_validate.py']   # 25/9: επαληθευση κλησεων TM με τις αποστολες FotMob που μολις ηρθαν
 OUTPUTS = ['intl_matches.csv', 'intl_ratings_h.csv', 'intl_preds_H.csv', 'intl_hfa_config.json', 'intl_preds_anchor.csv',
            'intl_ratings_anchor.csv', 'intl_projections.csv', 'intl_nl_shadow_2627.csv', 'intl_nl_overs_2627.csv',
            'intl_afconq_shadow_2627.csv', 'intl_afconq_overs_2627.csv', 'intl_projections_dashboard.json']
@@ -112,6 +113,12 @@ def tg_text(games, elo):
             a = f" · {e['anc_after'] - e['anc_before']:+d}" if (e['anc_before'] is not None and e['anc_after'] is not None) else ''
             out.append(f"{e['team']}: {e['m1_before']}→{e['m1_after']} ({e['m1_after'] - e['m1_before']:+d}){a}")
     out.append('\nΠροβολες/picks ξαναυπολογιστηκαν για τα επομενα ματς.')
+    try:      # 25/9: επαληθευση κλησεων Transfermarkt (intl_callups_validate.py)
+        for ln in open('intl_callups_validate_out.txt', encoding='utf-8'):
+            if ln.startswith('ΣΥΝΟΛΟ') or '✗' in ln or '? ελεγχος' in ln:
+                out.append(('Κλησεις TM: ' + ln.strip().replace('ΣΥΝΟΛΟ: ', '')) if ln.startswith('ΣΥΝΟΛΟ') else ('⚠ ' + ln.strip()))
+    except Exception:
+        pass
     return '\n'.join(out)
 
 
