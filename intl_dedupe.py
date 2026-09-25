@@ -74,3 +74,22 @@ def assert_clean(M, where=''):
     if drops:
         ex = [(M.loc[i, 'date'], M.loc[i, 'hid'], M.loc[i, 'aid']) for i, _ in drops[:3]]
         raise AssertionError(f'intl_dedupe{(" [" + where + "]") if where else ""}: {len(drops)} διπλα ματς εθνικων, π.χ. {ex}')
+
+
+# ---- 25/9 (β): ΕΝΑ ΜΑΤΣ = ΜΙΑ ΓΡΑΜΜΗ σε ΚΑΘΕ βοηθητικο πινακα (π.χ. intl_venue_flags.csv ειχε 286 φιλικα ×4 → το join τα πολλαπλασιαζε)
+def unique_mid(df, where='', on_index=False, verbose=True):
+    """Κραταει την πρωτη γραμμη ανα mid (στηλη mid ή index). Προειδοποιει αν βρηκε επαναληψεις."""
+    import numpy as np
+    keys = pd.Series(df.index.astype(str) if on_index else df['mid'].astype(str).values)
+    dup = np.asarray(keys.duplicated())
+    if dup.any() and verbose:
+        print(f'⚠ intl_dedupe.unique_mid{(" [" + where + "]") if where else ""}: {int(dup.sum())} επαναλαμβανομενες γραμμες '
+              f'({keys[dup].nunique()} ματς) αφαιρεθηκαν', flush=True)
+    return df[~dup]
+
+
+def assert_unique_mid(df, where='', on_index=False):
+    keys = pd.Series(df.index.astype(str) if on_index else df['mid'].astype(str).values)
+    n = int(keys.duplicated().sum())
+    if n:
+        raise AssertionError(f'intl_dedupe{(" [" + where + "]") if where else ""}: {n} γραμμες με ιδιο mid (π.χ. {list(keys[keys.duplicated()][:3])})')

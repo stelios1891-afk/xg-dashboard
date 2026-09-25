@@ -608,3 +608,13 @@ def test_f_intl_build_uses_guard():
     src = open(p, encoding='utf-8').read()
     assert 'intl_dedupe.assert_clean' in src, 'intl_build.py χωρις intl_dedupe.assert_clean'
     assert 'int(NAMES[' in src, 'intl_build.py: τα ids των φιλικων Nowgoal πρεπει να γινονται int'
+
+
+def test_f_intl_venue_flags_one_row_per_match():
+    """intl_venue_flags.csv (οπου υπαρχει — τοπικα) εχει μια γραμμη ανα ματς· αλλιως το join πολλαπλασιαζει ματς στο Elo (bug 25/9: 286 φιλικα ×4)."""
+    import pandas as pd
+    import intl_dedupe
+    p = os.path.join(ROOT, 'intl_venue_flags.csv')
+    if not os.path.exists(p):
+        pytest.skip('intl_venue_flags.csv δεν υπαρχει εδω (τοπικο)')
+    intl_dedupe.assert_unique_mid(pd.read_csv(p, dtype={'mid': str}), where='intl_venue_flags.csv')
