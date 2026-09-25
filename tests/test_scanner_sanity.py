@@ -675,3 +675,17 @@ def test_f_intl_consensus_and_ledger():
     assert len(cons) == 2 and all(r['home'] == 'X' for r in rows), 'μονο ματς ≤72ω'
     assert all(r['late'] for r in cons), 'pick 1.75ω πριν πρεπει να εχει σημειωση'
     assert L.new_entries(dash, known, now) == [], 'δευτερη φορα: καμια νεα εγγραφη (πρωτη εμφανιση μονο)'
+    # Telegram (25/9): μηνυμα νεου pick + εκκαθαρισης χτιζεται· χωρις TELEGRAM_TOKEN δεν στελνει ουτε βαζει σημαια
+    msg = L.tg_new_msg(cons)
+    assert 'ΕΘΝΙΚΕΣ' in msg and 'Y +1.25 @1.90' in msg and 'Over 2.25' in msg and '21:45' in msg, msg
+    assert 'Μ1+Μ2' in msg and cons[0]['late'] in msg
+    done = [dict(cons[0], result='0-1', pnl=0.9), dict(cons[1], result='0-1', pnl=-1.0)]
+    sm = L.tg_settle_msg(done, done)
+    assert '✅' in sm and '❌' in sm and 'ROI -5.0%' in sm, sm
+    old = {k: os.environ.pop(k, None) for k in ('TELEGRAM_TOKEN', 'TELEGRAM_CHAT_ID')}
+    try:
+        assert L.telegram(rows, now) is False and not any(r.get('tg') for r in rows), 'χωρις token δεν πρεπει να σημαδευει'
+    finally:
+        for k, v in old.items():
+            if v is not None:
+                os.environ[k] = v
