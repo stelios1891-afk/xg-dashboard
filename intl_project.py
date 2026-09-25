@@ -43,6 +43,8 @@ ol = fit_ol(C['diff'].values, C['y'].values)
 olA = fit_ol(PA['diff_lam0.3'].values, PA['y'].values); aA = float(np.sum(PA['diff_lam0.3'] * PA['gd']) / np.sum(PA['diff_lam0.3'] ** 2))
 a = float(np.sum(C['diff'] * C['gd']) / np.sum(C['diff'] ** 2))          # gd ~ a*diff
 M = pd.read_csv('intl_matches.csv', dtype={'season': str, 'mid': str})
+import intl_dedupe
+M = intl_dedupe.dedupe(M, where='intl_project')   # 25/9: κλειδι ασφαλειας — διπλα ματς δεν μετρανε
 T_nl = float((M[(M.ctype == 'nl') & (M.season >= '2223')].hs + M[(M.ctype == 'nl') & (M.season >= '2223')]['as']).mean())
 print(f'ordered logit: beta {ol[0]:.4f}/Elo, c1 {ol[1]:.3f}, c2 {ol[2]:.3f} · supremacy a = {a*100:.3f} γκολ ανα 100 Elo · μεσο συνολο NL {T_nl:.2f}')
 

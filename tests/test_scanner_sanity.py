@@ -569,3 +569,42 @@ def test_e_ucl_kappa_applied():
             if fav_ratio < 1.0:
                 bad.append(f'{_elab(p)}: UCL φαβορι xG/βαση = {fav_ratio:.3f} < 1 — το κ δεν φαινεται εφαρμοσμενο')
     assert not bad, 'κ UCL / συνεπεια projections:\n' + '\n'.join(bad)
+
+
+# ---------------------------------------------------------------- F. ΕΘΝΙΚΕΣ: κλειδι ασφαλειας κατα των διπλων ματς (25/9/2026)
+def test_f_intl_dedupe_logic():
+    """intl_dedupe πιανει: ιδιο ζευγος με ids κειμενο/αριθμο, ανεστραμμενο γηπ/φιλοξ, ±1 μερα· κραταει FotMob· αφηνει ρεβανς μετα απο μερες."""
+    import pandas as pd
+    import intl_dedupe
+    M = pd.DataFrame([
+        dict(mid='1', src='fotmob', date='2026-06-04 19:10', hid=6723, aid=6709, hs=1, **{'as': 2}),
+        dict(mid='ng1', src='nowgoal_friendly', date='2026-06-04 19:10', hid='6723', aid='6709', hs=1, **{'as': 2}),   # ids κειμενο
+        dict(mid='ng2', src='nowgoal_friendly', date='2026-06-04 21:00', hid=6709, aid=6723, hs=2, **{'as': 1}),       # ανεστραμμενο
+        dict(mid='ng3', src='nowgoal_friendly', date='2026-06-05 18:00', hid=6723, aid=6709, hs=1, **{'as': 2}),       # +1 μερα
+        dict(mid='2', src='fotmob', date='2026-06-09 19:10', hid=6723, aid=6709, hs=0, **{'as': 0}),                   # αλλο ματς (5 μερες μετα)
+    ])
+    C = intl_dedupe.dedupe(M, verbose=False)
+    assert sorted(C.mid) == ['1', '2'], f'κρατηθηκαν {sorted(C.mid)} — περιμενα μονο τα FotMob 1 και 2'
+    intl_dedupe.assert_clean(C)
+    with pytest.raises(AssertionError):
+        intl_dedupe.assert_clean(M)
+
+
+def test_f_intl_matches_has_no_duplicates():
+    """Ο πινακας ματς εθνικων (οπου υπαρχει — τοπικα, οχι στο repo) ΔΕΝ εχει διπλα."""
+    import pandas as pd
+    import intl_dedupe
+    p = os.path.join(ROOT, 'intl_matches.csv')
+    if not os.path.exists(p):
+        pytest.skip('intl_matches.csv δεν υπαρχει εδω (χτιζεται τοπικα)')
+    intl_dedupe.assert_clean(pd.read_csv(p, dtype={'mid': str}), where='intl_matches.csv')
+
+
+def test_f_intl_build_uses_guard():
+    """Το intl_build.py περναει απο τον κοινο ελεγχο διπλων και κανει τα ids ακεραιους (αιτια του bug 25/9)."""
+    p = os.path.join(ROOT, 'intl_build.py')
+    if not os.path.exists(p):
+        pytest.skip('intl_build.py ζει μονο τοπικα')
+    src = open(p, encoding='utf-8').read()
+    assert 'intl_dedupe.assert_clean' in src, 'intl_build.py χωρις intl_dedupe.assert_clean'
+    assert 'int(NAMES[' in src, 'intl_build.py: τα ids των φιλικων Nowgoal πρεπει να γινονται int'
