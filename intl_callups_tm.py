@@ -70,7 +70,10 @@ def tm_team(nm):
                 hit = RANKMAP[k]; break
     return tuple(hit) if hit else None
 
-PV = json.load(open('intl_player_values.json', encoding='utf-8'))
+if os.path.exists('intl_player_values.json'):
+    PV = json.load(open('intl_player_values.json', encoding='utf-8'))
+else:   # 25/9: στο GitHub Actions το συμπαγες αρχειο (pid -> [ονομα, τελευταια αξια SciSports])
+    PV = {k: {'name': v[0], 'mv_now': v[1]} for k, v in json.load(open('intl_player_values_now.json', encoding='utf-8')).items()}
 SQH = json.load(open('intl_squads.json', encoding='utf-8'))
 P = pd.read_csv('intl_projections.csv')
 M = pd.read_csv('intl_matches.csv', dtype={'mid': str})
@@ -102,6 +105,36 @@ for mid, rec in SQH.items():
             played[int(tid)][int(pid)] = played[int(tid)].get(int(pid), 0) + 1
 
 WIN0 = (datetime.datetime.now() - datetime.timedelta(days=10)).strftime('%Y-%m-%d')   # αρχη τρεχοντος διεθνους παραθυρου (προσεγγιση)
+# 25/9 (αποφαση Στελιου: στο μοντελο η αξια της ΚΛΗΣΗΣ): ολοι οι παικτες που εχουν ντυθει ποτε με καθε εθνικη (FotMob) → υποψηφιοι για αντιστοιχιση ονοματων TM
+team_pids = {}
+for mid, rec in SQH.items():
+    tms = mid2teams.get(str(mid)); d_ = str(mid2date.get(str(mid), ''))[:10]
+    if not tms:
+        continue
+    for sk, tid in (('h', tms[0]), ('a', tms[1])):
+        for pid in ((rec.get(sk) or {}).get('p') or {}):
+            dd = team_pids.setdefault(int(tid), {})
+            dd[int(pid)] = max(dd.get(int(pid), ''), d_)
+
+
+def _toks(name):
+    return re.findall(r'[a-z]{2,}', unicodedata.normalize('NFD', str(name).translate(_SPECIAL)).encode('ascii', 'ignore').decode().lower())
+
+
+def match_score(fm_name, tm_name):
+    """ποσο σιγουρα ο παικτης FotMob ειναι ο παικτης TM: 3 ιδια ονοματα · 2 ιδιο επωνυμο+αρχικο · 1.5 παρομοιο επωνυμο+αρχικο · 1 μονο επωνυμο · 0.
+    (Αυστηροτερο απο το name_in_call ωστε αδερφια/συνονοματοι — π.χ. Jurrien/Quinten Timber — να μη μπερδευονται.)"""
+    f, t = _toks(fm_name), _toks(tm_name)
+    if not f or not t:
+        return 0
+    if len(set(f) & set(t)) >= 2 or f == t:
+        return 3
+    same_init = f[0][:1] == t[0][:1]
+    if f[-1] == t[-1] or f[-1] in t:
+        return 2 if same_init else 1
+    if same_init and difflib.SequenceMatcher(None, f[-1], t[-1]).ratio() >= 0.85:
+        return 1.5
+    return 0
 
 
 def latest_val(pid):
@@ -154,6 +187,18 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
         continue
     vals = sorted([v for v in (parse_val(x) for x in RX_VAL.findall(h)) if v], reverse=True)
     v_call = float(np.percentile(vals[:11], 80)) if len(vals) >= 8 else None
+    # 25/9: ανα παικτη (γραμμη πινακα): ονομα TM + αξια TM → αντιστοιχιση με παικτη FotMob της ιδιας εθνικης → αξια SciSports (ιδια κλιμακα με το τεστ)
+    players = []; used = set(); cands = team_pids.get(tid, {})
+    for row in re.split(r'<tr class="(?:odd|even)"', h)[1:]:
+        pm = RX_PLAYER.search(row)
+        if not pm:
+            continue
+        tm_nm = pm.group(1).replace('-', ' '); vm = re.search(r'(€[\d.,]+[mk])', row); tmv = parse_val(vm.group(1)) if vm else None
+        best = max(((match_score((PV.get(str(p)) or {}).get('name', ''), tm_nm), d_, p) for p, d_ in cands.items() if p not in used), default=(0, '', None))
+        pid = best[2] if best[0] >= 1.5 else None      # μονο επωνυμο με αλλο μικρο ονομα = ΑΛΛΟΣ παικτης (Georgiy ≠ Hovhannes Harutyunyan) → αξια TM × K
+        if pid is not None:
+            used.add(pid)
+        players.append(dict(tm=tm_nm, pid=pid, sci=(latest_val(pid) if pid is not None else None), tm_m=tmv))
     called_tok = [norm(c) for c in called_names]
     miss = []
     pl = played.get(tid) or {}
@@ -173,14 +218,31 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
         if not ptok:
             continue
         # ταιριαζει με καποιον της κλησης; (>=2 κοινα tokens Ή ολο το επωνυμο)
-        matched = name_in_call(pnm, called_names)      # 25/9: ταιριασμα με επωνυμο/παρομοια γραφη
+        matched = int(pid) in used or name_in_call(pnm, called_names)      # 25/9: αντιστοιχισμενος παικτης Ή ταιριασμα ονοματος
         if not matched:
             miss.append(dict(pid=pid, nm=pnm, mv=round(v / 1e6, 1), starts=nst, left=int(pid) in dressed_now))
     miss.sort(key=lambda x: -x['mv'])
     OUT[tid] = dict(nm=nm, tm=f'{slug}/{vid}', v_call_m=v_call, n_sq=len(called_names), missing=miss[:4], dressed_now=len(dressed_now),
-                    called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'))   # 25/9: ολη η λιστα (για επαληθευση)
+                    called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'), players=players)   # 25/9: ολη η λιστα (για επαληθευση)
     print(f'  {nm:22s} κληση {len(called_names):2d} · V_call {v_call if v_call else chr(8212)}M · λειπουν: '
           + (', '.join(f"{m['nm']}({m['mv']}M)" for m in miss[:3]) if miss else chr(8212)), flush=True)
 
+# 25/9: V_call ΣΤΗΝ ΚΛΙΜΑΚΑ ΤΟΥ ΜΟΝΤΕΛΟΥ = αθροισμα 11 μεγαλυτερων αξιων SciSports της κλησης. Παικτης χωρις αντιστοιχιση (πρωτη κληση)
+# → αξια TM × K, K = διαμεσος (SciSports / TM) στους αντιστοιχισμενους ολων των ομαδων.
+_ratios = [pl['sci'] / (pl['tm_m'] * 1e6) for o in OUT.values() for pl in o['players'] if pl['sci'] and pl['tm_m']]
+K_TM = float(np.median(_ratios)) if len(_ratios) >= 50 else 1.0
+for o in OUT.values():
+    vs = []
+    for pl in o['players']:
+        pl['v'] = pl['sci'] if pl['sci'] else (pl['tm_m'] * 1e6 * K_TM if pl['tm_m'] else None)
+        if pl['v']:
+            vs.append(pl['v'])
+    vs.sort(reverse=True)
+    o['v_call_sci'] = float(sum(vs[:11])) if len(vs) >= 14 else None
+    o['n_mapped'] = sum(1 for pl in o['players'] if pl['pid'] is not None); o['k_tm'] = K_TM
+print(f'K (SciSports/TM) = {K_TM:.3f} απο {len(_ratios)} αντιστοιχισμενους · αντιστοιχιση: '
+      f"{sum(o['n_mapped'] for o in OUT.values())}/{sum(len(o['players']) for o in OUT.values())} παικτες")
+if len(OUT) < 0.8 * len(TIDS):     # 25/9: μπλοκαρισμα/σφαλματα TM → ΔΕΝ σβηνεται η προηγουμενη κληση
+    print(f'ΣΦΑΛΜΑ: μονο {len(OUT)}/{len(TIDS)} ομαδες απο TM — το intl_vcall_tm.json ΜΕΝΕΙ οπως ηταν'); sys.exit(1)
 json.dump(OUT, open('intl_vcall_tm.json', 'w', encoding='utf-8'), ensure_ascii=False)
 print(f'ΟΚ {len(OUT)}/{len(TIDS)} ομαδες -> intl_vcall_tm.json' + (f' · ΕΚΤΟΣ: {skipped}' if skipped else ''))

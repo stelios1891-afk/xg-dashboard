@@ -183,4 +183,11 @@ for mdl in ('M1', 'M2', 'M3'):
         s = B2[(B2.model == mdl) & (B2.book == bk)]
         P_(f'  {mdl} {bk:6s}: ' + ' · '.join(f"{g}: n{len(x)} {x.pnl.mean() * 100:+.1f}%" for g, x in s.groupby('ομαδα')))
 E.to_csv('intl_callup_test_events.csv', index=False)
+# 25/9 ΑΠΟΦΑΣΗ ΣΤΕΛΙΟΥ: live = αξια της ΚΛΗΣΗΣ (αποστολη που θα παιξει) ΑΝΤΙ για V_full → συντελεστης K1o (fit σε ολο το δειγμα, Μ1 H3)
+_b = coefs['K1o +V_own']
+_r = pd.concat([C.vo_h / C.vf_h, C.vo_a / C.vf_a]).replace([np.inf, -np.inf], np.nan).dropna()
+json.dump(dict(elo_per_ln=float(_b[1] / _b[0]), elo_per_doubling=float(_b[1] / _b[0] * np.log(2)), r_scale=float(_r.median()), n=int(len(C)),
+               note='V_call = αθροισμα 11 μεγαλυτερων αξιων (SciSports) της κλησης· r_scale = διαμεσος V_call/V_full (για ομαδες χωρις εγκυρη κληση: V_full × r_scale)'),
+          open('intl_vcall_config.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+P_(f'\nintl_vcall_config.json: {_b[1] / _b[0] * np.log(2):+.1f} Elo ανα διπλασιασμο αξιας κλησης · r_scale {_r.median():.3f}')
 open('intl_callup_test_out.txt', 'w', encoding='utf-8').write('\n'.join(out))

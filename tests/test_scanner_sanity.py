@@ -710,3 +710,16 @@ def test_g_intl_refresh_guards():
     assert not intl_dedupe.ng_same_fixture('2026-09-28 00:00', '2026-10-04T18:45')
     rec = [{'dt': '2026-09-28 00:00', 'x': 1}]
     assert intl_dedupe.ng_pick(rec, '2026-09-27 16:00') and intl_dedupe.ng_pick(rec, '2026-10-04 18:45') is None
+    # 25/9 (αποφαση Στελιου): στρωμα αξιας = ΚΛΗΣΗ (TM) — συντελεστης απο το τεστ, fallback V_full στην ιδια κλιμακα, προστασια απο μπλοκαρισμα TM
+    cfg = json.load(open(os.path.join(ROOT, 'intl_vcall_config.json'), encoding='utf-8'))
+    assert 30 < cfg['elo_per_doubling'] < 50 and 0.8 < cfg['r_scale'] < 1.5, cfg
+    pj = open(os.path.join(ROOT, 'intl_project.py'), encoding='utf-8').read()
+    assert 'ELO_LN_CALL * math.log(vh / va)' in pj and 'def v_call_of' in pj, 'το Μ1 πρεπει να χρησιμοποιει την αξια κλησης'
+    ct = open(os.path.join(ROOT, 'intl_callups_tm.py'), encoding='utf-8').read()
+    assert 'len(OUT) < 0.8 * len(TIDS)' in ct, 'χωρις προστασια: μπλοκαρισμα TM θα εσβηνε την κληση'
+    pr = os.path.join(ROOT, 'intl_projections.csv')
+    if os.path.exists(pr):
+        import pandas as pd
+        P = pd.read_csv(pr)
+        if 'val_src' in P:
+            assert (P.val_src.astype(str).str.count('κληση') >= 1).mean() > 0.5, 'λιγοτερα απο τα μισα ματς με αξια κλησης'

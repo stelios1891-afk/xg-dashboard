@@ -35,6 +35,33 @@ RA = pd.read_csv('intl_ratings_anchor.csv', index_col=0)['R']          # 21/9: r
 PA = pd.read_csv('intl_preds_anchor.csv', dtype={'mid': str}).merge(pd.read_csv('intl_preds_H.csv', dtype={'season': str, 'mid': str})[['mid', 'ctype', 'date', 'gd']], on='mid')
 PA = PA[PA.ctype.isin(['nl', 'qual', 'tourn']) & (pd.to_datetime(PA.date) >= '2020-07-01')]; PA['y'] = np.where(PA.gd > 0, 2, np.where(PA.gd == 0, 1, 0))     # 19/9: H3 (πραγματικες εδρες + HFA ομοσπονδιας + υψομετρο)
 VF = json.load(open('intl_team_vfull.json', encoding='utf-8')); VFULL = {int(k): v for k, v in VF['vfull'].items()}; ELO_LN = VF['elo_per_ln']
+# ---- 25/9/2026 ΑΠΟΦΑΣΗ ΣΤΕΛΙΟΥ: στρωμα αξιας = ΑΞΙΑ ΤΗΣ ΚΛΗΣΗΣ (αποστολη που θα παιξει), οχι «δυνατη ενδεκαδα 2 ετων» ----
+# V_call = αθροισμα 11 μεγαλυτερων αξιων SciSports της τρεχουσας κλησης Transfermarkt (intl_callups_tm.py → intl_vcall_tm.json)·
+# συντελεστης απο το τεστ intl_callup_test.py (K1o, Μ1 H3: RPS .16755 → .16694, 4/6) → intl_vcall_config.json.
+# Ομαδα χωρις εγκυρη κληση (π.χ. Γερμανια: λιστα TM 43 ονοματα) ή κληση παλαιοτερη απο 10 ημερες πριν το ματς → V_full × (διαμεσος V_call/V_full
+# της ιδιας ληψης), ωστε να ειναι στην ιδια κλιμακα με τις υπολοιπες.
+import os as _os, datetime as _dtm
+CALL_CFG = json.load(open('intl_vcall_config.json', encoding='utf-8')); ELO_LN_CALL = CALL_CFG['elo_per_ln']
+_VC = json.load(open('intl_vcall_tm.json', encoding='utf-8')) if _os.path.exists('intl_vcall_tm.json') else {}
+VCALL = {int(k): (v['v_call_sci'], v.get('asof')) for k, v in _VC.items() if v.get('v_call_sci')}
+_sc = [VCALL[t][0] / VFULL[t] for t in VCALL if VFULL.get(t)]
+CALL_SCALE = float(np.median(_sc)) if len(_sc) >= 10 else CALL_CFG['r_scale']
+
+
+def v_call_of(tid, utc):
+    """(αξια, πηγη) για την ομαδα στο ματς: κληση TM αν υπαρχει και ειναι φρεσκια (≤10 ημερες πριν το ματς), αλλιως V_full × CALL_SCALE."""
+    vc = VCALL.get(tid)
+    if vc and vc[1]:
+        try:
+            age = (_dtm.datetime.fromisoformat(str(utc)[:16]) - _dtm.datetime.fromisoformat(vc[1][:16])).days
+        except Exception:
+            age = 99
+        if -1 <= age <= 10:
+            return vc[0], 'κληση'
+    return (VFULL[tid] * CALL_SCALE, 'V_full') if VFULL.get(tid) else (None, '—')
+
+
+print(f"στρωμα αξιας ΚΛΗΣΗΣ: {len(VCALL)} ομαδες με κληση TM · {CALL_CFG['elo_per_doubling']:+.0f} Elo ανα διπλασιασμο · κλιμακα fallback V_full ×{CALL_SCALE:.3f}")
 print(f"στρωμα αξιας: {len(VFULL)} ομαδες, {VF['elo_per_doubling']:+.0f} Elo ανα διπλασιασμο (V1, intl_value2)")
 P = pd.read_csv('intl_preds_H.csv', dtype={'season': str, 'mid': str}, parse_dates=['date'])
 C = P[P.ctype.isin(['nl', 'qual', 'tourn']) & (P.date >= '2020-07-01')].copy()
@@ -105,8 +132,8 @@ for r in F.itertuples():
     if r.hid not in R.index or r.aid not in R.index:
         out.append(dict(comp=r.comp, utc=r.utc, home=r.home, away=r.away, note='χωρις rating')); continue
     rh, ra = float(R.loc[r.hid, 'B']), float(R.loc[r.aid, 'B'])
-    vh, va = VFULL.get(r.hid), VFULL.get(r.aid)
-    vadj = ELO_LN * math.log(vh / va) if (vh and va) else 0.0          # στρωμα αξιας ροστερ (V_full)
+    (vh, srch), (va, srca) = v_call_of(r.hid, r.utc), v_call_of(r.aid, r.utc)
+    vadj = ELO_LN_CALL * math.log(vh / va) if (vh and va) else 0.0          # 25/9: στρωμα αξιας ΚΛΗΣΗΣ (ηταν V_full)
     diff = rh + HFA - ra + vadj
     ph, pdr, pa = probs(np.array([diff]), ol)[0]
     # ---- εκδοχη ΑΓΚΥΡΑΣ (χωρις αξια) ----
@@ -132,7 +159,7 @@ for r in F.itertuples():
     # γραμμη οπου ο γηπεδουχος ~ 50%: η πλησιεστερη σε fair 2.00
     best = min(fair.items(), key=lambda kv: abs((kv[1] or 9) - 2.0))
     out.append(dict(comp=r.comp.replace('NationsLeague', 'NL '), utc=r.utc, home=r.home, away=r.away, hid=r.hid, aid=r.aid, νεκρη=('' if (r.alive_h is not False and r.alive_a is not False) else ('γηπ' if r.alive_h is False else '') + ('εκτος' if r.alive_a is False else '')),
-                    R_home=round(rh), R_away=round(ra), val_adj=round(vadj), diff=round(diff), xg_h=round(lh, 2), xg_a=round(la, 2),
+                    R_home=round(rh), R_away=round(ra), val_adj=round(vadj), val_src=f'{srch}/{srca}', V_h=(round(vh / 1e6, 1) if vh else np.nan), V_a=(round(va / 1e6, 1) if va else np.nan), diff=round(diff), xg_h=round(lh, 2), xg_a=round(la, 2),
                     P1=round(ph * 100), PX=round(pdr * 100), P2=round(pa * 100),
                     fair_1=round(1 / ph, 2), fair_X=round(1 / pdr, 2), fair_2=round(1 / pa, 2),
                     fair_line=f'{best[0]:+.2f} @{best[1]}', fair_m05=fair[-0.5], fair_p05=fair[0.5],

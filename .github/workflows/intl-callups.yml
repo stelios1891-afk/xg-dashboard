@@ -1,0 +1,85 @@
+name: intl-callups
+
+# ΚΛΗΣΕΙΣ ΕΘΝΙΚΩΝ ΚΟΝΤΑ ΣΕ ΚΑΘΕ ΜΑΤΣ (25/9/2026, αποφαση Στελιου: στο μοντελο μπαινει η αξια της ΚΛΗΣΗΣ = αποστολη που θα παιξει).
+# Καθε 4 ωρες, ΜΟΝΟ οταν υπαρχει ματς εθνικων στις επομενες 72 ωρες: Transfermarkt (τρεχουσα κληση — βγαζει οσους αποχωρουν, π.χ. Brobbey 24/9)
+# → intl_project (αξια κλησης στο Μ1/Μ3) → σκιες → dashboard → επαληθευση λιστας με αποστολες FotMob. 0 credits Odds API.
+# Χειροκινητα: Run workflow Ή push του intl_callups_trigger.txt (το commit ΧΩΡΙΣ [skip ci]).
+on:
+  schedule:
+    - cron: '20 */4 * * *'
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'intl_callups_trigger.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: intl-refresh          # ιδια ουρα με το intl-refresh (γραφουν τα ιδια αρχεια)
+  cancel-in-progress: false
+
+jobs:
+  callups:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Υπαρχει ματς στις επομενες 72 ωρες;
+        id: gate
+        run: |
+          python - <<'EOF' >> "$GITHUB_OUTPUT"
+          import pandas as pd, datetime as dt, os
+          now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
+          P = pd.read_csv('intl_projections.csv')
+          t = pd.to_datetime(P.utc)
+          soon = ((t > now) & (t <= now + dt.timedelta(hours=72))).sum()
+          force = os.environ.get('GITHUB_EVENT_NAME') in ('workflow_dispatch', 'push')
+          print('run=' + ('yes' if (soon or force) else 'no'))
+          EOF
+
+      - name: Κλησεις TM → προβολες → dashboard
+        if: steps.gate.outputs.run == 'yes'
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python intl_callups_tm.py
+          python intl_project.py > /dev/null
+          python intl_nl_shadow.py > /dev/null || echo "shadow failed (μη κρισιμο)"
+          python intl_nl_overs.py > /dev/null || echo "overs failed (μη κρισιμο)"
+          python intl_dashboard_build.py | tail -3
+          python intl_callups_validate.py | tail -3 || true
+
+      - name: Sanity tests (αποτυχια = ΟΧΙ commit)
+        if: steps.gate.outputs.run == 'yes'
+        id: sanity
+        continue-on-error: true
+        run: pip install -q pytest && python -m pytest -q -p no:cacheprovider tests/test_scanner_sanity.py
+
+      - name: Commit
+        if: steps.gate.outputs.run == 'yes' && steps.sanity.outcome == 'success'
+        run: |
+          git config user.name "intl-callups-bot"
+          git config user.email "actions@github.com"
+          for f in intl_vcall_tm.json intl_projections.csv intl_nl_shadow_2627.csv intl_nl_overs_2627.csv intl_projections_dashboard.json intl_callups_validate_out.txt; do
+            if [ -f "$f" ]; then git add -f "$f"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "καμια αλλαγη"
+          else
+            git commit -m "intl κλησεις TM → αξια κλησης/προβολες [skip ci]"
+            for i in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main && git push && break
+              sleep 10
+            done
+          fi
