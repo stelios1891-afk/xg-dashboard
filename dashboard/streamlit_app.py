@@ -469,8 +469,20 @@ def render_value(league):
                    'μπαινει με την πρωτη εμφανιση μεσα στις 72 ωρες· αν εμφανιστει στις 2 τελευταιες ωρες φαινεται η σημειωση · stake ~¼ μοναδας · '
                    f'υπολογισμος {in_scan or "—"} UTC')
 
+def _stamp(*files):
+    """26/9/2026: κλειδι cache = ωρα τελευταιας αλλαγης των αρχειων (και του κωδικα) → νεα picks/κωδικας φαινονται ΑΜΕΣΩΣ, οχι μετα απο 15′."""
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out = []
+    for f in files:
+        try:
+            out.append(os.path.getmtime(os.path.join(root, f)))
+        except OSError:
+            out.append(0)
+    return tuple(out)
+
+
 @st.cache_data(ttl=15 * 60)
-def _ledger_data():
+def _ledger_data(stamp_key=None):
     import ledger_view
     return ledger_view.prepare(build_data.CURRENT_SEASON)
 
@@ -485,7 +497,8 @@ def render_ledger(league):
                "**🌐 Εθνικες**: τα picks ΣΥΝΑΙΝΕΣΗΣ (τιμη πρωτης εμφανισης, Odds API) — κλεισιμο απο την τελευταια καταγραφη πριν τη σεντρα· "
                "≈ = η γραμμη εκλεισε αλλου και το κλεισιμο μεταφραστηκε στη δικη μας γραμμη.")
     try:
-        settled, pending = _ledger_data()
+        settled, pending = _ledger_data(_stamp('clv_ledger.jsonl', 'clv_bets.jsonl', 'intl_picks_ledger.jsonl', 'intl_closing.jsonl',
+                                               'dashboard/ledger_view.py'))
     except Exception as e:
         st.error(f"Σφαλμα φορτωσης: {e}")
         return
@@ -514,7 +527,7 @@ def render_ledger(league):
                           height=min((len(settled) + len(pending)) * 52 + 60, 5000), scrolling=True)
 
 @st.cache_data(ttl=15 * 60)
-def _moves_hist():
+def _moves_hist(stamp_key=None):
     import moves_view
     return moves_view.load_history()
 
@@ -526,7 +539,7 @@ def render_moves(league):
     st.caption("Απο τις καταγραφες του scanner (καθε 30′ σε μερα αγωνων, 2h τις τελευταιες 3 μερες, 1×/μερα νωριτερα). "
                "↓ = η αποδοση επεσε (πηρε χρημα). Το βαθος ιστοριας μεγαλωνει μερα με τη μερα — η συλλογη ξεκινησε 28/8/2026. "
                "**Εθνικες (NL A-D)** εμφανιζονται οσο υπαρχει διεθνες παραθυρο — Odds API: Pinnacle, αλλιως Bovada (γκανιοτα «σαν Pinnacle»), 1Χ2 Betfair οπου λειπει.")
-    H = _moves_hist()
+    H = _moves_hist(_stamp('odds_history.jsonl', 'intl_odds_hist.jsonl', 'dashboard/moves_view.py'))
     if not H:
         st.info("Δεν υπαρχουν καταγραφες ακομα.")
         return
