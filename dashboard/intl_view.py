@@ -31,7 +31,7 @@ HOWTO = [
     'dashboard· ~45λεπτο refresh μακρια απο ΚΟ, καθε τικ στο 6ωρο προ ΚΟ)· οταν δεν υπαρχει TOA γραμμη (π.χ. AFCON προκριματικα — δεν εχει '
     'key στο TOA — ή παυση scanner) → **Crown/SBOBET** (Nowgoal, snapshot laptop). Η ωρα του snapshot φαινεται στο badge (hover).',
     '**Γραμμες & picks:** fair AH = τιμη του καθε μοντελου στη γραμμη της πηγης, edge = αναμενομενη αποδοση· '
-    'κανονες pick (ιδιοι σε καθε πηγη): AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · 1Χ2 φαβορι ≥75% · '
+    'κανονες pick (ιδιοι σε καθε πηγη): AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · (1Χ2 φαβορι: αφαιρεθηκε 26/9 — δεν παιζεται) · '
     'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
     '**ΣΚΙΑ / ΧΑΡΤΙΝΟ:** τιποτα εδω δεν παιζεται live — καταγραφη για κριση με πραγματικα δεδομενα (ledger). '
     '**Bovada** (NL B-D, 25/9): οπου δεν υπαρχει Pinnacle, 1Χ2 + AH + O/U απο Bovada (Odds API) με **μειωμενη γκανιοτα**: '
@@ -95,12 +95,25 @@ def _x12_tip(m, lab):
             f'+ μεση γκανιοτα 1Χ2 Pinnacle {pm if pm is not None else "4.4"}%')
 
 
+def _no_x12(pick):
+    """26/9/2026 (Στελιος): χωρις «1Χ2 φαβορι» (κιτρινο σημα) — δεν παιζεται ποτε. Κραταει τα υπολοιπα κομματια (DOG/FAV/OVER…)."""
+    if not isinstance(pick, str):
+        return pick
+    parts = [x.strip() for x in pick.split(' · ') if x.strip() and not x.strip().startswith(('1Χ2', '1X2'))]
+    return ' · '.join(parts)
+
+
 def load():
     try:
         with open(DATA_F, encoding='utf-8') as fh:
-            return json.load(fh)
+            d = json.load(fh)
     except Exception:
         return None
+    for c in d.get('comps', []):
+        for m in c.get('matches', []):
+            if isinstance(m.get('picks'), dict):
+                m['picks'] = {k: _no_x12(v) for k, v in m['picks'].items()}
+    return d
 
 
 def comp_matches(data, comp):

@@ -73,11 +73,12 @@ def prepare(current_season):
             except Exception:
                 pass
     settled, pending = _first_alert(settled), _first_alert(pending)
-    try:
-        s_i, p_i = _intl_rows()
-        settled += s_i; pending += p_i
-    except Exception:
-        pass
+    for fn in (_intl_rows, _euro_rows):
+        try:
+            s_i, p_i = fn()
+            settled += s_i; pending += p_i
+        except Exception:
+            pass
     settled.sort(key=lambda r: str(r.get('ko') or ''), reverse=True)
     pending.sort(key=lambda r: str(r.get('ko') or ''))
     return settled, pending
@@ -175,6 +176,36 @@ def _intl_close(r, c):
     eq = clv_ledger._equiv_close_odds(T / 2, T / 2, r['side'], r['hcap'], r['close_line'], co, co_opp)
     if eq:
         r['close_eq'] = round(eq, 3); r['clv_est_pct'] = round(r['odds'] / eq - 1, 4)
+
+
+# ---------- ΕΥΡΩΠΑΪΚΑ (26/9/2026, Στελιος): euro_picks_ledger.jsonl — ιδιος κανονας εισοδου ≤72ω, κλεισιμο/σκορ/xG στο ιδιο το αρχειο ----------
+EURO_LG = {'ChampionsLeague': 'UCL', 'EuropaLeague': 'UEL', 'ConferenceLeague': 'UECL'}
+
+
+def _euro_rows():
+    settled, pending = [], []
+    for p in _jsonl(os.path.join(ROOT, 'euro_picks_ledger.jsonl')):
+        ou = p.get('mkt') == 'OVER'
+        r = dict(lg=EURO_LG.get(p.get('comp'), p.get('comp')), home=p['home'], away=p['away'], hid=p.get('hid'), aid=p.get('aid'),
+                 ko=p['ko'], euro=True, mkt=p.get('mkt'), side=(0 if ou else (1 if p.get('side') == 1 else -1)), hcap=float(p['line']),
+                 odds=float(p['odds']), edge=p.get('edge'), seen=p.get('seen'), no_play=bool(p.get('no_play')),
+                 bet_label=(f"Over {float(p['line']):g}" if ou else None),
+                 score=(p.get('score') or '').replace('-', ' - ') or None, pnl=p.get('pnl'),
+                 xg_h=None, xg_a=None, xg_fair=None, xg_value=None)
+        if p.get('pnl') is None:
+            pending.append(r); continue
+        c = p.get('close') or {}
+        try:
+            _intl_close(r, dict(line=c.get('line'), oh=c.get('oh'), oa=c.get('oa'), ou_line=c.get('tl'), over=c.get('to'), under=c.get('tu')))
+        except Exception:
+            r['close_odds'] = None; r['clv'] = None
+        if p.get('xg_h') is not None and p.get('xg_a') is not None:
+            try:
+                _intl_xg_value(r, (p['xg_h'], p['xg_a']))
+            except Exception:
+                pass
+        settled.append(r)
+    return settled, pending
 
 
 def _intl_rows():
@@ -285,6 +316,8 @@ def _when(r):
         t = f' · alert {hb / 24:.1f} μερ. πριν' if hb >= 48 else f' · alert {hb:.0f}ω πριν'
     except Exception:
         t = ''
+    if r.get('no_play'):
+        return t + ' · 👁 σκια (UEL, δεν παιζεται)'
     return t + (' · 📝 καταγραφη (αγων. &lt;15)' if r.get('paper') else '')
 
 
@@ -297,7 +330,7 @@ def table_html(settled, pending):
         H.append(
             f'<tr class="pend"><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)} · ΕΚΚΡΕΜΕΙ</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else "")}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)} · ΕΚΚΡΕΜΕΙ</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td colspan="7" class="mut">παιζεται…</td></tr>')
     for r in settled:
@@ -319,7 +352,7 @@ def table_html(settled, pending):
         H.append(
             f'<tr><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)}</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else "")}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)}</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td>{closes}</td><td>{clv}</td>'
             f'<td>{_h.escape(str(r.get("score") or "—"))}</td><td>{xg}</td>'

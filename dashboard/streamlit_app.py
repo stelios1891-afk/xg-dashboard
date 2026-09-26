@@ -495,10 +495,12 @@ def render_ledger(league):
                "CLV+ = νικησαμε το κλεισιμο · **xG value** = ποσο καλυτερη ηταν η τιμη μας απο τη «δικαιη» "
                "με βαση τα ΤΕΛΙΚΑ xG του ματς (κριση της διαδικασιας, οχι του σκορ). "
                "**🌐 Εθνικες**: τα picks ΣΥΝΑΙΝΕΣΗΣ (τιμη πρωτης εμφανισης, Odds API) — κλεισιμο απο την τελευταια καταγραφη πριν τη σεντρα· "
-               "≈ = η γραμμη εκλεισε αλλου και το κλεισιμο μεταφραστηκε στη δικη μας γραμμη.")
+               "≈ = η γραμμη εκλεισε αλλου και το κλεισιμο μεταφραστηκε στη δικη μας γραμμη. "
+               "**🇪🇺 Ευρωπαϊκα** (UCL/UEL/UECL) με τον ιδιο κανονα· το UEL ειναι σκια (δεν παιζεται). "
+               "Σε ολα: ενα pick ανα ματς & πλευρα, η πρωτη φορα που ηταν ενεργο ≤72ω πριν τη σεντρα.")
     try:
         settled, pending = _ledger_data(_stamp('clv_ledger.jsonl', 'clv_bets.jsonl', 'intl_picks_ledger.jsonl', 'intl_closing.jsonl',
-                                               'dashboard/ledger_view.py'))
+                                               'euro_picks_ledger.jsonl', 'dashboard/ledger_view.py'))
     except Exception as e:
         st.error(f"Σφαλμα φορτωσης: {e}")
         return

@@ -204,6 +204,17 @@ def test_a_clv_bets_h72_once_per_match_side():
         assert 0 < b.get('hours_before', 0) <= 72, f'clv_bets h72 εκτος 72ω: {b.get("home")}-{b.get("away")} {b.get("hours_before")}'
 
 
+def test_a_euro_ledger_once_within_72h():
+    """26/9/2026: euro_picks_ledger — μια εισοδος ανα ματς & πλευρα, μεσα σε 72ω πριν τη σεντρα· UEL = σκια."""
+    rows = _jsonl('euro_picks_ledger.jsonl')
+    keys = [r['key'] for r in rows]
+    assert len(keys) == len(set(keys)), 'euro_picks_ledger: διπλη εισοδος ιδιου ματς/πλευρας'
+    for r in rows:
+        assert 0 < r['hours_before'] <= 72, f'euro_picks_ledger εκτος 72ω: {r["home"]}-{r["away"]} {r["hours_before"]}'
+        if r['comp'] == 'EuropaLeague':
+            assert r['no_play'], f'euro_picks_ledger: UEL χωρις no_play ({r["home"]}-{r["away"]})'
+
+
 def test_a_clv_bets_fields():
     rows = _jsonl('clv_bets.jsonl')
     need = {'seen', 'lg', 'home', 'away', 'hid', 'aid', 'ko', 'side', 'hcap', 'odds', 'edge', 'stake'}
