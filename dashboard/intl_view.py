@@ -30,7 +30,7 @@ HOWTO = [
     '**Αγορα (πηγη ανα ματς, badge):** **Pinnacle** (αλλιως **Matchbook**) απο το Odds API μεσω του scanner (GitHub Actions, οπως το υπολοιπο '
     'dashboard· ~45λεπτο refresh μακρια απο ΚΟ, καθε τικ στο 6ωρο προ ΚΟ)· οταν δεν υπαρχει TOA γραμμη (π.χ. AFCON προκριματικα — δεν εχει '
     'key στο TOA — ή παυση scanner) → **Crown/SBOBET** (Nowgoal, snapshot laptop). Η ωρα του snapshot φαινεται στο badge (hover).',
-    '**Γραμμες & picks:** fair AH = τιμη του καθε μοντελου στη γραμμη της πηγης, edge = αναμενομενη αποδοση· '
+    '**Γραμμες & picks:** fair AH = τιμη του καθε μοντελου στη γραμμη της πηγης ΜΕ τη γκανιοτα της αγορας (οπως εγχωρια/Ευρωπη, 26/9), edge = αναμενομενη αποδοση στην πραγματικη τιμη· '
     'κανονες pick (ιδιοι σε καθε πηγη): AH dog/φαβορι ≥0.5 σε 1.70-2.10 με edge ≥10% · (1Χ2 φαβορι: αφαιρεθηκε 26/9 — δεν παιζεται) · '
     'νεκρη ομαδα = κανενα pick · OVER edge ≥8% ΚΑΙ κοντινο (|ΔElo| <150) ή νοκ-αουτ. Η «Αγκυρα» δινει μονο AH picks (οπως τρεχει απο 21/9).',
     '**ΣΚΙΑ / ΧΑΡΤΙΝΟ:** τιποτα εδω δεν παιζεται live — καταγραφη για κριση με πραγματικα δεδομενα (ledger). '
@@ -434,6 +434,10 @@ def _lines_pane(m, vers):
     src, c = market_src(m)
     ln = c.get('ah_line')
     ou = c.get('ou_line')
+    try:
+        S_AH = (1.0 / c['oh'] + 1.0 / c['oa']) if (c.get('oh') and c.get('oa')) else 1.0
+    except Exception:
+        S_AH = 1.0
     h = ('<table class="lt"><tr><th></th><th>xG · T</th>'
          f'<th>fair γηπ {_fmt_line(ln)}</th><th>fair φιλοξ {_fmt_line(-ln) if ln is not None else "—"}</th>'
          f'<th>over {ou:g}</th><th>pick</th></tr>' if ou is not None else
@@ -449,8 +453,11 @@ def _lines_pane(m, vers):
         e = ((m.get('edges') or {}).get(v) or {}).get(src) or {}
         xg = f'{V["xg_h"]:.2f}-{V["xg_a"]:.2f}' + (f' <span class="sec">T {V["T"]:.2f}</span>' if V.get('T') is not None else '')
         if e.get('fair_h') is not None:
-            fh = f'<span class="fair">{e["fair_h"]:.2f}</span> {_edge_span(e["ah_home"])}'
-            fa = f'<span class="fair">{e["fair_a"]:.2f}</span> {_edge_span(e["ah_away"])}'
+            # 26/9 (Στελιος): fair ΜΕ τη γκανιοτα της αγορας (ιδιο ζευγος AH της πηγης, ισομερως — οπως εγχωρια/Ευρωπη) ωστε να
+            # συγκρινεται αμεσα με την τιμη της αγορας· το edge μενει οπως ηταν (υπολογιζεται στην πραγματικη τιμη). Hover = χωρις γκανιοτα.
+            fvh, fva = e['fair_h'] / S_AH, e['fair_a'] / S_AH
+            fh = (f'<span class="fair" title="χωρις γκανιοτα {e["fair_h"]:.2f}">{fvh:.2f}</span> {_edge_span(e["ah_home"])}')
+            fa = (f'<span class="fair" title="χωρις γκανιοτα {e["fair_a"]:.2f}">{fva:.2f}</span> {_edge_span(e["ah_away"])}')
         else:
             fh = fa = '<span class="e dim">—</span>'
         ov = _edge_span(e.get('over')) if e.get('over') is not None else '<span class="e dim">—</span>'
@@ -475,7 +482,7 @@ def _lines_pane(m, vers):
                    + (f' · O/U {n["ou_line"]:g} {n["over"]:.2f}/{n["under"]:.2f}' if n.get('ou_line') is not None else '') + '</span>')
     h += (f'<tr class="mkr"><td class="vn">Αγορα {_src_badge(m)}<small>1 / Χ / 2 · AH · O/U</small></td>'
           f'<td>{x12}</td><td colspan="2">{ah}{sec}</td><td>{out}</td><td></td></tr></table>')
-    h += ('<div class="leg">fair = τιμη μοντελου στη γραμμη της πηγης · edge = αναμενομενη αποδοση (πρασινο ≥10%, κιτρινο ≥5%) · '
+    h += ('<div class="leg">fair = τιμη μοντελου στη γραμμη της πηγης <b>με τη γκανιοτα της αγορας</b> (αμεσα συγκρισιμη· hover = χωρις γκανιοτα) · edge = αναμενομενη αποδοση (πρασινο ≥10%, κιτρινο ≥5%) · '
           'over: P(over) μοντελου + edge</div>')
     return h
 
