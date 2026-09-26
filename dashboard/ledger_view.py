@@ -72,6 +72,7 @@ def prepare(current_season):
                     r['xg_value'] = round(r['odds'] / fair - 1, 4)
             except Exception:
                 pass
+    settled, pending = _first_alert(settled), _first_alert(pending)
     try:
         s_i, p_i = _intl_rows()
         settled += s_i; pending += p_i
@@ -80,6 +81,49 @@ def prepare(current_season):
     settled.sort(key=lambda r: str(r.get('ko') or ''), reverse=True)
     pending.sort(key=lambda r: str(r.get('ko') or ''))
     return settled, pending
+
+
+def _first_alert(rows):
+    """26/9/2026 (Στελιος): ΕΝΑ pick ανα ματς & πλευρα. Ο scanner γραφει νεα εγγραφη καθε φορα που αλλαζει η γραμμη
+    (π.χ. Union +3 → +3.25 → +3.5 → +3.75 = 4 εγγραφες), ενω στην πραξη παιζεται μια φορα — στο ΠΡΩΤΟ alert.
+    Κραταμε το πρωτο (τιμη/γραμμη τη στιγμη που ηρθε το alert)· οι μεταγενεστερες γραμμες φαινονται ως σημειωση (later).
+    Το αρχειο (clv_ledger/clv_bets) μενει ακεραιο."""
+    g = {}
+    for r in rows:
+        g.setdefault((r.get('lg'), r.get('home'), r.get('away'), str(r.get('ko'))[:16], r.get('side')), []).append(r)
+    out = []
+    for v in g.values():
+        v.sort(key=lambda r: str(r.get('seen') or ''))
+        r = dict(v[0]); r['later'] = [(x['hcap'], x['odds']) for x in v[1:]]
+        out.append(r)
+    return out
+
+
+def _intl_xg():
+    """(hid, aid, ημερα) -> (xG γηπ., xG φιλοξ.) απο το intl_matches.csv (FotMob)."""
+    import csv
+    idx = {}
+    try:
+        for m in csv.DictReader(open(os.path.join(ROOT, 'intl_matches.csv'), encoding='utf-8')):
+            if m.get('has_xg') == 'True' and m.get('xg_h') and m.get('xg_a'):
+                idx[(int(m['hid']), int(m['aid']), m['date'][:10])] = (float(m['xg_h']), float(m['xg_a']))
+    except Exception:
+        pass
+    return idx
+
+
+def _intl_xg_value(r, xg):
+    """xG fair / xG value ενος εθνικου pick απο τα ΤΕΛΙΚΑ xG (ιδια λογικη με τα εγχωρια· over: Poisson με συνολο xG)."""
+    import picks as engine, intl_pricing as ip
+    r['xg_h'], r['xg_a'] = round(xg[0], 2), round(xg[1], 2)
+    if r['mkt'] == 'OVER':
+        fair = ip.over_fair(max(xg[0] + xg[1], 0.1), r['hcap'])
+    else:
+        dist = engine.gd_dist(max(xg[0], 0.05), max(xg[1], 0.05))
+        pw, pp = engine.p_cover(dist, r['side'], r['hcap'])
+        fair = (1 - pp) / pw if pw > 0 else None
+    if fair:
+        r['xg_fair'] = round(fair, 2); r['xg_value'] = round(r['odds'] / fair - 1, 4)
 
 
 # ---------- ΕΘΝΙΚΕΣ (26/9/2026, Στελιος): τα picks ΣΥΝΑΙΝΕΣΗΣ στο ιδιο ιστορικο ----------
@@ -138,6 +182,7 @@ def _intl_rows():
     closing = {}
     for c in _jsonl(os.path.join(ROOT, 'intl_closing.jsonl')):
         closing[(int(c['hid']), int(c['aid']), str(c['ko'])[:10])] = c
+    xgi = _intl_xg()
     settled, pending = [], []
     for p in rows:
         ko = str(p.get('ko') or '').replace(' ', 'T')
@@ -153,6 +198,12 @@ def _intl_rows():
             _intl_close(r, closing.get((int(p['hid']), int(p['aid']), ko[:10])))
         except Exception:
             r['close_odds'] = None; r['clv'] = None
+        xg = xgi.get((int(p['hid']), int(p['aid']), ko[:10]))
+        if xg:
+            try:
+                _intl_xg_value(r, xg)
+            except Exception:
+                pass
         settled.append(r)
     return settled, pending
 
@@ -219,7 +270,22 @@ def _pick_cell(r):
         return f'⚽ {_h.escape(r["bet_label"])}'
     team = r['home'] if r['side'] == 1 else r['away']
     tid = r.get('hid') if r['side'] == 1 else r.get('aid')
-    return f'<img src="{TLOGO.format(tid)}">{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}'
+    out = f'<img src="{TLOGO.format(tid)}">{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}'
+    if r.get('later'):
+        out += ('<div class="dim">μετα: ' + ' → '.join(f'{"+" if h >= 0 else ""}{h:g} @{o:.2f}' for h, o in r['later']) + '</div>')
+    return out
+
+
+def _when(r):
+    """ποτε μπηκε το pick (ωρες πριν τη σεντρα) + σημα «καταγραφη» για τα paper (αγωνιστικη <15, δεν παιζονται)."""
+    try:
+        ko = datetime.datetime.fromisoformat(str(r['ko'])[:16]).replace(tzinfo=UTC)
+        se = datetime.datetime.fromisoformat(str(r['seen']).replace(' ', 'T')[:16]).replace(tzinfo=UTC)
+        hb = (ko - se).total_seconds() / 3600
+        t = f' · alert {hb / 24:.1f} μερ. πριν' if hb >= 48 else f' · alert {hb:.0f}ω πριν'
+    except Exception:
+        t = ''
+    return t + (' · 📝 καταγραφη (αγων. &lt;15)' if r.get('paper') else '')
 
 
 def table_html(settled, pending):
@@ -231,7 +297,7 @@ def table_html(settled, pending):
         H.append(
             f'<tr class="pend"><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]} · ΕΚΚΡΕΜΕΙ</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)} · ΕΚΚΡΕΜΕΙ</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td colspan="7" class="mut">παιζεται…</td></tr>')
     for r in settled:
@@ -253,7 +319,7 @@ def table_html(settled, pending):
         H.append(
             f'<tr><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]}</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)}</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td>{closes}</td><td>{clv}</td>'
             f'<td>{_h.escape(str(r.get("score") or "—"))}</td><td>{xg}</td>'
