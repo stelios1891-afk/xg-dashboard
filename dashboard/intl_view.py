@@ -162,12 +162,19 @@ def _fmt_line(x):
     return '0.00' if abs(x) < 1e-9 else f'{x:+.2f}'
 
 
+_GR_DAYS = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
+
+
 def _ko_fmt(utc):
-    """ωρα Ελλαδας (καλοκαιρι UTC+3) οπως στο Europe tab."""
+    """ωρα Ελλαδας (26/9: σωστη θερινη/χειμερινη μεσω Europe/Athens, οχι σταθερο +3) — «Σαβ 26/9 19:00»."""
     try:
-        d = datetime.datetime.fromisoformat(str(utc).replace('Z', '+00:00').replace('+00:00', ''))
-        d = d + datetime.timedelta(hours=3)
-        return d.strftime('%a %d/%m %H:%M')
+        d = datetime.datetime.fromisoformat(str(utc).replace('Z', '').replace('+00:00', '')[:16]).replace(tzinfo=datetime.timezone.utc)
+        try:
+            from zoneinfo import ZoneInfo
+            d = d.astimezone(ZoneInfo('Europe/Athens'))
+        except Exception:
+            d = d + datetime.timedelta(hours=3)
+        return f'{_GR_DAYS[d.weekday()]} {d.day}/{d.month} {d:%H:%M}'
     except Exception:
         return str(utc)[:16]
 
@@ -263,7 +270,9 @@ INTL_CSS = """
 .pill.fav{font-weight:800;} .pill.dimp{opacity:.55;}
 .vsep{width:100%;border-top:1px dashed #1e2d47;margin:2px 0 1px;}
 .flags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:6px 12px 2px;font-size:10px;}
-.flags .dead{color:#ff6b6b;font-weight:700;} .flags .call{color:#f3c74b;cursor:help;}
+.flags .dead{color:#ff6b6b;font-weight:700;} .flags .call{color:#f3c74b;cursor:help;text-align:center;}
+.kotop{display:flex;justify-content:space-between;padding:7px 15px 0;font-size:10.5px;color:#8fa3c8;font-family:'JetBrains Mono',monospace;}
+.kotop b{color:#cdd8ee;font-weight:600;}
 .pkrow{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;padding:5px 12px 7px;font-size:9px;color:#5a6b8c;}
 .pkrow .vk{font-weight:700;letter-spacing:.4px;}
 .bd{display:inline-block;padding:1px 6px;border-radius:8px;font-weight:700;font-size:9.5px;letter-spacing:.3px;margin:1px 2px;color:#0a0f1e;cursor:help;font-family:'DM Sans',sans-serif;}
@@ -369,7 +378,10 @@ def _flags(m):
     if m.get('dead'):
         out.append(f'<span class="dead" title="{esc(m["dead"])}">✝ νεκρη: {esc(m["dead"])}</span>')
     if m.get('callups'):
-        out.append(f'<span class="call" title="{esc(m["callups"])}">⚠ κλησεις (hover)</span>')
+        # 26/9 (Στελιος: «τι ειναι το κλησεις hover;»): ΟΡΑΤΟ — οι πιο πολυτιμοι ΤΑΚΤΙΚΟΙ παικτες που λειπουν απο την τρεχουσα κληση TM
+        # (αξια SciSports)· ηδη μεσα στην αξια ροστερ (Μ1/Μ3), δεν χρειαζεται χειροκινητη διορθωση.
+        out.append('<span class="call" title="Παίκτες με ≥2 βασικές συμμετοχές στην εθνική και αξία ≥30% του πιο ακριβού της ομάδας, που ΔΕΝ είναι στην τρέχουσα κλήση '
+                   'του Transfermarkt (και χειροκίνητες απουσίες) · αξία παίκτη σε εκ. € · ήδη μέσα στην αξία ρόστερ των Μ1/Μ3">🚑 Απουσίες: ' + esc(m['callups']).replace(' | ', ' · ') + '</span>')
     return f'<div class="flags">{"".join(out)}</div>' if out else ''
 
 
@@ -516,7 +528,7 @@ def card_html(m, vers, key):
     rows = ''.join(_model_row(v, (m.get('versions') or {}).get(v)) for v, _ in vers)
     rows += '<div class="vsep"></div>' + _market_row(m, Vh)
     return f"""
-<div class="card"><div class="sum">
+<div class="card"><div class="kotop"><b>📅 {_ko_fmt(m.get('utc'))}</b><span>{'⏱ σε εξελιξη / τελος' if _started(m) else ''}</span></div><div class="sum">
   <div class="team">
     <div class="thead">{cards._logo(m.get('hid'))}<div class="tn">{esc(m['home'])}</div></div>
     <div class="meta"><span class="xg">Elo {Vh.get('R_h', 0):.0f}</span><span>xG {Vh.get('xg_h', 0):.2f}</span></div></div>
