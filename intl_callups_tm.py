@@ -75,6 +75,10 @@ if os.path.exists('intl_player_values.json'):
 else:   # 25/9: στο GitHub Actions το συμπαγες αρχειο (pid -> [ονομα, τελευταια αξια SciSports])
     PV = {k: {'name': v[0], 'mv_now': v[1]} for k, v in json.load(open('intl_player_values_now.json', encoding='utf-8')).items()}
 SQH = json.load(open('intl_squads.json', encoding='utf-8'))
+try:      # 26/9: προηγουμενη κληση — για το «ποτε μπηκε καθε παικτης στη λιστα» (seen)
+    PREV = json.load(open('intl_vcall_tm.json', encoding='utf-8'))
+except Exception:
+    PREV = {}
 P = pd.read_csv('intl_projections.csv')
 M = pd.read_csv('intl_matches.csv', dtype={'mid': str})
 
@@ -216,6 +220,33 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
             manual_out.append(dict(nm=mo, tm=None, mv=None))       # δεν ηταν στη λιστα TM — ηδη εκτος
     if manual_out:
         print(f"  {nm}: χειροκινητα εκτος {[m['nm'] for m in manual_out]}", flush=True)
+    # 26/9 (Στελιος, Σεσκο): ΑΝΤΙΣΤΡΟΦΟΣ ελεγχος του Brobbey — βασικος (top-11 αξιας της κλησης) που ΕΙΝΑΙ στη λιστα TM αλλα ΔΕΝ ηταν στην
+    # αποστολη FotMob (11 + παγκος) του ΤΕΛΕΥΤΑΙΟΥ ματς της ομαδας σε αυτο το παραθυρο → μετραει ως απων στα επομενα. Μονο αν ηταν στη λιστα
+    # TM ΠΡΙΝ απο εκεινο το ματς (seen) — ενας αντικαταστατης που κληθηκε μετα δεν «λειπει». Αν ξαναντυθει σε νεοτερο ματς, ξαναμετραει.
+    now_s = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M')
+    pv_ = PREV.get(str(tid)) or {}
+    prev_seen = pv_.get('seen') or {n_: pv_.get('asof') for n_ in (pv_.get('called') or [])}
+    seen = {c: (prev_seen.get(c) or now_s) for c in called_names}
+    last_m = max(((str(mid2date.get(str(m_), ''))[:16], m_, sk_) for m_, rec_ in SQH.items()
+                  if str(mid2date.get(str(m_), ''))[:10] >= WIN0 and mid2teams.get(str(m_))
+                  for sk_, t_ in zip(('h', 'a'), mid2teams[str(m_)]) if int(t_) == tid and len((rec_.get(sk_) or {}).get('p') or {}) >= 16),
+                 default=None)
+    squad_out = []
+    if last_m:
+        dressed_last = {int(p_) for p_ in ((SQH[last_m[1]].get(last_m[2]) or {}).get('p') or {})}
+        _v = lambda pl_: pl_['sci'] or (pl_['tm_m'] or 0) * 1e6 * 0.69
+        top11 = sorted([pl_ for pl_ in players if _v(pl_)], key=lambda pl_: -_v(pl_))[:11]
+        for pl_ in top11:
+            if pl_['pid'] is None or int(pl_['pid']) in dressed_last:
+                continue
+            if (seen.get(pl_['tm']) or now_s) >= last_m[0]:
+                continue           # μπηκε στη λιστα μετα το ματς (αντικαταστατης) — δεν λειπει
+            players.remove(pl_)
+            called_names = [c for c in called_names if c != pl_['tm']]
+            squad_out.append(dict(nm=(PV.get(str(pl_['pid'])) or {}).get('name') or pl_['tm'], tm=pl_['tm'], pid=pl_['pid'],
+                                  mv=round(_v(pl_) / 1e6, 1), match=last_m[0]))
+        if squad_out:
+            print(f"  {nm}: στην κληση TM αλλα ΕΚΤΟΣ αποστολης {last_m[0][:10]}: {[m_['nm'] for m_ in squad_out]}", flush=True)
     called_tok = [norm(c) for c in called_names]
     miss = []
     pl = played.get(tid) or {}
@@ -240,8 +271,13 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
             miss.append(dict(pid=pid, nm=pnm, mv=round(v / 1e6, 1), starts=nst, left=int(pid) in dressed_now))
     miss.sort(key=lambda x: -x['mv'])
     miss = [dict(pid=None, nm=m_['nm'], mv=m_['mv'] or 0, starts=None, left=False, manual=True) for m_ in manual_out] + miss      # 25/9: χειροκινητες πρωτες
+    _man = {norm(m_['nm']) for m_ in manual_out}
+    miss = [dict(pid=m_['pid'], nm=m_['nm'], mv=m_['mv'], starts=None, left=False, squad=True) for m_ in squad_out
+            if norm(m_['nm']) not in _man and not any(match_score(mo_, m_['tm']) >= 1.5 for mo_ in (MANUAL.get(nm) or {}).get('out', []))] + miss   # 26/9
     OUT[tid] = dict(nm=nm, tm=f'{slug}/{vid}', v_call_m=v_call, n_sq=len(called_names), missing=miss[:4], dressed_now=len(dressed_now), manual_out=manual_out,
-                    called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'), players=players)   # 25/9: ολη η λιστα (για επαληθευση)
+                    called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'), players=players,
+                    seen={c: seen.get(c, now_s) for c in called_names} | {m_['tm']: seen.get(m_['tm'], now_s) for m_ in squad_out},
+                    squad_out=squad_out)   # 25/9: ολη η λιστα (για επαληθευση)
     print(f'  {nm:22s} κληση {len(called_names):2d} · V_call {v_call if v_call else chr(8212)}M · λειπουν: '
           + (', '.join(f"{m['nm']}({m['mv']}M)" for m in miss[:3]) if miss else chr(8212)), flush=True)
 

@@ -25,7 +25,7 @@ try:
         v = _VC.get(str(_N2T.get(str(team), '')))
         if not v or not v.get('missing'):
             return ''
-        return ', '.join(f"{m['nm']}({m['mv']}M{', χειρ.' if m.get('manual') else ''})" for m in v['missing'][:2])      # 25/9: χειροκινητες απουσιες σημειωνονται
+        return ', '.join(f"{m['nm']}({m['mv']}M{', χειρ.' if m.get('manual') else ''}{', εκτος αποστολης' if m.get('squad') else ''})" for m in v['missing'][:2])      # 25/9: χειροκινητες απουσιες σημειωνονται
 except Exception:
     def call_flag(team):
         return ''

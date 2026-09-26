@@ -40,7 +40,7 @@ for r in R.itertuples():
         dressed = [(p, NAMES_P.get(str(p)) or '') for p in ((SQ[r.mid].get(k) or {}).get('p') or {})]
         dressed = [(p, n) for p, n in dressed if n]
         miss = [n for p, n in dressed if not name_in_call(n, v['called'])]
-        false_abs = [m['nm'] for m in v.get('missing', []) if any(int(m['pid']) == int(p) for p, _ in dressed)]
+        false_abs = [m['nm'] for m in v.get('missing', []) if m.get('pid') is not None and any(int(m['pid']) == int(p) for p, _ in dressed)]   # 26/9: χειροκινητες χωρις pid
         cov = 1 - len(miss) / len(dressed) if dressed else float('nan')
         rows.append(dict(team=nm, match=f'{r.hn} - {r.an}', date=str(r.date)[:10], dressed=len(dressed), cov=cov, not_in_call=miss, false_abs=false_abs, n_call=v['n_sq']))
 rows.sort(key=lambda x: x['cov'])
@@ -53,6 +53,25 @@ if rows:
     ok = sum(1 for x in rows if x['cov'] >= 0.90)
     P_(f'\nΣΥΝΟΛΟ: {ok}/{len(rows)} ομαδες-ματς με ≥90% καλυψη · μεση καλυψη {sum(x["cov"] for x in rows) / len(rows) * 100:.1f}% · '
        f'αποχωρησαν μετα απο ματς του παραθυρου (βασικοι με σημαια) {sum(len(x["false_abs"]) for x in rows)}')
+# 26/9 (Στελιος, Σεσκο): ΑΝΤΙΣΤΡΟΦΟ — βασικοι (top-11 αξιας της κλησης) που ΕΙΝΑΙ στη λιστα TM αλλα ΔΕΝ ηταν στην αποστολη
+# του ΤΕΛΕΥΤΑΙΟΥ ματς της ομαδας (το intl_callups_tm τους βγαζει απο την αξια κλησης στο επομενο τρεξιμο του laptop)
+last = {}
+for r in R.itertuples():
+    for k, tid in (('h', r.hid), ('a', r.aid)):
+        d_ = (SQ[r.mid].get(k) or {}).get('p') or {}
+        if len(d_) >= 16 and (str(tid) not in last or r.date > last[str(tid)][0]):
+            last[str(tid)] = (r.date, {int(p) for p in d_}, f'{r.hn} - {r.an}')
+n_out = 0
+for tid, (d0, dressed_, mt) in sorted(last.items(), key=lambda z: z[1][0]):
+    v = VC.get(tid) or {}
+    pls = sorted([p for p in (v.get('players') or []) if p.get('v')], key=lambda p: -p['v'])[:11]
+    gone = [p for p in pls if p.get('pid') is not None and int(p['pid']) not in dressed_]
+    gone += [dict(tm=m['tm'], v=m['mv'] * 1e6) for m in (v.get('squad_out') or []) if m.get('tm') not in {g['tm'] for g in gone}]
+    if gone:
+        n_out += len(gone)
+        P_(f"  ✗ {v.get('nm', tid)}: στην κληση TM αλλα ΕΚΤΟΣ αποστολης στο {mt} ({str(d0)[:10]}): "
+           + ', '.join(f"{g['tm']} ({g['v'] / 1e6:.1f}M)" for g in gone) + ' → μετρανε ως απουσες στα επομενα ματς')
+P_(f'εκτος αποστολης (βασικοι στη λιστα TM): {n_out}')
 played = {x['team'] for x in rows}
 P_(f'ομαδες με κληση που ΔΕΝ εχουν παιξει ακομα (ανεπαληθευτες): {sorted(v["nm"] for v in VC.values() if v["nm"] not in played)}')
 open('intl_callups_validate_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
