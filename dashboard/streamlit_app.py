@@ -564,12 +564,18 @@ def render_moves(league):
     _up = {d['meta']['lg'] for _, d, _ in mv.upcoming(H)}
     lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg') and (not d['meta'].get('intl') or d['meta']['lg'] in _up)},
                  key=lambda x: (list(build_data.LEAGUE_FOTMOB).index(x) if x in build_data.LEAGUE_FOTMOB else (90 if str(x).startswith('NL') else 99), str(x)))
+    # 26/9: προεπιλογη = λιγκα που εχει επερχομενα ματς με κινηση (στη διακοπη π.χ. οι εθνικες), αλλιως το διαγραμμα «εξαφανιζοταν»
+    _chart_lgs = {d['meta']['lg'] for _, d, _ in mv.upcoming(H) if len(d['snaps']) >= 2}
+    _def = league if (league in lgs and league in _chart_lgs) else next((x for x in lgs if x in _chart_lgs), league)
     sel_lg = st.selectbox("Πρωταθλημα", lgs,
-                          index=lgs.index(league) if league in lgs else 0, key='mw_lg')
+                          index=lgs.index(_def) if _def in lgs else 0, key='mw_lg')
     st.components.v1.html(mv.league_html(H, sel_lg), height=560, scrolling=True)
     # ---- 3. Διαγραμμα ματς ----
     ups = [(k, d, ko) for k, d, ko in mv.upcoming(H) if d['meta']['lg'] == sel_lg and len(d['snaps']) >= 2]
     if not ups:
+        st.markdown("#### Διαγραμμα κινησης")
+        st.caption(f"Κανενα επερχομενο ματς του {sel_lg} με ≥2 καταγραφες τιμων ακομα (8 μερες μπροστα) — "
+                   f"διαλεξε αλλο πρωταθλημα" + (f": {', '.join(sorted(_chart_lgs))}." if _chart_lgs else "."))
         return
     st.markdown("#### Διαγραμμα κινησης")
     names = {k: f"{d['meta']['home']} – {d['meta']['away']} ({mv._kofmt(ko)})" for k, d, ko in ups}
