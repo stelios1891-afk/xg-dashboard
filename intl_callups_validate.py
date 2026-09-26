@@ -69,8 +69,8 @@ for tid, (d0, dressed_, mt) in sorted(last.items(), key=lambda z: z[1][0]):
     gone += [dict(tm=m['tm'], v=m['mv'] * 1e6) for m in (v.get('squad_out') or []) if m.get('tm') not in {g['tm'] for g in gone}]
     if gone:
         n_out += len(gone)
-        P_(f"  ✗ {v.get('nm', tid)}: στην κληση TM αλλα ΕΚΤΟΣ αποστολης στο {mt} ({str(d0)[:10]}): "
-           + ', '.join(f"{g['tm']} ({g['v'] / 1e6:.1f}M)" for g in gone) + ' → μετρανε ως απουσες στα επομενα ματς')
+        P_(f"  ⓘ {v.get('nm', tid)}: στην κληση TM αλλα ΕΚΤΟΣ αποστολης στο {mt} ({str(d0)[:10]}): "
+           + ', '.join(f"{g['tm']} ({g['v'] / 1e6:.1f}M)" for g in gone) + ' → ενδειξη μονο (μπορει να παιξουν στο επομενο· η 11αδα πριν το ματς ελεγχεται ξεχωριστα)')
 P_(f'εκτος αποστολης (βασικοι στη λιστα TM): {n_out}')
 played = {x['team'] for x in rows}
 P_(f'ομαδες με κληση που ΔΕΝ εχουν παιξει ακομα (ανεπαληθευτες): {sorted(v["nm"] for v in VC.values() if v["nm"] not in played)}')
