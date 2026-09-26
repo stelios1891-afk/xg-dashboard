@@ -168,8 +168,23 @@ def ah_edges(xg_h, xg_a, mk, deep=None):
             dx = intl_pricing.dist_for(dist, dd, ud)
             e = intl_pricing.ah_ev(dx, side, ud, odds, picks.MARGIN)
             rec[f'ah_{tag}'] = round(e * 100, 1); rec[f'fair_{tag[0]}'] = intl_pricing.ah_fair(dx, side, ud)
+            rec[f'need_{tag[0]}'] = _need(lambda o: intl_pricing.ah_ev(dx, side, ud, o, picks.MARGIN), .10)   # 26/9: τιμη για edge 10%
         out[lab] = rec
     return out
+
+
+def _need(ev, thr):
+    """26/9/2026: η ελαχιστη τιμη οπου ev(τιμη) >= thr (το ev αυξανει με την τιμη)· None αν ουτε στο 10.0."""
+    lo, hi = 1.01, 10.0
+    if ev(hi) < thr:
+        return None
+    for _ in range(40):
+        mid = (lo + hi) / 2
+        if ev(mid) >= thr:
+            hi = mid
+        else:
+            lo = mid
+    return round(hi + 0.004, 2)
 
 
 def p_over(T, line):
@@ -351,6 +366,8 @@ for r in P.itertuples():
         for lab, (ed, po) in oe.items():
             if e.get(lab) is None: e[lab] = {}
             e[lab]['over'] = ed; e[lab]['p_over'] = po
+            _T, _ln = TT[v][0], mk[lab]['ou_line']
+            e[lab]['need_over'] = _need(lambda o: intl_pricing.over_ev(_T, _ln, o), .08)      # 26/9: τιμη για edge 8%
         edges[v] = e
         # ελεγχος συνεπειας με το CSV της σκιας (εκδοχη H: fair/edge Crown)
         if v == 'H' and e.get('crown') and sh is not None and sget(sh, 'Crown_fair_H', None) is not None:

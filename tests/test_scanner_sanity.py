@@ -773,3 +773,18 @@ def test_h_intl_new_T_over():
     assert 'intl_pricing.t_over(T_H' in src and 'team_xg_sum(AD_XG' in src, 'το dashboard δεν χρησιμοποιει το νεο T στα over'
     ad = json.load(open(os.path.join(ROOT, 'intl_xg_attdef.json'), encoding='utf-8'))
     assert '_meta' in ad and len(ad) > 80, 'intl_xg_attdef.json χωρις meta/ομαδες'
+
+
+def test_i_intl_pick_status():
+    """26/9/2026: καταγεγραμμενο pick εθνικων — ενεργο αν υπαρχει στη συναινεση· αλλιως τιμη για να ξαναγινει = 2η μικροτερη των μοντελων."""
+    import intl_pick_status as ps
+    row = dict(mkt='AH', side=2, line=-2.5)
+    m = dict(consensus=[], market=dict(source='bovada', bovada=dict(ah_line=2.5, oh=2.0, oa=1.91)),
+             edges={'H': {'bovada': dict(ah_away=16.9, need_a=1.79)}, 'A': {'bovada': dict(ah_away=0.7, need_a=2.09)},
+                    'AV': {'bovada': dict(ah_away=7.0, need_a=1.97)}})
+    st = ps.status(row, m)
+    assert not st['active'] and st['cur_line'] == -2.5 and st['cur_odds'] == 1.91
+    assert st['need'] == 1.97, st                       # Μ1 1.79, Μ3 1.97 (το Μ2 2.09 εκτος ζωνης 2.10; οχι — 2.09 μεσα, αλλα 3ο)
+    m['consensus'] = [dict(mkt='AH', side=2, line=-2.5, odds=1.98, book='Bovada', edges={'Μ1': .2, 'Μ3': .1}, models='Μ1+Μ3')]
+    assert ps.status(row, m)['active']
+

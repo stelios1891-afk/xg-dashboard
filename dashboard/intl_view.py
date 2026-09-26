@@ -109,10 +109,19 @@ def load():
             d = json.load(fh)
     except Exception:
         return None
+    led = {}
+    try:      # 26/9: τα ανοιχτα picks του ημερολογιου (συναινεση) -> καταστση στην καρτα (🟢 ενεργο / 🟠 επεσε + τιμη που χρειαζεται)
+        for ln in open(os.path.join(os.path.dirname(DATA_F), 'intl_picks_ledger.jsonl'), encoding='utf-8'):
+            r = json.loads(ln)
+            if r.get('stream') == 'ΣΥΝΑΙΝΕΣΗ' and not r.get('removed') and r.get('result') is None:
+                led.setdefault((r['comp'], r['home'], r['away'], r['ko']), []).append(r)
+    except Exception:
+        pass
     for c in d.get('comps', []):
         for m in c.get('matches', []):
             if isinstance(m.get('picks'), dict):
                 m['picks'] = {k: _no_x12(v) for k, v in m['picks'].items()}
+            m['ledger'] = led.get((c.get('comp'), m.get('home'), m.get('away'), m.get('utc')), [])
     return d
 
 
@@ -258,6 +267,7 @@ INTL_CSS = """
 .pkrow{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;padding:5px 12px 7px;font-size:9px;color:#5a6b8c;}
 .pkrow .vk{font-weight:700;letter-spacing:.4px;}
 .bd{display:inline-block;padding:1px 6px;border-radius:8px;font-weight:700;font-size:9.5px;letter-spacing:.3px;margin:1px 2px;color:#0a0f1e;cursor:help;font-family:'DM Sans',sans-serif;}
+.bd.led{background:#1a2233;color:#c7d3ea;border:1px solid #26324e;font-weight:400;white-space:normal;} .bd.led.on{border-color:#1e4a33;} .bd.led.off{border-color:#7a5a1a;color:#f3c74b;}
 .bd.dog{background:#34d17a;} .bd.fav{background:#4b7cf3;color:#fff;} .bd.x12{background:#f3c74b;} .bd.over{background:#b17af3;color:#fff;}
 .bd.cons{background:#123524;color:#7ee2a8;border:1px solid #34d17a;font-size:10px;padding:2px 8px;} .pkrow.cons{padding-bottom:2px;}
 .bd.dead{background:#2a1a1f;color:#ff6b6b;border:1px solid #ff6b6b;font-weight:600;} .bd.oor{background:#151c2e;color:#6b7fa3;border:1px solid #26324e;font-weight:400;}
@@ -366,8 +376,9 @@ def _flags(m):
 def _consensus_row(m):
     """25/9 (αποφαση Στελιου): το ΚΑΝΟΝΙΚΟ pick = συναινεση ≥2 απο 3 μοντελα (handicap + over)."""
     cs = m.get('consensus') or []
+    led = _ledger_items(m)
     if not cs:
-        return ''
+        return (f'<div class="pkrow cons"><span class="vk" style="color:#f5b731">ΗΜΕΡΟΛΟΓΙΟ</span>{led}</div>' if led else '')
     items = []
     for c in cs:
         if c['mkt'] == 'OVER':
@@ -377,7 +388,33 @@ def _consensus_row(m):
             txt = f"{esc(team)} {c['line']:+g} @{c['odds']:.2f}"
         items.append(f'<span class="bd cons" title="edge ανα μοντελο: ' + esc(', '.join(f"{k} {v*100:+.0f}%" for k, v in (c.get('edges') or {}).items()))
                      + f'">✅ {txt} · edge ≥{c["edge"]*100:.0f}% · {esc(c.get("models", ""))}</span>')
-    return f'<div class="pkrow cons"><span class="vk" style="color:#34d17a">PICK (συναινεση)</span>{"".join(items)}</div>'
+    return f'<div class="pkrow cons"><span class="vk" style="color:#34d17a">PICK (συναινεση)</span>{"".join(items)}{led}</div>'
+
+
+def _ledger_items(m):
+    """26/9/2026: καθε ανοιχτο pick του ημερολογιου για το ματς — 🟢 ισχυει ακομα / 🟠 επεσε (τωρινη τιμη, edge ανα μοντελο,
+    τιμη για να ξαναγινει pick). Ιδια λογικη με τα Telegram «επεσε / ξανα pick» (intl_pick_status)."""
+    try:
+        import intl_pick_status as ps
+    except Exception:
+        return ''
+    out = []
+    try:
+        if datetime.datetime.fromisoformat(str(m['utc'])).replace(tzinfo=datetime.timezone.utc) <= datetime.datetime.now(datetime.timezone.utc):
+            return ''          # αρχισε — η κατασταση δεν εχει πια νοημα
+    except Exception:
+        pass
+    for r in m.get('ledger') or []:
+        st = ps.status(r, m)
+        if st is None:
+            continue
+        fs = str(r.get('first_seen', ''))
+        when = f'{int(fs[8:10])}/{int(fs[5:7])} {fs[11:16]}' if len(fs) >= 16 else fs
+        if st['active']:
+            out.append(f'<span class="bd led on" title="{esc(ps.describe(r, st, m["home"], m["away"]))}">📒 μπηκε {esc(r["label"])} ({when}) · 🟢 ισχυει</span>')
+        else:
+            out.append(f'<span class="bd led off">📒 μπηκε {esc(r["label"])} ({when}) · 🟠 επεσε — {esc(ps.describe(r, st, m["home"], m["away"]))}</span>')
+    return ''.join(out)
 
 
 def _picks_row(m, vers):

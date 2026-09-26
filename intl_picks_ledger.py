@@ -172,13 +172,51 @@ def telegram(rows, now):
     return changed
 
 
+def track_status(rows, dash, now, known_before):
+    """26/9/2026 (Στελιος): για καθε ανοιχτο pick συναινεσης — ειναι ακομα pick; Αν επεσε -> active=False + σιωπηλο Telegram
+    (με την τιμη που χρειαζεται)· αν ξαναβγει (ιδια αγορα/πλευρα, οποιαδηποτε γραμμη) -> active=True + Telegram «ΞΑΝΑ PICK».
+    Το ημερολογιο (τιμη πρωτης εμφανισης) ΔΕΝ αλλαζει. Επιστρεφει (αλλαξε_κατι, μηνυματα_επεσε, μηνυματα_ξανα)."""
+    import intl_pick_status as ps
+    M = {}
+    for c in dash.get('comps', []):
+        for m in c['matches']:
+            M[(c['comp'], m['home'], m['away'], m['utc'])] = m
+    changed, drops, backs = False, [], []
+    stamp = now.strftime('%Y-%m-%d %H:%M')
+    for r in rows:
+        if r['stream'] != 'ΣΥΝΑΙΝΕΣΗ' or r.get('removed') or r.get('result') is not None or r['key'] not in known_before:
+            continue
+        try:
+            if dt.datetime.fromisoformat(r['ko']).replace(tzinfo=dt.timezone.utc) <= now:
+                continue
+        except Exception:
+            continue
+        m = M.get((r['comp'], r['home'], r['away'], r['ko']))
+        st = ps.status(r, m) if m else None
+        if st is None:
+            continue                     # χωρις αγορα αυτη τη στιγμη — δεν αλλαζει τιποτα
+        prev = r.get('active', True)
+        last = max([x for x in (r.get('dropped_at'), r.get('back_at')) if x] or [''])
+        quiet = bool(last) and (now - dt.datetime.fromisoformat(last).replace(tzinfo=dt.timezone.utc)).total_seconds() < 30 * 60   # οχι «πινγκ-πονγκ» <30′
+        r['now_line'], r['now_odds'], r['now_need'] = st['cur_line'], st['cur_odds'], st.get('need')
+        if prev and not st['active']:
+            r['active'] = False; r['dropped_at'] = stamp; changed = True
+            if not quiet: drops.append(f"⚠ {r['comp']} · {r['home']} – {r['away']}\nμπηκε: {r['label']}\n"
+                                       f"{ps.describe(r, st, r['home'], r['away'])}")
+        elif not prev and st['active']:
+            r['active'] = True; r['back_at'] = stamp; changed = True
+            if not quiet: backs.append(f"🔁 ΞΑΝΑ PICK · {r['comp']} · {r['home']} – {r['away']}\n{ps.describe(r, st, r['home'], r['away'])}"
+                                       f" · {st.get('models') or ''}\n(αρχικα: {r['label']}, {r['first_seen']} UTC)")
+    return changed, drops, backs
+
+
 def main():
     now = dt.datetime.now(dt.timezone.utc)
     try:
         dash = json.load(open(DASH_F, encoding='utf-8'))
     except Exception:
         print('χωρις intl_projections_dashboard.json — τιποτα'); return
-    rows = load_ledger(); known = {r['key'] for r in rows}
+    rows = load_ledger(); known = {r['key'] for r in rows}; known_before = set(known)
     add = new_entries(dash, known, now)
     changed = bool(add)
     rows += add
@@ -192,6 +230,17 @@ def main():
             if sc:
                 r['result'] = f'{sc[0]}-{sc[1]}'; r['pnl'] = round(settle_row(r, *sc), 4); changed = True
     changed = telegram(rows, now) or changed
+    # 26/9: παρακολουθηση καταστασης (επεσε / ξανα pick) + Telegram
+    ch2, drops, backs = track_status(rows, dash, now, known_before)
+    changed = changed or ch2
+    if (drops or backs) and os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID'):
+        import notify
+        if backs:
+            notify.send('\n\n'.join(backs))
+        if drops:
+            notify.send('🌐 ΕΘΝΙΚΕΣ · pick που δεν ισχυει πια (αλλαξε η τιμη/γραμμη ή το μοντελο)\n\n' + '\n\n'.join(drops), silent=True)
+    for t in backs + drops:
+        print(t)
     if changed:
         with open(LEDGER_F, 'w', encoding='utf-8') as fh:
             for r in rows:
