@@ -36,6 +36,8 @@ jobs:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       PYTHONIOENCODING: utf-8
+      GH_DISPATCH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # 26/9: intl_refresh_due.py → dispatch intl-refresh μολις τελειωσει ματς εθνικων
+      GH_REPO: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v4
 
