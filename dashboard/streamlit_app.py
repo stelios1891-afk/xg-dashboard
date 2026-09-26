@@ -481,7 +481,9 @@ def render_ledger(league):
                 unsafe_allow_html=True)
     st.caption("Τιμη = Pinnacle/Matchbook τη στιγμη του alert · Κλεισιμο = τελευταια καταγραφη πριν τη σεντρα · "
                "CLV+ = νικησαμε το κλεισιμο · **xG value** = ποσο καλυτερη ηταν η τιμη μας απο τη «δικαιη» "
-               "με βαση τα ΤΕΛΙΚΑ xG του ματς (κριση της διαδικασιας, οχι του σκορ).")
+               "με βαση τα ΤΕΛΙΚΑ xG του ματς (κριση της διαδικασιας, οχι του σκορ). "
+               "**🌐 Εθνικες**: τα picks ΣΥΝΑΙΝΕΣΗΣ (τιμη πρωτης εμφανισης, Odds API) — κλεισιμο απο την τελευταια καταγραφη πριν τη σεντρα· "
+               "≈ = η γραμμη εκλεισε αλλου και το κλεισιμο μεταφραστηκε στη δικη μας γραμμη.")
     try:
         settled, pending = _ledger_data()
     except Exception as e:
@@ -522,7 +524,8 @@ def render_moves(league):
                 '<div class="co">ΚΙΝΗΣΕΙΣ ΑΓΟΡΑΣ · PINNACLE/MATCHBOOK · ΕΠΕΡΧΟΜΕΝΑ ΜΑΤΣ</div></div></div>',
                 unsafe_allow_html=True)
     st.caption("Απο τις καταγραφες του scanner (καθε 30′ σε μερα αγωνων, 2h τις τελευταιες 3 μερες, 1×/μερα νωριτερα). "
-               "↓ = η αποδοση επεσε (πηρε χρημα). Το βαθος ιστοριας μεγαλωνει μερα με τη μερα — η συλλογη ξεκινησε 28/8/2026.")
+               "↓ = η αποδοση επεσε (πηρε χρημα). Το βαθος ιστοριας μεγαλωνει μερα με τη μερα — η συλλογη ξεκινησε 28/8/2026. "
+               "**Εθνικες (NL A-D)** εμφανιζονται οσο υπαρχει διεθνες παραθυρο — Odds API: Pinnacle, αλλιως Bovada (γκανιοτα «σαν Pinnacle»), 1Χ2 Betfair οπου λειπει.")
     H = _moves_hist()
     if not H:
         st.info("Δεν υπαρχουν καταγραφες ακομα.")
@@ -543,8 +546,9 @@ def render_moves(league):
         st.components.v1.html(mv.line_change_html(lc), height=min(len(lc) * 48 + 50, 620), scrolling=True)
     # ---- 2. Ανα πρωταθλημα ----
     st.markdown("#### Ολα τα επερχομενα ανα πρωταθλημα")
-    lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg')},
-                 key=lambda x: list(build_data.LEAGUE_FOTMOB).index(x) if x in build_data.LEAGUE_FOTMOB else 99)
+    _up = {d['meta']['lg'] for _, d, _ in mv.upcoming(H)}
+    lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg') and (not d['meta'].get('intl') or d['meta']['lg'] in _up)},
+                 key=lambda x: (list(build_data.LEAGUE_FOTMOB).index(x) if x in build_data.LEAGUE_FOTMOB else (90 if str(x).startswith('NL') else 99), str(x)))
     sel_lg = st.selectbox("Πρωταθλημα", lgs,
                           index=lgs.index(league) if league in lgs else 0, key='mw_lg')
     st.components.v1.html(mv.league_html(H, sel_lg), height=560, scrolling=True)

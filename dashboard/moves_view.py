@@ -46,9 +46,50 @@ def load_history():
             d['meta']['ko'] = r['ko']
         d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'),
                                h2h=r.get('h2h')))
+    _load_intl(H)
     for d in H.values():
         d['snaps'].sort(key=lambda s: s['t'])
     return H
+
+
+INTL_F = os.path.join(ROOT, 'intl_odds_hist.jsonl')
+
+
+def _load_intl(H):
+    """26/9/2026 (Στελιος): και οι ΕΘΝΙΚΕΣ στο Market Watch οσο υπαρχει παραθυρο — απο το intl_odds_hist.jsonl (Odds API, μια γραμμη
+    ανα αλλαγη· κυρια πηγη Pinnacle, αλλιως Bovada με γκανιοτα «σαν Pinnacle», 1Χ2 Betfair οπου λειπει). lg = 'NL A'..'NL D'."""
+    if not os.path.exists(INTL_F):
+        return
+    names = {}
+    for fn in ('intl_projections_dashboard.json',):
+        try:
+            dd = json.load(open(os.path.join(ROOT, fn), encoding='utf-8'))
+            for c in dd.get('comps', []):
+                for m in c.get('matches', []):
+                    names[int(m['hid'])] = m['home']; names[int(m['aid'])] = m['away']
+        except Exception:
+            pass
+    try:
+        for line in open(os.path.join(ROOT, 'intl_closing.jsonl'), encoding='utf-8'):
+            c = json.loads(line); names.setdefault(int(c['hid']), c['home']); names.setdefault(int(c['aid']), c['away'])
+    except Exception:
+        pass
+    for line in open(INTL_F, encoding='utf-8'):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        t = _dt(r.get('t'))
+        if t is None or not r.get('key'):
+            continue
+        try:
+            hid, aid = [int(x) for x in r['key'].split('_')[:2]]
+        except Exception:
+            continue
+        d = H.setdefault('intl_' + r['key'], dict(meta=dict(lg=r.get('comp'), home=names.get(hid, str(hid)), away=names.get(aid, str(aid)),
+                                                            hid=hid, aid=aid, ko=r.get('ko'), intl=True), snaps=[]))
+        h2h = [r.get('h'), r.get('d'), r.get('a')] if (r.get('h') and r.get('d') and r.get('a')) else None
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book=r.get('book')))
 
 
 def upcoming(H, horizon_days=8):

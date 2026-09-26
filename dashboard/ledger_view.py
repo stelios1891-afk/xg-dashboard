@@ -72,8 +72,88 @@ def prepare(current_season):
                     r['xg_value'] = round(r['odds'] / fair - 1, 4)
             except Exception:
                 pass
+    try:
+        s_i, p_i = _intl_rows()
+        settled += s_i; pending += p_i
+    except Exception:
+        pass
     settled.sort(key=lambda r: str(r.get('ko') or ''), reverse=True)
     pending.sort(key=lambda r: str(r.get('ko') or ''))
+    return settled, pending
+
+
+# ---------- ΕΘΝΙΚΕΣ (26/9/2026, Στελιος): τα picks ΣΥΝΑΙΝΕΣΗΣ στο ιδιο ιστορικο ----------
+# Τιμη = πρωτη εμφανιση (intl_picks_ledger.jsonl, Odds API) · κλεισιμο = τελευταια καταγραφη πριν τη σεντρα (intl_closing.jsonl).
+# Ιδια γραμμη → CLV = τιμη/κλεισιμο − 1 (οπως τα εγχωρια). Αλλη γραμμη → ≈εκτιμηση: το κλεισιμο μεταφρασμενο στη γραμμη μας
+# (AH: υπεροχη που δικαιολογει το κλεισιμο με συνολο απο το κλεισιμο O/U· over: συνολο T απο το κλεισιμο O/U), με την ιδια γκανιοτα.
+def _ou_T(line, over, under):
+    """συνολο γκολ T (Poisson) που δικαιολογει το κλεισιμο O/U (χωρις γκανιοτα)."""
+    import intl_pricing as ip
+    pi = (1 / over) / (1 / over + 1 / under)
+    lo, hi = 0.3, 7.0
+    for _ in range(50):
+        mid = (lo + hi) / 2
+        if 1 / ip.over_fair(mid, line) < pi:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
+def _intl_close(r, c):
+    """συμπληρωνει close_line / close_odds / clv_pct ή clv_est_pct σε ενα εθνικο pick."""
+    import intl_pricing as ip
+    r['close_odds'] = r['clv'] = None
+    if not c:
+        return
+    if r['mkt'] == 'OVER':
+        if not (c.get('ou_line') is not None and c.get('over') and c.get('under')):
+            return
+        r['close_line'] = float(c['ou_line']); r['close_odds'] = float(c['over'])
+        if abs(r['close_line'] - r['hcap']) < 0.01:
+            r['clv'] = round(r['odds'] - r['close_odds'], 3); r['clv_pct'] = round(r['odds'] / r['close_odds'] - 1, 4)
+        else:
+            T = _ou_T(r['close_line'], c['over'], c['under'])
+            eq = r['close_odds'] * ip.over_fair(T, r['hcap']) / ip.over_fair(T, r['close_line'])
+            r['close_eq'] = round(eq, 3); r['clv_est_pct'] = round(r['odds'] / eq - 1, 4)
+        return
+    if not (c.get('line') is not None and c.get('oh') and c.get('oa')):
+        return
+    cl = float(c['line'])
+    r['close_line'] = cl if r['side'] == 1 else -cl
+    co, co_opp = (float(c['oh']), float(c['oa'])) if r['side'] == 1 else (float(c['oa']), float(c['oh']))
+    r['close_odds'] = co
+    if abs(r['close_line'] - r['hcap']) < 0.01:
+        r['clv'] = round(r['odds'] - co, 3); r['clv_pct'] = round(r['odds'] / co - 1, 4)
+        return
+    import clv_ledger
+    T = _ou_T(float(c['ou_line']), c['over'], c['under']) if (c.get('ou_line') is not None and c.get('over') and c.get('under')) else 2.5
+    eq = clv_ledger._equiv_close_odds(T / 2, T / 2, r['side'], r['hcap'], r['close_line'], co, co_opp)
+    if eq:
+        r['close_eq'] = round(eq, 3); r['clv_est_pct'] = round(r['odds'] / eq - 1, 4)
+
+
+def _intl_rows():
+    rows = [r for r in _jsonl(os.path.join(ROOT, 'intl_picks_ledger.jsonl')) if r.get('stream') == 'ΣΥΝΑΙΝΕΣΗ']
+    closing = {}
+    for c in _jsonl(os.path.join(ROOT, 'intl_closing.jsonl')):
+        closing[(int(c['hid']), int(c['aid']), str(c['ko'])[:10])] = c
+    settled, pending = [], []
+    for p in rows:
+        ko = str(p.get('ko') or '').replace(' ', 'T')
+        ou = p.get('mkt') == 'OVER'
+        r = dict(lg=p.get('comp'), home=p['home'], away=p['away'], hid=p.get('hid'), aid=p.get('aid'), ko=ko, intl=True,
+                 mkt=p.get('mkt'), side=(0 if ou else (1 if p.get('side') == 1 else -1)), hcap=float(p['line']),
+                 odds=float(p['odds']), edge=p.get('edge'), book=p.get('book'), seen=p.get('first_seen'),
+                 bet_label=(f"Over {float(p['line']):g}" if ou else None), score=(p.get('result') or '').replace('-', ' - ') or None,
+                 pnl=p.get('pnl'), xg_h=None, xg_a=None, xg_fair=None, xg_value=None)
+        if p.get('pnl') is None:
+            pending.append(r); continue
+        try:
+            _intl_close(r, closing.get((int(p['hid']), int(p['aid']), ko[:10])))
+        except Exception:
+            r['close_odds'] = None; r['clv'] = None
+        settled.append(r)
     return settled, pending
 
 
@@ -134,24 +214,27 @@ def _pct(v, flip=False):
     return f'<span class="{cls}">{v * 100:+.1f}%</span>'
 
 
+def _pick_cell(r):
+    if r.get('bet_label'):
+        return f'⚽ {_h.escape(r["bet_label"])}'
+    team = r['home'] if r['side'] == 1 else r['away']
+    tid = r.get('hid') if r['side'] == 1 else r.get('aid')
+    return f'<img src="{TLOGO.format(tid)}">{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}'
+
+
 def table_html(settled, pending):
     H = [CSS, '<table><tr>',
          '<th style="text-align:left">Ματς</th><th>Pick</th><th>Τιμη</th><th>Κλεισιμο</th>',
          '<th>CLV</th><th>Σκορ</th><th>Τελικα xG</th><th>xG fair</th><th>xG value</th><th>Αποτελεσμα</th></tr>']
     for r in pending:
-        team = r['home'] if r['side'] == 1 else r['away']
-        tid = r.get('hid') if r['side'] == 1 else r.get('aid')
         ko = str(r.get('ko') or '')
         H.append(
             f'<tr class="pend"><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{r["lg"]} · {ko[:10]} {ko[11:16]} · ΕΚΚΡΕΜΕΙ</div></td>'
-            f'<td class="pick"><img src="{TLOGO.format(tid)}">{_h.escape(team)} '
-            f'{"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}</td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]} · ΕΚΚΡΕΜΕΙ</div></td>'
+            f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td colspan="7" class="mut">παιζεται…</td></tr>')
     for r in settled:
-        team = r['home'] if r['side'] == 1 else r['away']
-        tid = r.get('hid') if r['side'] == 1 else r.get('aid')
         ko = str(r.get('ko') or '')
         if r.get('clv') is not None:
             closes = f'{r["close_odds"]:.2f}'
@@ -170,9 +253,8 @@ def table_html(settled, pending):
         H.append(
             f'<tr><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{r["lg"]} · {ko[:10]} {ko[11:16]}</div></td>'
-            f'<td class="pick"><img src="{TLOGO.format(tid)}">{_h.escape(team)} '
-            f'{"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}</td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ""}{r["lg"]} · {ko[:10]} {ko[11:16]}</div></td>'
+            f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td>{closes}</td><td>{clv}</td>'
             f'<td>{_h.escape(str(r.get("score") or "—"))}</td><td>{xg}</td>'
             f'<td>{("%.2f" % r["xg_fair"]) if r.get("xg_fair") else "—"}</td>'
