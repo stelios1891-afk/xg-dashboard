@@ -274,6 +274,8 @@ td img{width:17px;height:17px;object-fit:contain;vertical-align:-4px;margin-righ
 .push{background:#1a2233;color:#8fa3c8;border:1px solid #26324e;border-radius:6px;padding:2px 8px;}
 .half{opacity:.85;}
 .pend td{opacity:.55;}
+tr.day td{background:#111a2e;color:#f3c74b;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;text-align:left;
+          letter-spacing:.5px;padding:6px 8px;border-bottom:1px solid #1e2d47;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 """
@@ -325,7 +327,23 @@ def table_html(settled, pending):
     H = [CSS, '<table><tr>',
          '<th style="text-align:left">Ματς</th><th>Pick</th><th>Τιμη</th><th>Κλεισιμο</th>',
          '<th>CLV</th><th>Σκορ</th><th>Τελικα xG</th><th>xG fair</th><th>xG value</th><th>Αποτελεσμα</th></tr>']
+    # 26/9 (Στελιος): ολα κατα ημερομηνια, το πιο μελλοντικο ΠΑΝΩ, με επικεφαλιδα ανα μερα
+    _day = [None]
+
+    def _hdr(r):
+        d = str(r.get('ko') or '')[:10]
+        if d and d != _day[0]:
+            _day[0] = d
+            try:
+                dd = datetime.date.fromisoformat(d)
+                lab = f"{['Δευτερα', 'Τριτη', 'Τεταρτη', 'Πεμπτη', 'Παρασκευη', 'Σαββατο', 'Κυριακη'][dd.weekday()]} {dd.day}/{dd.month}/{dd.year}"
+            except Exception:
+                lab = d
+            H.append(f'<tr class="day"><td colspan="10">{lab}</td></tr>')
+    pending = sorted(pending, key=lambda r: str(r.get('ko') or ''), reverse=True)
+    settled = sorted(settled, key=lambda r: str(r.get('ko') or ''), reverse=True)
     for r in pending:
+        _hdr(r)
         ko = str(r.get('ko') or '')
         H.append(
             f'<tr class="pend"><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
@@ -334,6 +352,7 @@ def table_html(settled, pending):
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td colspan="7" class="mut">παιζεται…</td></tr>')
     for r in settled:
+        _hdr(r)
         ko = str(r.get('ko') or '')
         if r.get('clv') is not None:
             closes = f'{r["close_odds"]:.2f}'
