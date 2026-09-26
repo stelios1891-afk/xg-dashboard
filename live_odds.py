@@ -478,10 +478,10 @@ def cmd_live(leagues, ratings_season, demo=False, notify_tg=False):
         if pick_lines:
             notify.send(f"🎯 VALUE PICKS ({len(pick_lines)})\n{tag}" + "\n".join(pick_lines))
         else:
-            notify.send(f"ℹ️ Καμια value pick σημερα.{(' ' + tag) if demo else ''}", silent=True)
+            notify.send(channel="info", text=f"ℹ️ Καμια value pick σημερα.{(' ' + tag) if demo else ''}", silent=True)
         if block_lines:
             notify.send("⚠️ ΜΠΛΟΚΑΡΙΣΜΕΝΑ ΟΝΟΜΑΤΑ (δεν βγηκε pick — χρειαζεται alias):\n\n"
-                        + "\n".join(block_lines))
+                        + "\n".join(block_lines), channel='info')
 
 
 def main():

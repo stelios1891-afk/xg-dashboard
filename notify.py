@@ -27,10 +27,16 @@ def _token():
     return t
 
 
-def send(text, silent=False):
-    """Στελνει κειμενο στο chat σου. Επιστρεφει True/False. Δεν σκαει αν δεν ειναι ρυθμισμενο."""
+def send(text, silent=False, channel='picks'):
+    """Στελνει κειμενο στο chat σου. Επιστρεφει True/False. Δεν σκαει αν δεν ειναι ρυθμισμενο.
+    26/9/2026 (Στελιος): ΔΥΟ bots — channel='picks' (το υπαρχον: ΜΟΝΟ μηνυματα picks) · channel='info' (αποστολες, ανανεωσεις μοντελου,
+    αποτελεσματα/recap, εβδομαδιαιες αναφορες): TELEGRAM_INFO_TOKEN (+ προαιρετικα TELEGRAM_INFO_CHAT_ID, αλλιως το ιδιο chat).
+    Αν δεν εχει στηθει ακομα το info bot → πεφτει στο picks bot (τιποτα δεν χανεται)."""
     token = os.environ.get('TELEGRAM_TOKEN')
     chat = os.environ.get('TELEGRAM_CHAT_ID')
+    if channel == 'info' and os.environ.get('TELEGRAM_INFO_TOKEN'):
+        token = os.environ['TELEGRAM_INFO_TOKEN']
+        chat = os.environ.get('TELEGRAM_INFO_CHAT_ID') or chat
     if not token or not chat:
         print("  (Telegram δεν ειναι ρυθμισμενο — λειπει TELEGRAM_TOKEN ή TELEGRAM_CHAT_ID· παραλειπω.)")
         return False

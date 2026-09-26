@@ -217,7 +217,7 @@ def main():
     if msgs and os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID'):
         import notify
         for t in msgs:
-            notify.send(t)
+            notify.send(t, channel='info')
     return 0
 
 

@@ -42,6 +42,8 @@ jobs:
           PYTHONIOENCODING: utf-8
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_INFO_TOKEN: ${{ secrets.TELEGRAM_INFO_TOKEN }}   # 26/9: 2ο bot (πληροφοριες, οχι picks)· κενο = πεφτει στο picks bot
+          TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
         run: python intl_refresh.py
 
       - name: Sanity tests (αποτυχια = ΟΧΙ commit)

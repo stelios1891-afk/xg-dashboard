@@ -35,6 +35,8 @@ jobs:
       TOA_KEY: ${{ secrets.TOA_KEY }}
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_INFO_TOKEN: ${{ secrets.TELEGRAM_INFO_TOKEN }}   # 26/9: 2ο bot (πληροφοριες, οχι picks)· κενο = πεφτει στο picks bot
+      TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
       PYTHONIOENCODING: utf-8
       GH_DISPATCH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # 26/9: intl_refresh_due.py → dispatch intl-refresh μολις τελειωσει ματς εθνικων
       GH_REPO: ${{ github.repository }}

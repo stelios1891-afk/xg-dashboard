@@ -72,6 +72,12 @@ def tm_team(nm):
 
 if os.path.exists('intl_player_values.json'):
     PV = json.load(open('intl_player_values.json', encoding='utf-8'))
+    try:      # 26/9: οι φρεσκες αξιες (intl-values.yml, 2×/εβδομαδα) ΠΑΝΩ απο το μεγαλο ιστορικο αρχειο
+        for k_, v_ in json.load(open('intl_player_values_now.json', encoding='utf-8')).items():
+            if v_[1]:
+                PV.setdefault(k_, {'name': v_[0]})['mv_now'] = v_[1]
+    except Exception:
+        pass
 else:   # 25/9: στο GitHub Actions το συμπαγες αρχειο (pid -> [ονομα, τελευταια αξια SciSports])
     PV = {k: {'name': v[0], 'mv_now': v[1]} for k, v in json.load(open('intl_player_values_now.json', encoding='utf-8')).items()}
 SQH = json.load(open('intl_squads.json', encoding='utf-8'))

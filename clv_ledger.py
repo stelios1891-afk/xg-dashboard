@@ -413,7 +413,7 @@ def maybe_weekly(notify_tg=True):
             msg = report(7)
             if notify_tg and 'κανενα settled' not in msg:
                 import notify
-                notify.send(msg)
+                notify.send(msg, channel='info')
             with open(REPORT_STATE, 'w', encoding='utf-8') as fh:
                 fh.write(now.strftime('%Y-%m-%d'))
             print(msg)

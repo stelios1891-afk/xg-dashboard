@@ -147,7 +147,7 @@ def main(force=False):
     txt = tg_text(games, elo); print('\n' + txt, flush=True)
     if games and os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID'):
         import notify
-        notify.send(txt, silent=True)
+        notify.send(txt, silent=True, channel='info')
     shutil.rmtree(BAK, ignore_errors=True)
     return 0
 

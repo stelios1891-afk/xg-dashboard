@@ -105,7 +105,7 @@ def weekly(notify_tg=True):
     msg = report(7)
     if notify_tg and 'κανενα pick' not in msg.split('\n')[1]:
         try:
-            import notify; notify.send(msg)
+            import notify; notify.send(msg, channel='info')
         except Exception as e:
             print('Telegram σφαλμα:', e)
     open(STATE, 'w', encoding='utf-8').write(now.strftime('%Y-%m-%d'))

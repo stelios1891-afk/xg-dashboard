@@ -1,0 +1,46 @@
+name: intl-values
+
+# ΑΥΤΟΜΑΤΗ ανανεωση αξιων παικτων εθνικων (26/9/2026, εντολη Στελιου — πριν χειροκινητα ~1×/μηνα).
+# FotMob playerData «Market value» (SciSports) για οσους ειναι στις τρεχουσες κλησεις + οσους ντυθηκαν τις τελευταιες 60 ημερες
+# → intl_player_values_now.json (το διαβαζουν Actions + laptop). Δευτερα & Πεμπτη 03:30 UTC + χειροκινητα.
+on:
+  schedule:
+    - cron: '30 3 * * 1,4'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: intl-values
+  cancel-in-progress: false
+
+jobs:
+  values:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Refresh player values (FotMob / SciSports)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python intl_values_refresh.py
+      - name: Commit
+        run: |
+          git config user.name "intl-values-bot"
+          git config user.email "actions@github.com"
+          git add -f intl_player_values_now.json intl_player_values_now_meta.json
+          if git diff --cached --quiet; then
+            echo "καμια αλλαγη"
+          else
+            git commit -m "intl values: αξιες παικτων (FotMob/SciSports) [skip ci]"
+            for i in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main && git push && break
+              sleep 10
+            done
+          fi

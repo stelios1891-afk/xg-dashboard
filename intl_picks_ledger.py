@@ -165,7 +165,7 @@ def telegram(rows, now):
             r['tg'] = stamp
         changed = True
     done = [r for r in cons if r.get('pnl') is not None and not r.get('tg_res')]
-    if done and notify.send(tg_settle_msg(done, cons), silent=True):
+    if done and notify.send(tg_settle_msg(done, cons), silent=True, channel='info'):
         for r in done:
             r['tg_res'] = stamp
         changed = True
