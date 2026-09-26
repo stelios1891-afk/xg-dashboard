@@ -31,6 +31,9 @@ if AH_MINLINE != 0.5:
 IMP_S4 = os.environ.get('IMP_S4') == '1'     # 25/9: σημασια παικτη Σ4 (συμμετοχες×rating×αρχηγος) στο diff, συντελεστης LOSO ανα σεζον (intl_imp_s4_export.py)
 if IMP_S4:
     SUF = SUF + '_s4'
+T_MODE = os.environ.get('T_MODE', 'live')   # 26/9: live = T σημερα · mix = T σημερα + xG επιθεσης/αμυνας ομαδων (βαρη LOSO ανα σεζον στα γκολ)
+if T_MODE != 'live':
+    SUF = SUF + '_T' + T_MODE
 GD_FIX = os.environ.get('GD_FIX', 'none')   # 25/9 διορθωση dogs: none | slope (κλιση υπεροχης ανα μοντελο, LOSO) | shape (slope + κοινα γκολ λ3, LOSO)
 if GD_FIX != 'none':
     SUF = SUF + '_gd' + GD_FIX
@@ -158,6 +161,26 @@ def model_dist(r, m, T, diff):
     return picks.gd_dist(max((T + s_) / 2 - l3, .10), max((T - s_) / 2 - l3, .10))
 
 
+# ---- 26/9 T_MODE=mix: T = b0 + b1·T_live + b2·(λh_xG + λa_xG)· λ απο intl_xg_totals.csv (walk-forward, 12 ματς, shrink, διορθωση αντιπαλου) ----
+TMIX = {}; XGS = {}
+if T_MODE == 'mix':
+    _X = pd.read_csv('intl_xg_totals.csv', dtype={'mid': str}); XGS = dict(zip(_X.mid, _X.lh_xg + _X.la_xg))
+    _C = D[D.ctype.isin(['nl', 'qual', 'tourn'])]
+    for _sea in sorted(D.season.unique()):
+        for _m in MODELS:
+            _tr = [(T_of(getattr(r, f'd_{_m}'), r), XGS[str(r.mid)], r.tot) for r in _C[_C.season != _sea].itertuples() if str(r.mid) in XGS]
+            _A = np.array([[1, a, b] for a, b, _ in _tr]); _y = np.array([t for _, _, t in _tr])
+            TMIX[(_sea, _m)] = np.linalg.lstsq(_A, _y, rcond=None)[0]
+    print('T_MODE=mix βαρη (b0, b1·T_live, b2·xG): ' + ' · '.join(f"{k[0]} {k[1]}: {v[0]:+.2f} {v[1]:.2f} {v[2]:.2f}" for k, v in TMIX.items() if k[1] == 'M1'), flush=True)
+
+
+def T_final(diff, r, m):
+    T0 = T_of(diff, r)
+    if T_MODE != 'mix' or str(r.mid) not in XGS:
+        return T0
+    b = TMIX[(r.season, m)]; return max(b[0] + b[1] * T0 + b[2] * XGS[str(r.mid)], 0.8)
+
+
 S4_D, S4_COEF = {}, {}
 if IMP_S4:
     S4_D = dict(pd.read_csv('intl_imp_s4.csv', dtype={'mid': str}).values.tolist()); S4_COEF = json.load(open('intl_imp_s4_coef.json', encoding='utf-8'))
@@ -182,7 +205,7 @@ for r in D.itertuples():
             Tc = cl_ou[1] if cl_ou else 2.6; sc = sup_from_line(cl_ah[1], cl_ah[2], cl_ah[3], Tc)
             cdist = picks.gd_dist(max((Tc + sc) / 2, .15), max((Tc - sc) / 2, .15))
         for m in MODELS:
-            diff = getattr(r, f'd_{m}') + (S4_COEF.get(str(r.season), {}).get(m, 0.0) * S4_D.get(str(r.mid), 0.0) if IMP_S4 else 0.0); T = T_of(diff, r)
+            diff = getattr(r, f'd_{m}') + (S4_COEF.get(str(r.season), {}).get(m, 0.0) * S4_D.get(str(r.mid), 0.0) if IMP_S4 else 0.0); T = T_final(diff, r, m)
             dist = model_dist(r, m, T, diff)      # 25/9: GD_FIX (none = ιδιο με πριν)
             dist_deep = None
             if GD_FIX == 'deepfav':
