@@ -156,7 +156,7 @@ def telegram(rows, now):
     if not (os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID')):
         return False
     import notify
-    cons = [r for r in rows if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ']
+    cons = [r for r in rows if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ' and not r.get('removed')]   # removed = αφαιρεθηκε απο τον Στελιο (26/9)
     stamp = now.strftime('%Y-%m-%d %H:%M'); changed = False
     new = [r for r in cons if not r.get('tg') and r.get('result') is None and
            dt.datetime.fromisoformat(r['ko']).replace(tzinfo=dt.timezone.utc) > now]
@@ -196,7 +196,7 @@ def main():
         with open(LEDGER_F, 'w', encoding='utf-8') as fh:
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + '\n')
-    cons = [r for r in rows if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ']; st_ = [r for r in cons if r.get('pnl') is not None]
+    cons = [r for r in rows if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ' and not r.get('removed')]; st_ = [r for r in cons if r.get('pnl') is not None]
     print(f'intl ledger: +{len(add)} νεες ({sum(1 for r in add if r["stream"] == "ΣΥΝΑΙΝΕΣΗ")} συναινεσης) · εκκαθαρισμενα συναινεσης {len(st_)}'
           + (f' · ROI {sum(r["pnl"] for r in st_) / len(st_) * 100:+.1f}%' if st_ else '') + f' · συνολο εγγραφων {len(rows)}')
 

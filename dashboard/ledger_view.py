@@ -209,7 +209,7 @@ def _euro_rows():
 
 
 def _intl_rows():
-    rows = [r for r in _jsonl(os.path.join(ROOT, 'intl_picks_ledger.jsonl')) if r.get('stream') == 'ΣΥΝΑΙΝΕΣΗ']
+    rows = [r for r in _jsonl(os.path.join(ROOT, 'intl_picks_ledger.jsonl')) if r.get('stream') == 'ΣΥΝΑΙΝΕΣΗ' and not r.get('removed')]   # removed: βγηκε απο τον Στελιο (26/9, over παλιου T)
     closing = {}
     for c in _jsonl(os.path.join(ROOT, 'intl_closing.jsonl')):
         closing[(int(c['hid']), int(c['aid']), str(c['ko'])[:10])] = c
