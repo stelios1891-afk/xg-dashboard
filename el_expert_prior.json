@@ -2,10 +2,10 @@
  "season": "E2026",
  "source": "BasketNews pre-season Power Rankings 2026-27 (news-255835, 22/9/2026)",
  "method": "θεση → rating ποσοστημοριου (μεσος ορος E2018-E2025 ratings ομαδων τελους σεζον, ridge λ2)",
- "w_team": 0.32,
+ "w_team": 0.5,
  "w_exp": 0.42,
  "v1_carry": 0.7,
- "note": "τεστ Γ (el_all_sources_test.py): y = εδρα + 0.32·ομαδα περσι + 0.42·ειδικοι (LOSO 2021-25) · αγων 1-10 RMSE 11.49→11.41",
+ "note": "Β1 (26/9): 0.5·ομαδα περσι + 0.42·ειδικοι (el_hcap_big_test.py, επιλογη ακριβειας LOSO)· παλιο: 0.32/0.42 απο τεστ Γ",
  "rank": {
   "OLY": 1,
   "PAN": 2,
