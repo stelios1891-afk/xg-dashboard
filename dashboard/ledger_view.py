@@ -44,11 +44,11 @@ def _xg_index(current_season):
 def prepare(current_season):
     """Ολα τα picks (settled + pending) εμπλουτισμενα με τελικα xG & xG-fair odds."""
     import picks as engine
-    settled = _jsonl(os.path.join(ROOT, 'clv_ledger.jsonl'))
-    done = {f"{b.get('lg')}|{b.get('home')}|{b.get('away')}|{b.get('side')}|{b.get('hcap')}|{b.get('ko')}"
-            for b in settled}
+    import clv_ledger
+    settled = [b for b in _jsonl(os.path.join(ROOT, 'clv_ledger.jsonl')) if clv_ledger.counts(b)]   # 26/9: μονο εισοδοι ≤72ω
+    done = {clv_ledger._bet_key(b) for b in settled}
     pending = [b for b in _jsonl(os.path.join(ROOT, 'clv_bets.jsonl'))
-               if f"{b.get('lg')}|{b.get('home')}|{b.get('away')}|{b.get('side')}|{b.get('hcap')}|{b.get('ko')}" not in done]
+               if clv_ledger.counts(b) and clv_ledger._bet_key(b) not in done]
     xgi = _xg_index(current_season)
     for r in settled:
         ko = str(r.get('ko') or '')[:10]

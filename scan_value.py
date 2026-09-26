@@ -140,14 +140,32 @@ def scan(notify_tg=True):
         if w and w[:10] < today and k not in cur_keys:
             del state[k]
 
-    # ---- CLV ημερολογιο: καθε ΝΕΟ pick = η τιμη εισοδου μας (κρινεται στο κλεισιμο) ----
+    # ---- CLV ημερολογιο: η εισοδος μας (≤72ω πριν, μια ανα ματς/πλευρα) — κρινεται στο κλεισιμο ----
     try:
         # 13/9 (ledger πακετο 5.1): total & Pinnacle ΤΗ ΣΤΙΓΜΗ του pick — σημεια
         # αναφορας για τις μετα-το-ματς αναλυσεις (κινηση total/Pinnacle απο εισοδο).
         orow = {f"{r['hid']}_{r['aid']}": r
                 for r in res.get('odds_rows', []) if not r.get('inplay')}
+        # 26/9/2026 (Στελιος): εγγραφη ΟΧΙ σε καθε νεο alert (πριν: και 3 εβδομαδες πριν, και νεα εγγραφη σε καθε αλλαγη γραμμης),
+        # αλλα ΜΙΑ ανα ματς & πλευρα, την πρωτη φορα που το pick ειναι ενεργο μεσα σε 72ω πριν τη σεντρα (τιμη/γραμμη εκεινης της στιγμης).
+        # Τα Telegram alerts μενουν οπως ηταν.
+        import clv_ledger as _cl
+        _now_dt = datetime.datetime.now(datetime.timezone.utc)
+        recorded = set()
+        for b in _cl._jsonl(CLVBETS_F):
+            if _cl.counts(b):
+                recorded.add((b.get('hid'), b.get('aid'), str(b.get('ko'))[:16], b.get('side')))
+        entries = []
+        for p in picks:
+            ko_dt = _cl._dt(p.get('when'))
+            if ko_dt is None:
+                continue
+            hb = (ko_dt - _now_dt).total_seconds() / 3600
+            k = (p.get('home_id'), p.get('away_id'), str(p.get('when'))[:16], p['side'])
+            if 0 < hb <= _cl.ENTRY_H and k not in recorded:
+                recorded.add(k); entries.append((p, hb))
         with open(CLVBETS_F, 'a', encoding='utf-8') as fh:
-            for p in new_alerts:
+            for p, hb in entries:
                 # 13/9 Στελιος: καταγραφη απο την 1η αγωνιστικη (πριν: μονο md>=7) —
                 # να δουμε ΣΤΗΝ ΠΡΑΞΗ πως παει το μοντελο νωρις. paper=True σημαινει
                 # «καταγραφη μονο, ΔΕΝ παιζεται» (παιζουμε 15η+)· τα χειροκινητα πεδια
@@ -167,7 +185,8 @@ def scan(notify_tg=True):
                            window=(None if md is None else
                                    ('1-6' if md < 7 else ('7-14' if md < 15 else '15+'))),
                            paper=(None if md is None else bool(md < 15)),
-                           placed_at=None, stake_asked=None, stake_accepted=None, book=None)
+                           placed_at=None, stake_asked=None, stake_accepted=None, book=None,
+                           h72=True, hours_before=round(hb, 1))
                 fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
     except Exception as e:
         print(f"clv_bets ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")

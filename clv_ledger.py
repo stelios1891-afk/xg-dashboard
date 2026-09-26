@@ -50,7 +50,26 @@ def _jsonl(path):
 
 
 def _bet_key(b):
-    return f"{b['lg']}|{b['home']}|{b['away']}|{b['side']}|{b['hcap']:g}|{b.get('ko','')}"
+    return f"{b['lg']}|{b['home']}|{b['away']}|{b['side']}|{b['hcap']:g}|{b.get('ko','')}" + ('|72' if b.get('h72') else '')
+
+
+# 26/9/2026 (Στελιος): στο ιστορικο μετραει ΜΟΝΟ η εισοδος μεσα σε 72 ωρες πριν τη σεντρα (οπως στις εθνικες) —
+# «δεν προκειται ποτε να παιξω πολυ καιρο πριν». Νεες εγγραφες: h72=True (μια ανα ματς & πλευρα, scan_value).
+# Παλιες εγγραφες (χωρις h72): μετρανε μονο αν μπηκαν ≤72ω πριν. Τα Telegram alerts ΔΕΝ αλλαζουν.
+ENTRY_H = 72
+
+
+def hours_before(b):
+    ko, se = _dt(b.get('ko')), _dt(b.get('seen'))
+    return None if (ko is None or se is None) else (ko - se).total_seconds() / 3600
+
+
+def counts(b):
+    """True αν η εγγραφη μετραει στο ιστορικο (εισοδος ≤72ω πριν τη σεντρα)."""
+    if b.get('h72'):
+        return True
+    hb = hours_before(b)
+    return hb is not None and hb <= ENTRY_H
 
 
 # ---------- κλεισιμο απο το δικο μας odds_history ----------
@@ -350,7 +369,7 @@ def settle_pending(verbose=True):
 def report(days=7):
     now = datetime.datetime.now(UTC)
     cut = now - datetime.timedelta(days=days)
-    rows = [r for r in _jsonl(LEDGER_F) if (_dt(r.get('ko')) or now) >= cut]
+    rows = [r for r in _jsonl(LEDGER_F) if (_dt(r.get('ko')) or now) >= cut and counts(r)]
     if not rows:
         return f'CLV: κανενα settled pick τις τελευταιες {days} μερες.'
     n = len(rows)

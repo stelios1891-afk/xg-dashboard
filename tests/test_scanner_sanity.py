@@ -185,12 +185,23 @@ def test_a_clv_bets_no_duplicate_entries():
     rows = _jsonl('clv_bets.jsonl')
     seen, dup = {}, []
     for i, b in enumerate(rows, 1):
-        key = (b.get('hid'), b.get('aid'), b.get('ko'), b.get('side'), b.get('hcap'))
+        key = (b.get('hid'), b.get('aid'), b.get('ko'), b.get('side'), b.get('hcap'), bool(b.get('h72')))   # 26/9: h72 = εισοδος ≤72ω (νομιμη διπλη με παλια)
         if key in seen:
             dup.append(f'{b.get("lg")} {b.get("home")}-{b.get("away")} side={b.get("side")} hcap={b.get("hcap")} '
                        f'(γραμμες {seen[key]} & {i})')
         seen[key] = i
     assert not dup, f'clv_bets.jsonl: {len(dup)} ΔΙΠΛΕΣ εγγραφες ιδιου (ματς, πλευρα, γραμμη):\n' + '\n'.join(dup[:8])
+
+
+def test_a_clv_bets_h72_once_per_match_side():
+    """26/9/2026: απο εδω και περα μια εισοδος (h72) ανα ματς & πλευρα, μεσα σε 72ω πριν τη σεντρα."""
+    rows = [b for b in _jsonl('clv_bets.jsonl') if b.get('h72')]
+    seen = set()
+    for b in rows:
+        k = (b.get('hid'), b.get('aid'), str(b.get('ko'))[:16], b.get('side'))
+        assert k not in seen, f'clv_bets: 2η εισοδος h72 για {b.get("home")}-{b.get("away")} side={b.get("side")}'
+        seen.add(k)
+        assert 0 < b.get('hours_before', 0) <= 72, f'clv_bets h72 εκτος 72ω: {b.get("home")}-{b.get("away")} {b.get("hours_before")}'
 
 
 def test_a_clv_bets_fields():
