@@ -271,9 +271,8 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
             miss.append(dict(pid=pid, nm=pnm, mv=round(v / 1e6, 1), starts=nst, left=int(pid) in dressed_now))
     miss.sort(key=lambda x: -x['mv'])
     miss = [dict(pid=None, nm=m_['nm'], mv=m_['mv'] or 0, starts=None, left=False, manual=True) for m_ in manual_out] + miss      # 25/9: χειροκινητες πρωτες
-    _man = {norm(m_['nm']) for m_ in manual_out}
     miss = [dict(pid=m_['pid'], nm=m_['nm'], mv=m_['mv'], starts=None, left=False, squad=True) for m_ in squad_out
-            if norm(m_['nm']) not in _man and not any(match_score(mo_, m_['tm']) >= 1.5 for mo_ in (MANUAL.get(nm) or {}).get('out', []))] + miss   # 26/9
+            if not any(match_score(mo_, m_['tm']) >= 1.5 for mo_ in (MANUAL.get(nm) or {}).get('out', []))] + miss   # 26/9: εκτος αποστολης
     OUT[tid] = dict(nm=nm, tm=f'{slug}/{vid}', v_call_m=v_call, n_sq=len(called_names), missing=miss[:4], dressed_now=len(dressed_now), manual_out=manual_out,
                     called=called_names, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'), players=players,
                     seen={c: seen.get(c, now_s) for c in called_names} | {m_['tm']: seen.get(m_['tm'], now_s) for m_ in squad_out},
