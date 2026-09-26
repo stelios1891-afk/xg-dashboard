@@ -264,6 +264,7 @@ def rget(r, col, default=np.nan):
 
 # ============================ NATIONS LEAGUE ============================
 P = _load_csv('intl_projections.csv')
+AD_XG = _load_json('intl_xg_attdef.json', {}); TMIX = _load_json('intl_tmix_config.json', {})      # 26/9 (δ) νεο T over
 if P is None:
     print('ΣΦΑΛΜΑ: λειπει intl_projections.csv — δεν χτιζεται τιποτα (το υπαρχον json μενει)'); sys.exit(0)
 NG = _load_json('intl_ng_now.json', {})
@@ -324,6 +325,9 @@ for r in P.itertuples():
     T_H, close_H = T_of(r.diff, r.R_home, r.R_away)
     T_A, close_A = T_of(rget(r, 'diff_A'), rget(r, 'R_home_A'), rget(r, 'R_away_A'))
     T_AV, _ = T_of(rget(r, 'diff_AV'), rget(r, 'R_home_A'), rget(r, 'R_away_A'))
+    # 26/9 (δ): ΝΕΟ T για τα over = T + xG επιθεσης/αμυνας ομαδων (intl_pricing.t_over)· τα handicap δεν αλλαζουν (xg_h/xg_a απο intl_project)
+    _xs = intl_pricing.team_xg_sum(AD_XG, r.hid, r.aid)
+    T_H, T_A, T_AV = intl_pricing.t_over(T_H, 'H', _xs, TMIX), intl_pricing.t_over(T_A, 'A', _xs, TMIX), intl_pricing.t_over(T_AV, 'AV', _xs, TMIX)
     TT = {'H': (T_H, close_H), 'A': (T_A, close_A), 'AV': (T_AV, close_A)}
     if ov is not None and T_H is not None and sget(ov, 'T_μοντ', None) is not None and abs(float(ov['T_μοντ']) - T_H) > 0.011:
         t_bad.append((key[2], float(ov['T_μοντ']), round(T_H, 2)))

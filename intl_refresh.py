@@ -30,7 +30,7 @@ CUR = {   # μονο οι σεζον που «τρεχουν» τωρα (οι π
     'AFCONQ': (10608, ['2026/2027']), 'Friendlies': (114, ['2026']),
 }
 CRITICAL = ['intl_build.py', 'intl_rating2_hist.py', 'intl_mkt_anchor.py', 'intl_project.py']
-OPTIONAL = ['intl_nl_shadow.py', 'intl_nl_overs.py', 'intl_dashboard_build.py',      # 25/9: χωρις intl_afconq_shadow_v (Αφρικη κλειστη)
+OPTIONAL = ['intl_xg_attdef_build.py', 'intl_nl_shadow.py', 'intl_nl_overs.py', 'intl_dashboard_build.py',      # 26/9: xG ομαδων για το νεο T over      # 25/9: χωρις intl_afconq_shadow_v (Αφρικη κλειστη)
             'intl_callups_validate.py']   # 25/9: επαληθευση κλησεων TM με τις αποστολες FotMob που μολις ηρθαν
 OUTPUTS = ['intl_matches.csv', 'intl_ratings_h.csv', 'intl_preds_H.csv', 'intl_hfa_config.json', 'intl_preds_anchor.csv',
            'intl_ratings_anchor.csv', 'intl_projections.csv', 'intl_nl_shadow_2627.csv', 'intl_nl_overs_2627.csv',

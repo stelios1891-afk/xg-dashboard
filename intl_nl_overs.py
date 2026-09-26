@@ -4,7 +4,7 @@
 import sys, json, re, math
 import numpy as np, pandas as pd
 sys.stdout.reconfigure(encoding='utf-8'); sys.path.insert(0, '.')
-P = pd.read_csv('intl_projections.csv'); AD = json.load(open('intl_xg_attdef.json', encoding='utf-8')); MU = 1.231; HF = 1.15; NG = json.load(open('intl_ng_now.json', encoding='utf-8')); NAMES = json.load(open('nowgoal_intl_team_names.json', encoding='utf-8'))
+P = pd.read_csv('intl_projections.csv'); AD = json.load(open('intl_xg_attdef.json', encoding='utf-8')); TMIX = json.load(open('intl_tmix_config.json', encoding='utf-8')); MU = 1.231; HF = 1.15; NG = json.load(open('intl_ng_now.json', encoding='utf-8')); NAMES = json.load(open('nowgoal_intl_team_names.json', encoding='utf-8'))
 def toks(s): s = re.sub(r'[^a-z ]', ' ', str(s).lower()); return set(w for w in s.split() if len(w) > 2)
 ALIAS = {'Turkiye': 'Turkey', 'Czechia': 'Czech Republic', 'Bosnia and Herzegovina': 'Bosnia', 'Ireland': 'Republic of Ireland', 'North Macedonia': 'Macedonia', 'Faroe Islands': 'Faroe'}
 ng_by_key = {}
@@ -30,7 +30,8 @@ def p_over(T, line):
 rows = []
 for r in P.itertuples():
     if pd.isna(r.diff): continue
-    gap = abs(r.R_home - r.R_away); close = gap < 150; T = 0.29 + 0.33 * abs(r.diff) / 100 + 0.49 * close + 0.10 * (r.R_home + r.R_away) / 2 / 100 - 0.05      # 22/9: T με επιπεδο (intl_xg_totals)
+    _xs = intl_pricing.team_xg_sum(AD, r.hid, r.aid)      # 26/9 (δ): νεο T over = T + xG ομαδων
+    gap = abs(r.R_home - r.R_away); close = gap < 150; T = intl_pricing.t_over(0.29 + 0.33 * abs(r.diff) / 100 + 0.49 * close + 0.10 * (r.R_home + r.R_away) / 2 / 100 - 0.05, 'H', _xs, TMIX)      # 22/9: T με επιπεδο (intl_xg_totals)
     # εκδοχη «ΜΑΖΙ» (σκια): T_mix = 0.28 + 0.72·T_xg + 0.26·|diff|/100 + 0.27·[KO] + 0.41·[κοντινο], T_xg απο xG επιθεση/αμυνα ομαδων
     ah_ = AD.get(str(r.hid), {}); aa_ = AD.get(str(r.aid), {})
     if ah_ and aa_:
@@ -43,8 +44,8 @@ for r in P.itertuples():
     TV = {}
     if pd.notna(getattr(r, 'diff_A', np.nan)) and pd.notna(getattr(r, 'R_home_A', np.nan)):
         gapA = abs(r.R_home_A - r.R_away_A); closeA = gapA < 150; lvlA = 0.10 * (r.R_home_A + r.R_away_A) / 2 / 100
-        TV['A'] = (0.29 + 0.33 * abs(r.diff_A) / 100 + 0.49 * closeA + lvlA - 0.05, closeA)
-        if pd.notna(getattr(r, 'diff_AV', np.nan)): TV['AV'] = (0.29 + 0.33 * abs(r.diff_AV) / 100 + 0.49 * closeA + lvlA - 0.05, closeA)
+        TV['A'] = (intl_pricing.t_over(0.29 + 0.33 * abs(r.diff_A) / 100 + 0.49 * closeA + lvlA - 0.05, 'A', _xs, TMIX), closeA)
+        if pd.notna(getattr(r, 'diff_AV', np.nan)): TV['AV'] = (intl_pricing.t_over(0.29 + 0.33 * abs(r.diff_AV) / 100 + 0.49 * closeA + lvlA - 0.05, 'AV', _xs, TMIX), closeA)
         rec['ΔElo_A'] = int(gapA)
     for v_, (Tv, _) in TV.items(): rec[f'T_{v_}'] = round(Tv, 2)
     bestV = {v_: '' for v_ in TV}

@@ -735,3 +735,19 @@ def test_g_intl_refresh_guards():
         P = pd.read_csv(pr)
         if 'val_src' in P:
             assert (P.val_src.astype(str).str.count('κληση') >= 1).mean() > 0.5, 'λιγοτερα απο τα μισα ματς με αξια κλησης'
+
+
+def test_h_intl_new_T_over():
+    """26/9 (αποφαση Στελιου): νεο T για τα over = T + xG επιθεσης/αμυνας ομαδων· χωρις xG → T σημερα· μονο over (handicap απο intl_project)."""
+    import intl_pricing as ip
+    cfg = json.load(open(os.path.join(ROOT, 'intl_tmix_config.json'), encoding='utf-8'))
+    for v in ('H', 'A', 'AV'):
+        b0, b1, b2 = cfg[v]; assert 0.6 < b1 < 0.95 and 0.35 < b2 < 0.75 and -1.2 < b0 < -0.4, (v, cfg[v])
+    AD = {'_meta': {'mu': 1.23, 'hf': 1.15}, '1': {'att': 0.6, 'dfn': 0.9, 'n': 12}, '2': {'att': 0.7, 'dfn': 1.0, 'n': 12}, '3': {'att': 1.5, 'dfn': 1.4, 'n': 2}}
+    xs = ip.team_xg_sum(AD, 1, 2); assert xs is not None and xs < 1.4, xs
+    assert ip.team_xg_sum(AD, 1, 3) is None, 'λιγοτερα απο 3 ματς με xG → χωρις νεο T'
+    assert ip.t_over(2.5, 'H', None, cfg) == 2.5 and ip.t_over(2.5, 'H', xs, cfg) < 2.5, 'ομαδες με λιγα xG πρεπει να κατεβαζουν το T'
+    src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
+    assert 'intl_pricing.t_over(T_H' in src and 'team_xg_sum(AD_XG' in src, 'το dashboard δεν χρησιμοποιει το νεο T στα over'
+    ad = json.load(open(os.path.join(ROOT, 'intl_xg_attdef.json'), encoding='utf-8'))
+    assert '_meta' in ad and len(ad) > 80, 'intl_xg_attdef.json χωρις meta/ομαδες'

@@ -98,3 +98,27 @@ def settle_over(total, line, odds):
     if total > q:
         return odds - 1
     return 0.0 if abs(total - q) < 1e-9 else -1.0
+
+
+# ---------------- 26/9/2026 (δ) ΝΕΟ T ΓΙΑ ΤΑ OVER (αποφαση Στελιου): T + xG επιθεσης/αμυνας ομαδων ----------------
+# Το T «καταστασης» (διαφορα/κοντινο/επιπεδο) δεν ηξερε ΠΩΣ παιζουν οι ομαδες (π.χ. Βουλγαρια−Λουξεμβουργο: 0.3-0.5 γκολ υπερ ανα ματς).
+# T_over = b0 + b1·T + b2·(λh_xG + λa_xG) (intl_tmix_config.json· xG ομαδων intl_xg_attdef.json, 12 αγωνιστικα, διορθωση αντιπαλου).
+# Τεστ 72ω: over συναινεσης +13.2→+17.5% (5/5), «στεγνες» ομαδες +7.9→+22.9%· ακριβεια γκολ MAE 1.383→1.344. ΜΟΝΟ στα over (τα handicap μενουν).
+def team_xg_sum(AD, hid, aid, neutral=False, nmin=3):
+    """λ_h + λ_a (αναμενομενο xG ματς απο επιθεση/αμυνα των 2 ομαδων) ή None αν λειπει ιστορικο (< nmin ματς με xG)."""
+    if not AD or hid is None or aid is None:
+        return None
+    meta = AD.get('_meta') or {}; MU = meta.get('mu', 1.231); HF = meta.get('hf', 1.15)
+    h, a = AD.get(str(int(hid))), AD.get(str(int(aid)))
+    if not h or not a or h.get('n', 0) < nmin or a.get('n', 0) < nmin:
+        return None
+    hf = 1.0 if neutral else HF
+    return MU * (h['att'] / MU) * (a['dfn'] / MU) * hf + MU * (a['att'] / MU) * (h['dfn'] / MU) / hf
+
+
+def t_over(T, ver, xgsum, cfg):
+    """ΝΕΟ T για τα over (εκδοχη ver = H/A/AV)· χωρις xG ομαδων ή config → το T της καταστασης."""
+    if T is None or xgsum is None or not cfg or ver not in cfg:
+        return T
+    b = cfg[ver]
+    return max(b[0] + b[1] * T + b[2] * xgsum, 0.8)
