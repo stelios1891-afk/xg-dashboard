@@ -447,6 +447,17 @@ import intl_consensus
 for _c, _ms in comps.items():
     for _m in _ms:
         _m['consensus'] = intl_consensus.consensus(_m['picks'])
+        # 26/9: BTTS ΜΟΝΟ ενημερωτικα (P μοντελου ανα εκδοχη + «αγορα» απο AH+O/U της πηγης) — intl_pricing.btts_p / market_lambdas
+        try:
+            _bt = {v: round(intl_pricing.btts_p(max(V['xg_h'], .05), max(V['xg_a'], .05)), 4)
+                   for v, V in (_m.get('versions') or {}).items() if V and V.get('xg_h') is not None}
+            _src = (_m.get('market') or {}).get('source'); _b = (_m.get('market') or {}).get(_src) or {}
+            if _b.get('ah_line') is not None and _b.get('oh') and _b.get('oa') and _b.get('ou_line') is not None and _b.get('over') and _b.get('under'):
+                _lh, _la = intl_pricing.market_lambdas(_b['ah_line'], _b['oh'], _b['oa'], _b['ou_line'], _b['over'], _b['under'])
+                _bt['mkt'] = round(intl_pricing.btts_p(_lh, _la), 4)
+            _m['btts'] = _bt
+        except Exception:
+            _m['btts'] = {}
 nl_ms = [m for c, ms in comps.items() if c != 'AFCONQ' for m in ms]
 out = dict(generated=dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%d %H:%M'),
            toa_scanned=(str(TOA.get('scanned_at', '')).replace('T', ' ') or None) if TOA_ODDS else None, toa_matches=n_toa,

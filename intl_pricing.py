@@ -122,3 +122,58 @@ def t_over(T, ver, xgsum, cfg):
         return T
     b = cfg[ver]
     return max(b[0] + b[1] * T + b[2] * xgsum, 0.8)
+
+
+# ---------------- 26/9/2026 (ε) BTTS — ΜΟΝΟ ΕΝΗΜΕΡΩΤΙΚΟ στο dashboard (αποφαση Στελιου: «θα το δουμε», οχι picks) ----------------
+# Τεστ btts_test.py (26/9): εθνικες 972 ματς — P_mod(BTTS) εχει πληροφορια περα απο την αγορα (Μ1 b +0.83 t 3.9, 5/5 σεζον· υποθ. ROI@8%
+# +15%)· εγχωρια FAIL. Επιφυλαξεις: T in-sample, πιθανη επικαλυψη με τσεπη over, «αγορα» = proxy απο AH+O/U (οχι πραγματικη τιμη BTTS).
+def btts_p(lh, la):
+    """P(σκοραρουν και οι δυο) με ανεξαρτητο Poisson (ιδιο με το τεστ)."""
+    return (1 - math.exp(-lh)) * (1 - math.exp(-la))
+
+
+def _pois(l, k):
+    return math.exp(-l) * l ** k / math.factorial(k)
+
+
+def _cover_q(lh, la, line, total=False, K=11):
+    """P(καλυψη | οχι push) για γηπεδουχο στο AH line (ή over στο line αν total) — τεταρτα μισο/μισο."""
+    q = round(float(line) * 4) / 4
+    parts = [q] if abs(q * 2 - round(q * 2)) < 1e-9 else [q - 0.25, q + 0.25]
+    W = Ls = 0.0
+    for i in range(K):
+        pi = _pois(lh, i)
+        for j in range(K):
+            p = pi * _pois(la, j)
+            for L in parts:
+                m = (i + j - L) if total else (i - j + L)
+                if m > 1e-9:
+                    W += p
+                elif m < -1e-9:
+                    Ls += p
+    return W / max(W + Ls, 1e-12)
+
+
+def market_lambdas(ah_line, oh, oa, ou_line, over, under):
+    """λ_h, λ_a της ΑΓΟΡΑΣ απο το AH (γραμμη γηπεδουχου) και το O/U χωρις γκανιοτα — εμφωλευμενη διχοτομηση (T απο O/U, s απο AH)."""
+    qh = (1 / oh) / (1 / oh + 1 / oa); qo = (1 / over) / (1 / over + 1 / under)
+
+    def s_for(T):
+        lo, hi = -T + 0.04, T - 0.04
+        for _ in range(30):
+            s = (lo + hi) / 2
+            if _cover_q((T + s) / 2, (T - s) / 2, ah_line) < qh:
+                lo = s
+            else:
+                hi = s
+        return (lo + hi) / 2
+    Tlo, Thi = 0.4, 7.0
+    for _ in range(26):
+        T = (Tlo + Thi) / 2; s = s_for(T)
+        if _cover_q((T + s) / 2, (T - s) / 2, ou_line, total=True) < qo:
+            Tlo = T
+        else:
+            Thi = T
+    T = (Tlo + Thi) / 2; s = s_for(T)
+    return (T + s) / 2, (T - s) / 2
+

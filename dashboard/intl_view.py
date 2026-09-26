@@ -468,15 +468,29 @@ def _lines_pane(m, vers):
         S_AH = 1.0
     h = ('<table class="lt"><tr><th></th><th>xG · T</th>'
          f'<th>fair γηπ {_fmt_line(ln)}</th><th>fair φιλοξ {_fmt_line(-ln) if ln is not None else "—"}</th>'
-         f'<th>over {ou:g}</th><th>pick</th></tr>' if ou is not None else
+         f'<th>over {ou:g}</th><th title="ενημερωτικο — οχι pick">BTTS</th><th>pick</th></tr>' if ou is not None else
          '<table class="lt"><tr><th></th><th>xG · T</th>'
          f'<th>fair γηπ {_fmt_line(ln)}</th><th>fair φιλοξ {_fmt_line(-ln) if ln is not None else "—"}</th>'
-         '<th>over</th><th>pick</th></tr>')
+         '<th>over</th><th title="ενημερωτικο — οχι pick">BTTS</th><th>pick</th></tr>')
+    BT = m.get('btts') or {}
+    pm = BT.get('mkt')
+
+    def _btts_cell(v):
+        pv = BT.get(v)
+        if pv is None:
+            return '<span class="e dim">—</span>'
+        out = f'{pv * 100:.0f}% <span class="sec">fair {1 / pv:.2f}</span>'
+        if pm:
+            ey, en = pv / (1.05 * pm) - 1, (1 - pv) / (1.05 * (1 - pm)) - 1      # υποθετικη τιμη = αγορα-proxy με γκανιοτα 5%
+            d = (pv - pm) * 100
+            tag = (' <span class="e g">Yes</span>' if ey >= .08 else (' <span class="e g">No</span>' if en >= .08 else ''))
+            out += f' <span class="e {"n" if abs(d) < 5 else ("g" if d > 0 else "r")}">{d:+.0f}</span>{tag}'
+        return out
     for v, lab in vers:
         V = (m.get('versions') or {}).get(v)
         name = f'<td class="vn" style="color:{VER_COLOR[v]}">{VER_NUM[v]}<small>{lab}</small></td>'
         if not V:
-            h += f'<tr>{name}<td colspan="5" class="e dim">—</td></tr>'
+            h += f'<tr>{name}<td colspan="6" class="e dim">—</td></tr>'
             continue
         e = ((m.get('edges') or {}).get(v) or {}).get(src) or {}
         xg = f'{V["xg_h"]:.2f}-{V["xg_a"]:.2f}' + (f' <span class="sec">T {V["T"]:.2f}</span>' if V.get('T') is not None else '')
@@ -492,7 +506,7 @@ def _lines_pane(m, vers):
         if e.get('p_over') is not None:
             ov = f'{e["p_over"]:.0f}% {ov}'
         b = _badges(m['picks'].get(v, ''), m['picks'].get(OVER_KEY[v], '')) or '<span class="e dim">—</span>'
-        h += f'<tr>{name}<td>{xg}</td><td>{fh}</td><td>{fa}</td><td>{ov}</td><td>{b}</td></tr>'
+        h += f'<tr>{name}<td>{xg}</td><td>{fh}</td><td>{fa}</td><td>{ov}</td><td>{_btts_cell(v)}</td><td>{b}</td></tr>'
     # αγορα απο κατω
     xs, xc = x12_src(m)
     x12 = f'{xc["o1"]:.2f} / {xc["ox"]:.2f} / {xc["o2"]:.2f}' if xc.get('o1') else '—'
@@ -509,9 +523,11 @@ def _lines_pane(m, vers):
             sec = (f'<span class="sec">Crown {_fmt_line(n["ah_line"])} {n["oh"]:.2f}/{n["oa"]:.2f}'
                    + (f' · O/U {n["ou_line"]:g} {n["over"]:.2f}/{n["under"]:.2f}' if n.get('ou_line') is not None else '') + '</span>')
     h += (f'<tr class="mkr"><td class="vn">Αγορα {_src_badge(m)}<small>1 / Χ / 2 · AH · O/U</small></td>'
-          f'<td>{x12}</td><td colspan="2">{ah}{sec}</td><td>{out}</td><td></td></tr></table>')
+          f'<td>{x12}</td><td colspan="2">{ah}{sec}</td><td>{out}</td>'
+          f'<td>{(f"{pm * 100:.0f}% <span class=sec>εκτιμηση απο AH+O/U</span>") if pm else "—"}</td><td></td></tr></table>')
     h += ('<div class="leg">fair = τιμη μοντελου στη γραμμη της πηγης <b>με τη γκανιοτα της αγορας</b> (αμεσα συγκρισιμη· hover = χωρις γκανιοτα) · edge = αναμενομενη αποδοση (πρασινο ≥10%, κιτρινο ≥5%) · '
-          'over: P(over) μοντελου + edge</div>')
+          'over: P(over) μοντελου + edge · <b>BTTS (ενημερωτικο, οχι pick)</b>: P μοντελου, διαφορα σε ποσοστιαιες μοναδες απο την «αγορα» '
+          '(εκτιμηση απο AH+O/U — δεν υπαρχει πραγματικη τιμη BTTS)· Yes/No = υποθετικο edge ≥8% με γκανιοτα 5% (τεστ 26/9: εθνικες +15%, εγχωρια ✗)</div>')
     return h
 
 
