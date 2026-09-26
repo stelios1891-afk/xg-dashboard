@@ -177,6 +177,36 @@ if os.path.exists('intl_absences_manual.json'):
               if not k.startswith('_') and str(v.get('until', '9999')) >= _today}
 OUT = {}
 skipped = []
+
+
+def fotmob_call(tid, nm, why):
+    """26/9/2026 (Στελιος, Γερμανια): οταν η λιστα TM ειναι υποπτη/λειπει → «κληση» = ενωση των αποστολων FotMob (11 + παγκος)
+    της ομαδας στο τρεχον παραθυρο (π.χ. Ολλανδια–Γερμανια 24/9). Αξιες SciSports ανα pid. None αν δεν εχει παιξει ακομα στο παραθυρο."""
+    pids = []
+    for m_, rec_ in SQH.items():
+        if str(mid2date.get(str(m_), ''))[:10] < WIN0 or not mid2teams.get(str(m_)):
+            continue
+        for sk_, t_ in zip(('h', 'a'), mid2teams[str(m_)]):
+            if int(t_) == tid:
+                for p_ in ((rec_.get(sk_) or {}).get('p') or {}):
+                    if int(p_) not in pids:
+                        pids.append(int(p_))
+    if len(pids) < 18:
+        return None
+    players = [dict(tm=norm_name((PV.get(str(p_)) or {}).get('name', str(p_))), pid=p_, sci=latest_val(p_), tm_m=None) for p_ in pids]
+    called = [pl['tm'] for pl in players]
+    print(f'  {nm:22s} {why} → κληση απο τις αποστολες FotMob του παραθυρου ({len(pids)} παικτες)', flush=True)
+    return dict(nm=nm, tm='fotmob-squads', v_call_m=None, n_sq=len(called), missing=[], dressed_now=len(pids), manual_out=[],
+                called=called, asof=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M'), players=players,
+                seen={c: (PREV.get(str(tid)) or {}).get('seen', {}).get(c) or datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M') for c in called},
+                squad_out=[], source='fotmob')
+
+
+def norm_name(s):
+    import unicodedata
+    return ' '.join(unicodedata.normalize('NFKD', str(s)).encode('ascii', 'ignore').decode().lower().split())
+
+
 for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
     t = tm_team(nm)
     if not t:
@@ -193,6 +223,9 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
     rows = RX_PLAYER.findall(h)
     called_names = sorted({sl.replace('-', ' ') for sl, _ in rows})
     if not (18 <= len(called_names) <= 35):
+        fb = fotmob_call(tid, nm, f'ΥΠΟΠΤΟ μεγεθος κλησης TM {len(called_names)} ({slug}/{vid})')
+        if fb:
+            OUT[tid] = fb; continue
         print(f'  {nm:22s} ΥΠΟΠΤΟ μεγεθος κλησης {len(called_names)} ({slug}/{vid}) — ΠΑΡΑΛΕΙΠΕΤΑΙ, καμια σημαια')
         skipped.append(nm)
         continue
