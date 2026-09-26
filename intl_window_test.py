@@ -33,7 +33,7 @@ if IMP_S4:
     SUF = SUF + '_s4'
 T_MODE = os.environ.get('T_MODE', 'live')   # 26/9: live = T σημερα · mix = T σημερα + xG επιθεσης/αμυνας ομαδων (βαρη LOSO ανα σεζον στα γκολ)
 if T_MODE != 'live':
-    SUF = SUF + '_T' + T_MODE
+    SUF = SUF + '_T' + T_MODE + (f"N{os.environ['XG_N']}" if os.environ.get('XG_N') else '')
 GD_FIX = os.environ.get('GD_FIX', 'none')   # 25/9 διορθωση dogs: none | slope (κλιση υπεροχης ανα μοντελο, LOSO) | shape (slope + κοινα γκολ λ3, LOSO)
 if GD_FIX != 'none':
     SUF = SUF + '_gd' + GD_FIX
@@ -164,7 +164,10 @@ def model_dist(r, m, T, diff):
 # ---- 26/9 T_MODE=mix: T = b0 + b1·T_live + b2·(λh_xG + λa_xG)· λ απο intl_xg_totals.csv (walk-forward, 12 ματς, shrink, διορθωση αντιπαλου) ----
 TMIX = {}; XGS = {}
 if T_MODE == 'mix':
-    _X = pd.read_csv('intl_xg_totals.csv', dtype={'mid': str}); XGS = dict(zip(_X.mid, _X.lh_xg + _X.la_xg))
+    if os.environ.get('XG_N'):      # 26/9: πληθος ματς για το xG ομαδων (intl_xg_team_windows.py)
+        _X = pd.read_csv(f"intl_xg_teamN{os.environ['XG_N']}.csv", dtype={'mid': str}); _X = _X[_X.n >= 3]; XGS = dict(zip(_X.mid, _X.xgsum))
+    else:
+        _X = pd.read_csv('intl_xg_totals.csv', dtype={'mid': str}); XGS = dict(zip(_X.mid, _X.lh_xg + _X.la_xg))
     _C = D[D.ctype.isin(['nl', 'qual', 'tourn'])]
     for _sea in sorted(D.season.unique()):
         for _m in MODELS:
