@@ -66,6 +66,15 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python euro_refresh.py
 
+      # 26/9 (Στελιος): αποτελεσματα/προγραμμα UCL/UEL/UECL μετα απο καθε αγωνιστικη (FotMob) -> europe_fixtures_2627.json
+      # (σκορ στο dashboard, σωστες ωρες σεντρας). Αν αποτυχει το αρχειο ΔΕΝ ξαναγραφεται (το script γραφει μονο στο τελος).
+      # ΣΗΜ.: τα ευρωπαϊκα αποτελεσματα ΔΕΝ μπαινουν στα ratings — εκκρεμει τεστ (bias-free διορθωση αντιπαλου, βλ. y7b).
+      - name: Euro cups — προγραμμα + αποτελεσματα (FotMob)
+        continue-on-error: true
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python europe_fixtures_2627_fetch.py
+
       - name: Fresh euro projections
         env:
           PYTHONIOENCODING: utf-8
@@ -91,7 +100,7 @@ jobs:
         run: |
           git config user.name "euro-refresh-bot"
           git config user.email "actions@github.com"
-          git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json el_projections.json el_box.json el_sched.json   # -f: νεες λιγκες ειναι gitignored (data_*.json)
+          git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json europe_fixtures_2627.json el_projections.json el_box.json el_sched.json   # -f: νεες λιγκες ειναι gitignored (data_*.json)
           if git diff --cached --quiet; then
             echo "no changes — skip commit"
           else
