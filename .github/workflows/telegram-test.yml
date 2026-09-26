@@ -1,0 +1,29 @@
+name: telegram-test
+
+# 26/9/2026: δοκιμαστικο μηνυμα στο INFO bot (TELEGRAM_INFO_TOKEN). Πυροδοτηση: push του telegram_test_trigger.txt ή Run workflow.
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'telegram_test_trigger.txt'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_INFO_TOKEN: ${{ secrets.TELEGRAM_INFO_TOKEN }}
+      TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - name: Send test to INFO bot
+        run: |
+          if [ -z "$TELEGRAM_INFO_TOKEN" ]; then echo "::error::λειπει το secret TELEGRAM_INFO_TOKEN"; exit 1; fi
+          python -c "import notify, sys; ok = notify.send('✅ Info bot: δοκιμη. Εδω θα ερχονται αποστολες, ανανεωσεις μοντελου, αποτελεσματα και αναφορες. Τα picks μενουν στο αλλο bot.', channel='info'); sys.exit(0 if ok else 1)"
