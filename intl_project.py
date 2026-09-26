@@ -164,7 +164,7 @@ for r in F.itertuples():
     # γραμμη οπου ο γηπεδουχος ~ 50%: η πλησιεστερη σε fair 2.00
     best = min(fair.items(), key=lambda kv: abs((kv[1] or 9) - 2.0))
     out.append(dict(comp=r.comp.replace('NationsLeague', 'NL '), utc=r.utc, home=r.home, away=r.away, hid=r.hid, aid=r.aid, νεκρη=('' if (r.alive_h is not False and r.alive_a is not False) else ('γηπ' if r.alive_h is False else '') + ('εκτος' if r.alive_a is False else '')),
-                    R_home=round(rh), R_away=round(ra), val_adj=round(vadj), xg_h_D=round(lh_D, 3), xg_a_D=round(la_D, 3), xg_h_A_D=(round(lhA_D, 3) if pd.notna(lhA_D) else np.nan), xg_a_A_D=(round(laA_D, 3) if pd.notna(laA_D) else np.nan), xg_h_AV_D=(round(lhAV_D, 3) if pd.notna(lhAV_D) else np.nan), xg_a_AV_D=(round(laAV_D, 3) if pd.notna(laAV_D) else np.nan), val_src=f'{srch}/{srca}', V_h=(round(vh / 1e6, 1) if vh else np.nan), V_a=(round(va / 1e6, 1) if va else np.nan), diff=round(diff), xg_h=round(lh, 2), xg_a=round(la, 2),
+                    R_home=round(rh), R_away=round(ra), val_adj=round(vadj), xg_h_D=round(lh_D, 3), xg_a_D=round(la_D, 3), xg_h_A_D=(round(lhA_D, 3) if pd.notna(lhA_D) else np.nan), xg_a_A_D=(round(laA_D, 3) if pd.notna(laA_D) else np.nan), xg_h_AV_D=(round(lhAV_D, 3) if pd.notna(lhAV_D) else np.nan), xg_a_AV_D=(round(laAV_D, 3) if pd.notna(laAV_D) else np.nan), val_src=f'{srch}/{srca}', V_h=(round(vh / 1e6, 1) if vh else np.nan), V_a=(round(va / 1e6, 1) if va else np.nan), Vh_raw=(round(vh) if vh else np.nan), Va_raw=(round(va) if va else np.nan), diff=round(diff), xg_h=round(lh, 2), xg_a=round(la, 2),
                     P1=round(ph * 100), PX=round(pdr * 100), P2=round(pa * 100),
                     fair_1=round(1 / ph, 2), fair_X=round(1 / pdr, 2), fair_2=round(1 / pa, 2),
                     fair_line=f'{best[0]:+.2f} @{best[1]}', fair_m05=fair[-0.5], fair_p05=fair[0.5],
@@ -173,5 +173,7 @@ for r in F.itertuples():
                     diff_AV=(round(dAV) if pd.notna(dAV) else np.nan), xg_h_AV=(round(lhAV, 2) if pd.notna(lhAV) else np.nan), xg_a_AV=(round(laAV, 2) if pd.notna(laAV) else np.nan), P1_AV=(round(phAV * 100) if pd.notna(phAV) else np.nan), PX_AV=(round(pdAV * 100) if pd.notna(pdAV) else np.nan), P2_AV=(round(paAV * 100) if pd.notna(paAV) else np.nan)))
 O = pd.DataFrame(out)
 O.to_csv('intl_projections.csv', index=False)
+# 26/9: συντελεστες για τον ελεγχο ενδεκαδων πριν το ματς (intl_lineups_check.py ξαναβγαζει Μ1/Μ3 με την αξια της πραγματικης αποστολης)
+json.dump(dict(a=a, aA=aA, adeep=ADEEP, elo_per_ln=ELO_LN_CALL, hfa=HFA), open('intl_project_coefs.json', 'w', encoding='utf-8'), indent=1)
 pd.set_option('display.width', 250)
 print(O.to_string(index=False))

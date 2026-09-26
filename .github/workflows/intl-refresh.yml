@@ -57,7 +57,7 @@ jobs:
           # ενα-ενα (ενα αρχειο που λειπει, π.χ. NL C χωρις τελειωμενο ματς, δεν πρεπει να ακυρωσει ολο το add)
           for f in intl_matches.csv intl_ratings_h.csv intl_preds_H.csv intl_hfa_config.json intl_preds_anchor.csv intl_ratings_anchor.csv \
                    intl_projections.csv intl_nl_shadow_2627.csv intl_nl_overs_2627.csv intl_afconq_shadow_2627.csv intl_afconq_overs_2627.csv \
-                   intl_projections_dashboard.json intl_refresh_log.jsonl intl_squads.json intl_callups_validate_out.txt intl_xg_attdef.json \
+                   intl_projections_dashboard.json intl_refresh_log.jsonl intl_squads.json intl_callups_validate_out.txt intl_xg_attdef.json intl_project_coefs.json \
                    data_NationsLeagueA_2627.json data_NationsLeagueB_2627.json data_NationsLeagueC_2627.json data_NationsLeagueD_2627.json \
                    data_AFCONQ_2627.json data_Friendlies_2026.json; do
             if [ -f "$f" ]; then git add -f "$f"; fi

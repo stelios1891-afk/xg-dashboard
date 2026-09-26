@@ -16,7 +16,7 @@ os.chdir(ROOT)
 PY = sys.executable.replace('pythonw.exe', 'python.exe')      # τα παιδια με python.exe (κρυφα, CREATE_NO_WINDOW)
 LOG = os.path.join(ROOT, 'intl_callups_local.log')
 FILES = ['intl_vcall_tm.json', 'intl_projections.csv', 'intl_nl_shadow_2627.csv', 'intl_nl_overs_2627.csv',
-         'intl_projections_dashboard.json', 'intl_callups_validate_out.txt']
+         'intl_projections_dashboard.json', 'intl_callups_validate_out.txt', 'intl_project_coefs.json']
 ENV = dict(os.environ, PYTHONIOENCODING='utf-8')
 
 

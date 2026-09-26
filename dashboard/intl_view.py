@@ -109,6 +109,10 @@ def load():
             d = json.load(fh)
     except Exception:
         return None
+    try:      # 26/9: αποστολες FotMob πριν τη σεντρα (intl_lineups_check.py)
+        LU = json.load(open(os.path.join(os.path.dirname(DATA_F), 'intl_lineups.json'), encoding='utf-8'))
+    except Exception:
+        LU = {}
     led = {}
     try:      # 26/9: τα ανοιχτα picks του ημερολογιου (συναινεση) -> καταστση στην καρτα (🟢 ενεργο / 🟠 επεσε + τιμη που χρειαζεται)
         for ln in open(os.path.join(os.path.dirname(DATA_F), 'intl_picks_ledger.jsonl'), encoding='utf-8'):
@@ -122,6 +126,7 @@ def load():
             if isinstance(m.get('picks'), dict):
                 m['picks'] = {k: _no_x12(v) for k, v in m['picks'].items()}
             m['ledger'] = led.get((c.get('comp'), m.get('home'), m.get('away'), m.get('utc')), [])
+            m['lineup'] = LU.get(f"{c.get('comp')}|{m.get('home')}|{m.get('away')}|{m.get('utc')}")
     return d
 
 
@@ -276,6 +281,7 @@ INTL_CSS = """
 .pkrow{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;padding:5px 12px 7px;font-size:9px;color:#5a6b8c;}
 .pkrow .vk{font-weight:700;letter-spacing:.4px;}
 .bd{display:inline-block;padding:1px 6px;border-radius:8px;font-weight:700;font-size:9.5px;letter-spacing:.3px;margin:1px 2px;color:#0a0f1e;cursor:help;font-family:'DM Sans',sans-serif;}
+.lurow{padding:5px 12px;border-top:1px solid #16203a;font-size:10.5px;color:#c7d3ea;} .lurow .lu-t{color:#6b7fa3;margin-left:6px;} .lurow .lu-b{margin-top:3px;line-height:1.45;font-family:'DM Sans',sans-serif;}
 .bd.led{background:#1a2233;color:#c7d3ea;border:1px solid #26324e;font-weight:400;white-space:normal;} .bd.led.on{border-color:#1e4a33;} .bd.led.off{border-color:#7a5a1a;color:#f3c74b;}
 .bd.dog{background:#34d17a;} .bd.fav{background:#4b7cf3;color:#fff;} .bd.x12{background:#f3c74b;} .bd.over{background:#b17af3;color:#fff;}
 .bd.cons{background:#123524;color:#7ee2a8;border:1px solid #34d17a;font-size:10px;padding:2px 8px;} .pkrow.cons{padding-bottom:2px;}
@@ -383,6 +389,16 @@ def _flags(m):
         out.append('<span class="call" title="Παίκτες με ≥2 βασικές συμμετοχές στην εθνική και αξία ≥30% του πιο ακριβού της ομάδας, που ΔΕΝ είναι στην τρέχουσα κλήση '
                    'του Transfermarkt (και χειροκίνητες απουσίες) · αξία παίκτη σε εκ. € · ήδη μέσα στην αξία ρόστερ των Μ1/Μ3">🚑 Απουσίες: ' + esc(m['callups']).replace(' | ', ' · ') + '</span>')
     return f'<div class="flags">{"".join(out)}</div>' if out else ''
+
+
+def _lineup_row(m):
+    """26/9/2026: επισημες αποστολες FotMob (~60′ πριν) → αξια των 23 που ντυθηκαν, απουσιες, νεοι, edge Μ1/Μ3 πριν→μετα, συναινεση."""
+    L = m.get('lineup')
+    if not L or not L.get('text'):
+        return ''
+    body = '<br>'.join(esc(x) for x in L['text'].splitlines()[1:])
+    return (f'<div class="lurow"><span class="vk" style="color:#7ea2ff">📋 ΑΠΟΣΤΟΛΕΣ</span>'
+            f'<span class="lu-t">({L.get("min_before", "?")}′ πριν{" · ενημερωση" if L.get("update") else ""})</span><div class="lu-b">{body}</div></div>')
 
 
 def _consensus_row(m):
@@ -541,7 +557,7 @@ def card_html(m, vers, key):
     <div class="meta"><span>xG {Vh.get('xg_a', 0):.2f}</span><span class="xg">Elo {Vh.get('R_a', 0):.0f}</span></div></div>
 </div>
 <div class="pbar"><div style="width:{hw}%"></div><div style="width:{dw}%"></div><div style="width:{aw}%"></div></div>
-{_flags(m)}{_consensus_row(m)}{_picks_row(m, vers)}
+{_flags(m)}{_lineup_row(m)}{_consensus_row(m)}{_picks_row(m, vers)}
 <div class="tabs2">
   <button class="tbtn" onclick="tg('{key}','od',this)">Γραμμες &amp; picks</button>
   <button class="tbtn" onclick="tg('{key}','su',this)">Ratings</button>
