@@ -81,7 +81,7 @@ jobs:
         run: python euro_live_projections.py
 
       # 25/9: 🏀 Ευρωλιγκα — προγραμμα + box scores (επισημο API, χωρις κλειδι) + μοντελο v1 -> el_projections.json.
-      # Χρειαζεται στο repo: el_refresh.py, el_model_test.py, el_fatigue_travel.py, el_box.json, el_sched.json (μονο numpy/pandas).
+      # Χρειαζεται στο repo: el_refresh.py, el_model_test.py, el_fatigue_travel.py, el_box.json, el_sched.json, el_expert_prior.json, el_fantasy_prior.json (μονο numpy/pandas).
       # Μη κρισιμο: αν αποτυχει, το υπολοιπο euro-refresh συνεχιζει κανονικα.
       - name: Euroleague refresh (el_refresh.py)
         if: always()
@@ -100,7 +100,7 @@ jobs:
         run: |
           git config user.name "euro-refresh-bot"
           git config user.email "actions@github.com"
-          git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json europe_fixtures_2627.json el_projections.json el_box.json el_sched.json   # -f: νεες λιγκες ειναι gitignored (data_*.json)
+          git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json europe_fixtures_2627.json el_projections.json el_box.json el_sched.json el_shadow_lines.json   # -f: νεες λιγκες ειναι gitignored (data_*.json)
           if git diff --cached --quiet; then
             echo "no changes — skip commit"
           else

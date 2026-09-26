@@ -21,6 +21,8 @@ ENG_TOTAL = dict(luck=0.25, HL=9999, carry=0.7, mu_w=50.0, h=6.0)  # συνολ�
 # ΕΙΔΙΚΟΙ στην αρχη σεζον (αποφαση Στελιου 25/9): αρχικο net χαντικαπ = 0.32·ομαδα περσι + 0.42·ειδικοι (τεστ Γ, LOSO 2021-25)
 # v1 αρχικο net = 0.7·περσι → νεο = (0.32/0.7)·(v1 αρχικο) + 0.42·(rating θεσης BasketNews). Μονο χαντικαπ/1-2, οχι συνολο.
 EXPERTS = json.load(open('el_expert_prior.json', encoding='utf-8')) if os.path.exists('el_expert_prior.json') else None
+# ΣΚΙΑ fantasy (26/9): ιδιο μοντελο Β1 με τις τιμες EuroLeague Fantasy στη θεση των ειδικων — μονο για συγκριση, οχι picks
+FANTASY = json.load(open('el_fantasy_prior.json', encoding='utf-8')) if os.path.exists('el_fantasy_prior.json') else None
 # ΚΑΜΠΥΛΗ ΣΚΟΡ (25/9, el_total_curve_test.py «Κ2», αποφαση Στελιου): αντι σταθερου +1.1 (παρατασεις), διορθωση που μεγαλωνει
 # με τον αριθμο αγωνα της σεζον: +0.34 + 0.098×αγωνιστικη (1η +0.4 · 17η +2.0 · 34η +3.7)· τα σκορ ανεβαινουν ~7 π. μεσα στη σεζον.
 # Περιλαμβανει τις παρατασεις. Τεστ: RMSE 16.48→16.44 (5/6) · b .368→.383 · ROI συνολων ≥8% +7.2→+8.2% (6/6).
@@ -142,11 +144,12 @@ def build(eng):
         ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
         pr = {t: NEWCOMER_PRIOR[t] if (s == SEASON and t in NEWCOMER_PRIOR and t not in prior) else tuple(CAe * v for v in prior.get(t, (0, 0, 0))) for t in teams}
         o0 = np.array([pr[t][0] for t in teams]); d0 = np.array([pr[t][1] for t in teams]); p0 = np.array([pr[t][2] for t in teams])
-        if eng.get('experts') and EXPERTS and s == EXPERTS['season']:
+        PR = FANTASY if eng.get('prior') == 'fantasy' else EXPERTS
+        if eng.get('experts') and PR and s == PR['season']:
             for t, i in ix.items():
-                if t not in EXPERTS['rating']: continue
+                if t not in PR['rating']: continue
                 cur = o0[i] - d0[i]
-                new = EXPERTS['w_team'] / EXPERTS['v1_carry'] * cur + EXPERTS['w_exp'] * EXPERTS['rating'][t]
+                new = PR['w_team'] / PR['v1_carry'] * cur + PR['w_exp'] * PR['rating'][t]
                 o0[i] += (new - cur) / 2; d0[i] -= (new - cur) / 2
         hi = ai = hb = None
         if len(sidx):
@@ -190,10 +193,12 @@ def predict(st, hcode, acode, neu, h):
     return poss * (eh - ea) / 100, poss * (eh + ea) / 100, poss
 
 state, CTX = build(dict(ENG_SPREAD, experts=True))   # χαντικαπ/1-2 ΜΕ ειδικους (+ ratings στον πινακα)
+_, CTX_F = build(dict(ENG_SPREAD, experts=True, prior='fantasy')) if FANTASY else (None, None)   # σκια fantasy
 _, CTX_V1 = build(ENG_V1)                            # παλιο v1: χωρις ειδικους, HL120, K8, εδρα 6 (συγκριση)
 _, CTX_T = build(ENG_TOTAL)             # συνολο ποντων
 d0date = D.date.iloc[0]
 today_cut = (dt.date.today() - d0date).days + 1
+MODEL_TAG = 'v4-B1'
 GNO, _cnt = {}, {}                      # αριθμος αγωνα της σεζον (max των δυο ομαδων) — οπως στο τεστ της καμπυλης
 for y in sorted(S[SEASON], key=lambda y: y['utc']):
     if y['phase'] != 'RS': continue
@@ -209,7 +214,10 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     cut = (gdate - d0date).days if played or gdate <= dt.date.today() else today_cut
     neu = is_neutral(x)
     mg, tt1, poss = predict(state_at(CTX, cut), hcode, acode, neu, ENG_SPREAD['h'])
-    if GNO.get(x['code'], GMAX) >= ENG_SPREAD['stretch_from']: mg *= ENG_SPREAD['stretch']   # Β1: ανοιγμα ×1.1 απο τον 7ο αγωνα
+    mgf = predict(state_at(CTX_F, cut), hcode, acode, neu, ENG_SPREAD['h'])[0] if CTX_F else None
+    if GNO.get(x['code'], GMAX) >= ENG_SPREAD['stretch_from']:
+        mg *= ENG_SPREAD['stretch']   # Β1: ανοιγμα ×1.1 απο τον 7ο αγωνα
+        if mgf is not None: mgf *= ENG_SPREAD['stretch']
     mg1, tt1, _ = predict(state_at(CTX_V1, cut), hcode, acode, neu, ENG_V1['h'])
     _, tt, _ = predict(state_at(CTX_T, cut), hcode, acode, neu, ENG_TOTAL['h'])
     tt += CURVE_A + CURVE_B * GNO.get(x['code'], GMAX)
@@ -219,9 +227,23 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
                played=played, version='v4', hcrest=x.get('hcrest'), acrest=x.get('acrest'),
                versions={'v1': dict(pts_h=round((tt1 + mg1) / 2, 1), pts_a=round((tt1 - mg1) / 2, 1), margin=round(mg1, 2), total=round(tt1, 1),
                                     p_home=round(Phi(mg1 / SIGMA_MARGIN), 3))})
+    if mgf is not None:
+        rec['versions']['fantasy (σκια)'] = dict(pts_h=round((tt + mgf) / 2, 1), pts_a=round((tt - mgf) / 2, 1), margin=round(mgf, 2), total=round(tt, 1),
+                                                 p_home=round(Phi(mgf / SIGMA_MARGIN), 3))
     if played:
         rec.update(hs=x['hs'], as_=x['as_'])
     games.append(rec)
+# ---- ΣΚΙΩΔΕΣ ΑΡΧΕΙΟ (26/9): οι γραμμες καθε εκδοσης ΠΡΙΝ το ματς — παγωνουν μολις παιχτει, για κριση στο τελος της σεζον ----
+SH_F = 'el_shadow_lines.json'
+try: SH = json.load(open(SH_F, encoding='utf-8'))
+except Exception: SH = {}
+for gm in games:
+    k = str(gm['code'])
+    if SH.get(k, {}).get('frozen'): continue
+    SH[k] = dict(round=gm['round'], utc=gm['utc'], home=gm['hcode'], away=gm['acode'], live=gm['margin'], total=gm['total'],
+                 **{f'v_{v}': p['margin'] for v, p in gm.get('versions', {}).items()}, model=MODEL_TAG, frozen=bool(gm['played']))
+    if gm['played']: SH[k].update(hs=gm.get('hs'), as_=gm.get('as_'))
+json.dump(SH, open(SH_F, 'w', encoding='utf-8'), ensure_ascii=False)
 names = {}
 for L in S.values():
     for x in L: names[x['hcode']] = x['home']
