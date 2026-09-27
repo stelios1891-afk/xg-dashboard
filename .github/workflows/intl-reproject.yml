@@ -1,0 +1,58 @@
+name: intl-reproject
+
+# 27/9/2026 (Στελιος): οι τιμες των εθνικων να βασιζονται ΚΑΙ στις απουσιες του FotMob (τραυματισμοι/τιμωριες της «unavailable»
+# λιστας, μαζι με την προβλεπομενη ενδεκαδα) πριν την επισημη αποστολη. Ο scanner (intl_unavailable.py --check, ανα 60′) ζηταει
+# αυτο το workflow οταν αλλαξει η λιστα → intl_unavailable.json → intl_project (αξια κλησης − απουσιες) → σκιες → dashboard.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: intl-refresh          # ιδια ουρα με το intl-refresh (ποτε ταυτοχρονα)
+  cancel-in-progress: false
+
+jobs:
+  reproject:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONIOENCODING: utf-8
+      INTL_PIN_VARIANT: H3
+      INTL_CLOSE_COMPACT: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Unavailable (FotMob) → projections → shadows → dashboard
+        run: |
+          python intl_unavailable.py --force
+          python intl_project.py
+          python intl_nl_shadow.py || echo "shadow failed (μη κρισιμο)"
+          python intl_nl_overs.py || echo "overs failed (μη κρισιμο)"
+          python intl_dashboard_build.py || echo "build failed (μη κρισιμο)"
+      - name: Sanity tests (αποτυχια = ΟΧΙ commit)
+        id: sanity
+        continue-on-error: true
+        run: pip install -q pytest && python -m pytest -q -p no:cacheprovider tests/test_scanner_sanity.py
+      - name: Commit
+        if: steps.sanity.outcome == 'success'
+        run: |
+          git config user.name "intl-reproject-bot"
+          git config user.email "actions@github.com"
+          for f in intl_unavailable.json intl_projections.csv intl_project_coefs.json intl_nl_shadow_2627.csv intl_nl_overs_2627.csv intl_projections_dashboard.json; do
+            if [ -f "$f" ]; then git add -f "$f"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "καμια αλλαγη"
+          else
+            git commit -m "intl reproject: απουσιες FotMob → προβολες [skip ci]"
+            for i in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main && git push && break
+              sleep 10
+            done
+          fi

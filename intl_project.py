@@ -43,6 +43,10 @@ VF = json.load(open('intl_team_vfull.json', encoding='utf-8')); VFULL = {int(k):
 import os as _os, datetime as _dtm
 CALL_CFG = json.load(open('intl_vcall_config.json', encoding='utf-8')); ELO_LN_CALL = CALL_CFG['elo_per_ln']
 _VC = json.load(open('intl_vcall_tm.json', encoding='utf-8')) if _os.path.exists('intl_vcall_tm.json') else {}
+try:      # 27/9: μη διαθεσιμοι FotMob (τραυματισμος/τιμωρια) πριν την επισημη αποστολη — intl_unavailable.py
+    UNAV = {k: v for k, v in json.load(open('intl_unavailable.json', encoding='utf-8')).items() if not k.startswith('_')}
+except Exception:
+    UNAV = {}
 VCALL = {int(k): (v['v_call_sci'], v.get('asof')) for k, v in _VC.items() if v.get('v_call_sci')}
 _sc = [VCALL[t][0] / VFULL[t] for t in VCALL if VFULL.get(t)]
 CALL_SCALE = float(np.median(_sc)) if len(_sc) >= 10 else CALL_CFG['r_scale']
@@ -57,6 +61,15 @@ def v_call_of(tid, utc):
         except Exception:
             age = 99
         if -1 <= age <= 10:
+            # 27/9 (Στελιος): ΑΠΟΥΣΙΕΣ FotMob πριν την αποστολη (intl_unavailable.json: injury/suspension, οχι «Doubtful»)
+            out_ = {int(p_) for p_, u_ in (UNAV.get(str(tid)) or {}).items()
+                    if u_.get('type') in ('injury', 'suspension') and not u_.get('doubtful')
+                    and u_.get('until') and str(utc)[:10] < u_['until']}      # μονο αν το ματς ειναι ΠΡΙΝ την επιστροφη
+            if out_:
+                vs_ = sorted([p_['v'] for p_ in (_VC.get(str(tid)) or {}).get('players', [])
+                              if p_.get('v') and not (p_.get('pid') and int(p_['pid']) in out_)], reverse=True)
+                if len(vs_) >= 14 and abs(sum(vs_[:11]) - vc[0]) > 1:
+                    return float(sum(vs_[:11])), 'κληση−FotMob'
             return vc[0], 'κληση'
     return (VFULL[tid] * CALL_SCALE, 'V_full') if VFULL.get(tid) else (None, '—')
 

@@ -109,6 +109,10 @@ def load():
             d = json.load(fh)
     except Exception:
         return None
+    try:      # 27/9: μη διαθεσιμοι FotMob (τραυματισμος/τιμωρια) πριν την επισημη αποστολη — intl_unavailable.py
+        UNAV = json.load(open(os.path.join(os.path.dirname(DATA_F), 'intl_unavailable.json'), encoding='utf-8'))
+    except Exception:
+        UNAV = {}
     try:      # 26/9: αποστολες FotMob πριν τη σεντρα (intl_lineups_check.py)
         LU = json.load(open(os.path.join(os.path.dirname(DATA_F), 'intl_lineups.json'), encoding='utf-8'))
     except Exception:
@@ -127,6 +131,7 @@ def load():
                 m['picks'] = {k: _no_x12(v) for k, v in m['picks'].items()}
             m['ledger'] = led.get((c.get('comp'), m.get('home'), m.get('away'), m.get('utc')), [])
             m['lineup'] = LU.get(f"{c.get('comp')}|{m.get('home')}|{m.get('away')}|{m.get('utc')}")
+            m['unav'] = {s_: [u for u in (UNAV.get(str(m.get(k_))) or {}).values()] for s_, k_ in (('h', 'hid'), ('a', 'aid'))}
     return d
 
 
@@ -388,6 +393,19 @@ def _flags(m):
         # (αξια SciSports)· ηδη μεσα στην αξια ροστερ (Μ1/Μ3), δεν χρειαζεται χειροκινητη διορθωση.
         out.append('<span class="call" title="Παίκτες με ≥2 βασικές συμμετοχές στην εθνική και αξία ≥30% του πιο ακριβού της ομάδας, που ΔΕΝ είναι στην τρέχουσα κλήση '
                    'του Transfermarkt (και χειροκίνητες απουσίες) · αξία παίκτη σε εκ. € · ήδη μέσα στην αξία ρόστερ των Μ1/Μ3">🚑 Απουσίες: ' + esc(m['callups']).replace(' | ', ' · ') + '</span>')
+    U = m.get('unav') or {}
+    parts = []
+    for s_, nm_ in (('h', m.get('home')), ('a', m.get('away'))):
+        us = []
+        for u in U.get(s_) or []:
+            why = 'αμφιβολος' if u.get('doubtful') else ({'injury': 'τραυμ.', 'suspension': 'τιμωρια'}.get(u.get('type'), u.get('type') or '?'))
+            active = (not u.get('doubtful')) and u.get('until') and str(m.get('utc', ''))[:10] < u['until']
+            us.append(f"{u.get('name')} ({why}{'' if active else ' · δεν αφαιρειται'})")
+        if us:
+            parts.append(f'{nm_}: ' + ', '.join(us))
+    if parts:      # 27/9: FotMob «unavailable» — οσοι αφαιρουνται ΗΔΗ απο την αξια κλησης (Μ1/Μ3) πριν την επισημη αποστολη
+        out.append('<span class="call" title="FotMob: τραυματισμοι/τιμωριες μαζι με την προβλεπομενη ενδεκαδα · αφαιρουνται απο την αξια της κλησης '
+                   '(εκτος «αμφιβολων» και οσων επιστρεφουν πριν το ματς)">🏥 FotMob: ' + esc(' · '.join(parts)) + '</span>')
     return f'<div class="flags">{"".join(out)}</div>' if out else ''
 
 
