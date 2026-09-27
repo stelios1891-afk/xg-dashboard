@@ -1,0 +1,84 @@
+ΤΕΣΤ GK-aware ΑΞΙΑΣ — Μοντελο 1 εθνικων (H3) · ordered logit LOSO · αγωνιστικα ματς
+ΠΡΟ-ΔΗΛΩΣΗ: GK εκδοχη ΠΕΡΝΑ αν RPS ALL < μη-GK αντιστοιχης (K1g/K1g-rec vs K1, K1og/K1og-rec vs K1o) ΚΑΙ καλυτερη σε >=4/6 σεζον. ΜΙΑ εκτελεση.
+δειγμα: 1922 ματς (harness δειγμα 1922) · τερματοφυλακες στο intl_player_values: 1497
+
+                           2021    2122    2223    2324    2425    2526      ALL  logloss     n
+variant                                                                                        
+K1 V_call top11          0.1699  0.1686  0.1882  0.1645  0.1668  0.1530  0.16700   0.8704  1885
+K1g V_call GK-ms         0.1697  0.1686  0.1882  0.1645  0.1668  0.1531  0.16699   0.8704  1885
+K1g-rec V_call GK-rec    0.1697  0.1687  0.1882  0.1645  0.1668  0.1531  0.16702   0.8705  1885
+K1g-last V_call GK-last  0.1699  0.1686  0.1882  0.1643  0.1668  0.1531  0.16698   0.8704  1885
+K1o V_own top11          0.1703  0.1687  0.1881  0.1643  0.1665  0.1531  0.16694   0.8703  1885
+K1og V_own GK-ms         0.1702  0.1687  0.1880  0.1643  0.1665  0.1531  0.16694   0.8703  1885
+K1og-rec V_own GK-rec    0.1702  0.1687  0.1880  0.1643  0.1665  0.1531  0.16694   0.8703  1885
+K1og-last V_own GK-last  0.1702  0.1687  0.1880  0.1643  0.1665  0.1531  0.16694   0.8703  1885
+
+sanity: K1 ALL 0.16700 vs harness .16700 (Δ -0.00000) · K1o ALL 0.16694 vs harness .16694 (Δ -0.00000)
+
+ΚΡΙΤΗΡΙΟ: GK vs μη-GK αντιστοιχη
+  K1g V_call GK-ms         vs K1 V_call top11 : ΔRPS -0.00001 · Δlogloss -0.0000 · καλυτερη σε 2/6 · ΔΕΝ ΠΕΡΝΑ
+     ανα σεζον Δ: 2021:-0.00016 2122:+0.00006 2223:+0.00005 2324:-0.00006 2425:+0.00001 2526:+0.00001
+  K1g-rec V_call GK-rec    vs K1 V_call top11 : ΔRPS +0.00002 · Δlogloss +0.0001 · καλυτερη σε 2/6 · ΔΕΝ ΠΕΡΝΑ
+     ανα σεζον Δ: 2021:-0.00016 2122:+0.00008 2223:+0.00006 2324:-0.00001 2425:+0.00004 2526:+0.00004
+  K1g-last V_call GK-last  vs K1 V_call top11 : ΔRPS -0.00002 · Δlogloss -0.0000 · καλυτερη σε 2/6 · ΔΕΝ ΠΕΡΝΑ
+     ανα σεζον Δ: 2021:+0.00008 2122:+0.00001 2223:+0.00006 2324:-0.00019 2425:-0.00001 2526:+0.00004
+  K1og V_own GK-ms         vs K1o V_own top11 : ΔRPS -0.00000 · Δlogloss +0.0000 · καλυτερη σε 2/6 · ΔΕΝ ΠΕΡΝΑ
+     ανα σεζον Δ: 2021:-0.00012 2122:+0.00002 2223:-0.00008 2324:+0.00002 2425:+0.00004 2526:+0.00002
+  K1og-rec V_own GK-rec    vs K1o V_own top11 : ΔRPS +0.00000 · Δlogloss +0.0000 · καλυτερη σε 2/6 · ΔΕΝ ΠΕΡΝΑ
+     ανα σεζον Δ: 2021:-0.00010 2122:+0.00002 2223:-0.00008 2324:+0.00002 2425:+0.00004 2526:+0.00002
+  K1og-last V_own GK-last  vs K1o V_own top11 : ΔRPS +0.00000 · Δlogloss +0.0000 · καλυτερη σε 2/6 · ΔΕΝ ΠΕΡΝΑ
+     ανα σεζον Δ: 2021:-0.00010 2122:+0.00002 2223:-0.00008 2324:+0.00002 2425:+0.00004 2526:+0.00002
+
+συντελεστης αξιας (fit σε ολο το δειγμα), Elo ανα διπλασιασμο:
+  K1 V_call top11         : +38.7
+  K1g V_call GK-ms        : +38.6
+  K1g-rec V_call GK-rec   : +38.1
+  K1g-last V_call GK-last : +38.6
+  K1o V_own top11         : +38.9
+  K1og V_own GK-ms        : +38.7
+  K1og-rec V_own GK-rec   : +38.7
+  K1og-last V_own GK-last : +38.7
+
+ΣΥΧΝΟΤΗΤΑ (ομαδα-ματς στο δειγμα: 3844)
+  K1g (κληση, most-starts)                : επιλεγμενος ≠ πιο ακριβος GK σε 1490/3844 (38.8%) · τροπος {'starts': 3665, 'value': 138, 'nogk': 41}
+  K1g-rec (κληση, rec)                    : επιλεγμενος ≠ πιο ακριβος GK σε 1494/3844 (38.9%) · τροπος {'starts': 3665, 'value': 138, 'nogk': 41}
+  K1g-last (κληση, last comp)             : επιλεγμενος ≠ πιο ακριβος GK σε 1545/3844 (40.2%) · τροπος {'lastcomp': 3388, 'starts': 277, 'value': 138, 'nogk': 41}
+  K1og (ιδια αποστολη, actual->ms)        : επιλεγμενος ≠ πιο ακριβος GK σε 1540/3844 (40.1%) · τροπος {'actual': 3568, 'starts': 148, 'value': 80, 'nogk': 48}
+  K1og-rec (ιδια αποστολη, actual->rec)   : επιλεγμενος ≠ πιο ακριβος GK σε 1538/3844 (40.0%) · τροπος {'actual': 3568, 'starts': 148, 'value': 80, 'nogk': 48}
+  K1og-last (ιδια αποστολη, actual->last) : επιλεγμενος ≠ πιο ακριβος GK σε 1539/3844 (40.0%) · τροπος {'actual': 3568, 'starts': 101, 'value': 80, 'nogk': 48, 'lastcomp': 47}
+  απλο top11: ≥2 GK μεσα σε 538/3844 (14.0%) · 0 GK σε 1765 (45.9%)  [δεξαμενη κλησης]
+  ακριβεια κανονα most-starts (κληση) vs πραγματικος βασικος: 2836/3803 (74.6%)
+  ακριβεια κανονα rec         (κληση) vs πραγματικος βασικος: 2965/3803 (78.0%)
+  ακριβεια κανονα last        (κληση) vs πραγματικος βασικος: 2963/3803 (77.9%)
+  ακριβεια «πιο ακριβος GK» vs πραγματικος βασικος: 52.8%
+
+Serbia (8205) — τελευταια 8 ματς με αποστολη (ολοι οι τυποι):
+  2025-10-14 qual     ms: Djordje Petrović (starts) · rec: Djordje Petrović (starts) · last: Djordje Petrović (lastcomp) · πιο ακριβος: Djordje Petrović · ξεκινησε: Djordje Petrović
+  2025-11-13 qual     ms: Djordje Petrović (starts) · rec: Djordje Petrović (starts) · last: Djordje Petrović (lastcomp) · πιο ακριβος: Djordje Petrović · ξεκινησε: Predrag Rajković
+  2025-11-16 qual     ms: Predrag Rajković (starts) · rec: Djordje Petrović (starts) · last: Predrag Rajković (lastcomp) · πιο ακριβος: Djordje Petrović · ξεκινησε: Predrag Rajković
+  2026-03-27 friendly ms: Predrag Rajković (starts) · rec: Djordje Petrović (starts) · last: Predrag Rajković (lastcomp) · πιο ακριβος: Djordje Petrović · ξεκινησε: Vanja Milinković-Savić
+  2026-03-31 friendly ms: Predrag Rajković (starts) · rec: Djordje Petrović (starts) · last: Predrag Rajković (lastcomp) · πιο ακριβος: Djordje Petrović · ξεκινησε: Predrag Rajković
+  2026-05-31 friendly ms: Filip Stanković (value) · rec: Filip Stanković (value) · last: Filip Stanković (value) · πιο ακριβος: Filip Stanković · ξεκινησε: Filip Stanković
+  2026-06-05 friendly ms: Filip Stanković (starts) · rec: Filip Stanković (starts) · last: Filip Stanković (starts) · πιο ακριβος: Filip Stanković · ξεκινησε: Filip Stanković
+  2026-09-24 nl       ms: Djordje Petrović (starts) · rec: Djordje Petrović (starts) · last: Djordje Petrović (starts) · πιο ακριβος: Djordje Petrović · ξεκινησε: Vanja Milinković-Savić
+     GK Djordje Petrović             αξια  28.6M · starts730 8 · rec-score 1.46 · τελευταια βασικη 2025-10-14
+     GK Vanja Milinković-Savić       αξια  16.1M · starts730 1 · rec-score 0.25 · τελευταια βασικη 2026-03-27
+     GK Filip Stanković              αξια   5.5M · starts730 2 · rec-score 0.65 · τελευταια βασικη 2026-06-05
+
+Germany (8570) — τελευταια 3 ματς με αποστολη (ολοι οι τυποι):
+  2026-06-25 tourn    ms: Oliver Baumann (starts) · rec: Oliver Baumann (starts) · last: Manuel Neuer (lastcomp) · πιο ακριβος: Alexander Nübel · ξεκινησε: Manuel Neuer
+  2026-06-29 tourn    ms: Oliver Baumann (starts) · rec: Oliver Baumann (starts) · last: Manuel Neuer (lastcomp) · πιο ακριβος: Alexander Nübel · ξεκινησε: Manuel Neuer
+  2026-09-24 nl       ms: Alexander Nübel (starts) · rec: Alexander Nübel (starts) · last: Alexander Nübel (starts) · πιο ακριβος: Alexander Nübel · ξεκινησε: Marc ter Stegen
+     GK Alexander Nübel              αξια  10.5M · starts730 3 · rec-score 0.39 · τελευταια βασικη 2026-03-30
+     GK Finn Dahmen                  αξια   7.9M · starts730 0 · rec-score 0.00 · τελευταια βασικη -
+     GK Marc ter Stegen              αξια   2.0M · starts730 2 · rec-score 0.32 · τελευταια βασικη 2025-06-08
+
+Slovakia (8497) — τελευταια 3 ματς με αποστολη (ολοι οι τυποι):
+  2026-06-01 friendly ms: Lubomír Belko (value) · rec: Lubomír Belko (value) · last: Lubomír Belko (value) · πιο ακριβος: Lubomír Belko · ξεκινησε: Dominik Takác
+  2026-06-05 friendly ms: Dominik Takác (starts) · rec: Dominik Takác (starts) · last: Dominik Takác (starts) · πιο ακριβος: Lubomír Belko · ξεκινησε: Jakub Surovcík
+  2026-09-26 nl       ms: Martin Dúbravka (starts) · rec: Martin Dúbravka (starts) · last: Martin Dúbravka (lastcomp) · πιο ακριβος: Dominik Greif · ξεκινησε: Dominik Greif
+     GK Dominik Greif                αξια   4.5M · starts730 1 · rec-score 0.07 · τελευταια βασικη 2024-11-19
+     GK Dominik Takác                αξια   1.4M · starts730 1 · rec-score 0.32 · τελευταια βασικη 2026-06-01
+     GK Martin Dúbravka              αξια   0.8M · starts730 8 · rec-score 2.14 · τελευταια βασικη 2026-03-26
+
+ROI: το (β) του intl_callup_test ειναι ROI υπαρχοντων picks ανα ομαδα απουσιων, ΟΧΙ αξιολογηση πονταρισματος ανα εκδοχη μοντελου -> ROI ανα εκδοχη ΠΑΡΑΛΕΙΠΕΤΑΙ.
