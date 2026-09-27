@@ -1,5 +1,5 @@
 {
-"_asof": "2026-09-27T17:47",
+"_asof": "2026-09-27T17:53",
 "_xi": {
 "8570": {
 "match": "Germany - Greece",
@@ -208,7 +208,7 @@
 "8567": {
 "match": "Israel - Ireland",
 "utc": "2026-09-27T18:45",
-"type": "standard",
+"type": "predicted",
 "players": [
 {
 "pid": 949321,
@@ -219,8 +219,8 @@
 "name": "Guy Mizrahi"
 },
 {
-"pid": 940461,
-"name": "Raz Shlomo"
+"pid": 899188,
+"name": "Idan Nachmias"
 },
 {
 "pid": 1687592,
@@ -231,8 +231,8 @@
 "name": "Roy Revivo"
 },
 {
-"pid": 819066,
-"name": "Gabi Kanichowsky"
+"pid": 580694,
+"name": "Dor Peretz"
 },
 {
 "pid": 763312,
@@ -251,39 +251,39 @@
 "name": "Manor Solomon"
 },
 {
-"pid": 1177306,
-"name": "Dor Turgeman"
+"pid": 1091975,
+"name": "Liel Abada"
 }
 ]
 },
 "5791": {
 "match": "Israel - Ireland",
 "utc": "2026-09-27T18:45",
-"type": "standard",
+"type": "predicted",
 "players": [
 {
 "pid": 776689,
 "name": "Caoimhín Kelleher"
 },
 {
-"pid": 1098607,
-"name": "Jake O'Brien"
+"pid": 782705,
+"name": "Liam Scales"
+},
+{
+"pid": 295062,
+"name": "John Egan"
 },
 {
 "pid": 789578,
 "name": "Dara O'Shea"
 },
 {
-"pid": 914399,
-"name": "Liam Kitching"
-},
-{
 "pid": 1269329,
 "name": "James Abankwah"
 },
 {
-"pid": 770256,
-"name": "Conor Coventry"
+"pid": 1051415,
+"name": "Jason Knight"
 },
 {
 "pid": 789574,
@@ -294,12 +294,12 @@
 "name": "Ryan Manning"
 },
 {
-"pid": 1196750,
-"name": "Jack Moylan"
+"pid": 674009,
+"name": "Chiedozie Ogbene"
 },
 {
-"pid": 846009,
-"name": "Adam Idah"
+"pid": 883079,
+"name": "Finn Azaz"
 },
 {
 "pid": 942365,
@@ -2668,6 +2668,15 @@
 },
 "_alerts": [
 {
+"key": "5791|1098607|2026-09-27T18:45",
+"team": "Ireland",
+"name": "Jake Obrien",
+"v": 17.926277,
+"started_last": true,
+"match": "Israel - Ireland",
+"utc": "2026-09-27T18:45"
+},
+{
 "key": "10259|974268|2026-09-28T18:45",
 "team": "Northern Ireland",
 "name": "Dan Ballard",
@@ -2713,5 +2722,5 @@
 "utc": "2026-09-28T18:45"
 }
 ],
-"_hash": "0f43c5d166c46fef0f6e876cc8ec46cc"
+"_hash": "0767d9793bb9b9e3409e436451095431"
 }
