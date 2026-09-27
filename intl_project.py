@@ -62,6 +62,20 @@ except Exception:
     LUP = {}
 
 
+try:      # 27/9: αποστολες FotMob των ματς του τρεχοντος παραθυρου (για «ντυθηκε αλλα δεν υπηρξε ΠΟΤΕ στη λιστα TM»)
+    _SQ = json.load(open('intl_squads.json', encoding='utf-8'))
+    _MW = pd.read_csv('intl_matches.csv', dtype={'mid': str})
+    _MW = _MW[_MW.date >= (_dtm.datetime.now() - _dtm.timedelta(days=10)).strftime('%Y-%m-%d')].sort_values('date')
+    LAST_SQ = {}
+    for _r in _MW.itertuples():
+        for _sk, _t in (('h', _r.hid), ('a', _r.aid)):
+            _p = ((_SQ.get(_r.mid) or {}).get(_sk) or {}).get('p') or {}
+            if len(_p) >= 16:
+                LAST_SQ[int(_t)] = (str(_r.date)[:16], [int(x) for x in _p])      # η ΤΕΛΕΥΤΑΙΑ (ταξινομηση κατα ημερομηνια)
+except Exception:
+    LAST_SQ = {}
+
+
 def _nm(s):
     import unicodedata
     return ' '.join(unicodedata.normalize('NFKD', str(s)).encode('ascii', 'ignore').decode().lower().replace('-', ' ').split())
@@ -98,12 +112,28 @@ def v_call_of(tid, utc, home=None, away=None, side=None):
             pl_ = [p_ for p_ in (_VC.get(str(tid)) or {}).get('players', []) if p_.get('v')]
             have_ = {int(p_['pid']) for p_ in pl_ if p_.get('pid')}
             add_ = []
-            for x_ in ((XI.get(str(tid)) or {}).get('players') or []):
-                if x_['pid'] in have_ or any(not p_.get('pid') and _same_person(p_['tm'], x_.get('name', '')) for p_ in pl_):
+            seen_map_ = (_VC.get(str(tid)) or {}).get('seen') or {}
+            seen_ = list(seen_map_.keys()) + list((_VC.get(str(tid)) or {}).get('called') or [])
+            first_tm_ = min([x for x in seen_map_.values() if x] or ['9999'])      # πρωτο «στιγμιοτυπο» λιστας TM που εχουμε
+            xi_ = XI.get(str(tid)) or {}
+            last_d_, last_p_ = LAST_SQ.get(int(tid), ('', []))
+            # «ΠΑΛΙΟ» ματς (αποστολη του τελευταιου ματς ή lastStarting11): προσθηκη ΜΟΝΟ αν εχουμε λιστα TM ΑΠΟ ΠΡΙΝ εκεινο το ματς και ο παικτης
+            # ΔΕΝ υπηρξε ποτε μεσα (λιστα ελλιπης, π.χ. Hancko)· αν ΗΤΑΝ και βγηκε (Brobbey) ή δεν ξερουμε (λιστα μετα το ματς) → οχι
+            can_old_ = bool(last_d_) and first_tm_ < last_d_
+            cand_ = [(x_['pid'], x_.get('name', ''), 'xi' if xi_.get('type') in ('predicted', 'standard') else 'old')
+                     for x_ in (xi_.get('players') or [])]
+            cand_ += [(p_, (PVN.get(str(p_)) or [''])[0], 'old') for p_ in last_p_]
+            added_ = set()
+            for pid_, name_, why_ in cand_:
+                if pid_ in have_ or pid_ in added_ or pid_ in out_:
                     continue
-                v_ = (PVN.get(str(x_['pid'])) or [None, None])[1]
+                if any(not p_.get('pid') and _same_person(p_['tm'], name_) for p_ in pl_):
+                    continue
+                if why_ == 'old' and (not can_old_ or any(_same_person(s_, name_) for s_ in seen_)):
+                    continue
+                v_ = (PVN.get(str(pid_)) or [None, None])[1]
                 if v_:
-                    add_.append(v_)
+                    add_.append(v_); added_.add(pid_)
             vs_ = sorted([p_['v'] for p_ in pl_ if not (p_.get('pid') and int(p_['pid']) in out_)] + add_, reverse=True)
             if len(vs_) >= 14 and abs(sum(vs_[:11]) - vc[0]) > 1:
                 return float(sum(vs_[:11])), 'κληση' + ('+11αδα' if add_ else '') + ('−FotMob' if out_ else '')
