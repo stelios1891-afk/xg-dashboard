@@ -49,6 +49,10 @@ try:      # 27/9: μη διαθεσιμοι FotMob (τραυματισμος/τ�
     XI = _UJ.get('_xi') or {}
 except Exception:
     UNAV, XI = {}, {}
+try:      # 27/9: ΧΕΙΡΟΚΙΝΗΤΕΣ απουσιες και εδω (ισχυουν και για κλησεις απο αποστολες FotMob, π.χ. Γερμανια/Havertz)
+    MANUAL = {k: v for k, v in json.load(open('intl_absences_manual.json', encoding='utf-8')).items() if not k.startswith('_')}
+except Exception:
+    MANUAL = {}
 try:      # 27/9: αξιες SciSports (συμπαγες) για παικτες της 11αδας που δεν ειναι στη λιστα TM
     PVN = json.load(open('intl_player_values_now.json', encoding='utf-8'))
 except Exception:
@@ -129,6 +133,10 @@ def v_call_of(tid, utc, home=None, away=None, side=None):
             added_ = set()
             # 27/9: οι ΧΕΙΡΟΚΙΝΗΤΑ εκτος (intl_absences_manual → manual_out) ΔΕΝ ξαναμπαινουν ποτε (π.χ. Isak: ντυθηκε 25/9, λειπει)
             man_ = [m_.get('nm') or '' for m_ in ((_VC.get(str(tid)) or {}).get('manual_out') or [])] +                    [m_.get('tm') or '' for m_ in ((_VC.get(str(tid)) or {}).get('manual_out') or [])]
+            _mt = MANUAL.get((_VC.get(str(tid)) or {}).get('nm', '')) or {}
+            if not _mt.get('until') or str(utc)[:10] <= _mt['until']:
+                man_ += list(_mt.get('out') or [])
+            pl_ = [p_ for p_ in pl_ if not any(m_ and _same_person(m_, p_.get('tm', '')) for m_ in man_)]      # εκτος και απο την ιδια την κληση
             for pid_, name_, why_ in cand_:
                 if pid_ in have_ or pid_ in added_ or pid_ in out_:
                     continue

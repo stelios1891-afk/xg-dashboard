@@ -172,7 +172,12 @@ def star_alerts(out):
         v = VC[tid]
         xi_ids = {int(p['pid']) for p in xi.get('players') or []}
         unav = {int(k) for k in (out.get(tid) or {})}
-        pl = sorted([p for p in v.get('players', []) if p.get('v') and p.get('pid')], key=lambda p: -p['v'])[:STAR_TOP]
+        try:
+            man = [x.lower() for x in (json.load(open('intl_absences_manual.json', encoding='utf-8')).get(v.get('nm'), {}) or {}).get('out', [])]
+        except Exception:
+            man = []
+        pl = sorted([p for p in v.get('players', []) if p.get('v') and p.get('pid')
+                     and not any(m_.split()[-1] in p['tm'].lower() for m_ in man)], key=lambda p: -p['v'])[:STAR_TOP]
         last = sorted(starts.get(int(tid), []))[-1:] if starts.get(int(tid)) else []
         last_st = set(last[0][1]) if last else set()
         for p in pl:
