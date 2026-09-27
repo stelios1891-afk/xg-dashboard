@@ -86,7 +86,7 @@ def main(force=False):
                 fx[(int(m['home']['id']), int(m['away']['id']), str(m['status'].get('utcTime', ''))[:10])] = m['id']
         except Exception as e:
             print(f'  {comp}: FotMob {type(e).__name__}')
-    out = {'_asof': now.strftime('%Y-%m-%dT%H:%M')}; n_m = 0
+    out = {'_asof': now.strftime('%Y-%m-%dT%H:%M'), '_xi': {}}; n_m = 0
     for r in P.sort_values('ko').itertuples():
         hid, aid = int(r.hid), int(r.aid)
         mid = fx.get((hid, aid, str(r.utc)[:10]))
@@ -99,6 +99,11 @@ def main(force=False):
         lu = (j.get('content') or {}).get('lineup') or {}
         n_m += 1
         for side, tid in (('homeTeam', hid), ('awayTeam', aid)):
+            # 27/9 (Στελιος): ΠΡΟΒΛΕΠΟΜΕΝΗ ενδεκαδα → οσοι ΛΕΙΠΟΥΝ απο τη λιστα TM προστιθενται στην αξια (π.χ. Hancko/Lobotka, Edmundsson)·
+            # ο παγκος ΔΕΝ ειναι απουσια (δεν αφαιρειται κανεις επειδη δεν ειναι στην 11αδα)
+            xi_ = [dict(pid=int(p['id']), name=p.get('name')) for p in ((lu.get(side) or {}).get('starters') or []) if p.get('id')]
+            if xi_ and str(tid) not in out['_xi']:
+                out['_xi'][str(tid)] = dict(match=f'{r.home} - {r.away}', utc=str(r.utc)[:16], type=lu.get('lineupType'), players=xi_)
             for p in ((lu.get(side) or {}).get('unavailable') or []):
                 un = p.get('unavailability') or {}
                 ret = str(un.get('expectedReturn') or '')
@@ -110,7 +115,7 @@ def main(force=False):
                                            until=(None if 'doubt' in ret.lower() else until_of(ret, out['_asof'])))
     import hashlib
     body = {k: v for k, v in out.items() if not k.startswith('_')}
-    out['_hash'] = hashlib.md5(json.dumps(body, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    out['_hash'] = hashlib.md5(json.dumps([body, out['_xi']], sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     changed = out['_hash'] != cur.get('_hash')
     n_p = sum(len(v) for v in body.values())
     print(f'intl unavailable: {n_m} ματς · {n_p} μη διαθεσιμοι' + (' · ΑΛΛΑΓΗ' if changed else ''))

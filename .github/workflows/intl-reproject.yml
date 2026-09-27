@@ -1,10 +1,16 @@
 name: intl-reproject
 
-# 27/9/2026 (Στελιος): οι τιμες των εθνικων να βασιζονται ΚΑΙ στις απουσιες του FotMob (τραυματισμοι/τιμωριες της «unavailable»
+# 27/9/2026 (Στελιος): οι τιμες των εθνικων να βασιζονται ΚΑΙ στην προβλεπομενη 11αδα (προσθηκη οσων λειπουν απο TM), στις απουσιες του FotMob
+# και, ~60′ πριν, στην ΕΠΙΣΗΜΗ αποστολη (intl_lineups_check → dispatch με wait=yes). Αρχικα: (τραυματισμοι/τιμωριες της «unavailable»
 # λιστας, μαζι με την προβλεπομενη ενδεκαδα) πριν την επισημη αποστολη. Ο scanner (intl_unavailable.py --check, ανα 60′) ζηταει
 # αυτο το workflow οταν αλλαξει η λιστα → intl_unavailable.json → intl_project (αξια κλησης − απουσιες) → σκιες → dashboard.
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      wait:
+        description: 'περιμενε ~2′ (να ανεβει πρωτα το τικ του scanner, π.χ. intl_lineups.json)'
+        required: false
+        default: 'no'
 
 permissions:
   contents: write
@@ -26,6 +32,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Wait for scanner push (αποστολες)
+        if: github.event.inputs.wait == 'yes'
+        run: sleep 150 && git pull --rebase origin main
       - name: Install deps
         run: pip install -r requirements.txt
       - name: Unavailable (FotMob) → projections → shadows → dashboard

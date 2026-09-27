@@ -214,6 +214,19 @@ def main():
         print(rec['text'])
     if changed:
         json.dump(state, open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
+        # 27/9 (Στελιος): η επισημη αποστολη ΞΑΝΑΒΓΑΖΕΙ τις τιμες (intl_project: αξια των 23 για αυτο το ματς) → intl-reproject
+        # (το workflow περιμενει ~2′ να ανεβει το intl_lineups.json απο αυτο το τικ)
+        try:
+            import urllib.request
+            tok, repo = os.environ.get('GH_DISPATCH_TOKEN'), os.environ.get('GH_REPO')
+            if tok and repo:
+                urllib.request.urlopen(urllib.request.Request(
+                    f'https://api.github.com/repos/{repo}/actions/workflows/intl-reproject.yml/dispatches',
+                    data=json.dumps({'ref': 'main', 'inputs': {'wait': 'yes'}}).encode(), method='POST',
+                    headers={'Authorization': f'Bearer {tok}', 'Accept': 'application/vnd.github+json'}), timeout=20).read()
+                print('  → ζητηθηκε intl-reproject (τιμες με τις επισημες αποστολες)')
+        except Exception as e:
+            print(f'  reproject dispatch απετυχε {type(e).__name__}')
     if msgs and os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID'):
         import notify
         for t in msgs:

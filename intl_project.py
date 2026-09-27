@@ -43,17 +43,47 @@ VF = json.load(open('intl_team_vfull.json', encoding='utf-8')); VFULL = {int(k):
 import os as _os, datetime as _dtm
 CALL_CFG = json.load(open('intl_vcall_config.json', encoding='utf-8')); ELO_LN_CALL = CALL_CFG['elo_per_ln']
 _VC = json.load(open('intl_vcall_tm.json', encoding='utf-8')) if _os.path.exists('intl_vcall_tm.json') else {}
-try:      # 27/9: μη διαθεσιμοι FotMob (τραυματισμος/τιμωρια) πριν την επισημη αποστολη — intl_unavailable.py
-    UNAV = {k: v for k, v in json.load(open('intl_unavailable.json', encoding='utf-8')).items() if not k.startswith('_')}
+try:      # 27/9: μη διαθεσιμοι FotMob (τραυματισμος/τιμωρια) + προβλεπομενη 11αδα — intl_unavailable.py
+    _UJ = json.load(open('intl_unavailable.json', encoding='utf-8'))
+    UNAV = {k: v for k, v in _UJ.items() if not k.startswith('_')}
+    XI = _UJ.get('_xi') or {}
 except Exception:
-    UNAV = {}
+    UNAV, XI = {}, {}
+try:      # 27/9: αξιες SciSports (συμπαγες) για παικτες της 11αδας που δεν ειναι στη λιστα TM
+    PVN = json.load(open('intl_player_values_now.json', encoding='utf-8'))
+except Exception:
+    PVN = {}
+try:      # 27/9: ΕΠΙΣΗΜΕΣ αποστολες (~60′ πριν, intl_lineups_check.py) → αξια των 23 που ντυθηκαν για ΑΥΤΟ το ματς
+    LUP = {}
+    for _k, _L in json.load(open('intl_lineups.json', encoding='utf-8')).items():
+        _c, _h, _a, _u = _k.split('|')
+        LUP[(_h, _a, _u.replace(' ', 'T')[:16])] = _L
+except Exception:
+    LUP = {}
+
+
+def _nm(s):
+    import unicodedata
+    return ' '.join(unicodedata.normalize('NFKD', str(s)).encode('ascii', 'ignore').decode().lower().replace('-', ' ').split())
+
+
+def _same_person(a, b):
+    a, b = _nm(a).split(), _nm(b).split()
+    return bool(a and b) and a[-1] == b[-1] and a[0][:1] == b[0][:1]
 VCALL = {int(k): (v['v_call_sci'], v.get('asof')) for k, v in _VC.items() if v.get('v_call_sci')}
 _sc = [VCALL[t][0] / VFULL[t] for t in VCALL if VFULL.get(t)]
 CALL_SCALE = float(np.median(_sc)) if len(_sc) >= 10 else CALL_CFG['r_scale']
 
 
-def v_call_of(tid, utc):
-    """(αξια, πηγη) για την ομαδα στο ματς: κληση TM αν υπαρχει και ειναι φρεσκια (≤10 ημερες πριν το ματς), αλλιως V_full × CALL_SCALE."""
+def v_call_of(tid, utc, home=None, away=None, side=None):
+    """(αξια, πηγη) για την ομαδα στο ματς: κληση TM αν υπαρχει και ειναι φρεσκια (≤10 ημερες πριν το ματς), αλλιως V_full × CALL_SCALE.
+    27/9: (1) ΕΠΙΣΗΜΗ αποστολη του ματς αν εχει βγει (~60′ πριν) → αξια των 23· (2) αλλιως κληση + παικτες της προβλεπομενης 11αδας
+    που λειπουν απο τη λιστα TM − μη διαθεσιμοι FotMob."""
+    L = LUP.get((str(home), str(away), str(utc).replace(' ', 'T')[:16])) if home else None
+    if L and side:
+        t_ = (L.get('teams') or {}).get(side) or {}
+        if t_.get('v1'):
+            return float(t_['v1']), 'αποστολη'
     vc = VCALL.get(tid)
     if vc and vc[1]:
         try:
@@ -65,11 +95,18 @@ def v_call_of(tid, utc):
             out_ = {int(p_) for p_, u_ in (UNAV.get(str(tid)) or {}).items()
                     if u_.get('type') in ('injury', 'suspension') and not u_.get('doubtful')
                     and u_.get('until') and str(utc)[:10] < u_['until']}      # μονο αν το ματς ειναι ΠΡΙΝ την επιστροφη
-            if out_:
-                vs_ = sorted([p_['v'] for p_ in (_VC.get(str(tid)) or {}).get('players', [])
-                              if p_.get('v') and not (p_.get('pid') and int(p_['pid']) in out_)], reverse=True)
-                if len(vs_) >= 14 and abs(sum(vs_[:11]) - vc[0]) > 1:
-                    return float(sum(vs_[:11])), 'κληση−FotMob'
+            pl_ = [p_ for p_ in (_VC.get(str(tid)) or {}).get('players', []) if p_.get('v')]
+            have_ = {int(p_['pid']) for p_ in pl_ if p_.get('pid')}
+            add_ = []
+            for x_ in ((XI.get(str(tid)) or {}).get('players') or []):
+                if x_['pid'] in have_ or any(not p_.get('pid') and _same_person(p_['tm'], x_.get('name', '')) for p_ in pl_):
+                    continue
+                v_ = (PVN.get(str(x_['pid'])) or [None, None])[1]
+                if v_:
+                    add_.append(v_)
+            vs_ = sorted([p_['v'] for p_ in pl_ if not (p_.get('pid') and int(p_['pid']) in out_)] + add_, reverse=True)
+            if len(vs_) >= 14 and abs(sum(vs_[:11]) - vc[0]) > 1:
+                return float(sum(vs_[:11])), 'κληση' + ('+11αδα' if add_ else '') + ('−FotMob' if out_ else '')
             return vc[0], 'κληση'
     return (VFULL[tid] * CALL_SCALE, 'V_full') if VFULL.get(tid) else (None, '—')
 
@@ -147,7 +184,7 @@ for r in F.itertuples():
     if r.hid not in R.index or r.aid not in R.index:
         out.append(dict(comp=r.comp, utc=r.utc, home=r.home, away=r.away, note='χωρις rating')); continue
     rh, ra = float(R.loc[r.hid, 'B']), float(R.loc[r.aid, 'B'])
-    (vh, srch), (va, srca) = v_call_of(r.hid, r.utc), v_call_of(r.aid, r.utc)
+    (vh, srch), (va, srca) = v_call_of(r.hid, r.utc, r.home, r.away, 'h'), v_call_of(r.aid, r.utc, r.home, r.away, 'a')
     vadj = ELO_LN_CALL * math.log(vh / va) if (vh and va) else 0.0          # 25/9: στρωμα αξιας ΚΛΗΣΗΣ (ηταν V_full)
     diff = rh + HFA - ra + vadj
     ph, pdr, pa = probs(np.array([diff]), ol)[0]
