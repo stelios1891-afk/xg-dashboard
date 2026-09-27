@@ -189,3 +189,30 @@ for Y in EVAL:
     P(f'  {Y} εξω: [εδρα {best[0]} · K {best[1]} · HL {best[2]} · περσι {best[3]}]')
 report('LOSO επιλογη ακριβειας', held)
 open('nba_model_test_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- ΑΝΑ ΠΕΡΙΟΔΟ: πρωτο μισο (Οκτ-Δεκ) vs δευτερο (Ιαν-Απρ) — μεταγραφες/tanking/ξεκουραση μετα τον Ιανουαριο ----
+P('')
+P('=== ΑΝΑ ΠΕΡΙΟΔΟ ΣΕΖΟΝ (βασικο μοντελο) ===')
+MON = G.date.dt.month.values[IDX]
+def per_period(m, lab):
+    for nm, mask in (('Οκτ-Δεκ', np.isin(MON, [10, 11, 12])), ('Ιαν-Απρ', np.isin(MON, [1, 2, 3, 4, 5]))):
+        k = mask & np.isin(SE, EVAL); e = ACT[k] - m[IDX][k]; em = ACT[k] - MM[k]
+        b = np.polyfit((m[IDX] - MM)[k], (ACT - MM)[k], 1)[0]
+        R = roi(m, 0.08, EVAL); R = R.assign(mon=[MON[j] for j, i in enumerate(IDX) if SE[j] in EVAL][:0] or None)
+        # ROI ανα περιοδο
+        rows = []
+        for j, i in enumerate(IDX):
+            if not k[j]: continue
+            r = MK[i]; Lh = r['L']; mu = m[i]
+            pw = Phi((mu + Lh - 0.5) / SIG) if abs(Lh - round(Lh)) < 1e-9 else Phi((mu + Lh) / SIG)
+            pl = Phi((-mu - Lh - 0.5) / SIG) if abs(Lh - round(Lh)) < 1e-9 else 1 - pw
+            pp = 1 - pw - pl; eh, ea = pw * r['oh'] + pp - 1, pl * r['oa'] + pp - 1
+            side, ed, od = (1, eh, r['oh']) if eh >= ea else (-1, ea, r['oa'])
+            if ed < 0.08: continue
+            v = (ACT[j] + Lh) * side; rows.append(dict(season=SE[j], p=(od - 1) if v > 0 else (0 if v == 0 else -1)))
+        Rr = pd.DataFrame(rows)
+        per = ' '.join(f'{s}:{Rr[Rr.season == s].p.mean()*100:+.0f}%' for s in EVAL) if len(Rr) else ''
+        P(f'  {lab:28s} {nm}: RMSE {np.sqrt(np.mean(e**2)):.2f} / αγορα {np.sqrt(np.mean(em**2)):.2f} · b {b:+.2f} · ROI ≥8% {Rr.p.mean()*100:+.1f}% ({len(Rr)}) | {per}')
+per_period(base, 'βασικο')
+per_period(held, 'LOSO επιλογη')
+open('nba_model_test_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
