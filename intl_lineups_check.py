@@ -96,7 +96,8 @@ def cons(evs):
     return {p: labs for p, labs in cnt.items() if len(labs) >= 2}
 
 
-def team_value(ids, tid, VC, PVN):
+def team_value(ids, tid, VC, PVN, starters=None, before=None):
+    import intl_value_rule as VR
     vmap = {int(p['pid']): p['v'] for p in (VC.get(str(tid)) or {}).get('players', []) if p.get('pid') and p.get('v')}
     vals = []
     for i in ids:
@@ -104,7 +105,9 @@ def team_value(ids, tid, VC, PVN):
         if v:
             vals.append((v, int(i)))
     vals.sort(reverse=True)
-    return (sum(v for v, _ in vals[:11]) if len(vals) >= 11 else None), vals
+    # 27/9: κανονας τερματοφυλακα — μετραει αυτος που ΞΕΚΙΝΑ (διακοπτης gk_rule)
+    gk_st = next((int(p) for p in (starters or []) if int(p) in VR.GK), None)
+    return VR.top11([(i, v) for v, i in vals], tid, before, gk_st, need=11), vals
 
 
 def main():
@@ -151,7 +154,7 @@ def main():
         row = row.iloc[0]
         teams = {}
         for s, tid, nm, t, vb in (('h', m['hid'], m['home'], th, row.get('Vh_raw')), ('a', m['aid'], m['away'], ta, row.get('Va_raw'))):
-            v23, vals = team_value(ids[s], tid, VC, PVN)
+            v23, vals = team_value(ids[s], tid, VC, PVN, [int(p['id']) for p in (t.get('starters') or [])], m['utc'])
             vb = float(vb) if pd.notna(vb) else (float(row['V_h' if s == 'h' else 'V_a']) * 1e6 if pd.notna(row['V_h' if s == 'h' else 'V_a']) else None)
             call = sorted([p for p in (VC.get(str(tid)) or {}).get('players', []) if p.get('v')], key=lambda p: -p['v'])
             call_ids = {int(p['pid']) for p in call if p.get('pid')}

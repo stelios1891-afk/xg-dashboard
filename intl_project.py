@@ -76,6 +76,9 @@ except Exception:
     LAST_SQ = {}
 
 
+import intl_value_rule as VR      # 27/9: κανονας τερματοφυλακα
+
+
 def _nm(s):
     import unicodedata
     return ' '.join(unicodedata.normalize('NFKD', str(s)).encode('ascii', 'ignore').decode().lower().replace('-', ' ').split())
@@ -133,10 +136,13 @@ def v_call_of(tid, utc, home=None, away=None, side=None):
                     continue
                 v_ = (PVN.get(str(pid_)) or [None, None])[1]
                 if v_:
-                    add_.append(v_); added_.add(pid_)
-            vs_ = sorted([p_['v'] for p_ in pl_ if not (p_.get('pid') and int(p_['pid']) in out_)] + add_, reverse=True)
-            if len(vs_) >= 14 and abs(sum(vs_[:11]) - vc[0]) > 1:
-                return float(sum(vs_[:11])), 'κληση' + ('+11αδα' if add_ else '') + ('−FotMob' if out_ else '')
+                    add_.append((pid_, v_)); added_.add(pid_)
+            items_ = [(p_.get('pid'), p_['v']) for p_ in pl_ if not (p_.get('pid') and int(p_['pid']) in out_)] + add_
+            # 27/9: κανονας τερματοφυλακα (intl_value_rule, διακοπτης gk_rule) — προτιμηση στον τερματοφυλακα της 11αδας FotMob
+            gk_xi_ = next((x_['pid'] for x_ in (xi_.get('players') or []) if int(x_['pid']) in VR.GK), None)
+            V_ = VR.top11(items_, tid, utc, gk_xi_)
+            if V_ and abs(V_ - vc[0]) > 1:
+                return V_, 'κληση' + ('+11αδα' if add_ else '') + ('−FotMob' if out_ else '') + ('·ΤΦ' if VR.enabled() else '')
             return vc[0], 'κληση'
     return (VFULL[tid] * CALL_SCALE, 'V_full') if VFULL.get(tid) else (None, '—')
 
