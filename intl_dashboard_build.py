@@ -455,6 +455,11 @@ for _c, _ms in comps.items():
             if _b.get('ah_line') is not None and _b.get('oh') and _b.get('oa') and _b.get('ou_line') is not None and _b.get('over') and _b.get('under'):
                 _lh, _la = intl_pricing.market_lambdas(_b['ah_line'], _b['oh'], _b['oa'], _b['ou_line'], _b['over'], _b['under'])
                 _bt['mkt'] = round(intl_pricing.btts_p(_lh, _la), 4)
+            # 27/9: ΠΡΑΓΜΑΤΙΚΕΣ τιμες BTTS (Odds API, intl_odds_scan.fetch_btts) οταν υπαρχουν
+            _tr = TOA_ODDS.get(f"{_m.get('hid')}_{_m.get('aid')}_{str(_m.get('utc', '')).replace(' ', 'T')[:16]}") or {}
+            if _tr.get('btts') and _tr.get('btts_book') in _tr['btts']:
+                _y, _n = _tr['btts'][_tr['btts_book']]
+                _bt['real'] = dict(book=_tr['btts_book'], yes=_y, no=_n, when=_tr.get('btts_when'), books=_tr['btts'])
             _m['btts'] = _bt
         except Exception:
             _m['btts'] = {}

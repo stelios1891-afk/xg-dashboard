@@ -320,6 +320,9 @@ def process(games, upc, livefx, old, now):
                 if bk in books and books[bk].get(fld) is not None:
                     rec[fld] = books[bk][fld]; break
         rec['books'] = books
+        for _k in ('btts', 'btts_when', 'btts_book'):          # 27/9: BTTS τραβιεται χωριστα (event endpoint) — κρατα το τελευταιο
+            if old_rec.get(_k) is not None:
+                rec[_k] = old_rec[_k]
         sig = lambda r: tuple(r.get(x) for x in FIELDS)
         if sig(rec) != sig(old_rec):
             row = dict(t=now.isoformat()[:16], key=best['key'], comp=best['comp'], ko=rec['ko'], book=prim)
@@ -358,6 +361,8 @@ def close_passed(odds, now, path=CLOSE_F):
             pass
         row.update({x: v[x] for x in FIELDS if v.get(x) is not None})
         row['books'] = v.get('books') or {}
+        if v.get('btts'):
+            row['btts'] = v['btts']; row['btts_book'] = v.get('btts_book'); row['btts_when'] = v.get('btts_when')
         rows.append(row)
     if rows:
         with open(path, 'a', encoding='utf-8') as fh:
@@ -379,6 +384,59 @@ def write_out(now, odds, rem=None, unmatched=(), note=None, hist_rows=(), live_r
         with open(LIVE_F, 'a', encoding='utf-8') as lf:
             for lr in live_rows:
                 lf.write(json.dumps(lr, ensure_ascii=False) + '\n')
+
+
+BTTS_HIST_F = os.path.join(ROOT, 'intl_btts_hist.jsonl')
+BTTS_MIN_CREDITS = 1500      # κατω απο αυτο δεν τραβαμε BTTS (προτεραιοτητα στις κυριες αγορες)
+
+
+def fetch_btts(odds, now):
+    """27/9/2026 (Στελιος: «να ειναι ακριβη»): ΠΡΑΓΜΑΤΙΚΕΣ τιμες BTTS απο το Odds API. Το BTTS υπαρχει ΜΟΝΟ στο event endpoint
+    (/events/{eid}/odds, markets=btts) → ~1 credit ανα ματς ανα τραβηγμα. Ματς ≤36ω πριν τη σεντρα· ξανα καθε 3ω, στο 6ωρο προ ΚΟ καθε 30′.
+    Γραφει odds[key]['btts'] = {book: [yes, no]}, 'btts_book' = κυρια πηγη (σειρα BOOKS), + intl_btts_hist.jsonl σε καθε αλλαγη."""
+    import requests
+    rows = []; n = 0; rem = None
+    for key, v in odds.items():
+        try:
+            h = (_pdt(v['ko']) - now).total_seconds() / 3600
+            age = (now - _pdt(v['btts_when'])).total_seconds() / 60 if v.get('btts_when') else 1e9
+        except Exception:
+            continue
+        if not v.get('eid') or not (0 < h <= 36) or age < (30 if h <= 6 else 180):
+            continue
+        try:
+            r = requests.get(f'https://api.the-odds-api.com/v4/sports/{SPORT}/events/{v["eid"]}/odds',
+                             params=dict(apiKey=_key(), markets='btts', bookmakers=','.join(BOOKS), oddsFormat='decimal'), timeout=30)
+        except Exception as e:
+            print(f'  BTTS {v.get("home")}-{v.get("away")}: {type(e).__name__}'); continue
+        rem = r.headers.get('x-requests-remaining'); n += 1
+        v['btts_when'] = now.isoformat()[:16]
+        if r.status_code != 200:
+            print(f'  BTTS {v.get("home")}-{v.get("away")}: HTTP {r.status_code} {r.text[:100]}'); continue
+        bt = {}
+        for bk in (r.json().get('bookmakers') or []):
+            for mk in bk.get('markets', []):
+                if mk.get('key') == 'btts':
+                    o = {x.get('name'): x.get('price') for x in mk.get('outcomes', [])}
+                    if o.get('Yes') and o.get('No'):
+                        bt[bk['key']] = [float(o['Yes']), float(o['No'])]
+        if bt:
+            prim = next((b for b in BOOKS if b in bt), next(iter(bt)))
+            if bt != v.get('btts'):
+                rows.append(dict(t=now.isoformat()[:16], key=key, ko=v['ko'], book=prim, yes=bt[prim][0], no=bt[prim][1], books=bt))
+            v['btts'] = bt; v['btts_book'] = prim
+        try:
+            if rem is not None and float(rem) < BTTS_MIN_CREDITS:
+                print(f'  BTTS: credits {rem} < {BTTS_MIN_CREDITS} — σταματαω'); break
+        except Exception:
+            pass
+    if rows:
+        with open(BTTS_HIST_F, 'a', encoding='utf-8') as fh:
+            for row in rows:
+                fh.write(json.dumps(row, ensure_ascii=False) + chr(10))
+    if n:
+        print(f'BTTS: {n} ματς τραβηχτηκαν · {len(rows)} αλλαγες · credits left {rem}')
+    return rem
 
 
 def main():
@@ -438,6 +496,11 @@ def main():
         return
     games = r.json()
     odds, hist_rows, live_rows, unmatched = process(games, upc, livefx, odds, now)
+    try:
+        if rem is None or float(rem) >= BTTS_MIN_CREDITS:
+            rem = fetch_btts(odds, now) or rem
+    except Exception as e:
+        print(f'BTTS σφαλμα (μη κρισιμο): {type(e).__name__}: {e}')
     write_out(now, odds, rem=rem, unmatched=unmatched, hist_rows=hist_rows, live_rows=live_rows)
     nmatch = sum(1 for v in odds.values() if v.get('when') == now.isoformat()[:16])
     print(f'ματς στο παραθυρο: {len(upc)} · TOA events {len(games)} · ταιριασαν {nmatch} · hist +{len(hist_rows)} · '

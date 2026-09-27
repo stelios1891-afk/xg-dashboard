@@ -474,13 +474,20 @@ def _lines_pane(m, vers):
          '<th>over</th><th title="ενημερωτικο — οχι pick">BTTS</th><th>pick</th></tr>')
     BT = m.get('btts') or {}
     pm = BT.get('mkt')
+    RB = BT.get('real')          # 27/9: πραγματικη τιμη BTTS (Odds API) — αν υπαρχει, το edge μετριεται πανω της
 
     def _btts_cell(v):
         pv = BT.get(v)
         if pv is None:
             return '<span class="e dim">—</span>'
         out = f'{pv * 100:.0f}% <span class="sec">fair {1 / pv:.2f}</span>'
-        if pm:
+        if RB:
+            ey, en = pv * RB['yes'] - 1, (1 - pv) * RB['no'] - 1
+            if ey >= en:
+                out += f' <span class="e {_edge_class(ey * 100)}">Yes {ey * 100:+.0f}%</span>'
+            else:
+                out += f' <span class="e {_edge_class(en * 100)}">No {en * 100:+.0f}%</span>'
+        elif pm:
             ey, en = pv / (1.05 * pm) - 1, (1 - pv) / (1.05 * (1 - pm)) - 1      # υποθετικη τιμη = αγορα-proxy με γκανιοτα 5%
             d = (pv - pm) * 100
             tag = (' <span class="e g">Yes</span>' if ey >= .08 else (' <span class="e g">No</span>' if en >= .08 else ''))
@@ -524,11 +531,23 @@ def _lines_pane(m, vers):
                    + (f' · O/U {n["ou_line"]:g} {n["over"]:.2f}/{n["under"]:.2f}' if n.get('ou_line') is not None else '') + '</span>')
     h += (f'<tr class="mkr"><td class="vn">Αγορα {_src_badge(m)}<small>1 / Χ / 2 · AH · O/U</small></td>'
           f'<td>{x12}</td><td colspan="2">{ah}{sec}</td><td>{out}</td>'
-          f'<td>{(f"{pm * 100:.0f}% <span class=sec>εκτιμηση απο AH+O/U</span>") if pm else "—"}</td><td></td></tr></table>')
+          f'<td>{_btts_mkt(RB, pm)}</td><td></td></tr></table>')
     h += ('<div class="leg">fair = τιμη μοντελου στη γραμμη της πηγης <b>με τη γκανιοτα της αγορας</b> (αμεσα συγκρισιμη· hover = χωρις γκανιοτα) · edge = αναμενομενη αποδοση (πρασινο ≥10%, κιτρινο ≥5%) · '
           'over: P(over) μοντελου + edge · <b>BTTS (ενημερωτικο, οχι pick)</b>: P μοντελου, διαφορα σε ποσοστιαιες μοναδες απο την «αγορα» '
-          '(εκτιμηση απο AH+O/U — δεν υπαρχει πραγματικη τιμη BTTS)· Yes/No = υποθετικο edge ≥8% με γκανιοτα 5% (τεστ 26/9: εθνικες +15%, εγχωρια ✗)</div>')
+          '(εκτιμηση απο AH+O/U)· <b>με πραγματικη τιμη BTTS (Odds API, απο 27/9)</b>: edge Yes/No πανω στην τιμη της αγορας· χωρις τιμη: Yes/No = υποθετικο edge ≥8% '
+          'με γκανιοτα 5% (τεστ 26/9: εθνικες +15%, εγχωρια ✗)</div>')
     return h
+
+
+def _btts_mkt(RB, pm):
+    """γραμμη αγορας στη στηλη BTTS: πραγματικες τιμες (Yes/No + βιβλιο) αν υπαρχουν, αλλιως η εκτιμηση απο AH+O/U."""
+    if RB:
+        pr = (1 / RB['yes']) / (1 / RB['yes'] + 1 / RB['no'])
+        oth = ' · '.join(f"{SRC_LABEL.get(k, k)} {y:.2f}/{n:.2f}" for k, (y, n) in (RB.get('books') or {}).items())
+        return (f'<span title="{esc(oth)} · {esc(str(RB.get("when") or ""))} UTC">Yes {RB["yes"]:.2f} / No {RB["no"]:.2f}'
+                f'<span class="sec">{SRC_LABEL.get(RB["book"], RB["book"])} · {pr * 100:.0f}%'
+                + (f' (εκτιμ. {pm * 100:.0f}%)' if pm else '') + '</span></span>')
+    return (f"{pm * 100:.0f}% <span class=sec>εκτιμηση απο AH+O/U</span>") if pm else "—"
 
 
 def _ratings_pane(m, vers):
