@@ -127,8 +127,12 @@ def v_call_of(tid, utc, home=None, away=None, side=None):
                      for x_ in (xi_.get('players') or [])]
             cand_ += [(p_, (PVN.get(str(p_)) or [''])[0], 'old') for p_ in last_p_]
             added_ = set()
+            # 27/9: οι ΧΕΙΡΟΚΙΝΗΤΑ εκτος (intl_absences_manual → manual_out) ΔΕΝ ξαναμπαινουν ποτε (π.χ. Isak: ντυθηκε 25/9, λειπει)
+            man_ = [m_.get('nm') or '' for m_ in ((_VC.get(str(tid)) or {}).get('manual_out') or [])] +                    [m_.get('tm') or '' for m_ in ((_VC.get(str(tid)) or {}).get('manual_out') or [])]
             for pid_, name_, why_ in cand_:
                 if pid_ in have_ or pid_ in added_ or pid_ in out_:
+                    continue
+                if any(m_ and _same_person(m_, name_) for m_ in man_):
                     continue
                 if any(not p_.get('pid') and _same_person(p_['tm'], name_) for p_ in pl_):
                     continue
