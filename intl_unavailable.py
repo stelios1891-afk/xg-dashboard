@@ -113,6 +113,7 @@ def main(force=False):
                 t[str(p.get('id'))] = dict(name=p.get('name'), type=str(un.get('type') or '').lower(), ret=ret,
                                            doubtful=('doubt' in ret.lower()), match=f'{r.home} - {r.away}',
                                            until=(None if 'doubt' in ret.lower() else until_of(ret, out['_asof'])))
+    out['_alerts'] = star_alerts(out)
     import hashlib
     body = {k: v for k, v in out.items() if not k.startswith('_')}
     out['_hash'] = hashlib.md5(json.dumps([body, out['_xi']], sort_keys=True, ensure_ascii=False).encode()).hexdigest()
@@ -127,10 +128,60 @@ def main(force=False):
         st['last_check'] = now.strftime('%Y-%m-%dT%H:%M')
         if changed and not recent and _dispatch():
             st['last_dispatch'] = now.strftime('%Y-%m-%dT%H:%M'); print('  → ζητηθηκε intl-reproject (νεες προβολες)')
+        # 27/9 (Στελιος): ΕΙΔΟΠΟΙΗΣΗ για χειροκινητο ελεγχο — πρωτοκλασατος εκτος προβλεπομενης 11αδας (μια φορα ανα παικτη/ματς)
+        sent = set(st.get('alerted') or [])
+        new = [a_ for a_ in out['_alerts'] if a_['key'] not in sent]
+        if new and os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID'):
+            import notify
+            NL = chr(10)
+            txt = '⚠ ΕΘΝΙΚΕΣ · πρωτοκλασατοι ΕΚΤΟΣ προβλεπομενης 11αδας FotMob — ελεγξε χειροκινητα (δεν αφαιρουνται απο την τιμη)' + NL
+            txt += NL.join(f"• {a_['team']}: {a_['name']} ({a_['v']:.1f}M){' · βασικος στο προηγουμενο' if a_['started_last'] else ''} — {a_['match']}"
+                           for a_ in new)
+            txt += NL + 'Αν λειπει σιγουρα: πες το, μπαινει στις χειροκινητες απουσιες.'
+            if notify.send(txt, channel='info'):
+                sent |= {a_['key'] for a_ in new}
+        st['alerted'] = sorted(sent)[-300:]
+        for a_ in new:
+            print(f"  ⚠ {a_['team']}: {a_['name']} ({a_['v']:.1f}M) εκτος προβλεπομενης 11αδας — {a_['match']}")
         json.dump(st, open(STATE_F, 'w', encoding='utf-8'))
         return 0
     json.dump(out, open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     return 0
+
+
+STAR_TOP = 4          # «πρωτοκλασατοι» = οι 4 ακριβοτεροι της κλησης
+
+
+def star_alerts(out):
+    """27/9 (Στελιος): καποιος απο τους 4 ακριβοτερους της κλησης (μετα τις χειροκινητες απουσιες), ΒΑΣΙΚΟΣ στο προηγουμενο ματς, που ΔΕΝ ειναι στην ΠΡΟΒΛΕΠΟΜΕΝΗ
+    11αδα του FotMob (μονο τυπος 'predicted', οχι «τελευταια 11αδα») και ΔΕΝ ειναι ηδη στους μη διαθεσιμους → ειδοποιηση για ελεγχο.
+    Δεν αλλαζει την τιμη (ο παγκος δεν ειναι απουσια· δεν μετριεται ιστορικα)."""
+    try:
+        VC = json.load(open('intl_vcall_tm.json', encoding='utf-8'))
+    except Exception:
+        return []
+    try:
+        import intl_value_rule as VR
+        starts = VR._load_starts()
+    except Exception:
+        starts = {}
+    res = []
+    for tid, xi in (out.get('_xi') or {}).items():
+        if xi.get('type') != 'predicted' or tid not in VC:
+            continue
+        v = VC[tid]
+        xi_ids = {int(p['pid']) for p in xi.get('players') or []}
+        unav = {int(k) for k in (out.get(tid) or {})}
+        pl = sorted([p for p in v.get('players', []) if p.get('v') and p.get('pid')], key=lambda p: -p['v'])[:STAR_TOP]
+        last = sorted(starts.get(int(tid), []))[-1:] if starts.get(int(tid)) else []
+        last_st = set(last[0][1]) if last else set()
+        for p in pl:
+            pid = int(p['pid'])
+            if pid in xi_ids or pid in unav or pid not in last_st:      # πρωτοκλασατος = ΚΑΙ βασικος στο προηγουμενο ματς
+                continue
+            res.append(dict(key=f"{tid}|{pid}|{xi.get('utc')}", team=v.get('nm'), name=p['tm'].title(), v=p['v'] / 1e6,
+                            started_last=pid in last_st, match=xi.get('match'), utc=xi.get('utc')))
+    return res
 
 
 STATE_F = 'intl_unavailable_scan_state.json'

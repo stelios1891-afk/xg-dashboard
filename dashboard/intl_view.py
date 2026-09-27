@@ -132,6 +132,7 @@ def load():
             m['ledger'] = led.get((c.get('comp'), m.get('home'), m.get('away'), m.get('utc')), [])
             m['lineup'] = LU.get(f"{c.get('comp')}|{m.get('home')}|{m.get('away')}|{m.get('utc')}")
             m['unav'] = {s_: [u for u in (UNAV.get(str(m.get(k_))) or {}).values()] for s_, k_ in (('h', 'hid'), ('a', 'aid'))}
+            m['stars_out'] = [x for x in (UNAV.get('_alerts') or []) if x.get('match') == f"{m.get('home')} - {m.get('away')}"]
     return d
 
 
@@ -406,6 +407,10 @@ def _flags(m):
     if parts:      # 27/9: FotMob «unavailable» — οσοι αφαιρουνται ΗΔΗ απο την αξια κλησης (Μ1/Μ3) πριν την επισημη αποστολη
         out.append('<span class="call" title="FotMob: τραυματισμοι/τιμωριες μαζι με την προβλεπομενη ενδεκαδα · αφαιρουνται απο την αξια της κλησης '
                    '(εκτος «αμφιβολων» και οσων επιστρεφουν πριν το ματς)">🏥 FotMob: ' + esc(' · '.join(parts)) + '</span>')
+    if m.get('stars_out'):     # 27/9: πρωτοκλασατοι εκτος προβλεπομενης 11αδας FotMob — ΜΟΝΟ για ελεγχο, δεν αλλαζουν την τιμη
+        out.append('<span class="call" title="Απο τους 4 ακριβοτερους, βασικοι στο προηγουμενο ματς, αλλα ΟΧΙ στην προβλεπομενη 11αδα του FotMob '
+                   '(ουτε στους μη διαθεσιμους). Δεν αφαιρουνται απο την τιμη — ελεγξε και πες αν λειπουν.">⚠ Εκτος προβλ. 11αδας: '
+                   + esc(', '.join(f"{x['name']} ({x['team']}, {x['v']:.0f}M)" for x in m['stars_out'])) + '</span>')
     return f'<div class="flags">{"".join(out)}</div>' if out else ''
 
 
