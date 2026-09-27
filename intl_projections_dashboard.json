@@ -1,7 +1,7 @@
 {
- "generated": "2026-09-27 18:00",
+ "generated": "2026-09-27 18:04",
  "toa_scanned": "2026-09-27 18:00",
- "toa_matches": 23,
+ "toa_matches": 22,
  "ng_snapshot": "2026-09-24 15:23",
  "ng_snapshot_afconq": null,
  "comps": [
@@ -3481,210 +3481,6 @@
    "comp": "NL B",
    "matches": [
     {
-     "utc": "2026-09-27 16:00",
-     "home": "Austria",
-     "away": "Kosovo",
-     "hid": 8255,
-     "aid": 430156,
-     "dead": "",
-     "callups": "Austria: Christoph Baumgartner(14.8M), Leopold Querfeld(13.8M)",
-     "init_ah": "—",
-     "init_ou": "—",
-     "versions": {
-      "H": {
-       "R_h": 1800.0,
-       "R_a": 1676.0,
-       "vadj": 20.0,
-       "diff": 204.0,
-       "xg_h": 2.07,
-       "xg_a": 1.07,
-       "T": 2.71,
-       "xg_h_D": 2.005,
-       "xg_a_D": 1.135,
-       "p1": 58,
-       "px": 27,
-       "p2": 15,
-       "fair_1": 1.72,
-       "fair_x": 3.7,
-       "fair_2": 6.67
-      },
-      "A": {
-       "R_h": 1794.0,
-       "R_a": 1679.0,
-       "vadj": 0.0,
-       "diff": 175.0,
-       "xg_h": 1.95,
-       "xg_a": 1.1,
-       "T": 2.8,
-       "xg_h_D": 1.965,
-       "xg_a_D": 1.081,
-       "p1": 54,
-       "px": 29,
-       "p2": 17,
-       "fair_1": 1.85,
-       "fair_x": 3.45,
-       "fair_2": 5.88
-      },
-      "AV": {
-       "R_h": 1794.0,
-       "R_a": 1679.0,
-       "vadj": 20.0,
-       "diff": 196.0,
-       "xg_h": 2.03,
-       "xg_a": 1.08,
-       "T": 2.69,
-       "xg_h_D": 1.97,
-       "xg_a_D": 1.142,
-       "p1": 57,
-       "px": 28,
-       "p2": 16,
-       "fair_1": 1.75,
-       "fair_x": 3.57,
-       "fair_2": 6.25
-      }
-     },
-     "market": {
-      "crown": {
-       "ou_line": 2.75,
-       "over": 1.96,
-       "under": 1.84,
-       "o1": 1.44,
-       "ox": 4.25,
-       "o2": 5.7
-      },
-      "sbobet": {
-       "o1": 1.4,
-       "ox": 4.05,
-       "o2": 6.0
-      },
-      "pinnacle": null,
-      "matchbook": null,
-      "bovada": {
-       "ah_line": -1.0,
-       "oh": 1.93,
-       "oa": 1.97,
-       "ou_line": 2.75,
-       "over": 1.98,
-       "under": 1.9,
-       "o1": 1.57,
-       "ox": 4.27,
-       "o2": 5.92,
-       "raw_h": 1.53,
-       "raw_d": 4.15,
-       "raw_a": 5.75,
-       "gap_h2h": 2.99,
-       "gap_h2h_day": "2026-09-27",
-       "over_h2h": 6.85,
-       "over_h2h_adj": 3.86,
-       "raw_oh": 1.89,
-       "raw_oa": 1.93,
-       "gap_spreads": 1.98,
-       "gap_spreads_day": "2026-09-27",
-       "over_spreads": 4.72,
-       "over_spreads_adj": 2.75,
-       "raw_over": 1.95,
-       "raw_under": 1.87,
-       "gap_totals": 1.73,
-       "gap_totals_day": "2026-09-27",
-       "over_totals": 4.76,
-       "over_totals_adj": 3.03
-      },
-      "betfair_ex_eu": {
-       "o1": 1.54,
-       "ox": 4.37,
-       "o2": 6.22,
-       "raw_h": 1.59,
-       "raw_d": 4.5,
-       "raw_a": 6.4,
-       "raw_over": 0.74,
-       "pin_margin": 3.69
-      },
-      "source": "bovada",
-      "ts": "2026-09-27 15:55",
-      "ng_ts": "2026-09-24 15:23",
-      "x12_source": "bovada",
-      "pin_margin": 3.69,
-      "x12_ts": "2026-09-27 15:55"
-     },
-     "edges": {
-      "H": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": -8.6,
-        "fair_h": 2.14,
-        "need_h": 2.47,
-        "ah_away": 2.7,
-        "fair_a": 1.88,
-        "need_a": 2.16,
-        "over": -10.3,
-        "p_over": 45.3,
-        "need_over": 2.44
-       },
-       "betfair_ex_eu": null,
-       "crown": {
-        "over": -11.0
-       },
-       "sbobet": null
-      },
-      "A": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": -14.8,
-        "fair_h": 2.35,
-        "need_h": 2.71,
-        "ah_away": 9.0,
-        "fair_a": 1.74,
-        "need_a": 2.0,
-        "over": -6.0,
-        "p_over": 47.5,
-        "need_over": 2.32
-       },
-       "betfair_ex_eu": null,
-       "crown": {
-        "over": -7.0
-       },
-       "sbobet": null
-      },
-      "AV": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": -10.7,
-        "fair_h": 2.21,
-        "need_h": 2.54,
-        "ah_away": 4.8,
-        "fair_a": 1.83,
-        "need_a": 2.1,
-        "over": -11.0,
-        "p_over": 45.0,
-        "need_over": 2.47
-       },
-       "betfair_ex_eu": null,
-       "crown": {
-        "over": -12.0
-       },
-       "sbobet": null
-      }
-     },
-     "picks": {
-      "H": "",
-      "A": "",
-      "AV": "",
-      "over": "",
-      "over_A": "",
-      "over_AV": ""
-     },
-     "consensus": [],
-     "btts": {
-      "H": 0.5741,
-      "A": 0.5722,
-      "AV": 0.5737,
-      "mkt": 0.5087
-     }
-    },
-    {
      "utc": "2026-09-27 18:45",
      "home": "Israel",
      "away": "Ireland",
@@ -3698,19 +3494,19 @@
       "H": {
        "R_h": 1625.0,
        "R_a": 1666.0,
-       "vadj": -52.0,
-       "diff": -33.0,
+       "vadj": -51.0,
+       "diff": -32.0,
        "xg_h": 1.16,
        "xg_a": 1.32,
        "T": 2.58,
-       "xg_h_D": 1.171,
-       "xg_a_D": 1.313,
-       "p1": 28,
+       "xg_h_D": 1.172,
+       "xg_a_D": 1.307,
+       "p1": 29,
        "px": 34,
-       "p2": 38,
-       "fair_1": 3.57,
+       "p2": 37,
+       "fair_1": 3.45,
        "fair_x": 2.94,
-       "fair_2": 2.63
+       "fair_2": 2.7
       },
       "A": {
        "R_h": 1610.0,
@@ -3732,13 +3528,13 @@
       "AV": {
        "R_h": 1610.0,
        "R_a": 1675.0,
-       "vadj": -52.0,
-       "diff": -58.0,
+       "vadj": -51.0,
+       "diff": -56.0,
        "xg_h": 1.14,
        "xg_a": 1.42,
        "T": 2.59,
-       "xg_h_D": 1.159,
-       "xg_a_D": 1.403,
+       "xg_h_D": 1.16,
+       "xg_a_D": 1.398,
        "p1": 26,
        "px": 33,
        "p2": 41,
