@@ -335,3 +335,27 @@ for split in ('ολα', 'με over (≥2 μοντελα)', 'ΧΩΡΙΣ over'):
         else:
             cells.append('   —')
     print(f"  {split:>22s} | " + ' | '.join(f'{x:>17s}' for x in cells) + f"   ({' / '.join(SEAS_)} / POOLED)")
+
+# ---------------- 27/9: ΥΠΟΨΗΦΙΑ για ΠΡΑΓΜΑΤΙΚΕΣ τιμες BTTS (Στελιος): συναινεση ≥2/3 με edge ≥5% (το 8% και «λιγο κατω») ----------------
+def edge_yes(d, m):
+    pm = d[f'pm_{m}'].values; pk = d.pk.values
+    return pm / (pk * (1 + MARGIN_BTTS)) - 1
+rows = []
+for bname in ('Crown', 'SBOBET'):
+    d = BK[bname]
+    E = np.vstack([edge_yes(d, m) for m in MODELS])
+    for j, (ix, r) in enumerate(d.iterrows()):
+        es = sorted(E[:, j], reverse=True)
+        if es[1] >= 0.05:                       # 2ο καλυτερο μοντελο ≥5% = συναινεση ≥2/3 στο 5%
+            rows.append(dict(ix=ix, book=bname, e2=es[1], **{f'e_{m}': E[k, j] for k, m in enumerate(MODELS)}))
+C = pd.DataFrame(rows)
+C = C.groupby('ix').agg(e2=('e2', 'max'), books=('book', lambda x: '+'.join(sorted(set(x))))).reset_index()
+base = Dn.loc[C.ix]
+cols = [c for c in ('mid', 'date', 'season', 'comp', 'ctype', 'hn', 'an', 'hid', 'aid', 'hs', 'as') if c in base.columns]
+OUT = base[cols].reset_index(drop=True); OUT['e2'] = C.e2.values; OUT['books'] = C.books.values
+OUT['band'] = np.where(OUT.e2 >= 0.08, 'pick≥8%', 'κοντα 5-8%')
+OUT.to_csv('btts_realprice_candidates.csv', index=False)
+print(chr(10) + 'ΥΠΟΨΗΦΙΑ πραγματικων τιμων:', len(OUT), '·', OUT.band.value_counts().to_dict())
+print(OUT.groupby('season').size().to_dict())
+print('απο 2023-05-03 (ιστορικο TOA για BTTS):', int((pd.to_datetime(OUT.date) >= '2023-05-03').sum()))
+print(OUT.comp.value_counts().head(12).to_dict())
