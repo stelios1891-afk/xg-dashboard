@@ -1,10 +1,10 @@
 {
-"_asof": "2026-09-28T17:46",
+"_asof": "2026-09-28T17:57",
 "_xi": {
 "8263": {
 "match": "Belgium - France",
 "utc": "2026-09-28T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1178602,
@@ -23,12 +23,12 @@
 "name": "Brandon Mechele"
 },
 {
-"pid": 1134871,
-"name": "Maxim De Cuyper"
+"pid": 1489449,
+"name": "Joaquin Seys"
 },
 {
-"pid": 863869,
-"name": "Nicolas Raskin"
+"pid": 1190867,
+"name": "Roméo Lavia"
 },
 {
 "pid": 1342754,
@@ -55,19 +55,19 @@
 "6723": {
 "match": "Belgium - France",
 "utc": "2026-09-28T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 466439,
 "name": "Mike Maignan"
 },
 {
-"pid": 705450,
-"name": "Jules Koundé"
+"pid": 1131217,
+"name": "Pierre Kalulu"
 },
 {
-"pid": 658554,
-"name": "Dayot Upamecano"
+"pid": 1473534,
+"name": "Jérémy Jacquet"
 },
 {
 "pid": 950485,
@@ -78,28 +78,28 @@
 "name": "Andy Diouf"
 },
 {
-"pid": 1104053,
-"name": "Rayan Cherki"
+"pid": 1305618,
+"name": "Maghnes Akliouche"
 },
 {
-"pid": 1016132,
-"name": "Manu Koné"
+"pid": 1015185,
+"name": "Eduardo Camavinga"
 },
 {
-"pid": 352879,
-"name": "Adrien Rabiot"
-},
-{
-"pid": 1029063,
-"name": "Michael Olise"
+"pid": 1076647,
+"name": "Lucas Da Cunha"
 },
 {
 "pid": 1339208,
 "name": "Désiré Doué"
 },
 {
-"pid": 692984,
-"name": "Ousmane Dembélé"
+"pid": 1280225,
+"name": "Estéban Lepaul"
+},
+{
+"pid": 1297165,
+"name": "Bradley Barcola"
 }
 ]
 },
@@ -412,7 +412,7 @@
 "8520": {
 "match": "Sweden - Poland",
 "utc": "2026-09-28T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 546252,
@@ -463,7 +463,7 @@
 "8568": {
 "match": "Sweden - Poland",
 "utc": "2026-09-28T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 863455,
@@ -474,8 +474,8 @@
 "name": "Matty Cash"
 },
 {
-"pid": 1800401,
-"name": "Kacper Potulski"
+"pid": 934862,
+"name": "Przemysław Wiśniewski"
 },
 {
 "pid": 490868,
@@ -486,28 +486,28 @@
 "name": "Jakub Kiwior"
 },
 {
-"pid": 402419,
-"name": "Przemysław Frankowski"
-},
-{
-"pid": 1395322,
-"name": "Wiktor Nowak"
+"pid": 1053714,
+"name": "Nicola Zalewski"
 },
 {
 "pid": 362212,
 "name": "Piotr Zieliński"
 },
 {
-"pid": 1053714,
-"name": "Nicola Zalewski"
+"pid": 1395322,
+"name": "Wiktor Nowak"
+},
+{
+"pid": 823121,
+"name": "Tymoteusz Puchacz"
 },
 {
 "pid": 765466,
 "name": "Sebastian Szymański"
 },
 {
-"pid": 93447,
-"name": "Robert Lewandowski"
+"pid": 908847,
+"name": "Mateusz Żukowski"
 }
 ]
 },
@@ -2632,25 +2632,9 @@
 "doubtful": false,
 "match": "Sweden - Poland",
 "until": "2026-12-31"
-},
-"919848": {
-"name": "Gustaf Lagerbielke",
-"type": "injury",
-"ret": "About a week",
-"doubtful": false,
-"match": "Sweden - Poland",
-"until": "2026-10-05"
 }
 },
 "8568": {
-"1484822": {
-"name": "Filip Rózga",
-"type": "injury",
-"ret": "A few weeks",
-"doubtful": false,
-"match": "Sweden - Poland",
-"until": "2026-10-19"
-},
 "1067260": {
 "name": "Jakub Kamiński",
 "type": "injury",
@@ -2658,6 +2642,14 @@
 "doubtful": true,
 "match": "Sweden - Poland",
 "until": null
+},
+"1484822": {
+"name": "Filip Rózga",
+"type": "injury",
+"ret": "A few weeks",
+"doubtful": false,
+"match": "Sweden - Poland",
+"until": "2026-10-19"
 }
 },
 "7871": {
@@ -3009,5 +3001,5 @@
 "utc": "2026-09-29T18:45"
 }
 ],
-"_hash": "f010528ca6cd1318b33f094dba04bfd2"
+"_hash": "cd31f5123807578ca501b661177fc0b4"
 }
