@@ -156,14 +156,24 @@ function vpToggle(i){var p=document.getElementById('vpc'+i);p.classList.toggle('
 function vpFmt(x){return (x+0.004).toFixed(2);}
 function vpCalc(i){
   var p=document.getElementById('vpc'+i),c=JSON.parse(p.dataset.c),L=c.lines[+p.querySelector('select').value];
-  var o=parseFloat(p.querySelector('input').value),out='',ok=0,mins=[],T=Math.round(c.thr*100);
+  var o=parseFloat(p.querySelector('input').value),out='',ok=0,mins=[],eds=[],T=Math.round(c.thr*100);
   for(var k=0;k<c.models.length;k++){
     var a=L.c[k][0],b=L.c[k][1],mn=a>0?(c.thr-b)/a:null,m0=a>0?-b/a:null;mins.push(mn);
     var e=(o>1)?(a*o+b):null,cls=e===null?'':(e>=c.thr?'g':(e>=0?'a':'r'));
+    if(e!==null){eds.push(e);}
     if(e!==null&&e>=c.thr)ok++;
     out+='<div class="cm"><span class="n">'+c.models[k]+'</span><span class="e '+cls+'">'+
       (e===null?'—':((e>=0?'+':'')+(e*100).toFixed(1)+'%'))+(e!==null&&e>=c.thr?' ✓':'')+'</span>'+
       '<span class="q">'+(mn&&mn>1?('για '+T+'%: ≥'+vpFmt(mn)):'')+(m0&&m0>1?(' · 0%: ≥'+vpFmt(m0)):'')+'</span></div>';
+  }
+  // 28/9: ΣΥΝΟΛΟ = ιδιος κανονας με την καρτα: το ΜΙΚΡΟΤΕΡΟ edge απο τα μοντελα που περνουν το οριο (αν ≥need)·
+  // αλλιως το need-οστο καλυτερο (ποσο λειπει για συναινεση)
+  if(c.models.length>1&&eds.length>=c.need){
+    var pas=eds.filter(function(x){return x>=c.thr;}),srt=eds.slice().sort(function(x,y){return y-x;});
+    var tot=pas.length>=c.need?Math.min.apply(null,pas):srt[c.need-1],tc=tot>=c.thr?'g':(tot>=0?'a':'r');
+    out='<div class="cm" style="padding-right:14px;border-right:1px solid #1e2d47"><span class="n">Συνολο</span><span class="e '+tc+'" style="font-size:15px">'+
+      ((tot>=0?'+':'')+(tot*100).toFixed(1)+'%')+(tot>=c.thr?' ✓':'')+'</span><span class="q">'+
+      (pas.length>=c.need?'μικροτερο των '+pas.length+' που συμφωνουν':(c.need+'ο καλυτερο · οχι συναινεση'))+'</span></div>'+out;
   }
   document.getElementById('vpr'+i).innerHTML=out;
   var notes='';
