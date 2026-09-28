@@ -101,7 +101,7 @@ def adjust_xg(xg_h, xg_a, d_h, d_a, slope=0.9):
 def ah_fair(xg_h, xg_a, side, hcap):
     """Fair odds για την πλευρα side στο χαντικαπ hcap (σωστος χειρισμος quarter)."""
     import picks as engine
-    dist = engine.gd_dist(max(xg_h, 0.05), max(xg_a, 0.05))
+    dist = engine.gd_dist_dom(max(xg_h, 0.05), max(xg_a, 0.05))   # 28/9: εγχωρια = Dixon-Coles
     parts = [hcap] if (hcap * 4) % 2 == 0 else [hcap - 0.25, hcap + 0.25]
     pw = pp = 0.0
     for L in parts:

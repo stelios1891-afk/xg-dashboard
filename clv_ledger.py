@@ -230,7 +230,7 @@ def _enrich(rec, b, rows, ko):
         try:
             our_cl = float(close['line']) if b['side'] == 1 else -float(close['line'])
             co = float(close['oh'] if b['side'] == 1 else close['oa'])
-            dist = picks.gd_dist(min(max(float(b['mxh']), 0.05), 6.0),
+            dist = picks.gd_dist_dom(min(max(float(b['mxh']), 0.05), 6.0),   # 28/9: εγχωρια = Dixon-Coles
                                  min(max(float(b['mxa']), 0.05), 6.0))
             pw, pp = _pq(dist, b['side'], our_cl)
             ec = pw * (co - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
@@ -241,7 +241,7 @@ def _enrich(rec, b, rows, ko):
 
 
 # ---------- ισοδυναμο κλεισιμο οταν αλλαξε η γραμμη ----------
-def _equiv_close_odds(mxh, mxa, side, our_line, close_line_our, co_our, co_opp):
+def _equiv_close_odds(mxh, mxa, side, our_line, close_line_our, co_our, co_opp, dom=True):
     """Η γραμμη εκλεισε αλλου (πχ παιξαμε +0.5, εκλεισε +0.25): βρες ποια «δυναμη»
     (goal supremacy) δικαιολογει το κλεισιμο, και τιμολογησε τη ΔΙΚΗ μας γραμμη απο
     την ιδια κατανομη — με τη γκανιοτα του κλεισιματος. Επιστρεφει εκτιμωμενη αποδοση."""
@@ -261,7 +261,7 @@ def _equiv_close_odds(mxh, mxa, side, our_line, close_line_our, co_our, co_opp):
 
     def f(d):
         lh = max((T + d) / 2, 0.05); la = max((T - d) / 2, 0.05)
-        dist = engine.gd_dist(lh, la)
+        dist = (engine.gd_dist_dom if dom else engine.gd_dist)(lh, la)   # 28/9: εγχωρια Dixon-Coles
         pw, pp = pq(dist, side, close_line_our)
         return pw / max(pw + (1 - pw - pp), 1e-9)
 
@@ -278,7 +278,7 @@ def _equiv_close_odds(mxh, mxa, side, our_line, close_line_our, co_our, co_opp):
             hi = mid
     d = (lo + hi) / 2
     lh = max((T + d) / 2, 0.05); la = max((T - d) / 2, 0.05)
-    dist = engine.gd_dist(lh, la)
+    dist = (engine.gd_dist_dom if dom else engine.gd_dist)(lh, la)
     pw2, pp2 = pq(dist, side, our_line)
     pwc, ppc = pq(dist, side, close_line_our)
     if pw2 <= 0 or pwc <= 0:

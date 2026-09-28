@@ -2,7 +2,7 @@
 
 Χρησιμοποιειται απο τα ΕΓΧΩΡΙΑ cards (cards.py)· το europe_view.py εχει προς το παρον
 δικο του αντιγραφο (ιδια μαθηματικα + ευρωπαικο draw scale) — cleanup αργοτερα.
-Standalone: εξαρταται μονο απο picks (gd_dist, DRAW_BOOST).
+Standalone: εξαρταται μονο απο picks (gd_dist_dom/score_matrix_dom για τα εγχωρια απο 28/9· gd_dist/DRAW_BOOST για Ευρωπη).
 """
 import math
 
@@ -12,10 +12,10 @@ _LT_CELL = 'display:inline-block;text-align:center;font-family:monospace;font-si
 
 
 def match_dist(xgh, xga, draw_scale=1.0):
-    """Κατανομη goal difference (gd_dist)· προαιρετικο scale στην ισοπαλια (Ευρωπη)."""
-    dist = picks.gd_dist(max(xgh, 0.05), max(xga, 0.05))
+    """Κατανομη goal difference· draw_scale 1.0 = ΕΓΧΩΡΙΑ (κανονικο Dixon-Coles, 28/9/2026)· αλλιως gd_dist × scale (Ευρωπη)."""
     if draw_scale == 1.0:
-        return dist
+        return picks.gd_dist_dom(max(xgh, 0.05), max(xga, 0.05))
+    dist = picks.gd_dist(max(xgh, 0.05), max(xga, 0.05))
     px = dist.get(0, 0.0)
     if px <= 0 or px >= 1:
         return dist
@@ -23,17 +23,25 @@ def match_dist(xgh, xga, draw_scale=1.0):
     return {g: (p * draw_scale if g == 0 else p * k) for g, p in dist.items()}
 
 
-def tot_dist(xgh, xga):
-    """Κατανομη ΣΥΝΟΛΟΥ γκολ (ιδιος πυρηνας με gd_dist: Poisson × draw boost διαγωνιου)."""
+def _mat(xgh, xga, dom=True):
+    """Πινακας σκορ: ΕΓΧΩΡΙΑ = κανονικο Dixon-Coles (28/9/2026)· dom=False = Poisson × DRAW_BOOST διαγωνιου (Ευρωπη)."""
     lh, la = max(xgh, 0.05), max(xga, 0.05)
+    if dom:
+        return picks.score_matrix_dom(lh, la)
     F = [math.factorial(i) for i in range(13)]
     ph = [math.exp(-lh) * lh ** i / F[i] for i in range(13)]
     pa = [math.exp(-la) * la ** j / F[j] for j in range(13)]
+    return [[ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0) for j in range(13)] for i in range(13)]
+
+
+def tot_dist(xgh, xga, dom=True):
+    """Κατανομη ΣΥΝΟΛΟΥ γκολ (ιδιος πυρηνας με την κατανομη διαφορας)."""
+    Pm = _mat(xgh, xga, dom)
     tot = {}
     s = 0.0
     for i in range(13):
         for j in range(13):
-            p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
+            p = Pm[i][j]
             tot[i + j] = tot.get(i + j, 0.0) + p
             s += p
     return {t: p / s for t, p in tot.items()}
@@ -83,16 +91,13 @@ def fair_ou(tot, line):
     return (1.0 + (1.0 - po - push) / po, 1.0 + (1.0 - pu - push) / pu)
 
 
-def btts_probs(xgh, xga):
-    """P(σκοραρουν και οι δυο) / P(οχι) — ιδιος πυρηνας με tot_dist (Poisson × draw boost)."""
-    lh, la = max(xgh, 0.05), max(xga, 0.05)
-    F = [math.factorial(i) for i in range(13)]
-    ph = [math.exp(-lh) * lh ** i / F[i] for i in range(13)]
-    pa = [math.exp(-la) * la ** j / F[j] for j in range(13)]
+def btts_probs(xgh, xga, dom=True):
+    """P(σκοραρουν και οι δυο) / P(οχι) — ιδιος πυρηνας με tot_dist (εγχωρια: Dixon-Coles· dom=False: Poisson × draw boost)."""
+    Pm = _mat(xgh, xga, dom)
     s = yes = 0.0
     for i in range(13):
         for j in range(13):
-            p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
+            p = Pm[i][j]
             s += p
             if i >= 1 and j >= 1:
                 yes += p
@@ -100,9 +105,9 @@ def btts_probs(xgh, xga):
     return py, 1.0 - py
 
 
-def btts_html(xgh, xga, mk, s_fallback=1.025):
-    """Μια γραμμη BTTS Ναι/Οχι: μοντελο (με γκανιοτα αγορας) vs αγορα (17/9 Στελιος)."""
-    py, pn = btts_probs(xgh, xga)
+def btts_html(xgh, xga, mk, s_fallback=1.025, dom=True):
+    """Μια γραμμη BTTS Ναι/Οχι: μοντελο (με γκανιοτα αγορας) vs αγορα (17/9 Στελιος). dom=False για Ευρωπη (28/9)."""
+    py, pn = btts_probs(xgh, xga, dom)
     by, bn = mk.get('by'), mk.get('bn')
     S = overround((by, bn)) if by and bn else None
     fp = vig((1.0 / py, 1.0 / pn), S or s_fallback) if 0 < py < 1 else None

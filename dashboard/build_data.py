@@ -183,14 +183,13 @@ def predict_full(hh, ha, lg_shots, lg_xgps, hf):
 
 _F = [factorial(i) for i in range(13)]
 def one_x_two(lh, la):
-    """1X2 πιθανοτητες (%) + fair odds απο Poisson + draw-boost (ιδιο με picks.gd_dist)."""
+    """1X2 πιθανοτητες (%) + fair odds εγχωριων: Poisson + κανονικο Dixon-Coles (28/9/2026, ιδιο με picks.gd_dist_dom)."""
     lh = max(lh, 0.05); la = max(la, 0.05)
-    ph = [exp(-lh) * lh ** i / _F[i] for i in range(13)]
-    pa = [exp(-la) * la ** j / _F[j] for j in range(13)]
+    Pm = picks.score_matrix_dom(lh, la)
     hw = dw = aw = 0.0
     for i in range(13):
         for j in range(13):
-            p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
+            p = Pm[i, j]
             if i > j: hw += p
             elif i == j: dw += p
             else: aw += p

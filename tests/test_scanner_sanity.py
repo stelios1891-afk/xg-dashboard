@@ -448,27 +448,29 @@ def test_c_edge_and_proj_odds_reproduce_from_pw_pp():
 
 
 # ================================================================ (d) GOLDEN PRICING
-# Υπολογιστηκαν 18/9/2026 με picks.evaluate_bet (EDGE .10, ζωνη 1.70-2.10, MIN_LINE .5,
-# DRAW_BOOST 1.13, MARGIN .03). (xg_h, xg_a, line[home persp.], oh, oa) -> picks.
+# Υπολογιστηκαν 28/9/2026 με picks.evaluate_bet (EDGE .10, ζωνη 1.70-2.10, MIN_LINE .5, MARGIN .03) και
+# ΚΑΝΟΝΙΚΟ Dixon-Coles εγχωριων (picks.gd_dist_dom, ρ = DC_RHO_DOM −0.03· αποφαση Στελιου 28/9, core7_drawboost_test.py).
+# (Πριν: DRAW_BOOST 1.13 σε ολη τη διαγωνιο — τα 1 και 5 ηταν picks· με DC οι οριακοι dogs +0.5 κοβονται: λιγοτερες ισοπαλιες.)
+# (xg_h, xg_a, line[home persp.], oh, oa) -> picks.
 GOLDEN = [
-    # 1) Tottenham-Aston Villa 18/9 (πραγματικο pick): dog Villa +0.5
-    ((1.246, 1.004, -0.5, 1.95, 1.89),
-     [dict(side=-1, hcap=0.5, odds=1.89, pw=0.5970840973286032, pp=0.0,
-           edge=0.11254679855238636, proj_odds=1.6748059519154357)]),
+    # 1) Tottenham-Aston Villa 18/9: dog Villa +0.5 @1.89 — με Dixon-Coles ΔΕΝ περνα πια το 10%
+    ((1.246, 1.004, -0.5, 1.95, 1.89), []),
     # 2) Levante-Barcelona 13/9 (clv_bets): dog Levante +2.5, βαθια γραμμη
     ((1.058, 2.497, 2.5, 1.88, 2.04),
-     [dict(side=1, hcap=2.5, odds=1.88, pw=0.7348024962836962, pp=0.0,
-           edge=0.3620299071114592, proj_odds=1.3609099112449328)]),
+     [dict(side=1, hcap=2.5, odds=1.88, pw=0.7288972095238393, pp=0.0,
+           edge=0.3510838675733885, proj_odds=1.3719355581746044)]),
     # 3) ακεραια γραμμη +1.0 με push (pp>0), odds στο ανω οριο 2.10
     ((1.8, 0.9, -1.0, 1.87, 2.1),
-     [dict(side=-1, hcap=1.0, odds=2.1, pw=0.4308693255923392, pp=0.24208304355679694,
-           edge=0.13268993955616215, proj_odds=1.7590413413655148)]),
+     [dict(side=-1, hcap=1.0, odds=2.1, pw=0.4171949401047084, pp=0.24602262697741398,
+           edge=0.10836456817384621, proj_odds=1.8072543565206023)]),
     # 4) quarter γραμμη ±0.25 < MIN_LINE 0.5 -> ΚΑΝΕΝΑ pick
     ((1.3, 1.1, -0.25, 1.9, 2.0), []),
-    # 5) οριακο edge 10.04% -> pick (αν το EDGE ανεβει/ο τυπος αλλαξει, χανεται)
-    ((1.5, 1.2, -0.5, 1.9, 1.95),
-     [dict(side=-1, hcap=0.5, odds=1.95, pw=0.5726899801575689, pp=0.0,
-           edge=0.10042379687276859, proj_odds=1.746145444564722)]),
+    # 5) οριακο edge (ηταν 10.04% με το παλιο boost) -> με Dixon-Coles κατω απο 10% -> κανενα pick
+    ((1.5, 1.2, -0.5, 1.9, 1.95), []),
+    # 6) (28/9) θετικη περιπτωση +0.5 με Dixon-Coles
+    ((1.25, 1.0, -0.5, 1.95, 2.02),
+     [dict(side=-1, hcap=0.5, odds=2.02, pw=0.5840549863967728, pp=0.0,
+           edge=0.1619189899377398, proj_odds=1.7121675583481082)]),
 ]
 
 
@@ -482,6 +484,16 @@ def test_d_evaluate_bet_golden(args, expected):
         for k, v in exp.items():
             assert _approx(got.get(k), v, 1e-9), (f'evaluate_bet{args}: {k}={got.get(k)!r} αντι golden {v!r} '
                                                   f'(διαφορα {abs(float(got.get(k)) - v):.2e}) — το pricing ΑΛΛΑΞΕ')
+
+
+def test_d_gd_dist_dom_dixon_coles():
+    """28/9/2026: εγχωρια = κανονικο Dixon-Coles — αθροιζει 1, λιγοτερες ισοπαλιες απο το ×1.13, ρ −0.03, evaluate_bet το χρησιμοποιει."""
+    import picks
+    assert abs(picks.DC_RHO_DOM - (-0.03)) < 1e-12, f'DC_RHO_DOM={picks.DC_RHO_DOM} (αναμενοταν −0.03)'
+    d = picks.gd_dist_dom(1.4, 1.1); s = sum(d.values())
+    assert _approx(s, 1.0, 1e-9), f'gd_dist_dom δεν αθροιζει στο 1 ({s})'
+    old = picks.gd_dist(1.4, 1.1)
+    assert 0.22 < d[0] < old[0], f'ισοπαλια DC {d[0]:.4f} vs ×1.13 {old[0]:.4f} — αναμενοταν μικροτερη αλλα >0.22'
 
 
 def test_d_gd_dist_is_probability():

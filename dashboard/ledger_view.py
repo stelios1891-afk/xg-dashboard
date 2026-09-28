@@ -64,7 +64,7 @@ def prepare(current_season):
         r['xg_fair'] = r['xg_value'] = None
         if xg:
             try:
-                dist = engine.gd_dist(max(xg[0], 0.05), max(xg[1], 0.05))
+                dist = engine.gd_dist_dom(max(xg[0], 0.05), max(xg[1], 0.05))   # 28/9: εγχωρια = Dixon-Coles
                 pw, pp = engine.p_cover(dist, r['side'], r['hcap'])
                 if pw > 0:
                     fair = (1 - pp) / pw
@@ -173,7 +173,7 @@ def _intl_close(r, c):
         return
     import clv_ledger
     T = _ou_T(float(c['ou_line']), c['over'], c['under']) if (c.get('ou_line') is not None and c.get('over') and c.get('under')) else 2.5
-    eq = clv_ledger._equiv_close_odds(T / 2, T / 2, r['side'], r['hcap'], r['close_line'], co, co_opp)
+    eq = clv_ledger._equiv_close_odds(T / 2, T / 2, r['side'], r['hcap'], r['close_line'], co, co_opp, dom=False)   # εθνικες: gd_dist
     if eq:
         r['close_eq'] = round(eq, 3); r['clv_est_pct'] = round(r['odds'] / eq - 1, 4)
 

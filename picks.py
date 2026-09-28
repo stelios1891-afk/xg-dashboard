@@ -292,6 +292,34 @@ def gd_dist(lh, la):
             gd[i - j] = gd.get(i - j, 0) + Pm[i, j]
     return gd
 
+# ---------- 28/9/2026 (αποφαση Στελιου): ΚΑΝΟΝΙΚΟ Dixon-Coles ΜΟΝΟ ΣΤΑ ΕΓΧΩΡΙΑ ----------
+# Το gd_dist (Poisson × DRAW_BOOST 1.13 σε ΟΛΑ τα ισοπαλα σκορ) μενει για Ευρωπη/εθνικες/σκιες/season projections.
+# Εγχωρια: τ-διορθωση Dixon-Coles ΜΟΝΟ στα 0-0/1-0/0-1/1-1 με ρ = DC_RHO_DOM (core7_drawboost_test.py, LOSO: −0.03 σε 3/4 σεζον
+# και ολο το δειγμα). Τεστ (αγων. 7+, 4 σεζον): ισοπαλιες 25.9% → 24.5% (πραγματικο 25.1%), RPS 4/4 καλυτερο, dogs 15+
+# +5.2% → +6.7% (4/4). Στην Ευρωπη/εθνικες ΔΕΝ περασε (euro_dc_test.py, intl_dc_test.py).
+DC_RHO_DOM = -0.03
+
+
+def score_matrix_dom(lh, la, rho=None):
+    """13×13 πινακας σκορ εγχωριων: Poisson × Dixon-Coles τ (μονο 0-0/1-0/0-1/1-1), κανονικοποιημενος."""
+    r = DC_RHO_DOM if rho is None else rho
+    ph = [exp(-lh) * lh ** i / F[i] for i in range(13)]
+    pa = [exp(-la) * la ** j / F[j] for j in range(13)]
+    Pm = np.outer(ph, pa)
+    Pm[0, 0] *= 1 - lh * la * r; Pm[0, 1] *= 1 + lh * r; Pm[1, 0] *= 1 + la * r; Pm[1, 1] *= 1 - r
+    return Pm / Pm.sum()
+
+
+def gd_dist_dom(lh, la):
+    """Κατανομη διαφορας γκολ ΕΓΧΩΡΙΩΝ (Dixon-Coles) — ιδια μορφη με το gd_dist."""
+    Pm = score_matrix_dom(lh, la)
+    gd = {}
+    for i in range(13):
+        for j in range(13):
+            gd[i - j] = gd.get(i - j, 0) + Pm[i, j]
+    return gd
+
+
 def p_cover(dist, side, line):
     pw = pp = 0.0
     for k, p in dist.items():
@@ -327,12 +355,12 @@ def evaluate_bet(xg_h, xg_a, line, oh, oa):
     επιστρεφει λιστα picks που περνανε τα φιλτρα (μονο +handicap >=0.5, odds 1.70-2.10, edge>=10%).
     Συνηθως 0 η 1 pick. Χρησιμοποιειται ΤΟΣΟ στο backtest ΟΣΟ και ζωντανα."""
     lh = max(xg_h, 0.05); la = max(xg_a, 0.05)   # = (tot±sup)/2
-    dist = gd_dist(lh, la); out = []
+    dist = gd_dist_dom(lh, la); out = []   # 28/9/2026: εγχωρια = κανονικο Dixon-Coles
     for side, ud, odds in [(1, line, oh), (-1, -line, oa)]:
         if ud < MIN_LINE or not (OMIN <= odds <= OMAX):
             continue
         pw, pp = p_cover(dist, side, ud)
-        edge = pw * (odds - 1) * (1 - MARGIN) - (1 - pw - pp)   # 3% vig haircut στα winnings· DC μεσω gd_dist(DRAW_BOOST)
+        edge = pw * (odds - 1) * (1 - MARGIN) - (1 - pw - pp)   # 3% vig haircut στα winnings· Dixon-Coles μεσω gd_dist_dom (28/9)
         if edge >= EDGE:
             # fair odds ΜΕ push (AH): break-even = (1-pp)/pw· το 1/pw αγνοουσε το push
             # (παραπλανητικο σε ακεραιες/μισες γραμμες)· ΔΕΝ αλλαζει edge/picks, μονο το display.

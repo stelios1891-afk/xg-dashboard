@@ -233,7 +233,7 @@ def _odds_pane(m, mk, draw_scale):
                       main_ou, ml_ou, False, s_ou)
     # BTTS (17/9 Στελιος): ιδιο ζευγος xg με τα γκολ (W2), αγορα by/bn απο euro_odds_scan
     import lines_common
-    t3 = lines_common.btts_html(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'], mk)
+    t3 = lines_common.btts_html(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'], mk, dom=False)   # Ευρωπη: οχι Dixon-Coles (28/9)
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '

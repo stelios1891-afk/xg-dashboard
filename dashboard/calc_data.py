@@ -54,7 +54,7 @@ def dom_calc(p):
     """Εγχωρια (CORE7): ενα μοντελο, ιδιος τυπος με scan_value (p_cover στη γραμμη, κουρεμα MARGIN), οριο 10%, τιμη 1.70-2.10."""
     if p.get('mxh') is None or p.get('mxa') is None:
         return None
-    dist = picks.gd_dist(p['mxh'], p['mxa'])
+    dist = picks.gd_dist_dom(p['mxh'], p['mxa'])     # 28/9: εγχωρια = Dixon-Coles (ιδιο με scanner)
     side = 1 if p['side'] == 1 else -1
     lines = []
     for st in STEPS:
