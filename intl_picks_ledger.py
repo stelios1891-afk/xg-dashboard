@@ -52,8 +52,10 @@ def variant_of(p):
     return ''
 
 
-def new_entries(dash, known, now):
-    """Καθαρη λογικη (testable): νεες εγγραφες για picks που εμφανιζονται τωρα μεσα στο παραθυρο και δεν εχουν καταγραφει."""
+def new_entries(dash, known, now, removed=None):
+    """Καθαρη λογικη (testable): νεες εγγραφες για picks που εμφανιζονται τωρα μεσα στο παραθυρο και δεν εχουν καταγραφει.
+    28/9/2026 (Στελιος): pick ΣΥΝΑΙΝΕΣΗΣ που ειχε αφαιρεθει (removed) και ΞΑΝΑΒΓΑΙΝΕΙ → ΝΕΑ εγγραφη (key + '|re1', τιμη/ωρα τωρα),
+    ωστε να φαινεται στο Pick History και να σταλει Telegram (π.χ. over παλιου T που ξαναβγαινει με το νεο T)."""
     out = []
     for c in dash.get('comps', []):
         comp = c['comp']
@@ -68,15 +70,19 @@ def new_entries(dash, known, now):
             streams = [('ΣΥΝΑΙΝΕΣΗ', ic.consensus(m['picks']))] + list(ic.model_picks(m['picks']).items())
             for stream, ps in streams:
                 for p in ps:
-                    k = pick_key(comp, m, stream, p)
+                    k = pick_key(comp, m, stream, p); reentry = None
                     if k in known:
-                        continue
+                        if stream == 'ΣΥΝΑΙΝΕΣΗ' and removed and k in removed and (k + '|re1') not in known:
+                            reentry, k = k, k + '|re1'
+                        else:
+                            continue
                     known.add(k)
                     out.append(dict(key=k, stream=stream, comp=comp, home=m['home'], away=m['away'], hid=m.get('hid'), aid=m.get('aid'),
                                     ko=m['utc'], first_seen=now.strftime('%Y-%m-%d %H:%M'), hours_before=round(hours, 1),
                                     mkt=p['mkt'], role=p['role'], side=p['side'], line=p['line'], odds=p['odds'], book=p['book'],
                                     edge=p['edge'], models=p.get('models', stream), label=ic.label(p, m['home'], m['away']),
-                                    late=ic.late_note(hours), market_ts=(m.get('market') or {}).get('ts'), variant=variant_of(p)))
+                                    late=ic.late_note(hours), market_ts=(m.get('market') or {}).get('ts'), variant=variant_of(p),
+                                    **({'reentry_of': reentry} if reentry else {})))
     return out
 
 
@@ -217,7 +223,8 @@ def main():
     except Exception:
         print('χωρις intl_projections_dashboard.json — τιποτα'); return
     rows = load_ledger(); known = {r['key'] for r in rows}; known_before = set(known)
-    add = new_entries(dash, known, now)
+    removed = {r['key'] for r in rows if r.get('removed') and r.get('stream') == 'ΣΥΝΑΙΝΕΣΗ'}
+    add = new_entries(dash, known, now, removed)
     changed = bool(add)
     rows += add
     # εκκαθαριση
