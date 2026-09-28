@@ -15,7 +15,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 import picks
 
 src = open('sos_test.py', encoding='utf-8').read(); ns = {}; exec(src[:src.index('# ---------- team ratings')], ns)
-P = pd.read_csv('europe_test_preds.csv', dtype={'season': str}); P = P[P.gd.notna()].copy()
+import os
+P = pd.read_csv(os.environ.get('CORE7_PREDS', 'europe_test_preds.csv'), dtype={'season': str}); P = P[P.gd.notna()].copy()   # 28/9: CORE7_PREDS=europe_test_preds_all.csv για αγωνιστικες 1-6
 LG = sorted(P.league.unique()); SEAS = sorted(P.season.unique())
 reg, resolvers = ns['build_odds_layer'](LG, SEAS)
 _c = {}
