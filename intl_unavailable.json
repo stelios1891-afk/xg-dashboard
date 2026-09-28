@@ -1,5 +1,5 @@
 {
-"_asof": "2026-09-28T08:59",
+"_asof": "2026-09-28T10:03",
 "_xi": {
 "8268": {
 "match": "Georgia - Ukraine",
@@ -1432,7 +1432,7 @@
 "8498": {
 "match": "Scotland - Switzerland",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 760746,
@@ -1471,19 +1471,19 @@
 "name": "John McGinn"
 },
 {
-"pid": 1399218,
-"name": "Robbie Ure"
-},
-{
 "pid": 509151,
 "name": "Oli McBurnie"
+},
+{
+"pid": 982617,
+"name": "Kieron Bowie"
 }
 ]
 },
 "6717": {
 "match": "Scotland - Switzerland",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 764018,
@@ -1636,7 +1636,7 @@
 "8496": {
 "match": "Czechia - England",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 1186978,
@@ -1663,8 +1663,8 @@
 "name": "Michal Sadílek"
 },
 {
-"pid": 1151313,
-"name": "Lukás Červ"
+"pid": 836797,
+"name": "Alex Král"
 },
 {
 "pid": 1412656,
@@ -1675,8 +1675,8 @@
 "name": "Pavel Šulc"
 },
 {
-"pid": 1135655,
-"name": "Adam Karabec"
+"pid": 1020816,
+"name": "Matěj Radosta"
 },
 {
 "pid": 969870,
@@ -1687,15 +1687,15 @@
 "8491": {
 "match": "Czechia - England",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 1187213,
 "name": "James Trafford"
 },
 {
-"pid": 1107620,
-"name": "Jarell Quansah"
+"pid": 760712,
+"name": "Trent Alexander-Arnold"
 },
 {
 "pid": 710159,
@@ -1706,8 +1706,8 @@
 "name": "Marc Guéhi"
 },
 {
-"pid": 1300526,
-"name": "Nico O'Reilly"
+"pid": 1197655,
+"name": "Lewis Hall"
 },
 {
 "pid": 1089691,
@@ -2976,58 +2976,6 @@
 "until": "2026-10-09"
 }
 },
-"8496": {
-"1085401": {
-"name": "David Zima",
-"type": "injury",
-"ret": "Early October 2026",
-"doubtful": false,
-"match": "Czechia - England",
-"until": "2026-10-10"
-}
-},
-"8491": {
-"1107910": {
-"name": "Valentino Livramento",
-"type": "injury",
-"ret": "Mid October 2026",
-"doubtful": false,
-"match": "Czechia - England",
-"until": "2026-10-20"
-},
-"654096": {
-"name": "Declan Rice",
-"type": "injury",
-"ret": "Mid October 2026",
-"doubtful": false,
-"match": "Czechia - England",
-"until": "2026-10-20"
-},
-"1292810": {
-"name": "Kobbie Mainoo",
-"type": "injury",
-"ret": "Mid October 2026",
-"doubtful": false,
-"match": "Czechia - England",
-"until": "2026-10-20"
-},
-"696365": {
-"name": "Marcus Rashford",
-"type": "injury",
-"ret": "Mid October 2026",
-"doubtful": false,
-"match": "Czechia - England",
-"until": "2026-10-20"
-},
-"1096353": {
-"name": "Cole Palmer",
-"type": "injury",
-"ret": "Mid October 2026",
-"doubtful": false,
-"match": "Czechia - England",
-"until": "2026-10-20"
-}
-},
 "5787": {
 "955204": {
 "name": "Vanja Drkušić",
@@ -3250,5 +3198,5 @@
 "utc": "2026-09-28T18:45"
 }
 ],
-"_hash": "39102081cd805bf73b508b5ce39c1381"
+"_hash": "459dba618f32f61deeecff47dc2ca47a"
 }
