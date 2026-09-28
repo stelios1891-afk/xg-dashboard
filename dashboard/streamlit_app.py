@@ -347,6 +347,11 @@ def _intl_picks():
                          models=x.get('models'), late=L.get('late', ''))
                 if x['mkt'] == 'OVER':
                     q['bet'] = f"Over {x['line']:g}"
+                try:
+                    import calc_data
+                    q['calc'] = calc_data.intl_calc(m, x)       # 28/9: κομπιουτερακι (3 μοντελα)
+                except Exception:
+                    pass
                 out.append(q)
     return out, d.get('generated')
 
@@ -385,6 +390,11 @@ def _el_picks():
                  proj_odds=p.get('proj_odds'), when=p['when'], el=True)
         if p.get('bet'):
             q['bet'] = p['bet']
+        try:
+            import calc_data
+            q['calc'] = calc_data.single_calc(q, 0.08)          # 28/9: κομπιουτερακι (οριο Ευρωλιγκας 8%)
+        except Exception:
+            pass
         out.append(q)
     return out, d.get('scanned_at')
 
@@ -410,6 +420,12 @@ def render_value(league):
         w = str(p.get('when') or '')[:16]
         return (not w) or (w > _now)   # UTC ISO συγκριση ως string
     picks = [p for p in picks if _upcoming(p)]
+    try:
+        import calc_data                                        # 28/9: κομπιουτερακι στα εγχωρια
+        for p in picks:
+            p['calc'] = calc_data.dom_calc(p)
+    except Exception:
+        pass
     eu_picks = [p for p in eu_picks if _upcoming(p)]
     in_picks = [p for p in in_picks if _upcoming(p)]
     el_picks = [p for p in el_picks if _upcoming(p)]
@@ -452,7 +468,8 @@ def render_value(league):
                           format_func=lambda x: 'Όλα τα πρωταθληματα' if x == 'Όλα' else value_view.LEAGUE_LABELS.get(x, x),
                           key='vp_league')
     shown = combined if sel_lg == 'Όλα' else [p for p in combined if p['lg'] == sel_lg]
-    st.components.v1.html(value_view.picks_html(shown), height=min(len(shown) * 150 + 40, 4000), scrolling=True)
+    st.components.v1.html(value_view.picks_html(shown), height=min(len(shown) * 150 + 140, 4000), scrolling=True)
+    st.caption('🧮 = κομπιουτερακι: βαλε την τιμη (και γραμμη) που βρισκεις τωρα → edge ανα μοντελο με το ΤΡΕΧΟΝ μοντελο και την ελαχιστη τιμη που κραταει το pick (εθνικες: συναινεση = ≥2 απο τα 3 μοντελα πανω απο το οριο).')
     if eu_picks:
         st.caption('🌍 **EU beta** = ευρωπαϊκα picks (UCL/UEL/UECL) · μονο ματς με πληρες FotMob xG · '
                    'κατωφλια φαβορι ≥4% / outsider ≥10% / over ≥4% · 🎯 = γραμμη −0.75 (το τυφλο ευρημα '

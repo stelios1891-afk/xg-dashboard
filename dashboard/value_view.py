@@ -1,5 +1,6 @@
 """value_view.py — HTML cards για τα live Value Picks."""
 import html as _h
+import json as _json
 import build_data
 
 TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
@@ -43,6 +44,22 @@ body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf
 .tag.np{background:rgba(160,160,160,.14);color:#b9b9b9;border:1px dashed rgba(180,180,180,.45);}
 .pc.np{opacity:.72;}
 .bet.ov{color:#3ec98f;border-color:#2d6e57;}
+.cbtn{margin-left:8px;background:#0f1a30;border:1px solid #2d4470;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;line-height:1;color:#7ea2ff;}
+.cbtn:hover,.cbtn.on{background:#182444;border-color:#4b7cf3;}
+.calc{display:none;margin-top:10px;padding:9px 11px;background:#0c1426;border:1px solid #1e2d47;border-radius:9px;}
+.calc.on{display:block;}
+.crow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:#8da0c4;}
+.calc select,.calc input{background:#111c33;border:1px solid #2d4470;border-radius:6px;color:#e8edf8;font-family:'JetBrains Mono',monospace;
+     font-size:13px;padding:4px 6px;}
+.calc input{width:74px;}
+.cres{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+.cm{display:flex;flex-direction:column;gap:1px;}
+.cm .n{font-size:9px;color:#6b7fa3;text-transform:uppercase;letter-spacing:.5px;}
+.cm .e{font-weight:700;}
+.cm .q{font-size:10px;color:#6b7fa3;}
+.g{color:#34d17a;}.a{color:#f5b731;}.r{color:#f04f5a;}
+.csum{margin-top:7px;font-size:11.5px;font-weight:700;}
+.cnote{font-size:10px;color:#f5b731;margin-left:8px;font-weight:400;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 """
@@ -96,16 +113,72 @@ def pick_card(p):
     <div class="tm {hcls}">{_logo(p.get('home_id'))}{_h.escape(p['home'])}</div>
     <span class="vs">vs</span>
     <div class="tm {acls}">{_logo(p.get('away_id'))}{_h.escape(p['away'])}</div>
-    <div class="bet {'ov' if over else ''}">{bet}</div>
+    <div class="bet {'ov' if over else ''}">{bet}</div>{_calc_btn(p)}
   </div>
   <div class="stats">
     <div class="st"><span class="k">Projection</span><span class="v">{proj}</span></div>
     <div class="st"><span class="k">Market</span><span class="v">{p['odds']:.2f}</span></div>
     <div class="st"><span class="k">Edge</span><span class="v edge">{p['edge']*100:.0f}%</span></div>
     <div class="st"><span class="k">{stake_k}</span><span class="v stake">{stake_v}</span></div>
-  </div>
+  </div>{_calc_panel(p)}
 </div>"""
+
+_CID = [0]
+
+
+def _calc_btn(p):
+    """28/9/2026: κουμπι «κομπιουτερακι» (edge στην τιμη που βρισκεις τωρα) — μονο οπου υπαρχουν δεδομενα μοντελου."""
+    if not p.get('calc'):
+        return ''
+    _CID[0] += 1; p['_cid'] = _CID[0]
+    return f'<button class="cbtn" title="Κομπιουτερακι: βαλε την τιμη που βρισκεις τωρα → edge ανα μοντελο" onclick="vpToggle({_CID[0]})">🧮</button>'
+
+
+def _calc_panel(p):
+    c = p.get('calc')
+    if not c or not p.get('_cid'):
+        return ''
+    i = p['_cid']
+    opts = ''.join(f'<option value="{k}"{" selected" if k == c["def"] else ""}>{_h.escape(L["lab"])}</option>'
+                   for k, L in enumerate(c['lines']))
+    pr = f"{c['price']:.2f}" if c.get('price') else ''
+    return (f'<div class="calc" id="vpc{i}" data-c="{_h.escape(_json.dumps(c, ensure_ascii=False))}">'
+            f'<div class="crow">Γραμμη <select onchange="vpCalc({i})">{opts}</select>'
+            f'Τιμη που βρισκω <input type="number" step="0.01" min="1.01" value="{pr}" oninput="vpCalc({i})">'
+            f'<span style="margin-left:auto">οριο pick {c["thr"]*100:.0f}%</span></div>'
+            f'<div class="cres" id="vpr{i}"></div><div class="csum" id="vps{i}"></div></div>')
+
+
+CALC_JS = """
+<script>
+function vpToggle(i){var p=document.getElementById('vpc'+i);p.classList.toggle('on');
+  var b=p.parentNode.querySelector('.cbtn');if(b)b.classList.toggle('on');if(p.classList.contains('on'))vpCalc(i);}
+function vpFmt(x){return (x+0.004).toFixed(2);}
+function vpCalc(i){
+  var p=document.getElementById('vpc'+i),c=JSON.parse(p.dataset.c),L=c.lines[+p.querySelector('select').value];
+  var o=parseFloat(p.querySelector('input').value),out='',ok=0,mins=[],T=Math.round(c.thr*100);
+  for(var k=0;k<c.models.length;k++){
+    var a=L.c[k][0],b=L.c[k][1],mn=a>0?(c.thr-b)/a:null,m0=a>0?-b/a:null;mins.push(mn);
+    var e=(o>1)?(a*o+b):null,cls=e===null?'':(e>=c.thr?'g':(e>=0?'a':'r'));
+    if(e!==null&&e>=c.thr)ok++;
+    out+='<div class="cm"><span class="n">'+c.models[k]+'</span><span class="e '+cls+'">'+
+      (e===null?'—':((e>=0?'+':'')+(e*100).toFixed(1)+'%'))+(e!==null&&e>=c.thr?' ✓':'')+'</span>'+
+      '<span class="q">'+(mn&&mn>1?('για '+T+'%: ≥'+vpFmt(mn)):'')+(m0&&m0>1?(' · 0%: ≥'+vpFmt(m0)):'')+'</span></div>';
+  }
+  document.getElementById('vpr'+i).innerHTML=out;
+  var notes='';
+  if(c.rng&&o>1&&(o<c.rng[0]||o>c.rng[1]))notes+='τιμη εκτος '+c.rng[0].toFixed(2)+'–'+c.rng[1].toFixed(2)+' ';
+  if(c.minabs&&Math.abs(L.l)<c.minabs)notes+='γραμμη κατω απο ±'+c.minabs+' ';
+  var s=mins.filter(function(x){return x&&x>1;}).sort(function(x,y){return x-y;}),need=s.length>=c.need?s[c.need-1]:null;
+  var multi=c.models.length>1,pass=ok>=c.need;
+  var head=multi?('συναινεση '+ok+'/'+c.models.length+' '+(pass?'✓':'✗')):(pass?'✓ περνα το οριο':'✗ κατω απο το οριο');
+  document.getElementById('vps'+i).innerHTML='<span class="'+(pass?'g':'r')+'">'+head+'</span>'+
+    (need?'<span style="color:#8da0c4;font-weight:400;margin-left:8px">'+(multi?'συναινεση (≥'+c.need+' μοντελα)':'οριο')+' απο ≥'+vpFmt(need)+'</span>':'')+
+    (notes?'<span class="cnote">⚠ '+notes+'</span>':'');
+}
+</script>"""
+
 
 def picks_html(picks):
     picks = sorted(picks, key=lambda p: (p.get('when') or '9999'))   # χρονολογικα: νωριτερο πανω, πιο μετα κατω
-    return CSS + '<div class="wrap">' + ''.join(pick_card(p) for p in picks) + '</div>'
+    return CSS + '<div class="wrap">' + ''.join(pick_card(p) for p in picks) + '</div>' + CALC_JS
