@@ -73,7 +73,7 @@ def prepare(current_season):
             except Exception:
                 pass
     settled, pending = _first_alert(settled), _first_alert(pending)
-    for fn in (_intl_rows, _euro_rows):
+    for fn in (_intl_rows, _euro_rows, _el_rows):
         try:
             s_i, p_i = fn()
             settled += s_i; pending += p_i
@@ -208,6 +208,78 @@ def _euro_rows():
     return settled, pending
 
 
+# ---------- ΕΥΡΩΛΙΓΚΑ (28/9/2026, Στελιος): el_clv_bets.jsonl με τους ΙΔΙΟΥΣ κανονες ----------
+# Ενα pick ανα ματς & πλευρα (χαντικαπ: γηπ/φιλ · συνολο: over/under) = η ΠΡΩΤΗ εγγραφη ≤72ω πριν το τζαμπολ·
+# οι μεταγενεστερες γραμμες (π.χ. +8.5 → +9.5) μονο ως σημειωση «μετα», ΟΧΙ ξεχωριστα bets.
+# Αποτελεσμα = el_projections.json · κλεισιμο = τελευταια τιμη Pinnacle πριν το τζαμπολ (el_odds_hist + el_closing_backfill).
+# Αλλη γραμμη στο κλεισιμο → ≈CLV: το κλεισιμο μεταφρασμενο στη γραμμη μας (κανονικη κατανομη, σ του μοντελου), ιδια γκανιοτα.
+def _el_rows():
+    import el_report as er
+    proj = json.load(open(os.path.join(ROOT, 'el_projections.json'), encoding='utf-8'))
+    games = {g['code']: g for g in proj.get('games', [])}
+    sm, stt = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
+    close = {}
+    for c in _jsonl(os.path.join(ROOT, 'el_odds_hist.jsonl')) + _jsonl(os.path.join(ROOT, 'el_closing_backfill.jsonl')):
+        if c.get('line') is None or c['t'] + ':00' >= c['commence'][:19]:
+            continue
+        if c['code'] not in close or c['t'] > close[c['code']]['t']:
+            close[c['code']] = c
+    grp = {}
+    for b in _jsonl(os.path.join(ROOT, 'el_clv_bets.jsonl')):
+        d = (b.get('bet') or '').split(' ')[0] if b['mkt'] == 'total' else b['side']
+        grp.setdefault((b['code'], b['mkt'], d), []).append(b)
+    settled, pending = [], []
+    for v in grp.values():
+        v.sort(key=lambda b: b['seen'])
+        def hb(b):
+            ko = datetime.datetime.fromisoformat(b['when']).replace(tzinfo=UTC)
+            return (ko - datetime.datetime.fromisoformat(b['seen'])).total_seconds() / 3600
+        ok = [b for b in v if hb(b) <= 72]
+        b = ok[0] if ok else v[-1]
+        g = games.get(b['code'], {})
+        tot = b['mkt'] == 'total'
+        r = dict(lg='Euroleague', home=b['home'], away=b['away'], hid=None, aid=None, hlogo=g.get('hcrest'), alogo=g.get('acrest'),
+                 ko=b['when'], bk=True, mkt=b['mkt'], side=(0 if tot else b['side']), hcap=float(b['hcap']), odds=float(b['odds']),
+                 edge=b.get('edge'), seen=b['seen'], bet_label=(b.get('bet') if tot else None),
+                 later=[(x['hcap'], x['odds']) for x in v if x['seen'] > b['seen']],
+                 score=None, pnl=None, xg_h=None, xg_a=None, xg_fair=None, xg_value=None, close_odds=None, clv=None)
+        if not (g.get('played') and g.get('hs') is not None):
+            pending.append(r); continue
+        m, t = g['hs'] - g['as_'], g['hs'] + g['as_']
+        res = ((m if b['side'] == 1 else -m) + b['hcap']) if not tot else ((t - b['hcap']) if b['bet'].startswith('Over') else (b['hcap'] - t))
+        r['pnl'] = (b['odds'] - 1) if res > 0 else (0.0 if res == 0 else -1.0)
+        r['score'] = f"{g['hs']} - {g['as_']}"
+        c = close.get(b['code'])
+        try:
+            if c and not tot:
+                cl = c['line'] if b['side'] == 1 else -c['line']; co = c['oh'] if b['side'] == 1 else c['oa']
+                r['close_line'], r['close_odds'] = cl, co
+                if abs(cl - b['hcap']) < 0.01:
+                    r['clv'] = round(b['odds'] - co, 3); r['clv_pct'] = round(b['odds'] / co - 1, 4)
+                else:
+                    mu = er.implied_mu(c['line'], c['oh'], c['oa'], sm)
+                    def fair(L):
+                        Lh = L if b['side'] == 1 else -L
+                        pw, pp = er.cover(mu, Lh, sm); p = pw if b['side'] == 1 else 1 - pw - pp
+                        return (1 - pp) / p
+                    eq = co * fair(b['hcap']) / fair(cl); r['close_eq'] = round(eq, 3); r['clv_est_pct'] = round(b['odds'] / eq - 1, 4)
+            elif c and tot and c.get('tl') is not None:
+                over = b['bet'].startswith('Over'); co = c['to'] if over else c['tu']
+                r['close_line'], r['close_odds'] = c['tl'], co
+                if abs(c['tl'] - b['hcap']) < 0.01:
+                    r['clv'] = round(b['odds'] - co, 3); r['clv_pct'] = round(b['odds'] / co - 1, 4)
+                else:
+                    mu = er.implied_mu(-c['tl'], c['to'], c['tu'], stt)
+                    def fair(T):
+                        po, pp = er.cover(mu, -T, stt); p = po if over else 1 - po - pp
+                        return (1 - pp) / p
+                    eq = co * fair(b['hcap']) / fair(c['tl']); r['close_eq'] = round(eq, 3); r['clv_est_pct'] = round(b['odds'] / eq - 1, 4)
+        except Exception:
+            r['close_odds'] = None; r['clv'] = None
+        settled.append(r)
+    return settled, pending
+
+
 def _intl_rows():
     rows = [r for r in _jsonl(os.path.join(ROOT, 'intl_picks_ledger.jsonl')) if r.get('stream') == 'ΣΥΝΑΙΝΕΣΗ' and not r.get('removed')]   # removed: βγηκε απο τον Στελιο (26/9, over παλιου T)
     closing = {}
@@ -298,15 +370,26 @@ def _pct(v, flip=False):
     return f'<span class="{cls}">{v * 100:+.1f}%</span>'
 
 
+def _logo(r, home=True):
+    """σημα ομαδας: FotMob (ποδοσφαιρο) ή URL απο το ιδιο το pick (Ευρωλιγκα: hlogo/alogo)."""
+    u = r.get('hlogo' if home else 'alogo')
+    if u:
+        return f'<img src="{_h.escape(u)}">'
+    tid = r.get('hid') if home else r.get('aid')
+    return f'<img src="{TLOGO.format(tid)}">' if tid is not None else ''
+
+
+def _later(r):
+    if not r.get('later'):
+        return ''
+    return ('<div class="dim">μετα: ' + ' → '.join(f'{"+" if h >= 0 and not r.get("bet_label") else ""}{h:g} @{o:.2f}' for h, o in r['later']) + '</div>')
+
+
 def _pick_cell(r):
     if r.get('bet_label'):
-        return f'⚽ {_h.escape(r["bet_label"])}'
+        return f'{"🏀" if r.get("bk") else "⚽"} {_h.escape(r["bet_label"])}' + _later(r)
     team = r['home'] if r['side'] == 1 else r['away']
-    tid = r.get('hid') if r['side'] == 1 else r.get('aid')
-    out = f'<img src="{TLOGO.format(tid)}">{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}'
-    if r.get('later'):
-        out += ('<div class="dim">μετα: ' + ' → '.join(f'{"+" if h >= 0 else ""}{h:g} @{o:.2f}' for h, o in r['later']) + '</div>')
-    return out
+    return f'{_logo(r, r["side"] == 1)}{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}' + _later(r)
 
 
 def _when(r):
@@ -346,9 +429,9 @@ def table_html(settled, pending):
         _hdr(r)
         ko = str(r.get('ko') or '')
         H.append(
-            f'<tr class="pend"><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
+            f'<tr class="pend"><td class="l">{_logo(r)}'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else "")}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)} · ΕΚΚΡΕΜΕΙ</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else ("🏀 " if r.get("bk") else ""))}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)} · ΕΚΚΡΕΜΕΙ</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td colspan="7" class="mut">παιζεται…</td></tr>')
     for r in settled:
@@ -369,9 +452,9 @@ def table_html(settled, pending):
         xg = (f'{r["xg_h"]:.2f} – {r["xg_a"]:.2f}' if r.get('xg_h') is not None
               else '<span class="mut">—</span>')
         H.append(
-            f'<tr><td class="l"><img src="{TLOGO.format(r.get("hid"))}">'
+            f'<tr><td class="l">{_logo(r)}'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else "")}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)}</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else ("🏀 " if r.get("bk") else ""))}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)}</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td>{closes}</td><td>{clv}</td>'
             f'<td>{_h.escape(str(r.get("score") or "—"))}</td><td>{xg}</td>'

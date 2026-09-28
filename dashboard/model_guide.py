@@ -495,7 +495,7 @@ def euroleague_html():
                      ['σύνολο ≥10%: over / under', '+7.7% / −0.8%', '+10.3% / +6.0%']]))
     h += card('v3: ειδικοί στην αρχή σεζόν + value picks (25/9)', 'live',
               'Αρχικό rating χάντικαπ = 0.32·περσινή ομάδα + 0.42·κατάταξη ειδικών BasketNews (θέση → rating ιστορικού ποσοστημορίου). '
-              'Picks: edge ≥8% στην τιμή Pinnacle, χάντικαπ ή over/under, μόνο ματς που δεν άρχισαν · Telegram για νέα/αλλαγή τιμής · ημερολόγιο el_clv_bets.jsonl.',
+              'Picks: edge ≥8% στην τιμή Pinnacle, χάντικαπ ή over/under, μόνο ματς που δεν άρχισαν · Telegram για νέα/αλλαγή τιμής · ημερολόγιο el_clv_bets.jsonl · 📒 Pick History (28/9): ένα pick ανά ματς & πλευρά, η πρώτη εμφάνιση ≤72ω πριν το τζάμπολ (άλλες γραμμές μόνο ως «μετά»), κλείσιμο Pinnacle & CLV.',
               'Τεστ Γ (2021-25, αγων 1-10): σφάλμα 11.49 → 11.41 · δεδομένα παικτών (δικά μας, 3StepsBasket, μετάφραση 11 πρωταθλημάτων, 8 τρόποι rating) ΔΕΝ πρόσθεσαν πάνω από τους ειδικούς · fantasy = σκιά (χωρίς ιστορικό).',
               'el_expert_prior.json · el_refresh.py (EXPERTS) · el_picks.py · el_all_sources_test.py · el_rating_variants.py', '')
     h += card('v4: ρυθμίσεις Β1 στο χάντικαπ (26/9)', 'live',
