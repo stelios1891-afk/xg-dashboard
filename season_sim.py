@@ -3,7 +3,7 @@ season_sim.py — ΓΕΝΙΚΗ ΜΗΧΑΝΗ Monte Carlo τελους σεζον 
 
 Δεδομενων: (α) παιγμενα ματς ως ενα cutoff, (β) υπολοιπα fixtures, (γ) ratings της μηχανης ΣΤΟ cutoff
 -> λ_home/λ_away ανα ματς (ιδιο math με dashboard/build_data._predict_ratings, HFA_FIX)
--> σκορ απο Poisson x DRAW_BOOST 1.13 (ιδια κατανομη με picks.gd_dist / build_data.one_x_two)
+-> σκορ απο Poisson x Dixon-Coles εγχωριων (live απο 29/9: draw_boost='dc' = picks.score_matrix_dom / build_data.one_x_two· 1.13 = παλιο)
 -> N runs vectorized numpy -> καταταξη με κριτηρια ισοβαθμιας ανα λιγκα -> πιθανοτητες.
 
 ΔΕΙΓΜΑΤΟΛΗΨΙΑ ΣΚΟΡ (ακριβης, οχι προσεγγιση): rejection sampling. Η κατανομη με draw boost ειναι
@@ -184,8 +184,35 @@ def fixture_lambdas(fixtures, blended, lg_shots, lg_xgps, hf):
 
 
 # ======================= δειγματοληψια σκορ =======================
+def _sample_dc(lam_h, lam_a, rng, rho):
+    """29/9/2026: Poisson + κανονικο Dixon-Coles τ (μονο 0-0/1-0/0-1/1-1) με rejection — ιδιο με picks.score_matrix_dom
+    (αποδοχη τ/τ_max, τ_max = max(1−λμρ, 1−ρ, 1) για ρ<0). Ελεγχος: ισοπαλια MC .2639 vs αναλυτικο .2650 (season_sim_dc_test.py)."""
+    shp = np.broadcast(lam_h, lam_a).shape
+    L1 = np.broadcast_to(lam_h, shp); L2 = np.broadcast_to(lam_a, shp)
+    def tau(gh, ga, l1, l2):
+        t = np.ones(gh.shape)
+        t = np.where((gh == 0) & (ga == 0), 1 - l1 * l2 * rho, t)
+        t = np.where((gh == 0) & (ga == 1), 1 + l1 * rho, t)
+        t = np.where((gh == 1) & (ga == 0), 1 + l2 * rho, t)
+        return np.where((gh == 1) & (ga == 1), 1 - rho, t)
+    def tmax(l1, l2):
+        return np.maximum(np.maximum(1 - l1 * l2 * rho, 1 - rho), 1.0)
+    gh = rng.poisson(L1); ga = rng.poisson(L2)
+    redo = rng.random(gh.shape) > tau(gh, ga, L1, L2) / tmax(L1, L2)
+    while redo.any():
+        idx = np.nonzero(redo)
+        nh = rng.poisson(L1[idx]); na = rng.poisson(L2[idx])
+        gh[idx] = nh; ga[idx] = na
+        redo = np.zeros_like(redo)
+        redo[idx] = rng.random(nh.shape) > tau(nh, na, L1[idx], L2[idx]) / tmax(L1[idx], L2[idx])
+    return gh, ga
+
+
 def sample_scores(lam_h, lam_a, rng, draw_boost=DRAW_BOOST):
-    """lam_h, lam_a: arrays ιδιου σχηματος -> (gh, ga) ακεραιοι, κατανομη Poisson x draw_boost (rejection)."""
+    """lam_h, lam_a: arrays ιδιου σχηματος -> (gh, ga) ακεραιοι, κατανομη Poisson x draw_boost (rejection).
+    draw_boost='dc' (29/9/2026) -> κανονικο Dixon-Coles των εγχωριων (picks.DC_RHO_DOM)."""
+    if isinstance(draw_boost, str) and draw_boost == 'dc':
+        return _sample_dc(lam_h, lam_a, rng, picks.DC_RHO_DOM)
     gh = rng.poisson(lam_h); ga = rng.poisson(lam_a)
     if draw_boost and draw_boost != 1.0:
         p_acc = 1.0 / draw_boost
@@ -201,7 +228,9 @@ def sample_scores(lam_h, lam_a, rng, draw_boost=DRAW_BOOST):
 
 
 def score_matrix(lh, la, draw_boost=DRAW_BOOST):
-    """13x13 πινακας σκορ (ιδιος με picks.gd_dist) — για αναφορα/ελεγχο."""
+    """13x13 πινακας σκορ (ιδιος με picks.gd_dist· draw_boost='dc' -> picks.score_matrix_dom) — για αναφορα/ελεγχο."""
+    if isinstance(draw_boost, str) and draw_boost == 'dc':
+        return picks.score_matrix_dom(lh, la)
     from math import exp, factorial
     F = [factorial(i) for i in range(13)]
     ph = np.array([exp(-lh) * lh ** i / F[i] for i in range(13)])
@@ -337,7 +366,7 @@ if __name__ == '__main__':
     rng = np.random.default_rng(0)
     for lh, la in [(1.6, 1.1), (2.4, 0.7), (1.2, 1.3)]:
         n = 400000
-        gh, ga = sample_scores(np.full(n, lh), np.full(n, la), rng)
+        gh, ga = sample_scores(np.full(n, lh), np.full(n, la), rng, 'dc')   # 29/9: one_x_two = Dixon-Coles εγχωριων
         mc = ((gh > ga).mean() * 100, (gh == ga).mean() * 100, (gh < ga).mean() * 100)
         an = BD.one_x_two(lh, la)
         print(f"λ {lh}-{la}: MC {mc[0]:.1f}/{mc[1]:.1f}/{mc[2]:.1f}  αναλυτικο {an['hw']}/{an['d']}/{an['aw']}")

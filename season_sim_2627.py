@@ -64,7 +64,7 @@ def season_matches(lg):
 
 def parse_method(name):
     """-> dict(s0, rho, db, p1, c). 'D1_p1_c0.05' = M2 ρ=.15 s0=.10 + P1 + αξια c· 'M2_r0.15_s0.10' = παλια προεπιλογη."""
-    s0 = 0.0; rho = 0.0; db = SS.DRAW_BOOST; p1 = False; c = 0.0
+    s0 = 0.0; rho = 0.0; db = 'dc'; p1 = False; c = 0.0      # 29/9/2026: κανονικο Dixon-Coles οπως τα εγχωρια (season_sim_dc_test.py: LL ιδιο .1263, cov80 .783)
     if name.startswith('D1'):
         s0, rho, p1, c = 0.10, 0.15, True, 0.05
     m = re.search(r'_s([0-9.]+)', name)
