@@ -9,6 +9,12 @@ _src = open('nba_model_test.py', encoding='utf-8').read().split("P('')\nP('=== �
 with contextlib.redirect_stdout(io.StringIO()):
     exec(_src)
 RADJ = json.load(open('nba_roster_adj.json', encoding='utf-8'))['delta']
+_RADJ2 = None
+def _radj2():
+    global _RADJ2
+    if _RADJ2 is None:
+        _RADJ2 = json.load(open('nba_roster_adj2.json', encoding='utf-8'))
+    return _RADJ2
 
 def fit_eff2(hi, ai, eh, ea, hb, nt, w, n, o0, d0, lam, mu0, lam_u, u0):
     nG = len(hi); sw = np.sqrt(w); nu = n if lam_u else 0
@@ -26,7 +32,8 @@ def fit_eff2(hi, ai, eh, ea, hb, nt, w, n, o0, d0, lam, mu0, lam_u, u0):
     x = np.linalg.lstsq(A, y, rcond=None)[0]
     return x[0], x[1:1 + n], x[1 + n:1 + 2 * n], (x[1 + 2 * n:] if nu else np.zeros(n))
 
-def run2(h=2.0, lam=8, HL=60, carry=0.7, lw=0.5, lam_u=None, beta=0.0):
+def run2(h=2.0, lam=8, HL=60, carry=0.7, lw=0.5, lam_u=None, beta=0.0, radj=None):
+    """radj: εκδοχη απο nba_roster_adj2.json (π.χ. 'BOTH|W3', 'AGE|ROLL')· None = v1."""
     if lw not in EHA: EHA[lw] = luck_eff(lw)
     EH, EA = EHA[lw]
     pm_ = np.full(len(G), np.nan); prior = {}; uprior = {}
@@ -34,9 +41,18 @@ def run2(h=2.0, lam=8, HL=60, carry=0.7, lw=0.5, lam_u=None, beta=0.0):
     for s in SEAS:
         sidx = np.where(G.season.values == s)[0]
         teams = sorted(set(G.home.values[sidx]) | set(G.away.values[sidx])); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
-        adj = np.array([beta * RADJ.get(f'{s}|{t}', 0.0) for t in teams])
-        o0 = np.array([carry * prior.get(t, (0, 0, 0))[0] for t in teams]) + adj / 2
-        d0 = np.array([carry * prior.get(t, (0, 0, 0))[1] for t in teams]) - adj / 2
+        o0b = np.array([carry * prior.get(t, (0, 0, 0))[0] for t in teams])
+        d0b = np.array([carry * prior.get(t, (0, 0, 0))[1] for t in teams])
+        roll = radj is not None and radj.endswith('ROLL')
+        if radj is None:
+            adj = np.array([beta * RADJ.get(f'{s}|{t}', 0.0) for t in teams])
+        elif not roll:
+            adj = np.array([beta * _radj2()[radj].get(f'{s}|{t}', 0.0) for t in teams])
+        else:
+            R2 = _radj2()[radj]; dates_s = G.date.values[sidx]
+            byteam = {t: sorted((k.split('|')[2], v) for k, v in R2.items() if k.startswith(f'{s}|{t}|')) for t in teams}
+            adj = np.array([beta * (byteam[t][0][1] if byteam[t] else 0.0) for t in teams])
+        o0 = o0b + adj / 2; d0 = d0b - adj / 2
         p0 = np.array([carry * prior.get(t, (0, 0, 0))[2] for t in teams])
         u0 = np.array([uprior.get(t, 0.0) for t in teams])
         hi = np.array([ix[t] for t in G.home.values[sidx]]); ai = np.array([ix[t] for t in G.away.values[sidx]])
@@ -44,6 +60,10 @@ def run2(h=2.0, lam=8, HL=60, carry=0.7, lw=0.5, lam_u=None, beta=0.0):
         hb = nt * h / 2; dn = dnum[sidx]; eh = EH[sidx]; ea = EA[sidx]; pc = G.pace.values[sidx]
         for d in np.unique(dn):
             past = dn < d; cur = np.where(dn == d)[0]
+            if roll:
+                ds = str(np.datetime_as_string(dates_s[cur[0]], unit='D'))
+                adj = np.array([beta * next((v for dd, v in reversed(byteam[t]) if dd <= ds), byteam[t][0][1] if byteam[t] else 0.0) for t in teams])
+                o0 = o0b + adj / 2; d0 = d0b - adj / 2
             if past.any():
                 w = 0.5 ** ((d - dn[past]) / HL)
                 mu, O, Dd, U = fit_eff2(hi[past], ai[past], eh[past], ea[past], hb[past], nt[past], w, n, o0, d0, lam, mu0, lam_u, u0)
