@@ -8,7 +8,7 @@ Layout (εμπνευσμενο απο TeamsLab):
 
 Τρεξε τοπικα:  streamlit run dashboard/streamlit_app.py
 """
-import os, sys, json
+import os, sys, json, datetime
 import streamlit as st
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -49,6 +49,7 @@ import xgstats
 import xgstats_view
 import value_view
 import results_view
+import proj_archive
 
 st.set_page_config(page_title="xG Model — Live", page_icon="⚽", layout="wide",
                    initial_sidebar_state="expanded")
@@ -155,9 +156,21 @@ bar += '</div>'
 st.markdown(bar, unsafe_allow_html=True)
 
 # ---------- MAIN CONTENT ----------
+@st.cache_data(ttl=3600)
+def _proj_archive():
+    return proj_archive.load()
+
 def render_projections(league):
-    lg_matches = [m for m in proj if m['league'] == league]
+    upcoming = [m for m in proj if m['league'] == league]
+    # 29/9/2026 (Στελιος): και οι ΠΑΛΙΕΣ αγωνιστικες — παγωμενες προβλεψεις (οσα ηξερε το μοντελο πριν το ματς)
+    live_fids = {str(m.get('fid')) for m in upcoming}
+    now_iso = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M')
+    past = [m for m in _proj_archive().values()
+            if m.get('league') == league and m.get('projectable') and str(m.get('fid')) not in live_fids
+            and str(m.get('utc'))[:16] <= now_iso]
+    lg_matches = upcoming + past
     gws = sorted({m['gw'] for m in lg_matches})
+    dflt = proj_archive.default_gw(upcoming, gws)
     fid = build_data.LEAGUE_FOTMOB[league]
     c1, c2 = st.columns([3, 1])
     with c1:
@@ -166,7 +179,8 @@ def render_projections(league):
             f'<div><div class="nm">{LEAGUE_LABELS.get(league, league)}</div>'
             f'<div class="co">{LEAGUE_COUNTRY.get(league, "")}</div></div></div>', unsafe_allow_html=True)
     with c2:
-        gw = st.selectbox("Αγωνιστικη", gws, format_func=lambda x: f"GW {x}", key=f"gw_{league}")
+        gw = st.selectbox("Αγωνιστικη", gws, index=gws.index(dflt) if dflt in gws else 0,
+                          format_func=lambda x: f"GW {x}", key=f"gw_{league}")
     sel = sorted([m for m in lg_matches if m['gw'] == gw], key=lambda m: m['utc'])
     ws = [m['warm_cur'] for m in sel if 'warm_cur' in m]
     if ws:
@@ -181,7 +195,7 @@ def render_projections(league):
     except Exception:
         pass
     st.components.v1.html(cards.cards_block(sel, dom_odds),
-                          height=min(len(sel) * 132 + 40, 6000), scrolling=True)
+                          height=min(sum(162 if m.get('src') else 132 for m in sel) + 40, 6000), scrolling=True)
 
 def _lg_header(league, sub):
     fid = build_data.LEAGUE_FOTMOB[league]

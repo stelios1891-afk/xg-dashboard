@@ -522,6 +522,23 @@ def test_d_core7_anchor_short_lines_only():
                 assert abs(v['o']) < 1.5, f'{lg} {v.get("name")}: διορθωση {v["o"]} — υποπτα μεγαλη'
 
 
+def test_d_proj_archive():
+    """29/9/2026: αρχειο Match Projections — προεπιλεγμενη αγωνιστικη = του τρεχοντος σ/κ (οχι αναβληθεν) · εγγραφες ακεραιες."""
+    import proj_archive as pa
+    up = [dict(gw=4, utc='2026-10-01T18:00Z')] + [dict(gw=7, utc=f'2026-10-0{d}T14:00Z') for d in (3, 3, 4, 4)] + \
+         [dict(gw=8, utc='2026-10-17T14:00Z')] * 5
+    assert pa.default_gw(up, [1, 2, 3, 4, 5, 6, 7, 8]) == 7, 'αναβληθεν ματς παλιας αγωνιστικης δεν πρεπει να ειναι η προεπιλογη'
+    assert pa.default_gw([], [1, 2, 3]) == 3
+    p = os.path.join(ROOT, 'match_projections_archive.json')
+    if os.path.exists(p):
+        A = json.load(open(p, encoding='utf-8'))
+        for k, m in A.items():
+            assert m.get('src') in ('live', 'recon') and str(m.get('fid')) == k, (k, m.get('src'))
+            if m.get('projectable'):
+                assert 0.05 < m['home_adj_xg'] < 6 and 0.05 < m['away_adj_xg'] < 6, (k, m['home_adj_xg'], m['away_adj_xg'])
+                assert abs(m['hw'] + m['d'] + m['aw'] - 100) < 0.5, (k, m['hw'], m['d'], m['aw'])
+
+
 def test_d_gd_dist_is_probability():
     import picks
     dist = picks.gd_dist(1.4, 1.1)

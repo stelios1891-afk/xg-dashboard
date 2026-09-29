@@ -130,7 +130,19 @@ def card_html(m, mk=None, ou_pair=None):
     <div class="row"><span>npxG / Shot</span><b>{m['away_xg_shot']:.4f}</b></div>
     <div class="row"><span>Neutral xG</span><b>{m['away_xg']:.3f}</b></div>
     <div class="row"><span>Adj xG</span><b class="acc">{m['away_adj_xg']:.3f}</b></div></div>
-</div><div class="time">{esc(day)}</div></div></div>"""
+</div><div class="time">{esc(day)}</div></div>{_past_note(m)}</div>"""
+
+def _past_note(m):
+    """29/9/2026: παλια αγωνιστικη απο το αρχειο (proj_archive) — τελικο σκορ + οτι η προβλεψη ειναι η ΠΡΟ-αγωνα."""
+    if not m.get('src'):
+        return ''
+    sc = m.get('score')
+    src = ('ανακατασκευή με ό,τι ήταν γνωστό πριν το ματς' if m.get('src') == 'recon'
+           else 'πρόβλεψη όπως ήταν πριν τη σέντρα')
+    res = (f'<b style="color:#e8edf8;font-family:JetBrains Mono,monospace;font-size:12px">Τελικό {esc(sc.replace("-", " - "))}</b> · '
+           if sc else '')
+    return (f'<div style="text-align:center;font-size:10px;color:#8fa3c8;padding:5px 8px 7px;border-top:1px solid #1e2d47">'
+            f'{res}<span style="color:#6b7fa3">{src}</span></div>')
 
 def _ckey(m):
     return f"{m.get('home_id') or ''}_{m.get('away_id') or ''}"
@@ -153,7 +165,11 @@ def cards_block(matches, odds=None):
     odds = odds or {}
     up = _uncomp_pairs()
     def _op(m):
+        if m.get('src'):                                  # αρχειο: το ζευγος γκολ οπως ηταν τοτε
+            return tuple(m['_ou']) if m.get('_ou') else None
         p = up.get(_ckey(m))
         return (p['xh'], p['xa']) if p else None
+    def _mk(m):
+        return m.get('_mk') if m.get('src') else odds.get(_ckey(m))   # αρχειο: αγορα οπως ηταν τοτε
     return CARD_CSS + FONTS + lc.TABS_CSS + '<div class="wrap">' + \
-        ''.join(card_html(m, odds.get(_ckey(m)), ou_pair=_op(m)) for m in matches) + '</div>'
+        ''.join(card_html(m, _mk(m), ou_pair=_op(m)) for m in matches) + '</div>'
