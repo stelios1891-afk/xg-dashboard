@@ -1,5 +1,5 @@
 {
-"_asof": "2026-09-29T17:44",
+"_asof": "2026-09-29T18:00",
 "_xi": {
 "8496": {
 "match": "Czechia - England",
@@ -106,7 +106,7 @@
 "6720": {
 "match": "Spain - Croatia",
 "utc": "2026-09-29T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 660625,
@@ -157,7 +157,7 @@
 "10155": {
 "match": "Spain - Croatia",
 "utc": "2026-09-29T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 383971,
@@ -215,10 +215,6 @@
 "name": "Angus Gunn"
 },
 {
-"pid": 640642,
-"name": "Jack Hendry"
-},
-{
 "pid": 551805,
 "name": "Scott McKenna"
 },
@@ -227,32 +223,36 @@
 "name": "Luis Binks"
 },
 {
-"pid": 1112684,
-"name": "Nathan Patterson"
+"pid": 640642,
+"name": "Jack Hendry"
 },
 {
-"pid": 942549,
-"name": "Billy Gilmour"
+"pid": 1112684,
+"name": "Nathan Patterson"
 },
 {
 "pid": 888921,
 "name": "Lewis Ferguson"
 },
 {
-"pid": 357880,
-"name": "Andrew Robertson"
+"pid": 942549,
+"name": "Billy Gilmour"
 },
 {
 "pid": 356406,
 "name": "John McGinn"
 },
 {
-"pid": 509151,
-"name": "Oli McBurnie"
+"pid": 357880,
+"name": "Andrew Robertson"
 },
 {
 "pid": 982617,
 "name": "Kieron Bowie"
+},
+{
+"pid": 509151,
+"name": "Oli McBurnie"
 }
 ]
 },
@@ -490,8 +490,8 @@
 "name": "Robi Saarma"
 },
 {
-"pid": 1606292,
-"name": "Kristofer Käit"
+"pid": 695067,
+"name": "Mattias Käit"
 },
 {
 "pid": 1078375,
@@ -514,7 +514,7 @@
 "5792": {
 "match": "Luxembourg - Iceland",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
 "pid": 148331,
@@ -549,8 +549,8 @@
 "name": "Vincent Thill"
 },
 {
-"pid": 675023,
-"name": "Danel Sinani"
+"pid": 1089478,
+"name": "Mathias Olesen"
 },
 {
 "pid": 1536762,
@@ -565,7 +565,7 @@
 "8536": {
 "match": "Luxembourg - Iceland",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
 "pid": 850962,
@@ -584,24 +584,20 @@
 "name": "Daníel Grétarsson"
 },
 {
-"pid": 942193,
-"name": "Mikael Egill Ellertsson"
+"pid": 796756,
+"name": "Logi Tómasson"
 },
 {
-"pid": 873236,
-"name": "Jón Thorsteinsson"
-},
-{
-"pid": 1044470,
-"name": "Hákon Arnar Haraldsson"
+"pid": 157729,
+"name": "Gylfi Sigurðsson"
 },
 {
 "pid": 1000428,
 "name": "Ísak Jóhannesson"
 },
 {
-"pid": 665188,
-"name": "Albert Guðmundsson"
+"pid": 1044470,
+"name": "Hákon Arnar Haraldsson"
 },
 {
 "pid": 1050161,
@@ -610,72 +606,76 @@
 {
 "pid": 1097229,
 "name": "Orri Óskarsson"
+},
+{
+"pid": 942193,
+"name": "Mikael Egill Ellertsson"
 }
 ]
 },
 "6035": {
 "match": "San Marino - Albania",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
 "pid": 958440,
 "name": "Edoardo Colombo"
 },
 {
-"pid": 1240819,
-"name": "Filippo Fabbri"
+"pid": 1626146,
+"name": "Giacomo Benvenuti"
+},
+{
+"pid": 1182552,
+"name": "Dante Carlos Rossi"
 },
 {
 "pid": 850459,
 "name": "Michele Cevoli"
 },
 {
-"pid": 1501218,
-"name": "Marco Pasolini"
+"pid": 1651608,
+"name": "Simone Giocondi"
 },
 {
-"pid": 1407312,
-"name": "Alessandro Tosi"
+"pid": 1769613,
+"name": "Gabriel Capicchioni"
 },
 {
-"pid": 1808406,
-"name": "Cristian Meloni"
+"pid": 969678,
+"name": "Marcello Mularoni"
 },
 {
 "pid": 1422335,
 "name": "Lorenzo Capicchioni"
 },
 {
-"pid": 625654,
-"name": "Alessandro Golinucci"
-},
-{
-"pid": 1677244,
-"name": "Nicolas Giacopetti"
+"pid": 1422703,
+"name": "Lorenzo Lazzari"
 },
 {
 "pid": 954395,
 "name": "Nicola Nanni"
 },
 {
-"pid": 1677243,
-"name": "Samuele Zannoni"
+"pid": 857154,
+"name": "Samuel Pancotti"
 }
 ]
 },
 "10024": {
 "match": "San Marino - Albania",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
-"pid": 150747,
-"name": "Etrit Berisha"
+"pid": 1178779,
+"name": "Alen Sherri"
 },
 {
-"pid": 293160,
-"name": "Elseid Hysaj"
+"pid": 1643777,
+"name": "Samuele Sina"
 },
 {
 "pid": 750880,
@@ -686,47 +686,47 @@
 "name": "Berat Djimsiti"
 },
 {
-"pid": 1015750,
-"name": "Stavros Pilios"
+"pid": 1184458,
+"name": "Mario Mitaj"
 },
 {
-"pid": 544941,
-"name": "Taulant Seferi"
+"pid": 1198007,
+"name": "Anis Mehmeti"
+},
+{
+"pid": 1067466,
+"name": "Juljan Shehu"
 },
 {
 "pid": 1208969,
 "name": "Kristjan Asllani"
 },
 {
-"pid": 762028,
-"name": "Ylber Ramadani"
-},
-{
-"pid": 1121511,
-"name": "Ernest Muçi"
+"pid": 948247,
+"name": "Myrto Uzuni"
 },
 {
 "pid": 566753,
 "name": "Rey Manaj"
 },
 {
-"pid": 857618,
-"name": "Arbër Hoxha"
+"pid": 1121511,
+"name": "Ernest Muçi"
 }
 ]
 },
 "8497": {
 "match": "Slovakia - Kazakhstan",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
-"pid": 651910,
-"name": "Dominik Greif"
+"pid": 72241,
+"name": "Martin Dúbravka"
 },
 {
-"pid": 308841,
-"name": "Ivan Schranz"
+"pid": 521846,
+"name": "Martin Valjent"
 },
 {
 "pid": 309328,
@@ -753,8 +753,8 @@
 "name": "Ondrej Duda"
 },
 {
-"pid": 1159556,
-"name": "Adrián Kaprálik"
+"pid": 1425998,
+"name": "Leo Sauer"
 },
 {
 "pid": 940594,
@@ -769,15 +769,15 @@
 "8265": {
 "match": "Slovakia - Kazakhstan",
 "utc": "2026-09-29T18:45",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
 "pid": 489507,
 "name": "Stas Pokatilov"
 },
 {
-"pid": 1780058,
-"name": "Aleksandr Mrynskiy"
+"pid": 1819380,
+"name": "Arsen Ashirbek"
 },
 {
 "pid": 762729,
@@ -788,32 +788,32 @@
 "name": "Nuraly Alip"
 },
 {
-"pid": 634251,
-"name": "Yan Vorogovsky"
+"pid": 1284420,
+"name": "Stanislav Basmanov"
 },
 {
-"pid": 1251303,
-"name": "Dinmukhamed Karaman"
+"pid": 1652799,
+"name": "Nauryzbek Zhagorov"
 },
 {
 "pid": 462023,
 "name": "Islambek Kuat"
 },
 {
-"pid": 387960,
-"name": "Bauyrzhan Islamkhan"
-},
-{
 "pid": 1781547,
 "name": "Zhasulan Amir"
 },
 {
-"pid": 1068585,
-"name": "Artur Shushenachev"
+"pid": 1780059,
+"name": "Ismail Bekbolat"
 },
 {
-"pid": 1068586,
-"name": "Galymzhan Kenzhebek"
+"pid": 1251303,
+"name": "Dinmukhamed Karaman"
+},
+{
+"pid": 980776,
+"name": "Ramazan Karimov"
 }
 ]
 },
@@ -3084,10 +3084,10 @@
 "818893": {
 "name": "Nicolò Zaniolo",
 "type": "injury",
-"ret": "About 1-2 weeks",
+"ret": "Late October 2026",
 "doubtful": false,
 "match": "France - Italy",
-"until": "2026-10-10"
+"until": "2026-10-31"
 }
 },
 "8263": {
@@ -3152,25 +3152,6 @@
 "until": "2026-09-30"
 }
 },
-"_alerts": [
-{
-"key": "10155|1413996|2026-09-29T18:45",
-"team": "Croatia",
-"name": "Luka Vuskovic",
-"v": 41.40505,
-"started_last": true,
-"match": "Spain - Croatia",
-"utc": "2026-09-29T18:45"
-},
-{
-"key": "10155|950824|2026-09-29T18:45",
-"team": "Croatia",
-"name": "Josip Stanisic",
-"v": 28.985274,
-"started_last": true,
-"match": "Spain - Croatia",
-"utc": "2026-09-29T18:45"
-}
-],
-"_hash": "f915c45d8752f12aa699e337c4e6e5fa"
+"_alerts": [],
+"_hash": "0e548b806dc103ba23f95918c1cb6b48"
 }
