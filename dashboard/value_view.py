@@ -92,6 +92,10 @@ def pick_card(p):
         if p.get('mkt_note'):          # 30/9: «αγορα κοντρα» — η τιμη μας ανεβαινε τις 3ω πριν το alert
             short = ('⚠ αγορα κοντρα ' if p.get('mkt') == 'hcap' else 'ℹ αγορα κοντρα ') + f"{p.get('drift') or 0:+.1f}π"
             tags += f'<span class="tag lc" title="{_h.escape(p["mkt_note"])}">{_h.escape(short)}</span>'
+    if p.get('anchor'):                # 29/9: αγκυρα αγορας στις κοντες γραμμες (15η+)
+        a = p['anchor']
+        tags += (f'<span class="tag eu" title="Αγκυρα αγορας (κοντη γραμμη, 15η+): διορθωση υπεροχης {a.get("shift", 0):+.2f} γκολ '
+                 f'(γηπ {a.get("o_h", 0):+.2f} · φιλ {a.get("o_a", 0):+.2f})">⚓ αγκυρα {a.get("shift", 0):+.2f}</span>')
     if p.get('tag75'):
         tags += '<span class="tag t75">🎯 −0.75</span>'
     if p.get('no_play'):

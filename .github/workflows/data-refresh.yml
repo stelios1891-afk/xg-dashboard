@@ -40,6 +40,11 @@ jobs:
           done
           python add_current_season.py
 
+      - name: Market anchor (κοντες γραμμες, 15η+ — core7_anchor.py, 29/9)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python core7_anchor.py || echo "core7 anchor failed (κρατιουνται οι χθεσινες διορθωσεις)"
+
       - name: Lineup Lab refresh (φετινοι παικτες + βαση)
         env:
           PYTHONIOENCODING: utf-8
@@ -69,6 +74,7 @@ jobs:
           git config user.email "actions@github.com"
           git add teamgame_inputs.csv data_*_2627.json data_Brazil_2026.json player_matches_2627.json squads_2627.json lineup_lab.json projected_lineups.jsonl projected_fc.jsonl lineup_forward.jsonl
           git add -f season_projections.json || true
+          git add -f core7_anchor_offsets.json || true
           # commit ΜΟΝΟ αν αλλαξαν τα raw data (νεα ματς / Opta revisions) — οχι μονο float-noise στο csv
           if git diff --cached --quiet -- data_*_2627.json data_Brazil_2026.json player_matches_2627.json projected_lineups.jsonl; then
             echo "no raw-data changes — skip commit"

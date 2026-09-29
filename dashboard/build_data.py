@@ -248,16 +248,18 @@ def blend_league(prior_r, histc, K=K_WARM):
     return out, ns
 
 def league_ratings(lg, Mp, Mc, ratings_season=RATINGS_SEASON_DEFAULT,
-                   current_season=CURRENT_SEASON, id2name=None, name2id=None):
+                   current_season=CURRENT_SEASON, id2name=None, name2id=None, fixtures=None):
     """ΚΟΙΝΗ λογικη ratings μιας λιγκας — χρησιμοποιειται ΚΑΙ απο το dashboard ΚΑΙ απο τον scanner.
     ΜΗΝ την διπλασιασεις αλλου: καθε αλλαγη (νεοφωτιστες/K/prior) πρεπει να ισχυει και στα δυο.
+    fixtures=None → FotMob επερχομενα (live)· λιστα → χωρις δικτυο (core7_anchor: αναπαραγωγη προ-αγωνα προβλεψεων).
 
     -> dict(blended, ns, lg_shots, lg_xgps, hf, fixtures, promoted)
     """
     id2name = id2name if id2name is not None else {}
     name2id = name2id if name2id is not None else {}
     histp, lg_shots, lg_xgps, hf = picks.league_state(Mp, lg, ratings_season)
-    fixtures = fetch_upcoming(lg)          # χρειαζεται για να ξερουμε ΠΟΙΕΣ ειναι οι νεοφωτιστες
+    if fixtures is None:
+        fixtures = fetch_upcoming(lg)      # χρειαζεται για να ξερουμε ΠΟΙΕΣ ειναι οι νεοφωτιστες
     fx_ids = set(); fx_names = {}
     for f in fixtures:
         for ik, nk in (('home_id', 'home_name'), ('away_id', 'away_name')):

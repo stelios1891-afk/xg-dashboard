@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'das
 import picks as engine
 import live_odds   # reuse assign() / team_match()
 import build_data   # flatten_warmstart (flat cross-season prior)
+import core7_anchor  # 29/9: αγκυρα αγορας (κοντες γραμμες, 15η+)
 
 BASE = 'https://api.the-odds-api.com/v4'
 SPORT = {'EPL': 'soccer_epl', 'LaLiga': 'soccer_spain_la_liga', 'SerieA': 'soccer_italy_serie_a',
@@ -210,11 +211,13 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
             lgc = Mc[Mc.league == lg] if len(Mc) else Mc
             md = min(int(((lgc.home == H) | (lgc.away == H)).sum()),
                      int(((lgc.home == A) | (lgc.away == A)).sum())) + 1 if len(lgc) else 1
+            # 29/9/2026 (Στελιος): ΑΓΚΥΡΑ ΑΓΟΡΑΣ μονο σε κοντες γραμμες (+0.5/+0.75) απο την 15η — core7_anchor.py
+            xg_h, xg_a, anc = core7_anchor.apply(lg, H, A, xg_h, xg_a, f['line'], md)
             for b in engine.evaluate_bet(xg_h, xg_a, f['line'], f['home_odds'], f['away_odds']):
                 all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
                                       when=f['startTime'], md=md,
                                       mxh=round(xg_h, 3), mxa=round(xg_a, 3),
-                                      **b, hnote=hnote, anote=anote))
+                                      **b, hnote=hnote, anote=anote, **({'anchor': anc} if anc else {})))
     KELLY_FRAC = 0.125; CAP = 0.20
     for p in all_picks:
         p['stake'] = KELLY_FRAC * p['edge'] / (p['odds'] - 1)

@@ -496,6 +496,32 @@ def test_d_gd_dist_dom_dixon_coles():
     assert 0.22 < d[0] < old[0], f'ισοπαλια DC {d[0]:.4f} vs ×1.13 {old[0]:.4f} — αναμενοταν μικροτερη αλλα >0.22'
 
 
+def test_d_core7_anchor_short_lines_only():
+    """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
+    import core7_anchor as CA
+    assert CA.LAM == 0.5 and CA.APPLY_MD == 15 and CA.LEARN_MIN_PLAYED == 6 and set(CA.SHORT_LINES) == {0.5, 0.75}
+    saved = CA._OFF
+    CA._OFF = {'leagues': {'EPL': {'teams': {'1': {'o': 0.2}, '2': {'o': -0.1}}}}}
+    try:
+        assert CA.apply('EPL', 1, 2, 1.5, 1.0, -0.5, 14)[2] is None, 'εφαρμοστηκε πριν την 15η'
+        assert CA.apply('EPL', 1, 2, 1.5, 1.0, -1.0, 20)[2] is None, 'εφαρμοστηκε σε βαθια γραμμη'
+        h, a, info = CA.apply('EPL', 1, 2, 1.5, 1.0, -0.75, 15)
+        assert info is not None and _approx(h - a, 0.5 + 0.3, 1e-9) and _approx(h + a, 2.5, 1e-9), (h, a, info)
+        assert CA.apply('EPL', 1, 2, 1.5, 1.0, 0.5, 15)[2] is not None, 'δεν εφαρμοστηκε σε +0.5 (γηπεδουχος dog)'
+        assert CA.apply('LaLiga', 1, 2, 1.5, 1.0, -0.5, 20)[:2] == (1.5, 1.0), 'ομαδες χωρις διορθωση πρεπει να μενουν ιδιες'
+    finally:
+        CA._OFF = saved
+    src = open(os.path.join(ROOT, 'toa_live.py'), encoding='utf-8').read()
+    i_a, i_e = src.find('core7_anchor.apply('), src.find('engine.evaluate_bet(xg_h, xg_a')
+    assert 0 < i_a < i_e, 'toa_live: η αγκυρα πρεπει να εφαρμοζεται ΠΡΙΝ το evaluate_bet'
+    if os.path.exists(os.path.join(ROOT, 'core7_anchor_offsets.json')):
+        d = json.load(open(os.path.join(ROOT, 'core7_anchor_offsets.json'), encoding='utf-8'))
+        assert set(d.get('leagues', {})) == set(CA.CORE7), 'core7_anchor_offsets.json: λειπουν λιγκες'
+        for lg, L in d['leagues'].items():
+            for t, v in L['teams'].items():
+                assert abs(v['o']) < 1.5, f'{lg} {v.get("name")}: διορθωση {v["o"]} — υποπτα μεγαλη'
+
+
 def test_d_gd_dist_is_probability():
     import picks
     dist = picks.gd_dist(1.4, 1.1)
