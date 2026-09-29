@@ -89,6 +89,9 @@ def pick_card(p):
             tags += f'<span class="tag lc">{_h.escape(p["late"])}</span>'
     if p.get('el'):
         tags += '<span class="tag eu">🏀 μπασκετ</span>'
+        if p.get('mkt_note'):          # 30/9: «αγορα κοντρα» — η τιμη μας ανεβαινε τις 3ω πριν το alert
+            short = ('⚠ αγορα κοντρα ' if p.get('mkt') == 'hcap' else 'ℹ αγορα κοντρα ') + f"{p.get('drift') or 0:+.1f}π"
+            tags += f'<span class="tag lc" title="{_h.escape(p["mkt_note"])}">{_h.escape(short)}</span>'
     if p.get('tag75'):
         tags += '<span class="tag t75">🎯 −0.75</span>'
     if p.get('no_play'):

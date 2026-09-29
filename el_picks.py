@@ -13,6 +13,54 @@ F = lambda n: os.path.join(ROOT, n)
 HC_MIN, TOT_MIN = 0.08, 0.08
 ODDS_DELTA = 0.05
 Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
+# 30/9/2026 (Στελιος): σημειωση «αγορα κοντρα» — ποσο κινηθηκε η αγορα τις 3 ωρες ΠΡΙΝ την πρωτη εμφανιση του pick.
+# el_line_timing.py (Crown 2021-25): χαντικαπ με την τιμη μας να ΑΝΕΒΑΙΝΕΙ >=0.5 π. -> -1.4% (135, 2/5) vs σταθερη +5.2%·
+# συνολα ιδια περιπτωση +5.3% (215) = κανενα προβλημα. ΠΑΡΑΤΗΡΗΣΗ (οχι προ-δηλωμενο τεστ) -> μονο σημειωση, το pick μενει.
+DRIFT_H, DRIFT_MIN = 3.0, 0.5
+from statistics import NormalDist as _ND
+def _mu(row, mkt, sm, st):
+    try:
+        if mkt == 'hcap':
+            L, o1, o2 = float(row['line']), float(row['oh']), float(row['oa'])
+            p = (1 / o1) / (1 / o1 + 1 / o2); return -L + sm * _ND().inv_cdf(min(max(p, 1e-4), 1 - 1e-4))
+        T, o1, o2 = float(row['tl']), float(row['to']), float(row['tu'])
+        p = (1 / o1) / (1 / o1 + 1 / o2); return T + st * _ND().inv_cdf(min(max(p, 1e-4), 1 - 1e-4))
+    except Exception:
+        return None
+_HIST = None
+def drift_before(p, first_seen, sm, st):
+    """+ = η αγορα ηρθε ΠΡΟΣ την πλευρα μας, - = εφυγε (η τιμη μας ανεβηκε) τις DRIFT_H ωρες πριν την πρωτη εμφανιση."""
+    global _HIST
+    if _HIST is None:
+        _HIST = {}
+        try:
+            for ln in open(F('el_odds_hist.jsonl'), encoding='utf-8'):
+                try:
+                    r = json.loads(ln); _HIST.setdefault(int(r['code']), []).append(r)
+                except Exception:
+                    pass
+            for v in _HIST.values(): v.sort(key=lambda r: r['t'])
+        except FileNotFoundError:
+            pass
+    key_ = 'line' if p['mkt'] == 'hcap' else 'tl'
+    H = [r for r in _HIST.get(int(p['code']), []) if r.get(key_) is not None]
+    if not H: return None
+    t_alert = dt.datetime.fromisoformat(first_seen).astimezone(dt.timezone.utc)
+    ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
+    now_rows = [r for r in H if ts(r) <= t_alert + dt.timedelta(minutes=15)]
+    prev_rows = [r for r in H if ts(r) <= t_alert - dt.timedelta(hours=DRIFT_H)]
+    if not now_rows: return None
+    a, b = (prev_rows[-1] if prev_rows else H[0]), now_rows[-1]
+    m0, m1 = _mu(a, p['mkt'], sm, st), _mu(b, p['mkt'], sm, st)
+    if m0 is None or m1 is None: return None
+    s_ = p['side'] if p['mkt'] == 'hcap' else (1 if str(p.get('bet', '')).startswith('Over') else -1)
+    return round((m1 - m0) * s_, 1)
+def drift_note(p):
+    d = p.get('drift')
+    if d is None or d > -DRIFT_MIN: return None
+    if p['mkt'] == 'hcap':
+        return f"⚠️ Αγορα κοντρα: η τιμη μας ανεβηκε ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν το alert). Ιστορικα τετοια χαντικαπ −1.4% (135 picks) vs +5.2% οταν η τιμη ειναι σταθερη — παρατηρηση."
+    return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν το alert) — στα συνολα ιστορικα δεν βλαπτει (+5.3%, 215 picks)· παιζεται νωρις."
 
 def _load(p, d):
     try: return json.load(open(p, encoding='utf-8'))
@@ -75,7 +123,7 @@ def line(p, prev=None):
     else:
         bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_line']:g}"
     ch = f" (ηταν {prev:.2f})" if prev else ''
-    return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})"
+    return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})" + (f"\n{p['mkt_note']}" if p.get('mkt_note') else '')
 
 def main(notify_tg=True):
     picks = compute()
@@ -88,6 +136,13 @@ def main(notify_tg=True):
             new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now)
         elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
             changed.append((p, prev.get('odds'))); state[k].update(odds=p['odds'], edge=p['edge'])
+    proj_ = _load(F('el_projections.json'), {}); sm_, st_ = float(proj_.get('sigma_margin', 11.5)), float(proj_.get('sigma_total', 16.7))
+    for p in picks:
+        st0 = state.get(key(p), {})
+        if 'drift' not in st0:
+            st0['drift'] = drift_before(p, st0.get('first_seen', now), sm_, st_)
+            if key(p) in state: state[key(p)]['drift'] = st0['drift']
+        p['drift'] = st0['drift']; p['mkt_note'] = drift_note(p)
     today = now[:10]
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
     if new:
@@ -95,7 +150,7 @@ def main(notify_tg=True):
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
-                                         model=p.get('model')), ensure_ascii=False) + '\n')
+                                         model=p.get('model'), drift=p.get('drift')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('el_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

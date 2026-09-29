@@ -387,7 +387,7 @@ def _el_picks():
     out = []
     for p in d.get('picks', []):
         q = dict(lg='Euroleague', home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
-                 proj_odds=p.get('proj_odds'), when=p['when'], el=True)
+                 proj_odds=p.get('proj_odds'), when=p['when'], el=True, mkt=p.get('mkt'), mkt_note=p.get('mkt_note'), drift=p.get('drift'))
         if p.get('bet'):
             q['bet'] = p['bet']
         try:
