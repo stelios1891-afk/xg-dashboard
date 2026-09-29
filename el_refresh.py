@@ -15,7 +15,7 @@ LAM = 8                                          # βαρος περσινης �
 # ΔΥΟ ΜΗΧΑΝΕΣ (αποφαση Στελιου 25/9, μετα LOSO + ROI με edge σε 6 σεζον):
 # Β1 (26/9, αποφαση Στελιου· el_hcap_big_test.py 972 συνδ. LOSO: επιλογη ακριβειας 5/5): K 12 · HL 60 · εδρα 5 · ανοιγμα ×1.1 απο 7ο αγωνα
 #   (+ περσι 0.5 στο el_expert_prior.json). RMSE 11.709→11.663 · ROI χαντικαπ ≥8% +6.8→+7.6% · CLV ισο.
-ENG_SPREAD = dict(luck=0.5, HL=60, carry=0.7, mu_w=5.0, h=5.0, lam=12, stretch=1.1, stretch_from=7)
+ENG_SPREAD = dict(luck=0.5, HL=60, carry=0.7, mu_w=5.0, h=5.0, lam=12, stretch=1.1, stretch_from=7, domestic=True)   # 30/9: + φετινα εγχωρια (el_domestic_live)
 ENG_V1 = dict(luck=0.5, HL=120, carry=0.7, mu_w=5.0, h=6.0, lam=8)   # παλιο v1 (μονο για συγκριση στο dashboard)
 ENG_TOTAL = dict(luck=0.25, HL=9999, carry=0.7, mu_w=50.0, h=6.0)  # συνολο = v2 (LOSO b .314 vs .272· edge>=8% +5.5% 6/6 vs +2.0%)
 # ΕΙΔΙΚΟΙ στην αρχη σεζον (αποφαση Στελιου 25/9): αρχικο net χαντικαπ = 0.32·ομαδα περσι + 0.42·ειδικοι (τεστ Γ, LOSO 2021-25)
@@ -133,6 +133,20 @@ def fit_eff_mu(hi, ai, eh, ea, hb, w, n, o0, d0, lam, mu0, mu_w):
 
 dnum = np.array([(d - D.date.iloc[0]).days for d in D.date])
 NEU = {}
+# 30/9/2026 (Στελιος «περασε το»): ΦΕΤΙΝΑ ΕΓΧΩΡΙΑ — η φετινη φορμα στο πρωταθλημα μετακινει την αφετηρια του χαντικαπ
+# (κ 0.5, ταβανι 20· el_domestic_rating_test.py: αγων 11+ & ολη η σεζον καλυτερα 5/5, ROI ≥8% +7.6 → +10.1%).
+DOMSHIFT = None
+try:
+    import el_domestic_live
+    _elt = {}
+    for x in S.get(SEASON, []): _elt[x['hcode']] = x['home']; _elt[x['acode']] = x['away']
+    DOMSHIFT, _dinfo, _ddelta = el_domestic_live.build_shifts(_elt, D.date.iloc[0])
+    _cut = (dt.date.today() - D.date.iloc[0]).days + 1
+    print('φετινα εγχωρια: ' + ' · '.join(f'{c} {_ddelta(c, _cut):+.1f}' for c in sorted(_dinfo)) + f' (αντιστοιχισμενες {len(_dinfo)}/{len(_elt)})')
+    _miss = sorted(set(_elt) - set(_dinfo))
+    if _miss: print('  χωρις εγχωρια ομαδα:', _miss)
+except Exception as _e:
+    print('ΠΡΟΣΟΧΗ: φετινα εγχωρια απενεργα —', _e); DOMSHIFT = None
 def build(eng):
     """τρεχει μια «μηχανη» (ENG_*) σε ολες τις σεζον ως σημερα → (state τρεχουσας σεζον, CTX για walk-forward)."""
     EH, EA = luck_eff(eng['luck'])
@@ -151,6 +165,10 @@ def build(eng):
                 cur = o0[i] - d0[i]
                 new = PR['w_team'] / PR['v1_carry'] * cur + PR['w_exp'] * PR['rating'][t]
                 o0[i] += (new - cur) / 2; d0[i] -= (new - cur) / 2
+        o0b, d0b = o0.copy(), d0.copy()                  # βαση χωρις εγχωρια (για το walk-forward)
+        if s == SEASON and eng.get('domestic') and DOMSHIFT:
+            _c = (dt.date.today() - D.date.iloc[0]).days + 1
+            _sh = np.array([DOMSHIFT(t, _c) for t in teams]); o0 = o0 + _sh / 2; d0 = d0 - _sh / 2
         hi = ai = hb = None
         if len(sidx):
             if s not in NEU:
@@ -166,7 +184,7 @@ def build(eng):
         if s == SEASON:
             state = dict(mu=mu, pm=pm, O={t: O[i] for t, i in ix.items()}, D={t: Dd[i] for t, i in ix.items()}, P={t: Pc[i] for t, i in ix.items()},
                          n={t: int(((D.season == s) & ((D.home == t) | (D.away == t))).sum()) for t in teams})
-            CTX = dict(ix=ix, n=n, o0=o0, d0=d0, p0=p0, mu0=mu0, pm0=pm0, sidx=sidx, hi=hi, ai=ai, hb=hb, dn=dnum[sidx], EH=EH, EA=EA, eng=eng, cache={})
+            CTX = dict(ix=ix, n=n, o0=o0b, d0=d0b, tl=teams, p0=p0, mu0=mu0, pm0=pm0, sidx=sidx, hi=hi, ai=ai, hb=hb, dn=dnum[sidx], EH=EH, EA=EA, eng=eng, cache={})
         else:
             prior = {t: (O[i], Dd[i], Pc[i]) for t, i in ix.items()}; mu0 = mu; pm0 = pm
     return state, CTX
@@ -177,13 +195,16 @@ def state_at(c, cut):
     """ratings με ματς της σεζον ΑΥΣΤΗΡΑ πριν απο τη μερα cut (walk-forward, χωρις να ξερει το αποτελεσμα)."""
     if cut in c['cache']: return c['cache'][cut]
     ix, eng = c['ix'], c['eng']
+    o0, d0 = c['o0'], c['d0']
+    if eng.get('domestic') and DOMSHIFT:                # φετινα εγχωρια ΠΡΙΝ απο τη μερα cut
+        _sh = np.array([DOMSHIFT(t, cut) for t in c['tl']]); o0 = o0 + _sh / 2; d0 = d0 - _sh / 2
     past = (c['dn'] < cut) if c['hi'] is not None else np.array([], bool)
     if past.any():
         w = 0.5 ** ((cut - c['dn'][past]) / eng['HL']); sid = c['sidx'][past]
-        mu, O, Dd = fit_eff_mu(c['hi'][past], c['ai'][past], c['EH'][sid], c['EA'][sid], c['hb'][past], w, c['n'], c['o0'], c['d0'], eng.get('lam', LAM), c['mu0'], eng['mu_w'])
+        mu, O, Dd = fit_eff_mu(c['hi'][past], c['ai'][past], c['EH'][sid], c['EA'][sid], c['hb'][past], w, c['n'], o0, d0, eng.get('lam', LAM), c['mu0'], eng['mu_w'])
         pm, Pc = fit_pace(c['hi'][past], c['ai'][past], D.pace.values[sid], w, c['n'], c['p0'], eng.get('lam', LAM), c['pm0'])
     else:
-        mu, O, Dd, pm, Pc = c['mu0'], c['o0'], c['d0'], c['pm0'], c['p0']
+        mu, O, Dd, pm, Pc = c['mu0'], o0, d0, c['pm0'], c['p0']
     st = dict(mu=mu, pm=pm, O={t: O[i] for t, i in ix.items()}, D={t: Dd[i] for t, i in ix.items()}, P={t: Pc[i] for t, i in ix.items()})
     c['cache'][cut] = st; return st
 def predict(st, hcode, acode, neu, h):
@@ -198,7 +219,7 @@ _, CTX_V1 = build(ENG_V1)                            # παλιο v1: χωρις
 _, CTX_T = build(ENG_TOTAL)             # συνολο ποντων
 d0date = D.date.iloc[0]
 today_cut = (dt.date.today() - d0date).days + 1
-MODEL_TAG = 'v4-B1'
+MODEL_TAG = 'v4-B1+dom'
 GNO, _cnt = {}, {}                      # αριθμος αγωνα της σεζον (max των δυο ομαδων) — οπως στο τεστ της καμπυλης
 for y in sorted(S[SEASON], key=lambda y: y['utc']):
     if y['phase'] != 'RS': continue
@@ -250,7 +271,7 @@ for L in S.values():
 ratings = sorted([dict(code=t, name=names.get(t, t), O=round(state['O'][t], 2), D=round(state['D'][t], 2), net=round(state['O'][t] - state['D'][t], 2),
                        pace=round(state['P'][t], 2), games=state['n'][t]) for t in state['O']], key=lambda r: -r['net'])
 json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=SEASON,
-               model='v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
+               model='v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + φετινα εγχωρια (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
                sigma_margin=SIGMA_MARGIN, sigma_total=SIGMA_TOTAL, mu=round(state['mu'], 2), pace=round(state['pm'], 2),
                games=games, ratings=ratings), open('el_projections.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(f'el_projections.json: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα, με προβλεψη «πριν το ματς») · ratings {len(ratings)} ομαδων')

@@ -12,6 +12,8 @@ H = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0 Safar
 LEAGUES = {20: 'ACB', 17: 'GBL', 25: 'TBL', 16: 'LBA', 24: 'ISR', 19: 'LNB', 22: 'BBL', 142: 'LKL', 18: 'ABA', 23: 'VTB'}
 ALL = [f'{y % 100:02d}-{(y + 1) % 100:02d}' for y in range(2017, 2027)]
 RS_AGAIN = ['24-25', '25-26', '26-27']
+if '--current' in sys.argv:                  # 30/9: καθημερινα στο euro-refresh — μονο η τρεχουσα σεζον (για el_domestic_live)
+    ALL = RS_AGAIN = ['26-27']
 OUT = 'bk_domestic.json'
 db = json.load(open(OUT, encoding='utf-8')) if os.path.exists(OUT) else {}
 BASE = 'https://basketball.nowgoal26.com/jsData/matchResult'
