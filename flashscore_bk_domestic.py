@@ -12,7 +12,9 @@ sys.stdout.reconfigure(encoding='utf-8')
 H = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36'}
 HF = {**H, 'x-fsign': 'SW9D1eZo', 'Referer': 'https://www.flashscore.com/'}
 C = {'ACB': 'spain/acb', 'GBL': 'greece/basket-league', 'TBL': 'turkey/super-lig', 'LBA': 'italy/lega-a', 'ISR': 'israel/super-league',
-     'LNB': 'france/lnb', 'BBL': 'germany/bbl', 'LKL': 'lithuania/lkl', 'ABA': 'europe/aba-league', 'VTB': 'russia/vtb-united-league'}
+     'LNB': 'france/lnb', 'BBL': 'germany/bbl', 'LKL': 'lithuania/lkl', 'ABA': 'europe/aba-league', 'VTB': 'russia/vtb-united-league',
+     # 30/9: ευρωπαικες διοργανωσεις — συνδεουν τα πρωταθληματα (κοινη κλιμακα, «Elo» μπασκετ)
+     'EL': 'europe/euroleague', 'EC': 'europe/eurocup', 'BCL': 'europe/champions-league', 'FEC': 'europe/fiba-europe-cup'}
 YEARS = list(range(2020, 2027))
 GF, SF = 'fs_bk_games.json', 'fs_bk_stats.jsonl'
 S = requests.Session()
@@ -36,6 +38,7 @@ def events(txt):
         if 'ZA' in f: stage = f['ZA']
         if 'AA' in f and 'AE' in f:
             out.append(dict(id=f['AA'], ts=int(f.get('AD', 0) or 0), home=f.get('AE'), away=f.get('AF'),
+                            hid=f.get('PX'), aid=f.get('PY'),              # 30/9: σταθερος κωδικος ομαδας Flashscore (ιδιος σε ολες τις διοργανωσεις)
                             hs=f.get('AG'), as_=f.get('AH'), stage=stage))
     return out
 
@@ -43,7 +46,7 @@ games = json.load(open(GF, encoding='utf-8')) if os.path.exists(GF) else {}
 for k, p in C.items():
     for y in YEARS:
         key = f'{k}_{y}'
-        if key in games and y < 2026: continue
+        if key in games and y < 2026 and games[key] and 'hid' in games[key][0]: continue
         u = f'https://www.flashscore.com/basketball/{p}-{y}-{y + 1}/results/' if y < 2026 else f'https://www.flashscore.com/basketball/{p}/results/'
         t = get(u, H)
         if not t: print(key, 'χωρις σελιδα', flush=True); continue
