@@ -137,6 +137,23 @@ def upcoming():
 
 
 def toa_events():
+    # 1/10/2026 (Στελιος): ΠΡΩΤΑ PINNACLE (pin_api, 0 credits, ιδια μορφη με το Odds API)· Odds API μονο ως εφεδρεια και το πολυ
+    # 1 φορα την ωρα (πριν: σε ΚΑΘΕ tick ~5′ χωρις φρενο = ~290 credits/μερα). Επιστροφη: odds_source.json → "brazil": "toa".
+    import pin_api
+    if pin_api.source('brazil') == 'pinnacle':
+        try:
+            ev = pin_api.toa_like('brazil', include_alt=False)
+            print(f'brazil_shadow: Pinnacle {len(ev)} ματς (0 credits)')
+            return ev
+        except pin_api.PinError as e:
+            pin_api.fallback_notice('brazil', str(e))
+    try:
+        last = json.load(open(STATE_F, encoding='utf-8')).get('_toa_at')
+        if last and (datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(last)).total_seconds() < 3600:
+            print('brazil_shadow: Odds API πριν <60′ — skip (φρενο credits)')
+            return None
+    except Exception:
+        pass
     key = os.environ.get('TOA_KEY')
     if not key:
         print('brazil_shadow: TOA_KEY λειπει — dry run (μονο μοντελο).')
@@ -148,6 +165,12 @@ def toa_events():
     if r.status_code != 200:
         print(f'brazil_shadow: TOA HTTP {r.status_code}')
         return None
+    try:
+        st_ = json.load(open(STATE_F, encoding='utf-8'))
+    except Exception:
+        st_ = {}
+    st_['_toa_at'] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='minutes')
+    json.dump(st_, open(STATE_F, 'w', encoding='utf-8'), ensure_ascii=False)
     return r.json()
 
 

@@ -45,6 +45,8 @@ WINDOW_H = 48        # request μονο αν καποιο ματς ξεκινα 
 MIN_GAP_MIN = 60     # μακρια απο τζαμπολ: το πολυ 1 request / ωρα
 NEAR_H = 2           # ... αλλα μεσα στο 2ωρο πριν απο τζαμπολ:
 NEAR_GAP_MIN = 15    #     1 request / 15'
+PIN_GAP_MIN = 10     # 1/10: Pinnacle (δωρεαν) — καθε ~10'
+TOA_ALT_GAP_MIN = 180  # 1/10: Odds API μονο για alt book ματς που η Pinnacle δεν εχει ανοιξει — το πολυ 1 / 3ω
 MATCH_MIN = 30       # παραθυρο ωρας για ταιριασμα TOA <-> προγραμμα
 PRUNE_H = 48         # ποσο κρατιουνται οι εγγραφες μετα το τζαμπολ
 FORCE = os.environ.get('EL_FORCE') == '1'
@@ -278,34 +280,63 @@ def main():
         age_min = (now - _pdt(old['scanned_at'])).total_seconds() / 60
     except Exception:
         age_min = 1e9
-    gap = NEAR_GAP_MIN if nearest_h <= NEAR_H else MIN_GAP_MIN
+    # 1/10/2026 (Στελιος): ΠΡΩΤΑ PINNACLE (δημοσια υπηρεσια, 0 credits, pin_api.py) — Odds API μονο (α) για «alt book» σε ματς ≤48ω
+    # που η Pinnacle δεν εχει ανοιξει ακομα (το πολυ 1 φορα / TOA_ALT_GAP λεπτα) και (β) ως ΕΦΕΔΡΕΙΑ αν η Pinnacle αποτυχει.
+    # Επιστροφη στο Odds API: odds_source.json → "source": "toa" (ή "euroleague": "toa").
+    import pin_api
+    use_pin = pin_api.source('euroleague') == 'pinnacle'
+    gap = PIN_GAP_MIN if use_pin else (NEAR_GAP_MIN if nearest_h <= NEAR_H else MIN_GAP_MIN)
     if age_min < gap and not FORCE:
-        print(f'Ευρωλιγκα: τελευταιο request πριν {age_min:.0f}λ < {gap}λ '
-              f'(κοντινοτερο τζαμπολ σε {nearest_h:.1f}h) — skip, 0 credits')
+        print(f'Ευρωλιγκα: τελευταιο scan πριν {age_min:.0f}λ < {gap}λ (κοντινοτερο τζαμπολ σε {nearest_h:.1f}h) — skip')
         return
+    upcoming = [f for f in games if f['utc'] > now]
+    pin_data, src = None, 'toa'
+    if use_pin:
+        try:
+            pin_data = pin_api.toa_like('euroleague', include_alt=False); src = 'pinnacle'
+        except pin_api.PinError as e:
+            pin_api.fallback_notice('euroleague', str(e))
+    matched = set()
+    for g in pin_data or []:
+        f_, _ = match_game(g, upcoming)
+        if f_ is not None: matched.add(f_['code'])
+    missing = [f for f in upcoming if (f['utc'] - now).total_seconds() / 3600 <= WINDOW_H and f['code'] not in matched]
+    try:
+        toa_age = (now - _pdt(old['toa_at'])).total_seconds() / 60
+    except Exception:
+        toa_age = 1e9
+    if pin_data is None:
+        toa_gap = NEAR_GAP_MIN if nearest_h <= NEAR_H else MIN_GAP_MIN      # εφεδρεια: ιδιοι ρυθμοι με πριν
+    else:
+        toa_gap = TOA_ALT_GAP_MIN if missing else 1e9                          # μονο για alt book οσων λειπουν
+    toa_data, rem, used, toa_at = [], old.get('credits_remaining'), None, old.get('toa_at')
     key = os.environ.get('TOA_KEY')
-    if not key:
-        print('TOA_KEY δεν υπαρχει (τοπικο τρεξιμο;) — δεν γινεται fetch, 0 credits, το αρχειο μενει ως εχει')
+    if toa_age >= toa_gap or (pin_data is None and FORCE):
+        if not key:
+            print('TOA_KEY δεν υπαρχει (τοπικο τρεξιμο;) — χωρις Odds API')
+        else:
+            import requests
+            r = requests.get(f'https://api.the-odds-api.com/v4/sports/{SPORT}/odds',
+                             params=dict(apiKey=key, regions='eu', markets='h2h,spreads,totals', oddsFormat='decimal'), timeout=45)
+            rem = r.headers.get('x-requests-remaining'); used = r.headers.get('x-requests-last')
+            if r.status_code == 200:
+                toa_data, toa_at = r.json(), now.isoformat()[:16]
+            else:
+                print(f'Ευρωλιγκα: TOA {r.status_code} ({r.text[:200]})')
+    if pin_data is None and not toa_data:
+        print('Ευρωλιγκα: ουτε Pinnacle ουτε Odds API — τιποτα δεν γραφτηκε')
         return
-    import requests
-    r = requests.get(f'https://api.the-odds-api.com/v4/sports/{SPORT}/odds',
-                     params=dict(apiKey=key, regions='eu', markets='h2h,spreads,totals', oddsFormat='decimal'),
-                     timeout=45)
-    rem = r.headers.get('x-requests-remaining')
-    used = r.headers.get('x-requests-last')
-    if r.status_code != 200:
-        print(f'Ευρωλιγκα: TOA {r.status_code} ({r.text[:200]}) — τιποτα δεν γραφτηκε')
-        return
-    odds, hist_rows, unmatched, nmatch = build_records(r.json(), games, now, old.get('odds', {}))
-    json.dump(dict(scanned_at=now.isoformat()[:16], season=season, credits_remaining=rem,
+    # Odds API πρωτα, Pinnacle μετα → οπου υπαρχει Pinnacle, αυτη υπερισχυει (ιδια μορφη, pin_api.toa_like)
+    odds, hist_rows, unmatched, nmatch = build_records(list(toa_data) + list(pin_data or []), games, now, old.get('odds', {}))
+    json.dump(dict(scanned_at=now.isoformat()[:16], season=season, src=src, toa_at=toa_at, credits_remaining=rem,
                    n_games=nmatch, unmatched=unmatched[:20], odds=odds),
               open(OUT_F, 'w', encoding='utf-8'), ensure_ascii=False)
     if hist_rows:
         with open(HIST_F, 'a', encoding='utf-8') as hf:
             for row in hist_rows:
-                hf.write(json.dumps(row, ensure_ascii=False) + '\n')
-    print(f'Ευρωλιγκα: TOA {len(r.json())} ματς · ταιριαξαν {nmatch} · unmatched {len(unmatched)} · '
-          f'hist +{len(hist_rows)} · credits used {used} · left {rem}')
+                hf.write(json.dumps(row, ensure_ascii=False) + chr(10))
+    print(f'Ευρωλιγκα: πηγη {src} · Pinnacle {len(pin_data or [])} ματς · Odds API {len(toa_data)} (credits used {used}, left {rem}) · '
+          f'ταιριαξαν {nmatch} · χωρις Pinnacle ≤{WINDOW_H}h: {len(missing)} · hist +{len(hist_rows)}')
     if unmatched:
         print('  unmatched:', '; '.join(unmatched[:8]))
 
