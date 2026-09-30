@@ -549,3 +549,18 @@ for r in rows:
     f = lambda x: '—' if x is None else f"{'ΓΗΠ' if x['side'] == 1 else 'ΦΙΛ'} {x['line'] * x['side']:+g} @{x['od']:.2f} → {x['pnl']:+.2f}"
     P(f"    {r['g']:32s} {r['sc']:9s} · αγορα {r['mkt']:+5.1f} · μοντ. {r['hm']:+5.1f} → {r['hm'] + r['d']:+5.1f} · {f(a)}  ⇒  {f(b)}")
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 18. ΑΣΥΜΜΕΤΡΗ ΞΕΚΟΥΡΑΣΗ ΑΠΟ ΤΗΝ ΕΥΡΩΛΙΓΚΑ: 2 μερες vs 3 (π.χ. Βιλερμπαν Τετ→Παρ vs Βαλενθια Τρι→Παρ) ----
+P(''); P('=== 18. 2ο ΜΑΤΣ: η ομαδα με 2 μερες ξεκουραση απεναντι σε αντιπαλο με 3 (απο το προηγ. ματς EL) · υπερ της κουρασμενης ===')
+dwx = G[(G.h_dw2 == True) & (G.a_dw2 == True)].copy()
+dwx['hr'] = dwx.h_rest_el.round(); dwx['ar'] = dwx.a_rest_el.round()
+for lab, m, sg in (('γηπεδουχος 2 μερες, φιλοξ. 3', (dwx.hr == 2) & (dwx.ar == 3), 1), ('φιλοξενουμενος 2 μερες, γηπ. 3', (dwx.hr == 3) & (dwx.ar == 2), -1)):
+    x = dwx[m]; rm_ = x.rm_m * sg; rc_ = x.rm_c * sg
+    P(f'  {lab:32s} n {len(x):3d} · η κουρασμενη vs μοντελο {rm_.mean():+5.2f} (t {rm_.mean()/(rm_.std()/math.sqrt(len(x))):+.1f}) · vs αγορα {rc_.mean():+5.2f} · σεζον [' +
+      ' '.join(f'{Y[-2:]}:{(x[x.season == Y].rm_m * sg).mean():+.1f}' for Y in SE5 if (x.season == Y).sum() >= 3) + ']')
+both = pd.concat([dwx[(dwx.hr == 2) & (dwx.ar == 3)].rm_m, -dwx[(dwx.hr == 3) & (dwx.ar == 2)].rm_m])
+bothc = pd.concat([dwx[(dwx.hr == 2) & (dwx.ar == 3)].rm_c, -dwx[(dwx.hr == 3) & (dwx.ar == 2)].rm_c])
+P(f'  ΜΑΖΙ: n {len(both)} · η ομαδα με 1 μερα λιγοτερη vs μοντελο {both.mean():+.2f} (t {both.mean()/(both.std()/math.sqrt(len(both))):+.1f}) · vs αγορα {bothc.mean():+.2f}')
+x = dwx[(dwx.hr == 2) & (dwx.ar == 2)]
+P(f'  (συγκριση: και οι δυο 2 μερες, n {len(x)} · γηπ vs μοντελο {x.rm_m.mean():+.2f})')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
