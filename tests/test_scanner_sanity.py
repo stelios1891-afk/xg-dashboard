@@ -522,6 +522,19 @@ def test_d_core7_anchor_short_lines_only():
                 assert abs(v['o']) < 1.5, f'{lg} {v.get("name")}: διορθωση {v["o"]} — υποπτα μεγαλη'
 
 
+def test_e_euro_fav_proper_quarters():
+    """30/9/2026: ευρωπαϊκα ΦΑΒΟΡΙ = σωστα τεταρτα (cover_q), ΑΟΥΤΣΑΙΝΤΕΡ = p_cover ως εχει (quarters_all_markets)."""
+    import euro_shadow_scan as E, picks
+    src = open(os.path.join(ROOT, 'euro_shadow_scan.py'), encoding='utf-8').read()
+    assert "cover_q(dist, side, ln) if role == 'fav' else picks.p_cover(dist, side, ln)" in src, \
+        'euro_shadow_scan: τα φαβορι πρεπει να τιμολογουνται με cover_q και τα dogs με p_cover'
+    d = picks.gd_dist(1.8, 0.9)
+    pw, pp = E.cover_q(d, 1, -0.75)            # −0.75 = μισο −0.5 + μισο −1: νικη με 1 γκολ = μισο νικη + μισο επιστροφη
+    assert _approx(pw, sum(v for k, v in d.items() if k >= 2) + d[1] / 2, 1e-12) and _approx(pp, d[1] / 2, 1e-12), (pw, pp)
+    pw0, pp0 = picks.p_cover(d, 1, -0.75)
+    assert pw0 > pw and pp0 == 0, 'p_cover πρεπει να μετρα το −0.75 σαν −0.5 (ο λογος της αλλαγης)'
+
+
 def test_d_proj_archive():
     """29/9/2026: αρχειο Match Projections — προεπιλεγμενη αγωνιστικη = του τρεχοντος σ/κ (οχι αναβληθεν) · εγγραφες ακεραιες."""
     import proj_archive as pa

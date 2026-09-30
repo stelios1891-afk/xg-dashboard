@@ -135,7 +135,7 @@ def main():
 
     # ---------------- VALUE PICKS (beta) για το dashboard ----------------
     # Μηχανισμος οπως συμφωνηθηκε 10/9/2026 (Στελιος): ΜΟΝΟ ματς FotMob+FotMob,
-    # τιμολογηση as-live (P(X)x0.85 + p_cover ως εχει), ζωνη 1.70-2.10,
+    # τιμολογηση as-live (P(X)x0.85 · dogs p_cover ως εχει · ΦΑΒΟΡΙ σωστα τεταρτα απο 30/9), ζωνη 1.70-2.10,
     # OUTSIDERS: παιρνει >=0.5 & edge >= 10% · ΦΑΒΟΡΙ: δινει >=0.5 & edge >= 4%
     # (τα κατωφλια αντισταθμιζουν τη γνωστη μεροληψια των δηλωμενων edges ανα πλευρα).
     # Σημανση 🎯 στη γραμμη -0.75 των φαβορι (το τυφλο ευρημα Crown+Pinnacle).
@@ -179,11 +179,14 @@ def main():
                                   (-1, -lf, mk.get('oa'), m['away'])):
             if not o or not (1.70 <= o <= 2.10):
                 continue
-            pw, pp = picks.p_cover(dist, side, ln)
-            edge = edge_of(pw, pp, o)
             role = 'fav' if ln <= -0.5 else ('dog' if ln >= 0.5 else None)
             if role is None:
                 continue
+            # 30/9/2026 (Στελιος): ΦΑΒΟΡΙ = ΣΩΣΤΑ τεταρτα (cover_q), ΑΟΥΤΣΑΙΝΤΕΡ = p_cover ως εχει.
+            # quarters_all_markets / intl_quarters_compare: και στις 3 αγορες τα φαβορι κερδιζουν με σωστα τεταρτα
+            # (Ευρωπη UCL+UECL +11.0% → +18.4%, φευγουν 25 picks −18% 0/4), τα dogs με τον παλιο (+12.0% vs −4.2%).
+            pw, pp = cover_q(dist, side, ln) if role == 'fav' else picks.p_cover(dist, side, ln)
+            edge = edge_of(pw, pp, o)
             thr_fav = EDGE_FAV_UCL if m['comp'] == 'ChampionsLeague' else EDGE_FAV
             thr_dog = EDGE_DOG_UCL if m['comp'] == 'ChampionsLeague' else EDGE_DOG
             if (role == 'dog' and edge >= thr_dog) or (role == 'fav' and edge >= thr_fav):
@@ -223,7 +226,7 @@ def main():
                               edge_dog_ucl=EDGE_DOG_UCL,
                               zone=[1.70, 2.10],
                               no_play_comps=['EuropaLeague'],
-                              src='FotMob+FotMob', pricing='as-live (w2 + X x0.85 + p_cover)')),
+                              src='FotMob+FotMob', pricing='as-live (w2 + X x0.85 · dogs p_cover · φαβορι σωστα τεταρτα 30/9)')),
               open(os.path.join(ROOT, 'euro_value_latest.json'), 'w', encoding='utf-8'),
               ensure_ascii=False)
     print(f'euro value picks (beta): {len(picks_out)} '
