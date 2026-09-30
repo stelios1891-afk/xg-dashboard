@@ -65,7 +65,14 @@ def drift_note(p):
     d = p.get('drift')
     if d is None or d > -DRIFT_MIN: return None
     if p['mkt'] == 'hcap':
-        return f"⚠️ Αγορα κοντρα: η τιμη μας ανεβηκε ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν το alert). Ιστορικα τετοια χαντικαπ −1.4% (135 picks) vs +5.2% οταν η τιμη ειναι σταθερη — παρατηρηση."
+        # 1/10/2026: αντικαθιστα την παλια «⚠️ −1.4%» (el_line_timing, δεν ξεχωριζε ωρα/ειδος). el_alert_types.py (live μοντελο):
+        # πριν το τελευταιο 2ωρο η κοντρα ΔΕΝ βλαπτει — ≥6ω σταδιακη +12.9% (70) / ξαφνικη +36.5% (28)· 2-6ω σταδιακη −3.6% (47, 2/5) / ξαφνικη +44% (20).
+        kind = p.get('kind1h') or 'σταδιακη'; h = p.get('hrs_birth')
+        if h is not None and h < 6:
+            hist = 'ξαφνικη +44% (20 picks)' if kind == 'ξαφνικη' else 'σταδιακη −3.6% (47 picks, 2/5 σεζον)'
+            return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν, {kind}) — ιστορικα 2-6ω πριν: {hist}."
+        hist = 'ξαφνικη +36.5% (28 picks)' if kind == 'ξαφνικη' else 'σταδιακη +12.9% (70 picks)'
+        return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν, {kind}) — ιστορικα ≥6ω πριν δεν βλαπτει: {hist}."
     return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν το alert) — στα συνολα ιστορικα δεν βλαπτει (+5.3%, 215 picks)· παιζεται νωρις."
 
 def _load(p, d):
@@ -159,6 +166,16 @@ def main(notify_tg=True):
         if 'drift' not in st0:
             st0['drift'] = drift_before(p, st0.get('first_seen', now), sm_, st_)
             if key(p) in state: state[key(p)]['drift'] = st0['drift']
+        if 'kind1h' not in st0:
+            d1 = drift_before(p, st0.get('first_seen', now), sm_, st_, hours=1.0)
+            st0['kind1h'] = None if d1 is None else ('ξαφνικη' if d1 <= -SUDDEN_PTS else 'σταδιακη')
+            if key(p) in state: state[key(p)]['kind1h'] = st0['kind1h']
+        p['kind1h'] = st0['kind1h']
+        try:
+            p['hrs_birth'] = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
+                              - dt.datetime.fromisoformat(st0.get('first_seen', now))).total_seconds() / 3600
+        except Exception:
+            p['hrs_birth'] = None
         p['drift'] = st0['drift']; p['mkt_note'] = drift_note(p)
         if st0.get('paper'):
             if 'late_kind' not in st0:
