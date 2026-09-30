@@ -410,3 +410,15 @@ for lab, m in (('γηπ. ΕΜΕΙΝΕ σπιτι', G.tr_any & (G.h_prev_side2 ==
     x = G[m]
     if len(x): P(f'  {lab:36s} n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (±{1.96 * x.rm_m.std() / math.sqrt(max(len(x), 2)):.1f}) · vs αγορα {x.rm_c.mean():+5.2f}')
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 13. ΤΑ 4 ΣΕΝΑΡΙΑ (χωρις χιλιομετρα): γηπ. εντος-εντος / εκτος-εντος × φιλοξ. εκτος-εκτος / εντος-εκτος ----
+P(''); P('=== 13. 4 ΣΕΝΑΡΙΑ 2ου ΜΑΤΣ (χωρις χλμ) · αποκλιση υπερ γηπεδουχου ===')
+d2b = (G.h_dw2 == True) & (G.a_dw2 == True)
+for hp, hl in ((1, 'γηπ. ΕΝΤΟΣ-ΕΝΤΟΣ'), (-1, 'γηπ. ΕΚΤΟΣ-ΕΝΤΟΣ')):
+    for ap, al in ((-1, 'φιλ. ΕΚΤΟΣ-ΕΚΤΟΣ'), (1, 'φιλ. ΕΝΤΟΣ-ΕΚΤΟΣ')):
+        x = G[d2b & (G.h_prev_side2 == hp) & (G.a_prev_side2 == ap)]
+        if len(x) < 5: continue
+        sm_ = x.rm_m.std() / math.sqrt(len(x))
+        per = ' '.join(f'{Y[-2:]}:{x[x.season == Y].rm_m.mean():+.1f}' for Y in SE5 if (x.season == Y).sum() >= 3)
+        P(f'  {hl} vs {al}: n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (t {x.rm_m.mean()/sm_:+.1f}) · vs αγορα {x.rm_c.mean():+5.2f} · συνολο vs μοντ. {x.rt_m.mean():+5.2f} · [vs μοντ. {per}]')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
