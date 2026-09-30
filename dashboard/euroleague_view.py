@@ -402,48 +402,84 @@ def _tot_fair(T, TL, st):
     return (fair(po, pu), fair(pu, po))
 
 
-def _ladder(title, lines, fair_fn, main_ln, main_px, model_ln, signed):
+def _implied_center(pfn, L, o1, o2, lo, hi):
+    """1/10/2026: το «κεντρο» (διαφορα γηπ / συνολο) που βαζει η αγορα, απο την κυρια γραμμη και τις τιμες της (χωρις γκανιοτα)."""
+    ph = (1.0 / o1) / (1.0 / o1 + 1.0 / o2)
+    for _ in range(60):
+        mid = (lo + hi) / 2.0; a, pp, b = pfn(mid, L); p = a / (a + b) if (a + b) > 0 else 0.5
+        lo, hi = (mid, hi) if p < ph else (lo, mid)
+    return (lo + hi) / 2.0
+
+
+def _ecell(e):
+    if e is None:
+        return '<span style="color:#5a6b8c">—</span>'
+    c = '#35d07f' if e >= 0.08 else ('#b8c4dc' if e > 0 else '#5a6b8c')
+    w = '700' if e >= 0.08 else '400'
+    return f'<span style="color:{c};font-weight:{w}">{e * 100:+.0f}%</span>'
+
+
+def _ladder(title, lines, pfn, center_model, main_ln, main_px, model_ln, signed, span):
+    """1/10/2026 (Στελιος): σκαλα με EDGE σε καθε γραμμη. ΑΓΟΡ = πραγματικη τιμη στην κυρια γραμμη (●)· στις αλλες ≈ εκτιμηση απο την
+    κυρια (το «κεντρο» της αγορας + ιδια γκανιοτα). EDGE = πιθανοτητα μοντελου × τιμη αγορας − 1 (αριστερη/δεξια πλευρα), πρασινο ≥8%."""
     head = (f'<div style="display:flex;gap:7px"><span style="{_LT}width:10px"></span>'
             f'<span style="{_LT}width:44px;font-size:8px;color:#5a6b8c">ΓΡΑΜΜΗ</span>'
-            f'<span style="{_LT}width:76px;font-size:8px;color:#5a6b8c">ΜΟΝΤ</span>'
-            f'<span style="{_LT}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span></div>')
+            f'<span style="{_LT}width:72px;font-size:8px;color:#5a6b8c">ΜΟΝΤ</span>'
+            f'<span style="{_LT}width:80px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span>'
+            f'<span style="{_LT}width:78px;font-size:8px;color:#5a6b8c">EDGE</span></div>')
+    has_mkt = main_ln is not None and main_px and None not in main_px
+    S = (1.0 / main_px[0] + 1.0 / main_px[1]) if has_mkt else 1.05
+    c_mkt = _implied_center(pfn, main_ln, main_px[0], main_px[1], main_ln * (-1 if signed else 1) - span, main_ln * (-1 if signed else 1) + span) if has_mkt else None
     body = ''
     for ln in lines:
-        on_main = main_ln is not None and abs(ln - main_ln) < 0.01
-        fp = _vig2(fair_fn(ln), main_px if main_px and None not in main_px else (1.95, 1.95))
+        on_main = has_mkt and abs(ln - main_ln) < 0.01
+        a, pp, b = pfn(center_model, ln)
+        fp = (fair(a, b), fair(b, a))
+        fp = (fp[0] / S, fp[1] / S) if None not in fp else fp
+        if on_main:
+            px, est = main_px, False
+        elif has_mkt:
+            ma, mp, mb = pfn(c_mkt, ln); f1, f2 = fair(ma, mb), fair(mb, ma)
+            px, est = ((f1 / S, f2 / S) if None not in (f1, f2) else None), True
+        else:
+            px, est = None, False
+        e1, e2 = (edge(a, pp, px[0]), edge(b, pp, px[1])) if px else (None, None)
         tag = '●' if on_main else ('◆' if abs(ln - model_ln) < 0.01 else '')
         tagc = '#f5b731' if tag == '●' else '#7ea2ff'
         lnc = tagc if tag else '#e8edf8'
-        fp_s = f'{fp[0]:.2f}/{fp[1]:.2f}' if fp and None not in fp else '—'
-        mo_s = f'{main_px[0]:.2f}/{main_px[1]:.2f}' if on_main and main_px and None not in main_px else '—'
+        fp_s = f'{fp[0]:.2f}/{fp[1]:.2f}' if None not in fp else '—'
+        mo_s = ('—' if not px else (f'<span style="color:#5a6b8c">≈</span>{px[0]:.2f}/{px[1]:.2f}' if est else f'{px[0]:.2f}/{px[1]:.2f}'))
         ln_s = f'{ln:+.1f}' if signed else f'{ln:.1f}'
         body += (f'<div style="display:flex;gap:7px;align-items:baseline">'
                  f'<span style="{_LT}width:10px;color:{tagc};font-size:8px">{tag}</span>'
                  f'<span style="{_LT}width:44px;color:{lnc};font-weight:700">{ln_s}</span>'
-                 f'<span style="{_LT}width:76px;color:#7ea2ff">{fp_s}</span>'
-                 f'<span style="{_LT}width:76px;color:#8fa3c8">{mo_s}</span></div>')
+                 f'<span style="{_LT}width:72px;color:#7ea2ff">{fp_s}</span>'
+                 f'<span style="{_LT}width:80px;color:{"#6b7fa3" if est else "#8fa3c8"}">{mo_s}</span>'
+                 f'<span style="{_LT}width:78px">{_ecell(e1)} / {_ecell(e2)}</span></div>')
     return (f'<div style="display:flex;flex-direction:column;gap:4px">'
             f'<div style="font-size:9px;color:#6b7fa3;letter-spacing:1.5px;text-align:center">{title}</div>{head}{body}</div>')
 
 
 def _odds_pane(g, mk, sm, st):
-    """Match odds: σκαλα handicap (γηπ/φιλοξ) και συνολου (over/under), μοντελο ΜΕ τη γκανιοτα της αγορας vs αγορα."""
+    """Match odds: σκαλα handicap (γηπ/φιλοξ) και συνολου (over/under) με EDGE σε καθε γραμμη (1/10/2026)."""
     mk = mk or {}
     m, T = float(g['margin']), float(g['total'])
     ml_sp, ml_t = round_half(-m), round_half(T)
     c_sp = mk.get('line') if mk.get('line') is not None else ml_sp
     c_t = mk.get('tl') if mk.get('tl') is not None else ml_t
-    sp_lines = sorted({round(c_sp + k, 1) for k in (-2, -1, 0, 1, 2)} | {ml_sp})
-    t_lines = sorted({round(c_t + k, 1) for k in (-4, -2, 0, 2, 4)} | {ml_t})
-    t1 = _ladder('HANDICAP (γηπ/φιλοξ)', sp_lines, lambda L: _sp_fair(m, L, sm), mk.get('line'),
-                 (mk.get('oh'), mk.get('oa')) if mk.get('oh') else None, ml_sp, True)
-    t2 = _ladder('ΣΥΝΟΛΟ ΠΟΝΤΩΝ (over/under)', t_lines, lambda L: _tot_fair(T, L, st), mk.get('tl'),
-                 (mk.get('to'), mk.get('tu')) if mk.get('to') else None, ml_t, False)
+    sp_lines = sorted({round(c_sp + k, 1) for k in range(-4, 5)} | {ml_sp})
+    t_lines = sorted({round(c_t + k, 1) for k in range(-4, 5)} | {ml_t})
+    t1 = _ladder('HANDICAP (γηπ/φιλοξ)', sp_lines, lambda c, L: spread_probs(c, L, sm), m, mk.get('line'),
+                 (mk.get('oh'), mk.get('oa')) if mk.get('oh') else None, ml_sp, True, 60.0)
+    t2 = _ladder('ΣΥΝΟΛΟ ΠΟΝΤΩΝ (over/under)', t_lines, lambda c, L: total_probs(c, L, st), T, mk.get('tl'),
+                 (mk.get('to'), mk.get('tu')) if mk.get('to') else None, ml_t, False, 60.0)
     src = f' · αγορα: {esc(mk.get("label"))}' if mk.get('label') else ' · αγορα: καμια γραμμη ακομα'
-    leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
-           '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; <span style="color:#7ea2ff">◆</span> γραμμη μοντελου &nbsp;·&nbsp; '
-           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη)' + src + '</div>')
-    return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;padding:9px 0 4px">'
+    leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px;line-height:1.5">'
+           '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας (πραγματικη τιμη) &nbsp; <span style="color:#7ea2ff">◆</span> γραμμη μοντελου &nbsp;·&nbsp; '
+           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας &nbsp;·&nbsp; <span style="color:#6b7fa3">≈</span> = εκτιμηση τιμης απο την κυρια γραμμη '
+           '(τα βιβλια βαζουν συνηθως λιγο μεγαλυτερη γκανιοτα στις εναλλακτικες — συγκρινε με την πραγματικη τιμη σου)<br>'
+           'EDGE = αναμενομενη αποδοση (αριστερη / δεξια πλευρα) · <span style="color:#35d07f;font-weight:700">πρασινο ≥8%</span>' + src + '</div>')
+    return (f'<div style="display:flex;gap:28px;justify-content:center;flex-wrap:wrap;padding:9px 0 4px">'
             f'{t1}{t2}</div>{leg}')
 
 
