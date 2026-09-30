@@ -25,7 +25,9 @@ def _fit(hi, ai, y, n, R0):
     s8 = math.sqrt(LAM); A[m + np.arange(n), np.arange(n)] = s8; b[m:] = s8 * R0
     return np.linalg.lstsq(A, b, rcond=None)[0][:n]
 
-def build_shifts(el_teams, d0, season='26-27', path='bk_domestic.json'):
+def build_shifts(el_teams, d0, season=None, path='bk_domestic.json'):
+    if season is None:
+        from el_season import NG as season          # 1/10: τρεχουσα σεζον αυτοματα (ηταν '26-27')
     """el_teams: {κωδικος EL: ονομα} · d0: ημερομηνια-αφετηρια των dnum του el_refresh.
     Επιστρεφει (shift(κωδικος, cut) → ποντοι/100 για την αφετηρια, πινακας αντιστοιχισης, Δ σημερα ανα ομαδα)."""
     DOM = json.load(open(path, encoding='utf-8'))

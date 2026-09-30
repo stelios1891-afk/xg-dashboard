@@ -4,6 +4,10 @@
        el_projections.json (τελικα σκορ) · el_odds_hist.jsonl + el_closing_backfill.jsonl (closing Pinnacle = τελευταια τιμη πριν το τζαμπολ)
 Ανα pick: αποτελεσμα (μοναδες στην τιμη εισοδου) · κινηση γραμμης ως το κλεισιμο (ποντοι, + = υπερ μας) · EV στο κλεισιμο
   (πιθανοτητα καλυψης της γραμμης μας με τον μεσο που βαζει η Pinnacle στο κλεισιμο, χωρις γκανιοτα × αποδοση εισοδου − 1).
+1/10/2026: ΘΕΡΜΟΜΕΤΡΟ ΑΓΟΡΑΣ — ποσο κινηθηκε η αγορα (αναμενομενη διαφορα/συνολο, ΜΑΖΙ με αποδοσεις) απο την εισοδο μας ως το
+  κλεισιμο· % picks που ηρθε ΠΡΟΣ εμας / ΚΟΝΤΡΑ (≥0.5 π.) vs ιστορικο (el_alert_types, Crown 5 σεζον, χωρις καταγραφες):
+  χαντικαπ 32% / 25% (μ.ο. +0.12 π.) · συνολα 44% / 22% (μ.ο. +0.39 π.). Αν πεφτει κατω απο αυτα → το μοντελο χανει την αιχμη του.
+  Οι καταγραφες (paper: χαντικαπ τελευταιου 2ωρου, συνολα μετα απο κοντρα ≥1.5π) μετρανε ΞΕΧΩΡΙΣΤΑ.
 Χρηση: python el_report.py report [μερες]  ·  python el_report.py weekly (Δευτερα, μια φορα → Telegram· απο scanner_tick)"""
 import os, sys, json, math, datetime as dt
 sys.stdout.reconfigure(encoding='utf-8')
@@ -34,6 +38,10 @@ def settled():
     for r in _jl(F('el_odds_hist.jsonl')) + _jl(F('el_closing_backfill.jsonl')):
         if r.get('line') is None or r['t'] + ':00' >= r['commence'][:19]: continue
         if r['code'] not in close or r['t'] > close[r['code']]['t']: close[r['code']] = r
+    hist = {}
+    for r in _jl(F('el_odds_hist.jsonl')):
+        if r.get('line') is not None or r.get('tl') is not None: hist.setdefault(r['code'], []).append(r)
+    for v in hist.values(): v.sort(key=lambda r: r['t'])
     first = {}
     for b in _jl(F('el_clv_bets.jsonl')):
         k = (b['code'], b['mkt'], b.get('bet', '').split(' ')[0] if b['mkt'] == 'total' else b['side'])
@@ -62,8 +70,30 @@ def settled():
                 mu = implied_mu(-c['tl'], c['to'], c['tu'], st)              # μεσο συνολο της αγορας
                 po, pp = cover(mu, -b['hcap'], st); p = po if over else 1 - po - pp
             rec['ev_close'] = p * b['odds'] + pp - 1
+            # θερμομετρο: αναμενομενο (με αποδοσεις) στην εισοδο vs κλεισιμο, + = ΠΡΟΣ εμας
+            seen = (b['seen'][:16].replace(' ', 'T'))
+            ent = [r for r in hist.get(b['code'], []) if r['t'] <= seen and (r.get('line') if b['mkt'] == 'hcap' else r.get('tl')) is not None]
+            try:
+                if ent and b['mkt'] == 'hcap':
+                    e = ent[-1]; s_ = 1 if b['side'] == 1 else -1
+                    rec['mv_mu'] = (mu - implied_mu(e['line'], e['oh'], e['oa'], sm)) * s_
+                elif ent:
+                    e = ent[-1]; s_ = 1 if over else -1
+                    rec['mv_mu'] = (mu - implied_mu(-e['tl'], e['to'], e['tu'], st)) * s_
+            except Exception:
+                pass
         out.append(rec)
     return out
+
+BENCH = {'hcap': (0.32, 0.25, 0.12), 'total': (0.44, 0.22, 0.39)}      # ιστορικο: προς εμας / κοντρα (≥0.5 π.) / μ.ο.
+def thermo(rows):
+    out = []
+    for mk, nm in (('hcap', 'χαντικαπ'), ('total', 'συνολα')):
+        x = [r['mv_mu'] for r in rows if r['mkt'] == mk and r.get('mv_mu') is not None]
+        if not x: continue
+        b = BENCH[mk]; up = sum(v >= 0.5 for v in x) / len(x); dn = sum(v <= -0.5 for v in x) / len(x)
+        out.append(f'{nm} {len(x)}: προς εμας {up:.0%} (ιστ. {b[0]:.0%}) · κοντρα {dn:.0%} (ιστ. {b[1]:.0%}) · μ.ο. {sum(x) / len(x):+.2f} π. (ιστ. {b[2]:+.2f})')
+    return ('🌡 αγορα μετα το pick: ' + ' | '.join(out)) if out else ''
 
 def summarize(rows, title):
     s = [r for r in rows if r['settled']]
@@ -81,10 +111,16 @@ def summarize(rows, title):
     return txt
 
 def report(days=7):
-    rows = settled(); now = dt.datetime.now(dt.timezone.utc)
+    allr = settled(); now = dt.datetime.now(dt.timezone.utc)
+    rows = [r for r in allr if not r.get('paper')]; paper = [r for r in allr if r.get('paper')]
     cut = (now - dt.timedelta(days=days)).strftime('%Y-%m-%dT%H:%M')
     week = [r for r in rows if r['when'] >= cut]
     lines = ['🏀 EUROLEAGUE — εβδομαδιαια αναφορα picks', summarize(week, f'τελευταιες {days} μερες'), summarize(rows, 'σεζον ως τωρα')]
+    th = thermo([r for r in rows if r['settled']])
+    if th: lines.append(th + ' — σεζον ως τωρα')
+    ps = [r for r in paper if r['settled']]
+    if ps: lines.append(f'📝 καταγραφες (δεν παιζονται): {len(ps)} · {sum(r["pnl"] for r in ps):+.2f} μον. αν παιζονταν'
+                        f' (χαντικαπ 2ωρου {sum(1 for r in ps if r.get("paper") == "late2h")} · συνολα κοντρα ≥1.5 {sum(1 for r in ps if r.get("paper") == "move15")})')
     det = [r for r in week if r['settled']]
     if det:
         lines.append('\nαναλυτικα:')
@@ -94,7 +130,7 @@ def report(days=7):
                          + (f" · γραμμη {r['move']:+.1f}" if 'move' in r else ''))
     pend = [r for r in rows if not r['settled']]
     if pend: lines.append(f'\nεκκρεμη (δεν εχουν παιχτει): {len(pend)}')
-    lines.append('(σημ.: η γραμμη ιστορικα ΔΕΝ κινειται υπερ μας — το κερδος ερχεται απο τα αποτελεσματα· EV στο κλεισιμο ≈ −4% ειναι το «αναμενομενο»)')
+    lines.append('(σημ.: ιστορικα η αγορα ερχεται προς εμας μετα το pick πιο συχνα απ οτι κοντρα — κυριως στα συνολα· αν το 🌡 πεφτει κατω απο το ιστορικο, το μοντελο χανει την αιχμη του)')
     return '\n'.join(lines)
 
 def weekly(notify_tg=True):

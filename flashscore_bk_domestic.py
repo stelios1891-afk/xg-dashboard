@@ -15,7 +15,10 @@ C = {'ACB': 'spain/acb', 'GBL': 'greece/basket-league', 'TBL': 'turkey/super-lig
      'LNB': 'france/lnb', 'BBL': 'germany/bbl', 'LKL': 'lithuania/lkl', 'ABA': 'europe/aba-league', 'VTB': 'russia/vtb-united-league',
      # 30/9: ευρωπαικες διοργανωσεις — συνδεουν τα πρωταθληματα (κοινη κλιμακα, «Elo» μπασκετ)
      'EL': 'europe/euroleague', 'EC': 'europe/eurocup', 'BCL': 'europe/champions-league', 'FEC': 'europe/fiba-europe-cup'}
-YEARS = list(range(2020, 2027))
+from el_season import Y as CUR                # 1/10: τρεχουσα σεζον αυτοματα (ηταν 2026)
+YEARS = list(range(2020, CUR + 1))
+CURRENT_ONLY = '--current' in sys.argv       # 1/10: για el_preseason_auto — περσινη (αν ειναι ελλιπης) + φετινη, χωρις στατιστικα
+if CURRENT_ONLY: YEARS = [CUR - 1, CUR]
 GF, SF = 'fs_bk_games.json', 'fs_bk_stats.jsonl'
 S = requests.Session()
 
@@ -46,8 +49,10 @@ games = json.load(open(GF, encoding='utf-8')) if os.path.exists(GF) else {}
 for k, p in C.items():
     for y in YEARS:
         key = f'{k}_{y}'
-        if key in games and y < 2026 and games[key] and 'hid' in games[key][0]: continue
-        u = f'https://www.flashscore.com/basketball/{p}-{y}-{y + 1}/results/' if y < 2026 else f'https://www.flashscore.com/basketball/{p}/results/'
+        done_ = key in games and games[key] and 'hid' in games[key][0]
+        if done_ and y < CUR and max((e.get('ts') or 0) for e in games[key]) >= time.mktime((y + 1, 4, 1, 0, 0, 0, 0, 0, 0)): continue   # πληρης σεζον
+        if done_ and y < CUR - 1: continue
+        u = f'https://www.flashscore.com/basketball/{p}-{y}-{y + 1}/results/' if y < CUR else f'https://www.flashscore.com/basketball/{p}/results/'
         t = get(u, H)
         if not t: print(key, 'χωρις σελιδα', flush=True); continue
         m = re.search(r'initialFeeds\["summary-results"\] = \{\s*data: `(.*?)`', t, re.S)
@@ -65,6 +70,8 @@ for k, p in C.items():
         print(f'{key}: {len(ev)} ματς (συνολο σελιδας {tot.group(1) if tot else "?"})', flush=True)
         json.dump(games, open(GF, 'w', encoding='utf-8'), ensure_ascii=False)
 
+if CURRENT_ONLY:
+    print('ΤΕΛΟΣ (--current: χωρις στατιστικα)'); sys.exit(0)
 done = set()
 if os.path.exists(SF):
     for ln in open(SF, encoding='utf-8'):

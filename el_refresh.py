@@ -10,7 +10,7 @@
 import sys, os, json, math, time, datetime as dt, urllib.request, urllib.error
 import numpy as np, pandas as pd
 sys.stdout.reconfigure(encoding='utf-8')
-SEASON = 'E2026'
+from el_season import SEASON          # 1/10: τρεχουσα σεζον αυτοματα (απο 1 Σεπτ. η νεα) — ηταν 'E2026'
 LAM = 8                                          # βαρος περσινης εικονας (ισοδυναμα ματς)
 # ΔΥΟ ΜΗΧΑΝΕΣ (αποφαση Στελιου 25/9, μετα LOSO + ROI με edge σε 6 σεζον):
 # Β1 (26/9, αποφαση Στελιου· el_hcap_big_test.py 972 συνδ. LOSO: επιλογη ακριβειας 5/5): K 12 · HL 60 · εδρα 5 · ανοιγμα ×1.1 απο 7ο αγωνα

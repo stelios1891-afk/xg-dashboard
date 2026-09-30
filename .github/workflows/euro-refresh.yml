@@ -92,6 +92,20 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python nowgoal_bk_domestic_fill.py --current
 
+      # 1/10: ΑΥΤΟΜΑΤΗ ΠΡΟΕΤΟΙΜΑΣΙΑ (1/9-31/10, μεχρι να γινει «τελικη» 2 μερες μετα την πρεμιερα): φιλικα/Super Cups + Flashscore
+      # τρεχουσας σεζον → el_preseason_prior.json. Μη κρισιμο: αν αποτυχει, μενει το προηγουμενο αρχειο.
+      - name: Euroleague preseason prior (auto, Sep-Oct)
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 45
+        env:
+          PYTHONIOENCODING: utf-8
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_INFO_TOKEN: ${{ secrets.TELEGRAM_INFO_TOKEN }}
+          TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
+        run: python el_preseason_auto.py
+
       - name: Euroleague refresh (el_refresh.py)
         if: always()
         continue-on-error: true
@@ -109,7 +123,7 @@ jobs:
         run: |
           git config user.name "euro-refresh-bot"
           git config user.email "actions@github.com"
-          git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json europe_fixtures_2627.json el_projections.json el_box.json el_sched.json el_shadow_lines.json bk_domestic.json   # -f: νεες λιγκες ειναι gitignored (data_*.json)
+          git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json europe_fixtures_2627.json el_projections.json el_box.json el_sched.json el_shadow_lines.json bk_domestic.json el_preseason_prior.json fs_bk_preseason.json fs_bk_games.json el_season_warned.txt   # -f: νεες λιγκες ειναι gitignored (data_*.json)
           if git diff --cached --quiet; then
             echo "no changes — skip commit"
           else

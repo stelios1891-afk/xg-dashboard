@@ -33,11 +33,14 @@ def events(txt):
             out.append(dict(id=f['AA'], ts=int(f.get('AD', 0) or 0), home=f.get('AE'), away=f.get('AF'), hid=f.get('PX'), aid=f.get('PY'),
                             hs=f.get('AG'), as_=f.get('AH'), stage=stage))
     return out
-res = {}
+from el_season import Y as CUR                # 1/10: τρεχουσα σεζον αυτοματα (ηταν 2026)
+import os
+CURRENT_ONLY = '--current' in sys.argv       # 1/10: για el_preseason_auto — μονο το φετινο ετος, ενημερωνει το υπαρχον αρχειο
+res = json.load(open('fs_bk_preseason.json', encoding='utf-8')) if (CURRENT_ONLY and os.path.exists('fs_bk_preseason.json')) else {}
 for k, p in COMPS.items():
-    for y in range(2021, 2027):
+    for y in ([CUR] if CURRENT_ONLY else range(2021, CUR + 1)):
         t = None
-        for u in ([f'https://www.flashscore.com/basketball/{p}/results/'] if y == 2026 else []) + \
+        for u in ([f'https://www.flashscore.com/basketball/{p}/results/'] if y == CUR else []) + \
                  [f'https://www.flashscore.com/basketball/{p}-{y}/results/', f'https://www.flashscore.com/basketball/{p}-{y}-{y + 1}/results/']:
             t = get(u, H)
             if t and 'allEventsCount' in t: break

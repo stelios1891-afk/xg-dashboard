@@ -13,12 +13,14 @@ r = Σ[διαφορα (ταβανι ±20) − (R_ομαδας − R_αντιπα
 import sys, json, math, datetime as dt
 import numpy as np
 sys.stdout.reconfigure(encoding='utf-8')
-Y = int(sys.argv[1]) if len(sys.argv) > 1 else 2026
+from el_season import Y as _CY               # 1/10: τρεχουσα σεζον αυτοματα (ηταν 2026)
+Y = int(sys.argv[1]) if len(sys.argv) > 1 else _CY
 KAPPA = 0.5
 KAPPA_T = 0.25
 FG = json.load(open('fs_bk_games.json', encoding='utf-8'))
 PS = json.load(open('fs_bk_preseason.json', encoding='utf-8'))
-S = json.load(open('el_sched.json', encoding='utf-8'))[f'E{Y}']
+_SCH = json.load(open('el_sched.json', encoding='utf-8'))
+S = _SCH[f'E{Y}']
 
 def common(y):
     rows = []
@@ -56,12 +58,13 @@ def tendency(y):
 
 C = common(Y - 1)
 # κωδικος Flashscore → κωδικος EL (ματς EL της σεζον: ημερομηνια ±1 + σκορ)
+# 1/10: ΚΑΙ απο τα περσινα ματς EL (ο κωδικος Flashscore ειναι σταθερος) → αντιστοιχιση ΠΡΙΝ την πρεμιερα· οι νεες ομαδες μετα την 1η αγων.
 FS2EL = {}
-for e in FG.get(f'EL_{Y}', []):
+for e, SS in [(e, _SCH.get(f'E{Y - 1}', [])) for e in FG.get(f'EL_{Y - 1}', [])] + [(e, S) for e in FG.get(f'EL_{Y}', [])]:
     try: hs, as_ = int(e['hs']), int(e['as_'])
     except Exception: continue
     d = dt.datetime.fromtimestamp(e['ts'], dt.timezone.utc).date()
-    for x in S:
+    for x in SS:
         if x.get('played') and x.get('hs') == hs and x.get('as_') == as_ and abs((dt.date.fromisoformat(x['utc'][:10]) - d).days) <= 1:
             FS2EL[e['hid']] = x['hcode']; FS2EL[e['aid']] = x['acode']
 start = min(dt.date.fromisoformat(x['utc'][:10]) for x in S)
