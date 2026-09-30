@@ -118,10 +118,7 @@ for lg in LGS:
             lg_shots = lg_shots * (cur_shots / lg_shots) ** w
             lg_xgps = lg_xgps * (cur_xgps / lg_xgps) ** w
         blended, ns = build_data.blend_league(prior_r, histc)
-        if picks.SOS:
-            blended = {tid: picks.sos_adjust(r, histc.get(tid, {}).get('opp', []),
-                                             blended, lg_shots, lg_xgps)
-                       for tid, r in blended.items()}
+        blended = build_data.apply_sos(blended, prior_r, histc, lg_shots, lg_xgps)
         for _, m in dg.iterrows():
             rh = blended.get(m['home']); ra = blended.get(m['away'])
             if rh and ra:

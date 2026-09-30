@@ -176,12 +176,12 @@ def apply(lg, H, A, xg_h, xg_a, line, md):
 
 
 # ---------- ελεγχος: αναπαραγωγη 2526 vs αρχειο τεστ ----------
-def validate():
+def validate(variant='cur_0.75_6_13'):      # 1/10: live = σωστο SoS 0.75 → συγκριση με την ιδια εκδοχη του τεστ
     picks.MIN_PRIOR = 6
     Mp, id2name = picks.load_matches(CORE7, ['2425'])
     Mc, id2c = picks.load_matches(CORE7, ['2526']); id2name.update(id2c)
     name2id = {v: k for k, v in id2name.items()}
-    B = pd.read_csv('core7_mech_preds_base.csv', dtype={'season': str, 'mid': str}); B = B[B.season == '2526']
+    B = pd.read_csv(f'core7_mech_preds_{variant}.csv', dtype={'season': str, 'mid': str}); B = B[B.season == '2526']
     allp = []
     for lg in CORE7:
         P = replay_preds(lg, Mp, Mc, '2425', '2526', id2name, name2id)
@@ -202,6 +202,6 @@ if __name__ == '__main__':
     except Exception:
         pass
     if len(sys.argv) > 1 and sys.argv[1] == 'validate':
-        validate()
+        validate(*sys.argv[2:3])
     else:
         build()

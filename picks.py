@@ -28,7 +28,11 @@ BLEND = 0.60; DECAY = 0.96   # BLEND 0.80→0.60 (2026-08-26, blend_test.py + bl
 # MIN_PRIOR: cloud (GitHub Actions scanner) = 6 → picks απο την 7η αγωνιστικη (χαρτινα <15)· τοπικα (laptop backtests) = 14.
 # 2026-09-18: ΡΗΤΟΣ διακοπτης μεσω env — πριν ηταν uncommitted hunk (14 τοπικα / 6 στο HEAD) και ενα git add θα το εστελνε λαθος.
 MIN_PRIOR = 6 if os.environ.get('GITHUB_ACTIONS') == 'true' else 14
-SOS = 1.5; SOS_MIN_N = 6; SOS_MAX_N = 13   # Strength-of-Schedule (Caley one-pass). 1.5 (2026-08-27, sos_clean_loso.py/blend_ramp.py):
+SOS = 0.75; SOS_MIN_N = 6; SOS_MAX_N = 13   # 1/10/2026: «ΣΩΣΤΟ» SoS 0.75 — εφαρμοζεται ΜΟΝΟ στα φετινα νουμερα ΠΡΙΝ τη μιξη
+            # με το περσινο (build_data.apply_sos). Το παλιο (1.5 πανω στο μεικτο rating) υπερ-διορθωνε ~3×. Τεστ: core7_sos15_final.py,
+            # core7_714_sos_weight.py: RPS 7-14 0.19629→~0.1942 (4/4), 15+ καλυτερο· φαβορι 15+ (αγκυρα .7) +6.0→+13.2u, LOSO 0.75/1.0 σε 4/4.
+            # Κοστος: κοντα dogs 15+ ~−2u/4 σεζον (~10 picks). Αποφαση Στελιου 1/10 («βαλε το 0.75»). Ιστορικο παλιου:
+            # ΠΑΛΙΟ: 1.5 (2026-08-27, sos_clean_loso.py/blend_ramp.py):
             # md7-14 ROI -10.3% -> +2.8%· md15+ +5.8%->+5.4% αλλα 4/4 σεζον & +40% ογκος (61u -> 80u).
             # ΠΑΡΑΘΥΡΟ n=6..13 (= αγωνιστικες 7-14) ΜΟΝΟ. Αποφαση Stelios 2026-08-27:
             # "το SoS ειναι οπλο για την ΑΡΧΗ της σεζον, οταν η τυχη του προγραμματος επισκιαζει

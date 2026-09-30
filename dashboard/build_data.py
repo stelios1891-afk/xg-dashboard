@@ -247,6 +247,23 @@ def blend_league(prior_r, histc, K=K_WARM):
                 out[tid] = ri
     return out, ns
 
+def apply_sos(blended, prior_r, histc, lg_shots, lg_xgps, K=K_WARM):
+    """1/10/2026 «ΣΩΣΤΟ» SoS: η διορθωση προγραμματος στα ΦΕΤΙΝΑ νουμερα ΠΡΙΝ τη μιξη με το περσινο prior
+    (το φετινο προγραμμα δεν επηρεασε το περσινο κομματι). Αντιπαλοι = πληρες μεικτο rating (προ SoS).
+    Ενεργο μονο με SOS_MIN_N..SOS_MAX_N φετινους αντιπαλους (αγων. 7-14)· αλλιως το rating μενει ως εχει."""
+    if not picks.SOS:
+        return blended
+    out = {}
+    for tid, r in blended.items():
+        hc = histc.get(tid); opps = hc.get('opp', []) if hc else []
+        if not (picks.SOS_MIN_N <= len(opps) <= picks.SOS_MAX_N):
+            out[tid] = r; continue
+        n = len(hc['sf'])
+        rc = picks.sos_adjust(_rating(hc, n), opps, blended, lg_shots, lg_xgps)
+        pr = prior_r.get(tid)
+        out[tid] = _shrink(rc, pr, n, K) if pr is not None else rc
+    return out
+
 def league_ratings(lg, Mp, Mc, ratings_season=RATINGS_SEASON_DEFAULT,
                    current_season=CURRENT_SEASON, id2name=None, name2id=None, fixtures=None):
     """ΚΟΙΝΗ λογικη ratings μιας λιγκας — χρησιμοποιειται ΚΑΙ απο το dashboard ΚΑΙ απο τον scanner.
@@ -286,10 +303,7 @@ def league_ratings(lg, Mp, Mc, ratings_season=RATINGS_SEASON_DEFAULT,
         lg_shots = lg_shots * (cur_shots / lg_shots) ** w
         lg_xgps = lg_xgps * (cur_xgps / lg_xgps) ** w
     blended, ns = blend_league(prior_r, histc)                    # warm-start blend K=K_WARM
-    if picks.SOS:                        # SoS: διορθωση για τη δυσκολια του ΦΕΤΙΝΟΥ προγραμματος
-        blended = {tid: picks.sos_adjust(r, histc.get(tid, {}).get('opp', []),
-                                         blended, lg_shots, lg_xgps)
-                   for tid, r in blended.items()}
+    blended = apply_sos(blended, prior_r, histc, lg_shots, lg_xgps)   # SoS (σωστο, 1/10): φετινα πριν τη μιξη
     return dict(blended=blended, ns=ns, lg_shots=lg_shots, lg_xgps=lg_xgps, hf=hf,
                 fixtures=fixtures, promoted=promoted)
 

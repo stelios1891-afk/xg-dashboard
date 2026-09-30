@@ -251,7 +251,7 @@ def test_a_odds_history_rows_shape():
 def test_b_picks_locked_constants():
     import picks
     exp = dict(EDGE=0.10, OMIN=1.70, OMAX=2.10, MIN_LINE=0.5, DRAW_BOOST=1.13, MARGIN=0.03,
-               BLEND=0.60, DECAY=0.96, SOS=1.5, SOS_MIN_N=6, SOS_MAX_N=13,
+               BLEND=0.60, DECAY=0.96, SOS=0.75, SOS_MIN_N=6, SOS_MAX_N=13,
                BLEND_EARLY=1.00, BLEND_SPLIT=13, BLEND_KG=12.0)
     bad = [f'{k}={getattr(picks, k, None)!r} (περιμενα {v!r})' for k, v in exp.items()
            if not _approx(getattr(picks, k, None), v)]
@@ -494,6 +494,23 @@ def test_d_gd_dist_dom_dixon_coles():
     assert _approx(s, 1.0, 1e-9), f'gd_dist_dom δεν αθροιζει στο 1 ({s})'
     old = picks.gd_dist(1.4, 1.1)
     assert 0.22 < d[0] < old[0], f'ισοπαλια DC {d[0]:.4f} vs ×1.13 {old[0]:.4f} — αναμενοταν μικροτερη αλλα >0.22'
+
+
+def test_d_correct_sos_before_blend():
+    """1/10/2026: «σωστο» SoS = διορθωση στα ΦΕΤΙΝΑ νουμερα ΠΡΙΝ τη μιξη με το prior (οχι πανω στο μεικτο rating)·
+    ενεργο μονο με 6-13 φετινους αντιπαλους."""
+    import picks, build_data as BD
+    def hist(n, opp, x=1.4):
+        return dict(sf=[12.0] * n, xf=[x] * n, sa=[11.0] * n, xa=[1.1] * n, gf=[x] * n, ga=[1.1] * n, opp=[opp] * n)
+    histc = {1: hist(8, 2), 2: hist(8, 1, 1.0), 3: hist(3, 1)}
+    prior_r = {1: (0.10, 0.10, 12.0, 11.0), 2: (0.09, 0.11, 11.0, 12.0), 3: (0.10, 0.10, 12.0, 12.0)}
+    blended, _ = BD.blend_league(prior_r, histc)
+    out = BD.apply_sos(blended, prior_r, histc, 11.5, 0.10)
+    exp1 = BD._shrink(picks.sos_adjust(BD._rating(histc[1], 8), histc[1]['opp'], blended, 11.5, 0.10), prior_r[1], 8)
+    old1 = picks.sos_adjust(blended[1], histc[1]['opp'], blended, 11.5, 0.10)
+    assert all(abs(a - b) < 1e-12 for a, b in zip(out[1], exp1)), 'SoS πρεπει να μπαινει στα φετινα ΠΡΙΝ το shrink'
+    assert any(abs(a - b) > 1e-6 for a, b in zip(out[1], old1)), 'apply_sos ιδιο με το παλιο (SoS πανω στο μεικτο);'
+    assert out[3] == blended[3], 'με <6 αντιπαλους το SoS πρεπει να ειναι ανενεργο'
 
 
 def test_d_core7_anchor_short_lines_only():

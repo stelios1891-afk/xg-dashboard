@@ -154,8 +154,7 @@ def ratings_at_cutoff(lg, Gprev, Gcur_played, cur_teams, prior_only=False, sos=T
     lg_xgps = lg_xgps * (cur_xgps / lg_xgps) ** w
     blended, ns = BD.blend_league(prior_r, histc)
     if sos and picks.SOS:
-        blended = {t: picks.sos_adjust(r, histc.get(t, {}).get('opp', []), blended, lg_shots, lg_xgps)
-                   for t, r in blended.items()}
+        blended = BD.apply_sos(blended, prior_r, histc, lg_shots, lg_xgps)
     blended = {t: blended[t] for t in cur_teams if t in blended}
     for t in cur_teams:
         ns.setdefault(t, 0)

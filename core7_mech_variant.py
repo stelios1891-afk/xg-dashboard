@@ -29,6 +29,18 @@ pre = src[:src.index("P = P[P.md >= GLO].copy()")]
 if V == 'k4':
     assert 'K = 8.0;' in pre
     pre = pre.replace('K = 8.0;', 'K = 4.0;')
+if V.startswith('cur_'):                # 1/10: «σωστο SoS» cur_<ST>_<GLO>_<GHI> (SOS_MODE=current)
+    _, st_, lo_, hi_ = V.split('_')
+    assert 'ST = 1.5; GLO, GHI = 6, 13' in pre
+    pre = pre.replace('ST = 1.5; GLO, GHI = 6, 13', f'ST = {float(st_)}; GLO, GHI = {int(lo_)}, {int(hi_)}')
+    os.environ['SOS_MODE'] = 'current'
+if V.startswith('sos_'):                # 1/10: sos_<ST>_<GLO>_<GHI> π.χ. sos_1.5_6_19 (παραθυρο σε ματς που εχουν παιχτει)
+    _, st_, lo_, hi_ = V.split('_')
+    assert 'ST = 1.5; GLO, GHI = 6, 13' in pre
+    pre = pre.replace('ST = 1.5; GLO, GHI = 6, 13', f'ST = {float(st_)}; GLO, GHI = {int(lo_)}, {int(hi_)}')
+if V == 'nosos':                       # 1/10: χωρις διορθωση προγραμματος (SoS) στις αγων. 7-14
+    assert 'ST = 1.5;' in pre
+    pre = pre.replace('ST = 1.5;', 'ST = 0.0;')
 g = {'__name__': 'mech'}
 exec(pre, g)
 g['P'].to_csv(f'core7_mech_preds_{V}.csv', index=False)
