@@ -29,6 +29,8 @@ SEAS = sorted(D.season.unique())
 key = ['league', 'season', 'h', 'a', 'date']
 VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 1.0 @7-14', 'cur_1.0_6_13'),
        ('ΣΩΣΤΟ 0.5 ολη', 'cur_0.5_6_40'), ('ΣΩΣΤΟ 1.0 ολη', 'cur_1.0_6_40'), ('ΣΩΣΤΟ 1.5 ολη', 'cur_1.5_6_40')]
+if os.environ.get('SOS15_SET') == 'w714':      # 1/10: ποιο βαρος στις 7-14 δινει καλυτερη βαση (μεσω αγκυρας) για την 15+
+    VAR = [('ΣΗΜΕΡΑ', 'base'), ('0 (χωρις)', 'nosos')] + [(f'ΣΩΣΤΟ {w} @7-14', f'cur_{w}_6_13') for w in ('0.25', '0.5', '0.75', '1.0', '1.25', '1.5', '2.0')]
 def load(v):
     P = pd.read_csv(f'core7_mech_preds_{v}.csv', dtype={'season': str, 'mid': str}); P = P[P.md >= 6]; P['date'] = pd.to_datetime(P.date)
     m = D[key].merge(P[['league', 'season', 'home_name', 'away_name', 'date', 'xg_h', 'xg_a', 'mid']],
