@@ -434,3 +434,29 @@ for hp, hl in ((1, 'εντος-εντος'), (-1, 'εκτος-εντος')):
             per = sum(1 for Y in SE5 if (x.season == Y).sum() >= 3 and np.sign(x[x.season == Y].rm_m.mean()) == np.sign(x.rm_m.mean()))
             P(f'  {hl} vs {al} · {tl}: n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (t {x.rm_m.mean()/sm_:+.1f}, ιδια φορα {per}/5) · vs αγορα {x.rm_c.mean():+5.2f}')
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 15. ΚΛΙΜΑΚΑ ΧΙΛΙΟΜΕΤΡΩΝ (ιδεα Στελιου: «ποινη αναλογα με τα χλμ») ----
+P(''); P('=== 15. ΚΛΙΜΑΚΑ: αποκλιση υπερ γηπ. vs μοντελο ανα ζωνη ταξιδιου φιλοξ. (2ο ματς) ===')
+HH = d2b & (G.h_prev_side2 == 1); HX = d2b & (G.h_prev_side2 == -1)
+for lab, base_m in (('γηπ. ΕΜΕΙΝΕ σπιτι (σεναρια 1+2)', HH), ('γηπ. ΤΑΞΙΔΕΨΕ (σεναρια 3+4)', HX)):
+    P(f'  {lab}:')
+    for lo, hi in ((0, 400), (400, 700), (700, 1000), (1000, 1500), (1500, 2000), (2000, 99999)):
+        x = G[base_m & (G.a_travel >= lo) & (G.a_travel < hi)]
+        if len(x) < 3: P(f'    {lo}-{hi if hi < 99999 else "+"} χλμ: n {len(x)}'); continue
+        P(f'    {lo:>4}-{hi if hi < 99999 else "+":>5} χλμ: n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (±{1.96 * x.rm_m.std() / math.sqrt(len(x)):.1f}) · vs αγορα {x.rm_c.mean():+5.2f} · μεση αποσταση {x.a_travel.mean():.0f}')
+# LOSO: 3 μορφες ποινης μονο οταν ο γηπ. εμεινε σπιτι
+def loso2(fn, lab):
+    rb, rn, pars = [], [], []
+    for Y in SE5:
+        tr_ = G[(G.season != Y) & HH & G.a_travel.notna()]; te = G[G.season == Y]
+        f_tr = fn(tr_.a_travel); b = np.sum(f_tr * tr_.rm_m) / np.sum(f_tr ** 2); pars.append(b)
+        f_te = pd.Series(0.0, index=te.index); m = (HH & G.a_travel.notna()).loc[te.index]; f_te[m] = fn(te.a_travel[m])
+        rb.append(np.sqrt(np.mean((te.margin - te.hm) ** 2))); rn.append(np.sqrt(np.mean((te.margin - te.hm - b * f_te) ** 2)))
+    w_ = sum(n < b for n, b in zip(rn, rb))
+    P(f'  {lab:52s} παραμετρος {np.mean(pars):+.2f} · RMSE vs live ' + ' '.join(f'{n - b:+.4f}' for n, b in zip(rn, rb)) + f' (συνολο {sum(rn) - sum(rb):+.4f}) → {w_}/5')
+P(''); P('  LOSO (μονο οταν ο γηπεδουχος εμεινε σπιτι):')
+loso2(lambda k: (k >= 1000).astype(float), 'ΣΚΑΛΙ: σταθερη ποινη αν ≥1000 χλμ')
+loso2(lambda k: np.clip(k, 0, 2500) / 1000, 'ΓΡΑΜΜΙΚΗ: ποινη × χλμ/1000 (ταβανι 2500)')
+loso2(lambda k: np.clip(k - 500, 0, 2000) / 1000, 'ΓΡΑΜΜΙΚΗ απο 500 χλμ και πανω (ταβανι 2500)')
+loso2(lambda k: np.clip(k - 700, 0, 1800) / 1000, 'ΓΡΑΜΜΙΚΗ απο 700 χλμ και πανω (ταβανι 2500)')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
