@@ -1,0 +1,39 @@
+name: pinnacle-ci-probe
+
+# ΕΦΑΠΑΞ (1/10/2026): απαντα η δημοσια υπηρεσια της Pinnacle (ορια + τιμες) στο GitHub;
+# Πυροδοτηση: push αυτου του αρχειου ή του pinnacle_ci_probe.py. Κοστος: 0 credits.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '.github/workflows/pinnacle-ci-probe.yml'
+      - 'pinnacle_ci_probe.py'
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - name: Pinnacle probe
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python pinnacle_ci_probe.py
+      - name: Commit result
+        if: always()
+        run: |
+          git config user.name "pinnacle-probe-bot"
+          git config user.email "actions@github.com"
+          git add -f pinnacle_ci_probe_out.txt || true
+          if git diff --cached --quiet; then echo "τιποτα"; else
+            git commit -m "nowgoal ci probe [skip ci]"
+            git pull --rebase
+            git push
+          fi

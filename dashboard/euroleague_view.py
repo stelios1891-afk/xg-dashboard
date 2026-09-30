@@ -474,6 +474,8 @@ def _odds_pane(g, mk, sm, st):
     t2 = _ladder('ΣΥΝΟΛΟ ΠΟΝΤΩΝ (over/under)', t_lines, lambda c, L: total_probs(c, L, st), T, mk.get('tl'),
                  (mk.get('to'), mk.get('tu')) if mk.get('to') else None, ml_t, False, 60.0)
     src = f' · αγορα: {esc(mk.get("label"))}' if mk.get('label') else ' · αγορα: καμια γραμμη ακομα'
+    if mk.get('label') and (mk.get('src_sp') != 'Pinnacle' or (mk.get('tl') is not None and mk.get('src_tot') != 'Pinnacle')):
+        src += ' · <span style="color:#f5b731">ALT BOOK (οχι Pinnacle — η Pinnacle δεν εχει ανοιξει ακομα· τα edge ειναι ενδεικτικα, δεν βγαινουν picks)</span>'
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px;line-height:1.5">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας (πραγματικη τιμη) &nbsp; <span style="color:#7ea2ff">◆</span> γραμμη μοντελου &nbsp;·&nbsp; '
            'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας &nbsp;·&nbsp; <span style="color:#6b7fa3">≈</span> = εκτιμηση τιμης απο την κυρια γραμμη '
