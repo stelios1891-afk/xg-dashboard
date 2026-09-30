@@ -77,3 +77,28 @@ for nm, f1, f2 in (('LIVE αργοτερα → ΝΕΟ:', 'a', 'b'), ('ΝΕΟ α�
         P(f'    {c:30s} {len(L):3d} · {nm[:4]} στην αργοτερη τιμη {np.mean(r1)*100:+6.1f}% ({np.sum(r1):+5.1f} μον.)'
           + (f' · το αλλο {np.mean(r2)*100:+6.1f}% ({np.sum(r2):+5.1f} μον.)' if r2 else ''))
 open('el_domestic_totals_alert_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- ΣΥΝΑΙΝΕΣΗ: pick μονο οταν ΚΑΙ το LIVE ΚΑΙ το ΝΕΟ δινουν ≥8% στην ιδια πλευρα (πρωτη τετοια τιμη) ----
+def first_cons(m0, m1, r, p):
+    ser, tip = r['ser'], r['tip']; o = ser[0]
+    for k_, row in enumerate(ser):
+        if row[0] >= tip: break
+        s0, e0, od = pick(23, m0, row); s1, e1, _ = pick(23, m1, row)
+        if not (s0 == s1 and e0 >= 0.08 and e1 >= 0.08): continue
+        if k_ > 0 and -(row[1] - o[1]) * s0 >= 1.5: return None
+        return dict(side='over' if s0 == 1 else 'under', pnl=settle(23, p, s0, row, od), open=(k_ == 0))
+    return None
+C = []
+for p, r in REC[23].items():
+    k = key(p); m0 = PR.get(k, {}).get('t_new')
+    if m0 is None or not np.isfinite(m0) or k not in SIGK: continue
+    sig, rnd = SIGK[k]
+    if rnd < 11: continue
+    c = first_cons(m0, m0 + 0.25 * sig, r, p)
+    if c: C.append(dict(c, sea=D.season.values[p]))
+P(''); P('=== ΣΥΝΑΙΝΕΣΗ LIVE + ΝΕΟ (αγων 11+, τιμη alert Crown) ===')
+for nm, L in (('LIVE', [dict(x['a'], sea=x['sea']) for x in rows if x['a']]), ('ΝΕΟ', [dict(x['b'], sea=x['sea']) for x in rows if x['b']]), ('ΣΥΝΑΙΝΕΣΗ', C)):
+    P(f'  {nm:10s} ολα {summ(L)} · over {summ([l for l in L if l["side"] == "over"])} · under {summ([l for l in L if l["side"] == "under"])}')
+    S = {s: sum(l['pnl'] for l in L if l['sea'] == s) for s in SE5}
+    P('             μοναδες ανα σεζον: ' + ' '.join(f'{s[-2:]}:{v:+5.1f}' for s, v in S.items()))
+open('el_domestic_totals_alert_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
