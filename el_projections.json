@@ -1,7 +1,7 @@
 {
- "generated": "2026-09-30T12:11+00:00",
+ "generated": "2026-09-30T14:27+00:00",
  "season": "E2026",
- "model": "v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) + ταση ποντων προετοιμασιας (κ 0.25, αγων 1-10) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης",
+ "model": "v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) + ταση ποντων προετοιμασιας (κ 0.25, αγων 1-10) · ταξιδι 2ου ματς διαβολοβδομαδας (φιλοξ. ≥1000 χλμ, γηπ. σπιτι: +4.5/+6.6, μονο χαντικαπ) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης",
  "sigma_margin": 11.5,
  "sigma_total": 16.7,
  "mu": 113.93,
@@ -29,6 +29,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 167.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -70,6 +71,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 171.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -111,6 +113,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 170.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -152,6 +155,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 178.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.4,
@@ -193,6 +197,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 175.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -234,6 +239,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 161.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -275,6 +281,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 175.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -316,6 +323,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 174.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -357,6 +365,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 166.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.9,
@@ -398,6 +407,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 168.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -439,6 +449,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 170.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -480,6 +491,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 172.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.9,
@@ -521,6 +533,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 165.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 81.7,
@@ -562,6 +575,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 164.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -603,6 +617,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 174.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -644,6 +659,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 168.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.8,
@@ -685,6 +701,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 181.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.8,
@@ -726,6 +743,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 172.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -767,6 +785,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 178.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.4,
@@ -806,6 +825,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 169.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -845,6 +865,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 172.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -884,6 +905,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 169.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -923,6 +945,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -951,17 +974,23 @@
    "acode": "ZAL",
    "venue": "ADIDAS ARENA",
    "neutral": false,
-   "pts_h": 87.2,
-   "pts_a": 88.1,
-   "margin": -0.97,
+   "pts_h": 89.4,
+   "pts_a": 85.9,
+   "margin": 3.53,
    "total": 175.3,
    "poss": 76.2,
-   "p_home": 0.467,
+   "p_home": 0.621,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 176.4,
+   "travel": {
+    "adj": 4.5,
+    "km": 1614,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Zalgiris Kaunas 1614 χλμ σε ≤3.5 μερες απο το σπιτι της, Paris Basketball εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -1001,6 +1030,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 172.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -1029,17 +1059,23 @@
    "acode": "DUB",
    "venue": "ULKER SPORTS AND EVENT HALL",
    "neutral": false,
-   "pts_h": 87.7,
-   "pts_a": 82.3,
-   "margin": 5.42,
+   "pts_h": 90.0,
+   "pts_a": 80.0,
+   "margin": 9.92,
    "total": 170.0,
    "poss": 74.2,
-   "p_home": 0.681,
+   "p_home": 0.806,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 171.1,
+   "travel": {
+    "adj": 4.5,
+    "km": 2986,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Dubai Basketball 2986 χλμ σε ≤3.5 μερες απο το σπιτι της, Fenerbahce Tarfin Istanbul εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -1079,6 +1115,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 165.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.3,
@@ -1118,6 +1155,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 175.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.5,
@@ -1157,6 +1195,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 178.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.4,
@@ -1196,6 +1235,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 178.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -1235,6 +1275,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 174.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -1274,6 +1315,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 175.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -1313,6 +1355,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 177.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.7,
@@ -1352,6 +1395,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 169.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -1391,6 +1435,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 169.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -1430,6 +1475,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 179.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.7,
@@ -1469,6 +1515,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 166.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -1508,6 +1555,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 172.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.2,
@@ -1547,6 +1595,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 170.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -1586,6 +1635,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 180.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.8,
@@ -1625,6 +1675,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 168.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.3,
@@ -1664,6 +1715,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 170.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -1703,6 +1755,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 168.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -1742,6 +1795,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 178.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.2,
@@ -1781,6 +1835,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 170.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.9,
@@ -1820,6 +1875,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 181.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -1859,6 +1915,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 182.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -1898,6 +1955,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 174.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -1937,6 +1995,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 166.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -1976,6 +2035,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 177.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.6,
@@ -2015,6 +2075,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 165.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -2054,6 +2115,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 184.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 94.9,
@@ -2093,6 +2155,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 173.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -2132,6 +2195,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 168.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -2171,6 +2235,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 168.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -2210,6 +2275,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 170.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -2249,6 +2315,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 178.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.9,
@@ -2288,6 +2355,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 174.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.3,
@@ -2327,6 +2395,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 179.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.8,
@@ -2366,6 +2435,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -2405,6 +2475,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 173.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -2444,6 +2515,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 169.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -2483,6 +2555,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 172.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -2522,6 +2595,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 177.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -2561,6 +2635,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 180.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.5,
@@ -2600,6 +2675,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 171.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -2639,6 +2715,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 169.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -2678,6 +2755,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 168.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -2717,6 +2795,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 173.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -2756,6 +2835,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 184.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -2795,6 +2875,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 180.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.3,
@@ -2834,6 +2915,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 169.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -2873,6 +2955,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 179.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.2,
@@ -2912,6 +2995,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 172.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -2951,6 +3035,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -2990,6 +3075,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 178.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -3029,6 +3115,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 177.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.5,
@@ -3068,6 +3155,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 170.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -3107,6 +3195,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 165.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 81.6,
@@ -3146,6 +3235,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 171.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -3185,6 +3275,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 171.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -3224,6 +3315,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 184.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -3263,6 +3355,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 168.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.3,
@@ -3291,17 +3384,23 @@
    "acode": "HTA",
    "venue": "COCA-COLA ARENA",
    "neutral": false,
-   "pts_h": 89.7,
-   "pts_a": 85.4,
-   "margin": 4.33,
+   "pts_h": 91.9,
+   "pts_a": 83.1,
+   "margin": 8.83,
    "total": 175.1,
    "poss": 75.4,
-   "p_home": 0.647,
+   "p_home": 0.779,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 176.0,
+   "travel": {
+    "adj": 4.5,
+    "km": 3472,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Hapoel IBI Tel Aviv 3472 χλμ σε ≤3.5 μερες απο το σπιτι της, Dubai Basketball εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -3341,6 +3440,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 169.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -3380,6 +3480,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 167.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -3419,6 +3520,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 176.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -3458,6 +3560,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 94.4,
@@ -3486,17 +3589,23 @@
    "acode": "BES",
    "venue": "PALADOZZA",
    "neutral": false,
-   "pts_h": 87.6,
-   "pts_a": 83.1,
-   "margin": 4.43,
+   "pts_h": 89.8,
+   "pts_a": 80.9,
+   "margin": 8.93,
    "total": 170.7,
    "poss": 75.4,
-   "p_home": 0.65,
+   "p_home": 0.781,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 173.1,
+   "travel": {
+    "adj": 4.5,
+    "km": 1489,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Besiktas Istanbul 1489 χλμ σε ≤3.5 μερες απο το σπιτι της, Virtus Bologna εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -3536,6 +3645,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 178.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -3575,6 +3685,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 171.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -3614,6 +3725,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 174.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.8,
@@ -3653,6 +3765,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 173.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -3692,6 +3805,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 177.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -3731,6 +3845,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 167.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -3770,6 +3885,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 178.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -3809,6 +3925,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 172.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -3848,6 +3965,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 177.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.0,
@@ -3887,6 +4005,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 174.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.4,
@@ -3926,6 +4045,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 174.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.2,
@@ -3965,6 +4085,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 175.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -4004,6 +4125,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 175.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.3,
@@ -4043,6 +4165,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 180.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -4082,6 +4205,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 178.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.4,
@@ -4121,6 +4245,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 176.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -4160,6 +4285,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 171.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.5,
@@ -4199,6 +4325,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 172.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -4238,6 +4365,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 169.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -4277,6 +4405,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 172.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -4316,6 +4445,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 170.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -4355,6 +4485,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -4394,6 +4525,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 183.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -4433,6 +4565,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 167.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -4472,6 +4605,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 169.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -4511,6 +4645,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 177.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.9,
@@ -4550,6 +4685,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 173.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -4589,6 +4725,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 181.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.2,
@@ -4628,6 +4765,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 174.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -4667,6 +4805,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 173.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -4706,6 +4845,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 172.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -4745,6 +4885,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 181.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -4773,17 +4914,23 @@
    "acode": "PAN",
    "venue": "ZALGIRIO ARENA",
    "neutral": false,
-   "pts_h": 86.8,
-   "pts_a": 85.6,
-   "margin": 1.2,
+   "pts_h": 90.1,
+   "pts_a": 82.3,
+   "margin": 7.8,
    "total": 172.4,
    "poss": 74.3,
-   "p_home": 0.542,
+   "p_home": 0.751,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 172.4,
+   "travel": {
+    "adj": 6.6,
+    "km": 1464,
+    "frm": "εκτος",
+    "note": "🧳 ταξιδι: Panathinaikos AKTOR Athens 1464 χλμ σε ≤3.5 μερες απο αλλο εκτος, Zalgiris Kaunas εμεινε σπιτι → +6.6 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -4823,6 +4970,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 178.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -4851,17 +4999,23 @@
    "acode": "ULK",
    "venue": "UNIPOL FORUM",
    "neutral": false,
-   "pts_h": 84.3,
-   "pts_a": 85.1,
-   "margin": -0.81,
+   "pts_h": 86.5,
+   "pts_a": 82.8,
+   "margin": 3.69,
    "total": 169.4,
    "poss": 74.0,
-   "p_home": 0.472,
+   "p_home": 0.626,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 169.4,
+   "travel": {
+    "adj": 4.5,
+    "km": 1682,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Fenerbahce Tarfin Istanbul 1682 χλμ σε ≤3.5 μερες απο το σπιτι της, Armani Olimpia Milan εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 84.3,
@@ -4901,6 +5055,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 179.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -4940,6 +5095,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 178.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.8,
@@ -4979,6 +5135,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 166.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.4,
@@ -5018,6 +5175,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -5057,6 +5215,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 173.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -5096,6 +5255,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 169.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -5135,6 +5295,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 179.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -5174,6 +5335,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 173.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -5213,6 +5375,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 177.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -5252,6 +5415,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 179.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.6,
@@ -5291,6 +5455,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 169.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -5330,6 +5495,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 169.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -5369,6 +5535,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 171.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -5408,6 +5575,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 178.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.6,
@@ -5447,6 +5615,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 176.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -5486,6 +5655,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 171.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -5525,6 +5695,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 176.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -5564,6 +5735,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 171.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -5603,6 +5775,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 173.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -5642,6 +5815,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 176.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -5681,6 +5855,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -5720,6 +5895,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 174.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -5759,6 +5935,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 174.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -5798,6 +5975,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 174.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.9,
@@ -5837,6 +6015,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 168.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.1,
@@ -5876,6 +6055,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 186.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.3,
@@ -5915,6 +6095,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 167.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -5954,6 +6135,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 179.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.6,
@@ -5993,6 +6175,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -6032,6 +6215,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 180.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -6071,6 +6255,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 170.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -6110,6 +6295,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 177.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -6149,6 +6335,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 176.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -6188,6 +6375,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 177.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -6227,6 +6415,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 179.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -6266,6 +6455,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 168.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -6305,6 +6495,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 166.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.6,
@@ -6344,6 +6535,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 171.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.4,
@@ -6383,6 +6575,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 170.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -6422,6 +6615,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 181.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.5,
@@ -6461,6 +6655,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 170.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -6500,6 +6695,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 182.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -6539,6 +6735,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 178.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -6578,6 +6775,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 173.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.0,
@@ -6617,6 +6815,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 174.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -6656,6 +6855,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 180.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.8,
@@ -6695,6 +6895,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 176.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.4,
@@ -6734,6 +6935,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 173.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -6773,6 +6975,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 172.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -6812,6 +7015,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 178.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -6851,6 +7055,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 169.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -6890,6 +7095,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 173.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -6929,6 +7135,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 171.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -6968,6 +7175,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 186.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 94.0,
@@ -7007,6 +7215,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 175.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -7046,6 +7255,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 172.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -7085,6 +7295,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 171.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.1,
@@ -7124,6 +7335,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 170.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.7,
@@ -7163,6 +7375,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 175.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -7202,6 +7415,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 170.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -7241,6 +7455,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 172.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -7280,6 +7495,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 176.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -7319,6 +7535,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 178.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -7358,6 +7575,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 181.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.4,
@@ -7397,6 +7615,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 176.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -7436,6 +7655,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 178.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -7475,6 +7695,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 171.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.3,
@@ -7514,6 +7735,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 181.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -7553,6 +7775,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 187.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -7592,6 +7815,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 168.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.1,
@@ -7631,6 +7855,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 174.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -7670,6 +7895,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 169.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -7709,6 +7935,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 172.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -7748,6 +7975,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 174.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 82.4,
@@ -7787,6 +8015,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 172.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -7826,6 +8055,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 180.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -7865,6 +8095,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 174.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -7904,6 +8135,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 180.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -7943,6 +8175,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 167.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.9,
@@ -7982,6 +8215,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 178.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.1,
@@ -8021,6 +8255,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -8060,6 +8295,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 174.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -8099,6 +8335,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 176.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -8138,6 +8375,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 173.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -8177,6 +8415,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -8216,6 +8455,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 180.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -8255,6 +8495,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 173.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.3,
@@ -8294,6 +8535,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 180.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -8333,6 +8575,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 169.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.1,
@@ -8372,6 +8615,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 173.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -8411,6 +8655,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 180.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.7,
@@ -8450,6 +8695,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 170.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.3,
@@ -8489,6 +8735,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 172.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -8528,6 +8775,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 177.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.3,
@@ -8567,6 +8815,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 170.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -8606,6 +8855,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 185.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 98.0,
@@ -8645,6 +8895,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 174.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -8684,6 +8935,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 181.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -8723,6 +8975,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 172.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -8762,6 +9015,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 170.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -8801,6 +9055,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 169.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -8829,17 +9084,23 @@
    "acode": "TEL",
    "venue": "COCA-COLA ARENA",
    "neutral": false,
-   "pts_h": 93.5,
-   "pts_a": 88.8,
-   "margin": 4.69,
+   "pts_h": 95.7,
+   "pts_a": 86.6,
+   "margin": 9.19,
    "total": 182.3,
    "poss": 76.6,
-   "p_home": 0.658,
+   "p_home": 0.788,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 182.3,
+   "travel": {
+    "adj": 4.5,
+    "km": 3801,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Maccabi Rapyd Tel Aviv 3801 χλμ σε ≤3.5 μερες απο το σπιτι της, Dubai Basketball εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -8879,6 +9140,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 181.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.4,
@@ -8918,6 +9180,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 183.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 96.5,
@@ -8957,6 +9220,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 173.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -8996,6 +9260,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 167.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -9035,6 +9300,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 175.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -9074,6 +9340,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 171.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -9113,6 +9380,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 171.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -9152,6 +9420,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 179.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -9191,6 +9460,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 173.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.4,
@@ -9230,6 +9500,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 186.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.8,
@@ -9269,6 +9540,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 172.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -9308,6 +9580,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 172.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.4,
@@ -9347,6 +9620,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 174.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -9386,6 +9660,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 177.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -9425,6 +9700,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 175.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -9464,6 +9740,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 178.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -9503,6 +9780,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 184.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 95.8,
@@ -9542,6 +9820,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 179.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -9581,6 +9860,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 180.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -9620,6 +9900,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 170.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -9659,6 +9940,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 172.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.2,
@@ -9698,6 +9980,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 171.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -9737,6 +10020,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -9776,6 +10060,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 169.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -9815,6 +10100,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 170.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -9854,6 +10140,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 180.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -9893,6 +10180,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 176.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -9932,6 +10220,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 178.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -9971,6 +10260,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 169.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -10010,6 +10300,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 180.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -10049,6 +10340,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 179.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -10088,6 +10380,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 173.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -10127,6 +10420,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 170.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -10166,6 +10460,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 179.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.5,
@@ -10205,6 +10500,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 176.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -10244,6 +10540,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 177.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -10283,6 +10580,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 174.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -10322,6 +10620,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 178.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.3,
@@ -10361,6 +10660,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 176.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.0,
@@ -10400,6 +10700,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 168.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 82.0,
@@ -10439,6 +10740,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 174.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -10467,17 +10769,23 @@
    "acode": "RED",
    "venue": "BUESA ARENA",
    "neutral": false,
-   "pts_h": 90.9,
-   "pts_a": 91.6,
-   "margin": -0.71,
+   "pts_h": 94.2,
+   "pts_a": 88.3,
+   "margin": 5.89,
    "total": 182.5,
    "poss": 77.3,
-   "p_home": 0.475,
+   "p_home": 0.696,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 182.5,
+   "travel": {
+    "adj": 6.6,
+    "km": 1253,
+    "frm": "εκτος",
+    "note": "🧳 ταξιδι: Crvena Zvezda Meridianbet Belgrade 1253 χλμ σε ≤3.5 μερες απο αλλο εκτος, Kosner Baskonia Vitoria-Gasteiz εμεινε σπιτι → +6.6 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 90.6,
@@ -10517,6 +10825,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -10556,6 +10865,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 180.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -10595,6 +10905,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 183.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.5,
@@ -10634,6 +10945,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 168.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 82.9,
@@ -10673,6 +10985,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 177.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -10712,6 +11025,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 171.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -10751,6 +11065,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 180.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -10790,6 +11105,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 172.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -10829,6 +11145,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 186.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 95.6,
@@ -10868,6 +11185,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 170.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -10907,6 +11225,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 172.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.8,
@@ -10946,6 +11265,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 178.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.4,
@@ -10985,6 +11305,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 175.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.8,
@@ -11024,6 +11345,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -11063,6 +11385,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 179.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.6,
@@ -11102,6 +11425,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 186.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -11141,6 +11465,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 177.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -11180,6 +11505,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 180.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -11219,6 +11545,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 169.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -11258,6 +11585,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 172.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -11297,6 +11625,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 173.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -11336,6 +11665,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 170.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -11375,6 +11705,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 172.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -11414,6 +11745,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 173.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -11453,6 +11785,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 169.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -11492,6 +11825,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 181.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -11531,6 +11865,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.5,
@@ -11570,6 +11905,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 182.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -11609,6 +11945,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 174.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -11648,6 +11985,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 175.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -11687,6 +12025,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 182.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -11726,6 +12065,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 177.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -11754,17 +12094,23 @@
    "acode": "HTA",
    "venue": "SAP GARDEN",
    "neutral": false,
-   "pts_h": 88.8,
-   "pts_a": 85.1,
-   "margin": 3.68,
+   "pts_h": 92.1,
+   "pts_a": 81.8,
+   "margin": 10.28,
    "total": 173.9,
    "poss": 74.9,
-   "p_home": 0.626,
+   "p_home": 0.814,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 173.9,
+   "travel": {
+    "adj": 6.6,
+    "km": 1483,
+    "frm": "εκτος",
+    "note": "🧳 ταξιδι: Hapoel IBI Tel Aviv 1483 χλμ σε ≤3.5 μερες απο αλλο εκτος, FC Bayern Munich εμεινε σπιτι → +6.6 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 85.8,
@@ -11804,6 +12150,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 177.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -11832,17 +12179,23 @@
    "acode": "VIR",
    "venue": "MOVISTAR ARENA",
    "neutral": false,
-   "pts_h": 93.0,
-   "pts_a": 80.4,
-   "margin": 12.69,
+   "pts_h": 95.3,
+   "pts_a": 78.1,
+   "margin": 17.19,
    "total": 173.4,
    "poss": 75.7,
-   "p_home": 0.865,
+   "p_home": 0.932,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 173.4,
+   "travel": {
+    "adj": 4.5,
+    "km": 1314,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Virtus Bologna 1314 χλμ σε ≤3.5 μερες απο το σπιτι της, Real Madrid εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -11882,6 +12235,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 180.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -11921,6 +12275,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 167.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -11960,6 +12315,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 178.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -11988,17 +12344,23 @@
    "acode": "MIL",
    "venue": "ZALGIRIO ARENA",
    "neutral": false,
-   "pts_h": 91.4,
-   "pts_a": 81.6,
-   "margin": 9.79,
+   "pts_h": 93.7,
+   "pts_a": 79.4,
+   "margin": 14.29,
    "total": 173.1,
    "poss": 74.3,
-   "p_home": 0.803,
+   "p_home": 0.893,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 173.1,
+   "travel": {
+    "adj": 4.5,
+    "km": 1485,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Armani Olimpia Milan 1485 χλμ σε ≤3.5 μερες απο το σπιτι της, Zalgiris Kaunas εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -12038,6 +12400,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 177.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -12077,6 +12440,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 179.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 94.1,
@@ -12116,6 +12480,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 181.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.4,
@@ -12155,6 +12520,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 177.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -12194,6 +12560,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 187.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.2,
@@ -12233,6 +12600,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 174.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -12272,6 +12640,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 180.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.7,
@@ -12311,6 +12680,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 168.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -12350,6 +12720,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 176.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -12389,6 +12760,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 172.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -12428,6 +12800,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -12467,6 +12840,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 179.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -12506,6 +12880,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -12545,6 +12920,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 184.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.7,
@@ -12584,6 +12960,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 172.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -12623,6 +13000,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 173.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.1,
@@ -12662,6 +13040,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 172.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.1,
@@ -12701,6 +13080,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 170.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -12740,6 +13120,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 179.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.4,
@@ -12779,6 +13160,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 180.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.4,
@@ -12818,6 +13200,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.2,
@@ -12857,6 +13240,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 178.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -12896,6 +13280,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 181.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.3,
@@ -12924,17 +13309,23 @@
    "acode": "BAS",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 95.7,
-   "pts_a": 83.1,
-   "margin": 12.61,
+   "pts_h": 99.0,
+   "pts_a": 79.8,
+   "margin": 19.21,
    "total": 178.9,
    "poss": 76.4,
-   "p_home": 0.864,
+   "p_home": 0.953,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 178.9,
+   "travel": {
+    "adj": 6.6,
+    "km": 2994,
+    "frm": "εκτος",
+    "note": "🧳 ταξιδι: Kosner Baskonia Vitoria-Gasteiz 2994 χλμ σε ≤3.5 μερες απο αλλο εκτος, Anadolu Efes Istanbul εμεινε σπιτι → +6.6 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -12974,6 +13365,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 178.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -13013,6 +13405,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "total_base": 177.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -13052,6 +13445,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 171.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -13091,6 +13485,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 171.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -13119,17 +13514,23 @@
    "acode": "ZAL",
    "venue": "SAP GARDEN",
    "neutral": false,
-   "pts_h": 86.6,
-   "pts_a": 85.4,
-   "margin": 1.18,
+   "pts_h": 88.8,
+   "pts_a": 83.1,
+   "margin": 5.68,
    "total": 171.9,
    "poss": 74.0,
-   "p_home": 0.541,
+   "p_home": 0.689,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 171.9,
+   "travel": {
+    "adj": 4.5,
+    "km": 1132,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι: Zalgiris Kaunas 1132 χλμ σε ≤3.5 μερες απο το σπιτι της, FC Bayern Munich εμεινε σπιτι → +4.5 π. στον γηπεδουχο"
+   },
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -13169,6 +13570,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 182.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -13208,6 +13610,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 178.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.6,
@@ -13247,6 +13650,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 180.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.6,
@@ -13286,6 +13690,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 174.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -13325,6 +13730,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.3,
@@ -13364,6 +13770,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 175.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -13403,6 +13810,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 175.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -13442,6 +13850,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 178.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -13481,6 +13890,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 180.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -13520,6 +13930,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "total_base": 175.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -13559,6 +13970,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 182.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -13598,6 +14010,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 175.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -13637,6 +14050,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 180.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.7,
@@ -13676,6 +14090,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 168.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -13715,6 +14130,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 177.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -13754,6 +14170,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "total_base": 176.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -13793,6 +14210,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 181.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.0,
@@ -13832,6 +14250,7 @@
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 179.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.5,
@@ -13871,6 +14290,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "total_base": 176.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -13910,6 +14330,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 173.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -13949,6 +14370,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 177.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -13988,6 +14410,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 172.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -14027,6 +14450,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 177.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.3,
@@ -14066,6 +14490,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 176.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -14105,6 +14530,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "total_base": 177.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -14144,6 +14570,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 170.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 83.6,
@@ -14183,6 +14610,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 171.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 82.5,
@@ -14222,6 +14650,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 175.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -14261,6 +14690,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "total_base": 178.1,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.4,
@@ -14300,6 +14730,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 181.8,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.7,
@@ -14339,6 +14770,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "total_base": 180.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -14378,6 +14810,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "total_base": 182.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -14417,6 +14850,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "total_base": 178.3,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 91.5,
@@ -14456,6 +14890,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "total_base": 173.2,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -14495,6 +14930,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "total_base": 171.6,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -14534,6 +14970,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "total_base": 173.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -14573,6 +15010,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "total_base": 175.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.0,
@@ -14612,6 +15050,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "total_base": 189.0,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 93.1,
@@ -14651,6 +15090,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "total_base": 174.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -14690,6 +15130,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "total_base": 178.7,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 89.0,
@@ -14729,6 +15170,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "total_base": 174.4,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -14768,6 +15210,7 @@
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "total_base": 175.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -14807,6 +15250,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "total_base": 185.5,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 94.1,
@@ -14846,6 +15290,7 @@
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "total_base": 170.9,
+   "travel": null,
    "versions": {
     "v1": {
      "pts_h": 84.6,

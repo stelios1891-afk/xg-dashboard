@@ -113,7 +113,7 @@ def compute():
             for side, p_, pu, od, hc in ((1, pw, pp, oh, L), (-1, pl, pp, oa, -L)):
                 e = p_ * od + pu - 1
                 if e >= HC_MIN:
-                    picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4),
+                    picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4), travel=g.get('travel'),
                                       proj_odds=round((p_ + (1 - p_ - pu)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L))
         # ---- συνολο ----
         if pin.get('tl') is not None and pin.get('to') and pin.get('tu'):
@@ -146,6 +146,7 @@ def line(p, prev=None):
         team = p['home'] if p['side'] == 1 else p['away']
         bet = f"{team} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
         why = f"μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f}"
+        if p.get('travel'): why += f" · {p['travel']['note']}"
     else:
         bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_line']:g}"
         if p.get('old_agree') is not None:

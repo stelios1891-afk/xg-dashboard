@@ -234,13 +234,21 @@ _, CTX_V1 = build(ENG_V1)                            # παλιο v1: χωρις
 _, CTX_T = build(ENG_TOTAL)             # συνολο ποντων
 d0date = D.date.iloc[0]
 today_cut = (dt.date.today() - d0date).days + 1
-MODEL_TAG = 'v4-B1+dom+pre+preT'
+MODEL_TAG = 'v4-B1+dom+pre+preT+trav'
 GNO, _cnt = {}, {}                      # αριθμος αγωνα της σεζον (max των δυο ομαδων) — οπως στο τεστ της καμπυλης
 for y in sorted(S[SEASON], key=lambda y: y['utc']):
     if y['phase'] != 'RS': continue
     for t in (y['hcode'], y['acode']): _cnt[t] = _cnt.get(t, 0) + 1
     GNO[y['code']] = max(_cnt[y['hcode']], _cnt[y['acode']])
 GMAX = max(GNO.values()) if GNO else 34
+# 1/10/2026 (Στελιος «περασε το +4.5 και το +6.6»): ΤΑΞΙΔΙ στο 2ο ματς διαβολοβδομαδας — φιλοξ. ≥1000 χλμ απο το προηγ. γηπεδο ενω ο γηπ.
+# εμεινε σπιτι → +4.5 (φιλοξ. απο εντος) / +6.6 (απο εκτος) στη διαφορα του γηπεδουχου, ΜΟΝΟ χαντικαπ (el_travel.py · el_dw_fatigue_deep.py).
+try:
+    import el_travel
+    TRAVEL, _tmiss = el_travel.adjustments(S.get(SEASON, []), neutral=lambda x: is_neutral(x))
+    print(f'ταξιδι διαβολοβδομαδας: {len(TRAVEL)} ματς της σεζον με διορθωση' + (f' · ΓΗΠΕΔΑ ΧΩΡΙΣ ΣΥΝΤΕΤΑΓΜΕΝΕΣ: {_tmiss}' if _tmiss else ''))
+except Exception as _e:
+    TRAVEL = {}; print('ΠΡΟΣΟΧΗ: διορθωση ταξιδιου απενεργη —', _e)
 games = []
 for x in sorted(S[SEASON], key=lambda y: y['utc']):
     hcode, acode = x['hcode'], x['acode']
@@ -255,6 +263,8 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     if GNO.get(x['code'], GMAX) >= ENG_SPREAD['stretch_from']:
         mg *= ENG_SPREAD['stretch']   # Β1: ανοιγμα ×1.1 απο τον 7ο αγωνα
         if mgf is not None: mgf *= ENG_SPREAD['stretch']
+    _tr = TRAVEL.get(x['code'])
+    if _tr: mg += _tr['adj']                                          # 1/10: ταξιδι 2ου ματς διαβολοβδομαδας (υπερ γηπεδουχου)
     mg1, tt1, _ = predict(state_at(CTX_V1, cut), hcode, acode, neu, ENG_V1['h'])
     _, tt, _ = predict(state_at(CTX_T, cut), hcode, acode, neu, ENG_TOTAL['h'])
     tt += CURVE_A + CURVE_B * GNO.get(x['code'], GMAX)
@@ -264,7 +274,7 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], utc=x['utc'], home=x['home'], away=x['away'], hcode=hcode, acode=acode,
                venue=x.get('vname'), neutral=neu, pts_h=round((tt + mg) / 2, 1), pts_a=round((tt - mg) / 2, 1),
                margin=round(mg, 2), total=round(tt, 1), poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3),
-               played=played, version='v4', hcrest=x.get('hcrest'), acrest=x.get('acrest'), total_base=round(tt_base, 1),
+               played=played, version='v4', hcrest=x.get('hcrest'), acrest=x.get('acrest'), total_base=round(tt_base, 1), travel=_tr,
                versions={'v1': dict(pts_h=round((tt1 + mg1) / 2, 1), pts_a=round((tt1 - mg1) / 2, 1), margin=round(mg1, 2), total=round(tt1, 1),
                                     p_home=round(Phi(mg1 / SIGMA_MARGIN), 3))})
     if mgf is not None:
@@ -290,7 +300,7 @@ for L in S.values():
 ratings = sorted([dict(code=t, name=names.get(t, t), O=round(state['O'][t], 2), D=round(state['D'][t], 2), net=round(state['O'][t] - state['D'][t], 2),
                        pace=round(state['P'][t], 2), games=state['n'][t]) for t in state['O']], key=lambda r: -r['net'])
 json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=SEASON,
-               model='v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) + ταση ποντων προετοιμασιας (κ 0.25, αγων 1-10) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
+               model='v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) + ταση ποντων προετοιμασιας (κ 0.25, αγων 1-10) · ταξιδι 2ου ματς διαβολοβδομαδας (φιλοξ. ≥1000 χλμ, γηπ. σπιτι: +4.5/+6.6, μονο χαντικαπ) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
                sigma_margin=SIGMA_MARGIN, sigma_total=SIGMA_TOTAL, mu=round(state['mu'], 2), pace=round(state['pm'], 2),
                games=games, ratings=ratings), open('el_projections.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(f'el_projections.json: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα, με προβλεψη «πριν το ματς») · ratings {len(ratings)} ομαδων')
