@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-30T08:39+00:00",
+ "generated": "2026-09-30T12:11+00:00",
  "season": "E2026",
  "model": "v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) + ταση ποντων προετοιμασιας (κ 0.25, αγων 1-10) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης",
  "sigma_margin": 11.5,
@@ -3008,6 +3008,45 @@
    }
   },
   {
+   "code": 79,
+   "round": 8,
+   "phase": "RS",
+   "utc": "2026-10-28T17:30:00Z",
+   "home": "Besiktas Istanbul",
+   "away": "Olympiacos Piraeus",
+   "hcode": "BES",
+   "acode": "OLY",
+   "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
+   "neutral": false,
+   "pts_h": 83.5,
+   "pts_a": 91.3,
+   "margin": -7.78,
+   "total": 174.7,
+   "poss": 75.6,
+   "p_home": 0.249,
+   "played": false,
+   "version": "v4",
+   "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 177.1,
+   "versions": {
+    "v1": {
+     "pts_h": 85.5,
+     "pts_a": 89.6,
+     "margin": -4.12,
+     "total": 175.0,
+     "p_home": 0.36
+    },
+    "fantasy (σκια)": {
+     "pts_h": 84.2,
+     "pts_a": 90.6,
+     "margin": -6.39,
+     "total": 174.7,
+     "p_home": 0.289
+    }
+   }
+  },
+  {
    "code": 77,
    "round": 8,
    "phase": "RS",
@@ -3043,45 +3082,6 @@
      "margin": -0.45,
      "total": 169.7,
      "p_home": 0.484
-    }
-   }
-  },
-  {
-   "code": 79,
-   "round": 8,
-   "phase": "RS",
-   "utc": "2026-10-28T18:30:00Z",
-   "home": "Besiktas Istanbul",
-   "away": "Olympiacos Piraeus",
-   "hcode": "BES",
-   "acode": "OLY",
-   "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
-   "neutral": false,
-   "pts_h": 83.5,
-   "pts_a": 91.3,
-   "margin": -7.78,
-   "total": 174.7,
-   "poss": 75.6,
-   "p_home": 0.249,
-   "played": false,
-   "version": "v4",
-   "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
-   "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
-   "total_base": 177.1,
-   "versions": {
-    "v1": {
-     "pts_h": 85.5,
-     "pts_a": 89.6,
-     "margin": -4.12,
-     "total": 175.0,
-     "p_home": 0.36
-    },
-    "fantasy (σκια)": {
-     "pts_h": 84.2,
-     "pts_a": 90.6,
-     "margin": -6.39,
-     "total": 174.7,
-     "p_home": 0.289
     }
    }
   },
