@@ -59,3 +59,21 @@ for scope, f in (('ΟΛΑ τα alerts', lambda x: True), ('μονο οσα βγ�
             L = G.get((grp, sd), [])
             if L: P(f'    {grp:13s} {sd:5s}: {summ(L)} · εγχωριο σημα προς την πλευρα {np.mean([l["sg"] for l in L]):+.1f} π.')
 open('el_domestic_totals_alert_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- ΓΙΑΤΙ: τα picks που γεννιουνται ΜΕΤΑ το ανοιγμα ----
+P(''); P('=== ΜΕΤΑ ΤΟ ΑΝΟΙΓΜΑ: τι κανει το ΝΕΟ στα ματς οπου το LIVE βγαζει pick αργοτερα (και αντιστροφα) ===')
+def cls(x, y):
+    if y is None: return 'κανενα pick'
+    if y['side'] != x['side']: return 'ΑΝΤΙΘΕΤΗ πλευρα'
+    return 'ιδια πλευρα ΣΤΟ ΑΝΟΙΓΜΑ' if y['open'] else 'ιδια πλευρα, κι αυτο αργοτερα'
+for nm, f1, f2 in (('LIVE αργοτερα → ΝΕΟ:', 'a', 'b'), ('ΝΕΟ αργοτερα → LIVE:', 'b', 'a')):
+    P(f'  {nm}')
+    G = {}
+    for x in rows:
+        a = x[f1]
+        if a and not a['open']: G.setdefault(cls(a, x[f2]), []).append((a, x[f2], x['sea']))
+    for c, L in sorted(G.items(), key=lambda kv: -len(kv[1])):
+        r1 = [a['pnl'] for a, b, s in L]; r2 = [b['pnl'] for a, b, s in L if b]
+        P(f'    {c:30s} {len(L):3d} · {nm[:4]} στην αργοτερη τιμη {np.mean(r1)*100:+6.1f}% ({np.sum(r1):+5.1f} μον.)'
+          + (f' · το αλλο {np.mean(r2)*100:+6.1f}% ({np.sum(r2):+5.1f} μον.)' if r2 else ''))
+open('el_domestic_totals_alert_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
