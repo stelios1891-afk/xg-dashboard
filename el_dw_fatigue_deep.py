@@ -490,3 +490,62 @@ for nm, r in (('ΔΥΟ οπως μετρηθηκαν', b0), ('ΔΥΟ συγκρ.
     P(f'  {nm:22s} vs ΜΙΑ: ' + ' '.join(f'{x - y:+.4f}' for x, y in zip(r, a)) + f' → καλυτερο {sum(x < y for x, y in zip(r, a))}/5 · συνολο {sum(r) - sum(a):+.4f}')
 P(f'  ολο το δειγμα: φιλοξ. απο εντος n {G.s_fh.sum()} {G[G.s_fh].rm_m.mean():+.2f} · απο εκτος n {G.s_fa.sum()} {G[G.s_fa].rm_m.mean():+.2f} · μαζι n {G.s_all.sum()} {G[G.s_all].rm_m.mean():+.2f}')
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 17. ΙΣΤΟΡΙΚΑ: τι θα εκανε η διορθωση στα picks (alert Crown, LOSO τιμες με συγκρατηση 25) ----
+P(''); P('=== 17. ΤΑ 2 ΣΕΝΑΡΙΑ ΙΣΤΟΡΙΚΑ: picks χαντικαπ με και χωρις διορθωση (alert Crown, τιμες LOSO, συγκρατηση 25) ===')
+DV = {}
+for Y in SE5:
+    tr_ = G[G.season != Y]; pool = tr_[tr_.s_all].rm_m.mean(); v = []
+    for gc in ('s_fh', 's_fa'):
+        x = tr_[tr_[gc]].rm_m; v.append(pool + (x.mean() - pool) * len(x) / (len(x) + 25))
+    DV[Y] = v
+def first_pick(m, r, p):
+    ser, tip = r['ser'], r['tip']
+    for k_, row in enumerate(ser):
+        if row[0] >= tip: break
+        side, e, od = pick(21, m, row)
+        if e < 0.08: continue
+        if k_ > 0 and (tip - row[0]) / 3600 < 2: return None
+        return dict(side=side, pnl=settle(21, p, side, row, od), line=row[2], od=od)
+    return None
+rows = []
+for p in G.index[G.s_all]:
+    if p not in REC[21]: continue
+    m0 = PR.get(key(p), {}).get('h_new')
+    if m0 is None or not np.isfinite(m0): continue
+    Y = D.season.values[p]; d = DV[Y][0] if G.loc[p, 's_fh'] else DV[Y][1]
+    a, b = first_pick(m0, REC[21][p], p), first_pick(m0 + d, REC[21][p], p)
+    rows.append(dict(p=p, Y=Y, sc='απο εντος' if G.loc[p, 's_fh'] else 'απο εκτος', d=d, a=a, b=b,
+                     g=f"{D.home.values[p]}-{D.away.values[p]} {str(D.t.values[p])[:10]} {int(D.hs.values[p])}-{int(D.as_.values[p])}", mkt=G.loc[p, 'mc'], hm=m0))
+P(f'  ματς των 2 σεναριων με σειρα Crown: {len(rows)}')
+def sm(L):
+    if not L: return '—'
+    a = np.array(L); return f'{len(a):3d} picks · {a.sum():+5.1f} μον. · ROI {a.mean()*100:+6.1f}%'
+for sc in ('απο εντος', 'απο εκτος', 'ΟΛΑ'):
+    R = [r for r in rows if sc == 'ΟΛΑ' or r['sc'] == sc]
+    live = [r['a']['pnl'] for r in R if r['a']]; new = [r['b']['pnl'] for r in R if r['b']]
+    P(f'  {sc:10s}: ΧΩΡΙΣ διορθωση {sm(live)} (υπερ γηπ {sum(1 for r in R if r["a"] and r["a"]["side"] == 1)} / φιλ {sum(1 for r in R if r["a"] and r["a"]["side"] == -1)})'
+      f' · ΜΕ διορθωση {sm(new)} (υπερ γηπ {sum(1 for r in R if r["b"] and r["b"]["side"] == 1)} / φιλ {sum(1 for r in R if r["b"] and r["b"]["side"] == -1)})')
+P('  ΤΙ ΑΛΛΑΞΕ (ολα):')
+G_ = {}
+for r in rows:
+    a, b = r['a'], r['b']
+    if a and b and a['side'] == b['side']: G_.setdefault('ιδιο pick (ιδια πλευρα)', []).append((a['pnl'], b['pnl'], r))
+    elif a and b: G_.setdefault('ΑΝΑΠΟΔΑ: απο φιλοξ. → γηπεδουχο', []).append((a['pnl'], b['pnl'], r))
+    elif a: G_.setdefault('ΚΟΒΕΙ pick', []).append((a['pnl'], None, r))
+    elif b: G_.setdefault('ΝΕΟ pick', []).append((None, b['pnl'], r))
+for k in ('ιδιο pick (ιδια πλευρα)', 'ΚΟΒΕΙ pick', 'ΑΝΑΠΟΔΑ: απο φιλοξ. → γηπεδουχο', 'ΝΕΟ pick'):
+    L = G_.get(k, [])
+    if not L: P(f'    {k:34s} —'); continue
+    ua = [x[0] for x in L if x[0] is not None]; ub = [x[1] for x in L if x[1] is not None]
+    P(f'    {k:34s} {len(L):3d} ματς · χωρις διορθωση {sum(ua):+5.1f} μον. ({len(ua)}) · με διορθωση {sum(ub):+5.1f} μον. ({len(ub)})'
+      + (f' · πλευρες που κοπηκαν: υπερ γηπ {sum(1 for x in L if x[2]["a"]["side"] == 1)} / φιλ {sum(1 for x in L if x[2]["a"]["side"] == -1)}' if k == 'ΚΟΒΕΙ pick' else ''))
+P('  ΑΝΑ ΣΕΖΟΝ (μοναδες χωρις → με διορθωση): ' + ' · '.join(
+    f"{Y[-2:]}: {sum(r['a']['pnl'] for r in rows if r['Y'] == Y and r['a']):+.1f} → {sum(r['b']['pnl'] for r in rows if r['Y'] == Y and r['b']):+.1f}" for Y in SE5))
+P('  ΛΙΣΤΑ ματς οπου αλλαξε κατι (ματς · σεναριο · αγορα κλεισ. γηπ · μοντελο → +διορθωση · pick χωρις → με · αποτελεσμα):')
+for r in rows:
+    a, b = r['a'], r['b']
+    if (a is None) == (b is None) and (a is None or (a['side'] == b['side'] and abs(a['line'] - b['line']) < 0.01)): continue
+    f = lambda x: '—' if x is None else f"{'ΓΗΠ' if x['side'] == 1 else 'ΦΙΛ'} {x['line'] * x['side']:+g} @{x['od']:.2f} → {x['pnl']:+.2f}"
+    P(f"    {r['g']:32s} {r['sc']:9s} · αγορα {r['mkt']:+5.1f} · μοντ. {r['hm']:+5.1f} → {r['hm'] + r['d']:+5.1f} · {f(a)}  ⇒  {f(b)}")
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
