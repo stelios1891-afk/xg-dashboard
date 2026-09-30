@@ -16,6 +16,8 @@ core7_sos15_final.py — ΤΕΣΤ 1/10/2026 (Στελιος: «τρεξε το �
   εκδοχες c2_<W>_<HI>: + σωστο SoS βαρους W απο 14 ως HI αντιπαλους (HI 19 ≈ τελος 1ου γυρου, 25, 40 = τελος). W ∈ {.25,.5,.75,1}.
   ΠΡΟ-ΔΗΛΩΣΗ c2: μια συνεχεια ΜΠΑΙΝΕΙ αν (1) RPS 15+ καλυτερο σε ≥3/4 σεζον, (2) ολα τα picks 15+ (μεσος 3 βιβλιων) ≥ βαση
   σε ≥3/4 σεζον, ΚΑΙ (3) το LOSO (επιλογη απο τις 12+1 με κριτηριο μοναδες ολων των picks) βγαζει εκτος δειγματος > βαση.
+ΣΕΤ alearn (1/10, «να μαθαινει η αγκυρα νωριτερα;»): εκδοχη@L<n> = αγκυρα μαθαινει απο ματς με md ≥ n (live: n=6 = απο την 7η).
+  CORE7_PREDS πρεπει να ειναι ΠΛΗΡΕΣ αρχειο (ολα τα md), π.χ. core7_mech_preds_cur_0.75_6_13.csv. Ιδια ΠΡΟ-ΔΗΛΩΣΗ με το c2.
 Δεν αλλαζει τιποτα live.
 """
 import sys, io, os, json, glob, contextlib
@@ -35,12 +37,27 @@ VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 1.0 @7-14', 'cur_1.0_6_13'),
        ('ΣΩΣΤΟ 0.5 ολη', 'cur_0.5_6_40'), ('ΣΩΣΤΟ 1.0 ολη', 'cur_1.0_6_40'), ('ΣΩΣΤΟ 1.5 ολη', 'cur_1.5_6_40')]
 if os.environ.get('SOS15_SET') == 'fav075':    # 1/10: φαβορι 15+ ανα σεζον με 0.75
     VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 0.75 @7-14', 'cur_0.75_6_13')]
+if os.environ.get('SOS15_SET') == 'alearn':
+    VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13@L6')] + [(f'μαθ. απο {n + 1}η', f'cur_0.75_6_13@L{n}') for n in (1, 2, 3, 4, 5)] +           [('+SoS & μαθ. απο 3η', 'cur_0.75_2_13@L2'), ('+SoS & μαθ. απο 4η', 'cur_0.75_3_13@L3')]
+def run_L(lam, carry, L):
+    s_adj = np.zeros(len(D))
+    for lg, idx in D.groupby('league').groups.items():
+        off = {}; cur_sea = None
+        for i in idx:
+            r = D.loc[i]
+            if r.season != cur_sea:
+                off = {k: v * carry for k, v in off.items()}; cur_sea = r.season
+            s = (r.xh - r.xa) + off.get(r.h, 0.0) - off.get(r.a, 0.0); s_adj[i] = s
+            if lam > 0 and r.s_mkt == r.s_mkt and r.md >= L:
+                e = r.s_mkt - s; off[r.h] = off.get(r.h, 0.0) + lam * e / 2; off[r.a] = off.get(r.a, 0.0) - lam * e / 2
+    return s_adj
 if os.environ.get('SOS15_SET') == 'c2':
     VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13')] + [(f'{w} ως {h}', f'c2_{w}_{h}') for h in ('19', '25', '40') for w in ('0.25', '0.5', '0.75', '1.0')]
 if os.environ.get('SOS15_SET') == 'w714':      # 1/10: ποιο βαρος στις 7-14 δινει καλυτερη βαση (μεσω αγκυρας) για την 15+
     VAR = [('ΣΗΜΕΡΑ', 'base'), ('0 (χωρις)', 'nosos')] + [(f'ΣΩΣΤΟ {w} @7-14', f'cur_{w}_6_13') for w in ('0.25', '0.5', '0.75', '1.0', '1.25', '1.5', '2.0')]
 def load(v):
-    P = pd.read_csv(f'core7_mech_preds_{v}.csv', dtype={'season': str, 'mid': str}); P = P[P.md >= 6]; P['date'] = pd.to_datetime(P.date)
+    v = v.split('@')[0]
+    P = pd.read_csv(f'core7_mech_preds_{v}.csv', dtype={'season': str, 'mid': str}); P['date'] = pd.to_datetime(P.date)
     m = D[key].merge(P[['league', 'season', 'home_name', 'away_name', 'date', 'xg_h', 'xg_a', 'mid']],
                      left_on=key, right_on=['league', 'season', 'home_name', 'away_name', 'date'], how='left')
     assert len(m) == len(D) and m.xg_h.notna().mean() > .99
@@ -86,7 +103,8 @@ I15 = np.where((D.md >= 14).values)[0]
 RES = {}
 for lab, v in VAR:
     xh, xa, _ = load(v); D['xh'] = xh; D['xa'] = xa
-    S0, SA = run(0, 0), run(0.5, 0)
+    L = int(v.split('@L')[1]) if '@L' in v else 6
+    S0, SA = run_L(0, 0, L), run_L(0.5, 0, L)
     T = xh + xa; S7 = S0 + 0.7 * (SA - S0)
     rp = np.array([rps1(max((T[i] + S7[i]) / 2, .05), max((T[i] - S7[i]) / 2, .05), D.y.iat[i]) for i in I15])
     # πληροφορια περα απο κλεισιμο
@@ -174,8 +192,8 @@ for lab, _ in VAR:
         print(f'    {se}: ' + ' | '.join(f"n{len(F[(F.book == bk) & (F.season == se)]):3d} {F[(F.book == bk) & (F.season == se)].pnl.sum():+5.1f}u" for bk in BK))
 
 # 1/10: LOSO — βαρος 7-14 επιλεγμενο απο τις ΑΛΛΕΣ 3 σεζον (μεσος 3 βιβλιων), κριση στην 4η
-if os.environ.get('SOS15_SET') in ('w714', 'c2'):
-    cands = [l for l, _ in VAR if l != 'ΣΗΜΕΡΑ' or os.environ.get('SOS15_SET') == 'c2']
+if os.environ.get('SOS15_SET') in ('w714', 'c2', 'alearn'):
+    cands = [l for l, _ in VAR if l != 'ΣΗΜΕΡΑ' or os.environ.get('SOS15_SET') in ('c2', 'alearn')]
     def u(lab, role, seas):
         B = RES[lab]['B']; x = B[B.season.isin(seas) & ((B.role == role) if role else True)]
         return np.mean([x[x.book == bk].pnl.sum() for bk in BK])
@@ -188,7 +206,7 @@ if os.environ.get('SOS15_SET') in ('w714', 'c2'):
             print(f'   {se}: διαλεγει {pick:17s} → {ul:+6.1f}u  (σημερα {ub:+6.1f}u)')
         print(f'   ΣΥΝΟΛΟ LOSO {tot_l:+.1f}u vs σημερα {tot_b:+.1f}u')
 
-if os.environ.get('SOS15_SET') == 'c2':
+if os.environ.get('SOS15_SET') in ('c2', 'alearn'):
     md15 = D.md.values[I15]
     WIN = [('15-19', 14, 18), ('20-25', 19, 24), ('26+', 25, 99)]
     print(chr(10) + 'ΑΝΑ ΠΕΡΙΟΔΟ 15+ — ΟΛΑ τα picks (μεσος 3 βιβλιων, μοναδες) · σε [ ] RPS Δ×10⁻⁴ vs σημερα (− = καλυτερο)')
