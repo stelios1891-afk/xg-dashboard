@@ -705,7 +705,7 @@ def backlog_html():
     h += head('🟡 ΣΚΙΕΣ ΠΟΥ ΤΡΕΧΟΥΝ', 'αυτόματα στον scanner / refresh')
     h += table(['σκιά', 'μοντέλο', 'τι γράφει', 'κρίση', 'κριτήριο'],
                [['A / C / B2 + ζώνες 6-14%', 'εγχώρια', 'shadow_scan.py → shadow_picks.jsonl (3 εκδοχές quarter pricing + φαβορί e_B2f + dogs ≥6%)', '<b>Μάιος 2027</b>', 'n≥40 ανά ζώνη· κατέβασμα @6-8 μόνο αν ROI>0 t≥1· ανέβασμα αν ROI<0 t≤−1 (shadow_report header, οριστικοποίηση με 5.1)'],
-                ['FAV S2 (φαβορί)', 'εγχώρια', 'dom_fav_shadow.py → dom_fav_shadow.jsonl (edge_s2 + edge_base, mults +2:1.001/+1:0.988/−1:1.144/−2:1.171)', 'στη 15η αγωνιστική', 'μαζί με τις άλλες σκιές· backtest +1.9% 15η+ (0.3 SE)'],
+                ['FAV S2 (φαβορί)', 'εγχώρια', 'dom_fav_shadow.py → dom_fav_shadow.jsonl (edge_s2 + edge_base, mults +2:1.001/+1:0.988/−1:1.144/−2:1.171· SoS = live σωστό 0.75 από 1/10)', 'στη 15η αγωνιστική', 'μαζί με τις άλλες σκιές· backtest +1.9% 15η+ (0.3 SE)'],
                 ['Paper picks md1-14', 'εγχώρια', 'clv_bets.jsonl με window 1-6/7-14/15+, paper=True για md<15', '<b>χειμώνας 2026-27</b>', 'κρίση του 1-14 με πραγματικά δεδομένα + εμπλουτισμό (origin/move/dead/pin snapshots)· per-window κανόνες ΑΠΟΡΡΙΦΘΗΚΑΝ 1/9'],
                 ['Βραζιλία', 'επέκταση', 'brazil_shadow.py → brazil_shadow.jsonl (in-season MIN_N=14, HFA 1.17, TOA Pinnacle)', '<b>ένταξη 2027</b>', 'φετινό paper Σεπ-Δεκ 2026· backtest +5.9% ±7.6 (3/4)'],
                 ['Euro as-live stack', 'Ευρώπη', 'euro_shadow.jsonl: e_live + e_clean και για τις 2 πλευρές· γραμμή «fav −0.75» 🎯· UEL no_play', 'σεζόν 2627', 'favs FotMob+FotMob @4 (+4.4 Crown/+4.5 Pinnacle, 206 bets, 0.7 SE) και −0.75 τυφλό = υποψήφια'],

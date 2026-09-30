@@ -14,7 +14,7 @@ dom_fav_shadow.py — LIVE ΣΚΙΑ «FAV S2» για τον scanner (εγκρι
 Στο |line| = 0.5 ακριβως: λ baseline και στις δυο πλευρες (S2≡S1, συμβαση fav_combo).
 
 Ratings «ως σημερα»: warm-start μηχανικη gamestate_v2/fav_combo (flat περσινο prior
-2526, K=8, ραμπα blend_at, DECAY 0.96 wmean, SoS 1.5 gate n=6..13, HFA_FIX, norms
+2526, K=8, ραμπα blend_at, DECAY 0.96 wmean, SoS picks.SOS «σωστο» (φετινα πριν τη μιξη, 1/10) gate n=6..13, HFA_FIX, norms
 περσινης σεζον) πανω στα committed data_{lg}_{sea}.json (2526 prior + 2627 φετινη).
 ΑΠΟΚΛΙΣΗ (τεκμηριωμενη): prior νεοφερτων = μεσος ορος prior λιγκας (οχι promo-coef
 LOSO του corrected_config — δεν ειναι διαθεσιμο/αναγκαιο live· η σκια ειναι συνεπης
@@ -43,8 +43,8 @@ from picks import BLEND, HFA_FIX, MARGIN, OMIN, OMAX, wmean, blend_at
 CORE7 = ['EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Eredivisie']
 PRIOR_SEA, CUR_SEA = '2526', '2627'    # yearly update μαζι με το data-refresh
 K = 8.0                                # warm-start shrink n/(n+K)
-ST = 1.5                               # SoS strength
-SOS_MIN_N, SOS_MAX_N = 6, 13
+ST = picks.SOS                         # SoS strength — 1/10/2026: ιδιο με το live (σωστο SoS 0.75, πριν ηταν 1.5 πανω στο μεικτο)
+SOS_MIN_N, SOS_MAX_N = picks.SOS_MIN_N, picks.SOS_MAX_N
 FT = 95
 TILT = 0.09                            # ±TILT/2 στο pricing του ρευματος φαβορι
 EDGE_MIN = 0.10
@@ -190,38 +190,48 @@ class LeagueEngine:
         h = self.hist.get(tid)
         return len(h['sf']) if h else 0
 
-    def warm(self, tid):
-        if tid in self._cache:
-            return self._cache[tid]
-        p = self.prior.get(tid, self.mean_prior)
+    def cur_raw(self, tid):
+        """Φετινο rating (Ax, Dx, sf, sa) ΠΡΙΝ τη μιξη με το prior (ραμπα blend_at)."""
         h = self.hist.get(tid)
         n = len(h['sf']) if h else 0
         if n == 0:
-            v = p
-        else:
-            b = blend_at(n)
-            sf = wmean(h['sf']); sa = wmean(h['sa'])
-            Ax = (b * wmean(h['xf']) + (1 - b) * wmean(h['gf'])) / max(sf, 1e-9)
-            Dx = (b * wmean(h['xa']) + (1 - b) * wmean(h['ga'])) / max(sa, 1e-9)
-            w = n / (n + K)
-            v = tuple(max(pi, 1e-9) * (max(ri, 1e-9) / max(pi, 1e-9)) ** w
-                      for ri, pi in zip((Ax, Dx, sf, sa), p))
+            return None
+        b = blend_at(n)
+        sf = wmean(h['sf']); sa = wmean(h['sa'])
+        Ax = (b * wmean(h['xf']) + (1 - b) * wmean(h['gf'])) / max(sf, 1e-9)
+        Dx = (b * wmean(h['xa']) + (1 - b) * wmean(h['ga'])) / max(sa, 1e-9)
+        return (Ax, Dx, sf, sa)
+
+    def shrink(self, r, tid):
+        p = self.prior.get(tid, self.mean_prior)
+        w = self.n_of(tid) / (self.n_of(tid) + K)
+        return tuple(max(pi, 1e-9) * (max(ri, 1e-9) / max(pi, 1e-9)) ** w for ri, pi in zip(r, p))
+
+    def warm(self, tid):
+        if tid in self._cache:
+            return self._cache[tid]
+        r = self.cur_raw(tid)
+        v = self.prior.get(tid, self.mean_prior) if r is None else self.shrink(r, tid)
         self._cache[tid] = v
         return v
 
     def sosadj(self, r, tid):
+        """1/10/2026 «σωστο» SoS (ιδιο με build_data.apply_sos): διορθωση στα ΦΕΤΙΝΑ νουμερα ΠΡΙΝ το shrink·
+        αντιπαλοι = μεικτο rating προ SoS. Εκτος 6-13 αντιπαλων → r ως εχει."""
         t = self.hist.get(tid)
-        if not t or not (SOS_MIN_N <= len(t['opp']) <= SOS_MAX_N):
+        if not t or not (SOS_MIN_N <= len(t['opp']) <= SOS_MAX_N) or not ST:
             return r
         oA = []; oD = []; oSF = []; oSA = []
         for o in t['opp']:
             a = self.warm(o)
             oA.append(a[0]); oD.append(a[1]); oSF.append(a[2]); oSA.append(a[3])
         mA, mD, mSF, mSA = wmean(oA), wmean(oD), wmean(oSF), wmean(oSA)
-        return (r[0] * (self.lx / max(mD, 1e-9)) ** ST,
-                r[1] * (self.lx / max(mA, 1e-9)) ** ST,
-                r[2] * (self.ls / max(mSA, 1e-9)) ** ST,
-                r[3] * (self.ls / max(mSF, 1e-9)) ** ST)
+        c = self.cur_raw(tid)
+        c = (c[0] * (self.lx / max(mD, 1e-9)) ** ST,
+             c[1] * (self.lx / max(mA, 1e-9)) ** ST,
+             c[2] * (self.ls / max(mSA, 1e-9)) ** ST,
+             c[3] * (self.ls / max(mSF, 1e-9)) ** ST)
+        return self.shrink(c, tid)
 
     def predict(self, H, A):
         """(xg_h, xg_a) για επερχομενο ματς — ιδιο math με gamestate_v2.run."""

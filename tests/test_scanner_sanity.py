@@ -513,6 +513,20 @@ def test_d_correct_sos_before_blend():
     assert out[3] == blended[3], 'με <6 αντιπαλους το SoS πρεπει να ειναι ανενεργο'
 
 
+def test_d_fav_shadow_sos_matches_live():
+    """1/10/2026: η σκια FAV S2 εχει δικο της αντιγραφο της μηχανης — το SoS της πρεπει να ειναι το live (βαρος & παραθυρο)."""
+    import picks, dom_fav_shadow as F
+    assert (F.ST, F.SOS_MIN_N, F.SOS_MAX_N) == (picks.SOS, picks.SOS_MIN_N, picks.SOS_MAX_N)
+    # ιδια αριθμητικη με build_data.apply_sos: SoS στα φετινα ΠΡΙΝ το shrink
+    pr = [(0, 0, t, 0, 12.0, 1.3, 11.0, 1.2, 1.3, 1.2) for t in (1, 2)] * 5
+    cur = [(d, 0, 1, 2, 12.0, 1.6, 11.0, 1.0, 1.6, 1.0) for d in range(8)] + [(d, 0, 2, 1, 11.0, 1.0, 12.0, 1.6, 1.0, 1.6) for d in range(8)]
+    E = F.LeagueEngine('EPL', pr, cur)
+    got = E.sosadj(E.warm(1), 1)
+    c = E.cur_raw(1); o = E.warm(2)
+    exp = E.shrink((c[0] * (E.lx / o[1]) ** F.ST, c[1] * (E.lx / o[0]) ** F.ST, c[2] * (E.ls / o[3]) ** F.ST, c[3] * (E.ls / o[2]) ** F.ST), 1)
+    assert all(abs(a - b) < 1e-9 for a, b in zip(got, exp)), 'FAV S2: SoS οχι στα φετινα πριν το shrink'
+
+
 def test_d_core7_anchor_short_lines_only():
     """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
     import core7_anchor as CA
