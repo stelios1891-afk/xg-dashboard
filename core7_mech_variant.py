@@ -48,6 +48,12 @@ if V.startswith('c2_'):                 # 1/10: c2_<ST2>_<GHI> = σωστο SoS 
     pre = pre.replace(old_ret, old_ret.replace('** ST', '** _st').replace(
         '            return (', "            _st = ST if len(t['opp']) <= 13 else ST2" + chr(10) + '            return (', 1))
     os.environ['SOS_MODE'] = 'current'
+if V.startswith('bl_'):                 # 1/10: bl_<BL> = LIVE (σωστο SoS 0.75 @6-13) με αλλο τελικο μειγμα xG/γκολ BL (ραμπα 100→BL)
+    bl_ = float(V.split('_')[1])
+    assert 'K = 8.0; BL = 0.60; SPLIT = 13; KG = 12.0; ST = 1.5; GLO, GHI = 6, 13' in pre
+    pre = pre.replace('K = 8.0; BL = 0.60; SPLIT = 13; KG = 12.0; ST = 1.5; GLO, GHI = 6, 13',
+                      f'K = 8.0; BL = {bl_}; SPLIT = 13; KG = 12.0; ST = 0.75; GLO, GHI = 6, 13')
+    os.environ['SOS_MODE'] = 'current'
 if V == 'nosos':                       # 1/10: χωρις διορθωση προγραμματος (SoS) στις αγων. 7-14
     assert 'ST = 1.5;' in pre
     pre = pre.replace('ST = 1.5;', 'ST = 0.0;')
