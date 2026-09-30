@@ -54,6 +54,16 @@ def toa_like(league, include_alt=True):
     for x in MK:
         if x.get('period') == 0 and x.get('status', 'open') == 'open':
             byid.setdefault(x.get('matchupId'), []).append(x)
+    # BTTS: ξεχωριστο «ειδικο» ματς (special «Both Teams To Score?», συμμετεχοντες Yes/No) κατω απο το κυριο (parentId)
+    btts = {}
+    for m in M:
+        sp = m.get('special') or {}
+        if m.get('parentId') and sp.get('description') == 'Both Teams To Score?':
+            pid = {p['id']: p.get('name') for p in (m.get('participants') or [])}
+            for x in byid.get(m['id'], []):
+                oc = [dict(name=pid.get(p.get('participantId')), price=dec(p.get('price'))) for p in x.get('prices', [])]
+                if {o['name'] for o in oc} >= {'Yes', 'No'}:
+                    btts[m['parentId']] = (oc, max([l.get('amount', 0) for l in x.get('limits', [])] or [0]))
     out = []
     for m in M:
         ps = m.get('participants') or []
@@ -81,6 +91,8 @@ def toa_like(league, include_alt=True):
                       dict(name='Under', price=dec(pr['under']['price']), point=pr['under'].get('points'))]
                 if alt: alt_tot += oc
                 else: mk_out.append(dict(key='totals', outcomes=oc)); limits['totals'] = lim
+        if m['id'] in btts:
+            mk_out.append(dict(key='btts', outcomes=btts[m['id']][0])); limits['btts'] = btts[m['id']][1]
         if include_alt:
             main_sp = [o for k in mk_out if k['key'] == 'spreads' for o in k['outcomes']]
             main_tot = [o for k in mk_out if k['key'] == 'totals' for o in k['outcomes']]

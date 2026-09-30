@@ -288,7 +288,8 @@ def main(dry=False):
         unmatched_all += [f'[{lg}] {u}' for u in unm]
         for g, f in pairs:
             kid = f"{f['home_id']}_{f['away_id']}"
-            h2 = eos._h2h(g); sp = eos._spread(g); tt = eos._total(g); bt = None   # btts δεν υπαρχει στο bulk — ερχεται απο το per-event (σκαλες)
+            h2 = eos._h2h(g); sp = eos._spread(g); tt = eos._total(g)
+            bt = eos._btts(g) if str(g.get('id', '')).startswith('pin') else None   # TOA: btts μονο per-event· Pinnacle: μαζι (1/10)
             old_rec = odds.get(kid) or {}
             rec = dict(ko=f['ko'].isoformat(), when=now.isoformat()[:16], lg=lg,
                        eid=g.get('id'), sport=sport)
