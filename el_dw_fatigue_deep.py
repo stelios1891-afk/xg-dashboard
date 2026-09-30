@@ -460,3 +460,33 @@ loso2(lambda k: np.clip(k, 0, 2500) / 1000, 'ΓΡΑΜΜΙΚΗ: ποινη × χ�
 loso2(lambda k: np.clip(k - 500, 0, 2000) / 1000, 'ΓΡΑΜΜΙΚΗ απο 500 χλμ και πανω (ταβανι 2500)')
 loso2(lambda k: np.clip(k - 700, 0, 1800) / 1000, 'ΓΡΑΜΜΙΚΗ απο 700 χλμ και πανω (ταβανι 2500)')
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 16. ΤΕΣΤ: γηπ. σπιτι & φιλοξ. ≥1000 — ΜΙΑ τιμη vs ΔΥΟ (φιλοξ. απο εντος / απο εκτος), συγκρατηση 0/25/50 ----
+P(''); P('=== 16. ΓΗΠ. ΣΠΙΤΙ & ΦΙΛΟΞ. ≥1000 χλμ: ΜΙΑ τιμη vs ΔΥΟ τιμες (LOSO, τιμες απο τις αλλες σεζον) ===')
+G['s_all'] = HH & (G.a_travel >= 1000)
+G['s_fh'] = G.s_all & (G.a_prev_side2 == 1)
+G['s_fa'] = G.s_all & (G.a_prev_side2 == -1)
+def loso3(two, shrink, lab):
+    rb, rn, vals = [], [], []
+    for Y in SE5:
+        tr_ = G[G.season != Y]; te = G[G.season == Y]; pool = tr_[tr_.s_all].rm_m.mean()
+        if not two:
+            adj = te.hm + np.where(te.s_all, pool, 0.0); vals.append((pool,))
+        else:
+            v = []
+            for gc in ('s_fh', 's_fa'):
+                x = tr_[tr_[gc]].rm_m; d = pool + (x.mean() - pool) * len(x) / (len(x) + shrink) if shrink else x.mean(); v.append(d)
+            adj = te.hm + np.where(te.s_fh, v[0], 0.0) + np.where(te.s_fa, v[1], 0.0); vals.append(tuple(v))
+        rb.append(np.sqrt(np.mean((te.margin - te.hm) ** 2))); rn.append(np.sqrt(np.mean((te.margin - adj) ** 2)))
+    w_ = sum(n < b for n, b in zip(rn, rb)); mv = np.mean(vals, axis=0)
+    P(f'  {lab:40s} τιμες (μ.ο. LOSO) ' + ' / '.join(f'{v:+.2f}' for v in mv) + ' · RMSE vs live ' + ' '.join(f'{n - b:+.4f}' for n, b in zip(rn, rb))
+      + f' (συνολο {sum(rn) - sum(rb):+.4f}) → {w_}/5')
+    return rn
+a = loso3(False, 0, 'ΜΙΑ τιμη')
+b0 = loso3(True, 0, 'ΔΥΟ, οπως μετρηθηκαν')
+b25 = loso3(True, 25, 'ΔΥΟ, συγκρατηση 25')
+b50 = loso3(True, 50, 'ΔΥΟ, συγκρατηση 50')
+for nm, r in (('ΔΥΟ οπως μετρηθηκαν', b0), ('ΔΥΟ συγκρ. 25', b25), ('ΔΥΟ συγκρ. 50', b50)):
+    P(f'  {nm:22s} vs ΜΙΑ: ' + ' '.join(f'{x - y:+.4f}' for x, y in zip(r, a)) + f' → καλυτερο {sum(x < y for x, y in zip(r, a))}/5 · συνολο {sum(r) - sum(a):+.4f}')
+P(f'  ολο το δειγμα: φιλοξ. απο εντος n {G.s_fh.sum()} {G[G.s_fh].rm_m.mean():+.2f} · απο εκτος n {G.s_fa.sum()} {G[G.s_fa].rm_m.mean():+.2f} · μαζι n {G.s_all.sum()} {G[G.s_all].rm_m.mean():+.2f}')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
