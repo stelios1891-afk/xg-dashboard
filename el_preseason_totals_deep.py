@@ -115,3 +115,76 @@ for nm, v in (('ΠΑΛΙΟ', base), ('ΝΕΟ (σταθερη)', HELD['σταθε
     cells = [f"{sd}: κινηση {np.mean([x[0] for x in L]):+.2f} π. · ROI {np.mean([x[1] for x in L])*100:+.1f}% ({len(L)})" if L else f'{sd}: —' for sd, L in res.items()]
     P(f'    {nm:15s} ' + ' | '.join(cells))
 open('el_preseason_totals_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- D. ΓΙΑΤΙ διαφερει η Crown: ιδια ματς, ιδια picks; τιμες; ----
+P('')
+P('=== D. ΝΕΟ: picks στο ΑΝΟΙΓΜΑ Crown vs στο ΚΛΕΙΣΙΜΟ Pinnacle (αγων 1-10) ===')
+new = HELD['σταθερη ως 10η (τεστ)']
+both = [j for j in sel if np.isfinite(PRC[j, 3])]
+P(f'  ματς με ΚΑΙ Crown ανοιγμα ΚΑΙ Pinnacle κλεισιμο: {len(both)} (Crown μονο: {len(sel) - len(both)})')
+for sd in ('over', 'under'):
+    G = {'ιδιο pick και στα δυο': [], 'μονο στο ανοιγμα Crown': [], 'μονο στο κλεισιμο Pinnacle': []}
+    for j in both:
+        TL, ov, un = OPEN[j]['o']; s1, e1, p1 = pick(new[j], j, TL, ov, un); s2, e2, p2 = pick(new[j], j)
+        a = e1 >= 0.08 and s1 == sd; b = e2 >= 0.08 and s2 == sd
+        diff = (TL - PRC[j, 3]) * (1 if sd == 'under' else -1)          # + = η Crown στο ανοιγμα καλυτερη γραμμη για εμας
+        if a and b: G['ιδιο pick και στα δυο'].append((p1, p2, diff))
+        elif a: G['μονο στο ανοιγμα Crown'].append((p1, None, diff))
+        elif b: G['μονο στο κλεισιμο Pinnacle'].append((None, p2, diff))
+    P(f'  {sd.upper()}:')
+    for k, L in G.items():
+        if not L: P(f'    {k:28s}: —'); continue
+        r1 = [x[0] for x in L if x[0] is not None]; r2 = [x[1] for x in L if x[1] is not None]
+        P(f'    {k:28s}: {len(L):3d} picks · ROI στο ανοιγμα Crown {np.mean(r1)*100 if r1 else float("nan"):+.1f}% · στο κλεισιμο Pinnacle {np.mean(r2)*100 if r2 else float("nan"):+.1f}% · '
+          f'η γραμμη Crown ανοιγματος {np.mean([x[2] for x in L]):+.2f} π. καλυτερη για εμας')
+open('el_preseason_totals_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- E. ΠΑΛΙΟ vs ΝΕΟ vs ΣΥΝΑΙΝΕΣΗ χωρις τα αργα picks (προσομοιωση alert στην Crown) ----
+# σαρωση καθε ωρα απο το ανοιγμα Crown· alert = πρωτη ωρα με edge ≥8% (τιμη Crown εκεινης της ωρας)·
+# «αργο» pick = πρωτη εμφανιση λιγοτερο απο Χ ωρες πριν το τζαμπολ → εξαιρειται
+P('')
+P('=== E. ΠΑΛΙΟ vs ΝΕΟ vs ΣΥΝΑΙΝΕΣΗ — picks στην πρωτη εμφανιση (alert, τιμη Crown), αγων 1-10 ===')
+SER = {}
+for g in sched:
+    if g.get('hs') is None or g['ngid'] not in ROWS: continue
+    tip = pd.Timestamp(g['bj']) - pd.Timedelta(hours=8)
+    for j, tt in key.get((g['hs'], g['as_']), []):
+        if abs(pd.Timestamp(tt).tz_localize(None) - tip) <= pd.Timedelta(hours=3):
+            rows = sorted([(x[0] + 8 * 3600, x[1], 1 + x[2], 1 + x[3]) for x in ROWS[g['ngid']] if x[4] == 2 and x[1] is not None and x[2] and x[3]])
+            tsec = pd.Timestamp(tt).tz_localize(None).timestamp() if pd.Timestamp(tt).tzinfo is None else pd.Timestamp(tt).timestamp()
+            rows = [r for r in rows if r[0] <= tsec + 600]
+            if len(rows) >= 2 and E10[j] and SE[j] in SEAS: SER[j] = (rows, tsec)
+            break
+def at_(rows, tau):
+    k = None
+    for r in rows:
+        if r[0] <= tau: k = r
+        else: break
+    return k
+new = HELD['σταθερη ως 10η (τεστ)']
+MODELS = {'ΠΑΛΙΟ': lambda j, r: pick(base[j], j, r[1], r[2], r[3]),
+          'ΝΕΟ': lambda j, r: pick(new[j], j, r[1], r[2], r[3])}
+def cons(j, r):
+    a = pick(base[j], j, r[1], r[2], r[3]); b = pick(new[j], j, r[1], r[2], r[3])
+    return (b[0], min(a[1], b[1]), b[2]) if a[0] == b[0] else (b[0], -1, 0)
+MODELS['ΣΥΝΑΙΝΕΣΗ (και τα δυο)'] = cons
+REC_E = {m: [] for m in MODELS}
+for j, (rows, tip) in SER.items():
+    for m, f in MODELS.items():
+        tau = rows[0][0]
+        while tau < tip:
+            r = at_(rows, tau); s, e, p = f(j, r)
+            if e >= 0.08:
+                REC_E[m].append(dict(side=s, pnl=p, hrs=(tip - tau) / 3600, sea=SE[j])); break
+            tau += 3600
+P(f'  {len(SER)} ματς με σειρα Crown · ανοιγμα διαμεσος {np.median([(t - r[0][0]) / 3600 for r, t in SER.values()]):.1f}ω πριν')
+def cell(z):
+    if len(z) == 0: return '—'
+    pos = sum(1 for s in SEAS if (z.sea == s).any() and z[z.sea == s].pnl.mean() > 0)
+    return f'{z.pnl.mean()*100:+.1f}% ({len(z)}) {pos}/5'
+for cut, lab in ((0, 'ΟΛΑ τα alerts'), (3, 'χωρις οσα βγαινουν <3ω πριν'), (6, 'χωρις οσα βγαινουν <6ω πριν'), (12, 'μονο οσα βγαινουν ≥12ω πριν')):
+    P(f'  {lab}:')
+    for m in MODELS:
+        Z = pd.DataFrame(REC_E[m]); Z = Z[Z.hrs >= cut]
+        P(f'    {m:24s} over {cell(Z[Z.side == "over"])} · under {cell(Z[Z.side == "under"])} · ολα {cell(Z)}')
+open('el_preseason_totals_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
