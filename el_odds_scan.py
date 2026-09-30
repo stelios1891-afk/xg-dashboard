@@ -143,6 +143,31 @@ def _book_lines(b, h_name, a_name):
     return out
 
 
+def _pin_alt(g, swapped=False):
+    """1/10/2026: ΕΝΑΛΛΑΚΤΙΚΕΣ γραμμες Pinnacle (pin_api, 0 credits) στην προοπτικη του ΔΙΚΟΥ μας γηπεδουχου:
+    dict(sp=[[line_home, oh, oa], ...], tot=[[tl, over, under], ...]) — για τη σκαλα του dashboard (και ακεραιες γραμμες)."""
+    h_name, a_name = g.get('home_team'), g.get('away_team')
+    if swapped:
+        h_name, a_name = a_name, h_name
+    sp, tot = {}, {}
+    for b in g.get('bookmakers', []):
+        if b.get('key') != 'pinnacle':
+            continue
+        for m in b.get('markets', []):
+            if m.get('key') == 'alternate_spreads':
+                for o in m.get('outcomes', []):
+                    if o.get('point') is None or not o.get('price'): continue
+                    if o.get('name') == h_name: sp.setdefault(float(o['point']), [None, None])[0] = float(o['price'])
+                    elif o.get('name') == a_name: sp.setdefault(-float(o['point']), [None, None])[1] = float(o['price'])
+            elif m.get('key') == 'alternate_totals':
+                for o in m.get('outcomes', []):
+                    if o.get('point') is None or not o.get('price'): continue
+                    i = 0 if str(o.get('name', '')).lower() == 'over' else 1
+                    tot.setdefault(float(o['point']), [None, None])[i] = float(o['price'])
+    return dict(sp=sorted([k, v[0], v[1]] for k, v in sp.items() if None not in v),
+                tot=sorted([k, v[0], v[1]] for k, v in tot.items() if None not in v))
+
+
 def _best(vals):
     """[(price, book)] -> (max price, book) ή (None, None)."""
     vals = [v for v in vals if v[0]]
@@ -245,6 +270,9 @@ def build_records(toa_games, games, now, old_odds):
                    when=now.isoformat()[:16], toa_id=g.get('id'),
                    toa_home=g.get('home_team'), toa_away=g.get('away_team'), swapped=bool(sw),
                    n_books=nbk, pin=pin, cons=cons, best=best)
+        alt = _pin_alt(g, sw)
+        if alt['sp'] or alt['tot']:
+            rec['alt'] = alt
         if _sig(rec) != _sig(odds.get(key) or {}):
             row = dict(t=rec['when'], code=f['code'], commence=rec['commence'])
             row.update({k: v for k, v in pin.items()})
@@ -293,7 +321,7 @@ def main():
     pin_data, src = None, 'toa'
     if use_pin:
         try:
-            pin_data = pin_api.toa_like('euroleague', include_alt=False); src = 'pinnacle'
+            pin_data = pin_api.toa_like('euroleague', include_alt=True); src = 'pinnacle'
         except pin_api.PinError as e:
             pin_api.fallback_notice('euroleague', str(e))
     matched = set()

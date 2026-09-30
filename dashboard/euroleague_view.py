@@ -188,6 +188,8 @@ def _from_rec(rec):
         mk.update(tl=pin['tl'], to=pin.get('to'), tu=pin.get('tu'), src_tot='Pinnacle')
     elif best.get('tl') is not None:
         mk.update(tl=best['tl'], to=best.get('to'), tu=best.get('tu'), src_tot='καλυτερη τιμη')
+    if rec.get('alt') and pin.get('line') is not None:          # 1/10: πραγματικες εναλλακτικες Pinnacle
+        mk.update(alt_sp=rec['alt'].get('sp') or [], alt_tot=rec['alt'].get('tot') or [])
     if pin.get('mh'):
         mk.update(mh=pin['mh'], ma=pin.get('ma'))
     elif best.get('mh'):
@@ -419,7 +421,7 @@ def _ecell(e):
     return f'<span style="color:{c};font-weight:{w}">{e * 100:+.0f}%</span>'
 
 
-def _ladder(title, lines, pfn, center_model, main_ln, main_px, model_ln, signed, span):
+def _ladder(title, lines, pfn, center_model, main_ln, main_px, model_ln, signed, span, alt=None):
     """1/10/2026 (Στελιος): σκαλα με EDGE σε καθε γραμμη. ΑΓΟΡ = πραγματικη τιμη στην κυρια γραμμη (●)· στις αλλες ≈ εκτιμηση απο την
     κυρια (το «κεντρο» της αγορας + ιδια γκανιοτα). EDGE = πιθανοτητα μοντελου × τιμη αγορας − 1 (αριστερη/δεξια πλευρα), πρασινο ≥8%."""
     head = (f'<div style="display:flex;gap:7px"><span style="{_LT}width:10px"></span>'
@@ -436,8 +438,11 @@ def _ladder(title, lines, pfn, center_model, main_ln, main_px, model_ln, signed,
         a, pp, b = pfn(center_model, ln)
         fp = (fair(a, b), fair(b, a))
         fp = (fp[0] / S, fp[1] / S) if None not in fp else fp
+        real = next(((r[1], r[2]) for r in (alt or []) if abs(r[0] - ln) < 0.01), None)
         if on_main:
             px, est = main_px, False
+        elif real:
+            px, est = real, False                       # 1/10: πραγματικη τιμη εναλλακτικης γραμμης Pinnacle
         elif has_mkt:
             ma, mp, mb = pfn(c_mkt, ln); f1, f2 = fair(ma, mb), fair(mb, ma)
             px, est = ((f1 / S, f2 / S) if None not in (f1, f2) else None), True
@@ -467,19 +472,19 @@ def _odds_pane(g, mk, sm, st):
     ml_sp, ml_t = round_half(-m), round_half(T)
     c_sp = mk.get('line') if mk.get('line') is not None else ml_sp
     c_t = mk.get('tl') if mk.get('tl') is not None else ml_t
-    sp_lines = sorted({round(c_sp + k, 1) for k in range(-4, 5)} | {ml_sp})
+    sp_lines = sorted({round(c_sp + k / 2.0, 1) for k in range(-7, 8)} | {ml_sp})     # 1/10 (Στελιος): ΚΑΙ ακεραιες γραμμες (βημα 0.5)
     t_lines = sorted({round(c_t + k, 1) for k in range(-4, 5)} | {ml_t})
     t1 = _ladder('HANDICAP (γηπ/φιλοξ)', sp_lines, lambda c, L: spread_probs(c, L, sm), m, mk.get('line'),
-                 (mk.get('oh'), mk.get('oa')) if mk.get('oh') else None, ml_sp, True, 60.0)
+                 (mk.get('oh'), mk.get('oa')) if mk.get('oh') else None, ml_sp, True, 60.0, mk.get('alt_sp'))
     t2 = _ladder('ΣΥΝΟΛΟ ΠΟΝΤΩΝ (over/under)', t_lines, lambda c, L: total_probs(c, L, st), T, mk.get('tl'),
-                 (mk.get('to'), mk.get('tu')) if mk.get('to') else None, ml_t, False, 60.0)
+                 (mk.get('to'), mk.get('tu')) if mk.get('to') else None, ml_t, False, 60.0, mk.get('alt_tot'))
     src = f' · αγορα: {esc(mk.get("label"))}' if mk.get('label') else ' · αγορα: καμια γραμμη ακομα'
     if mk.get('label') and (mk.get('src_sp') != 'Pinnacle' or (mk.get('tl') is not None and mk.get('src_tot') != 'Pinnacle')):
         src += ' · <span style="color:#f5b731">ALT BOOK (οχι Pinnacle — η Pinnacle δεν εχει ανοιξει ακομα· τα edge ειναι ενδεικτικα, δεν βγαινουν picks)</span>'
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px;line-height:1.5">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας (πραγματικη τιμη) &nbsp; <span style="color:#7ea2ff">◆</span> γραμμη μοντελου &nbsp;·&nbsp; '
            'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας &nbsp;·&nbsp; <span style="color:#6b7fa3">≈</span> = εκτιμηση τιμης απο την κυρια γραμμη '
-           '(τα βιβλια βαζουν συνηθως λιγο μεγαλυτερη γκανιοτα στις εναλλακτικες — συγκρινε με την πραγματικη τιμη σου)<br>'
+           '(οπου η Pinnacle δινει εναλλακτικη γραμμη, η τιμη ειναι ΠΡΑΓΜΑΤΙΚΗ, χωρις ≈)<br>'
            'EDGE = αναμενομενη αποδοση (αριστερη / δεξια πλευρα) · <span style="color:#35d07f;font-weight:700">πρασινο ≥8%</span>' + src + '</div>')
     return (f'<div style="display:flex;gap:28px;justify-content:center;flex-wrap:wrap;padding:9px 0 4px">'
             f'{t1}{t2}</div>{leg}')
