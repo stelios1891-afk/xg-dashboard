@@ -166,3 +166,18 @@ for lab, _ in VAR:
     print(f'  {lab}')
     for se in SEAS:
         print(f'    {se}: ' + ' | '.join(f"n{len(F[(F.book == bk) & (F.season == se)]):3d} {F[(F.book == bk) & (F.season == se)].pnl.sum():+5.1f}u" for bk in BK))
+
+# 1/10: LOSO — βαρος 7-14 επιλεγμενο απο τις ΑΛΛΕΣ 3 σεζον (μεσος 3 βιβλιων), κριση στην 4η
+if os.environ.get('SOS15_SET') == 'w714':
+    cands = [l for l, _ in VAR if l != 'ΣΗΜΕΡΑ']
+    def u(lab, role, seas):
+        B = RES[lab]['B']; x = B[B.season.isin(seas) & ((B.role == role) if role else True)]
+        return np.mean([x[x.book == bk].pnl.sum() for bk in BK])
+    for role, nm in (('fav', 'ΦΑΒΟΡΙ 15+'), (None, 'ΟΛΑ ΤΑ PICKS 15+')):
+        print(chr(10) + f'LOSO — κριτηριο επιλογης: μοναδες {nm}')
+        tot_l = tot_b = 0
+        for se in SEAS:
+            oth = [x for x in SEAS if x != se]; pick = max(cands, key=lambda l: u(l, role, oth))
+            ul, ub = u(pick, role, [se]), u('ΣΗΜΕΡΑ', role, [se]); tot_l += ul; tot_b += ub
+            print(f'   {se}: διαλεγει {pick:17s} → {ul:+6.1f}u  (σημερα {ub:+6.1f}u)')
+        print(f'   ΣΥΝΟΛΟ LOSO {tot_l:+.1f}u vs σημερα {tot_b:+.1f}u')
