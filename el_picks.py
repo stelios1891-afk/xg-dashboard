@@ -23,6 +23,10 @@ DRIFT_H, DRIFT_MIN = 3.0, 0.5
 # vs σταδιακη κοντρα −22.6% (38) / ακινητη −12.3% (21) → λιγα για κανονα· καταγραφεται το ειδος για κριση με πραγματικα δεδομενα.
 # Οχι Telegram, οχι «παιζεται» στο dashboard· γραφεται στο el_clv_bets.jsonl με paper='late2h'. Συνολα: ΚΑΜΙΑ αλλαγη (2ωρο +4.5%).
 LATE_H, SUDDEN_PTS = 2.0, 1.0
+# 1/10/2026 (Στελιος «ναι»): ΣΥΝΟΛΑ που γεννιουνται αφου η αγορα κινηθηκε ≥1.5 π. ΚΟΝΤΡΑ απο την πρωτη τιμη που ειδε ο scanner
+# (αναμενομενο συνολο, με αποδοσεις) = ΚΑΤΑΓΡΑΦΗ (paper='move15'). el_alert_types_totals.py (Crown, 5 σεζον, live μοντελο):
+# κοντρα 1.5-2 −2.9% (54) · 2-3 −25.1% (44, 1/5)· κανονας «χωρις» ολα +7.1 → +9.7% (5/5 σεζον βελτιωση· παλιο μοντελο 4/5)· ορια 1/1.5/2 ιδια.
+MOVE_PTS = 1.5
 from statistics import NormalDist as _ND
 def _mu(row, mkt, sm, st):
     try:
@@ -73,7 +77,9 @@ def drift_note(p):
             return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν, {kind}) — ιστορικα 2-6ω πριν: {hist}."
         hist = 'ξαφνικη +36.5% (28 picks)' if kind == 'ξαφνικη' else 'σταδιακη +12.9% (70 picks)'
         return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν, {kind}) — ιστορικα ≥6ω πριν δεν βλαπτει: {hist}."
-    return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν το alert) — στα συνολα ιστορικα δεν βλαπτει (+5.3%, 215 picks)· παιζεται νωρις."
+    mo = p.get('move_open')      # 1/10: el_alert_types_totals — κοντρα απο το ανοιγμα <1.5 π. ιστορικα +9% (216 picks)· ≥1.5 → καταγραφη
+    return (f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν" + (f" · {mo:+.1f} απο το ανοιγμα" if mo is not None else '')
+            + ") — στα συνολα κοντρα κατω απο 1.5 π. απο το ανοιγμα ιστορικα δεν βλαπτει (+9%, 216 picks).")
 
 def _load(p, d):
     try: return json.load(open(p, encoding='utf-8'))
@@ -211,15 +217,19 @@ def main(notify_tg=True):
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
     state = _load(F('el_value_state.json'), {})
     new, changed, cur = [], [], set()
+    proj_ = _load(F('el_projections.json'), {}); sm_, st_ = float(proj_.get('sigma_margin', 11.5)), float(proj_.get('sigma_total', 16.7))
     for p in picks:
         k = key(p); cur.add(k); prev = state.get(k)
         if prev is None:
             new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now)
             hrs = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc) - dt.datetime.fromisoformat(now)).total_seconds() / 3600
             if p['mkt'] == 'hcap' and hrs < LATE_H: state[k]['paper'] = 'late2h'
+            if p['mkt'] == 'total':
+                d_open = drift_before(p, now, sm_, st_, hours=1e4)       # απο την ΠΡΩΤΗ τιμη του ιστορικου ως τωρα (+ = προς εμας)
+                state[k]['move_open'] = d_open
+                if d_open is not None and d_open <= -MOVE_PTS: state[k]['paper'] = 'move15'
         elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
             changed.append((p, prev.get('odds'))); state[k].update(odds=p['odds'], edge=p['edge'])
-    proj_ = _load(F('el_projections.json'), {}); sm_, st_ = float(proj_.get('sigma_margin', 11.5)), float(proj_.get('sigma_total', 16.7))
     for p in picks:
         st0 = state.get(key(p), {})
         if 'drift' not in st0:
@@ -235,6 +245,7 @@ def main(notify_tg=True):
                               - dt.datetime.fromisoformat(st0.get('first_seen', now))).total_seconds() / 3600
         except Exception:
             p['hrs_birth'] = None
+        p['move_open'] = st0.get('move_open')
         p['drift'] = st0['drift']; p['mkt_note'] = drift_note(p)
         if st0.get('paper'):
             if 'late_kind' not in st0:
@@ -242,8 +253,12 @@ def main(notify_tg=True):
                 st0['late_kind'] = 'αγνωστη' if d1 is None else ('ξαφνικη' if d1 <= -SUDDEN_PTS else 'σταδιακη/ακινητη')
                 if key(p) in state: state[key(p)]['late_kind'] = st0['late_kind']
             p['paper'], p['late_kind'] = st0['paper'], st0['late_kind']
-            p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε στο τελευταιο 2ωρο (ιστορικα −9%, 1/5 σεζον)· κινηση αγορας: {p['late_kind']}"
-                             + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
+            if st0['paper'] == 'move15':
+                p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε αφου η αγορα κινηθηκε {st0.get('move_open') or 0:+.1f} π. κοντρα απο το ανοιγμα "
+                                 f"(ιστορικα κοντρα ≥1.5 π. −10%, 1/5 σεζον)· κινηση: {p['late_kind']}")
+            else:
+                p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε στο τελευταιο 2ωρο (ιστορικα −9%, 1/5 σεζον)· κινηση αγορας: {p['late_kind']}"
+                                 + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
     today = now[:10]
     close_msgs = close_check(state, now, sm_, st_)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
@@ -253,7 +268,7 @@ def main(notify_tg=True):
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
                                          model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'),
-                                         paper=p.get('paper'), late_kind=p.get('late_kind')), ensure_ascii=False) + '\n')
+                                         paper=p.get('paper'), late_kind=p.get('late_kind'), move_open=state.get(key(p), {}).get('move_open')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('el_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

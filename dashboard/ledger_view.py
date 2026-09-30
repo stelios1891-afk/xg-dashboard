@@ -241,7 +241,8 @@ def _el_rows():
         r = dict(lg='Euroleague', home=b['home'], away=b['away'], hid=None, aid=None, hlogo=g.get('hcrest'), alogo=g.get('acrest'),
                  ko=b['when'], bk=True, mkt=b['mkt'], side=(0 if tot else b['side']), hcap=float(b['hcap']), odds=float(b['odds']),
                  edge=b.get('edge'), seen=b['seen'], bet_label=(b.get('bet') if tot else None),
-                 paper_note=(f"καταγραφη (τελευταιο 2ωρο · {b.get('late_kind') or ''})" if b.get('paper') == 'late2h' else None),
+                 paper_note=(f"καταγραφη (τελευταιο 2ωρο · {b.get('late_kind') or ''})" if b.get('paper') == 'late2h' else
+                             (f"καταγραφη (κοντρα {b.get('move_open') or 0:+.1f} π. απο το ανοιγμα · {b.get('late_kind') or ''})" if b.get('paper') == 'move15' else None)),
                  later=[(x['hcap'], x['odds']) for x in v if x['seen'] > b['seen']],
                  score=None, pnl=None, xg_h=None, xg_a=None, xg_fair=None, xg_value=None, close_odds=None, clv=None)
         if not (g.get('played') and g.get('hs') is not None):

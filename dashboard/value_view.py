@@ -102,7 +102,7 @@ def pick_card(p):
     if p.get('tag75'):
         tags += '<span class="tag t75">🎯 −0.75</span>'
     if p.get('paper_late'):              # 1/10: EL χαντικαπ τελευταιου 2ωρου = καταγραφη (ιστορικα −9%, 1/5)
-        tags += f'<span class="tag np" title="Βγηκε στο τελευταιο 2ωρο πριν το τζαμπολ — ιστορικα −9% (75 picks, 1/5 σεζον). Κινηση αγορας: {_h.escape(p.get("late_kind") or "")}">📝 καταγραφη · δεν παιζεται</span>'
+        tags += f'<span class="tag np" title="{_h.escape(p.get("mkt_note") or "")}">📝 καταγραφη · δεν παιζεται</span>'
     if p.get('no_play'):
         tags += '<span class="tag np" title="UEL κλειστο 11/9 (b=0.02 στο κλεισιμο) — μονο για παρακολουθηση">👁 ΣΚΙΑ · δεν παιζεται</span>'
     if over:
