@@ -188,3 +188,40 @@ for cut, lab in ((0, 'ΟΛΑ τα alerts'), (3, 'χωρις οσα βγαινο�
         Z = pd.DataFrame(REC_E[m]); Z = Z[Z.hrs >= cut]
         P(f'    {m:24s} over {cell(Z[Z.side == "over"])} · under {cell(Z[Z.side == "under"])} · ολα {cell(Z)}')
 open('el_preseason_totals_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- F. ΤΙ «χανει» το νεο που διορθωνει η συναινεση: picks ΝΕΟΥ στο alert → κοινα με παλιο vs μονο νεο ----
+P('')
+P('=== F. picks ΝΕΟΥ (alert Crown, ≥6ω πριν): ΚΟΙΝΑ με παλιο vs ΜΟΝΟ ΝΕΟ — χαρακτηριστικα ===')
+NGT = NS['NGT']; F = []
+for j, (rows, tip) in SER.items():
+    tau = rows[0][0]
+    while tau < tip:
+        r = at_(rows, tau); s, e, p = pick(new[j], j, r[1], r[2], r[3])
+        if e >= 0.08:
+            so, eo_, _ = pick(base[j], j, r[1], r[2], r[3])
+            sg = 1 if s == 'over' else -1
+            F.append(dict(side=s, pnl=p, hrs=(tip - tau) / 3600, sea=SE[j], rnd=RND[j], e_new=e,
+                          e_old=eo_ if so == s else -eo_, adj=(new[j] - base[j]) * sg,          # + = η προετοιμασια σπρωχνει ΠΡΟΣ το pick
+                          gap_old=(base[j] - r[1]) * sg, gap_new=(new[j] - r[1]) * sg,          # αποσταση μοντελου απο τη γραμμη προς το pick (π.)
+                          nfr=NGT.get((SE[j], DH[j]), 0) + NGT.get((SE[j], DA[j]), 0),
+                          cons=(so == s and eo_ >= 0.08)))
+            break
+        tau += 3600
+Z = pd.DataFrame(F); Z = Z[Z.hrs >= 6]
+def row_(lab, z):
+    pos = sum(1 for s in SEAS if (z.sea == s).any() and z[z.sea == s].pnl.mean() > 0)
+    P(f'  {lab:34s} n {len(z):3d} · ROI {z.pnl.mean()*100:+6.1f}% {pos}/5 · over {np.mean(z.side == "over"):.0%} · αποσταση ΝΕΟΥ απο γραμμη {z.gap_new.mean():+.1f}π. · '
+      f'ΠΑΛΙΟΥ {z.gap_old.mean():+.1f}π. · προετοιμασια προς το pick {z.adj.mean():+.1f}π. · φιλικα (2 ομαδες) {z.nfr.mean():.1f} · αγων {z.rnd.mean():.1f}')
+row_('ΚΟΙΝΑ (συναινεση)', Z[Z.cons]); row_('ΜΟΝΟ ΝΕΟ', Z[~Z.cons])
+o = Z[~Z.cons]
+row_('  μονο νεο: παλιο ιδια πλευρα <8%', o[o.gap_old > 0]); row_('  μονο νεο: παλιο ΑΝΤΙΘΕΤΗ πλευρα', o[o.gap_old <= 0])
+row_('  μονο νεο: over', o[o.side == 'over']); row_('  μονο νεο: under', o[o.side == 'under'])
+P('  ΟΛΑ τα picks ΝΕΟΥ ανα μεγεθος διορθωσης προετοιμασιας προς το pick:')
+for lo, hi, lab in ((-99, 0, 'κοντρα/μηδεν (≤0)'), (0, 2, '0-2π.'), (2, 4, '2-4π.'), (4, 99, '>4π.')):
+    z = Z[(Z.adj > lo) & (Z.adj <= hi)]
+    if len(z): row_(f'    {lab}', z)
+P('  ΟΛΑ τα picks ΝΕΟΥ ανα αριθμο φιλικων (2 ομαδες):')
+for lo, hi in ((-1, 4), (4, 8), (8, 99)):
+    z = Z[(Z.nfr > lo) & (Z.nfr <= hi)]
+    if len(z): row_(f'    φιλικα {lo+1}-{hi if hi < 99 else "+"}', z)
+open('el_preseason_totals_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
