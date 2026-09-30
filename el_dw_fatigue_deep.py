@@ -400,3 +400,13 @@ for ap, al in ((1, 'φιλοξ. ΑΠΟ ΕΝΤΟΣ'), (-1, 'φιλοξ. ΑΠΟ Ε
         x = G[G.tr_any & (G.a_prev_side2 == ap) & (G.h_prev_side2 == hp)]
         if len(x): P(f'  {al:18s} · {hl:18s} n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (±{1.96 * x.rm_m.std() / math.sqrt(max(len(x), 2)):.1f}) · vs αγορα {x.rm_c.mean():+5.2f}')
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 12. γηπεδουχος που «ταξιδεψε» ΚΟΝΤΑ (π.χ. Μιλανο → Μπολονια): μετραει σαν «εμεινε σπιτι»; (φιλοξ. ≥1000 χλμ) ----
+P(''); P('=== 12. ΦΙΛΟΞ. ≥1000 χλμ · γηπεδουχος: σπιτι / γυρισε απο ΚΟΝΤΙΝΟ εκτος / απο ΜΑΚΡΙΝΟ εκτος (vs μοντελο) ===')
+for lab, m in (('γηπ. ΕΜΕΙΝΕ σπιτι', G.tr_any & (G.h_prev_side2 == 1)),
+               ('γηπ. γυρισε απο εκτος <500 χλμ', G.tr_any & (G.h_prev_side2 == -1) & (G.h_travel < 500)),
+               ('γηπ. γυρισε απο εκτος 500-1000 χλμ', G.tr_any & (G.h_prev_side2 == -1) & (G.h_travel >= 500) & (G.h_travel < 1000)),
+               ('γηπ. γυρισε απο εκτος ≥1000 χλμ', G.tr_any & (G.h_prev_side2 == -1) & (G.h_travel >= 1000))):
+    x = G[m]
+    if len(x): P(f'  {lab:36s} n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (±{1.96 * x.rm_m.std() / math.sqrt(max(len(x), 2)):.1f}) · vs αγορα {x.rm_c.mean():+5.2f}')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
