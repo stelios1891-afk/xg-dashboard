@@ -422,3 +422,15 @@ for hp, hl in ((1, 'γηπ. ΕΝΤΟΣ-ΕΝΤΟΣ'), (-1, 'γηπ. ΕΚΤΟΣ-Ε
         per = ' '.join(f'{Y[-2:]}:{x[x.season == Y].rm_m.mean():+.1f}' for Y in SE5 if (x.season == Y).sum() >= 3)
         P(f'  {hl} vs {al}: n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (t {x.rm_m.mean()/sm_:+.1f}) · vs αγορα {x.rm_c.mean():+5.2f} · συνολο vs μοντ. {x.rt_m.mean():+5.2f} · [vs μοντ. {per}]')
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 14. ΤΑ 4 ΣΕΝΑΡΙΑ × ταξιδι φιλοξενουμενου (<1000 / ≥1000 χλμ απο το προηγ. γηπεδο) ----
+P(''); P('=== 14. 4 ΣΕΝΑΡΙΑ × ΤΑΞΙΔΙ ΦΙΛΟΞΕΝΟΥΜΕΝΟΥ · αποκλιση υπερ γηπεδουχου ===')
+for hp, hl in ((1, 'εντος-εντος'), (-1, 'εκτος-εντος')):
+    for ap, al in ((-1, 'εκτος-εκτος'), (1, 'εντος-εκτος')):
+        for lo, hi, tl in ((0, 1000, '<1000'), (1000, 99999, '≥1000')):
+            x = G[d2b & (G.h_prev_side2 == hp) & (G.a_prev_side2 == ap) & (G.a_travel >= lo) & (G.a_travel < hi)]
+            if len(x) < 3: P(f'  {hl} vs {al} · {tl}: n {len(x)}'); continue
+            sm_ = x.rm_m.std() / math.sqrt(len(x))
+            per = sum(1 for Y in SE5 if (x.season == Y).sum() >= 3 and np.sign(x[x.season == Y].rm_m.mean()) == np.sign(x.rm_m.mean()))
+            P(f'  {hl} vs {al} · {tl}: n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (t {x.rm_m.mean()/sm_:+.1f}, ιδια φορα {per}/5) · vs αγορα {x.rm_c.mean():+5.2f}')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
