@@ -29,6 +29,8 @@ SEAS = sorted(D.season.unique())
 key = ['league', 'season', 'h', 'a', 'date']
 VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 1.0 @7-14', 'cur_1.0_6_13'),
        ('ΣΩΣΤΟ 0.5 ολη', 'cur_0.5_6_40'), ('ΣΩΣΤΟ 1.0 ολη', 'cur_1.0_6_40'), ('ΣΩΣΤΟ 1.5 ολη', 'cur_1.5_6_40')]
+if os.environ.get('SOS15_SET') == 'fav075':    # 1/10: φαβορι 15+ ανα σεζον με 0.75
+    VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 0.75 @7-14', 'cur_0.75_6_13')]
 if os.environ.get('SOS15_SET') == 'w714':      # 1/10: ποιο βαρος στις 7-14 δινει καλυτερη βαση (μεσω αγκυρας) για την 15+
     VAR = [('ΣΗΜΕΡΑ', 'base'), ('0 (χωρις)', 'nosos')] + [(f'ΣΩΣΤΟ {w} @7-14', f'cur_{w}_6_13') for w in ('0.25', '0.5', '0.75', '1.0', '1.25', '1.5', '2.0')]
 def load(v):
@@ -157,3 +159,10 @@ for lab, _ in VAR[1:]:
     c4 = sum(B[(B.role == 'fav') & (B.book == bk)].pnl.sum() >= bu[('fav', bk)] - 1e-9 for bk in BK) >= 2
     print(f'  {lab:16s} (1) ακριβεια ολη σεζον ✓ · (2) RPS 15+ {"✓" if c2 else "✗"} · (3) dogs {"✓" if c3 else "✗"} · (4) φαβορι {"✓" if c4 else "✗"} → '
           f'{"ΑΝΤΙΚΑΘΙΣΤΑ" if c2 and c3 and c4 else "οχι"}')
+
+print(chr(10) + 'ΑΝΑ ΣΕΖΟΝ — ΦΑΒΟΡΙ 15+ (picks · μοναδες) Pinnacle | Crown | Bet365')
+for lab, _ in VAR:
+    B = RES[lab]['B']; F = B[B.role == 'fav']
+    print(f'  {lab}')
+    for se in SEAS:
+        print(f'    {se}: ' + ' | '.join(f"n{len(F[(F.book == bk) & (F.season == se)]):3d} {F[(F.book == bk) & (F.season == se)].pnl.sum():+5.1f}u" for bk in BK))
