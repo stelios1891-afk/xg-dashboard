@@ -101,3 +101,34 @@ for Y in SE5:
     a = [x[0] for x in res['υπερ της ομαδας με νεο προπονητη'] if x[1] == Y]; b = [x[0] for x in res['κατα της ομαδας με νεο προπονητη'] if x[1] == Y]
     P(f'    {Y}: υπερ n {len(a):2d} {sum(a):+5.1f} μον. · κατα n {len(b):2d} {sum(b):+5.1f} μον.')
 open('el_coach_change_test_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- ΠΟΤΕ βγαινουν τα picks & που στεκεται το μοντελο vs αγορα (απο τη ματια της ομαδας) ----
+P(''); P('=== ΠΟΤΕ: picks ανα φαση μετα την αλλαγη · (μοντελο − αγορα) για την ομαδα: + = το μοντελο την εκτιμα ΠΕΡΙΣΣΟΤΕΡΟ απο την αγορα ===')
+evn = {}
+for s, team, d, nm in EV:
+    idx = sorted([i for i in range(len(D)) if D.season.values[i] == s and team in (D.home.values[i], D.away.values[i])], key=lambda i: D.t.values[i])
+    pre = [i for i in idx if str(D.t.values[i])[:10] < d][-5:]; post = [i for i in idx if str(D.t.values[i])[:10] >= d][:10]
+    for j, i in enumerate(pre): evn[i] = (team, j - len(pre))
+    for j, i in enumerate(post): evn[i] = (team, j + 1)
+W = {}
+for p, (team, rel) in evn.items():
+    if p not in REC[21]: continue
+    m = PR.get(key(p), {}).get('h_new')
+    if m is None or not np.isfinite(m): continue
+    tside = 1 if D.home.values[p] == team else -1
+    ph = 'πριν (5)' if rel < 0 else ('1-3' if rel <= 3 else ('4-6' if rel <= 6 else '7-10'))
+    w = W.setdefault(ph, dict(gap=[], up=[], dn=[]))
+    w['gap'].append((m - REC[21][p]['ser'][0][1]) * tside)
+    ser, tip = REC[21][p]['ser'], REC[21][p]['tip']
+    for k_, row in enumerate(ser):
+        if row[0] >= tip: break
+        side, e, od = pick(21, m, row)
+        if e < 0.08: continue
+        if k_ > 0 and (tip - row[0]) / 3600 < 2: break
+        w['up' if side == tside else 'dn'].append(settle(21, p, side, row, od)); break
+for ph in ('πριν (5)', '1-3', '4-6', '7-10'):
+    w = W.get(ph)
+    if not w: continue
+    f = lambda L: f'{len(L):2d} picks {sum(L):+5.1f} μον. ({np.mean(L)*100:+.0f}%)' if L else ' 0 picks'
+    P(f'  {ph:9s} ματς {len(w["gap"]):3d} · μοντελο − αγορα (ανοιγμα) για την ομαδα {np.mean(w["gap"]):+.2f} π. · picks ΥΠΕΡ: {f(w["up"])} · ΚΑΤΑ: {f(w["dn"])}')
+open('el_coach_change_test_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
