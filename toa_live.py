@@ -229,12 +229,21 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
             md = min(int(((lgc.home == H) | (lgc.away == H)).sum()),
                      int(((lgc.home == A) | (lgc.away == A)).sum())) + 1 if len(lgc) else 1
             # 29/9/2026 (Στελιος): ΑΓΚΥΡΑ ΑΓΟΡΑΣ μονο σε κοντες γραμμες (+0.5/+0.75) απο την 15η — core7_anchor.py
+            xr_h, xr_a = xg_h, xg_a        # ωμα (χωρις αγκυρα) — τα φαβορι παιρνουν δικη τους αγκυρα .7
             xg_h, xg_a, anc = core7_anchor.apply(lg, H, A, xg_h, xg_a, f['line'], md)
             for b in engine.evaluate_bet(xg_h, xg_a, f['line'], f['home_odds'], f['away_odds']):
                 all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
-                                      when=f['startTime'], md=md,
+                                      when=f['startTime'], md=md, role='dog',
                                       mxh=round(xg_h, 3), mxa=round(xg_a, 3),
                                       **b, hnote=hnote, anote=anote, **({'anchor': anc} if anc else {})))
+            # 1/10/2026 (Στελιος «βαλτα κανονικα»): ΦΑΒΟΡΙ απο την 15η — αγκυρα .7 σε ολες τις γραμμες + σωστα τεταρτα, edge ≥10%
+            if md >= engine.FAV_MIN_MD:
+                fx_h, fx_a, fanc = core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)
+                for b in engine.evaluate_fav(fx_h, fx_a, f['line'], f['home_odds'], f['away_odds']):
+                    all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
+                                          when=f['startTime'], md=md,
+                                          mxh=round(fx_h, 3), mxa=round(fx_a, 3),
+                                          **b, hnote=hnote, anote=anote, **({'anchor': fanc} if fanc else {})))
     KELLY_FRAC = 0.125; CAP = 0.20
     for p in all_picks:
         p['stake'] = KELLY_FRAC * p['edge'] / (p['odds'] - 1)

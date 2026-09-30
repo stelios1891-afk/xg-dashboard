@@ -527,6 +527,23 @@ def test_d_fav_shadow_sos_matches_live():
     assert all(abs(a - b) < 1e-9 for a, b in zip(got, exp)), 'FAV S2: SoS οχι στα φετινα πριν το shrink'
 
 
+def test_d_fav15_rule():
+    """1/10/2026: ΦΑΒΟΡΙ 15η+ κανονικα picks — μονο πλευρα <= -0.5, 1.70-2.10, edge >=10% με ΣΩΣΤΑ τεταρτα, αγκυρα .7 απο την 15η."""
+    import picks, core7_anchor
+    assert (picks.FAV_MIN_MD, picks.FAV_ANCHOR_W) == (15, 0.7)
+    out = picks.evaluate_fav(2.2, 0.8, -0.75, 1.95, 1.90)          # δυνατο γηπεδουχο φαβορι στο -0.75
+    assert out and all(b['role'] == 'fav' and b['hcap'] <= -0.5 and b['side'] == 1 for b in out)
+    d = picks.gd_dist_dom(2.2, 0.8)
+    e = sum((w * 0.95 * (1 - picks.MARGIN) - (1 - w - q)) / 2 for w, q in (picks.p_cover(d, 1, -1.0), picks.p_cover(d, 1, -0.5)))
+    assert abs(out[0]['edge'] - e) < 1e-12, 'edge φαβορι: οχι ο μεσος των δυο μισων (σωστα τεταρτα)'
+    assert not picks.evaluate_fav(2.2, 0.8, -0.25, 1.95, 1.90), 'γραμμη -0.25 δεν ειναι φαβορι-pick'
+    assert not picks.evaluate_fav(0.8, 2.2, -0.75, 1.95, 1.90) or all(b['side'] == -1 for b in picks.evaluate_fav(0.8, 2.2, 0.75, 1.95, 1.90))
+    assert not picks.evaluate_fav(2.2, 0.8, -0.75, 2.30, 1.60), 'εκτος 1.70-2.10'
+    assert core7_anchor.apply_fav('EPL', 1, 2, 1.5, 1.0, 14)[2] is None, 'αγκυρα φαβορι πριν την 15η'
+    src = open(os.path.join(ROOT, 'toa_live.py'), encoding='utf-8').read()
+    assert 'engine.evaluate_fav(' in src and 'core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)' in src and 'engine.FAV_MIN_MD' in src
+
+
 def test_d_core7_anchor_short_lines_only():
     """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
     import core7_anchor as CA

@@ -372,6 +372,40 @@ def evaluate_bet(xg_h, xg_a, line, oh, oa):
                             proj_odds=((1 - pp) / pw if pw > 0 else float('inf'))))
     return out
 
+# ---------- 1/10/2026 ΦΑΒΟΡΙ 15η+ (Στελιος «βαλτα κανονικα»): κανονικα picks οπως τα dogs ----------
+# Κανονας (core7_sos15_final / core7_fav15_threshold): γραμμη φαβορι <= -0.5, αποδοση 1.70-2.10, edge >= EDGE (10%)
+# με ΣΩΣΤΑ τεταρτα (x.25/x.75 = μισο/μισο), μηχανη live + αγκυρα αγορας βαρους FAV_ANCHOR_W σε ΟΛΕΣ τις γραμμες,
+# ΜΟΝΟ απο την FAV_MIN_MD αγωνιστικη. Backtest 4 σεζον: ~37 picks/σεζον, +11u (μεσος 3 βιβλιων), 3/4 σεζον·
+# ΠΡΟΣΟΧΗ (ρητα στον Στελιο): κερδος συγκεντρωμενο στη ζωνη edge 10-13%, 5-9% εντονα αρνητικη, ~1 SE.
+FAV_MIN_MD = 15; FAV_ANCHOR_W = 0.7
+
+def p_cover_q(dist, side, line):
+    """p_cover με ΣΩΣΤΑ τεταρτα: x.25/x.75 = μεσος των δυο μισων (line∓0.25)."""
+    parts = [line] if (line * 4) % 2 == 0 else [line - 0.25, line + 0.25]
+    pw = pp = 0.0
+    for L in parts:
+        w, q = p_cover(dist, side, L)
+        pw += w / len(parts); pp += q / len(parts)
+    return pw, pp
+
+def evaluate_fav(xg_h, xg_a, line, oh, oa):
+    """Κανονας ΦΑΒΟΡΙ (1/10/2026): πλευρα με handicap <= -MIN_LINE, αποδοση OMIN-OMAX, edge >= EDGE, σωστα τεταρτα
+    (edge = μεσος ορος των edge των δυο μισων). Οι αγωνιστικες (>= FAV_MIN_MD) & η αγκυρα ελεγχονται απο τον καλουντα."""
+    dist = gd_dist_dom(max(xg_h, 0.05), max(xg_a, 0.05)); out = []
+    for side, ud, odds in [(1, line, oh), (-1, -line, oa)]:
+        if ud > -MIN_LINE or not (OMIN <= odds <= OMAX):
+            continue
+        parts = [ud] if (ud * 4) % 2 == 0 else [ud - 0.25, ud + 0.25]
+        edge = 0.0
+        for L in parts:
+            w, q = p_cover(dist, side, L)
+            edge += (w * (odds - 1) * (1 - MARGIN) - (1 - w - q)) / len(parts)
+        if edge >= EDGE:
+            pw, pp = p_cover_q(dist, side, ud)
+            out.append(dict(side=side, hcap=ud, odds=odds, pw=pw, pp=pp, edge=edge, role='fav',
+                            proj_odds=((1 - pp) / pw if pw > 0 else float('inf'))))
+    return out
+
 # ---------- signals: παραγει ΚΑΘΕ value bet (pre-match) [backtest, με football-data odds] ----------
 def bet_signals(P, Om, resolve):
     rows = []

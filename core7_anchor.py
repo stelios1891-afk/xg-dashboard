@@ -175,6 +175,22 @@ def apply(lg, H, A, xg_h, xg_a, line, md):
     return nh, na, dict(o_h=round(oh, 3), o_a=round(oa, 3), shift=round(oh - oa, 3), xg_raw=[round(xg_h, 3), round(xg_a, 3)])
 
 
+def apply_fav(lg, H, A, xg_h, xg_a, md, w=None):
+    """1/10/2026 ΦΑΒΟΡΙ 15η+: αγκυρα σε ΟΛΕΣ τις γραμμες με βαρος w (picks.FAV_ANCHOR_W=0.7) → (xg_h', xg_a', info|None)."""
+    w = picks.FAV_ANCHOR_W if w is None else w
+    try:
+        if md is None or md < picks.FAV_MIN_MD:
+            return xg_h, xg_a, None
+        L = (load_offsets().get('leagues') or {}).get(lg) or {}
+        tm = L.get('teams') or {}
+        oh = (tm.get(str(int(H))) or {}).get('o', 0.0); oa = (tm.get(str(int(A))) or {}).get('o', 0.0)
+    except Exception:
+        return xg_h, xg_a, None
+    T = xg_h + xg_a; s = (xg_h - xg_a) + w * (oh - oa)
+    nh, na = max((T + s) / 2, .05), max((T - s) / 2, .05)
+    return nh, na, dict(o_h=round(oh, 3), o_a=round(oa, 3), w=w, shift=round(w * (oh - oa), 3), xg_raw=[round(xg_h, 3), round(xg_a, 3)])
+
+
 # ---------- ελεγχος: αναπαραγωγη 2526 vs αρχειο τεστ ----------
 def validate(variant='cur_0.75_6_13'):      # 1/10: live = σωστο SoS 0.75 → συγκριση με την ιδια εκδοχη του τεστ
     picks.MIN_PRIOR = 6

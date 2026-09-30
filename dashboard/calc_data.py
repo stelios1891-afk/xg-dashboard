@@ -59,9 +59,14 @@ def dom_calc(p):
     lines = []
     for st in STEPS:
         ln = round(float(p['hcap']) + st, 2)
-        def ev(o, L=ln):
-            pw, pp = picks.p_cover(dist, side, L)
-            return pw * (o - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+        def ev(o, L=ln, fav=(p.get('role') == 'fav')):
+            # 1/10: φαβορι = ΣΩΣΤΑ τεταρτα (μεσος των edge των δυο μισων), ιδιο με picks.evaluate_fav· dogs = p_cover
+            parts = [L] if (not fav or (L * 4) % 2 == 0) else [L - 0.25, L + 0.25]
+            e = 0.0
+            for LL in parts:
+                pw, pp = picks.p_cover(dist, side, LL)
+                e += (pw * (o - 1) * (1 - picks.MARGIN) - (1 - pw - pp)) / len(parts)
+            return e
         lines.append({'l': ln, 'lab': _fmt(ln, False), 'c': [_lin(ev)]})
     return {'models': ['Μοντελο'], 'need': 1, 'thr': 0.10, 'lines': lines, 'def': 2, 'rng': [1.70, 2.10], 'minabs': None,
             'price': p.get('odds')}

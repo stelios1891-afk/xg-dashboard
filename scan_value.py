@@ -178,7 +178,7 @@ def scan(notify_tg=True):
                            side=p['side'], hcap=p['hcap'], odds=p['odds'],
                            edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4),
                            md=p.get('md'), mxh=p.get('mxh'), mxa=p.get('mxa'),
-                           anchor=p.get('anchor'),   # 29/9: αγκυρα αγορας (κοντες γραμμες 15η+) — None αν δεν εφαρμοστηκε
+                           anchor=p.get('anchor'), role=p.get('role', 'dog'),   # 1/10: 'fav' = φαβορι 15η+   # 29/9: αγκυρα αγορας (κοντες γραμμες 15η+) — None αν δεν εφαρμοστηκε
                            # 13/9 (ledger πακετο 5.1): ζωνη + χειροκινητα πεδια εκτελεσης
                            # (τα υπολοιπα — προελευση/κινηση/CLV Pin−6h/πεθαμενα — βγαινουν
                            # post-hoc απο odds_history με το ledger_enrich, οχι εδω)
