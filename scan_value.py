@@ -266,13 +266,17 @@ def _last_scan_hours():
 def auto():
     """Καλειται καθε 15' απο το cron· κανει TOA scan ΜΟΝΟ οταν πρεπει."""
     h = _nearest_kickoff_hours()
+    import pin_api
+    use_pin = pin_api.source('football') == 'pinnacle'   # 1/10/2026: τιμες απο Pinnacle (0 credits) → πυκνοτερα, χωρις παυση
     gap = 24.0 if h > 72 else (1.0 if h > 24 else 0.5)   # <24h καθε 30' · <3μερες καθε 1h · αλλιως 1×/μερα (2026-08-29)
     if 0 < h <= 2.0:       # ΤΕΛΙΚΟ 2ΩΡΟ προ σεντρας: καθε 15' (2026-09-02, ~+4k credits/μηνα)
         gap = 0.2          # τρεφει: Market Watch σκαλια γραμμης, πυκνο ιστορικο τελικου 2ωρου
                            # (γραμμη/total/Pinnacle) και το snapshot ΚΛΕΙΣΙΜΑΤΟΣ (CLV ledger =
                            # τελευταια εγγραφη προ ΚΟ). [Τ3 κοπηκε 15/9 — δεν τρεφει πια αυτο]
+    if use_pin:
+        gap = 3.0 if h > 72 else (0.2 if 0 < h <= 2.0 else 0.25)   # Pinnacle δωρεαν: καθε 15' ως 3 μερες πριν, αλλιως καθε 3ω
     since = _last_scan_hours()
-    if _now_utc() < PAUSE_UNTIL:
+    if not use_pin and _now_utc() < PAUSE_UNTIL:
         print(f"[{_now_utc().isoformat(timespec='minutes')}] ΠΑΥΣΗ TOA scans ως {PAUSE_UNTIL:%d/%m %H:%M} UTC "
               f"(διακοπη εθνικων) · πλησιεστερο ματς {h:.1f}h")
         since = -1.0

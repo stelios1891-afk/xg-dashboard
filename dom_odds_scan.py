@@ -76,7 +76,7 @@ FIX_KEEP_H = 8 * 24   # κρατα στο cache μονο fixtures εως 8 με�
 
 # TOA ονομα -> FotMob ονομα (προσθηκες οποτε δουμε unmatched στην εξοδο· τα κοινα
 # περιπτωσιολογικα τα πιανει ηδη το live_odds.ALIAS + assign)
-DOM_ALIAS = {}
+DOM_ALIAS = {'Internazionale': 'Inter'}   # 1/10: ονομα Pinnacle (guest API)
 
 
 def _load(path, default):
@@ -176,7 +176,11 @@ def _alt_due(rec, now):
 
 def main(dry=False):
     now = datetime.datetime.now(datetime.timezone.utc)
-    if now < datetime.datetime(2026, 10, 6, tzinfo=datetime.timezone.utc) and not os.environ.get('EURO_FORCE'):
+    # 1/10/2026 (Στελιος «ανοιξε το»): ΠΡΩΤΑ PINNACLE (pin_api, 0 credits, ιδια μορφη, ΜΑΖΙ οι εναλλακτικες)· BTTS δεν υπαρχει
+    # στην Pinnacle. Αποτυχια → Odds API για τη λιγκα (οπως πριν) + ειδοποιηση. Επιστροφη: odds_source.json → "football": "toa".
+    import pin_api
+    use_pin = pin_api.source('football') == 'pinnacle'
+    if not use_pin and now < datetime.datetime(2026, 10, 6, tzinfo=datetime.timezone.utc) and not os.environ.get('EURO_FORCE'):
         print('ΠΑΥΣΗ TOA ως 6/10 (διακοπη εθνικων, Στελιος 24/9) — 0 credits'); return
     FX = upcoming(now)
     data = _load(OUT_F, {})
@@ -232,37 +236,48 @@ def main(dry=False):
             age_min = (now - _dt(lg_when.get(lg))).total_seconds() / 60
         except Exception:
             age_min = 1e9
-        need_min = BULK_REFRESH_MIN if nearest <= 48 else BULK_FAR_MIN
+        need_min = (10 if nearest <= 48 else 60) if use_pin else (BULK_REFRESH_MIN if nearest <= 48 else BULK_FAR_MIN)
         if nearest <= NEAR_H or age_min > need_min:
             fetch_lgs.append(lg)
-    alt_pending = any(_alt_due(v, now) for v in odds.values())
+    alt_pending = any(_alt_due(v, now) for v in odds.values() if not str(v.get('eid', '')).startswith('pin'))
     if not fetch_lgs and not alt_pending:
         print('ολες οι λιγκες φρεσκες (<45\') και καμια σκαλα δεν χρωσταει — skip (0 credits)')
         return
-    if not os.environ.get('TOA_KEY'):
+    if not use_pin and not os.environ.get('TOA_KEY'):
         print('TOA_KEY δεν υπαρχει (τοπικο τρεξιμο;) — δεν γινεται fetch, το αρχειο μενει ως εχει')
         return
-    apikey = os.environ['TOA_KEY']
+    apikey = os.environ.get('TOA_KEY'); PIN_EVT = {}
 
     # ---- bulk ανα λιγκα: h2h + κυρια spread + κυριο total ----
     rem = data.get('credits_remaining'); cost = 0; nmatch = 0; unmatched_all = []
     hist_rows = []
     for lg in fetch_lgs:
         sport = toa_live.SPORT[lg]
-        r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=apikey, regions='eu', markets='h2h,spreads,totals',   # btts μονο per-event (422 στο bulk — 17/9)
-                                     bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
-                         timeout=45)
-        rem = r.headers.get('x-requests-remaining', rem)
-        try:
-            cost += int(r.headers.get('x-requests-last') or 0)
-        except ValueError:
-            pass
-        if r.status_code != 200:
-            print(f'{lg}: TOA {r.status_code} — skip')
-            continue
+        raw = None
+        if use_pin and toa_live.PIN_LEAGUE.get(lg):
+            try:
+                raw = pin_api.toa_like(toa_live.PIN_LEAGUE[lg], include_alt=True)
+                for g_ in raw: PIN_EVT[g_['id']] = g_
+            except pin_api.PinError as e:
+                pin_api.fallback_notice(f'dom-{lg}', str(e))
+        if raw is None:
+            if not apikey:
+                print(f'{lg}: χωρις Pinnacle και χωρις TOA_KEY — skip'); continue
+            r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
+                             params=dict(apiKey=apikey, regions='eu', markets='h2h,spreads,totals',   # btts μονο per-event (422 στο bulk — 17/9)
+                                         bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
+                             timeout=45)
+            rem = r.headers.get('x-requests-remaining', rem)
+            try:
+                cost += int(r.headers.get('x-requests-last') or 0)
+            except ValueError:
+                pass
+            if r.status_code != 200:
+                print(f'{lg}: TOA {r.status_code} — skip')
+                continue
+            raw = r.json()
         events = []
-        for g in r.json():
+        for g in raw:
             try:
                 gko = eos._pdt(g.get('commence_time'))
             except Exception:
@@ -278,7 +293,8 @@ def main(dry=False):
             rec = dict(ko=f['ko'].isoformat(), when=now.isoformat()[:16], lg=lg,
                        eid=g.get('id'), sport=sport)
             # κρατα τις σκαλες του προηγουμενου scan (ανανεωνονται με δικο τους ρυθμο)
-            for k in ('ah', 'ou', 'alt_when', 'by', 'bn'):
+            is_pin = str(g.get('id', '')).startswith('pin')
+            for k in (('ah', 'ou', 'alt_when') if is_pin else ('ah', 'ou', 'alt_when', 'by', 'bn')):
                 if k in old_rec:
                     rec[k] = old_rec[k]
             if h2:
@@ -289,6 +305,15 @@ def main(dry=False):
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
             if bt:
                 rec.update(by=round(bt[0], 2), bn=round(bt[1], 2))
+            if is_pin:                                        # σκαλες Pinnacle: ηρθαν μαζι (0 credits)
+                ahl, oul = eos._ladders(g)
+                if rec.get('line') is not None and not any(abs(x[0] - rec['line']) < 0.01 for x in ahl):
+                    ahl = sorted(ahl + [[rec['line'], rec.get('oh'), rec.get('oa')]])
+                if rec.get('tl') is not None and not any(abs(x[0] - rec['tl']) < 0.01 for x in oul):
+                    oul = sorted(oul + [[rec['tl'], rec.get('to'), rec.get('tu')]])
+                if ahl: rec['ah'] = ahl
+                if oul: rec['ou'] = oul
+                rec['alt_when'] = now.isoformat()[:16]
             if h2 or sp or tt or bt:
                 _hist_append(hist_rows, now, kid, rec, old_rec)
                 odds[kid] = rec; nmatch += 1
@@ -298,7 +323,7 @@ def main(dry=False):
     # ---- σκαλες (alternate lines): per-event endpoint, με δικο τους ρυθμο ----
     n_alt = 0
     for kid, rec in odds.items():
-        if not _alt_due(rec, now):
+        if str(rec.get('eid', '')).startswith('pin') or not _alt_due(rec, now) or not apikey:
             continue
         r = requests.get(f"https://api.the-odds-api.com/v4/sports/{rec['sport']}/events/{rec['eid']}/odds",
                          params=dict(apiKey=apikey, regions='eu',

@@ -24,7 +24,7 @@ SPORT = {'EPL': 'soccer_epl', 'LaLiga': 'soccer_spain_la_liga', 'SerieA': 'socce
          'PrimeiraLiga': 'soccer_portugal_primeira_liga',
          'Eredivisie': 'soccer_netherlands_eredivisie'}   # CORE 7 (Belgium & ScottishPrem εκτος portfolio, 2026-08)
 # TOA ονομα -> FotMob/μοντελο ονομα (προσθηκες οποτε φανει block)
-TOA_ALIAS = {}
+TOA_ALIAS = {'Internazionale': 'Inter'}   # 1/10: ονομα Pinnacle (guest API)
 
 def _key():
     k = os.environ.get('TOA_KEY')
@@ -92,13 +92,61 @@ def _h2h(g, bk):
                     return (float(h), float(d), float(a))
     return None
 
+PIN_LEAGUE = {'EPL': 'epl', 'LaLiga': 'laliga', 'SerieA': 'seriea', 'Bundesliga': 'bundesliga', 'Ligue1': 'ligue1',
+              'PrimeiraLiga': 'primeira', 'Eredivisie': 'eredivisie'}
+
+def _fixtures(events):
+    fx = []
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    for g in events:
+        # ΣΕΝΤΡΑ (12/9/2026, Στελιος): το TOA επιστρεφει και ματς ΣΕ ΕΞΕΛΙΞΗ με in-play
+        # τιμες. Τα ΚΡΑΤΑΜΕ για καταγραφη (dom_live_odds, εως ΚΟ+150') με σημαια
+        # inplay=True, αλλα ΔΕΝ επηρεαζουν picks / market 1X2 / pregame odds_history.
+        try:
+            ct = datetime.datetime.fromisoformat(
+                str(g.get('commence_time', '')).replace('Z', '+00:00'))
+        except (ValueError, TypeError):
+            continue
+        mins_in = (now_utc - ct).total_seconds() / 60
+        if mins_in > 150:
+            continue                      # τελειωμενα: τιποτα
+        inplay = mins_in > 0
+        pin = _pb(g, 'pinnacle'); mb = _pb(g, 'matchbook')
+        if pin and mb and abs(pin[0] - mb[0]) < 0.01:
+            c = (pin[0], max(pin[1], mb[1]), max(pin[2], mb[2]))   # best price και των δυο
+        else:
+            c = pin or mb
+        if not c:
+            continue
+        fx.append(dict(home_toa=g.get('home_team'), away_toa=g.get('away_team'),
+                       line=c[0], home_odds=c[1], away_odds=c[2],
+                       h2h=_h2h(g, 'pinnacle') or _h2h(g, 'matchbook'),   # 1X2 (Pinnacle preferred)
+                       startTime=(g.get('commence_time') or '')[:16],
+                       inplay=inplay,
+                       # 13/9 (ledger πακετο 5.1): PINNACLE ΧΩΡΙΣΤΑ — το CLV της 2627
+                       # θα μετριεται σε Pinnacle −6h· το blend best-of δεν αρκει.
+                       pin=pin, mb=mb,
+                       ou=_tot(g, 'pinnacle') or _tot(g, 'matchbook'),
+                       limits=(g.get('bookmakers') or [{}])[0].get('limits')))
+    return fx
+
 def fetch_all(leagues):
-    """{league: [fixtures]} + credits_remaining, credits_cost. 1 request/λιγκα."""
+    """{league: [fixtures]} + credits_remaining, credits_cost.
+    1/10/2026 (Στελιος «απο τη στιγμη που το ποδοσφαιρο ειναι δωρεαν, ανοιξε το»): ΠΡΩΤΑ PINNACLE (pin_api, 0 credits, ιδια μορφη)·
+    Matchbook ΔΕΝ υπαρχει στην Pinnacle → τιμη = Pinnacle (οχι πια best-of Pinnacle/Matchbook). Αν η Pinnacle αποτυχει για μια λιγκα →
+    Odds API για εκεινη τη λιγκα (Pinnacle+Matchbook, οπως πριν) + ειδοποιηση. Επιστροφη: odds_source.json → "football": "toa"."""
+    import pin_api
+    use_pin = pin_api.source('football') == 'pinnacle'
     out = {}; rem = None; cost = 0
     for lg in leagues:
         sport = SPORT.get(lg)
         if not sport:
             out[lg] = []; continue
+        if use_pin and PIN_LEAGUE.get(lg):
+            try:
+                out[lg] = _fixtures(pin_api.toa_like(PIN_LEAGUE[lg], include_alt=False)); continue
+            except pin_api.PinError as e:
+                pin_api.fallback_notice(f'football-{lg}', str(e))
         r = requests.get(f'{BASE}/sports/{sport}/odds',
                          params=dict(apiKey=_key(), regions='eu', markets='spreads,h2h,totals',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'), timeout=45)
@@ -109,38 +157,7 @@ def fetch_all(leagues):
             pass
         if r.status_code != 200:
             out[lg] = []; continue
-        fx = []
-        now_utc = datetime.datetime.now(datetime.timezone.utc)
-        for g in r.json():
-            # ΣΕΝΤΡΑ (12/9/2026, Στελιος): το TOA επιστρεφει και ματς ΣΕ ΕΞΕΛΙΞΗ με in-play
-            # τιμες. Τα ΚΡΑΤΑΜΕ για καταγραφη (dom_live_odds, εως ΚΟ+150') με σημαια
-            # inplay=True, αλλα ΔΕΝ επηρεαζουν picks / market 1X2 / pregame odds_history.
-            try:
-                ct = datetime.datetime.fromisoformat(
-                    str(g.get('commence_time', '')).replace('Z', '+00:00'))
-            except (ValueError, TypeError):
-                continue
-            mins_in = (now_utc - ct).total_seconds() / 60
-            if mins_in > 150:
-                continue                      # τελειωμενα: τιποτα
-            inplay = mins_in > 0
-            pin = _pb(g, 'pinnacle'); mb = _pb(g, 'matchbook')
-            if pin and mb and abs(pin[0] - mb[0]) < 0.01:
-                c = (pin[0], max(pin[1], mb[1]), max(pin[2], mb[2]))   # best price και των δυο
-            else:
-                c = pin or mb
-            if not c:
-                continue
-            fx.append(dict(home_toa=g.get('home_team'), away_toa=g.get('away_team'),
-                           line=c[0], home_odds=c[1], away_odds=c[2],
-                           h2h=_h2h(g, 'pinnacle') or _h2h(g, 'matchbook'),   # 1X2 (Pinnacle preferred)
-                           startTime=(g.get('commence_time') or '')[:16],
-                           inplay=inplay,
-                           # 13/9 (ledger πακετο 5.1): PINNACLE ΧΩΡΙΣΤΑ — το CLV της 2627
-                           # θα μετριεται σε Pinnacle −6h· το blend best-of δεν αρκει.
-                           pin=pin, mb=mb,
-                           ou=_tot(g, 'pinnacle') or _tot(g, 'matchbook')))
-        out[lg] = fx
+        out[lg] = _fixtures(r.json())
         time.sleep(0.3)
     return out, rem, cost
 

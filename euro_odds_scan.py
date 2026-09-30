@@ -26,12 +26,17 @@ HOURS_BACK = 3       # κρατα και ματς που μολις αρχισα
 FORCE = os.environ.get('EURO_FORCE') == '1'   # 17/9: το χειροκινητο workflow παρακαμπτει το gating
 PRUNE_H = 48         # ποσο κρατιουνται παλιες εγγραφες στο αρχειο
 
+# 1/10/2026 (Στελιος «απο τη στιγμη που το ποδοσφαιρο ειναι δωρεαν, ανοιξε το»): ΠΡΩΤΑ PINNACLE (pin_api, 0 credits, ιδια μορφη με το
+# Odds API, ΜΑΖΙ οι εναλλακτικες γραμμες — ο per-event κυκλος δεν πληρωνει πια)· BTTS δεν υπαρχει στην Pinnacle → χωρις BTTS.
+# Αποτυχια Pinnacle → Odds API (οπως πριν) + ειδοποιηση. Επιστροφη: odds_source.json → "football": "toa".
+PIN_EU = {'ChampionsLeague': 'ucl', 'EuropaLeague': 'uel', 'ConferenceLeague': 'uecl'}
 SPORT_EU = {'ChampionsLeague': 'soccer_uefa_champs_league',
             'EuropaLeague': 'soccer_uefa_europa_league',
             'ConferenceLeague': 'soccer_uefa_europa_conference_league'}
 
 # TOA ονομα -> ονομα fixture μας (προσθηκες οποτε δουμε unmatched στην εξοδο)
-ALIAS_EU = {'Red Star Belgrade': 'FK Crvena Zvezda', 'FC Copenhagen': 'FC København',
+ALIAS_EU = {'Internazionale': 'Inter',   # 1/10: ονομα Pinnacle (guest API)
+            'Red Star Belgrade': 'FK Crvena Zvezda', 'FC Copenhagen': 'FC København',
             'Inter Milan': 'Inter', 'AC Milan': 'Milan', 'Sporting Lisbon': 'Sporting CP',
             'Union Saint-Gilloise': 'Union St.Gilloise', 'Paphos': 'Pafos FC',
             'Kairat': 'Kairat Almaty', 'Paris Saint Germain': 'Paris Saint-Germain',
@@ -191,7 +196,9 @@ def _ladders(g, bks=('pinnacle', 'matchbook')):
 
 def main():
     now = datetime.datetime.now(datetime.timezone.utc)
-    if now < datetime.datetime(2026, 10, 6, tzinfo=datetime.timezone.utc) and not os.environ.get('EURO_FORCE'):
+    import pin_api
+    use_pin = pin_api.source('football') == 'pinnacle'
+    if not use_pin and now < datetime.datetime(2026, 10, 6, tzinfo=datetime.timezone.utc) and not os.environ.get('EURO_FORCE'):
         print('ΠΑΥΣΗ TOA ως 6/10 (διακοπη εθνικων, Στελιος 24/9) — 0 credits'); return
     try:
         P = json.load(open(PROJ_F, encoding='utf-8'))
@@ -242,27 +249,38 @@ def main():
     nearest_h = min([(f['ko'] - now).total_seconds() / 3600
                      for fs in upc.values() for f in fs] or [1e9])
     has_lad = (not odds) or any('ah' in v for v in odds.values())
-    if age_min < 45 and nearest_h > 6 and has_lad and not livefx and not FORCE:
+    if age_min < (10 if use_pin else 45) and nearest_h > 6 and has_lad and not livefx and not FORCE:
         print(f'φρεσκο αρχειο ({age_min:.0f}λ) και κοντινοτερο ΚΟ σε {nearest_h:.1f}h — skip (0 credits)')
         return
-    if not os.environ.get('TOA_KEY'):
+    if not use_pin and not os.environ.get('TOA_KEY'):
         print('TOA_KEY δεν υπαρχει (τοπικο τρεξιμο;) — δεν γινεται fetch, το αρχειο μενει ως εχει')
         return
-    rem = None; nmatch = 0; unmatched = []
+    rem = None; nmatch = 0; unmatched = []; PIN_EVT = {}
     live_rows = []
     comps_all = sorted(set(upc) | set(livefx))
     for comp in comps_all:
         fixtures = upc.get(comp, [])
         sport = SPORT_EU[comp]
-        r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
-                         params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',   # btts ΔΕΝ γινεται εδω (422) — μονο per-event
-                                     bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
-                         timeout=45)
-        rem = r.headers.get('x-requests-remaining', rem)
-        if r.status_code != 200:
-            print(f'{comp}: TOA {r.status_code} — skip')
-            continue
-        for g in r.json():
+        events = None
+        if use_pin:
+            try:
+                events = pin_api.toa_like(PIN_EU[comp], include_alt=True)
+                for g_ in events: PIN_EVT[g_['id']] = g_
+            except pin_api.PinError as e:
+                pin_api.fallback_notice(f'euro-{comp}', str(e))
+        if events is None:
+            if not os.environ.get('TOA_KEY'):
+                print(f'{comp}: χωρις Pinnacle και χωρις TOA_KEY — skip'); continue
+            r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
+                             params=dict(apiKey=_key(), regions='eu', markets='h2h,spreads,totals',   # btts ΔΕΝ γινεται εδω (422) — μονο per-event
+                                         bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
+                             timeout=45)
+            rem = r.headers.get('x-requests-remaining', rem)
+            if r.status_code != 200:
+                print(f'{comp}: TOA {r.status_code} — skip')
+                continue
+            events = r.json()
+        for g in events:
             try:
                 gko = _pdt(g.get('commence_time'))
             except Exception:
@@ -307,7 +325,7 @@ def main():
             rec = dict(ko=best['ko'].isoformat(), when=now.isoformat()[:16],
                        eid=g.get('id'), sport=sport)
             # κρατα τις σκαλες του προηγουμενου scan (ανανεωνονται με δικο τους ρυθμο)
-            for k in ('ah', 'ou', 'alt_when', 'by', 'bn'):
+            for k in (('ah', 'ou', 'alt_when') if str(g.get('id', '')).startswith('pin') else ('ah', 'ou', 'alt_when', 'by', 'bn')):
                 if k in old_rec:
                     rec[k] = old_rec[k]
             if h2:
@@ -349,18 +367,23 @@ def main():
             age = (now - aw).total_seconds() / 60
         except Exception:
             age = 1e9
-        need = FORCE or age > (ALT_NEAR_MIN if 0 <= h_to_ko <= 3 else ALT_REFRESH_MIN)
-        if not need:
-            continue
-        r = requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/events/{eid}/odds',
+        if str(eid).startswith('pin'):                       # Pinnacle: οι σκαλες ηρθαν ΜΑΖΙ με το bulk (0 credits)
+            if eid not in PIN_EVT: continue
+            _g = PIN_EVT[eid]
+        else:
+            need = FORCE or age > (ALT_NEAR_MIN if 0 <= h_to_ko <= 3 else ALT_REFRESH_MIN)
+            if not need:
+                continue
+        r = None if str(eid).startswith('pin') else requests.get(f'https://api.the-odds-api.com/v4/sports/{sport}/events/{eid}/odds',
                          params=dict(apiKey=_key(), regions='eu',
                                      markets='alternate_spreads,alternate_totals,btts',
                                      bookmakers='pinnacle,matchbook', oddsFormat='decimal'),
                          timeout=45)
-        rem = r.headers.get('x-requests-remaining', rem)
-        if r.status_code != 200:
-            continue
-        _g = r.json()
+        if r is not None:
+            rem = r.headers.get('x-requests-remaining', rem)
+            if r.status_code != 200:
+                continue
+            _g = r.json()
         bt = _btts(_g)
         if bt:
             rec['by'], rec['bn'] = round(bt[0], 2), round(bt[1], 2)
