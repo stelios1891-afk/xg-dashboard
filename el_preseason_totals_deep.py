@@ -225,3 +225,28 @@ for lo, hi in ((-1, 4), (4, 8), (8, 99)):
     z = Z[(Z.nfr > lo) & (Z.nfr <= hi)]
     if len(z): row_(f'    φιλικα {lo+1}-{hi if hi < 99 else "+"}', z)
 open('el_preseason_totals_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- G. «κλιση» στα picks: ποσο απο την αποσταση μοντελου-γραμμης (προς το pick) βγηκε στο σκορ ----
+P('')
+P('=== G. picks (alert Crown, ≥6ω): αποσταση μοντελου απο γραμμη vs τι βγηκε (+ = προς το pick) ===')
+for d in F:
+    pass
+G_ = []
+for j, (rows, tip) in SER.items():
+    for m, v in (('ΠΑΛΙΟ', base), ('ΝΕΟ', new)):
+        tau = rows[0][0]
+        while tau < tip - 6 * 3600:
+            r = at_(rows, tau); s, e, p = pick(v[j], j, r[1], r[2], r[3])
+            if e >= 0.08:
+                sg = 1 if s == 'over' else -1; so, eo_, _ = pick(base[j], j, r[1], r[2], r[3]); sn, en_, _ = pick(new[j], j, r[1], r[2], r[3])
+                G_.append(dict(m=m, sea=SE[j], gap=(v[j] - r[1]) * sg, real=(TOT[j] - r[1]) * sg, pnl=p,
+                               cons=(so == sn == s and eo_ >= 0.08 and en_ >= 0.08))); break
+            tau += 3600
+Zg = pd.DataFrame(G_)
+def gl(lab, z):
+    pos = sum(1 for s in SEAS if (z.sea == s).any() and z[z.sea == s].real.mean() > 0)
+    P(f'  {lab:30s} n {len(z):3d} · μοντελο {z.gap.mean():+.1f}π. · βγηκε {z.real.mean():+.1f}π. (±{z.real.std()/np.sqrt(len(z)):.1f}) · λογος {z.real.mean()/z.gap.mean():+.2f} · θετικο {pos}/5 · ROI {z.pnl.mean()*100:+.1f}%')
+gl('ΠΑΛΙΟ ολα', Zg[Zg.m == 'ΠΑΛΙΟ']); gl('ΝΕΟ ολα', Zg[Zg.m == 'ΝΕΟ'])
+gl('ΝΕΟ: κοινα (συναινεση)', Zg[(Zg.m == 'ΝΕΟ') & Zg.cons]); gl('ΝΕΟ: μονο νεο', Zg[(Zg.m == 'ΝΕΟ') & ~Zg.cons])
+gl('ΠΑΛΙΟ: μονο παλιο', Zg[(Zg.m == 'ΠΑΛΙΟ') & ~Zg.cons])
+open('el_preseason_totals_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
