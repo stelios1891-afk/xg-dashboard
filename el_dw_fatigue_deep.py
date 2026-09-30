@@ -302,3 +302,101 @@ tr('    κανονικη εβδομαδα, ≥1000 χλμ απο την εδρα
 tr('    2ο ματς, ≥1000 χλμ απο το προηγ. γηπεδο', d2 & (G.a_travel >= 1000))
 tr('    1ο ματς διαβολοβδομαδας (ξερει οτι ξαναπαιζει σε 2 μερες), ≥1000 απο εδρα', (G.a_rest >= 5) & (G.a_from_home >= 1000) & False)
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 8. (α) ΞΕΧΩΡΙΣΤΗ διορθωση απο εντος / απο εκτος (με συγκρατηση) · (β) ΓΗΠΕΔΟΥΧΟΣ στο 2ο ματς ----
+P(''); P('=== 8α. ΦΙΛΟΞΕΝΟΥΜΕΝΟΣ ≥1000 χλμ: ΜΙΑ διορθωση vs ΔΥΟ (απο εντος / απο εκτος), LOSO RMSE ανα σεζον ===')
+G['tr_home'] = (G.a_dw2 == True) & (G.a_travel >= 1000) & (G.a_prev_side2 == 1)
+G['tr_away'] = (G.a_dw2 == True) & (G.a_travel >= 1000) & (G.a_prev_side2 == -1)
+G['tr_any'] = G.tr_home | G.tr_away
+def loso(groups, shrink=None, lab=''):
+    rb, rn, used = [], [], {}
+    for Y in SE5:
+        tr_ = G[G.season != Y]; te = G[G.season == Y]; adj = te.hm.copy()
+        pool = tr_[tr_.tr_any].rm_m.mean()
+        for gcol in groups:
+            x = tr_[tr_[gcol]].rm_m; d = x.mean()
+            if shrink: d = pool + (d - pool) * len(x) / (len(x) + shrink)
+            adj = adj + np.where(te[gcol], d, 0.0); used.setdefault(gcol, []).append(d)
+        rb.append(np.sqrt(np.mean((te.margin - te.hm) ** 2))); rn.append(np.sqrt(np.mean((te.margin - adj) ** 2)))
+    w_ = sum(n < b for n, b in zip(rn, rb))
+    P(f'  {lab:44s} διορθωση ' + ' · '.join(f'{g}: {np.mean(v):+.2f}' for g, v in used.items()) + ' · RMSE vs live ' + ' '.join(f'{n - b:+.4f}' for n, b in zip(rn, rb))
+      + f' (συνολο {sum(rn) - sum(rb):+.4f}) → {w_}/5')
+    return rn
+r1 = loso(['tr_any'], lab='ΜΙΑ κοινη')
+r2 = loso(['tr_home', 'tr_away'], lab='ΔΥΟ, ακριβως οπως μετρηθηκαν')
+r3 = loso(['tr_home', 'tr_away'], shrink=50, lab='ΔΥΟ, με συγκρατηση (50 ματς) προς τον κοινο')
+P('  ΔΥΟ-με-συγκρατηση vs ΜΙΑ: ' + ' '.join(f'{a - b:+.4f}' for a, b in zip(r3, r1)) + f' → καλυτερο {sum(a < b for a, b in zip(r3, r1))}/5')
+P(''); P('=== 8β. ΓΗΠΕΔΟΥΧΟΣ στο 2ο ματς διαβολοβδομαδας: απο που ερχεται (υπερ γηπεδουχου· vs μοντελο / αγορα) ===')
+HO = T[T.side == 1].set_index('pos')
+G['h_prev_side2'] = [HO.loc[p, 'prev_side'] for p in G.index]
+def hc(lab, m):
+    x = G[m.fillna(False).astype(bool)]
+    if len(x) < 8: P(f'  {lab:58s} n {len(x)}'); return
+    sm_ = x.rm_m.std() / math.sqrt(len(x)); sc = x.rm_c.std() / math.sqrt(len(x))
+    per = ' '.join(f'{Y[-2:]}:{x[x.season == Y].rm_m.mean():+.1f}' for Y in SE5 if (x.season == Y).sum() >= 4)
+    P(f'  {lab:58s} n {len(x):4d} · vs ΜΟΝΤΕΛΟ {x.rm_m.mean():+5.2f} (t {x.rm_m.mean()/sm_:+.1f}) · vs αγορα {x.rm_c.mean():+5.2f} (t {x.rm_c.mean()/sc:+.1f}) · [vs μοντ. {per}]')
+h2 = G.h_dw2 == True
+hc('ΕΝΤΟΣ → ΕΝΤΟΣ (επαιξε και το 1ο στο σπιτι)', h2 & (G.h_prev_side2 == 1))
+hc('ΕΚΤΟΣ → ΕΝΤΟΣ, γυρισμα <1000 χλμ', h2 & (G.h_prev_side2 == -1) & (G.h_travel < 1000))
+hc('ΕΚΤΟΣ → ΕΝΤΟΣ, γυρισμα ≥1000 χλμ', h2 & (G.h_prev_side2 == -1) & (G.h_travel >= 1000))
+P('  ...και με τον φιλοξενουμενο (ΙΔΙΟ ματς): ')
+hc('  γηπ. ΕΝΤΟΣ→ΕΝΤΟΣ & φιλοξ. ≥1000 χλμ', h2 & (G.h_prev_side2 == 1) & G.tr_any)
+hc('  γηπ. ΕΝΤΟΣ→ΕΝΤΟΣ & φιλοξ. <1000 χλμ', h2 & (G.h_prev_side2 == 1) & ~G.tr_any)
+hc('  γηπ. γυρισμα ≥1000 & φιλοξ. ≥1000 χλμ (και οι 2 ταξιδεψαν)', h2 & (G.h_prev_side2 == -1) & (G.h_travel >= 1000) & G.tr_any)
+hc('  γηπ. γυρισμα ≥1000 & φιλοξ. <1000', h2 & (G.h_prev_side2 == -1) & (G.h_travel >= 1000) & ~G.tr_any)
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 9. ΕΝΙΑΙΟΣ ΔΕΙΚΤΗΣ: χλμ ταξιδιου καθε ομαδας μεσα στη διαβολοβδομαδα (ταξιδι για το 1ο ματς αν ηταν εκτος + ταξιδι για το 2ο) ----
+P(''); P('=== 9. ΔΙΑΦΟΡΑ ΚΟΥΡΑΣΗΣ ΑΠΟ ΤΑΞΙΔΙΑ στη διαβολοβδομαδα: (χλμ φιλοξ. − χλμ γηπ.) / 1000 → αποκλιση υπερ γηπ. vs μοντελο ===')
+T['home_loc'] = [HB.get((s, t_)) for s, t_ in zip(T.season, T.team)]
+T['prev2_loc'] = T.groupby(['season', 'team'])['loc'].shift(2)
+T['prev2_t'] = T.groupby(['season', 'team']).t.shift(2)
+def leg_in(r):
+    """ταξιδι ΠΡΟΣ το προηγουμενο ματς (αν ηταν εκτος): απο το γηπεδο πριν απ αυτο αν ηταν ≤4 μερες πριν, αλλιως απο την εδρα"""
+    if r.prev_side != -1 or not r.prev_loc: return 0.0
+    src = r.prev2_loc if (isinstance(r.prev2_t, pd.Timestamp) and (r.prev_t - r.prev2_t).total_seconds() / 86400 <= 4 and r.prev2_loc) else r.home_loc
+    return km(src, r.prev_loc) if src else np.nan
+T['leg1'] = [leg_in(r) if d else np.nan for r, d in zip(T.itertuples(), T.dw2)]
+T['leg2'] = [km(a, b) if (d and a and b) else (0.0 if d else np.nan) for a, b, d in zip(T.prev_loc, T['loc'], T.dw2)]
+T['dwkm'] = T.leg1 + T.leg2
+HO2 = T[T.side == 1].set_index('pos'); AW2 = T[T.side == -1].set_index('pos')
+G['h_dwkm'] = HO2.loc[G.index, 'dwkm'].values; G['a_dwkm'] = AW2.loc[G.index, 'dwkm'].values
+Z = G[(G.h_dw2 == True) & (G.a_dw2 == True)].dropna(subset=['h_dwkm', 'a_dwkm']).copy()
+Z['dk'] = (Z.a_dwkm - Z.h_dwkm) / 1000
+P(f'  ματς: {len(Z)} · χλμ γηπ μ.ο. {Z.h_dwkm.mean():.0f} · φιλοξ. {Z.a_dwkm.mean():.0f} · διαφορα (φιλ−γηπ) διασπορα {Z.dk.std():.2f} χιλ.χλμ')
+for y, lab in (('rm_m', 'vs ΜΟΝΤΕΛΟ'), ('rm_c', 'vs ΑΓΟΡΑ')):
+    cf = np.polyfit(Z.dk, Z[y], 1); r = Z[y] - np.polyval(cf, Z.dk)
+    se = math.sqrt(np.sum(r ** 2) / (len(Z) - 2) / np.sum((Z.dk - Z.dk.mean()) ** 2))
+    per = [np.polyfit(Z[Z.season == Y].dk, Z[Z.season == Y][y], 1)[0] for Y in SE5]
+    P(f'  {lab:12s} κλιση {cf[0]:+.2f} π. ανα 1000 χλμ διαφορας (t {cf[0]/se:+.1f}) · σταθερος ορος {cf[1]:+.2f} · ανα σεζον [' + ' '.join(f'{p:+.2f}' for p in per) + f'] · ιδια φορα {sum(np.sign(p) == np.sign(cf[0]) for p in per)}/5')
+P('  ανα ζωνη διαφορας (φιλ − γηπ, χλμ): ')
+for lo, hi in ((-99, -1), (-1, 0.5), (0.5, 1.5), (1.5, 2.5), (2.5, 99)):
+    x = Z[(Z.dk >= lo) & (Z.dk < hi)]
+    if len(x) >= 8: P(f'    {lo*1000 if lo > -99 else "−∞"}…{hi*1000 if hi < 99 else "+∞"}: n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} · vs αγορα {x.rm_c.mean():+5.2f}')
+# LOSO: διορθωση = κλιση × dk (χωρις σταθερο ορο — μονο η διαφορα ταξιδιου), κλιση απο τις αλλες σεζον
+rb, rn, rs = [], [], []
+for Y in SE5:
+    tr_ = Z[Z.season != Y]; b = np.sum(tr_.dk * tr_.rm_m) / np.sum(tr_.dk ** 2); rs.append(b)
+    te = G[G.season == Y]; dk = pd.Series(0.0, index=te.index); zz = Z[Z.season == Y]; dk.loc[zz.index] = zz.dk
+    rb.append(np.sqrt(np.mean((te.margin - te.hm) ** 2))); rn.append(np.sqrt(np.mean((te.margin - te.hm - b * dk) ** 2)))
+w_ = sum(n < b for n, b in zip(rn, rb))
+P(f'  LOSO διορθωση = κλιση × διαφορα χλμ (κλισεις {" ".join(f"{b:+.2f}" for b in rs)} π./1000 χλμ): RMSE ολης της σεζον ' + ' '.join(f'{n - b:+.4f}' for n, b in zip(rn, rb))
+  + f' (συνολο {sum(rn) - sum(rb):+.4f}) → καλυτερο {w_}/5 {"ΠΕΡΝΑ" if w_ >= 4 else "✗"}  [συγκριση: ΜΙΑ κοινη διορθωση συνολο −0.1088]')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 10. ΦΙΛΟΞ ≥1000 χλμ, διορθωση αναλογα με τον ΓΗΠΕΔΟΥΧΟ (εμεινε σπιτι / ταξιδεψε) ----
+P(''); P('=== 10. ΦΙΛΟΞ. ≥1000 χλμ: διορθωση αναλογα με το αν ο ΓΗΠΕΔΟΥΧΟΣ επαιξε και το 1ο στο σπιτι (LOSO) ===')
+G['tr_hh'] = G.tr_any & (G.h_prev_side2 == 1)
+G['tr_hx'] = G.tr_any & (G.h_prev_side2 == -1)
+r4 = loso(['tr_hh', 'tr_hx'], lab='ΔΥΟ (γηπ. σπιτι / γηπ. ταξιδεψε)')
+r5 = loso(['tr_hh', 'tr_hx'], shrink=50, lab='ΔΥΟ με συγκρατηση (50)')
+P('  vs ΜΙΑ κοινη: ' + ' '.join(f'{a - b:+.4f}' for a, b in zip(r5, r1)) + f' → καλυτερο {sum(a < b for a, b in zip(r5, r1))}/5')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 11. 2×2: φιλοξ. απο εντος/εκτος × γηπ. σπιτι/ταξιδεψε (φιλοξ. ≥1000 χλμ) ----
+P(''); P('=== 11. 2×2 (φιλοξ. ≥1000 χλμ): αποκλιση υπερ γηπ. vs μοντελο ===')
+for ap, al in ((1, 'φιλοξ. ΑΠΟ ΕΝΤΟΣ'), (-1, 'φιλοξ. ΑΠΟ ΕΚΤΟΣ')):
+    for hp, hl in ((1, 'γηπ. ΕΜΕΙΝΕ σπιτι'), (-1, 'γηπ. ΤΑΞΙΔΕΨΕ')):
+        x = G[G.tr_any & (G.a_prev_side2 == ap) & (G.h_prev_side2 == hp)]
+        if len(x): P(f'  {al:18s} · {hl:18s} n {len(x):3d} · vs μοντελο {x.rm_m.mean():+5.2f} (±{1.96 * x.rm_m.std() / math.sqrt(max(len(x), 2)):.1f}) · vs αγορα {x.rm_c.mean():+5.2f}')
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
