@@ -101,6 +101,8 @@ def pick_card(p):
                  f'(γηπ {a.get("o_h", 0):+.2f} · φιλ {a.get("o_a", 0):+.2f})">⚓ αγκυρα {a.get("shift", 0):+.2f}</span>')
     if p.get('tag75'):
         tags += '<span class="tag t75">🎯 −0.75</span>'
+    if p.get('paper_late'):              # 1/10: EL χαντικαπ τελευταιου 2ωρου = καταγραφη (ιστορικα −9%, 1/5)
+        tags += f'<span class="tag np" title="Βγηκε στο τελευταιο 2ωρο πριν το τζαμπολ — ιστορικα −9% (75 picks, 1/5 σεζον). Κινηση αγορας: {_h.escape(p.get("late_kind") or "")}">📝 καταγραφη · δεν παιζεται</span>'
     if p.get('no_play'):
         tags += '<span class="tag np" title="UEL κλειστο 11/9 (b=0.02 στο κλεισιμο) — μονο για παρακολουθηση">👁 ΣΚΙΑ · δεν παιζεται</span>'
     if over:
@@ -113,8 +115,10 @@ def pick_card(p):
         ('Ποντ. (καβα)', f"{p['stake_final']*100:.1f}%")
     if p.get('no_play'):
         stake_k, stake_v = 'Ποντ.', '— (σκια)'
+    if p.get('paper_late'):
+        stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
     return f"""
-<div class="pc {hi} {'np' if p.get('no_play') else ''}">
+<div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late')) else ''}">
   <div class="top">
     <div class="lg">{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
     <div class="when">{_h.escape((p.get('when') or '').replace('T', ' '))}</div>

@@ -402,7 +402,8 @@ def _el_picks():
     for p in d.get('picks', []):
         q = dict(lg='Euroleague', home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
                  proj_odds=p.get('proj_odds'), when=p['when'], el=True, mkt=p.get('mkt'), mkt_note=p.get('mkt_note'), drift=p.get('drift'),
-                 old_agree=p.get('old_agree'), total_base=p.get('total_base'))
+                 old_agree=p.get('old_agree'), total_base=p.get('total_base'),
+                 paper_late=bool(p.get('paper')), late_kind=p.get('late_kind'))
         if p.get('bet'):
             q['bet'] = p['bet']
         try:

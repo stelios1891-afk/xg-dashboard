@@ -17,6 +17,12 @@ Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
 # el_line_timing.py (Crown 2021-25): χαντικαπ με την τιμη μας να ΑΝΕΒΑΙΝΕΙ >=0.5 π. -> -1.4% (135, 2/5) vs σταθερη +5.2%·
 # συνολα ιδια περιπτωση +5.3% (215) = κανενα προβλημα. ΠΑΡΑΤΗΡΗΣΗ (οχι προ-δηλωμενο τεστ) -> μονο σημειωση, το pick μενει.
 DRIFT_H, DRIFT_MIN = 3.0, 0.5
+# 1/10/2026 (Στελιος «περασε το»): ΧΑΝΤΙΚΑΠ που γεννιουνται στο ΤΕΛΕΥΤΑΙΟ 2ΩΡΟ = ΚΑΤΑΓΡΑΦΗ, ΟΧΙ ΠΑΙΧΝΙΔΙ (paper).
+# el_alert_types.py (Crown καθε αλλαγη τιμης, E2021-25, live μοντελο): τελευταιο 2ωρο −9.0% (75, 1/5) · παλιο μοντελο −17.1% (1/5)·
+# ολες οι αλλες ωρες θετικες (ανοιγμα +7.5% 5/5, ≥12ω +24.8%, 6-12ω +14.6%, 2-6ω +8.6%). Μεσα στο 2ωρο: ξαφνικο αλμα ≥1π/1ω +27.7% (16)
+# vs σταδιακη κοντρα −22.6% (38) / ακινητη −12.3% (21) → λιγα για κανονα· καταγραφεται το ειδος για κριση με πραγματικα δεδομενα.
+# Οχι Telegram, οχι «παιζεται» στο dashboard· γραφεται στο el_clv_bets.jsonl με paper='late2h'. Συνολα: ΚΑΜΙΑ αλλαγη (2ωρο +4.5%).
+LATE_H, SUDDEN_PTS = 2.0, 1.0
 from statistics import NormalDist as _ND
 def _mu(row, mkt, sm, st):
     try:
@@ -28,7 +34,7 @@ def _mu(row, mkt, sm, st):
     except Exception:
         return None
 _HIST = None
-def drift_before(p, first_seen, sm, st):
+def drift_before(p, first_seen, sm, st, hours=DRIFT_H):
     """+ = η αγορα ηρθε ΠΡΟΣ την πλευρα μας, - = εφυγε (η τιμη μας ανεβηκε) τις DRIFT_H ωρες πριν την πρωτη εμφανιση."""
     global _HIST
     if _HIST is None:
@@ -48,7 +54,7 @@ def drift_before(p, first_seen, sm, st):
     t_alert = dt.datetime.fromisoformat(first_seen).astimezone(dt.timezone.utc)
     ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
     now_rows = [r for r in H if ts(r) <= t_alert + dt.timedelta(minutes=15)]
-    prev_rows = [r for r in H if ts(r) <= t_alert - dt.timedelta(hours=DRIFT_H)]
+    prev_rows = [r for r in H if ts(r) <= t_alert - dt.timedelta(hours=hours)]
     if not now_rows: return None
     a, b = (prev_rows[-1] if prev_rows else H[0]), now_rows[-1]
     m0, m1 = _mu(a, p['mkt'], sm, st), _mu(b, p['mkt'], sm, st)
@@ -143,6 +149,8 @@ def main(notify_tg=True):
         k = key(p); cur.add(k); prev = state.get(k)
         if prev is None:
             new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now)
+            hrs = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc) - dt.datetime.fromisoformat(now)).total_seconds() / 3600
+            if p['mkt'] == 'hcap' and hrs < LATE_H: state[k]['paper'] = 'late2h'
         elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
             changed.append((p, prev.get('odds'))); state[k].update(odds=p['odds'], edge=p['edge'])
     proj_ = _load(F('el_projections.json'), {}); sm_, st_ = float(proj_.get('sigma_margin', 11.5)), float(proj_.get('sigma_total', 16.7))
@@ -152,6 +160,14 @@ def main(notify_tg=True):
             st0['drift'] = drift_before(p, st0.get('first_seen', now), sm_, st_)
             if key(p) in state: state[key(p)]['drift'] = st0['drift']
         p['drift'] = st0['drift']; p['mkt_note'] = drift_note(p)
+        if st0.get('paper'):
+            if 'late_kind' not in st0:
+                d1 = drift_before(p, st0.get('first_seen', now), sm_, st_, hours=1.0)
+                st0['late_kind'] = 'αγνωστη' if d1 is None else ('ξαφνικη' if d1 <= -SUDDEN_PTS else 'σταδιακη/ακινητη')
+                if key(p) in state: state[key(p)]['late_kind'] = st0['late_kind']
+            p['paper'], p['late_kind'] = st0['paper'], st0['late_kind']
+            p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε στο τελευταιο 2ωρο (ιστορικα −9%, 1/5 σεζον)· κινηση αγορας: {p['late_kind']}"
+                             + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
     today = now[:10]
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
     if new:
@@ -159,13 +175,15 @@ def main(notify_tg=True):
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
-                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base')), ensure_ascii=False) + '\n')
+                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'),
+                                         paper=p.get('paper'), late_kind=p.get('late_kind')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('el_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    if notify_tg and (new or changed):
+    new_tg = [p for p in new if not p.get('paper')]; changed = [(p, pr) for p, pr in changed if not p.get('paper')]
+    if notify_tg and (new_tg or changed):
         msg = []
-        if new: msg += [f'🏀 {len(new)} ΝΕΑ value picks Ευρωλιγκας', ''] + [line(p) + '\n' for p in sorted(new, key=lambda x: x['when'])]
+        if new_tg: msg += [f'🏀 {len(new_tg)} ΝΕΑ value picks Ευρωλιγκας', ''] + [line(p) + '\n' for p in sorted(new_tg, key=lambda x: x['when'])]
         if changed: msg += [f'🔄 {len(changed)} ΑΛΛΑΞΑΝ odds'] + [line(p, pr) for p, pr in changed]
         try:
             import notify; notify.send('\n'.join(msg))
