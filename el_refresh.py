@@ -137,6 +137,9 @@ NEU = {}
 # (κ 0.5, ταβανι 20· el_domestic_rating_test.py: αγων 11+ & ολη η σεζον καλυτερα 5/5, ROI ≥8% +7.6 → +10.1%).
 # 1/10/2026 (Στελιος): ΠΡΟΕΤΟΙΜΑΣΙΑ — αποδοση σε φιλικα & Super Cups (el_preseason_prior.json, κ 0.5) στην αφετηρια του χαντικαπ
 # (el_preseason_test.py: LOSO κ .5 σε 5/5, RMSE αγων 1-10 11.304 → 11.185 (4/5), ROI χαντικαπ ≥8% +8.5 → +15.1%).
+# 1/10/2026 (Στελιος «περασε το νεο και στα συνολα»): ΠΡΟΕΤΟΙΜΑΣΙΑ ΣΤΑ ΣΥΝΟΛΑ — συνολο αγων ≤10 += κ_T·(r_T γηπ + r_T φιλ), κ_T .25
+# (el_preseason_totals_test/_deep: LOSO κ .25 5/5, RMSE 16.453 → 16.353 (4/5), b .08 → .26, alert Crown ≥6ω +2.7% → +5.4% 4/5).
+PRE_T_UNTIL = 10
 PRESEASON = None
 try:
     _pp = json.load(open('el_preseason_prior.json', encoding='utf-8'))
@@ -231,7 +234,7 @@ _, CTX_V1 = build(ENG_V1)                            # παλιο v1: χωρις
 _, CTX_T = build(ENG_TOTAL)             # συνολο ποντων
 d0date = D.date.iloc[0]
 today_cut = (dt.date.today() - d0date).days + 1
-MODEL_TAG = 'v4-B1+dom+pre'
+MODEL_TAG = 'v4-B1+dom+pre+preT'
 GNO, _cnt = {}, {}                      # αριθμος αγωνα της σεζον (max των δυο ομαδων) — οπως στο τεστ της καμπυλης
 for y in sorted(S[SEASON], key=lambda y: y['utc']):
     if y['phase'] != 'RS': continue
@@ -255,10 +258,13 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     mg1, tt1, _ = predict(state_at(CTX_V1, cut), hcode, acode, neu, ENG_V1['h'])
     _, tt, _ = predict(state_at(CTX_T, cut), hcode, acode, neu, ENG_TOTAL['h'])
     tt += CURVE_A + CURVE_B * GNO.get(x['code'], GMAX)
+    tt_base = tt                           # συνολο ΧΩΡΙΣ προετοιμασια («παλιο») — για την ενδειξη ✓/✗ στα picks
+    if PRESEASON and PRESEASON.get('rT') and GNO.get(x['code'], GMAX) <= PRE_T_UNTIL:   # 1/10: ταση ποντων φιλικων, αγων 1-10
+        tt += PRESEASON.get('kappa_T', 0.25) * (PRESEASON['rT'].get(hcode, 0.0) + PRESEASON['rT'].get(acode, 0.0))
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], utc=x['utc'], home=x['home'], away=x['away'], hcode=hcode, acode=acode,
                venue=x.get('vname'), neutral=neu, pts_h=round((tt + mg) / 2, 1), pts_a=round((tt - mg) / 2, 1),
                margin=round(mg, 2), total=round(tt, 1), poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3),
-               played=played, version='v4', hcrest=x.get('hcrest'), acrest=x.get('acrest'),
+               played=played, version='v4', hcrest=x.get('hcrest'), acrest=x.get('acrest'), total_base=round(tt_base, 1),
                versions={'v1': dict(pts_h=round((tt1 + mg1) / 2, 1), pts_a=round((tt1 - mg1) / 2, 1), margin=round(mg1, 2), total=round(tt1, 1),
                                     p_home=round(Phi(mg1 / SIGMA_MARGIN), 3))})
     if mgf is not None:
@@ -284,7 +290,7 @@ for L in S.values():
 ratings = sorted([dict(code=t, name=names.get(t, t), O=round(state['O'][t], 2), D=round(state['D'][t], 2), net=round(state['O'][t] - state['D'][t], 2),
                        pace=round(state['P'][t], 2), games=state['n'][t]) for t in state['O']], key=lambda r: -r['net'])
 json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=SEASON,
-               model='v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
+               model='v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) + ταση ποντων προετοιμασιας (κ 0.25, αγων 1-10) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης',
                sigma_margin=SIGMA_MARGIN, sigma_total=SIGMA_TOTAL, mu=round(state['mu'], 2), pace=round(state['pm'], 2),
                games=games, ratings=ratings), open('el_projections.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(f'el_projections.json: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα, με προβλεψη «πριν το ματς») · ratings {len(ratings)} ομαδων')

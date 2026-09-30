@@ -1,7 +1,7 @@
 {
- "generated": "2026-09-30T02:14+00:00",
+ "generated": "2026-09-30T08:39+00:00",
  "season": "E2026",
- "model": "v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης",
+ "model": "v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · HL60 · εδρα 5/100 · ανοιγμα ×1.1 απο 7ο αγωνα · τυχη 3P/FT 50%) + προετοιμασια (φιλικα/Super Cups, κ 0.5) + φετινα εγχωρια απο τον 11ο αγωνα (κ 0.5, ταβανι 20) · συνολο = v2 (τυχη 25%, χωρις φθορα, επιπεδο λιγκας σταθερο) + καμπυλη σεζον 0.34+0.098×αγων (με παρατασεις) + ταση ποντων προετοιμασιας (κ 0.25, αγων 1-10) · νεες ομαδες κατω απο μεση · ουδετερο εκτος πολης",
  "sigma_margin": 11.5,
  "sigma_total": 16.7,
  "mu": 113.93,
@@ -18,16 +18,17 @@
    "acode": "MUN",
    "venue": "ARENA 8888 SOFIA",
    "neutral": true,
-   "pts_h": 84.1,
-   "pts_a": 83.5,
+   "pts_h": 84.6,
+   "pts_a": 84.0,
    "margin": 0.63,
-   "total": 167.7,
+   "total": 168.6,
    "poss": 73.5,
    "p_home": 0.522,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 167.7,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -37,10 +38,10 @@
      "p_home": 0.575
     },
     "fantasy (σκια)": {
-     "pts_h": 84.3,
-     "pts_a": 83.4,
+     "pts_h": 84.7,
+     "pts_a": 83.8,
      "margin": 0.91,
-     "total": 167.7,
+     "total": 168.6,
      "p_home": 0.532
     }
    },
@@ -58,16 +59,17 @@
    "acode": "MAD",
    "venue": "COCA-COLA ARENA",
    "neutral": false,
-   "pts_h": 85.7,
-   "pts_a": 86.1,
+   "pts_h": 86.4,
+   "pts_a": 86.8,
    "margin": -0.39,
-   "total": 171.8,
+   "total": 173.3,
    "poss": 74.0,
    "p_home": 0.486,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 171.8,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -77,10 +79,10 @@
      "p_home": 0.573
     },
     "fantasy (σκια)": {
-     "pts_h": 86.9,
-     "pts_a": 84.9,
+     "pts_h": 87.6,
+     "pts_a": 85.6,
      "margin": 1.98,
-     "total": 171.8,
+     "total": 173.3,
      "p_home": 0.569
     }
    },
@@ -98,16 +100,17 @@
    "acode": "ZAL",
    "venue": "BELGRADE ARENA",
    "neutral": false,
-   "pts_h": 85.7,
-   "pts_a": 84.6,
+   "pts_h": 85.3,
+   "pts_a": 84.3,
    "margin": 1.07,
-   "total": 170.3,
+   "total": 169.6,
    "poss": 72.5,
    "p_home": 0.537,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 170.3,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -117,10 +120,10 @@
      "p_home": 0.636
     },
     "fantasy (σκια)": {
-     "pts_h": 86.2,
-     "pts_a": 84.1,
+     "pts_h": 85.9,
+     "pts_a": 83.7,
      "margin": 2.18,
-     "total": 170.3,
+     "total": 169.6,
      "p_home": 0.575
     }
    },
@@ -138,16 +141,17 @@
    "acode": "PRS",
    "venue": "TELEKOM CENTER ATHENS",
    "neutral": false,
-   "pts_h": 94.8,
-   "pts_a": 83.2,
+   "pts_h": 93.7,
+   "pts_a": 82.1,
    "margin": 11.6,
-   "total": 178.1,
+   "total": 175.8,
    "poss": 74.7,
    "p_home": 0.843,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 178.1,
    "versions": {
     "v1": {
      "pts_h": 91.4,
@@ -157,10 +161,10 @@
      "p_home": 0.709
     },
     "fantasy (σκια)": {
-     "pts_h": 94.6,
-     "pts_a": 83.5,
+     "pts_h": 93.5,
+     "pts_a": 82.3,
      "margin": 11.16,
-     "total": 178.1,
+     "total": 175.8,
      "p_home": 0.834
     }
    },
@@ -178,16 +182,17 @@
    "acode": "OLY",
    "venue": "BUESA ARENA",
    "neutral": false,
-   "pts_h": 84.1,
-   "pts_a": 91.1,
+   "pts_h": 85.0,
+   "pts_a": 92.0,
    "margin": -7.05,
-   "total": 175.2,
+   "total": 177.0,
    "poss": 74.5,
    "p_home": 0.27,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 175.2,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -197,10 +202,10 @@
      "p_home": 0.454
     },
     "fantasy (σκια)": {
-     "pts_h": 83.7,
-     "pts_a": 91.5,
+     "pts_h": 84.6,
+     "pts_a": 92.4,
      "margin": -7.71,
-     "total": 175.2,
+     "total": 177.0,
      "p_home": 0.251
     }
    },
@@ -218,16 +223,17 @@
    "acode": "IST",
    "venue": "PALAU BLAUGRANA",
    "neutral": false,
-   "pts_h": 81.9,
-   "pts_a": 79.9,
+   "pts_h": 82.6,
+   "pts_a": 80.6,
    "margin": 1.99,
-   "total": 161.9,
+   "total": 163.2,
    "poss": 71.8,
    "p_home": 0.569,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 161.9,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -237,10 +243,10 @@
      "p_home": 0.683
     },
     "fantasy (σκια)": {
-     "pts_h": 81.9,
-     "pts_a": 79.9,
+     "pts_h": 82.6,
+     "pts_a": 80.6,
      "margin": 1.98,
-     "total": 161.9,
+     "total": 163.2,
      "p_home": 0.568
     }
    },
@@ -258,16 +264,17 @@
    "acode": "TEL",
    "venue": "LDLC ARENA",
    "neutral": false,
-   "pts_h": 86.3,
-   "pts_a": 89.4,
+   "pts_h": 85.8,
+   "pts_a": 88.8,
    "margin": -3.08,
-   "total": 175.8,
+   "total": 174.6,
    "poss": 75.0,
    "p_home": 0.395,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 175.8,
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -277,10 +284,10 @@
      "p_home": 0.555
     },
     "fantasy (σκια)": {
-     "pts_h": 86.7,
-     "pts_a": 89.1,
+     "pts_h": 86.1,
+     "pts_a": 88.5,
      "margin": -2.44,
-     "total": 175.8,
+     "total": 174.6,
      "p_home": 0.416
     }
    },
@@ -298,16 +305,17 @@
    "acode": "PAM",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 86.9,
-   "pts_a": 88.0,
+   "pts_h": 85.9,
+   "pts_a": 87.0,
    "margin": -1.1,
-   "total": 174.8,
+   "total": 172.9,
    "poss": 75.6,
    "p_home": 0.462,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 174.8,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -317,10 +325,10 @@
      "p_home": 0.506
     },
     "fantasy (σκια)": {
-     "pts_h": 87.2,
-     "pts_a": 87.6,
+     "pts_h": 86.3,
+     "pts_a": 86.7,
      "margin": -0.36,
-     "total": 174.8,
+     "total": 172.9,
      "p_home": 0.487
     }
    },
@@ -338,16 +346,17 @@
    "acode": "VIR",
    "venue": "ULKER SPORTS AND EVENT HALL",
    "neutral": false,
-   "pts_h": 88.2,
-   "pts_a": 78.3,
+   "pts_h": 87.7,
+   "pts_a": 77.8,
    "margin": 9.98,
-   "total": 166.5,
+   "total": 165.5,
    "poss": 74.4,
    "p_home": 0.807,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 166.5,
    "versions": {
     "v1": {
      "pts_h": 84.9,
@@ -357,10 +366,10 @@
      "p_home": 0.746
     },
     "fantasy (σκια)": {
-     "pts_h": 87.7,
-     "pts_a": 78.8,
+     "pts_h": 87.2,
+     "pts_a": 78.3,
      "margin": 8.91,
-     "total": 166.5,
+     "total": 165.5,
      "p_home": 0.781
     }
    },
@@ -378,16 +387,17 @@
    "acode": "MIL",
    "venue": "BELGRADE ARENA",
    "neutral": false,
-   "pts_h": 86.7,
-   "pts_a": 81.5,
+   "pts_h": 87.6,
+   "pts_a": 82.3,
    "margin": 5.23,
-   "total": 168.2,
+   "total": 169.9,
    "poss": 74.5,
    "p_home": 0.675,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 168.2,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -397,10 +407,10 @@
      "p_home": 0.651
     },
     "fantasy (σκια)": {
-     "pts_h": 86.3,
-     "pts_a": 81.9,
+     "pts_h": 87.2,
+     "pts_a": 82.8,
      "margin": 4.39,
-     "total": 168.2,
+     "total": 169.9,
      "p_home": 0.649
     }
    },
@@ -418,16 +428,17 @@
    "acode": "BAR",
    "venue": "COCA-COLA ARENA",
    "neutral": false,
-   "pts_h": 88.1,
-   "pts_a": 82.2,
+   "pts_h": 88.7,
+   "pts_a": 82.8,
    "margin": 5.87,
-   "total": 170.3,
+   "total": 171.5,
    "poss": 74.2,
    "p_home": 0.695,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 170.3,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -437,10 +448,10 @@
      "p_home": 0.677
     },
     "fantasy (σκια)": {
-     "pts_h": 88.2,
-     "pts_a": 82.1,
+     "pts_h": 88.8,
+     "pts_a": 82.7,
      "margin": 6.15,
-     "total": 170.3,
+     "total": 171.5,
      "p_home": 0.703
     }
    },
@@ -458,16 +469,17 @@
    "acode": "OLY",
    "venue": "ZALGIRIO ARENA",
    "neutral": false,
-   "pts_h": 85.9,
-   "pts_a": 86.1,
+   "pts_h": 85.1,
+   "pts_a": 85.3,
    "margin": -0.24,
-   "total": 172.0,
+   "total": 170.5,
    "poss": 74.4,
    "p_home": 0.492,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 172.0,
    "versions": {
     "v1": {
      "pts_h": 83.9,
@@ -477,10 +489,10 @@
      "p_home": 0.514
     },
     "fantasy (σκια)": {
-     "pts_h": 85.9,
-     "pts_a": 86.1,
+     "pts_h": 85.1,
+     "pts_a": 85.3,
      "margin": -0.18,
-     "total": 172.0,
+     "total": 170.5,
      "p_home": 0.494
     }
    },
@@ -498,16 +510,17 @@
    "acode": "MAD",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 82.2,
-   "pts_a": 82.9,
+   "pts_h": 83.0,
+   "pts_a": 83.6,
    "margin": -0.62,
-   "total": 165.1,
+   "total": 166.6,
    "poss": 74.1,
    "p_home": 0.478,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 165.1,
    "versions": {
     "v1": {
      "pts_h": 81.7,
@@ -517,10 +530,10 @@
      "p_home": 0.522
     },
     "fantasy (σκια)": {
-     "pts_h": 83.1,
-     "pts_a": 82.0,
+     "pts_h": 83.9,
+     "pts_a": 82.7,
      "margin": 1.17,
-     "total": 165.1,
+     "total": 166.6,
      "p_home": 0.541
     }
    },
@@ -538,16 +551,17 @@
    "acode": "MUN",
    "venue": "ULKER SPORTS AND EVENT HALL",
    "neutral": false,
-   "pts_h": 85.2,
-   "pts_a": 79.2,
+   "pts_h": 85.5,
+   "pts_a": 79.5,
    "margin": 5.99,
-   "total": 164.3,
+   "total": 165.1,
    "poss": 73.7,
    "p_home": 0.699,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 164.3,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -557,10 +571,10 @@
      "p_home": 0.706
     },
     "fantasy (σκια)": {
-     "pts_h": 84.7,
-     "pts_a": 79.6,
+     "pts_h": 85.1,
+     "pts_a": 80.0,
      "margin": 5.09,
-     "total": 164.3,
+     "total": 165.1,
      "p_home": 0.671
     }
    },
@@ -588,6 +602,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 174.0,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -597,7 +612,7 @@
      "p_home": 0.63
     },
     "fantasy (σκια)": {
-     "pts_h": 87.7,
+     "pts_h": 87.8,
      "pts_a": 86.3,
      "margin": 1.48,
      "total": 174.0,
@@ -618,16 +633,17 @@
    "acode": "VIR",
    "venue": "UNIPOL FORUM",
    "neutral": false,
-   "pts_h": 87.3,
-   "pts_a": 81.5,
+   "pts_h": 87.0,
+   "pts_a": 81.2,
    "margin": 5.8,
-   "total": 168.9,
+   "total": 168.1,
    "poss": 74.8,
    "p_home": 0.693,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 168.9,
    "versions": {
     "v1": {
      "pts_h": 85.8,
@@ -637,10 +653,10 @@
      "p_home": 0.662
     },
     "fantasy (σκια)": {
-     "pts_h": 86.5,
-     "pts_a": 82.4,
+     "pts_h": 86.1,
+     "pts_a": 82.0,
      "margin": 4.11,
-     "total": 168.9,
+     "total": 168.1,
      "p_home": 0.64
     }
    },
@@ -658,16 +674,17 @@
    "acode": "BAS",
    "venue": "ROIG ARENA",
    "neutral": false,
-   "pts_h": 95.7,
-   "pts_a": 85.2,
+   "pts_h": 96.8,
+   "pts_a": 86.4,
    "margin": 10.48,
-   "total": 181.0,
+   "total": 183.2,
    "poss": 76.7,
    "p_home": 0.819,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 181.0,
    "versions": {
     "v1": {
      "pts_h": 93.8,
@@ -677,10 +694,10 @@
      "p_home": 0.808
     },
     "fantasy (σκια)": {
-     "pts_h": 96.3,
-     "pts_a": 84.6,
+     "pts_h": 97.5,
+     "pts_a": 85.7,
      "margin": 11.72,
-     "total": 181.0,
+     "total": 183.2,
      "p_home": 0.846
     }
    },
@@ -698,16 +715,17 @@
    "acode": "PAR",
    "venue": "ADIDAS ARENA",
    "neutral": false,
-   "pts_h": 86.5,
-   "pts_a": 86.4,
+   "pts_h": 87.2,
+   "pts_a": 87.2,
    "margin": 0.04,
-   "total": 172.9,
+   "total": 174.4,
    "poss": 75.9,
    "p_home": 0.501,
    "played": true,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 172.9,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -717,10 +735,10 @@
      "p_home": 0.617
     },
     "fantasy (σκια)": {
-     "pts_h": 88.0,
-     "pts_a": 85.0,
+     "pts_h": 88.7,
+     "pts_a": 85.7,
      "margin": 2.98,
-     "total": 172.9,
+     "total": 174.4,
      "p_home": 0.602
     }
    },
@@ -738,16 +756,17 @@
    "acode": "BES",
    "venue": "ALEKSANDAR NIKOLIC HALL",
    "neutral": true,
-   "pts_h": 91.8,
-   "pts_a": 87.1,
+   "pts_h": 90.4,
+   "pts_a": 85.7,
    "margin": 4.69,
-   "total": 178.9,
+   "total": 176.1,
    "poss": 76.8,
    "p_home": 0.658,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 178.9,
    "versions": {
     "v1": {
      "pts_h": 89.4,
@@ -757,10 +776,10 @@
      "p_home": 0.55
     },
     "fantasy (σκια)": {
-     "pts_h": 92.3,
-     "pts_a": 86.6,
+     "pts_h": 90.9,
+     "pts_a": 85.2,
      "margin": 5.69,
-     "total": 178.9,
+     "total": 176.1,
      "p_home": 0.69
     }
    }
@@ -776,16 +795,17 @@
    "acode": "ASV",
    "venue": "TELEKOM CENTER ATHENS",
    "neutral": false,
-   "pts_h": 92.4,
-   "pts_a": 76.9,
+   "pts_h": 91.3,
+   "pts_a": 75.8,
    "margin": 15.5,
-   "total": 169.2,
+   "total": 167.1,
    "poss": 75.1,
    "p_home": 0.911,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 169.2,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -795,10 +815,10 @@
      "p_home": 0.809
     },
     "fantasy (σκια)": {
-     "pts_h": 91.6,
-     "pts_a": 77.6,
+     "pts_h": 90.6,
+     "pts_a": 76.5,
      "margin": 14.07,
-     "total": 169.2,
+     "total": 167.1,
      "p_home": 0.889
     }
    }
@@ -814,16 +834,17 @@
    "acode": "MAD",
    "venue": "ARENA 8888 SOFIA",
    "neutral": true,
-   "pts_h": 84.1,
-   "pts_a": 88.1,
+   "pts_h": 85.2,
+   "pts_a": 89.2,
    "margin": -3.99,
-   "total": 172.2,
+   "total": 174.4,
    "poss": 75.8,
    "p_home": 0.364,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 172.2,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -833,10 +854,10 @@
      "p_home": 0.447
     },
     "fantasy (σκια)": {
-     "pts_h": 85.0,
-     "pts_a": 87.2,
+     "pts_h": 86.1,
+     "pts_a": 88.3,
      "margin": -2.19,
-     "total": 172.2,
+     "total": 174.4,
      "p_home": 0.425
     }
    }
@@ -852,16 +873,17 @@
    "acode": "IST",
    "venue": "BELGRADE ARENA",
    "neutral": false,
-   "pts_h": 85.3,
-   "pts_a": 84.4,
+   "pts_h": 84.9,
+   "pts_a": 84.1,
    "margin": 0.86,
-   "total": 169.7,
+   "total": 169.0,
    "poss": 75.0,
    "p_home": 0.53,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 169.7,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -871,10 +893,10 @@
      "p_home": 0.633
     },
     "fantasy (σκια)": {
-     "pts_h": 85.2,
-     "pts_a": 84.5,
+     "pts_h": 84.8,
+     "pts_a": 84.2,
      "margin": 0.67,
-     "total": 169.7,
+     "total": 169.0,
      "p_home": 0.523
     }
    }
@@ -890,16 +912,17 @@
    "acode": "OLY",
    "venue": "PALADOZZA",
    "neutral": false,
-   "pts_h": 84.4,
-   "pts_a": 91.3,
+   "pts_h": 83.8,
+   "pts_a": 90.6,
    "margin": -6.82,
-   "total": 175.7,
+   "total": 174.3,
    "poss": 75.7,
    "p_home": 0.277,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -909,10 +932,10 @@
      "p_home": 0.324
     },
     "fantasy (σκια)": {
-     "pts_h": 85.0,
-     "pts_a": 90.7,
+     "pts_h": 84.3,
+     "pts_a": 90.0,
      "margin": -5.66,
-     "total": 175.7,
+     "total": 174.3,
      "p_home": 0.311
     }
    }
@@ -928,16 +951,17 @@
    "acode": "ZAL",
    "venue": "ADIDAS ARENA",
    "neutral": false,
-   "pts_h": 87.7,
-   "pts_a": 88.7,
+   "pts_h": 87.2,
+   "pts_a": 88.1,
    "margin": -0.97,
-   "total": 176.4,
+   "total": 175.3,
    "poss": 76.2,
    "p_home": 0.467,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 176.4,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -947,10 +971,10 @@
      "p_home": 0.533
     },
     "fantasy (σκια)": {
-     "pts_h": 88.5,
-     "pts_a": 87.9,
+     "pts_h": 87.9,
+     "pts_a": 87.4,
      "margin": 0.55,
-     "total": 176.4,
+     "total": 175.3,
      "p_home": 0.519
     }
    }
@@ -966,16 +990,17 @@
    "acode": "BAR",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 86.3,
-   "pts_a": 86.0,
+   "pts_h": 86.5,
+   "pts_a": 86.2,
    "margin": 0.31,
-   "total": 172.2,
+   "total": 172.6,
    "poss": 74.4,
    "p_home": 0.511,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 172.2,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -985,10 +1010,10 @@
      "p_home": 0.591
     },
     "fantasy (σκια)": {
-     "pts_h": 86.2,
-     "pts_a": 86.0,
+     "pts_h": 86.4,
+     "pts_a": 86.2,
      "margin": 0.17,
-     "total": 172.2,
+     "total": 172.6,
      "p_home": 0.506
     }
    }
@@ -1004,16 +1029,17 @@
    "acode": "DUB",
    "venue": "ULKER SPORTS AND EVENT HALL",
    "neutral": false,
-   "pts_h": 88.3,
-   "pts_a": 82.8,
+   "pts_h": 87.7,
+   "pts_a": 82.3,
    "margin": 5.42,
-   "total": 171.1,
+   "total": 170.0,
    "poss": 74.2,
    "p_home": 0.681,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 171.1,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -1023,10 +1049,10 @@
      "p_home": 0.678
     },
     "fantasy (σκια)": {
-     "pts_h": 87.6,
-     "pts_a": 83.5,
+     "pts_h": 87.1,
+     "pts_a": 82.9,
      "margin": 4.17,
-     "total": 171.1,
+     "total": 170.0,
      "p_home": 0.642
     }
    }
@@ -1042,16 +1068,17 @@
    "acode": "PAR",
    "venue": "SAP GARDEN",
    "neutral": false,
-   "pts_h": 83.4,
-   "pts_a": 82.4,
+   "pts_h": 84.8,
+   "pts_a": 83.8,
    "margin": 1.0,
-   "total": 165.8,
+   "total": 168.5,
    "poss": 73.9,
    "p_home": 0.535,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 165.8,
    "versions": {
     "v1": {
      "pts_h": 83.3,
@@ -1061,10 +1088,10 @@
      "p_home": 0.538
     },
     "fantasy (σκια)": {
-     "pts_h": 84.5,
-     "pts_a": 81.3,
+     "pts_h": 85.8,
+     "pts_a": 82.7,
      "margin": 3.13,
-     "total": 165.8,
+     "total": 168.5,
      "p_home": 0.607
     }
    }
@@ -1080,16 +1107,17 @@
    "acode": "PAM",
    "venue": "LDLC ARENA",
    "neutral": false,
-   "pts_h": 86.0,
-   "pts_a": 89.0,
+   "pts_h": 85.9,
+   "pts_a": 88.8,
    "margin": -2.97,
-   "total": 175.0,
+   "total": 174.7,
    "poss": 76.3,
    "p_home": 0.398,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 175.0,
    "versions": {
     "v1": {
      "pts_h": 85.5,
@@ -1099,10 +1127,10 @@
      "p_home": 0.432
     },
     "fantasy (σκια)": {
-     "pts_h": 87.1,
-     "pts_a": 87.8,
+     "pts_h": 87.0,
+     "pts_a": 87.7,
      "margin": -0.71,
-     "total": 175.0,
+     "total": 174.7,
      "p_home": 0.475
     }
    }
@@ -1118,16 +1146,17 @@
    "acode": "TEL",
    "venue": "TELEKOM CENTER ATHENS",
    "neutral": false,
-   "pts_h": 93.9,
-   "pts_a": 84.7,
+   "pts_h": 92.4,
+   "pts_a": 83.2,
    "margin": 9.19,
-   "total": 178.6,
+   "total": 175.6,
    "poss": 76.5,
    "p_home": 0.788,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 178.6,
    "versions": {
     "v1": {
      "pts_h": 91.4,
@@ -1137,10 +1166,10 @@
      "p_home": 0.726
     },
     "fantasy (σκια)": {
-     "pts_h": 93.5,
-     "pts_a": 85.2,
+     "pts_h": 91.9,
+     "pts_a": 83.6,
      "margin": 8.3,
-     "total": 178.6,
+     "total": 175.6,
      "p_home": 0.765
     }
    }
@@ -1156,16 +1185,17 @@
    "acode": "MIL",
    "venue": "BUESA ARENA",
    "neutral": false,
-   "pts_h": 89.3,
-   "pts_a": 89.2,
+   "pts_h": 90.5,
+   "pts_a": 90.4,
    "margin": 0.13,
-   "total": 178.5,
+   "total": 180.9,
    "poss": 76.7,
    "p_home": 0.504,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 178.5,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -1175,10 +1205,10 @@
      "p_home": 0.667
     },
     "fantasy (σκια)": {
-     "pts_h": 89.2,
-     "pts_a": 89.3,
+     "pts_h": 90.4,
+     "pts_a": 90.5,
      "margin": -0.08,
-     "total": 178.5,
+     "total": 180.9,
      "p_home": 0.497
     }
    }
@@ -1194,16 +1224,17 @@
    "acode": "ASV",
    "venue": "ADIDAS ARENA",
    "neutral": false,
-   "pts_h": 90.5,
-   "pts_a": 83.8,
+   "pts_h": 90.3,
+   "pts_a": 83.6,
    "margin": 6.67,
-   "total": 174.3,
+   "total": 173.9,
    "poss": 77.0,
    "p_home": 0.719,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 174.3,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -1213,10 +1244,10 @@
      "p_home": 0.69
     },
     "fantasy (σκια)": {
-     "pts_h": 89.9,
-     "pts_a": 84.4,
+     "pts_h": 89.7,
+     "pts_a": 84.3,
      "margin": 5.42,
-     "total": 174.3,
+     "total": 173.9,
      "p_home": 0.681
     }
    }
@@ -1232,16 +1263,17 @@
    "acode": "RED",
    "venue": "COCA-COLA ARENA",
    "neutral": false,
-   "pts_h": 90.7,
-   "pts_a": 84.4,
+   "pts_h": 90.3,
+   "pts_a": 84.1,
    "margin": 6.24,
-   "total": 175.1,
+   "total": 174.4,
    "poss": 75.5,
    "p_home": 0.706,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 175.1,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -1251,10 +1283,10 @@
      "p_home": 0.68
     },
     "fantasy (σκια)": {
-     "pts_h": 91.0,
-     "pts_a": 84.2,
+     "pts_h": 90.6,
+     "pts_a": 83.8,
      "margin": 6.81,
-     "total": 175.1,
+     "total": 174.4,
      "p_home": 0.723
     }
    }
@@ -1270,16 +1302,17 @@
    "acode": "MIL",
    "venue": "ALEKSANDAR NIKOLIC HALL",
    "neutral": true,
-   "pts_h": 90.1,
-   "pts_a": 87.5,
+   "pts_h": 89.6,
+   "pts_a": 87.0,
    "margin": 2.64,
-   "total": 177.6,
+   "total": 176.6,
    "poss": 76.5,
    "p_home": 0.591,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 177.6,
    "versions": {
     "v1": {
      "pts_h": 89.7,
@@ -1289,10 +1322,10 @@
      "p_home": 0.585
     },
     "fantasy (σκια)": {
-     "pts_h": 91.4,
-     "pts_a": 86.2,
+     "pts_h": 90.9,
+     "pts_a": 85.7,
      "margin": 5.23,
-     "total": 177.6,
+     "total": 176.6,
      "p_home": 0.675
     }
    }
@@ -1308,16 +1341,17 @@
    "acode": "VIR",
    "venue": "SAP GARDEN",
    "neutral": false,
-   "pts_h": 88.3,
-   "pts_a": 81.5,
+   "pts_h": 88.4,
+   "pts_a": 81.6,
    "margin": 6.86,
-   "total": 169.8,
+   "total": 170.0,
    "poss": 74.8,
    "p_home": 0.725,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 169.8,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -1327,10 +1361,10 @@
      "p_home": 0.675
     },
     "fantasy (σκια)": {
-     "pts_h": 88.3,
-     "pts_a": 81.4,
+     "pts_h": 88.5,
+     "pts_a": 81.6,
      "margin": 6.9,
-     "total": 169.8,
+     "total": 170.0,
      "p_home": 0.726
     }
    }
@@ -1346,16 +1380,17 @@
    "acode": "ULK",
    "venue": "TELEKOM CENTER ATHENS",
    "neutral": false,
-   "pts_h": 88.2,
-   "pts_a": 81.4,
+   "pts_h": 87.0,
+   "pts_a": 80.3,
    "margin": 6.75,
-   "total": 169.6,
+   "total": 167.3,
    "poss": 74.0,
    "p_home": 0.721,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 169.6,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -1365,10 +1400,10 @@
      "p_home": 0.676
     },
     "fantasy (σκια)": {
-     "pts_h": 88.6,
-     "pts_a": 80.9,
+     "pts_h": 87.5,
+     "pts_a": 79.8,
      "margin": 7.7,
-     "total": 169.6,
+     "total": 167.3,
      "p_home": 0.748
     }
    }
@@ -1384,16 +1419,17 @@
    "acode": "HTA",
    "venue": "ROIG ARENA",
    "neutral": false,
-   "pts_h": 91.7,
-   "pts_a": 87.9,
+   "pts_h": 91.6,
+   "pts_a": 87.8,
    "margin": 3.75,
-   "total": 179.6,
+   "total": 179.4,
    "poss": 76.3,
    "p_home": 0.628,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 179.6,
    "versions": {
     "v1": {
      "pts_h": 91.7,
@@ -1403,10 +1439,10 @@
      "p_home": 0.71
     },
     "fantasy (σκια)": {
-     "pts_h": 91.2,
-     "pts_a": 88.4,
+     "pts_h": 91.1,
+     "pts_a": 88.3,
      "margin": 2.81,
-     "total": 179.6,
+     "total": 179.4,
      "p_home": 0.597
     }
    }
@@ -1422,16 +1458,17 @@
    "acode": "PAR",
    "venue": "MOVISTAR ARENA",
    "neutral": false,
-   "pts_h": 86.6,
-   "pts_a": 80.2,
+   "pts_h": 88.6,
+   "pts_a": 82.2,
    "margin": 6.42,
-   "total": 166.9,
+   "total": 170.9,
    "poss": 74.8,
    "p_home": 0.712,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 166.9,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -1441,10 +1478,10 @@
      "p_home": 0.693
     },
     "fantasy (σκια)": {
-     "pts_h": 87.0,
-     "pts_a": 79.9,
+     "pts_h": 89.0,
+     "pts_a": 81.9,
      "margin": 7.07,
-     "total": 166.9,
+     "total": 170.9,
      "p_home": 0.731
     }
    }
@@ -1460,16 +1497,17 @@
    "acode": "IST",
    "venue": "SUNEL ARENA",
    "neutral": false,
-   "pts_h": 90.8,
-   "pts_a": 81.8,
+   "pts_h": 90.1,
+   "pts_a": 81.1,
    "margin": 9.05,
-   "total": 172.6,
+   "total": 171.2,
    "poss": 75.0,
    "p_home": 0.784,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 172.6,
    "versions": {
     "v1": {
      "pts_h": 91.2,
@@ -1479,10 +1517,10 @@
      "p_home": 0.839
     },
     "fantasy (σκια)": {
-     "pts_h": 90.2,
-     "pts_a": 82.4,
+     "pts_h": 89.5,
+     "pts_a": 81.7,
      "margin": 7.78,
-     "total": 172.6,
+     "total": 171.2,
      "p_home": 0.751
     }
    }
@@ -1498,16 +1536,17 @@
    "acode": "ZAL",
    "venue": "PALAU BLAUGRANA",
    "neutral": false,
-   "pts_h": 86.1,
-   "pts_a": 84.6,
+   "pts_h": 86.7,
+   "pts_a": 85.2,
    "margin": 1.58,
-   "total": 170.7,
+   "total": 171.9,
    "poss": 73.6,
    "p_home": 0.555,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 170.7,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -1517,10 +1556,10 @@
      "p_home": 0.621
     },
     "fantasy (σκια)": {
-     "pts_h": 86.8,
-     "pts_a": 83.9,
+     "pts_h": 87.4,
+     "pts_a": 84.5,
      "margin": 2.89,
-     "total": 170.7,
+     "total": 171.9,
      "p_home": 0.599
     }
    }
@@ -1536,16 +1575,17 @@
    "acode": "BES",
    "venue": "BUESA ARENA",
    "neutral": false,
-   "pts_h": 91.1,
-   "pts_a": 88.9,
+   "pts_h": 91.5,
+   "pts_a": 89.3,
    "margin": 2.17,
-   "total": 180.0,
+   "total": 180.8,
    "poss": 77.0,
    "p_home": 0.575,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 180.0,
    "versions": {
     "v1": {
      "pts_h": 91.8,
@@ -1555,10 +1595,10 @@
      "p_home": 0.635
     },
     "fantasy (σκια)": {
-     "pts_h": 90.2,
-     "pts_a": 89.8,
+     "pts_h": 90.6,
+     "pts_a": 90.2,
      "margin": 0.36,
-     "total": 180.0,
+     "total": 180.8,
      "p_home": 0.512
     }
    }
@@ -1574,16 +1614,17 @@
    "acode": "ZAL",
    "venue": "ULKER SPORTS AND EVENT HALL",
    "neutral": false,
-   "pts_h": 86.6,
-   "pts_a": 81.8,
+   "pts_h": 86.0,
+   "pts_a": 81.2,
    "margin": 4.84,
-   "total": 168.4,
+   "total": 167.2,
    "poss": 73.6,
    "p_home": 0.663,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 168.4,
    "versions": {
     "v1": {
      "pts_h": 85.3,
@@ -1593,10 +1634,10 @@
      "p_home": 0.654
     },
     "fantasy (σκια)": {
-     "pts_h": 86.8,
-     "pts_a": 81.6,
+     "pts_h": 86.2,
+     "pts_a": 81.0,
      "margin": 5.16,
-     "total": 168.4,
+     "total": 167.2,
      "p_home": 0.673
     }
    }
@@ -1622,6 +1663,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 170.1,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -1650,16 +1692,17 @@
    "acode": "PAN",
    "venue": "BELGRADE ARENA",
    "neutral": false,
-   "pts_h": 84.2,
-   "pts_a": 84.2,
+   "pts_h": 84.1,
+   "pts_a": 84.1,
    "margin": 0.02,
-   "total": 168.5,
+   "total": 168.2,
    "poss": 74.2,
    "p_home": 0.501,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 168.5,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -1669,10 +1712,10 @@
      "p_home": 0.628
     },
     "fantasy (σκια)": {
-     "pts_h": 83.1,
-     "pts_a": 85.4,
+     "pts_h": 83.0,
+     "pts_a": 85.2,
      "margin": -2.27,
-     "total": 168.5,
+     "total": 168.2,
      "p_home": 0.422
     }
    }
@@ -1688,16 +1731,17 @@
    "acode": "TEL",
    "venue": "PALAU BLAUGRANA",
    "neutral": false,
-   "pts_h": 90.3,
-   "pts_a": 87.7,
+   "pts_h": 90.8,
+   "pts_a": 88.2,
    "margin": 2.63,
-   "total": 178.0,
+   "total": 179.0,
    "poss": 75.8,
    "p_home": 0.591,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 178.0,
    "versions": {
     "v1": {
      "pts_h": 90.2,
@@ -1707,10 +1751,10 @@
      "p_home": 0.667
     },
     "fantasy (σκια)": {
-     "pts_h": 89.9,
-     "pts_a": 88.1,
+     "pts_h": 90.4,
+     "pts_a": 88.6,
      "margin": 1.79,
-     "total": 178.0,
+     "total": 179.0,
      "p_home": 0.562
     }
    }
@@ -1726,16 +1770,17 @@
    "acode": "MAD",
    "venue": "UNIPOL FORUM",
    "neutral": false,
-   "pts_h": 83.6,
-   "pts_a": 86.7,
+   "pts_h": 84.8,
+   "pts_a": 87.8,
    "margin": -3.08,
-   "total": 170.3,
+   "total": 172.6,
    "poss": 75.3,
    "p_home": 0.395,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 170.3,
    "versions": {
     "v1": {
      "pts_h": 84.9,
@@ -1745,10 +1790,10 @@
      "p_home": 0.47
     },
     "fantasy (σκια)": {
-     "pts_h": 83.6,
-     "pts_a": 86.7,
+     "pts_h": 84.8,
+     "pts_a": 87.8,
      "margin": -3.08,
-     "total": 170.3,
+     "total": 172.6,
      "p_home": 0.395
     }
    }
@@ -1764,16 +1809,17 @@
    "acode": "DUB",
    "venue": "BUESA ARENA",
    "neutral": false,
-   "pts_h": 89.3,
-   "pts_a": 92.2,
+   "pts_h": 90.1,
+   "pts_a": 93.0,
    "margin": -2.98,
-   "total": 181.5,
+   "total": 183.1,
    "poss": 76.9,
    "p_home": 0.398,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 181.5,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -1783,10 +1829,10 @@
      "p_home": 0.567
     },
     "fantasy (σκια)": {
-     "pts_h": 88.2,
-     "pts_a": 93.4,
+     "pts_h": 89.0,
+     "pts_a": 94.2,
      "margin": -5.2,
-     "total": 181.5,
+     "total": 183.1,
      "p_home": 0.326
     }
    }
@@ -1802,16 +1848,17 @@
    "acode": "OLY",
    "venue": "ROIG ARENA",
    "neutral": false,
-   "pts_h": 90.0,
-   "pts_a": 92.3,
+   "pts_h": 89.6,
+   "pts_a": 91.9,
    "margin": -2.26,
-   "total": 182.3,
+   "total": 181.5,
    "poss": 76.5,
    "p_home": 0.422,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 182.3,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -1821,10 +1868,10 @@
      "p_home": 0.517
     },
     "fantasy (σκια)": {
-     "pts_h": 90.3,
-     "pts_a": 92.0,
+     "pts_h": 89.9,
+     "pts_a": 91.6,
      "margin": -1.71,
-     "total": 182.3,
+     "total": 181.5,
      "p_home": 0.441
     }
    }
@@ -1840,16 +1887,17 @@
    "acode": "BES",
    "venue": "ARENA 8888 SOFIA",
    "neutral": true,
-   "pts_h": 89.6,
-   "pts_a": 84.7,
+   "pts_h": 88.7,
+   "pts_a": 83.8,
    "margin": 4.9,
-   "total": 174.2,
+   "total": 172.5,
    "poss": 75.5,
    "p_home": 0.665,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 174.2,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -1859,10 +1907,10 @@
      "p_home": 0.598
     },
     "fantasy (σκια)": {
-     "pts_h": 89.7,
-     "pts_a": 84.6,
+     "pts_h": 88.8,
+     "pts_a": 83.7,
      "margin": 5.11,
-     "total": 174.2,
+     "total": 172.5,
      "p_home": 0.672
     }
    }
@@ -1878,16 +1926,17 @@
    "acode": "MUN",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 86.3,
-   "pts_a": 80.5,
+   "pts_h": 86.4,
+   "pts_a": 80.6,
    "margin": 5.77,
-   "total": 166.8,
+   "total": 167.0,
    "poss": 74.2,
    "p_home": 0.692,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 166.8,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -1897,10 +1946,10 @@
      "p_home": 0.713
     },
     "fantasy (σκια)": {
-     "pts_h": 86.3,
-     "pts_a": 80.5,
+     "pts_h": 86.4,
+     "pts_a": 80.6,
      "margin": 5.85,
-     "total": 166.8,
+     "total": 167.0,
      "p_home": 0.694
     }
    }
@@ -1916,16 +1965,17 @@
    "acode": "VIR",
    "venue": "ADIDAS ARENA",
    "neutral": false,
-   "pts_h": 90.9,
-   "pts_a": 86.5,
+   "pts_h": 90.4,
+   "pts_a": 86.0,
    "margin": 4.48,
-   "total": 177.4,
+   "total": 176.4,
    "poss": 76.9,
    "p_home": 0.652,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 177.4,
    "versions": {
     "v1": {
      "pts_h": 89.6,
@@ -1935,10 +1985,10 @@
      "p_home": 0.665
     },
     "fantasy (σκια)": {
-     "pts_h": 91.1,
-     "pts_a": 86.3,
+     "pts_h": 90.6,
+     "pts_a": 85.8,
      "margin": 4.89,
-     "total": 177.4,
+     "total": 176.4,
      "p_home": 0.665
     }
    }
@@ -1954,16 +2004,17 @@
    "acode": "PAR",
    "venue": "ULKER SPORTS AND EVENT HALL",
    "neutral": false,
-   "pts_h": 84.8,
-   "pts_a": 80.5,
+   "pts_h": 85.6,
+   "pts_a": 81.3,
    "margin": 4.3,
-   "total": 165.4,
+   "total": 166.8,
    "poss": 73.5,
    "p_home": 0.646,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 165.4,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -1973,10 +2024,10 @@
      "p_home": 0.643
     },
     "fantasy (σκια)": {
-     "pts_h": 85.5,
-     "pts_a": 79.9,
+     "pts_h": 86.2,
+     "pts_a": 80.6,
      "margin": 5.62,
-     "total": 165.4,
+     "total": 166.8,
      "p_home": 0.687
     }
    }
@@ -1992,16 +2043,17 @@
    "acode": "TEL",
    "venue": "ROIG ARENA",
    "neutral": false,
-   "pts_h": 94.4,
-   "pts_a": 90.3,
+   "pts_h": 93.8,
+   "pts_a": 89.7,
    "margin": 4.1,
-   "total": 184.8,
+   "total": 183.5,
    "poss": 77.6,
    "p_home": 0.639,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 184.8,
    "versions": {
     "v1": {
      "pts_h": 94.9,
@@ -2011,10 +2063,10 @@
      "p_home": 0.756
     },
     "fantasy (σκια)": {
-     "pts_h": 93.6,
-     "pts_a": 91.2,
+     "pts_h": 93.0,
+     "pts_a": 90.6,
      "margin": 2.36,
-     "total": 184.8,
+     "total": 183.5,
      "p_home": 0.581
     }
    }
@@ -2030,16 +2082,17 @@
    "acode": "DUB",
    "venue": "UNIPOL FORUM",
    "neutral": false,
-   "pts_h": 87.1,
-   "pts_a": 86.4,
+   "pts_h": 86.7,
+   "pts_a": 86.0,
    "margin": 0.71,
-   "total": 173.6,
+   "total": 172.7,
    "poss": 74.9,
    "p_home": 0.525,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 173.6,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -2049,10 +2102,10 @@
      "p_home": 0.553
     },
     "fantasy (σκια)": {
-     "pts_h": 86.2,
-     "pts_a": 87.4,
+     "pts_h": 85.7,
+     "pts_a": 87.0,
      "margin": -1.24,
-     "total": 173.6,
+     "total": 172.7,
      "p_home": 0.457
     }
    }
@@ -2068,16 +2121,17 @@
    "acode": "ASV",
    "venue": "MOVISTAR ARENA",
    "neutral": false,
-   "pts_h": 91.3,
-   "pts_a": 76.7,
+   "pts_h": 92.4,
+   "pts_a": 77.8,
    "margin": 14.57,
-   "total": 168.1,
+   "total": 170.2,
    "poss": 75.7,
    "p_home": 0.897,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 168.1,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -2087,10 +2141,10 @@
      "p_home": 0.826
     },
     "fantasy (σκια)": {
-     "pts_h": 89.8,
-     "pts_a": 78.3,
+     "pts_h": 90.8,
+     "pts_a": 79.4,
      "margin": 11.45,
-     "total": 168.1,
+     "total": 170.2,
      "p_home": 0.84
     }
    }
@@ -2106,16 +2160,17 @@
    "acode": "IST",
    "venue": "ZALGIRIO ARENA",
    "neutral": false,
-   "pts_h": 85.9,
-   "pts_a": 82.1,
+   "pts_h": 85.1,
+   "pts_a": 81.3,
    "margin": 3.8,
-   "total": 168.1,
+   "total": 166.4,
    "poss": 74.0,
    "p_home": 0.629,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 168.1,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -2125,10 +2180,10 @@
      "p_home": 0.681
     },
     "fantasy (σκια)": {
-     "pts_h": 85.3,
-     "pts_a": 82.7,
+     "pts_h": 84.5,
+     "pts_a": 81.9,
      "margin": 2.6,
-     "total": 168.1,
+     "total": 166.4,
      "p_home": 0.59
     }
    }
@@ -2144,16 +2199,17 @@
    "acode": "MUN",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 85.6,
-   "pts_a": 85.2,
+   "pts_h": 85.2,
+   "pts_a": 84.9,
    "margin": 0.36,
-   "total": 170.8,
+   "total": 170.1,
    "poss": 74.7,
    "p_home": 0.512,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 170.8,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -2163,10 +2219,10 @@
      "p_home": 0.663
     },
     "fantasy (σκια)": {
-     "pts_h": 85.6,
-     "pts_a": 85.2,
+     "pts_h": 85.3,
+     "pts_a": 84.9,
      "margin": 0.42,
-     "total": 170.8,
+     "total": 170.1,
      "p_home": 0.515
     }
    }
@@ -2182,16 +2238,17 @@
    "acode": "PRS",
    "venue": "ALEKSANDAR NIKOLIC HALL",
    "neutral": false,
-   "pts_h": 92.1,
-   "pts_a": 86.5,
+   "pts_h": 92.0,
+   "pts_a": 86.4,
    "margin": 5.61,
-   "total": 178.6,
+   "total": 178.5,
    "poss": 77.2,
    "p_home": 0.687,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 178.6,
    "versions": {
     "v1": {
      "pts_h": 90.9,
@@ -2201,10 +2258,10 @@
      "p_home": 0.722
     },
     "fantasy (σκια)": {
-     "pts_h": 91.9,
+     "pts_h": 91.8,
      "pts_a": 86.7,
      "margin": 5.13,
-     "total": 178.6,
+     "total": 178.5,
      "p_home": 0.672
     }
    }
@@ -2220,16 +2277,17 @@
    "acode": "HTA",
    "venue": "TELEKOM CENTER ATHENS",
    "neutral": false,
-   "pts_h": 91.4,
-   "pts_a": 82.6,
+   "pts_h": 90.4,
+   "pts_a": 81.6,
    "margin": 8.76,
-   "total": 174.0,
+   "total": 172.0,
    "poss": 75.2,
    "p_home": 0.777,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 174.0,
    "versions": {
     "v1": {
      "pts_h": 88.3,
@@ -2239,10 +2297,10 @@
      "p_home": 0.68
     },
     "fantasy (σκια)": {
-     "pts_h": 91.3,
-     "pts_a": 82.7,
+     "pts_h": 90.3,
+     "pts_a": 81.7,
      "margin": 8.64,
-     "total": 174.0,
+     "total": 172.0,
      "p_home": 0.774
     }
    }
@@ -2258,16 +2316,17 @@
    "acode": "BAS",
    "venue": "PALADOZZA",
    "neutral": false,
-   "pts_h": 92.6,
-   "pts_a": 86.8,
+   "pts_h": 93.4,
+   "pts_a": 87.6,
    "margin": 5.8,
-   "total": 179.3,
+   "total": 181.0,
    "poss": 77.0,
    "p_home": 0.693,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 179.3,
    "versions": {
     "v1": {
      "pts_h": 90.8,
@@ -2277,10 +2336,10 @@
      "p_home": 0.641
     },
     "fantasy (σκια)": {
-     "pts_h": 93.4,
-     "pts_a": 85.9,
+     "pts_h": 94.3,
+     "pts_a": 86.8,
      "margin": 7.5,
-     "total": 179.3,
+     "total": 181.0,
      "p_home": 0.743
     }
    }
@@ -2296,16 +2355,17 @@
    "acode": "OLY",
    "venue": "PALAU BLAUGRANA",
    "neutral": false,
-   "pts_h": 86.1,
-   "pts_a": 89.6,
+   "pts_h": 86.8,
+   "pts_a": 90.3,
    "margin": -3.56,
-   "total": 175.7,
+   "total": 177.1,
    "poss": 74.7,
    "p_home": 0.378,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -2315,10 +2375,10 @@
      "p_home": 0.423
     },
     "fantasy (σκια)": {
-     "pts_h": 86.8,
-     "pts_a": 88.9,
+     "pts_h": 87.5,
+     "pts_a": 89.6,
      "margin": -2.18,
-     "total": 175.7,
+     "total": 177.1,
      "p_home": 0.425
     }
    }
@@ -2334,16 +2394,17 @@
    "acode": "VIR",
    "venue": "ARENA BOTEVGRAD",
    "neutral": true,
-   "pts_h": 89.3,
-   "pts_a": 84.2,
+   "pts_h": 88.9,
+   "pts_a": 83.8,
    "margin": 5.1,
-   "total": 173.6,
+   "total": 172.8,
    "poss": 75.5,
    "p_home": 0.671,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 173.6,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -2353,10 +2414,10 @@
      "p_home": 0.634
     },
     "fantasy (σκια)": {
-     "pts_h": 89.5,
-     "pts_a": 84.1,
+     "pts_h": 89.1,
+     "pts_a": 83.7,
      "margin": 5.45,
-     "total": 173.6,
+     "total": 172.8,
      "p_home": 0.682
     }
    }
@@ -2372,16 +2433,17 @@
    "acode": "BES",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 89.9,
-   "pts_a": 79.8,
+   "pts_h": 88.7,
+   "pts_a": 78.6,
    "margin": 10.11,
-   "total": 169.8,
+   "total": 167.3,
    "poss": 74.7,
    "p_home": 0.81,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 169.8,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -2391,10 +2453,10 @@
      "p_home": 0.704
     },
     "fantasy (σκια)": {
-     "pts_h": 90.0,
-     "pts_a": 79.8,
+     "pts_h": 88.7,
+     "pts_a": 78.6,
      "margin": 10.13,
-     "total": 169.8,
+     "total": 167.3,
      "p_home": 0.811
     }
    }
@@ -2410,16 +2472,17 @@
    "acode": "DUB",
    "venue": "SAP GARDEN",
    "neutral": false,
-   "pts_h": 87.3,
-   "pts_a": 85.0,
+   "pts_h": 87.4,
+   "pts_a": 85.1,
    "margin": 2.31,
-   "total": 172.3,
+   "total": 172.4,
    "poss": 74.6,
    "p_home": 0.58,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 172.3,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -2429,10 +2492,10 @@
      "p_home": 0.575
     },
     "fantasy (σκια)": {
-     "pts_h": 87.0,
-     "pts_a": 85.2,
+     "pts_h": 87.1,
+     "pts_a": 85.3,
      "margin": 1.81,
-     "total": 172.3,
+     "total": 172.4,
      "p_home": 0.563
     }
    }
@@ -2448,16 +2511,17 @@
    "acode": "MAD",
    "venue": "ALEKSANDAR NIKOLIC HALL",
    "neutral": true,
-   "pts_h": 86.3,
-   "pts_a": 91.1,
+   "pts_h": 86.9,
+   "pts_a": 91.7,
    "margin": -4.77,
-   "total": 177.4,
+   "total": 178.7,
    "poss": 77.1,
    "p_home": 0.339,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 177.4,
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -2467,10 +2531,10 @@
      "p_home": 0.396
     },
     "fantasy (σκια)": {
-     "pts_h": 87.8,
-     "pts_a": 89.7,
+     "pts_h": 88.4,
+     "pts_a": 90.3,
      "margin": -1.91,
-     "total": 177.4,
+     "total": 178.7,
      "p_home": 0.434
     }
    }
@@ -2486,16 +2550,17 @@
    "acode": "BAS",
    "venue": "TELEKOM CENTER ATHENS",
    "neutral": false,
-   "pts_h": 98.6,
-   "pts_a": 81.4,
+   "pts_h": 98.8,
+   "pts_a": 81.7,
    "margin": 17.13,
-   "total": 180.0,
+   "total": 180.5,
    "poss": 76.7,
    "p_home": 0.932,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 180.0,
    "versions": {
     "v1": {
      "pts_h": 93.5,
@@ -2505,10 +2570,10 @@
      "p_home": 0.785
     },
     "fantasy (σκια)": {
-     "pts_h": 99.6,
-     "pts_a": 80.4,
+     "pts_h": 99.8,
+     "pts_a": 80.6,
      "margin": 19.22,
-     "total": 180.0,
+     "total": 180.5,
      "p_home": 0.953
     }
    }
@@ -2524,16 +2589,17 @@
    "acode": "BAR",
    "venue": "UNIPOL FORUM",
    "neutral": false,
-   "pts_h": 86.8,
-   "pts_a": 84.3,
+   "pts_h": 87.9,
+   "pts_a": 85.4,
    "margin": 2.5,
-   "total": 171.2,
+   "total": 173.2,
    "poss": 74.1,
    "p_home": 0.586,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 171.2,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -2543,10 +2609,10 @@
      "p_home": 0.556
     },
     "fantasy (σκια)": {
-     "pts_h": 85.9,
-     "pts_a": 85.3,
+     "pts_h": 86.9,
+     "pts_a": 86.3,
      "margin": 0.66,
-     "total": 171.2,
+     "total": 173.2,
      "p_home": 0.523
     }
    }
@@ -2562,16 +2628,17 @@
    "acode": "RED",
    "venue": "BELGRADE ARENA",
    "neutral": false,
-   "pts_h": 88.6,
-   "pts_a": 80.6,
+   "pts_h": 89.6,
+   "pts_a": 81.6,
    "margin": 8.0,
-   "total": 169.3,
+   "total": 171.1,
    "poss": 74.8,
    "p_home": 0.757,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 169.3,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -2581,10 +2648,10 @@
      "p_home": 0.711
     },
     "fantasy (σκια)": {
-     "pts_h": 87.5,
-     "pts_a": 81.7,
+     "pts_h": 88.4,
+     "pts_a": 82.7,
      "margin": 5.76,
-     "total": 169.3,
+     "total": 171.1,
      "p_home": 0.692
     }
    }
@@ -2600,16 +2667,17 @@
    "acode": "ASV",
    "venue": "ZALGIRIO ARENA",
    "neutral": false,
-   "pts_h": 90.3,
-   "pts_a": 78.1,
+   "pts_h": 89.8,
+   "pts_a": 77.6,
    "margin": 12.27,
-   "total": 168.4,
+   "total": 167.4,
    "poss": 74.7,
    "p_home": 0.857,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 168.4,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -2619,10 +2687,10 @@
      "p_home": 0.784
     },
     "fantasy (σκια)": {
-     "pts_h": 88.8,
-     "pts_a": 79.5,
+     "pts_h": 88.4,
+     "pts_a": 79.1,
      "margin": 9.29,
-     "total": 168.4,
+     "total": 167.4,
      "p_home": 0.79
     }
    }
@@ -2638,16 +2706,17 @@
    "acode": "ULK",
    "venue": "SUNEL ARENA",
    "neutral": false,
-   "pts_h": 90.9,
-   "pts_a": 82.4,
+   "pts_h": 90.5,
+   "pts_a": 82.0,
    "margin": 8.49,
-   "total": 173.4,
+   "total": 172.4,
    "poss": 74.6,
    "p_home": 0.77,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 173.4,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -2657,10 +2726,10 @@
      "p_home": 0.812
     },
     "fantasy (σκια)": {
-     "pts_h": 90.7,
-     "pts_a": 82.6,
+     "pts_h": 90.3,
+     "pts_a": 82.2,
      "margin": 8.07,
-     "total": 173.4,
+     "total": 172.4,
      "p_home": 0.758
     }
    }
@@ -2676,16 +2745,17 @@
    "acode": "PAM",
    "venue": "ADIDAS ARENA",
    "neutral": false,
-   "pts_h": 91.9,
-   "pts_a": 92.1,
+   "pts_h": 91.7,
+   "pts_a": 91.9,
    "margin": -0.2,
-   "total": 184.0,
+   "total": 183.5,
    "poss": 77.8,
    "p_home": 0.493,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 184.0,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -2695,10 +2765,10 @@
      "p_home": 0.466
     },
     "fantasy (σκια)": {
-     "pts_h": 92.5,
-     "pts_a": 91.5,
+     "pts_h": 92.2,
+     "pts_a": 91.3,
      "margin": 0.95,
-     "total": 184.0,
+     "total": 183.5,
      "p_home": 0.533
     }
    }
@@ -2714,16 +2784,17 @@
    "acode": "PRS",
    "venue": "COCA-COLA ARENA",
    "neutral": false,
-   "pts_h": 94.5,
-   "pts_a": 85.6,
+   "pts_h": 93.9,
+   "pts_a": 85.0,
    "margin": 8.9,
-   "total": 180.0,
+   "total": 178.9,
    "poss": 76.8,
    "p_home": 0.78,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 180.0,
    "versions": {
     "v1": {
      "pts_h": 92.3,
@@ -2733,10 +2804,10 @@
      "p_home": 0.745
     },
     "fantasy (σκια)": {
-     "pts_h": 94.5,
-     "pts_a": 85.5,
+     "pts_h": 94.0,
+     "pts_a": 85.0,
      "margin": 9.01,
-     "total": 180.0,
+     "total": 178.9,
      "p_home": 0.783
     }
    }
@@ -2752,16 +2823,17 @@
    "acode": "BAR",
    "venue": "SAP GARDEN",
    "neutral": false,
-   "pts_h": 86.9,
-   "pts_a": 82.9,
+   "pts_h": 88.5,
+   "pts_a": 84.5,
    "margin": 4.0,
-   "total": 169.9,
+   "total": 173.0,
    "poss": 73.8,
    "p_home": 0.636,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 169.9,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -2771,10 +2843,10 @@
      "p_home": 0.578
     },
     "fantasy (σκια)": {
-     "pts_h": 86.8,
-     "pts_a": 83.0,
+     "pts_h": 88.4,
+     "pts_a": 84.6,
      "margin": 3.79,
-     "total": 169.9,
+     "total": 173.0,
      "p_home": 0.629
     }
    }
@@ -2790,16 +2862,17 @@
    "acode": "TEL",
    "venue": "ALEKSANDAR NIKOLIC HALL",
    "neutral": false,
-   "pts_h": 90.8,
-   "pts_a": 88.9,
+   "pts_h": 90.4,
+   "pts_a": 88.4,
    "margin": 1.97,
-   "total": 179.7,
+   "total": 178.8,
    "poss": 77.1,
    "p_home": 0.568,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 179.7,
    "versions": {
     "v1": {
      "pts_h": 90.2,
@@ -2809,10 +2882,10 @@
      "p_home": 0.647
     },
     "fantasy (σκια)": {
-     "pts_h": 90.2,
-     "pts_a": 89.5,
+     "pts_h": 89.7,
+     "pts_a": 89.1,
      "margin": 0.68,
-     "total": 179.7,
+     "total": 178.8,
      "p_home": 0.523
     }
    }
@@ -2828,16 +2901,17 @@
    "acode": "MIL",
    "venue": "TELEKOM CENTER ATHENS",
    "neutral": false,
-   "pts_h": 92.4,
-   "pts_a": 79.7,
+   "pts_h": 91.4,
+   "pts_a": 78.7,
    "margin": 12.72,
-   "total": 172.1,
+   "total": 170.1,
    "poss": 74.7,
    "p_home": 0.866,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 172.1,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -2847,10 +2921,10 @@
      "p_home": 0.786
     },
     "fantasy (σκια)": {
-     "pts_h": 93.3,
-     "pts_a": 78.8,
+     "pts_h": 92.3,
+     "pts_a": 77.8,
      "margin": 14.54,
-     "total": 172.1,
+     "total": 170.1,
      "p_home": 0.897
     }
    }
@@ -2866,16 +2940,17 @@
    "acode": "ULK",
    "venue": "ROIG ARENA",
    "neutral": false,
-   "pts_h": 88.8,
-   "pts_a": 86.9,
+   "pts_h": 88.6,
+   "pts_a": 86.6,
    "margin": 1.97,
-   "total": 175.7,
+   "total": 175.3,
    "poss": 75.2,
    "p_home": 0.568,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -2885,10 +2960,10 @@
      "p_home": 0.707
     },
     "fantasy (σκια)": {
-     "pts_h": 88.9,
-     "pts_a": 86.8,
+     "pts_h": 88.7,
+     "pts_a": 86.6,
      "margin": 2.15,
-     "total": 175.7,
+     "total": 175.3,
      "p_home": 0.574
     }
    }
@@ -2904,16 +2979,17 @@
    "acode": "MAD",
    "venue": "BUESA ARENA",
    "neutral": false,
-   "pts_h": 85.5,
-   "pts_a": 93.0,
+   "pts_h": 87.8,
+   "pts_a": 95.4,
    "margin": -7.58,
-   "total": 178.5,
+   "total": 183.2,
    "poss": 77.3,
    "p_home": 0.255,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 178.5,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -2923,10 +2999,10 @@
      "p_home": 0.482
     },
     "fantasy (σκια)": {
-     "pts_h": 85.3,
-     "pts_a": 93.2,
+     "pts_h": 87.7,
+     "pts_a": 95.5,
      "margin": -7.81,
-     "total": 178.5,
+     "total": 183.2,
      "p_home": 0.249
     }
    }
@@ -2942,16 +3018,17 @@
    "acode": "IST",
    "venue": "ARENA BOTEVGRAD",
    "neutral": true,
-   "pts_h": 84.9,
-   "pts_a": 85.6,
+   "pts_h": 84.5,
+   "pts_a": 85.2,
    "margin": -0.67,
-   "total": 170.5,
+   "total": 169.7,
    "poss": 74.9,
    "p_home": 0.477,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 170.5,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -2961,10 +3038,10 @@
      "p_home": 0.538
     },
     "fantasy (σκια)": {
-     "pts_h": 85.0,
-     "pts_a": 85.5,
+     "pts_h": 84.6,
+     "pts_a": 85.1,
      "margin": -0.45,
-     "total": 170.5,
+     "total": 169.7,
      "p_home": 0.484
     }
    }
@@ -2980,16 +3057,17 @@
    "acode": "OLY",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 84.6,
-   "pts_a": 92.4,
+   "pts_h": 83.5,
+   "pts_a": 91.3,
    "margin": -7.78,
-   "total": 177.1,
+   "total": 174.7,
    "poss": 75.6,
    "p_home": 0.249,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 177.1,
    "versions": {
     "v1": {
      "pts_h": 85.5,
@@ -2999,10 +3077,10 @@
      "p_home": 0.36
     },
     "fantasy (σκια)": {
-     "pts_h": 85.3,
-     "pts_a": 91.7,
+     "pts_h": 84.2,
+     "pts_a": 90.6,
      "margin": -6.39,
-     "total": 177.1,
+     "total": 174.7,
      "p_home": 0.289
     }
    }
@@ -3018,16 +3096,17 @@
    "acode": "PAR",
    "venue": "LDLC ARENA",
    "neutral": false,
-   "pts_h": 80.4,
-   "pts_a": 85.0,
+   "pts_h": 81.2,
+   "pts_a": 85.8,
    "margin": -4.65,
-   "total": 165.4,
+   "total": 167.0,
    "poss": 74.6,
    "p_home": 0.343,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 165.4,
    "versions": {
     "v1": {
      "pts_h": 81.6,
@@ -3037,10 +3116,10 @@
      "p_home": 0.487
     },
     "fantasy (σκια)": {
-     "pts_h": 82.4,
-     "pts_a": 83.0,
+     "pts_h": 83.2,
+     "pts_a": 83.8,
      "margin": -0.56,
-     "total": 165.4,
+     "total": 167.0,
      "p_home": 0.481
     }
    }
@@ -3056,16 +3135,17 @@
    "acode": "ZAL",
    "venue": "PALADOZZA",
    "neutral": false,
-   "pts_h": 84.8,
-   "pts_a": 86.5,
+   "pts_h": 84.0,
+   "pts_a": 85.7,
    "margin": -1.72,
-   "total": 171.4,
+   "total": 169.8,
    "poss": 74.6,
    "p_home": 0.441,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 171.4,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -3075,10 +3155,10 @@
      "p_home": 0.524
     },
     "fantasy (σκια)": {
-     "pts_h": 85.4,
-     "pts_a": 85.9,
+     "pts_h": 84.6,
+     "pts_a": 85.1,
      "margin": -0.51,
-     "total": 171.4,
+     "total": 169.8,
      "p_home": 0.482
     }
    }
@@ -3094,16 +3174,17 @@
    "acode": "MUN",
    "venue": "BELGRADE ARENA",
    "neutral": false,
-   "pts_h": 87.3,
-   "pts_a": 84.1,
+   "pts_h": 87.9,
+   "pts_a": 84.6,
    "margin": 3.24,
-   "total": 171.4,
+   "total": 172.5,
    "poss": 75.0,
    "p_home": 0.611,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 171.4,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -3113,10 +3194,10 @@
      "p_home": 0.698
     },
     "fantasy (σκια)": {
-     "pts_h": 87.3,
-     "pts_a": 84.1,
+     "pts_h": 87.8,
+     "pts_a": 84.7,
      "margin": 3.11,
-     "total": 171.4,
+     "total": 172.5,
      "p_home": 0.607
     }
    }
@@ -3132,16 +3213,17 @@
    "acode": "PRS",
    "venue": "ALEKSANDAR NIKOLIC HALL",
    "neutral": true,
-   "pts_h": 94.3,
-   "pts_a": 90.0,
+   "pts_h": 93.6,
+   "pts_a": 89.3,
    "margin": 4.26,
-   "total": 184.3,
+   "total": 183.0,
    "poss": 78.3,
    "p_home": 0.645,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 184.3,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -3151,10 +3233,10 @@
      "p_home": 0.583
     },
     "fantasy (σκια)": {
-     "pts_h": 94.7,
-     "pts_a": 89.6,
+     "pts_h": 94.0,
+     "pts_a": 89.0,
      "margin": 5.04,
-     "total": 184.3,
+     "total": 183.0,
      "p_home": 0.669
     }
    }
@@ -3170,16 +3252,17 @@
    "acode": "ULK",
    "venue": "MOVISTAR ARENA",
    "neutral": false,
-   "pts_h": 87.5,
-   "pts_a": 81.1,
+   "pts_h": 88.5,
+   "pts_a": 82.1,
    "margin": 6.34,
-   "total": 168.6,
+   "total": 170.6,
    "poss": 74.6,
    "p_home": 0.709,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 168.6,
    "versions": {
     "v1": {
      "pts_h": 86.3,
@@ -3189,10 +3272,10 @@
      "p_home": 0.697
     },
     "fantasy (σκια)": {
-     "pts_h": 87.1,
-     "pts_a": 81.5,
+     "pts_h": 88.1,
+     "pts_a": 82.5,
      "margin": 5.58,
-     "total": 168.6,
+     "total": 170.6,
      "p_home": 0.686
     }
    }
@@ -3208,16 +3291,17 @@
    "acode": "HTA",
    "venue": "COCA-COLA ARENA",
    "neutral": false,
-   "pts_h": 90.2,
-   "pts_a": 85.8,
+   "pts_h": 89.7,
+   "pts_a": 85.4,
    "margin": 4.33,
-   "total": 176.0,
+   "total": 175.1,
    "poss": 75.4,
    "p_home": 0.647,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 176.0,
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -3227,10 +3311,10 @@
      "p_home": 0.624
     },
     "fantasy (σκια)": {
-     "pts_h": 90.2,
-     "pts_a": 85.7,
+     "pts_h": 89.8,
+     "pts_a": 85.3,
      "margin": 4.52,
-     "total": 176.0,
+     "total": 175.1,
      "p_home": 0.653
     }
    }
@@ -3246,16 +3330,17 @@
    "acode": "PAN",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 84.5,
-   "pts_a": 85.2,
+   "pts_h": 83.1,
+   "pts_a": 83.8,
    "margin": -0.69,
-   "total": 169.7,
+   "total": 166.9,
    "poss": 74.4,
    "p_home": 0.476,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 169.7,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -3265,10 +3350,10 @@
      "p_home": 0.586
     },
     "fantasy (σκια)": {
-     "pts_h": 84.4,
-     "pts_a": 85.2,
+     "pts_h": 83.1,
+     "pts_a": 83.8,
      "margin": -0.77,
-     "total": 169.7,
+     "total": 166.9,
      "p_home": 0.473
     }
    }
@@ -3284,16 +3369,17 @@
    "acode": "PAR",
    "venue": "ZALGIRIO ARENA",
    "neutral": false,
-   "pts_h": 85.5,
-   "pts_a": 82.0,
+   "pts_h": 85.9,
+   "pts_a": 82.5,
    "margin": 3.46,
-   "total": 167.6,
+   "total": 168.4,
    "poss": 73.8,
    "p_home": 0.618,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 167.6,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -3303,10 +3389,10 @@
      "p_home": 0.64
     },
     "fantasy (σκια)": {
-     "pts_h": 86.1,
-     "pts_a": 81.5,
+     "pts_h": 86.5,
+     "pts_a": 81.9,
      "margin": 4.57,
-     "total": 167.6,
+     "total": 168.4,
      "p_home": 0.654
     }
    }
@@ -3322,16 +3408,17 @@
    "acode": "BAS",
    "venue": "LDLC ARENA",
    "neutral": false,
-   "pts_h": 90.3,
-   "pts_a": 86.3,
+   "pts_h": 91.5,
+   "pts_a": 87.5,
    "margin": 3.97,
-   "total": 176.6,
+   "total": 179.0,
    "poss": 77.1,
    "p_home": 0.635,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 176.6,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -3341,10 +3428,10 @@
      "p_home": 0.616
     },
     "fantasy (σκια)": {
-     "pts_h": 92.2,
-     "pts_a": 84.5,
+     "pts_h": 93.3,
+     "pts_a": 85.6,
      "margin": 7.68,
-     "total": 176.6,
+     "total": 179.0,
      "p_home": 0.748
     }
    }
@@ -3360,16 +3447,17 @@
    "acode": "MIL",
    "venue": "SUNEL ARENA",
    "neutral": false,
-   "pts_h": 94.8,
-   "pts_a": 80.9,
+   "pts_h": 94.4,
+   "pts_a": 80.6,
    "margin": 13.84,
-   "total": 175.7,
+   "total": 175.1,
    "poss": 75.3,
    "p_home": 0.886,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 94.4,
@@ -3379,10 +3467,10 @@
      "p_home": 0.89
     },
     "fantasy (σκια)": {
-     "pts_h": 95.0,
-     "pts_a": 80.8,
+     "pts_h": 94.6,
+     "pts_a": 80.4,
      "margin": 14.18,
-     "total": 175.7,
+     "total": 175.1,
      "p_home": 0.891
     }
    }
@@ -3398,16 +3486,17 @@
    "acode": "BES",
    "venue": "PALADOZZA",
    "neutral": false,
-   "pts_h": 88.8,
-   "pts_a": 84.3,
+   "pts_h": 87.6,
+   "pts_a": 83.1,
    "margin": 4.43,
-   "total": 173.1,
+   "total": 170.7,
    "poss": 75.4,
    "p_home": 0.65,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 173.1,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -3417,10 +3506,10 @@
      "p_home": 0.616
     },
     "fantasy (σκια)": {
-     "pts_h": 88.7,
-     "pts_a": 84.4,
+     "pts_h": 87.5,
+     "pts_a": 83.2,
      "margin": 4.32,
-     "total": 173.1,
+     "total": 170.7,
      "p_home": 0.646
     }
    }
@@ -3436,16 +3525,17 @@
    "acode": "PAM",
    "venue": "PALAU BLAUGRANA",
    "neutral": false,
-   "pts_h": 90.5,
-   "pts_a": 87.8,
+   "pts_h": 91.4,
+   "pts_a": 88.8,
    "margin": 2.64,
-   "total": 178.3,
+   "total": 180.2,
    "poss": 75.2,
    "p_home": 0.591,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 178.3,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -3455,10 +3545,10 @@
      "p_home": 0.561
     },
     "fantasy (σκια)": {
-     "pts_h": 90.9,
-     "pts_a": 87.4,
+     "pts_h": 91.9,
+     "pts_a": 88.3,
      "margin": 3.57,
-     "total": 178.3,
+     "total": 180.2,
      "p_home": 0.622
     }
    }
@@ -3474,16 +3564,17 @@
    "acode": "PAN",
    "venue": "MOVISTAR ARENA",
    "neutral": false,
-   "pts_h": 87.4,
-   "pts_a": 84.5,
+   "pts_h": 87.6,
+   "pts_a": 84.6,
    "margin": 2.99,
-   "total": 171.9,
+   "total": 172.2,
    "poss": 75.3,
    "p_home": 0.602,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 171.9,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -3493,10 +3584,10 @@
      "p_home": 0.673
     },
     "fantasy (σκια)": {
-     "pts_h": 86.5,
-     "pts_a": 85.4,
+     "pts_h": 86.7,
+     "pts_a": 85.5,
      "margin": 1.16,
-     "total": 171.9,
+     "total": 172.2,
      "p_home": 0.54
     }
    }
@@ -3512,16 +3603,17 @@
    "acode": "PRS",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 92.0,
-   "pts_a": 82.7,
+   "pts_h": 91.5,
+   "pts_a": 82.2,
    "margin": 9.35,
-   "total": 174.7,
+   "total": 173.7,
    "poss": 76.3,
    "p_home": 0.792,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 174.7,
    "versions": {
     "v1": {
      "pts_h": 89.8,
@@ -3531,10 +3623,10 @@
      "p_home": 0.736
     },
     "fantasy (σκια)": {
-     "pts_h": 91.9,
-     "pts_a": 82.8,
+     "pts_h": 91.4,
+     "pts_a": 82.3,
      "margin": 9.03,
-     "total": 174.7,
+     "total": 173.7,
      "p_home": 0.784
     }
    }
@@ -3550,16 +3642,17 @@
    "acode": "BAR",
    "venue": "ARENA BOTEVGRAD",
    "neutral": true,
-   "pts_h": 87.6,
-   "pts_a": 86.0,
+   "pts_h": 88.6,
+   "pts_a": 87.0,
    "margin": 1.56,
-   "total": 173.6,
+   "total": 175.6,
    "poss": 74.5,
    "p_home": 0.554,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 173.6,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -3569,10 +3662,10 @@
      "p_home": 0.534
     },
     "fantasy (σκια)": {
-     "pts_h": 87.6,
-     "pts_a": 86.0,
+     "pts_h": 88.6,
+     "pts_a": 87.0,
      "margin": 1.65,
-     "total": 173.6,
+     "total": 175.6,
      "p_home": 0.557
     }
    }
@@ -3588,16 +3681,17 @@
    "acode": "BAS",
    "venue": "ULKER SPORTS AND EVENT HALL",
    "neutral": false,
-   "pts_h": 95.3,
-   "pts_a": 81.7,
+   "pts_h": 96.3,
+   "pts_a": 82.8,
    "margin": 13.53,
-   "total": 177.0,
+   "total": 179.1,
    "poss": 76.0,
    "p_home": 0.88,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 177.0,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -3607,10 +3701,10 @@
      "p_home": 0.76
     },
     "fantasy (σκια)": {
-     "pts_h": 95.8,
-     "pts_a": 81.2,
+     "pts_h": 96.8,
+     "pts_a": 82.3,
      "margin": 14.53,
-     "total": 177.0,
+     "total": 179.1,
      "p_home": 0.897
     }
    }
@@ -3626,16 +3720,17 @@
    "acode": "MUN",
    "venue": "LDLC ARENA",
    "neutral": false,
-   "pts_h": 82.9,
-   "pts_a": 84.6,
+   "pts_h": 83.4,
+   "pts_a": 85.0,
    "margin": -1.66,
-   "total": 167.5,
+   "total": 168.4,
    "poss": 74.8,
    "p_home": 0.443,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 167.5,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -3645,10 +3740,10 @@
      "p_home": 0.602
     },
     "fantasy (σκια)": {
-     "pts_h": 83.8,
-     "pts_a": 83.7,
+     "pts_h": 84.2,
+     "pts_a": 84.2,
      "margin": 0.08,
-     "total": 167.5,
+     "total": 168.4,
      "p_home": 0.503
     }
    }
@@ -3664,16 +3759,17 @@
    "acode": "PAM",
    "venue": "UNIPOL FORUM",
    "neutral": false,
-   "pts_h": 89.6,
-   "pts_a": 88.5,
+   "pts_h": 89.5,
+   "pts_a": 88.4,
    "margin": 1.05,
-   "total": 178.1,
+   "total": 177.9,
    "poss": 75.9,
    "p_home": 0.536,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 178.1,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -3683,10 +3779,10 @@
      "p_home": 0.462
     },
     "fantasy (σκια)": {
-     "pts_h": 89.1,
-     "pts_a": 89.0,
+     "pts_h": 89.0,
+     "pts_a": 88.9,
      "margin": 0.1,
-     "total": 178.1,
+     "total": 177.9,
      "p_home": 0.503
     }
    }
@@ -3702,16 +3798,17 @@
    "acode": "ZAL",
    "venue": "TURKCELL BASKETBALL DEVELOPMENT CENTER",
    "neutral": false,
-   "pts_h": 85.2,
-   "pts_a": 87.2,
+   "pts_h": 83.9,
+   "pts_a": 85.9,
    "margin": -2.0,
-   "total": 172.4,
+   "total": 169.9,
    "poss": 74.6,
    "p_home": 0.431,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 172.4,
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -3721,10 +3818,10 @@
      "p_home": 0.562
     },
     "fantasy (σκια)": {
-     "pts_h": 85.9,
-     "pts_a": 86.6,
+     "pts_h": 84.6,
+     "pts_a": 85.3,
      "margin": -0.69,
-     "total": 172.4,
+     "total": 169.9,
      "p_home": 0.476
     }
    }
@@ -3740,16 +3837,17 @@
    "acode": "RED",
    "venue": "SUNEL ARENA",
    "neutral": false,
-   "pts_h": 95.4,
-   "pts_a": 82.1,
+   "pts_h": 95.2,
+   "pts_a": 81.9,
    "margin": 13.29,
-   "total": 177.6,
+   "total": 177.0,
    "poss": 75.9,
    "p_home": 0.876,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 177.6,
    "versions": {
     "v1": {
      "pts_h": 93.0,
@@ -3759,10 +3857,10 @@
      "p_home": 0.855
     },
     "fantasy (σκια)": {
-     "pts_h": 94.8,
-     "pts_a": 82.7,
+     "pts_h": 94.6,
+     "pts_a": 82.5,
      "margin": 12.09,
-     "total": 177.6,
+     "total": 177.0,
      "p_home": 0.853
     }
    }
@@ -3778,16 +3876,17 @@
    "acode": "DUB",
    "venue": "PALADOZZA",
    "neutral": false,
-   "pts_h": 86.7,
-   "pts_a": 87.8,
+   "pts_h": 85.9,
+   "pts_a": 87.0,
    "margin": -1.13,
-   "total": 174.5,
+   "total": 173.0,
    "poss": 75.2,
    "p_home": 0.461,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 174.5,
    "versions": {
     "v1": {
      "pts_h": 86.4,
@@ -3797,10 +3896,10 @@
      "p_home": 0.55
     },
     "fantasy (σκια)": {
-     "pts_h": 86.4,
-     "pts_a": 88.1,
+     "pts_h": 85.6,
+     "pts_a": 87.3,
      "margin": -1.67,
-     "total": 174.5,
+     "total": 173.0,
      "p_home": 0.442
     }
    }
@@ -3816,16 +3915,17 @@
    "acode": "TEL",
    "venue": "BELGRADE ARENA",
    "neutral": false,
-   "pts_h": 90.3,
-   "pts_a": 84.4,
+   "pts_h": 90.7,
+   "pts_a": 84.8,
    "margin": 5.89,
-   "total": 174.8,
+   "total": 175.4,
    "poss": 76.0,
    "p_home": 0.696,
    "played": false,
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 174.8,
    "versions": {
     "v1": {
      "pts_h": 89.2,
@@ -3835,10 +3935,10 @@
      "p_home": 0.704
     },
     "fantasy (σκια)": {
-     "pts_h": 88.6,
-     "pts_a": 86.2,
+     "pts_h": 88.9,
+     "pts_a": 86.6,
      "margin": 2.34,
-     "total": 174.8,
+     "total": 175.4,
      "p_home": 0.581
     }
    }
@@ -3864,6 +3964,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 175.8,
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -3902,6 +4003,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 175.3,
    "versions": {
     "v1": {
      "pts_h": 86.3,
@@ -3940,6 +4042,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 180.4,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -3978,6 +4081,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 178.7,
    "versions": {
     "v1": {
      "pts_h": 93.4,
@@ -4016,6 +4120,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 176.7,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -4054,6 +4159,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 171.1,
    "versions": {
     "v1": {
      "pts_h": 85.5,
@@ -4092,6 +4198,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 172.6,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -4130,6 +4237,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 169.3,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -4168,6 +4276,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 172.7,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -4206,6 +4315,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 170.4,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -4244,6 +4354,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -4282,6 +4393,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 183.1,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -4320,6 +4432,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 167.0,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -4358,6 +4471,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 169.8,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -4396,6 +4510,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 177.9,
    "versions": {
     "v1": {
      "pts_h": 90.9,
@@ -4434,6 +4549,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 173.2,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -4472,6 +4588,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 181.5,
    "versions": {
     "v1": {
      "pts_h": 90.2,
@@ -4510,6 +4627,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 174.8,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -4548,6 +4666,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 173.1,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -4586,6 +4705,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 172.4,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -4624,6 +4744,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 181.3,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -4662,6 +4783,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 172.4,
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -4700,6 +4822,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 178.0,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -4738,6 +4861,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 169.4,
    "versions": {
     "v1": {
      "pts_h": 84.3,
@@ -4776,6 +4900,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 179.8,
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -4814,6 +4939,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 178.9,
    "versions": {
     "v1": {
      "pts_h": 92.8,
@@ -4852,6 +4978,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 166.6,
    "versions": {
     "v1": {
      "pts_h": 86.4,
@@ -4890,6 +5017,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -4928,6 +5056,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 173.5,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -4966,6 +5095,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 169.6,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -5004,6 +5134,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 179.2,
    "versions": {
     "v1": {
      "pts_h": 91.0,
@@ -5042,6 +5173,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 173.9,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -5080,6 +5212,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 177.1,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -5118,6 +5251,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 179.6,
    "versions": {
     "v1": {
      "pts_h": 90.6,
@@ -5156,6 +5290,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 169.3,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -5194,6 +5329,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 169.7,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -5232,6 +5368,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 171.0,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -5270,6 +5407,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 178.3,
    "versions": {
     "v1": {
      "pts_h": 92.6,
@@ -5308,6 +5446,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 176.9,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -5346,6 +5485,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 171.0,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -5384,6 +5524,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 176.0,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -5422,6 +5563,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 171.3,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -5460,6 +5602,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 173.8,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -5498,6 +5641,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 176.4,
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -5536,6 +5680,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -5574,6 +5719,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 174.2,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -5612,6 +5758,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 174.2,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -5650,6 +5797,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 174.0,
    "versions": {
     "v1": {
      "pts_h": 92.9,
@@ -5688,6 +5836,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 168.9,
    "versions": {
     "v1": {
      "pts_h": 83.1,
@@ -5726,6 +5875,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 186.8,
    "versions": {
     "v1": {
      "pts_h": 93.3,
@@ -5764,6 +5914,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 167.1,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -5802,6 +5953,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 179.5,
    "versions": {
     "v1": {
      "pts_h": 92.6,
@@ -5840,6 +5992,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -5878,6 +6031,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 180.4,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -5916,6 +6070,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 170.4,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -5954,6 +6109,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 177.4,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -5992,6 +6148,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 176.0,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -6030,6 +6187,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 177.5,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -6068,6 +6226,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 179.3,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -6106,6 +6265,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 168.7,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -6144,6 +6304,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 166.0,
    "versions": {
     "v1": {
      "pts_h": 83.6,
@@ -6182,6 +6343,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 171.8,
    "versions": {
     "v1": {
      "pts_h": 86.4,
@@ -6220,6 +6382,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 170.1,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -6258,6 +6421,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 181.6,
    "versions": {
     "v1": {
      "pts_h": 92.5,
@@ -6296,6 +6460,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 170.1,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -6334,6 +6499,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 182.8,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -6372,6 +6538,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 178.7,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -6410,6 +6577,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 173.3,
    "versions": {
     "v1": {
      "pts_h": 89.0,
@@ -6448,6 +6616,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 174.7,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -6486,6 +6655,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 180.2,
    "versions": {
     "v1": {
      "pts_h": 89.8,
@@ -6524,6 +6694,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 176.8,
    "versions": {
     "v1": {
      "pts_h": 89.4,
@@ -6562,6 +6733,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 173.9,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -6600,6 +6772,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 172.4,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -6638,6 +6811,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 178.4,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -6676,6 +6850,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 169.5,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -6714,6 +6889,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 173.2,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -6752,6 +6928,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 171.7,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -6790,6 +6967,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 186.1,
    "versions": {
     "v1": {
      "pts_h": 94.0,
@@ -6828,6 +7006,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 175.1,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -6866,6 +7045,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 172.8,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -6904,6 +7084,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 171.4,
    "versions": {
     "v1": {
      "pts_h": 85.1,
@@ -6942,6 +7123,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 170.8,
    "versions": {
     "v1": {
      "pts_h": 83.7,
@@ -6980,6 +7162,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 175.3,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -7018,6 +7201,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 170.1,
    "versions": {
     "v1": {
      "pts_h": 83.8,
@@ -7056,6 +7240,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 172.2,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -7094,6 +7279,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 176.0,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -7132,6 +7318,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 178.7,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -7170,6 +7357,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 181.7,
    "versions": {
     "v1": {
      "pts_h": 92.4,
@@ -7208,6 +7396,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 176.5,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -7246,6 +7435,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 178.3,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -7284,6 +7474,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 171.2,
    "versions": {
     "v1": {
      "pts_h": 85.3,
@@ -7322,6 +7513,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 181.3,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -7360,6 +7552,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 187.1,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -7398,6 +7591,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 168.6,
    "versions": {
     "v1": {
      "pts_h": 85.1,
@@ -7436,6 +7630,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 174.5,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -7474,6 +7669,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 169.9,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -7512,6 +7708,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 172.2,
    "versions": {
     "v1": {
      "pts_h": 87.3,
@@ -7550,6 +7747,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 174.5,
    "versions": {
     "v1": {
      "pts_h": 82.4,
@@ -7588,6 +7786,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 172.8,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -7626,6 +7825,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 180.0,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -7664,6 +7864,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 174.0,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -7702,6 +7903,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 180.4,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -7740,6 +7942,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 167.6,
    "versions": {
     "v1": {
      "pts_h": 83.9,
@@ -7778,6 +7981,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 178.2,
    "versions": {
     "v1": {
      "pts_h": 91.1,
@@ -7816,6 +8020,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -7854,6 +8059,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 174.4,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -7892,6 +8098,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 176.5,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -7930,6 +8137,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 173.6,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -7968,6 +8176,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -8006,6 +8215,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 180.8,
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -8044,6 +8254,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 173.0,
    "versions": {
     "v1": {
      "pts_h": 86.3,
@@ -8082,6 +8293,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 180.6,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -8120,6 +8332,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 169.9,
    "versions": {
     "v1": {
      "pts_h": 83.1,
@@ -8158,6 +8371,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 173.6,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -8196,6 +8410,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 180.4,
    "versions": {
     "v1": {
      "pts_h": 89.7,
@@ -8234,6 +8449,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 170.4,
    "versions": {
     "v1": {
      "pts_h": 84.3,
@@ -8272,6 +8488,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 172.7,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -8310,6 +8527,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 177.9,
    "versions": {
     "v1": {
      "pts_h": 88.3,
@@ -8348,6 +8566,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 170.4,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -8386,6 +8605,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 185.1,
    "versions": {
     "v1": {
      "pts_h": 98.0,
@@ -8424,6 +8644,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 174.0,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -8462,6 +8683,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 181.5,
    "versions": {
     "v1": {
      "pts_h": 87.7,
@@ -8500,6 +8722,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 172.2,
    "versions": {
     "v1": {
      "pts_h": 88.7,
@@ -8538,6 +8761,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 170.2,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -8576,6 +8800,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 169.5,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -8614,6 +8839,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 182.3,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -8652,6 +8878,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 181.9,
    "versions": {
     "v1": {
      "pts_h": 92.4,
@@ -8690,6 +8917,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 183.3,
    "versions": {
     "v1": {
      "pts_h": 96.5,
@@ -8728,6 +8956,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 173.3,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -8766,6 +8995,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 167.0,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -8804,6 +9034,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 175.8,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -8842,6 +9073,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 171.9,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -8880,6 +9112,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 171.2,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -8918,6 +9151,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 179.1,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -8956,6 +9190,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 173.8,
    "versions": {
     "v1": {
      "pts_h": 84.4,
@@ -8994,6 +9229,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 186.7,
    "versions": {
     "v1": {
      "pts_h": 93.8,
@@ -9032,6 +9268,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 172.8,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -9070,6 +9307,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 172.9,
    "versions": {
     "v1": {
      "pts_h": 88.4,
@@ -9108,6 +9346,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 174.6,
    "versions": {
     "v1": {
      "pts_h": 86.8,
@@ -9146,6 +9385,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 177.0,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -9184,6 +9424,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 175.8,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -9222,6 +9463,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 178.1,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -9260,6 +9502,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 184.4,
    "versions": {
     "v1": {
      "pts_h": 95.8,
@@ -9298,6 +9541,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 179.4,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -9336,6 +9580,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 180.4,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -9374,6 +9619,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 170.1,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -9412,6 +9658,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 172.4,
    "versions": {
     "v1": {
      "pts_h": 84.2,
@@ -9450,6 +9697,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 171.2,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -9488,6 +9736,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 87.9,
@@ -9526,6 +9775,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 169.4,
    "versions": {
     "v1": {
      "pts_h": 84.0,
@@ -9564,6 +9814,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 170.0,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -9602,6 +9853,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 180.3,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -9640,6 +9892,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 176.7,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -9678,6 +9931,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 178.5,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -9716,6 +9970,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 169.0,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -9754,6 +10009,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 180.4,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -9792,6 +10048,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 179.5,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -9830,6 +10087,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 173.1,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -9868,6 +10126,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 170.8,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -9906,6 +10165,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 179.7,
    "versions": {
     "v1": {
      "pts_h": 93.5,
@@ -9944,6 +10204,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 176.2,
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -9982,6 +10243,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 177.2,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -10020,6 +10282,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 174.1,
    "versions": {
     "v1": {
      "pts_h": 88.9,
@@ -10058,6 +10321,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 178.5,
    "versions": {
     "v1": {
      "pts_h": 92.3,
@@ -10096,6 +10360,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 176.1,
    "versions": {
     "v1": {
      "pts_h": 93.0,
@@ -10134,6 +10399,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 168.4,
    "versions": {
     "v1": {
      "pts_h": 82.0,
@@ -10172,6 +10438,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 174.0,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -10210,6 +10477,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 182.5,
    "versions": {
     "v1": {
      "pts_h": 90.6,
@@ -10248,6 +10516,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 86.2,
@@ -10286,6 +10555,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 180.1,
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -10324,6 +10594,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 183.1,
    "versions": {
     "v1": {
      "pts_h": 91.5,
@@ -10362,6 +10633,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 168.1,
    "versions": {
     "v1": {
      "pts_h": 82.9,
@@ -10400,6 +10672,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 177.2,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -10438,6 +10711,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 171.3,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -10476,6 +10750,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 180.3,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -10514,6 +10789,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 172.1,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -10552,6 +10828,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 186.0,
    "versions": {
     "v1": {
      "pts_h": 95.6,
@@ -10590,6 +10867,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 170.9,
    "versions": {
     "v1": {
      "pts_h": 88.1,
@@ -10628,6 +10906,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 172.3,
    "versions": {
     "v1": {
      "pts_h": 85.8,
@@ -10666,6 +10945,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 178.7,
    "versions": {
     "v1": {
      "pts_h": 91.4,
@@ -10704,6 +10984,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 175.6,
    "versions": {
     "v1": {
      "pts_h": 89.8,
@@ -10742,6 +11023,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -10780,6 +11062,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 179.7,
    "versions": {
     "v1": {
      "pts_h": 90.6,
@@ -10818,6 +11101,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 186.2,
    "versions": {
     "v1": {
      "pts_h": 91.6,
@@ -10856,6 +11140,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 177.6,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -10894,6 +11179,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 180.5,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -10932,6 +11218,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 169.4,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -10970,6 +11257,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 172.6,
    "versions": {
     "v1": {
      "pts_h": 85.0,
@@ -11008,6 +11296,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 173.0,
    "versions": {
     "v1": {
      "pts_h": 85.6,
@@ -11046,6 +11335,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 170.5,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -11084,6 +11374,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 172.3,
    "versions": {
     "v1": {
      "pts_h": 87.6,
@@ -11122,6 +11413,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 173.2,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -11160,6 +11452,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 169.2,
    "versions": {
     "v1": {
      "pts_h": 84.5,
@@ -11198,6 +11491,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 181.9,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -11236,6 +11530,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 83.5,
@@ -11274,6 +11569,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 182.3,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -11312,6 +11608,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 174.8,
    "versions": {
     "v1": {
      "pts_h": 88.5,
@@ -11350,6 +11647,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 175.9,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -11388,6 +11686,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 182.9,
    "versions": {
     "v1": {
      "pts_h": 89.9,
@@ -11426,6 +11725,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 177.8,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -11464,6 +11764,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 173.9,
    "versions": {
     "v1": {
      "pts_h": 85.8,
@@ -11502,6 +11803,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 177.9,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -11540,6 +11842,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 173.4,
    "versions": {
     "v1": {
      "pts_h": 89.5,
@@ -11578,6 +11881,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 180.6,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -11616,6 +11920,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 167.4,
    "versions": {
     "v1": {
      "pts_h": 84.8,
@@ -11654,6 +11959,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 178.0,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -11692,6 +11998,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 173.1,
    "versions": {
     "v1": {
      "pts_h": 89.1,
@@ -11730,6 +12037,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 177.8,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -11768,6 +12076,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 179.3,
    "versions": {
     "v1": {
      "pts_h": 94.1,
@@ -11806,6 +12115,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 181.5,
    "versions": {
     "v1": {
      "pts_h": 92.4,
@@ -11844,6 +12154,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 177.3,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -11882,6 +12193,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 187.3,
    "versions": {
     "v1": {
      "pts_h": 89.2,
@@ -11920,6 +12232,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 174.3,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -11958,6 +12271,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 180.8,
    "versions": {
     "v1": {
      "pts_h": 93.7,
@@ -11996,6 +12310,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 168.6,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -12034,6 +12349,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 176.1,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -12072,6 +12388,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 172.2,
    "versions": {
     "v1": {
      "pts_h": 85.9,
@@ -12110,6 +12427,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -12148,6 +12466,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 179.7,
    "versions": {
     "v1": {
      "pts_h": 85.4,
@@ -12186,6 +12505,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -12224,6 +12544,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 184.2,
    "versions": {
     "v1": {
      "pts_h": 93.7,
@@ -12262,6 +12583,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 172.6,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -12300,6 +12622,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 173.4,
    "versions": {
     "v1": {
      "pts_h": 84.1,
@@ -12338,6 +12661,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 172.3,
    "versions": {
     "v1": {
      "pts_h": 83.1,
@@ -12376,6 +12700,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 170.7,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -12414,6 +12739,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 179.7,
    "versions": {
     "v1": {
      "pts_h": 90.4,
@@ -12452,6 +12778,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 180.2,
    "versions": {
     "v1": {
      "pts_h": 90.4,
@@ -12490,6 +12817,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 84.2,
@@ -12528,6 +12856,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 178.3,
    "versions": {
     "v1": {
      "pts_h": 92.1,
@@ -12566,6 +12895,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 181.8,
    "versions": {
     "v1": {
      "pts_h": 93.3,
@@ -12604,6 +12934,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 178.9,
    "versions": {
     "v1": {
      "pts_h": 91.3,
@@ -12642,6 +12973,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 178.4,
    "versions": {
     "v1": {
      "pts_h": 87.1,
@@ -12680,6 +13012,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+   "total_base": 177.2,
    "versions": {
     "v1": {
      "pts_h": 87.8,
@@ -12718,6 +13051,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 171.3,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -12756,6 +13090,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 171.7,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -12794,6 +13129,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 171.9,
    "versions": {
     "v1": {
      "pts_h": 84.7,
@@ -12832,6 +13168,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 182.1,
    "versions": {
     "v1": {
      "pts_h": 88.6,
@@ -12870,6 +13207,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 178.7,
    "versions": {
     "v1": {
      "pts_h": 93.6,
@@ -12908,6 +13246,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 180.6,
    "versions": {
     "v1": {
      "pts_h": 89.6,
@@ -12946,6 +13285,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 174.6,
    "versions": {
     "v1": {
      "pts_h": 90.0,
@@ -12984,6 +13324,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 84.3,
@@ -13022,6 +13363,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 175.5,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -13060,6 +13402,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 175.9,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -13098,6 +13441,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 178.5,
    "versions": {
     "v1": {
      "pts_h": 85.7,
@@ -13136,6 +13480,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 180.1,
    "versions": {
     "v1": {
      "pts_h": 90.1,
@@ -13174,6 +13519,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+   "total_base": 175.1,
    "versions": {
     "v1": {
      "pts_h": 88.0,
@@ -13212,6 +13558,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 182.7,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -13250,6 +13597,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 175.1,
    "versions": {
     "v1": {
      "pts_h": 86.0,
@@ -13288,6 +13636,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 180.2,
    "versions": {
     "v1": {
      "pts_h": 90.7,
@@ -13326,6 +13675,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 168.0,
    "versions": {
     "v1": {
      "pts_h": 86.5,
@@ -13364,6 +13714,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 177.3,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -13402,6 +13753,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
    "acrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+   "total_base": 176.2,
    "versions": {
     "v1": {
      "pts_h": 84.6,
@@ -13440,6 +13792,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 181.2,
    "versions": {
     "v1": {
      "pts_h": 87.0,
@@ -13478,6 +13831,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 179.3,
    "versions": {
     "v1": {
      "pts_h": 90.5,
@@ -13516,6 +13870,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+   "total_base": 176.6,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -13554,6 +13909,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 173.4,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -13592,6 +13948,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 177.3,
    "versions": {
     "v1": {
      "pts_h": 87.2,
@@ -13630,6 +13987,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 172.6,
    "versions": {
     "v1": {
      "pts_h": 87.5,
@@ -13668,6 +14026,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 177.3,
    "versions": {
     "v1": {
      "pts_h": 85.3,
@@ -13706,6 +14065,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 176.3,
    "versions": {
     "v1": {
      "pts_h": 87.4,
@@ -13744,6 +14104,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
    "acrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+   "total_base": 177.7,
    "versions": {
     "v1": {
      "pts_h": 86.6,
@@ -13782,6 +14143,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 170.3,
    "versions": {
     "v1": {
      "pts_h": 83.6,
@@ -13820,6 +14182,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 171.1,
    "versions": {
     "v1": {
      "pts_h": 82.5,
@@ -13858,6 +14221,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 175.5,
    "versions": {
     "v1": {
      "pts_h": 89.3,
@@ -13896,6 +14260,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+   "total_base": 178.1,
    "versions": {
     "v1": {
      "pts_h": 90.4,
@@ -13934,6 +14299,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 181.8,
    "versions": {
     "v1": {
      "pts_h": 91.7,
@@ -13972,6 +14338,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+   "total_base": 180.4,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -14010,6 +14377,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+   "total_base": 182.3,
    "versions": {
     "v1": {
      "pts_h": 90.3,
@@ -14048,6 +14416,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+   "total_base": 178.3,
    "versions": {
     "v1": {
      "pts_h": 91.5,
@@ -14086,6 +14455,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
    "acrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+   "total_base": 173.2,
    "versions": {
     "v1": {
      "pts_h": 86.9,
@@ -14124,6 +14494,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+   "total_base": 171.6,
    "versions": {
     "v1": {
      "pts_h": 85.2,
@@ -14162,6 +14533,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
    "acrest": "https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+   "total_base": 173.5,
    "versions": {
     "v1": {
      "pts_h": 86.1,
@@ -14200,6 +14572,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+   "total_base": 175.7,
    "versions": {
     "v1": {
      "pts_h": 89.0,
@@ -14238,6 +14611,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
    "acrest": "https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+   "total_base": 189.0,
    "versions": {
     "v1": {
      "pts_h": 93.1,
@@ -14276,6 +14650,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
    "acrest": "https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+   "total_base": 174.7,
    "versions": {
     "v1": {
      "pts_h": 86.7,
@@ -14314,6 +14689,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
    "acrest": "https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+   "total_base": 178.7,
    "versions": {
     "v1": {
      "pts_h": 89.0,
@@ -14352,6 +14728,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
    "acrest": "https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+   "total_base": 174.4,
    "versions": {
     "v1": {
      "pts_h": 88.8,
@@ -14390,6 +14767,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+   "total_base": 175.9,
    "versions": {
     "v1": {
      "pts_h": 88.2,
@@ -14428,6 +14806,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
    "acrest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+   "total_base": 185.5,
    "versions": {
     "v1": {
      "pts_h": 94.1,
@@ -14466,6 +14845,7 @@
    "version": "v4",
    "hcrest": "https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
    "acrest": "https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+   "total_base": 170.9,
    "versions": {
     "v1": {
      "pts_h": 84.6,

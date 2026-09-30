@@ -104,8 +104,15 @@ def compute():
             for nm, p_, od in (('Over', po, ov), ('Under', pu_, un)):
                 e = p_ * od + pq - 1
                 if e >= TOT_MIN:
-                    picks.append(dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
-                                      proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(t, 1), mkt_line=T))
+                    pk = dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
+                              proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(t, 1), mkt_line=T)
+                    # 1/10/2026: αγων 1-10 το συνολο εχει ταση ποντων προετοιμασιας· ενδειξη αν ΣΥΜΦΩΝΕΙ και το παλιο (χωρις προετοιμασια)
+                    # — μονο καταγραφη για κριση με πραγματικα δεδομενα (el_preseason_totals_deep.py F/G), δεν αλλαζει τα picks
+                    tb = g.get('total_base')
+                    if tb is not None and abs(float(tb) - t) >= 0.05:
+                        bo, bq = cover(float(tb), -T, st); bp = bo if nm == 'Over' else 1 - bo - bq
+                        pk['old_agree'] = bool(bp * od + bq - 1 >= TOT_MIN); pk['total_base'] = round(float(tb), 1)
+                    picks.append(pk)
     return picks
 
 def key(p): return f"EL|{p['code']}|{p['mkt']}|{p.get('bet') or p['side']}|{p['hcap']:g}"
@@ -122,6 +129,8 @@ def line(p, prev=None):
         why = f"μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f}"
     else:
         bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_line']:g}"
+        if p.get('old_agree') is not None:
+            why += f" · {'✓ συμφωνει και το παλιο' if p['old_agree'] else '✗ μονο με την προετοιμασια'} ({p['total_base']:.1f} χωρις φιλικα)"
     ch = f" (ηταν {prev:.2f})" if prev else ''
     return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})" + (f"\n{p['mkt_note']}" if p.get('mkt_note') else '')
 
@@ -150,7 +159,7 @@ def main(notify_tg=True):
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
-                                         model=p.get('model'), drift=p.get('drift')), ensure_ascii=False) + '\n')
+                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('el_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
