@@ -38,6 +38,16 @@ if V.startswith('sos_'):                # 1/10: sos_<ST>_<GLO>_<GHI> π.χ. sos_
     _, st_, lo_, hi_ = V.split('_')
     assert 'ST = 1.5; GLO, GHI = 6, 13' in pre
     pre = pre.replace('ST = 1.5; GLO, GHI = 6, 13', f'ST = {float(st_)}; GLO, GHI = {int(lo_)}, {int(hi_)}')
+if V.startswith('c2_'):                 # 1/10: c2_<ST2>_<GHI> = σωστο SoS 0.75 στις 7-14 (6-13 αντιπαλοι) ΚΑΙ βαρος ST2 απο 14 ως GHI αντιπαλους
+    _, st2_, hi_ = V.split('_')
+    assert 'ST = 1.5; GLO, GHI = 6, 13' in pre
+    pre = pre.replace('ST = 1.5; GLO, GHI = 6, 13', f'ST = 0.75; ST2 = {float(st2_)}; GLO, GHI = 6, {int(hi_)}')
+    old_ret = ("            return (r[0] * (lxx / max(mD, 1e-9)) ** ST, r[1] * (lxx / max(mA, 1e-9)) ** ST," + chr(10) +
+               "                    r[2] * (lsx / max(mSA, 1e-9)) ** ST, r[3] * (lsx / max(mSF, 1e-9)) ** ST)")
+    assert old_ret in pre, 'sosadj μορφη αλλαξε'
+    pre = pre.replace(old_ret, old_ret.replace('** ST', '** _st').replace(
+        '            return (', "            _st = ST if len(t['opp']) <= 13 else ST2" + chr(10) + '            return (', 1))
+    os.environ['SOS_MODE'] = 'current'
 if V == 'nosos':                       # 1/10: χωρις διορθωση προγραμματος (SoS) στις αγων. 7-14
     assert 'ST = 1.5;' in pre
     pre = pre.replace('ST = 1.5;', 'ST = 0.0;')

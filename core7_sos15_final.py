@@ -12,6 +12,10 @@ core7_sos15_final.py — ΤΕΣΤ 1/10/2026 (Στελιος: «τρεξε το �
   (2) RPS 15+ οχι χειροτερο (μεσος ≤ σημερα + 0.00005)
   (3) dogs 15+: μοναδες ≥ σημερα σε ≥2/3 βιβλια
   (4) φαβορι 15+: μοναδες ≥ σημερα σε ≥2/3 βιβλια
+ΣΕΤ c2 (1/10, «SoS και μετα την 15η; μεχρι ποτε; ποιο βαρος;»): βαση = LIVE (σωστο 0.75 @7-14, χωρις SoS στην 15+)·
+  εκδοχες c2_<W>_<HI>: + σωστο SoS βαρους W απο 14 ως HI αντιπαλους (HI 19 ≈ τελος 1ου γυρου, 25, 40 = τελος). W ∈ {.25,.5,.75,1}.
+  ΠΡΟ-ΔΗΛΩΣΗ c2: μια συνεχεια ΜΠΑΙΝΕΙ αν (1) RPS 15+ καλυτερο σε ≥3/4 σεζον, (2) ολα τα picks 15+ (μεσος 3 βιβλιων) ≥ βαση
+  σε ≥3/4 σεζον, ΚΑΙ (3) το LOSO (επιλογη απο τις 12+1 με κριτηριο μοναδες ολων των picks) βγαζει εκτος δειγματος > βαση.
 Δεν αλλαζει τιποτα live.
 """
 import sys, io, os, json, glob, contextlib
@@ -31,6 +35,8 @@ VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 1.0 @7-14', 'cur_1.0_6_13'),
        ('ΣΩΣΤΟ 0.5 ολη', 'cur_0.5_6_40'), ('ΣΩΣΤΟ 1.0 ολη', 'cur_1.0_6_40'), ('ΣΩΣΤΟ 1.5 ολη', 'cur_1.5_6_40')]
 if os.environ.get('SOS15_SET') == 'fav075':    # 1/10: φαβορι 15+ ανα σεζον με 0.75
     VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 0.75 @7-14', 'cur_0.75_6_13')]
+if os.environ.get('SOS15_SET') == 'c2':
+    VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13')] + [(f'{w} ως {h}', f'c2_{w}_{h}') for h in ('19', '25', '40') for w in ('0.25', '0.5', '0.75', '1.0')]
 if os.environ.get('SOS15_SET') == 'w714':      # 1/10: ποιο βαρος στις 7-14 δινει καλυτερη βαση (μεσω αγκυρας) για την 15+
     VAR = [('ΣΗΜΕΡΑ', 'base'), ('0 (χωρις)', 'nosos')] + [(f'ΣΩΣΤΟ {w} @7-14', f'cur_{w}_6_13') for w in ('0.25', '0.5', '0.75', '1.0', '1.25', '1.5', '2.0')]
 def load(v):
@@ -104,15 +110,15 @@ for lab, v in VAR:
             L, oh, oa = q
             s = S0[i] + ((SA[i] - S0[i]) if abs(L) in (0.5, 0.75) else 0.0)
             for b in picks.evaluate_bet(max((T[i] + s) / 2, .05), max((T[i] - s) / 2, .05), L, oh, oa):
-                rows.append((bk, r.season, r.league, r.mid, 'dog', 'κοντες' if b['hcap'] < 1 else 'βαθιες', picks.settle(r.gd, b['side'], b['hcap'], b['odds'])))
+                rows.append((bk, r.season, r.league, r.mid, r.md, 'dog', 'κοντες' if b['hcap'] < 1 else 'βαθιες', picks.settle(r.gd, b['side'], b['hcap'], b['odds'])))
             if abs(L) >= 0.5:
                 side = 1 if L < 0 else -1; ud = -abs(L); o = oh if side == 1 else oa
                 if 1.70 <= o <= 2.10:
                     dist = picks.gd_dist_dom(max((T[i] + S7[i]) / 2, .05), max((T[i] - S7[i]) / 2, .05))
                     if ev_ok(dist, side, ud, o) >= 0.10:
-                        rows.append((bk, r.season, r.league, r.mid, 'fav', 'κοντες' if ud > -1 else 'βαθιες', picks.settle(r.gd, side, ud, o)))
+                        rows.append((bk, r.season, r.league, r.mid, r.md, 'fav', 'κοντες' if ud > -1 else 'βαθιες', picks.settle(r.gd, side, ud, o)))
     RES[lab] = dict(rp=rp, info=(bI[2], tI[2]), ant=(bA[1], tA[1], len(mv)),
-                    B=pd.DataFrame(rows, columns=['book', 'season', 'league', 'mid', 'role', 'depth', 'pnl']))
+                    B=pd.DataFrame(rows, columns=['book', 'season', 'league', 'mid', 'md', 'role', 'depth', 'pnl']))
     print(f'{lab} ok', flush=True)
 BK = ('Pinnacle', 'Crown', 'Bet365')
 def fm(d):
@@ -168,8 +174,8 @@ for lab, _ in VAR:
         print(f'    {se}: ' + ' | '.join(f"n{len(F[(F.book == bk) & (F.season == se)]):3d} {F[(F.book == bk) & (F.season == se)].pnl.sum():+5.1f}u" for bk in BK))
 
 # 1/10: LOSO — βαρος 7-14 επιλεγμενο απο τις ΑΛΛΕΣ 3 σεζον (μεσος 3 βιβλιων), κριση στην 4η
-if os.environ.get('SOS15_SET') == 'w714':
-    cands = [l for l, _ in VAR if l != 'ΣΗΜΕΡΑ']
+if os.environ.get('SOS15_SET') in ('w714', 'c2'):
+    cands = [l for l, _ in VAR if l != 'ΣΗΜΕΡΑ' or os.environ.get('SOS15_SET') == 'c2']
     def u(lab, role, seas):
         B = RES[lab]['B']; x = B[B.season.isin(seas) & ((B.role == role) if role else True)]
         return np.mean([x[x.book == bk].pnl.sum() for bk in BK])
@@ -181,3 +187,19 @@ if os.environ.get('SOS15_SET') == 'w714':
             ul, ub = u(pick, role, [se]), u('ΣΗΜΕΡΑ', role, [se]); tot_l += ul; tot_b += ub
             print(f'   {se}: διαλεγει {pick:17s} → {ul:+6.1f}u  (σημερα {ub:+6.1f}u)')
         print(f'   ΣΥΝΟΛΟ LOSO {tot_l:+.1f}u vs σημερα {tot_b:+.1f}u')
+
+if os.environ.get('SOS15_SET') == 'c2':
+    md15 = D.md.values[I15]
+    WIN = [('15-19', 14, 18), ('20-25', 19, 24), ('26+', 25, 99)]
+    print(chr(10) + 'ΑΝΑ ΠΕΡΙΟΔΟ 15+ — ΟΛΑ τα picks (μεσος 3 βιβλιων, μοναδες) · σε [ ] RPS Δ×10⁻⁴ vs σημερα (− = καλυτερο)')
+    for lab, _ in VAR:
+        B = RES[lab]['B']; cells = []
+        for nm, lo, hi in WIN:
+            x = B[(B.md >= lo) & (B.md <= hi)]; uu = np.mean([x[x.book == bk].pnl.sum() for bk in BK])
+            mk = (md15 >= lo) & (md15 <= hi); dr = 1e4 * (RES[lab]['rp'][mk].mean() - base['rp'][mk].mean())
+            cells.append(f'{nm}: {uu:+6.1f}u [{dr:+5.1f}]')
+        tot = np.mean([B[B.book == bk].pnl.sum() for bk in BK])
+        dg = np.mean([B[(B.book == bk) & (B.role == 'dog')].pnl.sum() for bk in BK]); fv = np.mean([B[(B.book == bk) & (B.role == 'fav')].pnl.sum() for bk in BK])
+        ps = sum(np.mean([B[(B.book == bk) & (B.season == se)].pnl.sum() for bk in BK]) >= np.mean([base['B'][(base['B'].book == bk) & (base['B'].season == se)].pnl.sum() for bk in BK]) for se in SEAS)
+        rb = sum(RES[lab]['rp'][s15 == se].mean() < base['rp'][s15 == se].mean() for se in SEAS)
+        print(f'  {lab:12s} ' + ' · '.join(cells) + f' · ΣΥΝΟΛΟ {tot:+6.1f}u (dogs {dg:+5.1f} φαβ {fv:+5.1f}) · σεζον ≥σημερα {ps}/4 · RPS καλυτερο {rb}/4')
