@@ -103,7 +103,7 @@ def compute():
         ko = dt.datetime.fromisoformat(o['commence'].replace('Z', '+00:00'))
         if ko <= now: continue
         when = ko.strftime('%Y-%m-%dT%H:%M')
-        base = dict(lg='Euroleague', home=g['home'], away=g['away'], hcode=g['hcode'], acode=g['acode'], code=g['code'], round=g['round'],
+        base = dict(lg='Euroleague', home=g['home'], away=g['away'], hcode=g['hcode'], acode=g['acode'], code=g['code'], round=g['round'], coach_notes=g.get('coach_notes'),
                     when=when, el=True, model=proj.get('model', '')[:60])
         # ---- χαντικαπ ----
         if pin.get('line') is not None and pin.get('oh') and pin.get('oa'):
@@ -152,6 +152,7 @@ def line(p, prev=None):
         if p.get('old_agree') is not None:
             why += f" · {'✓ συμφωνει και το παλιο' if p['old_agree'] else '✗ μονο με την προετοιμασια'} ({p['total_base']:.1f} χωρις φιλικα)"
     ch = f" (ηταν {prev:.2f})" if prev else ''
+    if p.get('coach_notes'): why += ' · ' + ' · '.join(p['coach_notes'])
     return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})" + (f"\n{p['mkt_note']}" if p.get('mkt_note') else '')
 
 # 1/10/2026 (Στελιος): ELEGXOS KLEISIMATOS — στο τελευταιο μισαωρο πριν το τζαμπολ (scanner καθε 15'), για καθε pick που ΠΑΙΞΑΜΕ

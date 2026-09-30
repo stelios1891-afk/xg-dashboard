@@ -249,6 +249,13 @@ try:
     print(f'ταξιδι διαβολοβδομαδας: {len(TRAVEL)} ματς της σεζον με διορθωση' + (f' · ΓΗΠΕΔΑ ΧΩΡΙΣ ΣΥΝΤΕΤΑΓΜΕΝΕΣ: {_tmiss}' if _tmiss else ''))
 except Exception as _e:
     TRAVEL = {}; print('ΠΡΟΣΟΧΗ: διορθωση ταξιδιου απενεργη —', _e)
+# 1/10/2026 (Στελιος): ΣΗΜΕΙΩΣΗ «νεος προπονητης» για 10 ματς μετα την αλλαγη (el_coach_live.py) — μονο ενδειξη, οχι στο μοντελο.
+try:
+    import el_coach_live
+    COACH_CH = el_coach_live.changes(SEASON, S.get(SEASON, [])); COACH_NOTES = el_coach_live.notes(S.get(SEASON, []), COACH_CH)
+    print('αλλαγες προπονητη: ' + (' · '.join(f"{c} {v['name']} ({v['date']})" for c, v in COACH_CH.items()) or 'καμια'))
+except Exception as _e:
+    COACH_NOTES = {}; print('ΠΡΟΣΟΧΗ: σημειωση προπονητη απενεργη —', _e)
 games = []
 for x in sorted(S[SEASON], key=lambda y: y['utc']):
     hcode, acode = x['hcode'], x['acode']
@@ -274,7 +281,7 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], utc=x['utc'], home=x['home'], away=x['away'], hcode=hcode, acode=acode,
                venue=x.get('vname'), neutral=neu, pts_h=round((tt + mg) / 2, 1), pts_a=round((tt - mg) / 2, 1),
                margin=round(mg, 2), total=round(tt, 1), poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3),
-               played=played, version='v4', hcrest=x.get('hcrest'), acrest=x.get('acrest'), total_base=round(tt_base, 1), travel=_tr,
+               played=played, version='v4', hcrest=x.get('hcrest'), acrest=x.get('acrest'), total_base=round(tt_base, 1), travel=_tr, coach_notes=COACH_NOTES.get(x['code']),
                versions={'v1': dict(pts_h=round((tt1 + mg1) / 2, 1), pts_a=round((tt1 - mg1) / 2, 1), margin=round(mg1, 2), total=round(tt1, 1),
                                     p_home=round(Phi(mg1 / SIGMA_MARGIN), 3))})
     if mgf is not None:
