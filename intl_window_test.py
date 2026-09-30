@@ -117,6 +117,8 @@ def ah_ev(dist, side, ud, odds):
     parts = [ud] if (AH_FORMULA == 'live' or (ud * 4) % 2 == 0) else [ud - 0.25, ud + 0.25]
     if AH_FORMULA == 'hybrid' and ud > 0 and abs(ud % 1 - 0.25) < 1e-9:      # 25/9 σχεδιο Β Στελιου: dog +x.25 με τον ΠΑΛΙΟ τροπο, ολα τα αλλα σωστα
         parts = [ud]
+    if AH_FORMULA == 'dogold' and ud > 0:      # 30/9 (Στελιος): dogs ΟΛΑ τα τεταρτα με τον παλιο τροπο, φαβορι σωστα (οπως εγχωρια/Ευρωπη)
+        parts = [ud]
     e = 0.0
     for L in parts:
         pw, pp = picks.p_cover(dist, side, L); e += (pw * (odds - 1) * (1 - picks.MARGIN) - (1 - pw - pp)) / len(parts)

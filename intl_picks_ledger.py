@@ -47,6 +47,8 @@ def variant_of(p):
     L = float(p['line'])
     if L > 0 and abs(L % 1 - 0.25) < 1e-9:
         return 'Σχ.Β (+x.25 παλιος τροπος)'
+    if L > 0 and abs(L % 1 - 0.75) < 1e-9:                 # 30/9: και τα +x.75 των dogs με τον παλιο τροπο
+        return 'Σχ.Β (+x.75 παλιος τροπος)'
     if L <= -2 + 1e-9:
         return 'βαθυ φαβορι (σωστη υπεροχη)'
     return ''
