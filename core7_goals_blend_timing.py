@@ -84,6 +84,40 @@ def tanchor(h, a, lam=0.5):
     s = h - a; return np.maximum((out + s) / 2, .05), np.maximum((out - s) / 2, .05)
 BASE = 'xG 60/40 (ΣΗΜΕΡΑ)'
 VARS['ΣΗΜΕΡΑ + αγκυρα συνολων'] = tanchor(*VARS[BASE])
+if os.environ.get('GBT_TIMES'):           # 1/10: ανα ωρα πριν τη σεντρα — ποσο κοντα στο ματς αντεχει η αγκυρα συνολων;
+    AH, AA = VARS['ΣΗΜΕΡΑ + αγκυρα συνολων']; tg = W.tg.values.astype(int)
+    HRS = [240, 168, 120, 96, 72, 48, 36, 24, 12, 6, 3, 1, 0]
+    rows = []
+    for i in range(N):
+        ko = KO.get(W.mid[i])
+        if not ko: continue
+        d = tdist(AH[i], AA[i])
+        for bk in ('Crown', 'Bet365'):
+            seq = SER.get((W.mid[i], bk))
+            if not seq: continue
+            Lc = seq[-1][1]
+            for h in HRS:
+                prev = [x for x in seq if x[0] <= (ko - h * 3600 if h else ko + 600)]
+                if not prev or (h and (ko - prev[-1][0]) / 3600 > h + 24): continue
+                _, L, oo, uu = prev[-1]
+                for over, o in ((True, oo), (False, uu)):
+                    if not (1.70 <= o <= 2.10): continue
+                    e, s_ = ou_eval(d, L, over, o, tg[i])
+                    if e >= 0.05:
+                        rows.append(dict(h=h, book=bk, season=W.season[i], win='15+' if W.md[i] >= 14 else '7-14', edge=e, pnl=s_,
+                                         clv=(1 if over else -1) * (Lc - L)))
+    R = pd.DataFrame(rows)
+    def fm(x):
+        if len(x) < 5: return f'n{len(x):4d}        —       '
+        ps = x.groupby('season').pnl.mean(); return f'n{len(x):4d} {100*x.pnl.mean():+6.1f}% {int((ps > 0).sum())}/4'
+    for th in (0.10, 0.05):
+        print(chr(10) + f'ΑΓΚΥΡΑ ΣΥΝΟΛΩΝ — pick στην τιμη που ισχυε Χ ωρες πριν (O+U, edge ≥{int(th*100)}%) · Crown | Bet365 · CLV γραμμης ως το κλεισιμο (Crown)')
+        for h in HRS:
+            x = R[(R.h == h) & (R.edge >= th)]
+            c, b = x[x.book == 'Crown'], x[x.book == 'Bet365']
+            c15, b15 = c[c.win == '15+'], b[b.win == '15+']
+            print(f'  {("κλεισιμο" if h == 0 else f"−{h}ω"):9s} ολα 7+: {fm(c)} | {fm(b)} · CLV {c.clv.mean():+.3f} · μονο 15+: {fm(c15)} | {fm(b15)}')
+    sys.exit()
 if os.environ.get('GBT_ROBUST'):          # 1/10: ελεγχοι σταθεροτητας για την αγκυρα συνολων στο ανοιγμα
     AH, AA = VARS['ΣΗΜΕΡΑ + αγκυρα συνολων']; tg = W.tg.values.astype(int)
     rows = []
