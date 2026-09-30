@@ -270,3 +270,35 @@ for flag, lab in (('trav', 'ταξιδι ≥1000 χλμ'), ('trav_tz', 'αλλα
             P(f'    (γ) ΧΑΝΤΙΚΑΠ {nm:12s} ολα: n {len(a)} · ROI {a.mean()*100:+.1f}% · μοναδες {a.sum():+.1f} [{per}] · στα ματς με ταξιδι: n {len(f_)} · μοναδες {sum(x[0] for x in f_):+.1f}'
               + f' (υπερ γηπ {sum(1 for x in f_ if x[3] == 1)} / υπερ φιλ {sum(1 for x in f_ if x[3] == -1)})')
 open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
+
+# ---- 7. ΤΑΞΙΔΙ: κανονικη εβδομαδα vs διαβολοβδομαδα · προηγουμενο εντος/εκτος (ερωτηση Στελιου 1/10) ----
+P(''); P('=== 7. ΤΑΞΙΔΙ ΦΙΛΟΞΕΝΟΥΜΕΝΟΥ: κανονικη εβδομαδα vs 2ο ματς διαβολοβδομαδας · απο εντος ή απο εκτος ===')
+HB = T[T.side == 1].groupby(['season', 'team'])['loc'].agg(lambda s: s.dropna().mode().iloc[0] if len(s.dropna()) else None)
+AW = T[T.side == -1].set_index('pos')
+G['a_home_loc'] = [HB.get((s, a)) for s, a in zip(G.season, G.away)]
+G['a_loc_now'] = [AW.loc[p, 'loc'] for p in G.index]
+G['a_from_home'] = [km(h, c) if (h and c) else np.nan for h, c in zip(G.a_home_loc, G.a_loc_now)]
+G['a_prev_side2'] = [AW.loc[p, 'prev_side'] for p in G.index]
+G['a_rest'] = G.a_rest_el
+def tr(lab, m):
+    x = G[m.fillna(False).astype(bool)]
+    if len(x) < 8: P(f'  {lab:62s} n {len(x)}'); return
+    s1 = x.rm_c.std() / math.sqrt(len(x))
+    per = ' '.join(f'{Y[-2:]}:{-x[x.season == Y].rm_m.mean():+.1f}' for Y in SE5 if (x.season == Y).sum() >= 4)
+    P(f'  {lab:62s} n {len(x):4d} · φιλοξ. vs ΜΟΝΤΕΛΟ {-x.rm_m.mean():+5.2f} (t {-x.rm_m.mean()/(x.rm_m.std()/math.sqrt(len(x))):+.1f}) · vs αγορα {-x.rm_c.mean():+5.2f} (t {-x.rm_c.mean()/s1:+.1f}) · [vs μοντ. ανα σεζον {per}]')
+nw = G.a_rest >= 5
+P('  ΚΑΝΟΝΙΚΗ ΕΒΔΟΜΑΔΑ (≥5 μερες απο το προηγ. ματς), αποσταση εδρας φιλοξ. → γηπεδο:')
+for lo, hi in ((0, 1000), (1000, 2000), (2000, 99999)):
+    tr(f'    {lo}-{hi if hi < 99999 else "+"} χλμ', nw & (G.a_from_home >= lo) & (G.a_from_home < hi))
+d2 = G.a_dw2 == True
+P('  2ο ΜΑΤΣ ΔΙΑΒΟΛΟΒΔΟΜΑΔΑΣ, αποσταση ΑΠΟ ΤΟ ΠΡΟΗΓΟΥΜΕΝΟ γηπεδο:')
+for lo, hi in ((0, 1000), (1000, 99999)):
+    for ps, pl in ((1, 'προηγ. ΕΝΤΟΣ (σπιτι → ταξιδι)'), (-1, 'προηγ. ΕΚΤΟΣ (ταξιδι → ταξιδι)')):
+        tr(f'    {lo}-{hi if hi < 99999 else "+"} χλμ · {pl}', d2 & (G.a_travel >= lo) & (G.a_travel < hi) & (G.a_prev_side2 == ps))
+P('  2ο ΜΑΤΣ ΔΙΑΒΟΛΟΒΔΟΜΑΔΑΣ, ΕΚΤΟΣ → ΕΚΤΟΣ: μακρια απο το σπιτι αλλα κοντα στο προηγ. (≥1000 απο εδρα, <1000 απο προηγ.)')
+tr('    ', d2 & (G.a_prev_side2 == -1) & (G.a_from_home >= 1000) & (G.a_travel < 1000))
+P('  ΣΥΓΚΡΙΣΗ ιδιας αποστασης: ≥1000 χλμ σε κανονικη εβδομαδα vs στο 2ο ματς')
+tr('    κανονικη εβδομαδα, ≥1000 χλμ απο την εδρα', nw & (G.a_from_home >= 1000))
+tr('    2ο ματς, ≥1000 χλμ απο το προηγ. γηπεδο', d2 & (G.a_travel >= 1000))
+tr('    1ο ματς διαβολοβδομαδας (ξερει οτι ξαναπαιζει σε 2 μερες), ≥1000 απο εδρα', (G.a_rest >= 5) & (G.a_from_home >= 1000) & False)
+open('el_dw_fatigue_deep_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
