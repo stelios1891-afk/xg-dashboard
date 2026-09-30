@@ -1,0 +1,39 @@
+name: oddsportal-ci-probe
+
+# ΕΦΑΠΑΞ (1/10/2026): απαντα το Oddsportal (outrights EuroCup) στο GitHub; απο Ελλαδα μπλοκαρει.
+# Πυροδοτηση: push αυτου του αρχειου ή του oddsportal_ci_probe.py.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '.github/workflows/oddsportal-ci-probe.yml'
+      - 'oddsportal_ci_probe.py'
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - name: Oddsportal probe
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python oddsportal_ci_probe.py
+      - name: Commit result
+        if: always()
+        run: |
+          git config user.name "oddsportal-probe-bot"
+          git config user.email "actions@github.com"
+          git add -f op_probe || true
+          if git diff --cached --quiet; then echo "τιποτα"; else
+            git commit -m "oddsportal ci probe [skip ci]"
+            git pull --rebase
+            git push
+          fi
