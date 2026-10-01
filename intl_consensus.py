@@ -57,6 +57,8 @@ def label(c, home, away):
     if c['mkt'] == 'OVER':
         return f"Over {c['line']:g} @{c['odds']:.2f}"
     team = home if c['side'] == 1 else away
+    if '1Χ2' in str(c.get('book', '')):          # 1/10: ξερη νικη (= −0.5) οταν η γραμμη χαντικαπ ειναι −0.25/0
+        return f"{team} νικη (1Χ2) @{c['odds']:.2f}"
     return f"{team} {c['line']:+g} @{c['odds']:.2f}"
 
 

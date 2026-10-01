@@ -28,6 +28,9 @@ if OVER_ALL:
 AH_MINLINE = float(os.environ.get('AH_MINLINE', '0.5'))   # 25/9: 0 = και DNB (γραμμη 0) και ±0.25 (ερωτηση Στελιου)· live = 0.5
 if AH_MINLINE != 0.5:
     SUF = SUF + f'_min{AH_MINLINE:g}'
+X12_SMALL = os.environ.get('X12_SMALL') == '1'   # 1/10 (Στελιος, Ολλανδια −0.25): γραμμη φαβορι −0.25/0 → εξεταζεται το ΞΕΡΟ 1Χ2 της νικης (= −0.5)
+if X12_SMALL:
+    SUF = SUF + '_x12s'
 IMP_S4 = os.environ.get('IMP_S4') == '1'     # 25/9: σημασια παικτη Σ4 (συμμετοχες×rating×αρχηγος) στο diff, συντελεστης LOSO ανα σεζον (intl_imp_s4_export.py)
 if IMP_S4:
     SUF = SUF + '_s4'
@@ -90,7 +93,7 @@ for f in glob.glob('nowgoal_intl_odds/*.jsonl'):
         mid = str(r['mid']); k = KO.get(mid)
         if k is None:
             continue
-        rec = {'ah': [], 'ou': []}
+        rec = {'ah': [], 'ou': [], 'op': []}
         for x in (r.get('ah') or []):
             if ok_row(x) and x[0] < k:
                 try: rec['ah'].append(((k - x[0]) / 3600, -line_of(x[4]), hk(x[5]), hk(x[6])))
@@ -99,6 +102,10 @@ for f in glob.glob('nowgoal_intl_odds/*.jsonl'):
             if ok_row(x) and x[0] < k:
                 try: rec['ou'].append(((k - x[0]) / 3600, line_of(x[4]), hk(x[5]), hk(x[6])))
                 except Exception: pass
+        for x in (r.get('op') or []):      # 1Χ2 (δεκαδικες): x[4] γηπ · x[5] ισοπαλια · x[6] εκτος
+            try: rec['op'].append(((k - x[0]) / 3600, float(x[4]), float(x[5]), float(x[6])))
+            except (TypeError, ValueError): pass
+        rec['op'].sort(key=lambda z: -z[0])
         rec['ah'].sort(key=lambda z: -z[0]); rec['ou'].sort(key=lambda z: -z[0])     # χρονολογικα (απο νωριτερα προς σεντρα)
         ROWS[(mid, 3 if r['cid'] == 3 else 31)] = rec
 
@@ -221,7 +228,16 @@ for r in D.itertuples():
                 # --- AH ---
                 cand = [cl_ah] if (W is None and cl_ah) else [z for z in rec['ah'] if z[0] <= (W or 0)]
                 for ci, (h, line, oh, oa) in enumerate(cand):
-                    q = ah_q(dist, line, oh, oa, dist_deep)
+                    q = ah_q(dist, line, oh, oa, dist_deep); x12 = False
+                    if q is None and X12_SMALL and abs(line) < 0.5 - 1e-9 and rec['op']:
+                        prev = [z for z in rec['op'] if z[0] >= h - 1e-9]       # η 1Χ2 τιμη που ισχυε εκεινη τη στιγμη
+                        if prev:
+                            _, o1, _, o2 = prev[-1]
+                            for side_, o_ in ((1, o1), (-1, o2)):
+                                if (line if side_ == 1 else -line) <= 1e-9 and 1.70 <= o_ <= 2.10:    # φαβορι (ή ισοπαλη γραμμη)
+                                    e_ = ah_ev(dist, side_, -0.5, o_)
+                                    if e_ >= .10:
+                                        q = (side_, -0.5, o_, e_); x12 = True; break
                     if q and W is not None and MODE == 'persist30':
                         # πρεπει να ισχυει συνεχομενα ≥30λ: ολες οι κινησεις των επομενων 30λ περνανε κι αυτες τον κανονα
                         nxt = [z for z in cand[ci + 1:] if h - z[0] <= 0.5]
@@ -239,7 +255,7 @@ for r in D.itertuples():
                         side, ud, odds, e = q; clv = np.nan
                         if cdist is not None:
                             pw, pp = picks.p_cover(cdist, side, ud); fc = (1 - pp) / pw if pw > 0 else np.nan; clv = odds / fc - 1
-                        bets.append(dict(base, win=wlab, hours=round(h, 1), rule='AH dog' if ud >= .5 else ('AH fav' if ud <= -.5 else 'AH small'), side=side, line=ud,
+                        bets.append(dict(base, win=wlab, hours=round(h, 1), x12=x12, rule='AH dog' if ud >= .5 else ('AH fav' if ud <= -.5 else 'AH small'), side=side, line=ud,
                                          odds=odds, edge=e, pnl=picks.settle(int(r.gd), side, ud, odds), clv=clv))
                         break
                 # --- OVER ---

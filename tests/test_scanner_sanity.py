@@ -593,6 +593,18 @@ def test_bk_pick_status_drop_and_back():
     assert src.count('bps.track(') == 2
 
 
+def test_intl_x12_win_as_minus_half():
+    """1/10/2026: εθνικες — γραμμη φαβορι −0.25/0 → η ξερη νικη 1Χ2 τιμολογειται ως −0.5 (ιδιοι κανονες) και διαβαζεται απο τη συναινεση."""
+    import intl_dashboard_build as B, intl_consensus as ic
+    mk = {'pinnacle': {'ah_line': 0.25, 'oh': 2.05, 'oa': 1.85, 'o1': 4.6, 'ox': 3.6, 'o2': 1.95}}
+    pk = B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False)
+    assert pk.startswith('FAV 2 -0.50 @1.95') and '1Χ2' in pk, pk
+    c = ic.parse(pk)[0]
+    assert c['mkt'] == 'AH' and c['line'] == -0.5 and c['side'] == 2 and 'νικη (1Χ2)' in ic.label(c, 'A', 'B')
+    mk['pinnacle']['o2'] = 2.15
+    assert B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False) == '', 'εκτος 1.70-2.10 → οχι pick'
+
+
 def test_d_core7_anchor_short_lines_only():
     """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
     import core7_anchor as CA
