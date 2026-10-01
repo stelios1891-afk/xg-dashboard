@@ -155,18 +155,15 @@ def line(p, prev=None):
     if p.get('coach_notes'): why += ' · ' + ' · '.join(p['coach_notes'])
     return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})" + (f"\n{p['mkt_note']}" if p.get('mkt_note') else '')
 
-# 1/10/2026 (Στελιος): ELEGXOS KLEISIMATOS — στο τελευταιο μισαωρο πριν το τζαμπολ (scanner καθε 15'), για καθε pick που ΠΑΙΞΑΜΕ
-# (πρωτη εγγραφη, οχι paper): ποσο κινηθηκε η αγορα απο την εισοδο μας (αναμενομενη διαφορα/συνολο, με αποδοσεις).
-# el_alert_types (picks στο ανοιγμα, κινηση ως το κλεισιμο): κοντρα ≥1.5π συνολα −10.7% (39) / χαντικαπ −17.4% (38)·
-# προς εμας ≥1.5π συνολα +31.4% (115) / χαντικαπ +28.4% (48). Μονο ΕΝΗΜΕΡΩΣΗ στο info bot· προς εμας → γραμμη middle.
-CLOSE_MIN, CLOSE_PTS = 35, 1.5
-def _rng(a, b):
-    lo, hi = math.floor(min(a, b)) + 1, math.ceil(max(a, b)) - 1        # ακεραια αποτελεσματα ΑΝΑΜΕΣΑ στις δυο γραμμες
-    return f'{lo}' if lo == hi else f'{lo}-{hi}'
+# 1/10/2026 (Στελιος): ELEGXOS KLEISIMATOS — για καθε pick που ΠΑΙΞΑΜΕ (πρωτη εγγραφη, οχι paper): ποσο κινηθηκε η αγορα απο την
+# εισοδο μας ως το ΚΛΕΙΣΙΜΟ (αναμενομενη διαφορα/συνολο, με αποδοσεις). el_alert_types (picks στο ανοιγμα, κινηση ως το κλεισιμο):
+# κοντρα ≥1.5π συνολα −10.7% (39) / χαντικαπ −17.4% (38) · προς εμας ≥1.5π συνολα +31.4% (115) / χαντικαπ +28.4% (48). Μονο ΕΝΗΜΕΡΩΣΗ (info bot).
+# 1/10 βραδυ (Στελιος «να ερχεται ακριβως στο κλεισιμο, χωρις middle»): στελνεται ΜΕΤΑ το τζαμπολ (πρωτο τικ, εως 30′) με την
+# ΤΕΛΕΥΤΑΙΑ τιμη πριν το τζαμπολ (el_odds_hist) = το πραγματικο κλεισιμο· οχι πια 35′ πριν, οχι γραμμη middle.
+CLOSE_AFTER_MIN, CLOSE_PTS = 30, 1.5
 def close_check(state, now, sm, st):
     msgs = []
     try:
-        odds = _load(F('el_odds_latest.json'), {}).get('odds', {})
         bets = {}
         for ln in open(F('el_clv_bets.jsonl'), encoding='utf-8'):
             try: b = json.loads(ln)
@@ -178,40 +175,39 @@ def close_check(state, now, sm, st):
     except FileNotFoundError:
         return msgs
     tnow = dt.datetime.fromisoformat(now)
+    ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
     for k, b in bets.items():
         if k in state: continue
         ko = dt.datetime.fromisoformat(b['when']).replace(tzinfo=dt.timezone.utc)
-        mins = (ko - tnow).total_seconds() / 60
-        if not (0 < mins <= CLOSE_MIN): continue
-        o = odds.get(str(b['code']), {}).get('pin') or {}
+        after = (tnow - ko).total_seconds() / 60
+        if not (0 <= after <= CLOSE_AFTER_MIN): continue                 # μολις ξεκινησε το ματς
         p = dict(b, side=b['side'] if b['mkt'] == 'hcap' else (1 if str(b.get('bet', '')).startswith('Over') else -1))
-        m0 = drift_before(dict(p, side=p['side']), b['seen'], sm, st, hours=0.0)   # μονο για να φορτωσει το ιστορικο
+        drift_before(dict(p, side=p['side']), b['seen'], sm, st, hours=0.0)   # μονο για να φορτωσει το ιστορικο
         H = [r for r in (_HIST or {}).get(int(b['code']), []) if r.get('line' if b['mkt'] == 'hcap' else 'tl') is not None]
-        ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
         ent = [r for r in H if ts(r) <= dt.datetime.fromisoformat(b['seen']) + dt.timedelta(minutes=15)]
-        if not ent or not o: continue
+        cls = [r for r in H if ts(r) < ko]                                 # τελευταια τιμη ΠΡΙΝ το τζαμπολ = κλεισιμο
+        if not ent or not cls: continue
+        o = cls[-1]
         mu0, mu1 = _mu(ent[-1], b['mkt'], sm, st), _mu(o, b['mkt'], sm, st)
         if mu0 is None or mu1 is None: continue
         mv = round((mu1 - mu0) * p['side'], 1)                     # + = η αγορα ηρθε ΠΡΟΣ εμας
         state[k] = dict(when=b['when'], mv=mv, checked=now)
         if abs(mv) < CLOSE_PTS: continue
         if b['mkt'] == 'hcap':
-            team = b['home'] if b['side'] == 1 else b['away']; other = b['away'] if b['side'] == 1 else b['home']
+            team = b['home'] if b['side'] == 1 else b['away']
             h1 = float(b['hcap']); h2 = float(o['line']) * (1 if b['side'] == 1 else -1)
-            bet = f"{team} {'+' if h1 >= 0 else ''}{h1:g} @{b['odds']:.2f}"; now_l = f"{team} {'+' if h2 >= 0 else ''}{h2:g}"
-            mid = (f"middle: {other} {'+' if -h2 >= 0 else ''}{-h2:g} → κερδιζουν ΚΑΙ τα δυο αν {team} νικησει με {_rng(-h1, -h2)}"
-                   if mv > 0 and h2 < h1 else '')
+            co = o.get('oh') if b['side'] == 1 else o.get('oa')
+            bet = f"{team} {'+' if h1 >= 0 else ''}{h1:g} @{b['odds']:.2f}"
+            now_l = f"{team} {'+' if h2 >= 0 else ''}{h2:g}" + (f" @{float(co):.2f}" if co else '')
             hist = ('χαντικαπ +28.4% (48 picks)' if mv > 0 else 'χαντικαπ −17.4% (38 picks)')
         else:
-            T1 = float(b['hcap']); T2 = float(o['tl']); over = p['side'] == 1
-            bet = f"{b['bet']} @{b['odds']:.2f}"; now_l = f"συνολο {T2:g}"
-            mid = ((f"middle: {'Under' if over else 'Over'} {T2:g} → κερδιζουν ΚΑΙ τα δυο αν το συνολο βγει {_rng(T1, T2)}")
-                   if mv > 0 and ((over and T2 > T1) or (not over and T2 < T1)) else '')
+            T2 = float(o['tl']); over = p['side'] == 1
+            co = o.get('to') if over else o.get('tu')
+            bet = f"{b['bet']} @{b['odds']:.2f}"; now_l = f"{'Over' if over else 'Under'} {T2:g}" + (f" @{float(co):.2f}" if co else '')
             hist = ('συνολα +31.4% (115 picks)' if mv > 0 else 'συνολα −10.7% (39 picks)')
         head = '✅ ΚΛΕΙΣΙΜΟ ΥΠΕΡ ΜΑΣ' if mv > 0 else '⚠️ ΚΛΕΙΣΙΜΟ ΚΟΝΤΡΑ'
-        tail = f"\n{mid}" if mid else ("\n(κοντρα: καλυψη ΠΡΙΝ το ματς κλειδωνει τη ζημια + πληρωνει γκανιοτα ξανα)" if mv < 0 else '')
-        msgs.append(f"🏀 {head} · {b['home']} - {b['away']} (σε {mins:.0f}')\nπαιξαμε {bet} · τωρα {now_l} · κινηση {mv:+.1f} π. "
-                    f"{'προς εμας' if mv > 0 else 'κοντρα'}\nιστορικα: {hist}" + tail)
+        msgs.append(f"🏀 {head} · {b['home']} - {b['away']}\nπαιξαμε {bet} · εκλεισε {now_l} · κινηση {mv:+.1f} π. "
+                    f"{'προς εμας' if mv > 0 else 'κοντρα'}\nιστορικα: {hist}")
     return msgs
 
 def main(notify_tg=True):
