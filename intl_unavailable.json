@@ -1,5 +1,5 @@
 {
-"_asof": "2026-10-01T16:00",
+"_asof": "2026-10-01T17:00",
 "_xi": {
 "8238": {
 "match": "Denmark - Portugal",
@@ -1024,7 +1024,7 @@
 "6718": {
 "match": "Ukraine - Northern Ireland",
 "utc": "2026-10-02T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 1022350,
@@ -1063,19 +1063,19 @@
 "name": "Bogdan Mykhaylychenko"
 },
 {
-"pid": 1577424,
-"name": "Matviy Ponomarenko"
+"pid": 643690,
+"name": "Roman Yaremchuk"
 },
 {
-"pid": 1231648,
-"name": "Vladyslav Vanat"
+"pid": 955572,
+"name": "Danylo Sikan"
 }
 ]
 },
 "10259": {
 "match": "Ukraine - Northern Ireland",
 "utc": "2026-10-02T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 1420144,
@@ -2992,6 +2992,46 @@
 }
 },
 "8520": {
+"1168311": {
+"name": "Yasin Ayari",
+"type": "injury",
+"ret": "A few days",
+"doubtful": false,
+"match": "Bosnia and Herzegovina - Sweden",
+"until": "2026-10-05"
+},
+"1134825": {
+"name": "Patrik Wålemark",
+"type": "injury",
+"ret": "A few days",
+"doubtful": false,
+"match": "Bosnia and Herzegovina - Sweden",
+"until": "2026-10-05"
+},
+"931605": {
+"name": "Benjamin Nygren",
+"type": "injury",
+"ret": "A few days",
+"doubtful": false,
+"match": "Bosnia and Herzegovina - Sweden",
+"until": "2026-10-05"
+},
+"1272349": {
+"name": "Elliot Stroud",
+"type": "injury",
+"ret": "A few days",
+"doubtful": false,
+"match": "Bosnia and Herzegovina - Sweden",
+"until": "2026-10-05"
+},
+"919848": {
+"name": "Gustaf Lagerbielke",
+"type": "injury",
+"ret": "A few days",
+"doubtful": false,
+"match": "Bosnia and Herzegovina - Sweden",
+"until": "2026-10-05"
+},
 "1014630": {
 "name": "Emil Holm",
 "type": "injury",
@@ -3162,6 +3202,14 @@
 }
 },
 "6720": {
+"1202110": {
+"name": "Nico Williams",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "Spain - Czechia",
+"until": null
+},
 "288406": {
 "name": "Alejandro Grimaldo",
 "type": "injury",
@@ -3281,16 +3329,7 @@
 "started_last": true,
 "match": "France - Italy",
 "utc": "2026-10-02T18:45"
-},
-{
-"key": "8520|1168311|2026-10-02T18:45",
-"team": "Sweden",
-"name": "Yasin Ayari",
-"v": 25.125044,
-"started_last": true,
-"match": "Bosnia and Herzegovina - Sweden",
-"utc": "2026-10-02T18:45"
 }
 ],
-"_hash": "e1fee23bc1af7820574afaea6112413e"
+"_hash": "30a49d0a6755c78ec74be68e836d6655"
 }
