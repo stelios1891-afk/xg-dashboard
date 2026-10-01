@@ -342,6 +342,12 @@ def _intl_picks():
                     r = json.loads(ln); led[r['key']] = r
     except Exception:
         pass
+    try:      # 1/10: φρενο φρεσκαδας (intl_freshness) — picks που κρατηθηκαν επειδη λειπουν αποτελεσματα/ratings
+        with open(os.path.join(root, 'intl_guard_state.json'), encoding='utf-8') as fh:
+            _g = json.load(fh)
+        held = set(_g.get('blocked') or []); held_note = _g.get('note') or ''
+    except Exception:
+        held, held_note = set(), ''
     now = _dt.datetime.now(_dt.timezone.utc); out = []
     for c in d.get('comps', []):
         for m in c.get('matches', []):
@@ -359,6 +365,8 @@ def _intl_picks():
                          side=0 if x['mkt'] == 'OVER' else (1 if x['side'] == 1 else -1), hcap=x['line'], odds=x['odds'],
                          edge=x['edge'], proj_odds=round(x['odds'] / (1 + x['edge']), 2), when=m['utc'].replace(' ', 'T'), intl=True,
                          models=x.get('models'), late=L.get('late', ''))
+                if key in held:
+                    q['stale'] = held_note or 'λειπουν αποτελεσματα/ratings'
                 if x['mkt'] == 'OVER':
                     q['bet'] = f"Over {x['line']:g}"
                 try:

@@ -227,6 +227,29 @@ def main():
     rows = load_ledger(); known = {r['key'] for r in rows}; known_before = set(known)
     removed = {r['key'] for r in rows if r.get('removed') and r.get('stream') == 'ΣΥΝΑΙΝΕΣΗ'}
     add = new_entries(dash, known, now, removed)
+    # 1/10/2026 (Στελιος): ΦΡΕΝΟ — κανενα νεο pick αν τα αποτελεσματα/ratings των ομαδων του δεν ειναι ενημερωμενα (intl_freshness)
+    import intl_freshness as fr
+    prev_g = fr.load_state(); warned = set(prev_g.get('warned', []))
+    if add:
+        g = fr.check(now); keep, held = [], []
+        for r in add:
+            why = fr.blocked(r, g)
+            (held if why else keep).append((r, why))
+        add = [r for r, _ in keep]
+        bkeys = [r['key'] for r, _ in held]
+        new_warn = [(r, why) for r, why in held if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ' and r['key'] not in warned]
+        for r, why in held:
+            print(f"  ⏸ ΦΡΕΝΟ: {r['comp']} {r['home']} – {r['away']} · {r['label']} → {why}")
+        if new_warn and os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID'):
+            import notify
+            NL = chr(10)
+            notify.send('⏸ ΕΘΝΙΚΕΣ · pick ΚΡΑΤΗΘΗΚΕ (δεν βγαινει μεχρι να ανανεωθουν αποτελεσματα/ratings)' + NL + NL +
+                        (NL + NL).join(f"{r['comp']} · {r['home']} – {r['away']}{NL}{r['label']}{NL}{why}" for r, why in new_warn), channel='info')
+        warned |= {r['key'] for r, _ in new_warn}
+        fr.save_state(dict(g, warned=sorted(warned)), bkeys)
+    else:
+        fr.save_state(dict({k: prev_g.get(k) for k in ('ok_ratings', 'missing_matches', 'fotmob_ok', 'note', 'checked')},
+                           stale_teams={}, warned=sorted(warned)), [])
     changed = bool(add)
     rows += add
     # εκκαθαριση

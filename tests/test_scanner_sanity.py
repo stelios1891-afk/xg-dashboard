@@ -544,6 +544,22 @@ def test_d_fav15_rule():
     assert 'engine.evaluate_fav(' in src and 'core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)' in src and 'engine.FAV_MIN_MD' in src
 
 
+def test_d_intl_freshness_guard():
+    """1/10/2026: ΦΡΕΝΟ εθνικων — pick μπλοκαρεται αν ομαδα του εχει τελειωμενο ματς που δεν περασε, ή αν τα ratings δεν ξαναχτιστηκαν."""
+    import intl_freshness as fr, datetime as dt
+    now = dt.datetime(2026, 10, 1, 12, tzinfo=dt.timezone.utc)
+    fake = [('999999999', 111, 222, '2026-09-30 18:45', 'NL C', 'A – B')]          # ματς που ΔΕΝ υπαρχει στο intl_matches
+    g = fr.check(now, finished=fake)
+    assert 111 in g['stale_teams'] and 222 in g['stale_teams'] and g['missing_matches']
+    assert fr.blocked(dict(hid=111, aid=5), dict(g, ok_ratings=True)) and fr.blocked(dict(hid=5, aid=222), dict(g, ok_ratings=True))
+    assert fr.blocked(dict(hid=5, aid=6), dict(g, ok_ratings=True)) is None
+    assert fr.blocked(dict(hid=5, aid=6), dict(g, ok_ratings=False)), 'ratings μη ξαναχτισμενα → ολα μπλοκ'
+    assert fr.blocked(dict(hid=5, aid=6), dict(g, ok_ratings=True, fotmob_ok=False)), 'χωρις FotMob → μπλοκ (δεν επιβεβαιωνεται)'
+    src = open(os.path.join(ROOT, 'intl_picks_ledger.py'), encoding='utf-8').read()
+    assert 'fr.check(now)' in src and 'fr.blocked(r, g)' in src
+    assert 'intl_guard_state.json' in open(os.path.join(ROOT, 'scanner_tick.sh'), encoding='utf-8').read()
+
+
 def test_d_core7_anchor_short_lines_only():
     """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
     import core7_anchor as CA
