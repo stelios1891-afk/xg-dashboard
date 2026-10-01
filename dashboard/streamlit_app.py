@@ -74,12 +74,13 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
          ('lineup', 'Lineup Lab', '🧪'), ('europe', 'Europe', '🌍'),
          ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο (χαντικαπ v1 + συνολο v2) vs αγορα (TOA)
+         ('eurocup', 'EuroCup', '🏀'),         # 1/10/2026: EuroCup — μοντελο ec1 vs Pinnacle (ιδια σελιδα με την Ευρωλιγκα)
          ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -423,6 +424,26 @@ def _el_picks():
     return out, d.get('scanned_at')
 
 
+def _ec_picks():
+    """Value picks EuroCup (1/10/2026): ec_picks.py στον scanner · ΜΟΝΟ χαντικαπ, edge ≥8% · Pinnacle."""
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ec_value_latest.json'), encoding='utf-8') as fh:
+            d = json.load(fh)
+    except Exception:
+        return [], None
+    out = []
+    for p in d.get('picks', []):
+        q = dict(lg='EuroCup', home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
+                 proj_odds=p.get('proj_odds'), when=p['when'], el=True, mkt=p.get('mkt'))
+        try:
+            import calc_data
+            q['calc'] = calc_data.single_calc(q, 0.08)
+        except Exception:
+            pass
+        out.append(q)
+    return out, d.get('scanned_at')
+
+
 def render_value(league):
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#34d17a">💰 VALUE PICKS</div>'
                 '<div class="co">LIVE · THE ODDS API · PINNACLE/MATCHBOOK AH</div></div></div>', unsafe_allow_html=True)
@@ -436,6 +457,7 @@ def render_value(league):
     eu_picks, eu_scan = _euro_picks()
     in_picks, in_scan = _intl_picks()
     el_picks, el_scan = _el_picks()
+    ec_picks, ec_scan = _ec_picks()          # 1/10: EuroCup
     # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
     # ως pick, ακομα κι αν το αρχειο του scan ειναι παλιοτερο απο τη σεντρα.
     import datetime as _dt
@@ -453,7 +475,8 @@ def render_value(league):
     eu_picks = [p for p in eu_picks if _upcoming(p)]
     in_picks = [p for p in in_picks if _upcoming(p)]
     el_picks = [p for p in el_picks if _upcoming(p)]
-    eu_picks = eu_picks + in_picks + el_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
+    ec_picks = [p for p in ec_picks if _upcoming(p)]
+    eu_picks = eu_picks + in_picks + el_picks + ec_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
     if not res:
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
         if not eu_picks:
@@ -486,7 +509,7 @@ def render_value(league):
             st.caption(f"⚙ Συνολικη εκθεση {gr*100:.0f}% > cap {cap*100:.0f}% → μειωση ολων ×{sc:.2f}.")
     # ---- φιλτρο ανα πρωταθλημα (default: ολα μαζι) ----
     combined = picks + eu_picks
-    order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague', 'Euroleague', 'NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
+    order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague', 'Euroleague', 'EuroCup', 'NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
     lgs_present = sorted({p['lg'] for p in combined}, key=lambda x: order.index(x) if x in order else 99)
     sel_lg = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs_present,
                           format_func=lambda x: 'Όλα τα πρωταθληματα' if x == 'Όλα' else value_view.LEAGUE_LABELS.get(x, x),
@@ -504,6 +527,10 @@ def render_value(league):
         st.caption('🏀 **Euroleague** = μοντελο v3 (χαντικαπ: v1 + ειδικοι αρχης σεζον · συνολο: v2 + παρατασεις) · '
                    'pick οταν edge ≥8% στην τιμη Pinnacle (χαντικαπ ή over/under) · stake ερευνητικο ~¼ μοναδας · '
                    f'EL scan: {el_scan or "—"}')
+    if ec_picks:
+        st.caption('🏀 **EuroCup** = μοντελο ec1 (αφετηρια: 0.2 × περσι + ειδικοι Eurohoops/Taking The Charge/αποδοσεις νικητη + φιλικα · '
+                   'φετινα εγχωρια απο τον 1ο αγωνα) · ΜΟΝΟ χαντικαπ, edge ≥8% στην τιμη Pinnacle · stake ερευνητικο ~¼ μοναδας · '
+                   f'EC scan: {ec_scan or "—"}')
     if in_picks:
         st.caption('🌐 **ΕΘΝ.** = εθνικες (Nations League) · κανονικο pick οταν συμφωνουν **≥2 απο τα 3 μοντελα** (Μ1 H+αξια / Μ2 Αγκυρα / Μ3 Αγκυρα+αξια) '
                    'σε handicap ή over (over μονο σε κοντινα ματς / νοκ-αουτ) · edge = το μικροτερο απο τα μοντελα που συμφωνουν · '
@@ -542,7 +569,7 @@ def render_ledger(league):
                "Σε ολα: ενα pick ανα ματς & πλευρα, η πρωτη φορα που ηταν ενεργο ≤72ω πριν τη σεντρα.")
     try:
         settled, pending = _ledger_data(_stamp('clv_ledger.jsonl', 'clv_bets.jsonl', 'intl_picks_ledger.jsonl', 'intl_closing.jsonl',
-                                               'euro_picks_ledger.jsonl', 'el_clv_bets.jsonl', 'el_projections.json', 'el_odds_hist.jsonl',
+                                               'euro_picks_ledger.jsonl', 'el_clv_bets.jsonl', 'el_projections.json', 'el_odds_hist.jsonl', 'ec_clv_bets.jsonl', 'ec_projections.json', 'ec_odds_hist.jsonl',
                                                'dashboard/ledger_view.py'))
     except Exception as e:
         st.error(f"Σφαλμα φορτωσης: {e}")
@@ -844,10 +871,42 @@ def render_europe(league):
 
 
 @st.cache_data(ttl=15 * 60)
-def _el_data(mtimes):
-    """🏀 Ευρωλιγκα: ολα τα αρχεια της σελιδας (κλειδι cache = mtimes -> νεο commit = νεα δεδομενα)."""
+def _el_data(mtimes, comp='EL'):
+    """🏀 Ευρωλιγκα / EuroCup: ολα τα αρχεια της σελιδας (κλειδι cache = mtimes -> νεο commit = νεα δεδομενα)."""
     import euroleague_view as elv
-    return elv.load_all()
+    return elv.load_all(comp)
+
+
+def render_eurocup(league):
+    """🏀 EuroCup (1/10/2026): ιδια σελιδα με την Ευρωλιγκα — μοντελο ec1 vs Pinnacle."""
+    import euroleague_view as elv
+    data = _el_data(elv.files_mtime('EC'), 'EC')
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 EUROCUP</div>'
+                '<div class="co">EUROCUP 2026/27 · 4 ΟΜΙΛΟΙ × 8 · ΜΟΝΤΕΛΟ ec1 · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ (PINNACLE)</div></div></div>',
+                unsafe_allow_html=True)
+    if not data:
+        st.info('Δεν υπαρχουν ακομα προβλεψεις — τρεχει καθε πρωι (ec_refresh.py στο euro-refresh).')
+        return
+    proj = data['proj']; scan = data.get('scanned_at')
+    st.caption(f"Ιδια μηχανη με την Ευρωλιγκα (κατοχες × ποντοι/κατοχη). Αφετηρια: 20% περσινο EuroCup + ειδικοι (Eurohoops, Taking The Charge, "
+               f"αποδοσεις νικητη) + φιλικα · φετινα εγχωρια απο τον 1ο αγωνα. Picks ΜΟΝΟ χαντικαπ (τα συνολα δεν εχουν τεσταριστει). "
+               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
+               + (f" · αγορα: **{str(scan)[:16].replace('T', ' ')} UTC**" if scan else ' · αγορα: ο scanner πιανει γραμμες Pinnacle 48h πριν το τζαμπολ'))
+    vis = dict(proj, games=elv.visible_games(proj))
+    keys = elv.rounds(vis)
+    if not keys:
+        st.info('Δεν βρεθηκαν ματς.'); return
+    dflt = elv.default_round(vis, keys)
+    key = st.selectbox('Αγωνιστικη', keys, index=keys.index(dflt), format_func=lambda k: f'Αγωνιστικη {k[1]}', key='ec_round')
+    games = elv.round_games(vis, key)
+    grp = sorted({g.get('group') for g in games if g.get('group')})
+    if grp:
+        sel = st.radio('Ομιλος', ['Ολοι'] + grp, horizontal=True, key='ec_group')
+        if sel != 'Ολοι': games = [g for g in games if g.get('group') == sel]
+    st.components.v1.html(elv.cards_block(games, data), height=elv.block_height(games), scrolling=True)
+    with st.expander('Ratings ομαδων'):
+        st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
+        st.caption('Net = επιθεση − αμυνα σε ποντους/100 κατοχες vs μεσο ορο · ×0.72 ≈ ποντοι διαφορας ανα ματς.')
 
 
 def render_euroleague(league):
@@ -1026,7 +1085,7 @@ RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': ren
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
           'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl,
-          'euroleague': render_euroleague}
+          'euroleague': render_euroleague, 'eurocup': render_eurocup}
 if page in RENDER:
     RENDER[page](league)
 else:

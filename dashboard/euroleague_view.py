@@ -29,6 +29,10 @@ ODDS_F = os.path.join(ROOT, 'el_odds_latest.json')
 HIST_F = os.path.join(ROOT, 'el_odds_hist.jsonl')
 NOW_F = os.path.join(ROOT, 'toa_el_now.json')
 FILES = (PROJ_F, ODDS_F, HIST_F, NOW_F)
+# 1/10/2026: ιδια σελιδα και για το EuroCup (ec_refresh / ec_odds_scan) — comp='EC'
+COMP_FILES = {'EL': dict(proj=PROJ_F, odds=ODDS_F, hist=(HIST_F, os.path.join(ROOT, 'el_closing_backfill.jsonl')), now=NOW_F),
+              'EC': dict(proj=os.path.join(ROOT, 'ec_projections.json'), odds=os.path.join(ROOT, 'ec_odds_latest.json'),
+                         hist=(os.path.join(ROOT, 'ec_odds_hist.jsonl'), os.path.join(ROOT, 'ec_closing_backfill.jsonl')), now=None)}
 
 EDGE_HI = 0.05          # edge ≥5% -> πρασινο (οπως το «value» των αλλων tabs)
 esc = cards.esc
@@ -60,9 +64,11 @@ def _json(path):
         return None
 
 
-def files_mtime():
+def files_mtime(comp='EL'):
     """Κλειδι cache για το Streamlit: αλλαζει μολις ερθει νεο commit/αρχειο."""
-    return tuple(os.path.getmtime(f) if os.path.exists(f) else 0 for f in FILES)
+    c = COMP_FILES[comp]
+    fs = [c['proj'], c['odds'], *c['hist']] + ([c['now']] if c['now'] else [])
+    return tuple(os.path.getmtime(f) if os.path.exists(f) else 0 for f in fs)
 
 
 def _pdt(s):
@@ -72,10 +78,10 @@ def _pdt(s):
     return datetime.datetime.fromisoformat(s.replace('Z', '+00:00'))
 
 
-def _closing_from_hist():
+def _closing_from_hist(comp='EL'):
     """{code: τελευταια γραμμη hist με t < commence}."""
     out = {}
-    for path in (HIST_F, os.path.join(ROOT, 'el_closing_backfill.jsonl')):   # scanner + συμπληρωμα ιστορικου (toa_el_backfill_closing.py)
+    for path in COMP_FILES[comp]['hist']:   # scanner + συμπληρωμα ιστορικου (toa_el_backfill_closing.py / ec: Nowgoal Crown)
       try:
         with open(path, encoding='utf-8') as fh:
             for ln in fh:
@@ -112,16 +118,17 @@ def _morning(proj):
         return {}, None
 
 
-def load_all():
-    """Ολα τα δεδομενα της σελιδας (dict) ή None αν λειπει το el_projections.json."""
-    proj = _json(PROJ_F)
+def load_all(comp='EL'):
+    """Ολα τα δεδομενα της σελιδας (dict) ή None αν λειπει το el_projections.json (ec_projections.json για comp='EC')."""
+    c = COMP_FILES[comp]
+    proj = _json(c['proj'])
     if not proj or not proj.get('games'):
         return None
-    lat = _json(ODDS_F) or {}
-    morning, morning_when = _morning(proj)
+    lat = _json(c['odds']) or {}
+    morning, morning_when = _morning(proj) if comp == 'EL' else ({}, None)
     return dict(proj=proj, odds=(lat.get('odds') or {}) if isinstance(lat, dict) else {},
                 scanned_at=lat.get('scanned_at') if isinstance(lat, dict) else None,
-                closing=_closing_from_hist(), morning=morning, morning_when=morning_when)
+                closing=_closing_from_hist(comp), morning=morning, morning_when=morning_when)
 
 
 # ---------------- μαθηματικα ----------------

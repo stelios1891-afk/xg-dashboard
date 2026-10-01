@@ -73,7 +73,7 @@ def prepare(current_season):
             except Exception:
                 pass
     settled, pending = _first_alert(settled), _first_alert(pending)
-    for fn in (_intl_rows, _euro_rows, _el_rows):
+    for fn in (_intl_rows, _euro_rows, _el_rows, lambda: _el_rows('EC')):     # 1/10: + EuroCup
         try:
             s_i, p_i = fn()
             settled += s_i; pending += p_i
@@ -213,19 +213,21 @@ def _euro_rows():
 # οι μεταγενεστερες γραμμες (π.χ. +8.5 → +9.5) μονο ως σημειωση «μετα», ΟΧΙ ξεχωριστα bets.
 # Αποτελεσμα = el_projections.json · κλεισιμο = τελευταια τιμη Pinnacle πριν το τζαμπολ (el_odds_hist + el_closing_backfill).
 # Αλλη γραμμη στο κλεισιμο → ≈CLV: το κλεισιμο μεταφρασμενο στη γραμμη μας (κανονικη κατανομη, σ του μοντελου), ιδια γκανιοτα.
-def _el_rows():
+def _el_rows(comp='EL'):
+    """comp='EC' (1/10/2026): EuroCup — ιδια λογικη με ec_clv_bets.jsonl / ec_projections.json / ec_odds_hist.jsonl."""
+    pre, lg_ = ('el', 'Euroleague') if comp == 'EL' else ('ec', 'EuroCup')
     import el_report as er
-    proj = json.load(open(os.path.join(ROOT, 'el_projections.json'), encoding='utf-8'))
+    proj = json.load(open(os.path.join(ROOT, f'{pre}_projections.json'), encoding='utf-8'))
     games = {g['code']: g for g in proj.get('games', [])}
     sm, stt = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
     close = {}
-    for c in _jsonl(os.path.join(ROOT, 'el_odds_hist.jsonl')) + _jsonl(os.path.join(ROOT, 'el_closing_backfill.jsonl')):
+    for c in _jsonl(os.path.join(ROOT, f'{pre}_odds_hist.jsonl')) + _jsonl(os.path.join(ROOT, f'{pre}_closing_backfill.jsonl')):
         if c.get('line') is None or c['t'] + ':00' >= c['commence'][:19]:
             continue
         if c['code'] not in close or c['t'] > close[c['code']]['t']:
             close[c['code']] = c
     grp = {}
-    for b in _jsonl(os.path.join(ROOT, 'el_clv_bets.jsonl')):
+    for b in _jsonl(os.path.join(ROOT, f'{pre}_clv_bets.jsonl')):
         d = (b.get('bet') or '').split(' ')[0] if b['mkt'] == 'total' else b['side']
         grp.setdefault((b['code'], b['mkt'], d), []).append(b)
     settled, pending = [], []
@@ -238,7 +240,7 @@ def _el_rows():
         b = ok[0] if ok else v[-1]
         g = games.get(b['code'], {})
         tot = b['mkt'] == 'total'
-        r = dict(lg='Euroleague', home=b['home'], away=b['away'], hid=None, aid=None, hlogo=g.get('hcrest'), alogo=g.get('acrest'),
+        r = dict(lg=lg_, home=b['home'], away=b['away'], hid=None, aid=None, hlogo=g.get('hcrest'), alogo=g.get('acrest'),
                  ko=b['when'], bk=True, mkt=b['mkt'], side=(0 if tot else b['side']), hcap=float(b['hcap']), odds=float(b['odds']),
                  edge=b.get('edge'), seen=b['seen'], bet_label=(b.get('bet') if tot else None),
                  paper_note=(f"καταγραφη (τελευταιο 2ωρο · {b.get('late_kind') or ''})" if b.get('paper') == 'late2h' else

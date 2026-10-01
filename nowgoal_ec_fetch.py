@@ -8,10 +8,11 @@ import requests
 sys.stdout.reconfigure(encoding='utf-8')
 OUT = 'nowgoal_ec'; os.makedirs(OUT, exist_ok=True); OF = f'{OUT}/odds.jsonl'
 S = requests.Session(); S.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36'})
-SEAS = ['20-21', '21-22', '22-23', '23-24', '24-25', '25-26']
+SEAS = [a for a in sys.argv[1:] if not a.startswith('--')] or ['20-21', '21-22', '22-23', '23-24', '24-25', '25-26']   # 1/10: π.χ. «26-27 --refresh» για τρεχουσα σεζον
+REFRESH = '--refresh' in sys.argv
 def sched(sea):
     fn = f'{OUT}/sched_{sea}.json'
-    if os.path.exists(fn): return json.load(open(fn, encoding='utf-8'))
+    if os.path.exists(fn) and not REFRESH: return json.load(open(fn, encoding='utf-8'))
     r = S.get(f'https://basketball.nowgoal26.com/jsData/matchResult/{sea}/c21.js', headers={'Referer': 'https://basketball.nowgoal26.com/'}, timeout=30)
     t = r.content
     try: t = gzip.decompress(t)

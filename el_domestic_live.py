@@ -25,12 +25,14 @@ def _fit(hi, ai, y, n, R0):
     s8 = math.sqrt(LAM); A[m + np.arange(n), np.arange(n)] = s8; b[m:] = s8 * R0
     return np.linalg.lstsq(A, b, rcond=None)[0][:n]
 
-def build_shifts(el_teams, d0, season=None, path='bk_domestic.json'):
+def build_shifts(el_teams, d0, season=None, path='bk_domestic.json', extra=None, kappa=None):
     if season is None:
         from el_season import NG as season          # 1/10: τρεχουσα σεζον αυτοματα (ηταν '26-27')
     """el_teams: {κωδικος EL: ονομα} · d0: ημερομηνια-αφετηρια των dnum του el_refresh.
     Επιστρεφει (shift(κωδικος, cut) → ποντοι/100 για την αφετηρια, πινακας αντιστοιχισης, Δ σημερα ανα ομαδα)."""
     DOM = json.load(open(path, encoding='utf-8'))
+    if extra: DOM.update(extra)                      # 1/10: EuroCup — +6 πρωταθληματα Flashscore (ec_refresh.py)
+    kap = KAPPA if kappa is None else kappa         # 1/10: EuroCup κ 1 (ec_contrib_test)
     d0 = dt.date.fromisoformat(str(d0)[:10])
     series, names = {}, {}
     for L in sorted({k.split('_')[0] for k in DOM}):
@@ -76,6 +78,6 @@ def build_shifts(el_teams, d0, season=None, path='bk_domestic.json'):
             if d <= cut - 1: v = x
             else: break
         return v
-    shift = lambda code, cut: KAPPA * delta(code, cut) * 100 / 72
+    shift = lambda code, cut: kap * delta(code, cut) * 100 / 72
     info = {c: (MAP[c][0], names.get(MAP[c])) for c in MAP}
     return shift, info, delta
