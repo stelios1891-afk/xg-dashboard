@@ -605,6 +605,19 @@ def test_intl_x12_win_as_minus_half():
     assert B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False) == '', 'εκτος 1.70-2.10 → οχι pick'
 
 
+def test_intl_status_better_price_stays_active():
+    """1/10/2026: pick που σταλθηκε (−0.5 @2.09) δεν «πεφτει» οταν η τιμη ανεβαινει πανω απο 2.10 με ≥2 μοντελα ακομα ≥10%."""
+    import intl_pick_status as ps
+    row = dict(mkt='AH', side=2, line=-0.5)
+    m = {'market': {'source': 'pinnacle', 'pinnacle': {'ah_line': 0.5, 'oh': 1.79, 'oa': 2.15}},
+         'edges': {'H': {'pinnacle': {'ah_away': 11.0, 'need_a': 2.12}}, 'A': {'pinnacle': {'ah_away': 5.0, 'need_a': 2.3}},
+                   'AV': {'pinnacle': {'ah_away': 16.0, 'need_a': 2.0}}}}
+    assert ps.status(row, m)['active']
+    m['edges']['H']['pinnacle'].update(ah_away=9.8, need_a=2.16)
+    st = ps.status(row, m)
+    assert not st['active'] and abs(st['need'] - 2.16) < 1e-9, 'need πανω απο 2.10 πρεπει να αναφερεται'
+
+
 def test_d_core7_anchor_short_lines_only():
     """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
     import core7_anchor as CA

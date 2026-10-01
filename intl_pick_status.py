@@ -32,7 +32,7 @@ def status(row, m):
     if not b:
         return None
     E = m.get('edges') or {}
-    edges, needs = {}, []
+    edges, needs, raw = {}, [], {}
     if row['mkt'] == 'OVER':
         if b.get('ou_line') is None:
             return None
@@ -40,7 +40,7 @@ def status(row, m):
         for v, lab in VERS:
             r = (E.get(v) or {}).get(src) or {}
             if r.get('over') is not None:
-                edges[lab] = round(r['over'])
+                edges[lab] = round(r['over']); raw[lab] = r['over']
             if r.get('need_over'):
                 needs.append(r['need_over'])
     else:
@@ -53,11 +53,17 @@ def status(row, m):
             r = (E.get(v) or {}).get(src) or {}
             e = r.get('ah_home' if home else 'ah_away')
             if e is not None:
-                edges[lab] = round(e)
+                edges[lab] = round(e); raw[lab] = e
             nd = r.get('need_h' if home else 'need_a')
-            if nd and nd <= ZONE_HI:
+            if nd:      # 1/10: χωρις ανω οριο — για pick που ηδη σταλθηκε, καλυτερη τιμη ειναι παντα δεκτη
                 needs.append(nd)
     needs.sort()
+    # 1/10/2026 (Στελιος, Ολλανδια −0.5 @2.09 → 2.15): pick που ΣΤΑΛΘΗΚΕ δεν «πεφτει» επειδη η τιμη εγινε ΚΑΛΥΤΕΡΗ (πανω απο το 2.10).
+    # Ενεργο αν η γραμμη ειναι ιδια ή καλυτερη για εμας ΚΑΙ ≥2 μοντελα δινουν ακομα το κατωφλι (AH 10% · over 8%) — χωρις ανω οριο τιμης.
+    thr = 8 if row['mkt'] == 'OVER' else 10
+    same_or_better = (line <= row['line'] + 1e-9) if row['mkt'] == 'OVER' else (line >= row['line'] - 1e-9)
+    if same_or_better and sum(1 for v in raw.values() if v >= thr - 1e-9) >= 2:   # ακριβη (οχι στρογγυλεμενα) edges
+        return dict(active=True, cur_line=line, cur_odds=odds, book=src, edges=edges, need=None, models=None, above_cap=True)
     return dict(active=False, cur_line=line, cur_odds=odds, book=src, edges=edges, need=(needs[1] if len(needs) >= 2 else None), models=None)
 
 
