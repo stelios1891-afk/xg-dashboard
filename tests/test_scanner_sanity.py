@@ -574,6 +574,25 @@ def test_workflows_valid_yaml():
     assert not bad, 'ΜΗ εγκυρα workflows: ' + ' | '.join(bad)
 
 
+def test_bk_pick_status_drop_and_back():
+    """1/10/2026: μπασκετ — pick που βγηκε και δεν ειναι πια pick (σε καμια γραμμη) → «δεν ισχυει πια»· ξαναγινεται → «ΞΑΝΑ PICK»."""
+    import bk_pick_status as bps, el_picks, json, tempfile, datetime as dt
+    ko = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=6)).strftime('%Y-%m-%dT%H:%M')
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
+    bet = dict(seen=now, code=99, home='A', away='B', mkt='total', side=0, hcap=171.0, bet='Over 171', odds=1.86, edge=0.09, when=ko)
+    f = tempfile.NamedTemporaryFile('w', suffix='.jsonl', delete=False, encoding='utf-8'); f.write(json.dumps(bet) + chr(10)); f.close()
+    games = {'99': dict(margin=0.0, total=174.6)}; odds = {'99': dict(pin=dict(tl=172.5, to=1.885, tu=1.97))}
+    state = {}
+    drops, backs = bps.track(state, [], f.name, games, odds, lambda m: 16.7, lambda m: 0.08, el_picks.cover, 'Euroleague', now)
+    assert len(drops) == 1 and 'Over 172.5' in drops[0] and 'χρειαζεται @1.96' in drops[0] and not backs
+    later = (dt.datetime.fromisoformat(now) + dt.timedelta(minutes=40)).isoformat(timespec='minutes')
+    p = dict(code=99, mkt='total', side=0, bet='Over 173', hcap=173.0, odds=2.05, edge=0.09, home='A', away='B')
+    drops, backs = bps.track(state, [p], f.name, games, odds, lambda m: 16.7, lambda m: 0.08, el_picks.cover, 'Euroleague', later)
+    assert len(backs) == 1 and 'ΞΑΝΑ PICK' in backs[0] and not drops
+    src = open(os.path.join(ROOT, 'el_picks.py'), encoding='utf-8').read() + open(os.path.join(ROOT, 'ec_picks.py'), encoding='utf-8').read()
+    assert src.count('bps.track(') == 2
+
+
 def test_d_core7_anchor_short_lines_only():
     """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
     import core7_anchor as CA

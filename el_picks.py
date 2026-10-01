@@ -263,6 +263,11 @@ def main(notify_tg=True):
                                  + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
     today = now[:10]
     close_msgs = close_check(state, now, sm_, st_)
+    # 1/10/2026 (Στελιος, Virtus–Olympiakos over 171): pick που ΔΕΝ ισχυει πια (σε καμια γραμμη) → μηνυμα· ξαναγινεται → «ΞΑΝΑ PICK»
+    import bk_pick_status as bps
+    drops, backs = bps.track(state, picks, F('el_clv_bets.jsonl'), {str(g['code']): g for g in proj_.get('games', [])},
+                             _load(F('el_odds_latest.json'), {}).get('odds', {}), lambda m: sm_ if m == 'hcap' else st_,
+                             lambda m: HC_MIN if m == 'hcap' else TOT_MIN, cover, 'Euroleague', now)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
     if new:
         with open(F('el_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:
@@ -283,6 +288,14 @@ def main(notify_tg=True):
             import notify; notify.send('\n'.join(msg))
         except Exception as e:
             print('Telegram σφαλμα:', e)
+    for t in backs + drops: print(t.replace(chr(10), ' | '))
+    if notify_tg and (backs or drops):
+        try:
+            import notify
+            if backs: notify.send((chr(10) * 2).join(backs))
+            if drops: notify.send('🏀 pick που ΔΕΝ ισχυει πια (αλλαξε γραμμη/τιμη)' + chr(10) * 2 + (chr(10) * 2).join(drops), silent=True)
+        except Exception as e:
+            print('Telegram σφαλμα (κατασταση):', e)
     if close_msgs:
         print('\n'.join(close_msgs))
         if notify_tg:
