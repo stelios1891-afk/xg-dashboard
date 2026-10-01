@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-01 08:59",
+ "generated": "2026-10-01 09:01",
  "toa_scanned": "2026-10-01 08:17",
  "toa_matches": 29,
- "ng_snapshot": "2026-09-24 17:57",
+ "ng_snapshot": "2026-10-01 08:33",
  "ng_snapshot_afconq": null,
  "comps": [
   {
@@ -26,7 +26,7 @@
        "diff": -72.0,
        "xg_h": 1.26,
        "xg_a": 1.61,
-       "T": 3.07,
+       "T": 3.14,
        "xg_h_D": 1.278,
        "xg_a_D": 1.586,
        "p1": 25,
@@ -43,7 +43,7 @@
        "diff": -85.0,
        "xg_h": 1.27,
        "xg_a": 1.69,
-       "T": 3.19,
+       "T": 3.25,
        "xg_h_D": 1.267,
        "xg_a_D": 1.696,
        "p1": 23,
@@ -60,7 +60,7 @@
        "diff": -125.0,
        "xg_h": 1.24,
        "xg_a": 1.85,
-       "T": 3.17,
+       "T": 3.23,
        "xg_h_D": 1.283,
        "xg_a_D": 1.811,
        "p1": 19,
@@ -149,9 +149,9 @@
         "ah_away": -11.3,
         "fair_a": 2.26,
         "need_a": 2.54,
-        "over": 1.8,
-        "p_over": 53.9,
-        "need_over": 2.02
+        "over": 4.8,
+        "p_over": 55.5,
+        "need_over": 1.96
        },
        "matchbook": {
         "ah_home": 5.7,
@@ -168,9 +168,9 @@
         "ah_away": -11.3,
         "fair_a": 2.26,
         "need_a": 2.54,
-        "over": 2.3,
-        "p_over": 53.8,
-        "need_over": 2.02
+        "over": 5.3,
+        "p_over": 55.4,
+        "need_over": 1.96
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -184,9 +184,9 @@
         "ah_away": -7.9,
         "fair_a": 2.18,
         "need_a": 2.45,
-        "over": 6.8,
-        "p_over": 56.5,
-        "need_over": 1.92
+        "over": 9.1,
+        "p_over": 57.7,
+        "need_over": 1.87
        },
        "matchbook": {
         "ah_home": 2.5,
@@ -203,9 +203,9 @@
         "ah_away": -7.9,
         "fair_a": 2.18,
         "need_a": 2.45,
-        "over": 7.3,
-        "p_over": 56.5,
-        "need_over": 1.92
+        "over": 9.7,
+        "p_over": 57.7,
+        "need_over": 1.87
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -219,9 +219,9 @@
         "ah_away": 0.8,
         "fair_a": 1.99,
         "need_a": 2.23,
-        "over": 5.9,
-        "p_over": 56.0,
-        "need_over": 1.94
+        "over": 8.4,
+        "p_over": 57.4,
+        "need_over": 1.89
        },
        "matchbook": {
         "ah_home": -5.8,
@@ -238,9 +238,9 @@
         "ah_away": 0.8,
         "fair_a": 1.99,
         "need_a": 2.23,
-        "over": 6.4,
-        "p_over": 56.0,
-        "need_over": 1.94
+        "over": 8.9,
+        "p_over": 57.3,
+        "need_over": 1.89
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -252,10 +252,26 @@
       "A": "",
       "AV": "",
       "over": "",
-      "over_A": "",
-      "over_AV": ""
+      "over_A": "OVER 2.75 @1.89 (Pinnacle, +9%)",
+      "over_AV": "OVER 2.75 @1.89 (Pinnacle, +8%)"
      },
-     "consensus": [],
+     "consensus": [
+      {
+       "mkt": "OVER",
+       "role": "over",
+       "side": 0,
+       "line": 2.75,
+       "odds": 1.89,
+       "book": "Pinnacle",
+       "edge": 0.08,
+       "models": "Μ2+Μ3",
+       "n": 2,
+       "edges": {
+        "Μ2": 0.09,
+        "Μ3": 0.08
+       }
+      }
+     ],
      "btts": {
       "H": 0.5732,
       "A": 0.5865,
@@ -297,7 +313,7 @@
        "diff": 371.0,
        "xg_h": 2.54,
        "xg_a": 0.72,
-       "T": 3.37,
+       "T": 3.44,
        "xg_h_D": 2.425,
        "xg_a_D": 0.837,
        "p1": 77,
@@ -314,7 +330,7 @@
        "diff": 424.0,
        "xg_h": 2.76,
        "xg_a": 0.7,
-       "T": 3.62,
+       "T": 3.68,
        "xg_h_D": 2.798,
        "xg_a_D": 0.665,
        "p1": 81,
@@ -331,7 +347,7 @@
        "diff": 483.0,
        "xg_h": 3.0,
        "xg_a": 0.65,
-       "T": 3.59,
+       "T": 3.65,
        "xg_h_D": 2.853,
        "xg_a_D": 0.806,
        "p1": 85,
@@ -423,9 +439,9 @@
         "ah_away": 14.0,
         "fair_a": 1.7,
         "need_a": 1.95,
-        "over": -18.3,
-        "p_over": 43.5,
-        "need_over": 2.49
+        "over": -15.3,
+        "p_over": 45.1,
+        "need_over": 2.4
        },
        "matchbook": {
         "ah_home": -26.8,
@@ -434,9 +450,9 @@
         "ah_away": 14.0,
         "fair_a": 1.7,
         "need_a": 1.95,
-        "over": -16.6,
-        "p_over": 43.5,
-        "need_over": 2.49
+        "over": -13.5,
+        "p_over": 45.1,
+        "need_over": 2.4
        },
        "bovada": {
         "ah_home": -26.3,
@@ -445,9 +461,9 @@
         "ah_away": 11.8,
         "fair_a": 1.7,
         "need_a": 1.95,
-        "over": -16.6,
-        "p_over": 43.5,
-        "need_over": 2.49
+        "over": -13.5,
+        "p_over": 45.1,
+        "need_over": 2.4
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -461,9 +477,9 @@
         "ah_away": 3.7,
         "fair_a": 1.92,
         "need_a": 2.2,
-        "over": -8.0,
-        "p_over": 48.9,
-        "need_over": 2.21
+        "over": -5.6,
+        "p_over": 50.2,
+        "need_over": 2.16
        },
        "matchbook": {
         "ah_home": -5.7,
@@ -472,9 +488,9 @@
         "ah_away": 3.7,
         "fair_a": 1.92,
         "need_a": 2.2,
-        "over": -6.1,
-        "p_over": 48.9,
-        "need_over": 2.21
+        "over": -3.6,
+        "p_over": 50.2,
+        "need_over": 2.16
        },
        "bovada": {
         "ah_home": -4.9,
@@ -483,9 +499,9 @@
         "ah_away": 1.7,
         "fair_a": 1.92,
         "need_a": 2.2,
-        "over": -6.1,
-        "p_over": 48.9,
-        "need_over": 2.21
+        "over": -3.6,
+        "p_over": 50.2,
+        "need_over": 2.16
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -499,9 +515,9 @@
         "ah_away": -8.3,
         "fair_a": 2.24,
         "need_a": 2.58,
-        "over": -9.2,
-        "p_over": 48.3,
-        "need_over": 2.24
+        "over": -6.7,
+        "p_over": 49.6,
+        "need_over": 2.18
        },
        "matchbook": {
         "ah_home": -8.8,
@@ -510,9 +526,9 @@
         "ah_away": -8.3,
         "fair_a": 2.24,
         "need_a": 2.58,
-        "over": -7.3,
-        "p_over": 48.3,
-        "need_over": 2.24
+        "over": -4.7,
+        "p_over": 49.6,
+        "need_over": 2.18
        },
        "bovada": {
         "ah_home": -8.0,
@@ -521,9 +537,9 @@
         "ah_away": -10.0,
         "fair_a": 2.24,
         "need_a": 2.58,
-        "over": -7.3,
-        "p_over": 48.3,
-        "need_over": 2.24
+        "over": -4.7,
+        "p_over": 49.6,
+        "need_over": 2.18
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -580,7 +596,7 @@
        "diff": -153.0,
        "xg_h": 0.91,
        "xg_a": 1.66,
-       "T": 2.59,
+       "T": 2.58,
        "xg_h_D": 0.953,
        "xg_a_D": 1.609,
        "p1": 17,
@@ -703,9 +719,9 @@
         "ah_away": 7.7,
         "fair_a": 1.87,
         "need_a": 2.1,
-        "over": -20.8,
-        "p_over": 42.8,
-        "need_over": 2.63
+        "over": -21.0,
+        "p_over": 42.7,
+        "need_over": 2.64
        },
        "matchbook": {
         "ah_home": -14.0,
@@ -722,9 +738,9 @@
         "ah_away": 7.2,
         "fair_a": 1.87,
         "need_a": 2.1,
-        "over": -20.8,
-        "p_over": 42.8,
-        "need_over": 2.63
+        "over": -21.0,
+        "p_over": 42.7,
+        "need_over": 2.64
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -738,9 +754,9 @@
         "ah_away": 0.3,
         "fair_a": 2.01,
         "need_a": 2.26,
-        "over": -19.2,
-        "p_over": 43.7,
-        "need_over": 2.57
+        "over": -19.4,
+        "p_over": 43.6,
+        "need_over": 2.58
        },
        "matchbook": {
         "ah_home": -7.2,
@@ -757,9 +773,9 @@
         "ah_away": -0.2,
         "fair_a": 2.01,
         "need_a": 2.26,
-        "over": -19.2,
-        "p_over": 43.7,
-        "need_over": 2.57
+        "over": -19.4,
+        "p_over": 43.6,
+        "need_over": 2.58
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -773,9 +789,9 @@
         "ah_away": 10.6,
         "fair_a": 1.83,
         "need_a": 2.04,
-        "over": -18.3,
-        "p_over": 44.2,
-        "need_over": 2.54
+        "over": -18.5,
+        "p_over": 44.1,
+        "need_over": 2.55
        },
        "matchbook": {
         "ah_home": -16.6,
@@ -792,9 +808,9 @@
         "ah_away": 10.0,
         "fair_a": 1.83,
         "need_a": 2.04,
-        "over": -18.3,
-        "p_over": 44.2,
-        "need_over": 2.54
+        "over": -18.5,
+        "p_over": 44.1,
+        "need_over": 2.55
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -851,7 +867,7 @@
        "diff": -237.0,
        "xg_h": 0.82,
        "xg_a": 1.98,
-       "T": 2.76,
+       "T": 2.74,
        "xg_h_D": 0.891,
        "xg_a_D": 1.904,
        "p1": 12,
@@ -868,7 +884,7 @@
        "diff": -271.0,
        "xg_h": 0.8,
        "xg_a": 2.12,
-       "T": 2.94,
+       "T": 2.93,
        "xg_h_D": 0.778,
        "xg_a_D": 2.143,
        "p1": 10,
@@ -885,7 +901,7 @@
        "diff": -337.0,
        "xg_h": 0.75,
        "xg_a": 2.39,
-       "T": 2.98,
+       "T": 2.96,
        "xg_h_D": 0.855,
        "xg_a_D": 2.283,
        "p1": 7,
@@ -977,9 +993,9 @@
         "ah_away": -13.7,
         "fair_a": 2.27,
         "need_a": 2.58,
-        "over": -21.5,
-        "p_over": 41.7,
-        "need_over": 2.87
+        "over": -22.3,
+        "p_over": 41.3,
+        "need_over": 2.91
        },
        "matchbook": {
         "ah_home": 17.3,
@@ -988,9 +1004,9 @@
         "ah_away": -12.2,
         "fair_a": 2.27,
         "need_a": 2.58,
-        "over": -26.4,
-        "p_over": 29.9,
-        "need_over": 3.61
+        "over": -27.3,
+        "p_over": 29.6,
+        "need_over": 3.66
        },
        "bovada": {
         "ah_home": 17.9,
@@ -999,9 +1015,9 @@
         "ah_away": -13.7,
         "fair_a": 2.27,
         "need_a": 2.58,
-        "over": -21.5,
-        "p_over": 41.7,
-        "need_over": 2.87
+        "over": -22.3,
+        "p_over": 41.3,
+        "need_over": 2.91
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1015,9 +1031,9 @@
         "ah_away": -6.5,
         "fair_a": 2.08,
         "need_a": 2.36,
-        "over": -13.7,
-        "p_over": 45.9,
-        "need_over": 2.52
+        "over": -14.3,
+        "p_over": 45.6,
+        "need_over": 2.55
        },
        "matchbook": {
         "ah_home": 10.0,
@@ -1026,9 +1042,9 @@
         "ah_away": -4.9,
         "fair_a": 2.08,
         "need_a": 2.36,
-        "over": -16.4,
-        "p_over": 34.0,
-        "need_over": 3.18
+        "over": -17.1,
+        "p_over": 33.7,
+        "need_over": 3.21
        },
        "bovada": {
         "ah_home": 10.5,
@@ -1037,9 +1053,9 @@
         "ah_away": -6.5,
         "fair_a": 2.08,
         "need_a": 2.36,
-        "over": -13.7,
-        "p_over": 45.9,
-        "need_over": 2.52
+        "over": -14.3,
+        "p_over": 45.6,
+        "need_over": 2.55
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1053,9 +1069,9 @@
         "ah_away": 7.1,
         "fair_a": 1.78,
         "need_a": 2.01,
-        "over": -12.3,
-        "p_over": 46.7,
-        "need_over": 2.47
+        "over": -12.9,
+        "p_over": 46.4,
+        "need_over": 2.49
        },
        "matchbook": {
         "ah_home": -4.2,
@@ -1064,9 +1080,9 @@
         "ah_away": 9.0,
         "fair_a": 1.78,
         "need_a": 2.01,
-        "over": -14.5,
-        "p_over": 34.8,
-        "need_over": 3.11
+        "over": -15.3,
+        "p_over": 34.4,
+        "need_over": 3.14
        },
        "bovada": {
         "ah_home": -3.7,
@@ -1075,9 +1091,9 @@
         "ah_away": 7.1,
         "fair_a": 1.78,
         "need_a": 2.01,
-        "over": -12.3,
-        "p_over": 46.7,
-        "need_over": 2.47
+        "over": -12.9,
+        "p_over": 46.4,
+        "need_over": 2.49
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1150,7 +1166,7 @@
        "diff": 164.0,
        "xg_h": 1.97,
        "xg_a": 1.16,
-       "T": 3.24,
+       "T": 3.21,
        "xg_h_D": 1.917,
        "xg_a_D": 1.215,
        "p1": 53,
@@ -1167,7 +1183,7 @@
        "diff": 234.0,
        "xg_h": 2.01,
        "xg_a": 0.87,
-       "T": 3.1,
+       "T": 3.07,
        "xg_h_D": 2.029,
        "xg_a_D": 0.85,
        "p1": 61,
@@ -1184,7 +1200,7 @@
        "diff": 239.0,
        "xg_h": 2.03,
        "xg_a": 0.87,
-       "T": 3.0,
+       "T": 2.97,
        "xg_h_D": 1.954,
        "xg_a_D": 0.941,
        "p1": 62,
@@ -1276,9 +1292,9 @@
         "ah_away": 14.4,
         "fair_a": 1.71,
         "need_a": 1.96,
-        "over": -9.6,
-        "p_over": 46.4,
-        "need_over": 2.39
+        "over": -11.1,
+        "p_over": 45.6,
+        "need_over": 2.43
        },
        "matchbook": {
         "ah_home": -17.8,
@@ -1287,9 +1303,9 @@
         "ah_away": 14.4,
         "fair_a": 1.71,
         "need_a": 1.96,
-        "over": -8.1,
-        "p_over": 40.7,
-        "need_over": 2.66
+        "over": -9.8,
+        "p_over": 39.9,
+        "need_over": 2.71
        },
        "bovada": {
         "ah_home": -18.5,
@@ -1298,9 +1314,9 @@
         "ah_away": 14.4,
         "fair_a": 1.71,
         "need_a": 1.96,
-        "over": -9.2,
-        "p_over": 46.3,
-        "need_over": 2.39
+        "over": -10.7,
+        "p_over": 45.6,
+        "need_over": 2.43
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1314,9 +1330,9 @@
         "ah_away": 0.4,
         "fair_a": 2.02,
         "need_a": 2.33,
-        "over": -15.8,
-        "p_over": 43.2,
-        "need_over": 2.59
+        "over": -17.0,
+        "p_over": 42.6,
+        "need_over": 2.63
        },
        "matchbook": {
         "ah_home": -5.0,
@@ -1325,9 +1341,9 @@
         "ah_away": 0.4,
         "fair_a": 2.02,
         "need_a": 2.33,
-        "over": -15.4,
-        "p_over": 37.5,
-        "need_over": 2.89
+        "over": -16.8,
+        "p_over": 36.8,
+        "need_over": 2.94
        },
        "bovada": {
         "ah_home": -5.7,
@@ -1336,9 +1352,9 @@
         "ah_away": 0.4,
         "fair_a": 2.02,
         "need_a": 2.33,
-        "over": -15.4,
-        "p_over": 43.2,
-        "need_over": 2.59
+        "over": -16.6,
+        "p_over": 42.5,
+        "need_over": 2.63
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1352,9 +1368,9 @@
         "ah_away": -0.5,
         "fair_a": 2.04,
         "need_a": 2.35,
-        "over": -20.1,
-        "p_over": 41.0,
-        "need_over": 2.75
+        "over": -21.4,
+        "p_over": 40.3,
+        "need_over": 2.8
        },
        "matchbook": {
         "ah_home": -4.1,
@@ -1363,9 +1379,9 @@
         "ah_away": -0.5,
         "fair_a": 2.04,
         "need_a": 2.35,
-        "over": -20.4,
-        "p_over": 35.2,
-        "need_over": 3.07
+        "over": -21.9,
+        "p_over": 34.6,
+        "need_over": 3.13
        },
        "bovada": {
         "ah_home": -4.9,
@@ -1374,9 +1390,9 @@
         "ah_away": -0.5,
         "fair_a": 2.04,
         "need_a": 2.35,
-        "over": -19.7,
-        "p_over": 41.0,
-        "need_over": 2.75
+        "over": -21.1,
+        "p_over": 40.3,
+        "need_over": 2.8
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1433,7 +1449,7 @@
        "diff": 276.0,
        "xg_h": 2.22,
        "xg_a": 0.87,
-       "T": 3.27,
+       "T": 3.25,
        "xg_h_D": 2.134,
        "xg_a_D": 0.955,
        "p1": 67,
@@ -1450,7 +1466,7 @@
        "diff": 263.0,
        "xg_h": 2.21,
        "xg_a": 0.94,
-       "T": 3.38,
+       "T": 3.36,
        "xg_h_D": 2.237,
        "xg_a_D": 0.914,
        "p1": 65,
@@ -1467,7 +1483,7 @@
        "diff": 294.0,
        "xg_h": 2.34,
        "xg_a": 0.91,
-       "T": 3.31,
+       "T": 3.3,
        "xg_h_D": 2.252,
        "xg_a_D": 1.004,
        "p1": 69,
@@ -1559,9 +1575,9 @@
         "ah_away": 9.8,
         "fair_a": 1.77,
         "need_a": 1.98,
-        "over": -7.8,
-        "p_over": 46.8,
-        "need_over": 2.36
+        "over": -8.6,
+        "p_over": 46.4,
+        "need_over": 2.38
        },
        "matchbook": {
         "ah_home": -6.3,
@@ -1570,9 +1586,9 @@
         "ah_away": 11.4,
         "fair_a": 1.77,
         "need_a": 1.98,
-        "over": -8.5,
-        "p_over": 41.2,
-        "need_over": 2.63
+        "over": -9.5,
+        "p_over": 40.8,
+        "need_over": 2.65
        },
        "bovada": {
         "ah_home": -5.9,
@@ -1581,9 +1597,9 @@
         "ah_away": 9.8,
         "fair_a": 1.77,
         "need_a": 1.98,
-        "over": -8.2,
-        "p_over": 46.8,
-        "need_over": 2.36
+        "over": -9.0,
+        "p_over": 46.4,
+        "need_over": 2.38
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1597,9 +1613,9 @@
         "ah_away": 12.9,
         "fair_a": 1.72,
         "need_a": 1.92,
-        "over": -3.1,
-        "p_over": 49.2,
-        "need_over": 2.23
+        "over": -3.7,
+        "p_over": 48.9,
+        "need_over": 2.25
        },
        "matchbook": {
         "ah_home": -9.5,
@@ -1608,9 +1624,9 @@
         "ah_away": 14.6,
         "fair_a": 1.72,
         "need_a": 1.92,
-        "over": -3.1,
-        "p_over": 43.6,
-        "need_over": 2.48
+        "over": -3.9,
+        "p_over": 43.3,
+        "need_over": 2.5
        },
        "bovada": {
         "ah_home": -9.1,
@@ -1619,9 +1635,9 @@
         "ah_away": 12.9,
         "fair_a": 1.72,
         "need_a": 1.92,
-        "over": -3.5,
-        "p_over": 49.2,
-        "need_over": 2.23
+        "over": -4.2,
+        "p_over": 48.9,
+        "need_over": 2.25
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1635,9 +1651,9 @@
         "ah_away": 6.0,
         "fair_a": 1.83,
         "need_a": 2.05,
-        "over": -5.7,
-        "p_over": 47.8,
-        "need_over": 2.3
+        "over": -6.5,
+        "p_over": 47.5,
+        "need_over": 2.32
        },
        "matchbook": {
         "ah_home": -2.9,
@@ -1646,9 +1662,9 @@
         "ah_away": 7.5,
         "fair_a": 1.83,
         "need_a": 2.05,
-        "over": -6.2,
-        "p_over": 42.2,
-        "need_over": 2.56
+        "over": -7.0,
+        "p_over": 41.9,
+        "need_over": 2.58
        },
        "bovada": {
         "ah_home": -2.5,
@@ -1657,9 +1673,9 @@
         "ah_away": 6.0,
         "fair_a": 1.83,
         "need_a": 2.05,
-        "over": -6.2,
-        "p_over": 47.9,
-        "need_over": 2.3
+        "over": -6.9,
+        "p_over": 47.5,
+        "need_over": 2.32
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1732,7 +1748,7 @@
        "diff": -147.0,
        "xg_h": 1.2,
        "xg_a": 1.92,
-       "T": 2.89,
+       "T": 2.95,
        "xg_h_D": 1.243,
        "xg_a_D": 1.873,
        "p1": 18,
@@ -1749,7 +1765,7 @@
        "diff": -125.0,
        "xg_h": 1.0,
        "xg_a": 1.61,
-       "T": 2.6,
+       "T": 2.64,
        "xg_h_D": 0.991,
        "xg_a_D": 1.62,
        "p1": 19,
@@ -1766,7 +1782,7 @@
        "diff": -190.0,
        "xg_h": 0.95,
        "xg_a": 1.87,
-       "T": 2.66,
+       "T": 2.7,
        "xg_h_D": 1.011,
        "xg_a_D": 1.815,
        "p1": 15,
@@ -1855,9 +1871,9 @@
         "ah_away": -2.4,
         "fair_a": 1.9,
         "need_a": 2.13,
-        "over": -2.4,
-        "p_over": 49.8,
-        "need_over": 2.2
+        "over": -0.1,
+        "p_over": 51.0,
+        "need_over": 2.14
        },
        "matchbook": {
         "ah_home": -3.0,
@@ -1874,9 +1890,9 @@
         "ah_away": -2.9,
         "fair_a": 1.9,
         "need_a": 2.13,
-        "over": -3.3,
-        "p_over": 49.9,
-        "need_over": 2.2
+        "over": -1.0,
+        "p_over": 51.0,
+        "need_over": 2.14
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1890,9 +1906,9 @@
         "ah_away": -7.4,
         "fair_a": 2.0,
         "need_a": 2.24,
-        "over": -16.2,
-        "p_over": 42.8,
-        "need_over": 2.61
+        "over": -14.2,
+        "p_over": 43.8,
+        "need_over": 2.55
        },
        "matchbook": {
         "ah_home": 2.4,
@@ -1909,9 +1925,9 @@
         "ah_away": -7.9,
         "fair_a": 2.0,
         "need_a": 2.24,
-        "over": -16.9,
-        "p_over": 42.8,
-        "need_over": 2.61
+        "over": -15.0,
+        "p_over": 43.8,
+        "need_over": 2.55
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1925,9 +1941,9 @@
         "ah_away": 6.2,
         "fair_a": 1.75,
         "need_a": 1.95,
-        "over": -13.3,
-        "p_over": 44.2,
-        "need_over": 2.51
+        "over": -11.2,
+        "p_over": 45.3,
+        "need_over": 2.45
        },
        "matchbook": {
         "ah_home": -12.6,
@@ -1944,9 +1960,9 @@
         "ah_away": 5.6,
         "fair_a": 1.75,
         "need_a": 1.95,
-        "over": -14.1,
-        "p_over": 44.3,
-        "need_over": 2.51
+        "over": -12.0,
+        "p_over": 45.4,
+        "need_over": 2.45
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1987,7 +2003,7 @@
        "diff": 632.0,
        "xg_h": 3.67,
        "xg_a": 0.58,
-       "T": 3.89,
+       "T": 3.91,
        "xg_h_D": 3.473,
        "xg_a_D": 0.772,
        "p1": 93,
@@ -2004,7 +2020,7 @@
        "diff": 601.0,
        "xg_h": 3.54,
        "xg_a": 0.62,
-       "T": 4.05,
+       "T": 4.07,
        "xg_h_D": 3.595,
        "xg_a_D": 0.57,
        "p1": 92,
@@ -2021,7 +2037,7 @@
        "diff": 724.0,
        "xg_h": 4.05,
        "xg_a": 0.53,
-       "T": 4.09,
+       "T": 4.11,
        "xg_h_D": 3.82,
        "xg_a_D": 0.752,
        "p1": 95,
@@ -2113,9 +2129,9 @@
         "ah_away": -21.4,
         "fair_a": 2.42,
         "need_a": 2.72,
-        "over": -1.5,
-        "p_over": 54.4,
-        "need_over": 1.99
+        "over": -0.8,
+        "p_over": 54.8,
+        "need_over": 1.97
        },
        "matchbook": {
         "ah_home": -9.9,
@@ -2124,9 +2140,9 @@
         "ah_away": -20.2,
         "fair_a": 2.42,
         "need_a": 2.72,
-        "over": 3.4,
-        "p_over": 54.4,
-        "need_over": 1.99
+        "over": 4.1,
+        "p_over": 54.8,
+        "need_over": 1.97
        },
        "bovada": {
         "ah_home": -11.9,
@@ -2135,9 +2151,9 @@
         "ah_away": -20.6,
         "fair_a": 2.42,
         "need_a": 2.72,
-        "over": -0.4,
-        "p_over": 54.4,
-        "need_over": 1.99
+        "over": 0.3,
+        "p_over": 54.8,
+        "need_over": 1.97
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2151,9 +2167,9 @@
         "ah_away": -15.1,
         "fair_a": 2.24,
         "need_a": 2.52,
-        "over": 4.4,
-        "p_over": 57.7,
-        "need_over": 1.88
+        "over": 4.9,
+        "p_over": 58.0,
+        "need_over": 1.87
        },
        "matchbook": {
         "ah_home": 1.9,
@@ -2162,9 +2178,9 @@
         "ah_away": -13.9,
         "fair_a": 2.24,
         "need_a": 2.52,
-        "over": 9.6,
-        "p_over": 57.7,
-        "need_over": 1.88
+        "over": 10.1,
+        "p_over": 58.0,
+        "need_over": 1.87
        },
        "bovada": {
         "ah_home": -0.4,
@@ -2173,9 +2189,9 @@
         "ah_away": -14.3,
         "fair_a": 2.24,
         "need_a": 2.52,
-        "over": 5.5,
-        "p_over": 57.7,
-        "need_over": 1.88
+        "over": 6.1,
+        "p_over": 58.0,
+        "need_over": 1.87
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2189,9 +2205,9 @@
         "ah_away": -36.0,
         "fair_a": 2.97,
         "need_a": 3.34,
-        "over": 5.7,
-        "p_over": 58.4,
-        "need_over": 1.85
+        "over": 6.2,
+        "p_over": 58.7,
+        "need_over": 1.84
        },
        "matchbook": {
         "ah_home": 3.4,
@@ -2200,9 +2216,9 @@
         "ah_away": -35.0,
         "fair_a": 2.97,
         "need_a": 3.34,
-        "over": 10.9,
-        "p_over": 58.4,
-        "need_over": 1.85
+        "over": 11.5,
+        "p_over": 58.7,
+        "need_over": 1.84
        },
        "bovada": {
         "ah_home": 1.1,
@@ -2211,9 +2227,9 @@
         "ah_away": -35.3,
         "fair_a": 2.97,
         "need_a": 3.34,
-        "over": 6.8,
-        "p_over": 58.4,
-        "need_over": 1.85
+        "over": 7.4,
+        "p_over": 58.7,
+        "need_over": 1.84
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2226,7 +2242,7 @@
       "AV": "1Χ2 φαβ γηπ ≥75% @1.07",
       "over": "",
       "over_A": "(εκτος κανονα: αναντιστοιχια, edge +10% Matchbook)",
-      "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +11% Matchbook)"
+      "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +12% Matchbook)"
      },
      "consensus": [],
      "btts": {
@@ -2254,7 +2270,7 @@
        "diff": -174.0,
        "xg_h": 0.89,
        "xg_a": 1.75,
-       "T": 2.86,
+       "T": 2.96,
        "xg_h_D": 0.948,
        "xg_a_D": 1.694,
        "p1": 16,
@@ -2271,7 +2287,7 @@
        "diff": -138.0,
        "xg_h": 0.97,
        "xg_a": 1.64,
-       "T": 2.85,
+       "T": 2.93,
        "xg_h_D": 0.954,
        "xg_a_D": 1.648,
        "p1": 18,
@@ -2288,7 +2304,7 @@
        "diff": -181.0,
        "xg_h": 0.93,
        "xg_a": 1.81,
-       "T": 2.87,
+       "T": 2.96,
        "xg_h_D": 0.989,
        "xg_a_D": 1.754,
        "p1": 15,
@@ -2380,9 +2396,9 @@
         "ah_away": 12.8,
         "fair_a": 1.56,
         "need_a": 1.76,
-        "over": -5.6,
-        "p_over": 49.2,
-        "need_over": 2.24
+        "over": -1.3,
+        "p_over": 51.4,
+        "need_over": 2.13
        },
        "matchbook": {
         "ah_home": -8.2,
@@ -2391,9 +2407,9 @@
         "ah_away": 13.4,
         "fair_a": 1.56,
         "need_a": 1.76,
-        "over": -2.9,
-        "p_over": 54.5,
-        "need_over": 1.98
+        "over": 1.1,
+        "p_over": 56.8,
+        "need_over": 1.91
        },
        "bovada": {
         "ah_home": -12.0,
@@ -2402,9 +2418,9 @@
         "ah_away": 13.9,
         "fair_a": 1.56,
         "need_a": 1.76,
-        "over": -5.6,
-        "p_over": 49.2,
-        "need_over": 2.24
+        "over": -1.3,
+        "p_over": 51.4,
+        "need_over": 2.13
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2418,9 +2434,9 @@
         "ah_away": 5.3,
         "fair_a": 1.68,
         "need_a": 1.91,
-        "over": -6.2,
-        "p_over": 48.8,
-        "need_over": 2.25
+        "over": -2.7,
+        "p_over": 50.7,
+        "need_over": 2.16
        },
        "matchbook": {
         "ah_home": 1.3,
@@ -2429,9 +2445,9 @@
         "ah_away": 5.8,
         "fair_a": 1.68,
         "need_a": 1.91,
-        "over": -3.5,
-        "p_over": 54.2,
-        "need_over": 2.0
+        "over": -0.2,
+        "p_over": 56.0,
+        "need_over": 1.93
        },
        "bovada": {
         "ah_home": -2.9,
@@ -2440,9 +2456,9 @@
         "ah_away": 6.3,
         "fair_a": 1.68,
         "need_a": 1.91,
-        "over": -6.2,
-        "p_over": 48.8,
-        "need_over": 2.25
+        "over": -2.7,
+        "p_over": 50.7,
+        "need_over": 2.16
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2456,9 +2472,9 @@
         "ah_away": 13.3,
         "fair_a": 1.55,
         "need_a": 1.75,
-        "over": -5.1,
-        "p_over": 49.4,
-        "need_over": 2.23
+        "over": -1.4,
+        "p_over": 51.3,
+        "need_over": 2.13
        },
        "matchbook": {
         "ah_home": -9.1,
@@ -2467,9 +2483,9 @@
         "ah_away": 13.8,
         "fair_a": 1.55,
         "need_a": 1.75,
-        "over": -2.5,
-        "p_over": 54.8,
-        "need_over": 1.98
+        "over": 0.9,
+        "p_over": 56.7,
+        "need_over": 1.91
        },
        "bovada": {
         "ah_home": -12.9,
@@ -2478,9 +2494,9 @@
         "ah_away": 14.4,
         "fair_a": 1.55,
         "need_a": 1.75,
-        "over": -5.1,
-        "p_over": 49.4,
-        "need_over": 2.23
+        "over": -1.4,
+        "p_over": 51.3,
+        "need_over": 2.13
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2638,7 +2654,7 @@
        "diff": 129.0,
        "xg_h": 1.85,
        "xg_a": 1.22,
-       "T": 3.11,
+       "T": 3.17,
        "xg_h_D": 1.813,
        "xg_a_D": 1.26,
        "p1": 48,
@@ -2655,7 +2671,7 @@
        "diff": 134.0,
        "xg_h": 1.9,
        "xg_a": 1.25,
-       "T": 3.27,
+       "T": 3.32,
        "xg_h_D": 1.916,
        "xg_a_D": 1.243,
        "p1": 48,
@@ -2672,7 +2688,7 @@
        "diff": 149.0,
        "xg_h": 1.96,
        "xg_a": 1.24,
-       "T": 3.16,
+       "T": 3.21,
        "xg_h_D": 1.919,
        "xg_a_D": 1.289,
        "p1": 50,
@@ -2726,9 +2742,9 @@
         "ah_away": 3.9,
         "fair_a": 2.03,
         "need_a": 2.27,
-        "over": -37.4,
-        "p_over": 60.2,
-        "need_over": 1.8
+        "over": -36.2,
+        "p_over": 61.4,
+        "need_over": 1.76
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -2744,9 +2760,9 @@
         "ah_away": 3.0,
         "fair_a": 2.04,
         "need_a": 2.29,
-        "over": -34.0,
-        "p_over": 63.4,
-        "need_over": 1.71
+        "over": -33.1,
+        "p_over": 64.4,
+        "need_over": 1.68
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -2762,9 +2778,9 @@
         "ah_away": -0.3,
         "fair_a": 2.11,
         "need_a": 2.37,
-        "over": -36.4,
-        "p_over": 61.1,
-        "need_over": 1.77
+        "over": -35.3,
+        "p_over": 62.2,
+        "need_over": 1.74
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -2806,7 +2822,7 @@
        "diff": -174.0,
        "xg_h": 0.86,
        "xg_a": 1.71,
-       "T": 2.64,
+       "T": 2.69,
        "xg_h_D": 0.912,
        "xg_a_D": 1.657,
        "p1": 16,
@@ -2823,7 +2839,7 @@
        "diff": -200.0,
        "xg_h": 0.84,
        "xg_a": 1.81,
-       "T": 2.75,
+       "T": 2.79,
        "xg_h_D": 0.822,
        "xg_a_D": 1.827,
        "p1": 14,
@@ -2840,7 +2856,7 @@
        "diff": -241.0,
        "xg_h": 0.81,
        "xg_a": 1.98,
-       "T": 2.76,
+       "T": 2.8,
        "xg_h_D": 0.882,
        "xg_a_D": 1.902,
        "p1": 12,
@@ -2932,9 +2948,9 @@
         "ah_away": 0.1,
         "fair_a": 2.02,
         "need_a": 2.29,
-        "over": -14.7,
-        "p_over": 44.0,
-        "need_over": 2.54
+        "over": -12.7,
+        "p_over": 45.0,
+        "need_over": 2.47
        },
        "matchbook": {
         "ah_home": -17.2,
@@ -2943,9 +2959,9 @@
         "ah_away": 0.5,
         "fair_a": 2.02,
         "need_a": 2.29,
-        "over": -12.8,
-        "p_over": 49.3,
-        "need_over": 2.2
+        "over": -10.9,
+        "p_over": 50.3,
+        "need_over": 2.15
        },
        "bovada": {
         "ah_home": -21.1,
@@ -2954,9 +2970,9 @@
         "ah_away": 0.5,
         "fair_a": 2.02,
         "need_a": 2.29,
-        "over": -14.7,
-        "p_over": 44.0,
-        "need_over": 2.54
+        "over": -12.7,
+        "p_over": 45.0,
+        "need_over": 2.47
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2970,9 +2986,9 @@
         "ah_away": 5.8,
         "fair_a": 1.89,
         "need_a": 2.15,
-        "over": -9.6,
-        "p_over": 46.6,
-        "need_over": 2.38
+        "over": -8.0,
+        "p_over": 47.4,
+        "need_over": 2.33
        },
        "matchbook": {
         "ah_home": -22.5,
@@ -2981,9 +2997,9 @@
         "ah_away": 6.2,
         "fair_a": 1.89,
         "need_a": 2.15,
-        "over": -8.1,
-        "p_over": 51.9,
-        "need_over": 2.08
+        "over": -6.5,
+        "p_over": 52.8,
+        "need_over": 2.05
        },
        "bovada": {
         "ah_home": -26.1,
@@ -2992,9 +3008,9 @@
         "ah_away": 6.2,
         "fair_a": 1.89,
         "need_a": 2.15,
-        "over": -9.6,
-        "p_over": 46.6,
-        "need_over": 2.38
+        "over": -8.0,
+        "p_over": 47.4,
+        "need_over": 2.33
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -3008,9 +3024,9 @@
         "ah_away": 15.0,
         "fair_a": 1.72,
         "need_a": 1.95,
-        "over": -9.4,
-        "p_over": 46.7,
-        "need_over": 2.37
+        "over": -7.7,
+        "p_over": 47.6,
+        "need_over": 2.32
        },
        "matchbook": {
         "ah_home": -30.9,
@@ -3019,9 +3035,9 @@
         "ah_away": 15.5,
         "fair_a": 1.72,
         "need_a": 1.95,
-        "over": -7.8,
-        "p_over": 52.1,
-        "need_over": 2.08
+        "over": -6.2,
+        "p_over": 53.0,
+        "need_over": 2.04
        },
        "bovada": {
         "ah_home": -34.1,
@@ -3030,9 +3046,9 @@
         "ah_away": 15.5,
         "fair_a": 1.72,
         "need_a": 1.95,
-        "over": -9.4,
-        "p_over": 46.7,
-        "need_over": 2.37
+        "over": -7.7,
+        "p_over": 47.6,
+        "need_over": 2.32
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -3073,7 +3089,7 @@
        "diff": 232.0,
        "xg_h": 2.3,
        "xg_a": 1.16,
-       "T": 3.35,
+       "T": 3.39,
        "xg_h_D": 2.229,
        "xg_a_D": 1.237,
        "p1": 62,
@@ -3090,7 +3106,7 @@
        "diff": 253.0,
        "xg_h": 2.18,
        "xg_a": 0.95,
-       "T": 3.19,
+       "T": 3.23,
        "xg_h_D": 2.198,
        "xg_a_D": 0.925,
        "p1": 64,
@@ -3107,7 +3123,7 @@
        "diff": 305.0,
        "xg_h": 2.39,
        "xg_a": 0.91,
-       "T": 3.17,
+       "T": 3.21,
        "xg_h_D": 2.292,
        "xg_a_D": 1.002,
        "p1": 70,
@@ -3140,9 +3156,9 @@
       "H": {
        "pinnacle": null,
        "matchbook": {
-        "over": -34.4,
-        "p_over": 65.0,
-        "need_over": 1.67
+        "over": -33.6,
+        "p_over": 65.8,
+        "need_over": 1.65
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -3152,9 +3168,9 @@
       "A": {
        "pinnacle": null,
        "matchbook": {
-        "over": -37.6,
-        "p_over": 61.8,
-        "need_over": 1.75
+        "over": -36.8,
+        "p_over": 62.5,
+        "need_over": 1.73
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -3164,9 +3180,9 @@
       "AV": {
        "pinnacle": null,
        "matchbook": {
-        "over": -38.0,
-        "p_over": 61.4,
-        "need_over": 1.76
+        "over": -37.2,
+        "p_over": 62.2,
+        "need_over": 1.74
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -3207,7 +3223,7 @@
        "diff": 120.0,
        "xg_h": 1.77,
        "xg_a": 1.18,
-       "T": 3.17,
+       "T": 3.02,
        "xg_h_D": 1.735,
        "xg_a_D": 1.221,
        "p1": 47,
@@ -3224,7 +3240,7 @@
        "diff": 224.0,
        "xg_h": 1.97,
        "xg_a": 0.88,
-       "T": 3.12,
+       "T": 2.99,
        "xg_h_D": 1.986,
        "xg_a_D": 0.856,
        "p1": 60,
@@ -3241,7 +3257,7 @@
        "diff": 249.0,
        "xg_h": 2.07,
        "xg_a": 0.86,
-       "T": 3.07,
+       "T": 2.94,
        "xg_h_D": 1.989,
        "xg_a_D": 0.934,
        "p1": 63,
@@ -3324,7 +3340,7 @@
        "diff": -325.0,
        "xg_h": 0.85,
        "xg_a": 2.45,
-       "T": 2.95,
+       "T": 3.02,
        "xg_h_D": 0.955,
        "xg_a_D": 2.344,
        "p1": 8,
@@ -3341,7 +3357,7 @@
        "diff": -286.0,
        "xg_h": 0.92,
        "xg_a": 2.31,
-       "T": 3.05,
+       "T": 3.11,
        "xg_h_D": 0.892,
        "xg_a_D": 2.331,
        "p1": 9,
@@ -3358,7 +3374,7 @@
        "diff": -353.0,
        "xg_h": 0.86,
        "xg_a": 2.58,
-       "T": 3.04,
+       "T": 3.1,
        "xg_h_D": 0.974,
        "xg_a_D": 2.472,
        "p1": 7,
@@ -3475,7 +3491,7 @@
        "diff": 561.0,
        "xg_h": 3.34,
        "xg_a": 0.61,
-       "T": 3.55,
+       "T": 3.54,
        "xg_h_D": 3.163,
        "xg_a_D": 0.789,
        "p1": 90,
@@ -3508,9 +3524,9 @@
       "H": {
        "pinnacle": null,
        "matchbook": {
-        "over": -35.4,
-        "p_over": 63.9,
-        "need_over": 1.69
+        "over": -35.5,
+        "p_over": 63.8,
+        "need_over": 1.7
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -3520,8 +3536,8 @@
       "A": {
        "pinnacle": null,
        "matchbook": {
-        "over": -32.3,
-        "p_over": 67.0,
+        "over": -32.4,
+        "p_over": 66.9,
         "need_over": 1.62
        },
        "bovada": null,
@@ -3532,9 +3548,9 @@
       "AV": {
        "pinnacle": null,
        "matchbook": {
-        "over": -30.5,
-        "p_over": 68.8,
-        "need_over": 1.57
+        "over": -30.6,
+        "p_over": 68.7,
+        "need_over": 1.58
        },
        "bovada": null,
        "betfair_ex_eu": null,
@@ -3580,7 +3596,7 @@
        "diff": -66.0,
        "xg_h": 1.18,
        "xg_a": 1.5,
-       "T": 2.62,
+       "T": 2.66,
        "xg_h_D": 1.199,
        "xg_a_D": 1.483,
        "p1": 25,
@@ -3597,7 +3613,7 @@
        "diff": -46.0,
        "xg_h": 1.21,
        "xg_a": 1.43,
-       "T": 2.65,
+       "T": 2.69,
        "xg_h_D": 1.202,
        "xg_a_D": 1.435,
        "p1": 27,
@@ -3614,7 +3630,7 @@
        "diff": -39.0,
        "xg_h": 1.21,
        "xg_a": 1.4,
-       "T": 2.54,
+       "T": 2.57,
        "xg_h_D": 1.224,
        "xg_a_D": 1.388,
        "p1": 28,
@@ -3707,7 +3723,7 @@
        "diff": -30.0,
        "xg_h": 1.17,
        "xg_a": 1.31,
-       "T": 2.26,
+       "T": 2.24,
        "xg_h_D": 1.176,
        "xg_a_D": 1.303,
        "p1": 29,
@@ -3724,7 +3740,7 @@
        "diff": -22.0,
        "xg_h": 1.16,
        "xg_a": 1.27,
-       "T": 2.3,
+       "T": 2.29,
        "xg_h_D": 1.158,
        "xg_a_D": 1.271,
        "p1": 29,
@@ -3741,7 +3757,7 @@
        "diff": -61.0,
        "xg_h": 1.13,
        "xg_a": 1.43,
-       "T": 2.31,
+       "T": 2.3,
        "xg_h_D": 1.149,
        "xg_a_D": 1.407,
        "p1": 25,
@@ -3806,9 +3822,9 @@
         "ah_away": -10.6,
         "fair_a": 2.22,
         "need_a": 2.53,
-        "over": -24.7,
-        "p_over": 39.2,
-        "need_over": 2.76
+        "over": -25.4,
+        "p_over": 38.9,
+        "need_over": 2.78
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -3824,9 +3840,9 @@
         "ah_away": -12.1,
         "fair_a": 2.26,
         "need_a": 2.58,
-        "over": -22.4,
-        "p_over": 40.4,
-        "need_over": 2.68
+        "over": -22.9,
+        "p_over": 40.1,
+        "need_over": 2.7
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -3842,9 +3858,9 @@
         "ah_away": -3.2,
         "fair_a": 2.02,
         "need_a": 2.3,
-        "over": -21.9,
-        "p_over": 40.7,
-        "need_over": 2.66
+        "over": -22.5,
+        "p_over": 40.4,
+        "need_over": 2.68
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -3885,7 +3901,7 @@
        "diff": -112.0,
        "xg_h": 1.11,
        "xg_a": 1.66,
-       "T": 2.64,
+       "T": 2.62,
        "xg_h_D": 1.145,
        "xg_a_D": 1.624,
        "p1": 21,
@@ -3902,7 +3918,7 @@
        "diff": -70.0,
        "xg_h": 1.18,
        "xg_a": 1.52,
-       "T": 2.66,
+       "T": 2.65,
        "xg_h_D": 1.17,
        "xg_a_D": 1.522,
        "p1": 24,
@@ -3919,7 +3935,7 @@
        "diff": -140.0,
        "xg_h": 1.12,
        "xg_a": 1.8,
-       "T": 2.73,
+       "T": 2.71,
        "xg_h_D": 1.165,
        "xg_a_D": 1.759,
        "p1": 18,
@@ -3984,9 +4000,9 @@
         "ah_away": 8.7,
         "fair_a": 1.78,
         "need_a": 2.02,
-        "over": -15.1,
-        "p_over": 43.8,
-        "need_over": 2.55
+        "over": -15.9,
+        "p_over": 43.3,
+        "need_over": 2.58
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4002,9 +4018,9 @@
         "ah_away": -0.5,
         "fair_a": 1.97,
         "need_a": 2.24,
-        "over": -13.8,
-        "p_over": 44.4,
-        "need_over": 2.51
+        "over": -14.5,
+        "p_over": 44.1,
+        "need_over": 2.53
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4020,9 +4036,9 @@
         "ah_away": 14.1,
         "fair_a": 1.69,
         "need_a": 1.91,
-        "over": -10.9,
-        "p_over": 45.9,
-        "need_over": 2.41
+        "over": -11.6,
+        "p_over": 45.6,
+        "need_over": 2.43
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4063,7 +4079,7 @@
        "diff": 179.0,
        "xg_h": 1.94,
        "xg_a": 1.06,
-       "T": 2.75,
+       "T": 2.74,
        "xg_h_D": 1.882,
        "xg_a_D": 1.117,
        "p1": 55,
@@ -4080,7 +4096,7 @@
        "diff": 112.0,
        "xg_h": 1.66,
        "xg_a": 1.11,
-       "T": 2.69,
+       "T": 2.67,
        "xg_h_D": 1.671,
        "xg_a_D": 1.104,
        "p1": 46,
@@ -4097,7 +4113,7 @@
        "diff": 111.0,
        "xg_h": 1.65,
        "xg_a": 1.12,
-       "T": 2.56,
+       "T": 2.55,
        "xg_h_D": 1.62,
        "xg_a_D": 1.15,
        "p1": 45,
@@ -4162,9 +4178,9 @@
         "ah_away": -20.6,
         "fair_a": 2.29,
         "need_a": 2.57,
-        "over": 10.5,
-        "p_over": 58.2,
-        "need_over": 1.85
+        "over": 10.0,
+        "p_over": 57.9,
+        "need_over": 1.87
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4180,9 +4196,9 @@
         "ah_away": -6.8,
         "fair_a": 1.95,
         "need_a": 2.18,
-        "over": 7.8,
-        "p_over": 56.7,
-        "need_over": 1.91
+        "over": 7.4,
+        "p_over": 56.5,
+        "need_over": 1.92
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4198,9 +4214,9 @@
         "ah_away": -6.0,
         "fair_a": 1.93,
         "need_a": 2.16,
-        "over": 2.4,
-        "p_over": 53.9,
-        "need_over": 2.02
+        "over": 1.9,
+        "p_over": 53.6,
+        "need_over": 2.03
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4211,7 +4227,7 @@
       "H": "FAV 1 -0.50 @2.09 (Bovada, +16%)",
       "A": "",
       "AV": "",
-      "over": "OVER 2.25 @1.90 (Bovada, +11%)",
+      "over": "OVER 2.25 @1.90 (Bovada, +10%)",
       "over_A": "",
       "over_AV": ""
      },
@@ -4241,7 +4257,7 @@
        "diff": 184.0,
        "xg_h": 1.95,
        "xg_a": 1.05,
-       "T": 2.93,
+       "T": 2.87,
        "xg_h_D": 1.893,
        "xg_a_D": 1.107,
        "p1": 56,
@@ -4258,7 +4274,7 @@
        "diff": 205.0,
        "xg_h": 2.02,
        "xg_a": 1.02,
-       "T": 3.06,
+       "T": 3.02,
        "xg_h_D": 2.036,
        "xg_a_D": 1.006,
        "p1": 58,
@@ -4275,7 +4291,7 @@
        "diff": 239.0,
        "xg_h": 2.16,
        "xg_a": 1.0,
-       "T": 3.01,
+       "T": 2.96,
        "xg_h_D": 2.084,
        "xg_a_D": 1.072,
        "p1": 62,
@@ -4340,9 +4356,9 @@
         "ah_away": 4.5,
         "fair_a": 1.78,
         "need_a": 2.04,
-        "over": 3.3,
-        "p_over": 50.4,
-        "need_over": 2.16
+        "over": 0.5,
+        "p_over": 49.0,
+        "need_over": 2.23
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4358,9 +4374,9 @@
         "ah_away": 0.4,
         "fair_a": 1.87,
         "need_a": 2.15,
-        "over": 9.4,
-        "p_over": 53.4,
-        "need_over": 2.02
+        "over": 7.2,
+        "p_over": 52.3,
+        "need_over": 2.07
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4376,9 +4392,9 @@
         "ah_away": -6.2,
         "fair_a": 2.05,
         "need_a": 2.36,
-        "over": 6.8,
-        "p_over": 52.1,
-        "need_over": 2.08
+        "over": 4.5,
+        "p_over": 51.0,
+        "need_over": 2.13
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4390,7 +4406,7 @@
       "A": "",
       "AV": "",
       "over": "",
-      "over_A": "OVER 2.75 @2.05 (Bovada, +9%)",
+      "over_A": "",
       "over_AV": ""
      },
      "consensus": [],
@@ -4419,7 +4435,7 @@
        "diff": 257.0,
        "xg_h": 2.02,
        "xg_a": 0.76,
-       "T": 2.38,
+       "T": 2.37,
        "xg_h_D": 1.94,
        "xg_a_D": 0.841,
        "p1": 65,
@@ -4436,7 +4452,7 @@
        "diff": 129.0,
        "xg_h": 1.72,
        "xg_a": 1.09,
-       "T": 2.55,
+       "T": 2.54,
        "xg_h_D": 1.728,
        "xg_a_D": 1.079,
        "p1": 48,
@@ -4453,7 +4469,7 @@
        "diff": 169.0,
        "xg_h": 1.88,
        "xg_a": 1.06,
-       "T": 2.51,
+       "T": 2.5,
        "xg_h_D": 1.827,
        "xg_a_D": 1.112,
        "p1": 53,
@@ -4518,9 +4534,9 @@
         "ah_away": -33.7,
         "fair_a": 2.87,
         "need_a": 3.23,
-        "over": 5.4,
-        "p_over": 56.7,
-        "need_over": 1.92
+        "over": 5.0,
+        "p_over": 56.4,
+        "need_over": 1.94
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4536,8 +4552,8 @@
         "ah_away": -5.9,
         "fair_a": 2.02,
         "need_a": 2.27,
-        "over": 12.6,
-        "p_over": 60.5,
+        "over": 12.2,
+        "p_over": 60.3,
         "need_over": 1.77
        },
        "betfair_ex_eu": null,
@@ -4554,9 +4570,9 @@
         "ah_away": -14.3,
         "fair_a": 2.22,
         "need_a": 2.49,
-        "over": 11.1,
-        "p_over": 59.7,
-        "need_over": 1.8
+        "over": 10.7,
+        "p_over": 59.5,
+        "need_over": 1.81
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4568,7 +4584,7 @@
       "A": "",
       "AV": "",
       "over": "",
-      "over_A": "OVER 2 @1.86 (Bovada, +13%)",
+      "over_A": "OVER 2 @1.86 (Bovada, +12%)",
       "over_AV": "OVER 2 @1.86 (Bovada, +11%)"
      },
      "consensus": [
@@ -4583,7 +4599,7 @@
        "models": "Μ2+Μ3",
        "n": 2,
        "edges": {
-        "Μ2": 0.13,
+        "Μ2": 0.12,
         "Μ3": 0.11
        }
       }
@@ -4613,7 +4629,7 @@
        "diff": -211.0,
        "xg_h": 0.76,
        "xg_a": 1.8,
-       "T": 2.55,
+       "T": 2.54,
        "xg_h_D": 0.83,
        "xg_a_D": 1.73,
        "p1": 13,
@@ -4630,7 +4646,7 @@
        "diff": -152.0,
        "xg_h": 0.8,
        "xg_a": 1.54,
-       "T": 2.41,
+       "T": 2.4,
        "xg_h_D": 0.783,
        "xg_a_D": 1.55,
        "p1": 17,
@@ -4647,7 +4663,7 @@
        "diff": -245.0,
        "xg_h": 0.72,
        "xg_a": 1.91,
-       "T": 2.58,
+       "T": 2.56,
        "xg_h_D": 0.801,
        "xg_a_D": 1.837,
        "p1": 11,
@@ -4712,9 +4728,9 @@
         "ah_away": 7.7,
         "fair_a": 1.83,
         "need_a": 2.07,
-        "over": 3.9,
-        "p_over": 53.5,
-        "need_over": 2.03
+        "over": 3.2,
+        "p_over": 53.2,
+        "need_over": 2.05
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4730,9 +4746,9 @@
         "ah_away": -6.9,
         "fair_a": 2.16,
         "need_a": 2.45,
-        "over": -2.8,
-        "p_over": 50.1,
-        "need_over": 2.19
+        "over": -3.4,
+        "p_over": 49.8,
+        "need_over": 2.21
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4748,9 +4764,9 @@
         "ah_away": 14.6,
         "fair_a": 1.7,
         "need_a": 1.93,
-        "over": 4.9,
-        "p_over": 54.1,
-        "need_over": 2.01
+        "over": 4.3,
+        "p_over": 53.8,
+        "need_over": 2.02
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4791,7 +4807,7 @@
        "diff": 358.0,
        "xg_h": 2.47,
        "xg_a": 0.72,
-       "T": 2.72,
+       "T": 2.71,
        "xg_h_D": 2.361,
        "xg_a_D": 0.83,
        "p1": 76,
@@ -4808,7 +4824,7 @@
        "diff": 319.0,
        "xg_h": 2.32,
        "xg_a": 0.77,
-       "T": 2.81,
+       "T": 2.8,
        "xg_h_D": 2.346,
        "xg_a_D": 0.739,
        "p1": 71,
@@ -4825,7 +4841,7 @@
        "diff": 389.0,
        "xg_h": 2.6,
        "xg_a": 0.71,
-       "T": 2.82,
+       "T": 2.81,
        "xg_h_D": 2.48,
        "xg_a_D": 0.834,
        "p1": 78,
@@ -4890,9 +4906,9 @@
         "ah_away": -2.9,
         "fair_a": 2.1,
         "need_a": 2.35,
-        "over": 0.1,
-        "p_over": 51.1,
-        "need_over": 2.12
+        "over": -0.3,
+        "p_over": 50.8,
+        "need_over": 2.13
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4908,9 +4924,9 @@
         "ah_away": 6.3,
         "fair_a": 1.92,
         "need_a": 2.15,
-        "over": 4.4,
-        "p_over": 53.3,
-        "need_over": 2.03
+        "over": 4.1,
+        "p_over": 53.1,
+        "need_over": 2.04
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -4926,9 +4942,9 @@
         "ah_away": -9.2,
         "fair_a": 2.25,
         "need_a": 2.52,
-        "over": 4.8,
-        "p_over": 53.5,
-        "need_over": 2.02
+        "over": 4.5,
+        "p_over": 53.3,
+        "need_over": 2.03
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -5003,7 +5019,7 @@
        "diff": -86.0,
        "xg_h": 1.17,
        "xg_a": 1.58,
-       "T": 2.41,
+       "T": 2.42,
        "xg_h_D": 1.193,
        "xg_a_D": 1.557,
        "p1": 23,
@@ -5086,7 +5102,7 @@
        "diff": 153.0,
        "xg_h": 1.81,
        "xg_a": 1.07,
-       "T": 2.84,
+       "T": 2.86,
        "xg_h_D": 1.767,
        "xg_a_D": 1.113,
        "p1": 52,
@@ -5103,7 +5119,7 @@
        "diff": 176.0,
        "xg_h": 1.9,
        "xg_a": 1.05,
-       "T": 2.98,
+       "T": 3.0,
        "xg_h_D": 1.919,
        "xg_a_D": 1.034,
        "p1": 54,
@@ -5120,7 +5136,7 @@
        "diff": 228.0,
        "xg_h": 2.12,
        "xg_a": 1.01,
-       "T": 2.98,
+       "T": 3.0,
        "xg_h_D": 2.045,
        "xg_a_D": 1.079,
        "p1": 61,
@@ -5203,7 +5219,7 @@
        "diff": -68.0,
        "xg_h": 1.14,
        "xg_a": 1.48,
-       "T": 2.57,
+       "T": 2.54,
        "xg_h_D": 1.164,
        "xg_a_D": 1.454,
        "p1": 25,
@@ -5220,7 +5236,7 @@
        "diff": 18.0,
        "xg_h": 1.28,
        "xg_a": 1.2,
-       "T": 2.51,
+       "T": 2.5,
        "xg_h_D": 1.283,
        "xg_a_D": 1.194,
        "p1": 34,
@@ -5237,7 +5253,7 @@
        "diff": -21.0,
        "xg_h": 1.19,
        "xg_a": 1.29,
-       "T": 2.44,
+       "T": 2.42,
        "xg_h_D": 1.199,
        "xg_a_D": 1.287,
        "p1": 29,
@@ -5437,7 +5453,7 @@
        "diff": -108.0,
        "xg_h": 1.11,
        "xg_a": 1.64,
-       "T": 2.67,
+       "T": 2.61,
        "xg_h_D": 1.147,
        "xg_a_D": 1.608,
        "p1": 21,
@@ -5454,7 +5470,7 @@
        "diff": -172.0,
        "xg_h": 0.83,
        "xg_a": 1.66,
-       "T": 2.52,
+       "T": 2.48,
        "xg_h_D": 0.811,
        "xg_a_D": 1.678,
        "p1": 16,
@@ -5471,7 +5487,7 @@
        "diff": -238.0,
        "xg_h": 0.77,
        "xg_a": 1.93,
-       "T": 2.6,
+       "T": 2.55,
        "xg_h_D": 0.849,
        "xg_a_D": 1.859,
        "p1": 12,
@@ -5554,7 +5570,7 @@
        "diff": 90.0,
        "xg_h": 1.61,
        "xg_a": 1.17,
-       "T": 2.6,
+       "T": 2.58,
        "xg_h_D": 1.586,
        "xg_a_D": 1.199,
        "p1": 43,
@@ -5571,7 +5587,7 @@
        "diff": 46.0,
        "xg_h": 1.4,
        "xg_a": 1.18,
-       "T": 2.53,
+       "T": 2.51,
        "xg_h_D": 1.405,
        "xg_a_D": 1.171,
        "p1": 37,
@@ -5588,7 +5604,7 @@
        "diff": 44.0,
        "xg_h": 1.39,
        "xg_a": 1.18,
-       "T": 2.43,
+       "T": 2.41,
        "xg_h_D": 1.379,
        "xg_a_D": 1.191,
        "p1": 37,
@@ -5671,7 +5687,7 @@
        "diff": 159.0,
        "xg_h": 1.86,
        "xg_a": 1.08,
-       "T": 2.75,
+       "T": 2.77,
        "xg_h_D": 1.81,
        "xg_a_D": 1.13,
        "p1": 52,
@@ -5688,7 +5704,7 @@
        "diff": 94.0,
        "xg_h": 1.59,
        "xg_a": 1.13,
-       "T": 2.68,
+       "T": 2.69,
        "xg_h_D": 1.597,
        "xg_a_D": 1.123,
        "p1": 43,
@@ -5705,7 +5721,7 @@
        "diff": 134.0,
        "xg_h": 1.75,
        "xg_a": 1.1,
-       "T": 2.66,
+       "T": 2.68,
        "xg_h_D": 1.711,
        "xg_a_D": 1.142,
        "p1": 49,
@@ -5788,7 +5804,7 @@
        "diff": 529.0,
        "xg_h": 3.15,
        "xg_a": 0.55,
-       "T": 3.26,
+       "T": 3.2,
        "xg_h_D": 2.981,
        "xg_a_D": 0.716,
        "p1": 89,
@@ -5805,7 +5821,7 @@
        "diff": 497.0,
        "xg_h": 3.0,
        "xg_a": 0.58,
-       "T": 3.37,
+       "T": 3.33,
        "xg_h_D": 3.044,
        "xg_a_D": 0.54,
        "p1": 86,
@@ -5822,7 +5838,7 @@
        "diff": 619.0,
        "xg_h": 3.5,
        "xg_a": 0.49,
-       "T": 3.46,
+       "T": 3.41,
        "xg_h_D": 3.304,
        "xg_a_D": 0.682,
        "p1": 92,
@@ -5910,7 +5926,7 @@
        "diff": 164.0,
        "xg_h": 1.72,
        "xg_a": 0.91,
-       "T": 2.57,
+       "T": 2.52,
        "xg_h_D": 1.666,
        "xg_a_D": 0.963,
        "p1": 53,
@@ -5927,7 +5943,7 @@
        "diff": 136.0,
        "xg_h": 1.58,
        "xg_a": 0.92,
-       "T": 2.53,
+       "T": 2.49,
        "xg_h_D": 1.594,
        "xg_a_D": 0.908,
        "p1": 49,
@@ -5944,7 +5960,7 @@
        "diff": 138.0,
        "xg_h": 1.59,
        "xg_a": 0.92,
-       "T": 2.45,
+       "T": 2.41,
        "xg_h_D": 1.548,
        "xg_a_D": 0.962,
        "p1": 49,
@@ -6009,9 +6025,9 @@
         "ah_away": -18.0,
         "fair_a": 2.21,
         "need_a": 2.48,
-        "over": 3.5,
-        "p_over": 53.9,
-        "need_over": 2.02
+        "over": 1.5,
+        "p_over": 52.9,
+        "need_over": 2.07
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6027,9 +6043,9 @@
         "ah_away": -11.3,
         "fair_a": 2.05,
         "need_a": 2.29,
-        "over": 1.8,
-        "p_over": 53.0,
-        "need_over": 2.06
+        "over": 0.1,
+        "p_over": 52.1,
+        "need_over": 2.1
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6045,9 +6061,9 @@
         "ah_away": -11.8,
         "fair_a": 2.06,
         "need_a": 2.31,
-        "over": -1.9,
-        "p_over": 51.1,
-        "need_over": 2.15
+        "over": -3.8,
+        "p_over": 50.1,
+        "need_over": 2.2
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6088,7 +6104,7 @@
        "diff": -44.0,
        "xg_h": 1.04,
        "xg_a": 1.25,
-       "T": 2.36,
+       "T": 2.33,
        "xg_h_D": 1.049,
        "xg_a_D": 1.236,
        "p1": 27,
@@ -6105,7 +6121,7 @@
        "diff": 70.0,
        "xg_h": 1.34,
        "xg_a": 1.0,
-       "T": 2.43,
+       "T": 2.41,
        "xg_h_D": 1.348,
        "xg_a_D": 0.996,
        "p1": 40,
@@ -6122,7 +6138,7 @@
        "diff": 46.0,
        "xg_h": 1.24,
        "xg_a": 1.02,
-       "T": 2.3,
+       "T": 2.29,
        "xg_h_D": 1.229,
        "xg_a_D": 1.035,
        "p1": 37,
@@ -6187,9 +6203,9 @@
         "ah_away": 29.1,
         "fair_a": 1.42,
         "need_a": 1.58,
-        "over": -9.4,
-        "p_over": 49.0,
-        "need_over": 2.27
+        "over": -10.4,
+        "p_over": 48.4,
+        "need_over": 2.3
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6205,9 +6221,9 @@
         "ah_away": 4.6,
         "fair_a": 1.75,
         "need_a": 1.96,
-        "over": -6.1,
-        "p_over": 50.8,
-        "need_over": 2.18
+        "over": -6.9,
+        "p_over": 50.3,
+        "need_over": 2.2
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6223,9 +6239,9 @@
         "ah_away": 10.5,
         "fair_a": 1.66,
         "need_a": 1.86,
-        "over": -11.8,
-        "p_over": 47.7,
-        "need_over": 2.34
+        "over": -12.7,
+        "p_over": 47.2,
+        "need_over": 2.37
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6283,7 +6299,7 @@
        "diff": -166.0,
        "xg_h": 0.68,
        "xg_a": 1.49,
-       "T": 2.16,
+       "T": 2.15,
        "xg_h_D": 0.67,
        "xg_a_D": 1.508,
        "p1": 16,
@@ -6365,9 +6381,9 @@
         "ah_away": 11.3,
         "fair_a": 1.65,
         "need_a": 1.84,
-        "over": -9.2,
-        "p_over": 45.9,
-        "need_over": 2.42
+        "over": -9.3,
+        "p_over": 45.8,
+        "need_over": 2.43
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6383,8 +6399,8 @@
         "ah_away": 0.7,
         "fair_a": 1.82,
         "need_a": 2.04,
-        "over": -14.1,
-        "p_over": 43.4,
+        "over": -14.2,
+        "p_over": 43.3,
         "need_over": 2.59
        },
        "betfair_ex_eu": null,
@@ -6401,7 +6417,7 @@
         "ah_away": 21.1,
         "fair_a": 1.51,
         "need_a": 1.69,
-        "over": -5.1,
+        "over": -5.2,
         "p_over": 47.9,
         "need_over": 2.3
        },
@@ -6460,7 +6476,7 @@
        "diff": -352.0,
        "xg_h": 0.6,
        "xg_a": 2.33,
-       "T": 2.53,
+       "T": 2.59,
        "xg_h_D": 0.711,
        "xg_a_D": 2.218,
        "p1": 7,
@@ -6477,7 +6493,7 @@
        "diff": -218.0,
        "xg_h": 0.71,
        "xg_a": 1.77,
-       "T": 2.3,
+       "T": 2.35,
        "xg_h_D": 0.691,
        "xg_a_D": 1.789,
        "p1": 13,
@@ -6494,7 +6510,7 @@
        "diff": -378.0,
        "xg_h": 0.59,
        "xg_a": 2.42,
-       "T": 2.6,
+       "T": 2.65,
        "xg_h_D": 0.704,
        "xg_a_D": 2.304,
        "p1": 6,
@@ -6559,9 +6575,9 @@
         "ah_away": 27.6,
         "fair_a": 1.4,
         "need_a": 1.58,
-        "over": 7.0,
-        "p_over": 52.7,
-        "need_over": 2.06
+        "over": 9.7,
+        "p_over": 54.0,
+        "need_over": 2.0
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6577,9 +6593,9 @@
         "ah_away": 1.2,
         "fair_a": 1.81,
         "need_a": 2.05,
-        "over": -4.7,
-        "p_over": 47.0,
-        "need_over": 2.35
+        "over": -2.3,
+        "p_over": 48.1,
+        "need_over": 2.28
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6595,9 +6611,9 @@
         "ah_away": 30.9,
         "fair_a": 1.36,
         "need_a": 1.53,
-        "over": 10.2,
-        "p_over": 54.3,
-        "need_over": 1.99
+        "over": 12.5,
+        "p_over": 55.4,
+        "need_over": 1.94
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6608,9 +6624,9 @@
       "H": "FAV 2 -0.75 @1.86 (Bovada, +28%) · 1Χ2 φαβ εκτος ≥75% @1.63",
       "A": "",
       "AV": "FAV 2 -0.75 @1.86 (Bovada, +31%) · 1Χ2 φαβ εκτος ≥75% @1.63",
-      "over": "",
+      "over": "(εκτος κανονα: αναντιστοιχια, edge +10% Bovada)",
       "over_A": "",
-      "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +10% Bovada)"
+      "over_AV": "(εκτος κανονα: αναντιστοιχια, edge +12% Bovada)"
      },
      "consensus": [
       {
@@ -6654,7 +6670,7 @@
        "diff": -8.0,
        "xg_h": 1.15,
        "xg_a": 1.19,
-       "T": 2.1,
+       "T": 2.11,
        "xg_h_D": 1.152,
        "xg_a_D": 1.188,
        "p1": 31,
@@ -6753,9 +6769,9 @@
         "ah_away": 5.0,
         "fair_a": 1.95,
         "need_a": 2.27,
-        "over": -13.2,
-        "p_over": 41.5,
-        "need_over": 2.7
+        "over": -12.8,
+        "p_over": 41.7,
+        "need_over": 2.68
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6771,9 +6787,9 @@
         "ah_away": 0.0,
         "fair_a": 2.09,
         "need_a": 2.43,
-        "over": -8.4,
-        "p_over": 43.8,
-        "need_over": 2.53
+        "over": -8.1,
+        "p_over": 44.0,
+        "need_over": 2.52
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6789,9 +6805,9 @@
         "ah_away": 10.8,
         "fair_a": 1.81,
         "need_a": 2.1,
-        "over": -10.1,
-        "p_over": 43.0,
-        "need_over": 2.59
+        "over": -9.8,
+        "p_over": 43.2,
+        "need_over": 2.58
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -6832,7 +6848,7 @@
        "diff": 774.0,
        "xg_h": 3.9,
        "xg_a": 0.15,
-       "T": 3.73,
+       "T": 3.69,
        "xg_h_D": 3.656,
        "xg_a_D": 0.344,
        "p1": 97,
@@ -6849,7 +6865,7 @@
        "diff": 648.0,
        "xg_h": 3.33,
        "xg_a": 0.18,
-       "T": 3.51,
+       "T": 3.47,
        "xg_h_D": 3.382,
        "xg_a_D": 0.15,
        "p1": 93,
@@ -6866,7 +6882,7 @@
        "diff": 737.0,
        "xg_h": 3.69,
        "xg_a": 0.15,
-       "T": 3.54,
+       "T": 3.5,
        "xg_h_D": 3.461,
        "xg_a_D": 0.337,
        "p1": 96,
@@ -6949,7 +6965,7 @@
        "diff": -51.0,
        "xg_h": 1.05,
        "xg_a": 1.3,
-       "T": 2.09,
+       "T": 2.07,
        "xg_h_D": 1.062,
        "xg_a_D": 1.282,
        "p1": 27,
@@ -6966,7 +6982,7 @@
        "diff": -8.0,
        "xg_h": 1.05,
        "xg_a": 1.09,
-       "T": 2.0,
+       "T": 1.99,
        "xg_h_D": 1.05,
        "xg_a_D": 1.091,
        "p1": 31,
@@ -6983,7 +6999,7 @@
        "diff": -55.0,
        "xg_h": 1.01,
        "xg_a": 1.28,
-       "T": 2.06,
+       "T": 2.04,
        "xg_h_D": 1.032,
        "xg_a_D": 1.263,
        "p1": 26,
@@ -7048,9 +7064,9 @@
         "ah_away": 1.4,
         "fair_a": 2.08,
         "need_a": 2.37,
-        "over": -17.2,
-        "p_over": 41.6,
-        "need_over": 2.72
+        "over": -18.2,
+        "p_over": 41.1,
+        "need_over": 2.76
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -7066,9 +7082,9 @@
         "ah_away": -10.1,
         "fair_a": 2.41,
         "need_a": 2.75,
-        "over": -21.9,
-        "p_over": 39.2,
-        "need_over": 2.92
+        "over": -22.8,
+        "p_over": 38.8,
+        "need_over": 2.96
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -7084,9 +7100,9 @@
         "ah_away": 2.3,
         "fair_a": 2.06,
         "need_a": 2.35,
-        "over": -18.8,
-        "p_over": 40.8,
-        "need_over": 2.78
+        "over": -19.7,
+        "p_over": 40.3,
+        "need_over": 2.82
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -7127,7 +7143,7 @@
        "diff": 273.0,
        "xg_h": 2.01,
        "xg_a": 0.67,
-       "T": 2.58,
+       "T": 2.54,
        "xg_h_D": 1.925,
        "xg_a_D": 0.759,
        "p1": 67,
@@ -7144,7 +7160,7 @@
        "diff": 293.0,
        "xg_h": 2.08,
        "xg_a": 0.65,
-       "T": 2.7,
+       "T": 2.67,
        "xg_h_D": 2.102,
        "xg_a_D": 0.627,
        "p1": 68,
@@ -7161,7 +7177,7 @@
        "diff": 345.0,
        "xg_h": 2.29,
        "xg_a": 0.61,
-       "T": 2.72,
+       "T": 2.68,
        "xg_h_D": 2.18,
        "xg_a_D": 0.72,
        "p1": 74,
@@ -7244,7 +7260,7 @@
        "diff": 147.0,
        "xg_h": 1.64,
        "xg_a": 0.92,
-       "T": 2.51,
+       "T": 2.55,
        "xg_h_D": 1.597,
        "xg_a_D": 0.969,
        "p1": 51,
@@ -7261,7 +7277,7 @@
        "diff": 172.0,
        "xg_h": 1.73,
        "xg_a": 0.9,
-       "T": 2.63,
+       "T": 2.66,
        "xg_h_D": 1.747,
        "xg_a_D": 0.882,
        "p1": 53,
@@ -7278,7 +7294,7 @@
        "diff": 218.0,
        "xg_h": 1.92,
        "xg_a": 0.86,
-       "T": 2.64,
+       "T": 2.67,
        "xg_h_D": 1.851,
        "xg_a_D": 0.929,
        "p1": 59,
@@ -7361,7 +7377,7 @@
        "diff": 141.0,
        "xg_h": 1.69,
        "xg_a": 0.99,
-       "T": 2.6,
+       "T": 2.53,
        "xg_h_D": 1.641,
        "xg_a_D": 1.036,
        "p1": 50,
@@ -7378,7 +7394,7 @@
        "diff": 185.0,
        "xg_h": 1.84,
        "xg_a": 0.94,
-       "T": 2.76,
+       "T": 2.71,
        "xg_h_D": 1.855,
        "xg_a_D": 0.925,
        "p1": 55,
@@ -7395,7 +7411,7 @@
        "diff": 209.0,
        "xg_h": 1.94,
        "xg_a": 0.92,
-       "T": 2.71,
+       "T": 2.65,
        "xg_h_D": 1.871,
        "xg_a_D": 0.988,
        "p1": 58,
@@ -7478,7 +7494,7 @@
        "diff": 89.0,
        "xg_h": 1.43,
        "xg_a": 1.0,
-       "T": 2.14,
+       "T": 2.13,
        "xg_h_D": 1.404,
        "xg_a_D": 1.023,
        "p1": 43,
@@ -7495,7 +7511,7 @@
        "diff": 39.0,
        "xg_h": 1.21,
        "xg_a": 1.02,
-       "T": 2.07,
+       "T": 2.06,
        "xg_h_D": 1.215,
        "xg_a_D": 1.017,
        "p1": 36,
@@ -7595,7 +7611,7 @@
        "diff": 943.0,
        "xg_h": 4.61,
        "xg_a": 0.15,
-       "T": 4.21,
+       "T": 4.07,
        "xg_h_D": 4.314,
        "xg_a_D": 0.281,
        "p1": 99,
@@ -7612,7 +7628,7 @@
        "diff": 824.0,
        "xg_h": 4.09,
        "xg_a": 0.15,
-       "T": 4.11,
+       "T": 4.0,
        "xg_h_D": 4.158,
        "xg_a_D": 0.15,
        "p1": 97,
@@ -7629,7 +7645,7 @@
        "diff": 1006.0,
        "xg_h": 4.83,
        "xg_a": 0.15,
-       "T": 4.3,
+       "T": 4.17,
        "xg_h_D": 4.517,
        "xg_a_D": 0.255,
        "p1": 99,
@@ -7712,7 +7728,7 @@
        "diff": -40.0,
        "xg_h": 1.1,
        "xg_a": 1.3,
-       "T": 2.29,
+       "T": 2.36,
        "xg_h_D": 1.117,
        "xg_a_D": 1.289,
        "p1": 28,
@@ -7729,7 +7745,7 @@
        "diff": -69.0,
        "xg_h": 1.05,
        "xg_a": 1.39,
-       "T": 2.39,
+       "T": 2.44,
        "xg_h_D": 1.047,
        "xg_a_D": 1.394,
        "p1": 24,
@@ -7746,7 +7762,7 @@
        "diff": -116.0,
        "xg_h": 1.02,
        "xg_a": 1.58,
-       "T": 2.42,
+       "T": 2.48,
        "xg_h_D": 1.052,
        "xg_a_D": 1.544,
        "p1": 20,
@@ -7829,7 +7845,7 @@
        "diff": -258.0,
        "xg_h": 0.67,
        "xg_a": 1.94,
-       "T": 2.54,
+       "T": 2.5,
        "xg_h_D": 0.753,
        "xg_a_D": 1.857,
        "p1": 11,
@@ -7846,7 +7862,7 @@
        "diff": -228.0,
        "xg_h": 0.69,
        "xg_a": 1.8,
-       "T": 2.5,
+       "T": 2.47,
        "xg_h_D": 0.669,
        "xg_a_D": 1.819,
        "p1": 12,
@@ -7863,7 +7879,7 @@
        "diff": -335.0,
        "xg_h": 0.61,
        "xg_a": 2.23,
-       "T": 2.68,
+       "T": 2.65,
        "xg_h_D": 0.711,
        "xg_a_D": 2.128,
        "p1": 7,
@@ -7946,7 +7962,7 @@
        "diff": 66.0,
        "xg_h": 1.37,
        "xg_a": 1.05,
-       "T": 2.09,
+       "T": 2.11,
        "xg_h_D": 1.35,
        "xg_a_D": 1.068,
        "p1": 40,
@@ -7963,7 +7979,7 @@
        "diff": 73.0,
        "xg_h": 1.37,
        "xg_a": 1.01,
-       "T": 2.17,
+       "T": 2.18,
        "xg_h_D": 1.374,
        "xg_a_D": 1.008,
        "p1": 41,
@@ -7980,7 +7996,7 @@
        "diff": 65.0,
        "xg_h": 1.33,
        "xg_a": 1.02,
-       "T": 2.06,
+       "T": 2.07,
        "xg_h_D": 1.314,
        "xg_a_D": 1.041,
        "p1": 40,
@@ -8063,7 +8079,7 @@
        "diff": -428.0,
        "xg_h": 0.52,
        "xg_a": 2.61,
-       "T": 2.96,
+       "T": 2.98,
        "xg_h_D": 0.65,
        "xg_a_D": 2.481,
        "p1": 5,
@@ -8080,7 +8096,7 @@
        "diff": -315.0,
        "xg_h": 0.61,
        "xg_a": 2.14,
-       "T": 2.76,
+       "T": 2.77,
        "xg_h_D": 0.583,
        "xg_a_D": 2.169,
        "p1": 8,
@@ -8097,7 +8113,7 @@
        "diff": -455.0,
        "xg_h": 0.5,
        "xg_a": 2.71,
-       "T": 2.99,
+       "T": 3.01,
        "xg_h_D": 0.643,
        "xg_a_D": 2.572,
        "p1": 4,
@@ -8185,7 +8201,7 @@
        "diff": 479.0,
        "xg_h": 2.68,
        "xg_a": 0.33,
-       "T": 2.68,
+       "T": 2.89,
        "xg_h_D": 2.527,
        "xg_a_D": 0.477,
        "p1": 86,
@@ -8202,7 +8218,7 @@
        "diff": 473.0,
        "xg_h": 2.62,
        "xg_a": 0.32,
-       "T": 2.77,
+       "T": 2.94,
        "xg_h_D": 2.666,
        "xg_a_D": 0.282,
        "p1": 85,
@@ -8219,7 +8235,7 @@
        "diff": 473.0,
        "xg_h": 2.62,
        "xg_a": 0.32,
-       "T": 2.63,
+       "T": 2.81,
        "xg_h_D": 2.476,
        "xg_a_D": 0.472,
        "p1": 85,
@@ -8284,9 +8300,9 @@
         "ah_away": 5.6,
         "fair_a": 1.75,
         "need_a": 1.95,
-        "over": -14.8,
-        "p_over": 44.8,
-        "need_over": 2.49
+        "over": -5.4,
+        "p_over": 49.8,
+        "need_over": 2.21
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -8302,9 +8318,9 @@
         "ah_away": 7.9,
         "fair_a": 1.71,
         "need_a": 1.91,
-        "over": -10.4,
-        "p_over": 47.1,
-        "need_over": 2.35
+        "over": -2.9,
+        "p_over": 51.1,
+        "need_over": 2.14
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -8320,9 +8336,9 @@
         "ah_away": 7.9,
         "fair_a": 1.71,
         "need_a": 1.91,
-        "over": -16.9,
-        "p_over": 43.7,
-        "need_over": 2.56
+        "over": -8.7,
+        "p_over": 48.1,
+        "need_over": 2.3
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -8462,8 +8478,8 @@
         "ah_away": -20.4,
         "fair_a": 2.39,
         "need_a": 2.68,
-        "over": 15.3,
-        "p_over": 61.3,
+        "over": 15.4,
+        "p_over": 61.4,
         "need_over": 1.75
        },
        "betfair_ex_eu": null,
@@ -8480,9 +8496,9 @@
         "ah_away": -9.9,
         "fair_a": 2.11,
         "need_a": 2.37,
-        "over": 11.6,
+        "over": 11.7,
         "p_over": 59.4,
-        "need_over": 1.82
+        "need_over": 1.81
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -8498,7 +8514,7 @@
         "ah_away": -25.2,
         "fair_a": 2.54,
         "need_a": 2.86,
-        "over": 14.8,
+        "over": 14.9,
         "p_over": 61.1,
         "need_over": 1.76
        },
@@ -8557,7 +8573,7 @@
        "diff": 61.0,
        "xg_h": 1.3,
        "xg_a": 1.0,
-       "T": 1.98,
+       "T": 2.12,
        "xg_h_D": 1.285,
        "xg_a_D": 1.022,
        "p1": 40,
@@ -8574,7 +8590,7 @@
        "diff": 70.0,
        "xg_h": 1.32,
        "xg_a": 0.98,
-       "T": 2.08,
+       "T": 2.19,
        "xg_h_D": 1.33,
        "xg_a_D": 0.978,
        "p1": 40,
@@ -8591,7 +8607,7 @@
        "diff": 37.0,
        "xg_h": 1.19,
        "xg_a": 1.01,
-       "T": 1.91,
+       "T": 2.04,
        "xg_h_D": 1.18,
        "xg_a_D": 1.021,
        "p1": 36,
@@ -8674,7 +8690,7 @@
        "diff": 313.0,
        "xg_h": 2.03,
        "xg_a": 0.5,
-       "T": 2.32,
+       "T": 2.31,
        "xg_h_D": 1.935,
        "xg_a_D": 0.595,
        "p1": 71,
