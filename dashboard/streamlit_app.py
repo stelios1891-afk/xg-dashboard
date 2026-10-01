@@ -401,47 +401,22 @@ def _euro_picks():
     return out, ev_res.get('scanned_at')
 
 def _el_picks():
-    """Value picks Ευρωλιγκας (25/9/2026): el_picks.py στον scanner · edge ≥8% χαντικαπ/συνολο · Pinnacle."""
+    """Value picks Ευρωλιγκας (25/9/2026): el_picks.py στον scanner · edge ≥8% χαντικαπ/συνολο · Pinnacle.
+    1/10: + οσα βγηκαν και «χαθηκαν» (⚠ δεν ισχυει πια) ως το τζαμπολ · κομπιουτερακι με επιλογη γραμμης (bk_value.py)."""
     try:
-        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'el_value_latest.json'), encoding='utf-8') as fh:
-            d = json.load(fh)
+        import bk_value
+        return bk_value.rows('el', 'Euroleague')
     except Exception:
         return [], None
-    out = []
-    for p in d.get('picks', []):
-        q = dict(lg='Euroleague', home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
-                 proj_odds=p.get('proj_odds'), when=p['when'], el=True, mkt=p.get('mkt'), mkt_note=p.get('mkt_note'), drift=p.get('drift'),
-                 old_agree=p.get('old_agree'), total_base=p.get('total_base'),
-                 paper_late=bool(p.get('paper')), late_kind=p.get('late_kind'), travel=p.get('travel'), coach_notes=p.get('coach_notes'))
-        if p.get('bet'):
-            q['bet'] = p['bet']
-        try:
-            import calc_data
-            q['calc'] = calc_data.single_calc(q, 0.08)          # 28/9: κομπιουτερακι (οριο Ευρωλιγκας 8%)
-        except Exception:
-            pass
-        out.append(q)
-    return out, d.get('scanned_at')
 
 
 def _ec_picks():
-    """Value picks EuroCup (1/10/2026): ec_picks.py στον scanner · ΜΟΝΟ χαντικαπ, edge ≥8% · Pinnacle."""
+    """Value picks EuroCup (1/10/2026): ec_picks.py στον scanner · ΜΟΝΟ χαντικαπ, edge ≥8% · Pinnacle (ιδια λογικη με Ευρωλιγκα)."""
     try:
-        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ec_value_latest.json'), encoding='utf-8') as fh:
-            d = json.load(fh)
+        import bk_value
+        return bk_value.rows('ec', 'EuroCup')
     except Exception:
         return [], None
-    out = []
-    for p in d.get('picks', []):
-        q = dict(lg='EuroCup', home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
-                 proj_odds=p.get('proj_odds'), when=p['when'], el=True, mkt=p.get('mkt'))
-        try:
-            import calc_data
-            q['calc'] = calc_data.single_calc(q, 0.08)
-        except Exception:
-            pass
-        out.append(q)
-    return out, d.get('scanned_at')
 
 
 def render_value(league):

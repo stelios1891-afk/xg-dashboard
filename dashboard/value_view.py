@@ -107,6 +107,10 @@ def pick_card(p):
                  f'(γηπ {a.get("o_h", 0):+.2f} · φιλ {a.get("o_a", 0):+.2f})">⚓ αγκυρα {a.get("shift", 0):+.2f}</span>')
     if p.get('tag75'):
         tags += '<span class="tag t75">🎯 −0.75</span>'
+    if p.get('gone'):                    # 1/10: μπασκετ — βγηκε pick, τωρα ΟΧΙ (επεσε η αποδοση/αλλαξε η γραμμη)· μενει ως το τζαμπολ
+        g_ = p.get('gone_now')
+        now_ = (f"τωρα {g_['lab']} @{g_['odds']:.2f} · edge {g_['edge']*100:+.0f}%" + (f" · χρειαζεται @{g_['need']:.2f}" if g_.get('need') else '')) if g_ else 'τωρα χωρις τιμη'
+        tags += f'<span class="tag np" title="Βγηκε pick στην τιμη που φαινεται· η αγορα αλλαξε. Δες στο 🧮 αλλες γραμμες / τιμες του broker.">⚠ δεν ισχυει πια · {_h.escape(now_)}</span>'
     if p.get('paper_late'):              # 1/10: EL χαντικαπ τελευταιου 2ωρου = καταγραφη (ιστορικα −9%, 1/5)
         tags += f'<span class="tag np" title="{_h.escape(p.get("mkt_note") or "")}">📝 καταγραφη · δεν παιζεται</span>'
     if p.get('stale'):                   # 1/10: φρενο φρεσκαδας εθνικων
@@ -127,8 +131,10 @@ def pick_card(p):
         stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
     if p.get('stale'):
         stake_k, stake_v = 'Ποντ.', '— (αναμονη ανανεωσης)'
+    if p.get('gone'):
+        stake_k, stake_v = 'Ποντ.', '— (δες 🧮)'
     return f"""
-<div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late') or p.get('stale')) else ''}">
+<div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late') or p.get('stale') or p.get('gone')) else ''}">
   <div class="top">
     <div class="lg">{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
     <div class="when">{_h.escape((p.get('when') or '').replace('T', ' '))}</div>
