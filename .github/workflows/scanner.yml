@@ -82,7 +82,8 @@ jobs:
           for i in $(seq 1 10); do
             sleep 300
             echo "=== loop tick $i/10 ($(date -u +%H:%M)) ==="
-            git pull --rebase --autostash || true
+            git rebase --abort 2>/dev/null || true          # 1/10: αν εμεινε μισο rebase απο το προηγουμενο τικ
+            git pull --rebase --autostash -X theirs || { git rebase --abort 2>/dev/null || true; }
             bash scanner_tick.sh auto
           done
 

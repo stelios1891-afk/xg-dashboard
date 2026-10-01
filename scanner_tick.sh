@@ -60,7 +60,9 @@ else
   fi
   git commit -m "picks/market update [skip ci]"
   # rebase πριν το push: μεσα στη βροχη μπορει να τρεχουν παραλληλα euro-refresh/one-offs
-  git pull --rebase --autostash || true
+  # 1/10/2026: -X theirs = σε συγκρουση κερδιζει η ΔΙΚΗ μας (μολις παραγμενη) εκδοχη· αλλιως το rebase «κολλουσε» (π.χ.
+  # intl_projections_dashboard.json που γραφει και το intl-reproject) και ο scanner δεν ανεβαζε ΤΙΠΟΤΑ ως το τελος του run.
+  git pull --rebase --autostash -X theirs || { echo "::warning::rebase απετυχε — abort"; git rebase --abort 2>/dev/null || true; }
   git push || echo "push failed — θα ξαναπροσπαθησει το επομενο τικ"
 fi
 exit 0
