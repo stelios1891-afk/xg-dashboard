@@ -37,6 +37,21 @@ VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 1.0 @7-14', 'cur_1.0_6_13'),
        ('ΣΩΣΤΟ 0.5 ολη', 'cur_0.5_6_40'), ('ΣΩΣΤΟ 1.0 ολη', 'cur_1.0_6_40'), ('ΣΩΣΤΟ 1.5 ολη', 'cur_1.5_6_40')]
 if os.environ.get('SOS15_SET') == 'fav075':    # 1/10: φαβορι 15+ ανα σεζον με 0.75
     VAR = [('ΣΗΜΕΡΑ', 'base'), ('ΣΩΣΤΟ 0.75 @7-14', 'cur_0.75_6_13')]
+if os.environ.get('SOS15_SET') == 'tanch':      # 1/10: αγκυρα ΣΥΝΟΛΩΝ αναλογικη (core7_totals_anchor_dash_test) πριν τους κανονες picks
+    VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13'), ('+αγκ. συνολων λ0.5', 'cur_0.75_6_13@T0.5'), ('+αγκ. συνολων λ0.7', 'cur_0.75_6_13@T0.7')]
+    _W = pd.read_csv('core7_goals_gap_rows.csv', dtype={'season': str, 'mid': str}).sort_values(['league', 'date']).reset_index(drop=True)
+    def _tfac(lam):
+        T = (_W.xh + _W.xa).values; out = T.copy()
+        for lg, idx in _W.groupby('league').groups.items():
+            off = {}; cur = None
+            for i in idx:
+                r = _W.loc[i]
+                if r.season != cur: off = {}; cur = r.season
+                t = T[i] + off.get(r.h, 0) + off.get(r.a, 0); out[i] = t
+                if r.md >= 6:
+                    e = r.T_mkt - t; off[r.h] = off.get(r.h, 0) + lam * e / 2; off[r.a] = off.get(r.a, 0) + lam * e / 2
+        return dict(zip(_W.mid, out / np.maximum(T, .1)))
+    TFAC = {lam: _tfac(lam) for lam in (0.5, 0.7)}
 if os.environ.get('SOS15_SET') == 'alearn':
     VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13@L6')] + [(f'μαθ. απο {n + 1}η', f'cur_0.75_6_13@L{n}') for n in (1, 2, 3, 4, 5)] +           [('+SoS & μαθ. απο 3η', 'cur_0.75_2_13@L2'), ('+SoS & μαθ. απο 4η', 'cur_0.75_3_13@L3')]
 def run_L(lam, carry, L):
@@ -56,7 +71,7 @@ if os.environ.get('SOS15_SET') == 'c2':
 if os.environ.get('SOS15_SET') == 'w714':      # 1/10: ποιο βαρος στις 7-14 δινει καλυτερη βαση (μεσω αγκυρας) για την 15+
     VAR = [('ΣΗΜΕΡΑ', 'base'), ('0 (χωρις)', 'nosos')] + [(f'ΣΩΣΤΟ {w} @7-14', f'cur_{w}_6_13') for w in ('0.25', '0.5', '0.75', '1.0', '1.25', '1.5', '2.0')]
 def load(v):
-    v = v.split('@')[0]
+    v = v.split('@')[0]   # @L.. / @T.. = επιλογες, οχι αρχειο
     P = pd.read_csv(f'core7_mech_preds_{v}.csv', dtype={'season': str, 'mid': str}); P['date'] = pd.to_datetime(P.date)
     m = D[key].merge(P[['league', 'season', 'home_name', 'away_name', 'date', 'xg_h', 'xg_a', 'mid']],
                      left_on=key, right_on=['league', 'season', 'home_name', 'away_name', 'date'], how='left')
@@ -102,7 +117,10 @@ def ols(y, X):
 I15 = np.where((D.md >= 14).values)[0]
 RES = {}
 for lab, v in VAR:
-    xh, xa, _ = load(v); D['xh'] = xh; D['xa'] = xa
+    xh, xa, _ = load(v)
+    if '@T' in v:      # αναλογικη αγκυρα συνολων: ιδιος συντελεστης και στις δυο ομαδες
+        _f = np.array([TFAC[float(v.split('@T')[1])].get(m, 1.0) for m in D.mid]); xh = np.clip(xh * _f, .05, 6); xa = np.clip(xa * _f, .05, 6)
+    D['xh'] = xh; D['xa'] = xa
     L = int(v.split('@L')[1]) if '@L' in v else 6
     S0, SA = run_L(0, 0, L), run_L(0.5, 0, L)
     T = xh + xa; S7 = S0 + 0.7 * (SA - S0)
@@ -192,8 +210,8 @@ for lab, _ in VAR:
         print(f'    {se}: ' + ' | '.join(f"n{len(F[(F.book == bk) & (F.season == se)]):3d} {F[(F.book == bk) & (F.season == se)].pnl.sum():+5.1f}u" for bk in BK))
 
 # 1/10: LOSO — βαρος 7-14 επιλεγμενο απο τις ΑΛΛΕΣ 3 σεζον (μεσος 3 βιβλιων), κριση στην 4η
-if os.environ.get('SOS15_SET') in ('w714', 'c2', 'alearn'):
-    cands = [l for l, _ in VAR if l != 'ΣΗΜΕΡΑ' or os.environ.get('SOS15_SET') in ('c2', 'alearn')]
+if os.environ.get('SOS15_SET') in ('w714', 'c2', 'alearn', 'tanch'):
+    cands = [l for l, _ in VAR if l != 'ΣΗΜΕΡΑ' or os.environ.get('SOS15_SET') in ('c2', 'alearn', 'tanch')]
     def u(lab, role, seas):
         B = RES[lab]['B']; x = B[B.season.isin(seas) & ((B.role == role) if role else True)]
         return np.mean([x[x.book == bk].pnl.sum() for bk in BK])
@@ -206,7 +224,7 @@ if os.environ.get('SOS15_SET') in ('w714', 'c2', 'alearn'):
             print(f'   {se}: διαλεγει {pick:17s} → {ul:+6.1f}u  (σημερα {ub:+6.1f}u)')
         print(f'   ΣΥΝΟΛΟ LOSO {tot_l:+.1f}u vs σημερα {tot_b:+.1f}u')
 
-if os.environ.get('SOS15_SET') in ('c2', 'alearn'):
+if os.environ.get('SOS15_SET') in ('c2', 'alearn', 'tanch'):
     md15 = D.md.values[I15]
     WIN = [('15-19', 14, 18), ('20-25', 19, 24), ('26+', 25, 99)]
     print(chr(10) + 'ΑΝΑ ΠΕΡΙΟΔΟ 15+ — ΟΛΑ τα picks (μεσος 3 βιβλιων, μοναδες) · σε [ ] RPS Δ×10⁻⁴ vs σημερα (− = καλυτερο)')
