@@ -64,7 +64,7 @@ def toa_like(league, include_alt=True):
                 oc = [dict(name=pid.get(p.get('participantId')), price=dec(p.get('price'))) for p in x.get('prices', [])]
                 if {o['name'] for o in oc} >= {'Yes', 'No'}:
                     btts[m['parentId']] = (oc, max([l.get('amount', 0) for l in x.get('limits', [])] or [0]))
-    out = []
+    out = []; LAD = {}                         # LAD: σκαλα για το αρχειο ΠΑΝΤΑ (ακομα κι οταν include_alt=False)
     for m in M:
         ps = m.get('participants') or []
         if len(ps) != 2 or m.get('parentId') or (m.get('special') is not None):
@@ -93,9 +93,10 @@ def toa_like(league, include_alt=True):
                 else: mk_out.append(dict(key='totals', outcomes=oc)); limits['totals'] = lim
         if m['id'] in btts:
             mk_out.append(dict(key='btts', outcomes=btts[m['id']][0])); limits['btts'] = btts[m['id']][1]
+        main_sp = [o for k in mk_out if k['key'] == 'spreads' for o in k['outcomes']]
+        main_tot = [o for k in mk_out if k['key'] == 'totals' for o in k['outcomes']]
+        LAD[m['id']] = (main_sp + alt_sp, main_tot + alt_tot)
         if include_alt:
-            main_sp = [o for k in mk_out if k['key'] == 'spreads' for o in k['outcomes']]
-            main_tot = [o for k in mk_out if k['key'] == 'totals' for o in k['outcomes']]
             if alt_sp or main_sp: mk_out.append(dict(key='alternate_spreads', outcomes=main_sp + alt_sp))
             if alt_tot or main_tot: mk_out.append(dict(key='alternate_totals', outcomes=main_tot + alt_tot))
         if not mk_out:
@@ -104,7 +105,7 @@ def toa_like(league, include_alt=True):
         out.append(dict(id=f"pin{m['id']}", pin_id=m['id'], commence_time=m['startTime'], home_team=home, away_team=away,
                         bookmakers=[dict(key='pinnacle', title='Pinnacle', last_update=upd, markets=mk_out, limits=limits)]))
     try:
-        archive(league, out, include_alt)
+        archive(league, out, LAD)
     except Exception as e:                     # το αρχειο δεν πρεπει ποτε να ριξει τη σαρωση
         print(f'pin archive σφαλμα ({league}): {e}')
     return out
@@ -126,7 +127,7 @@ def _mk(rec, key):
         for m in b.get('markets', []):
             if m.get('key') == key: return m.get('outcomes', [])
     return []
-def archive(league, games, include_alt=True):
+def archive(league, games, lad_src=None):
     if not (os.environ.get('GITHUB_ACTIONS') or os.environ.get('PIN_ARCHIVE')):
         return
     now = dt.datetime.now(dt.timezone.utc)
@@ -156,13 +157,13 @@ def archive(league, games, include_alt=True):
         if s0.get('m') != sig:
             rows.append(dict(t=now.isoformat(timespec='minutes')[:16], kind='main', lg=league, mid=int(mid), start=g['commence_time'],
                              home=home, away=away, **main)); s0['m'] = sig
-        if include_alt:
+        if lad_src is not None and g['pin_id'] in lad_src:
             lad_sp, lad_tot = {}, {}
-            for o in _mk(g, 'alternate_spreads'):
+            for o in lad_src[g['pin_id']][0]:
                 if o.get('point') is None: continue
                 if o['name'] == home: lad_sp.setdefault(float(o['point']), [None, None])[0] = o['price']
                 elif o['name'] == away: lad_sp.setdefault(-float(o['point']), [None, None])[1] = o['price']
-            for o in _mk(g, 'alternate_totals'):
+            for o in lad_src[g['pin_id']][1]:
                 if o.get('point') is None: continue
                 lad_tot.setdefault(float(o['point']), [None, None])[0 if o['name'] == 'Over' else 1] = o['price']
             lad = dict(sp=sorted([k] + v for k, v in lad_sp.items() if None not in v), tot=sorted([k] + v for k, v in lad_tot.items() if None not in v))
