@@ -55,7 +55,8 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_INFO_TOKEN: ${{ secrets.TELEGRAM_INFO_TOKEN }}
           TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
-        run: python -c "import notify; notify.send('⚠ ΕΘΝΙΚΕΣ: η αυτοματη ανανεωση (intl-refresh) ΑΠΕΤΥΧΕ — σκορ/xG/ratings δεν περνανε. Δες GitHub Actions.', silent=False, channel='info')" || true
+        run: |
+          python -c "import notify; notify.send('⚠ ΕΘΝΙΚΕΣ — η αυτοματη ανανεωση (intl-refresh) ΑΠΕΤΥΧΕ · σκορ/xG/ratings δεν περνανε · δες GitHub Actions', silent=False, channel='info')" || true
 
       - name: Sanity tests (αποτυχια = ΟΧΙ commit)
         id: sanity

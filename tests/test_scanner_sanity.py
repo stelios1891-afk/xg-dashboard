@@ -560,6 +560,20 @@ def test_d_intl_freshness_guard():
     assert 'intl_guard_state.json' in open(os.path.join(ROOT, 'scanner_tick.sh'), encoding='utf-8').read()
 
 
+def test_workflows_valid_yaml():
+    """1/10/2026: ενα «: » μεσα σε run γραμμη εσπασε ολοκληρο το intl-refresh.yml (το GitHub δεν το ξεκινουσε καν)."""
+    yaml = pytest.importorskip('yaml')
+    import glob
+    bad = []
+    for f in glob.glob(os.path.join(ROOT, '.github', 'workflows', '*.yml')):
+        try:
+            d = yaml.safe_load(open(f, encoding='utf-8'))
+            assert isinstance(d, dict) and d.get('jobs'), 'χωρις jobs'
+        except Exception as e:
+            bad.append(f'{os.path.basename(f)}: {str(e)[:120]}')
+    assert not bad, 'ΜΗ εγκυρα workflows: ' + ' | '.join(bad)
+
+
 def test_d_core7_anchor_short_lines_only():
     """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
     import core7_anchor as CA
