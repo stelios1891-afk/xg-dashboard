@@ -451,6 +451,13 @@ def render_value(league):
     in_picks = [p for p in in_picks if _upcoming(p)]
     el_picks = [p for p in el_picks if _upcoming(p)]
     ec_picks = [p for p in ec_picks if _upcoming(p)]
+    # 1/10 (Στελιος): ποδοσφαιρο — picks που βγηκαν και «χαθηκαν» μενουν ως τη σεντρα (⚠ δεν ισχυει πια + 🧮 με γραμμες)
+    gone_fb = []
+    try:
+        import fb_value
+        gone_fb = fb_value.core7_gone(picks) + fb_value.euro_gone(eu_picks) + fb_value.intl_gone(in_picks)
+    except Exception:
+        gone_fb = []
     eu_picks = eu_picks + in_picks + el_picks + ec_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
     if not res:
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
@@ -469,7 +476,7 @@ def render_value(league):
     elif res:
         st.caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')} "
                    "· auto-scan καθε 30' (GitHub Actions)")
-    if not picks and not eu_picks:
+    if not picks and not eu_picks and not gone_fb:
         st.info("Καμια value pick στο τελευταιο scan (αναμενομενο προεποχικα / χαμηλη ρευστοτητα Betfair).")
         return
     if picks:
@@ -483,7 +490,7 @@ def render_value(league):
         if sc < 1.0:
             st.caption(f"⚙ Συνολικη εκθεση {gr*100:.0f}% > cap {cap*100:.0f}% → μειωση ολων ×{sc:.2f}.")
     # ---- φιλτρο ανα πρωταθλημα (default: ολα μαζι) ----
-    combined = picks + eu_picks
+    combined = picks + eu_picks + gone_fb
     order = list(build_data.LEAGUE_FOTMOB) + ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague', 'Euroleague', 'EuroCup', 'NL A', 'NL B', 'NL C', 'NL D', 'AFCONQ']
     lgs_present = sorted({p['lg'] for p in combined}, key=lambda x: order.index(x) if x in order else 99)
     sel_lg = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs_present,
