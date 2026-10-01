@@ -1,5 +1,5 @@
 {
-"_asof": "2026-10-01T17:47",
+"_asof": "2026-10-01T17:59",
 "_xi": {
 "8238": {
 "match": "Denmark - Portugal",
@@ -412,15 +412,11 @@
 "5791": {
 "match": "Ireland - Austria",
 "utc": "2026-10-01T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 776689,
 "name": "Caoimhín Kelleher"
-},
-{
-"pid": 1098607,
-"name": "Jake O'Brien"
 },
 {
 "pid": 295062,
@@ -431,24 +427,28 @@
 "name": "Dara O'Shea"
 },
 {
+"pid": 782705,
+"name": "Liam Scales"
+},
+{
 "pid": 1269329,
 "name": "James Abankwah"
 },
 {
-"pid": 1051415,
-"name": "Jason Knight"
+"pid": 883079,
+"name": "Finn Azaz"
 },
 {
-"pid": 789574,
-"name": "Jayson Molumby"
+"pid": 770256,
+"name": "Conor Coventry"
 },
 {
 "pid": 435513,
 "name": "Ryan Manning"
 },
 {
-"pid": 674009,
-"name": "Chiedozie Ogbene"
+"pid": 846009,
+"name": "Adam Idah"
 },
 {
 "pid": 1196750,
@@ -463,11 +463,11 @@
 "8255": {
 "match": "Ireland - Austria",
 "utc": "2026-10-01T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
-"pid": 450739,
-"name": "Alexander Schlager"
+"pid": 1514693,
+"name": "Florian Wiegele"
 },
 {
 "pid": 557325,
@@ -482,32 +482,32 @@
 "name": "Philipp Lienhart"
 },
 {
-"pid": 701149,
-"name": "Maximilian Wöber"
-},
-{
-"pid": 620027,
-"name": "Xaver Schlager"
+"pid": 423812,
+"name": "Phillipp Mwene"
 },
 {
 "pid": 1024672,
 "name": "Nicolas Seiwald"
 },
 {
+"pid": 620027,
+"name": "Xaver Schlager"
+},
+{
 "pid": 1073498,
 "name": "Patrick Wimmer"
 },
 {
-"pid": 1327149,
-"name": "Paul Wanner"
+"pid": 1089685,
+"name": "Carney Chukwuemeka"
 },
 {
 "pid": 749488,
 "name": "Romano Schmid"
 },
 {
-"pid": 882163,
-"name": "Chukwubuike Adamu"
+"pid": 858198,
+"name": "Saša Kalajdžić"
 }
 ]
 },
@@ -2810,22 +2810,6 @@
 "match": "Ireland - Austria",
 "until": "2026-10-20"
 },
-"198316": {
-"name": "Michael Gregoritsch",
-"type": "injury",
-"ret": "Doubtful",
-"doubtful": true,
-"match": "Ireland - Austria",
-"until": null
-},
-"526827": {
-"name": "Konrad Laimer",
-"type": "injury",
-"ret": "A few weeks",
-"doubtful": false,
-"match": "Ireland - Austria",
-"until": "2026-10-22"
-},
 "754126": {
 "name": "Kevin Danso",
 "type": "suspension",
@@ -2833,6 +2817,22 @@
 "doubtful": false,
 "match": "Ireland - Austria",
 "until": "2026-10-10"
+},
+"198316": {
+"name": "Michael Gregoritsch",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "Kosovo - Austria",
+"until": null
+},
+"526827": {
+"name": "Konrad Laimer",
+"type": "injury",
+"ret": "A few weeks",
+"doubtful": false,
+"match": "Kosovo - Austria",
+"until": "2026-10-22"
 }
 },
 "8567": {
@@ -3313,5 +3313,5 @@
 "utc": "2026-10-02T18:45"
 }
 ],
-"_hash": "67d40147e39e61ab9154686e3c972bd3"
+"_hash": "667e0546f8802a36ab38c9f915df672a"
 }
