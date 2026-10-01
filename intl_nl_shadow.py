@@ -114,5 +114,7 @@ for r in P.itertuples():
     rec['PICK_χαρτι'] = pick; rec['PICK_αγκυρα'] = pickA; rec['PICK_αγκυρα_αξια'] = pickAV; rows.append(rec)
 T = pd.DataFrame(rows); pd.set_option('display.width', 300); pd.set_option('display.max_columns', 30)
 cols = [c for c in ['comp', 'utc', 'ματς', 'diff', 'λ', 'p1X2', 'αρχικη_AH', 'Crown', 'Crown_fair_H', 'Crown_fair_A', 'Crown_edge_H', 'Crown_edge_A', 'SBOBET', 'Crown_1X2', 'νεκρη', 'PICK_χαρτι', 'p1X2_A', 'Crown_edgeA_H', 'Crown_edgeA_A', 'PICK_αγκυρα', 'p1X2_AV', 'Crown_edgeAV_H', 'Crown_edgeAV_A', 'PICK_αγκυρα_αξια'] if c in T.columns]
-print(T[cols].to_string(index=False)); print(f'\nματς με γραμμη Crown: {int((T.Crown != "—").sum())}/{len(T)} · χαρτινα picks: {int((T.PICK_χαρτι != "").sum())} · αγκυρα: {int((T.PICK_αγκυρα != "").sum())} · αγκυρα+αξια: {int((T.PICK_αγκυρα_αξια != "").sum())}')
-T.to_csv('intl_nl_shadow_2627.csv', index=False)
+T.to_csv('intl_nl_shadow_2627.csv', index=False)   # 1/10: ΠΡΙΝ την εκτυπωση (ενα σφαλμα αναφορας δεν πρεπει να χανει το αρχειο)
+def _npk(c):
+    return int((T[c] != '').sum()) if c in T.columns else 0
+print(T[cols].to_string(index=False)); print(chr(10) + f'ματς με γραμμη Crown: {int((T["Crown"] != "—").sum()) if "Crown" in T.columns else 0}/{len(T)} · χαρτινα picks: {_npk("PICK_χαρτι")} · αγκυρα: {_npk("PICK_αγκυρα")} · αγκυρα+αξια: {_npk("PICK_αγκυρα_αξια")}')

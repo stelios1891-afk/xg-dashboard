@@ -67,7 +67,7 @@ def run(script):
 
 
 def backup():
-    shutil.rmtree(BAK, ignore_errors=True); os.makedirs(BAK)
+    shutil.rmtree(BAK, ignore_errors=True); os.makedirs(BAK, exist_ok=True)   # 1/10: στο Google Drive ο φακελος μπορει να μη σβηνεται
     for f in OUTPUTS:
         if os.path.exists(f):
             shutil.copy2(f, os.path.join(BAK, f))

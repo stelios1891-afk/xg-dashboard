@@ -173,7 +173,7 @@ names = {}
 for r in M.itertuples():
     names[r.hid] = r.hn; names[r.aid] = r.an
 L = pd.Series(R, name='R').to_frame(); L['name'] = L.index.map(names)
-last = M.groupby('hid')['date'].max().combine(M.groupby('aid')['date'].max(), max)
+last = pd.concat([M.groupby('hid')['date'].max(), M.groupby('aid')['date'].max()], axis=1).max(axis=1)   # 1/10: νεα ομαδα μονο εντος/μονο εκτος (NaT) εσπαγε το combine → refresh αποτυγχανε απο 27/9
 L['last_match'] = L.index.map(last); L = L[L['last_match'] >= '2025-01-01'].sort_values('R', ascending=False)
 L.to_csv('intl_ratings_h.csv'); D.to_csv('intl_preds_H.csv', index=False)
 json.dump(dict(variant=best, hfa_conf=HFA_CONF, alt=ALT, home_elev={str(k): v for k, v in home_elev.items()}), open('intl_hfa_config.json', 'w', encoding='utf-8'))

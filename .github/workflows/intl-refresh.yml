@@ -46,6 +46,16 @@ jobs:
           TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
         run: python intl_refresh.py
 
+      - name: Ειδοποιηση αποτυχιας (1/10 — ειχε σπασει σιωπηλα 27/9-1/10)
+        if: failure() && steps.refresh.outcome == 'failure'
+        env:
+          PYTHONIOENCODING: utf-8
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_INFO_TOKEN: ${{ secrets.TELEGRAM_INFO_TOKEN }}
+          TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
+        run: python -c "import notify; notify.send('⚠ ΕΘΝΙΚΕΣ: η αυτοματη ανανεωση (intl-refresh) ΑΠΕΤΥΧΕ — σκορ/xG/ratings δεν περνανε. Δες GitHub Actions.', silent=False, channel='info')" || true
+
       - name: Sanity tests (αποτυχια = ΟΧΙ commit)
         id: sanity
         continue-on-error: true
