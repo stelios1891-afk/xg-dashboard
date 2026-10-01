@@ -103,7 +103,84 @@ def toa_like(league, include_alt=True):
         upd = dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
         out.append(dict(id=f"pin{m['id']}", pin_id=m['id'], commence_time=m['startTime'], home_team=home, away_team=away,
                         bookmakers=[dict(key='pinnacle', title='Pinnacle', last_update=upd, markets=mk_out, limits=limits)]))
+    try:
+        archive(league, out, include_alt)
+    except Exception as e:                     # το αρχειο δεν πρεπει ποτε να ριξει τη σαρωση
+        print(f'pin archive σφαλμα ({league}): {e}')
     return out
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ΑΡΧΕΙΟ PINNACLE (1/10/2026, Στελιος: «οτι τιμη βαζουμε στο μοντελο απο την αρχη μεχρι το κλεισιμο να μενει αποθηκευμενη»,
+# ωστε του χρονου να τρεχουμε οποιο τεστ θελουμε χωρις credits). ΟΛΕΣ οι ροες που περνανε απο εδω (ποδοσφαιρο CORE7/εγχωρια/
+# Ευρωπη, Ευρωλιγκα, EuroCup, Βραζιλια). Γραφει ΜΟΝΟ στο GitHub (GITHUB_ACTIONS) ή με PIN_ARCHIVE=1 — οχι στα τοπικα τεστ.
+#   pin_archive/YYYY-MM.jsonl:
+#     kind 'main'   — καθε ΑΛΛΑΓΗ: κυρια γραμμη χαντικαπ [γραμμη γηπ., τιμη γηπ., τιμη φιλ., οριο] · συνολο [γραμμη, over, under, οριο] ·
+#                     νικητης [γηπ., φιλ., (ισοπ.), οριο] · btts [yes, no, οριο]
+#     kind 'ladder' — ΟΛΗ η σκαλα (εναλλακτικες γραμμες χαντικαπ [γραμμη γηπ., τιμη γηπ., τιμη φιλ.] & συνολου [γραμμη, over, under]):
+#                     καθε 6ω (>24ω πριν), καθε ωρα (2-24ω), καθε 10′ στο τελευταιο 2ωρο, μονο αν αλλαξε κατι (η τελευταια πριν το τζαμπολ = κλεισιμο σκαλας)
+#   pin_archive_state.json — τι γραφτηκε τελευταιο ανα ματς (για να γραφονται μονο αλλαγες)
+ARCH_DIR = os.path.join(ROOT, 'pin_archive')
+ARCH_STATE = os.path.join(ROOT, 'pin_archive_state.json')
+def _mk(rec, key):
+    for b in rec.get('bookmakers', []):
+        for m in b.get('markets', []):
+            if m.get('key') == key: return m.get('outcomes', [])
+    return []
+def archive(league, games, include_alt=True):
+    if not (os.environ.get('GITHUB_ACTIONS') or os.environ.get('PIN_ARCHIVE')):
+        return
+    now = dt.datetime.now(dt.timezone.utc)
+    try: st = json.load(open(ARCH_STATE, encoding='utf-8'))
+    except Exception: st = {}
+    rows = []
+    for g in games:
+        mid = str(g['pin_id']); home, away = g['home_team'], g['away_team']
+        try: hrs = (dt.datetime.fromisoformat(g['commence_time'].replace('Z', '+00:00')) - now).total_seconds() / 3600
+        except Exception: hrs = 99
+        if hrs <= 0: continue                                   # μονο πριν το τζαμπολ/σεντρα
+        lim = (g['bookmakers'][0].get('limits') or {})
+        sp = _mk(g, 'spreads'); tot = _mk(g, 'totals'); ml = _mk(g, 'h2h'); bt = _mk(g, 'btts')
+        main = {}
+        h = next((o for o in sp if o['name'] == home), None); a = next((o for o in sp if o['name'] == away), None)
+        if h and a: main['sp'] = [h.get('point'), h['price'], a['price'], lim.get('spreads')]
+        ov = next((o for o in tot if o['name'] == 'Over'), None); un = next((o for o in tot if o['name'] == 'Under'), None)
+        if ov and un: main['tot'] = [ov.get('point'), ov['price'], un['price'], lim.get('totals')]
+        if ml:
+            d_ = {o['name']: o['price'] for o in ml}
+            main['ml'] = [d_.get(home), d_.get(away)] + ([d_['Draw']] if 'Draw' in d_ else []) + [lim.get('h2h')]
+        if bt:
+            d_ = {o['name']: o['price'] for o in bt}; main['btts'] = [d_.get('Yes'), d_.get('No'), lim.get('btts')]
+        if not main: continue
+        s0 = st.setdefault(mid, {}); s0['start'] = g['commence_time']
+        sig = json.dumps(main, sort_keys=True)
+        if s0.get('m') != sig:
+            rows.append(dict(t=now.isoformat(timespec='minutes')[:16], kind='main', lg=league, mid=int(mid), start=g['commence_time'],
+                             home=home, away=away, **main)); s0['m'] = sig
+        if include_alt:
+            lad_sp, lad_tot = {}, {}
+            for o in _mk(g, 'alternate_spreads'):
+                if o.get('point') is None: continue
+                if o['name'] == home: lad_sp.setdefault(float(o['point']), [None, None])[0] = o['price']
+                elif o['name'] == away: lad_sp.setdefault(-float(o['point']), [None, None])[1] = o['price']
+            for o in _mk(g, 'alternate_totals'):
+                if o.get('point') is None: continue
+                lad_tot.setdefault(float(o['point']), [None, None])[0 if o['name'] == 'Over' else 1] = o['price']
+            lad = dict(sp=sorted([k] + v for k, v in lad_sp.items() if None not in v), tot=sorted([k] + v for k, v in lad_tot.items() if None not in v))
+            gap = 10 if hrs <= 2 else (60 if hrs <= 24 else 360)      # >24ω: καθε 6ω · 2-24ω: καθε ωρα · τελευταιο 2ωρο: καθε 10′
+            last = s0.get('lt')
+            due = not last or (now - dt.datetime.fromisoformat(last)).total_seconds() >= gap * 60 - 30
+            lsig = json.dumps(lad)
+            if (lad['sp'] or lad['tot']) and due and s0.get('ls') != lsig:
+                rows.append(dict(t=now.isoformat(timespec='minutes')[:16], kind='ladder', lg=league, mid=int(mid), start=g['commence_time'],
+                                 home=home, away=away, **lad)); s0['ls'] = lsig; s0['lt'] = now.isoformat(timespec='minutes')
+    # καθαρισμα state: ματς που ξεκινησαν πριν απο 2+ μερες
+    for k in [k for k, v in st.items() if v.get('start', '9') < (now - dt.timedelta(days=2)).isoformat()[:10]]:
+        st.pop(k, None)
+    if rows:
+        os.makedirs(ARCH_DIR, exist_ok=True)
+        with open(os.path.join(ARCH_DIR, f'{now:%Y-%m}.jsonl'), 'a', encoding='utf-8') as fh:
+            for r in rows: fh.write(json.dumps(r, ensure_ascii=False, separators=(',', ':')) + chr(10))
+    json.dump(st, open(ARCH_STATE, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 def fallback_notice(part, why):
     """ΜΙΑ ειδοποιηση ανα 6 ωρες ανα κομματι οταν η Pinnacle αποτυγχανει και γυριζουμε στο Odds API."""
     fn = os.path.join(ROOT, 'pin_fallback_state.json')
