@@ -6181,42 +6181,42 @@
 "update": false
 },
 "NL C|Kazakhstan|Moldova|2026-10-02 14:00": {
-"t": "2026-10-02 12:35",
+"t": "2026-10-02 13:13",
 "sig": [
 269806,
-462023,
-489507,
+387960,
 489579,
 552451,
 634251,
 762729,
 931332,
 980776,
+988184,
 1066256,
+1066266,
 1066269,
 1068585,
 1068586,
+1210914,
 1251303,
 1270388,
 1284420,
 1296656,
 1652799,
 1780058,
-1780059,
 1781547,
 1786952,
-1819380,
 0,
 274683,
 468286,
 762406,
-762682,
 824634,
 825816,
 872671,
 923167,
 928461,
 949253,
+953177,
 1169576,
 1272202,
 1283042,
@@ -6232,25 +6232,22 @@
 1727060
 ],
 "mid": "5181937",
-"min_before": 85,
+"min_before": 47,
 "teams": {
 "h": {
 "nm": "Kazakhstan",
-"v0": 7649508.0,
-"v1": 5017484.655555556,
-"dE": -23.7,
+"v0": 5017485.0,
+"v1": 5216124.655555556,
+"dE": 2.2,
 "out23": [
 "Maksim Samorodov(1.8M)",
-"Islam Chesnokov(1.0M)",
-"Alibek Kasym(0.4M)"
+"Islam Chesnokov(1.0M)"
 ],
 "new": [],
 "bench": [
-"Galymzhan Kenzhebek",
 "Azamat Tuyakbayev",
-"Aleksandr Mrynskiy",
 "Temirlan Anarbekov",
-"Damir Kasabulat"
+"Alibek Kassym"
 ],
 "unav": [
 "Islambek Kuat (τραυμ.)",
@@ -6260,60 +6257,26 @@
 "a": {
 "nm": "Moldova",
 "v0": 6902981.0,
-"v1": 6902981.324444445,
-"dE": 0.0,
-"out23": [],
-"new": [],
+"v1": 6775044.324444445,
+"dE": -1.0,
+"out23": [
+"Cristian Dros(0.4M)"
+],
+"new": [
+"Ioan-Călin Revenco(0.2M)"
+],
 "bench": [
-"Sergiu Perciun",
-"Nicky Cleșcenco",
 "Ștefan Bodișteanu"
 ],
 "unav": []
 }
 },
-"delta_elo": -23.7,
+"delta_elo": 3.2,
 "src": "bovada",
 "ev0": {
 "Μ1": {
 "xg": [
-1.7,
-0.92
-],
-"picks": [
-[
-"OVER",
-0
-]
-],
-"e_h": 2.1,
-"f_h": 1.79,
-"e_a": -10.3,
-"f_a": 2.12,
-"e_o": 15.0
-},
-"Μ3": {
-"xg": [
 1.6,
-0.92
-],
-"picks": [
-[
-"OVER",
-0
-]
-],
-"e_h": -2.5,
-"f_h": 1.88,
-"e_a": -5.5,
-"f_a": 2.02,
-"e_o": 10.6
-}
-},
-"ev1": {
-"Μ1": {
-"xg": [
-1.61,
 0.94
 ],
 "picks": [
@@ -6322,29 +6285,70 @@
 0
 ]
 ],
-"e_h": -3.2,
+"e_h": -0.3,
 "f_h": 1.9,
-"e_a": -4.7,
+"e_a": -7.5,
 "f_a": 2.01,
-"e_o": 12.5
+"e_o": 15.7
 },
 "Μ3": {
 "xg": [
 1.51,
 0.94
 ],
-"picks": [],
-"e_h": -7.9,
-"f_h": 1.99,
-"e_a": 0.1,
+"picks": [
+[
+"OVER",
+0
+]
+],
+"e_h": -5.1,
+"f_h": 2.0,
+"e_a": -2.8,
 "f_a": 1.91,
-"e_o": 8.0
+"e_o": 11.0
+}
+},
+"ev1": {
+"Μ1": {
+"xg": [
+1.62,
+0.93
+],
+"picks": [
+[
+"OVER",
+0
+]
+],
+"e_h": 0.4,
+"f_h": 1.88,
+"e_a": -8.2,
+"f_a": 2.02,
+"e_o": 16.1
+},
+"Μ3": {
+"xg": [
+1.52,
+0.93
+],
+"picks": [
+[
+"OVER",
+0
+]
+],
+"e_h": -4.4,
+"f_h": 1.98,
+"e_a": -3.5,
+"f_a": 1.92,
+"e_o": 11.3
 }
 },
 "m2": {
-"e_h": -3.7,
-"e_a": -4.2,
-"e_o": 13.6,
+"e_h": -0.8,
+"e_a": -7.1,
+"e_o": 16.9,
 "picks": [
 [
 "OVER",
@@ -6353,8 +6357,8 @@
 ]
 },
 "cons0": "Over 2 (Μ1+Μ2+Μ3)",
-"cons1": "Over 2 (Μ1+Μ2)",
-"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Kazakhstan – Moldova (17:00)\nKazakhstan: αξια 7.6→5.0M (-24 Elo) · εκτος 23: Maksim Samorodov(1.8M), Islam Chesnokov(1.0M), Alibek Kasym(0.4M) · μη διαθεσιμοι: Islambek Kuat (τραυμ.), Dastan Satpaev (τραυμ.) · ακριβοι στον παγκο: Galymzhan Kenzhebek, Azamat Tuyakbayev, Aleksandr Mrynskiy\nMoldova: αξια 6.9→6.9M (+0 Elo) · ακριβοι στον παγκο: Sergiu Perciun, Nicky Cleșcenco, Ștefan Bodișteanu\nAH -0.5 @1.91/1.99 (Bovada): Μ1 γηπ +2→-3% / φιλ -10→-5% · Μ3 γηπ -2→-8% / φιλ -6→+0% · Μ2 -4/-4%\nΣυναινεση: πριν Over 2 (Μ1+Μ2+Μ3) → με αποστολες Over 2 (Μ1+Μ2)",
-"update": false
+"cons1": "Over 2 (Μ1+Μ2+Μ3)",
+"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Kazakhstan – Moldova (17:00)\nKazakhstan: αξια 5.0→5.2M (+2 Elo) · εκτος 23: Maksim Samorodov(1.8M), Islam Chesnokov(1.0M) · μη διαθεσιμοι: Islambek Kuat (τραυμ.), Dastan Satpaev (τραυμ.) · ακριβοι στον παγκο: Azamat Tuyakbayev, Temirlan Anarbekov, Alibek Kassym\nMoldova: αξια 6.9→6.8M (-1 Elo) · εκτος 23: Cristian Dros(0.4M) · νεοι (οχι στη λιστα TM): Ioan-Călin Revenco(0.2M) · ακριβοι στον παγκο: Ștefan Bodișteanu\nAH -0.5 @1.97/1.93 (Bovada): Μ1 γηπ -0→+0% / φιλ -8→-8% · Μ3 γηπ -5→-4% / φιλ -3→-4% · Μ2 -1/-7%\nΣυναινεση: πριν Over 2 (Μ1+Μ2+Μ3) → με αποστολες Over 2 (Μ1+Μ2+Μ3)",
+"update": true
 }
 }
