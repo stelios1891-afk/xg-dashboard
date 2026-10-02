@@ -111,6 +111,16 @@ for f in glob.glob('nowgoal_intl_odds/*.jsonl'):
         rec['op'].sort(key=lambda z: -z[0])
         rec['ah'].sort(key=lambda z: -z[0]); rec['ou'].sort(key=lambda z: -z[0])     # χρονολογικα (απο νωριτερα προς σεντρα)
         ROWS[(mid, 3 if r['cid'] == 3 else 31)] = rec
+# 2/10/2026: 1Χ2 ΠΡΙΝ ΤΗ ΣΕΝΤΡΑ απο τη σωστη πηγη (nowgoal_intl_1x2_fetch.py · 1x2.nowgoal26.com/{ng}.js) — αντικαθιστα το 'op' (≈95% in-play)
+if os.path.exists('nowgoal_intl_1x2.jsonl'):
+    _n12 = 0
+    for ln in open('nowgoal_intl_1x2.jsonl', encoding='utf-8'):
+        try: x = json.loads(ln)
+        except Exception: continue
+        key = (str(x['mid']), 3 if x['book'] == 'Crown' else 31); k = KO.get(str(x['mid']))
+        if key not in ROWS or k is None: continue
+        ROWS[key]['op'] = sorted([((k - t) / 3600, o1, ox, o2) for t, o1, ox, o2 in x['rows'] if t <= k], key=lambda z: -z[0]); _n12 += 1
+    print(f'1Χ2 pre-match (νεα πηγη): {_n12} ματς×βιβλια', flush=True)
 
 
 def sup_from_line(line, oh, oa, T):
@@ -304,7 +314,10 @@ for r in D.itertuples():
                             e = ah_ev(dist, side, ud, odds)
                             if e >= .10:
                                 done.add((rl, side))
-                                SMALL.append(dict(base, win=wlab, hours=round(h, 1), rule=rl, side=side, line=ud, odds=odds, edge=e,
+                                ahl = None
+                                if a_:
+                                    ahl = a_[-1][1] if side == 1 else -a_[-1][1]      # γραμμη χαντικαπ της ΙΔΙΑΣ πλευρας τη στιγμη του bet
+                                SMALL.append(dict(base, win=wlab, hours=round(h, 1), rule=rl, side=side, line=ud, odds=odds, edge=e, ahl=ahl,
                                                   pnl=picks.settle(int(r.gd), side, ud, odds)))
                 # --- OVER ---
                 if not (r.ko or r.close or OVER_ALL):

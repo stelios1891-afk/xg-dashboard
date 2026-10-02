@@ -56,3 +56,16 @@ for wlab in ('72ω', 'closing'):
             y = x[(x.odds >= lo) & (x.odds < hi)]
             print(f'    @{lo:.2f}-{hi if hi < 99 else "∞"}: {fm(y)} · ποσοστο νικων {100*(y.pnl > 0).mean() if len(y) else 0:.0f}% (χρειαζεται ~{100/((lo+min(hi,9))/2):.0f}%)')
 print(f'\nΚΡΙΣΗ (72ω, προ-δηλωμενη): υποψηφιες = {passed or "ΚΑΜΙΑ"}')
+
+# 2/10: Ο ΝΕΟΣ ΚΑΝΟΝΑΣ ακριβως — νικη οταν η γραμμη χαντικαπ της ιδιας ομαδας ειναι −0.25 ή 0 (72ω, συναινεση)
+W = S[S.win == '72ω']; C = cons(W)
+x = C[(C.rule == 'WIN') & C.ahl.isin([-0.25, 0.0])]
+print(chr(10) + 'ΝΕΟΣ ΚΑΝΟΝΑΣ (νικη με γραμμη χαντικαπ −0.25/0) — Crown | SBOBET')
+for lo, hi in ((1.7, 2.1), (2.1, 2.6), (2.6, 99)):
+    y = x[(x.odds >= lo) & (x.odds < hi)]
+    print(f'  @{lo:.2f}-{hi if hi < 99 else "∞"}: {fm(y[y.book == "Crown"])} | {fm(y[y.book == "SBOBET"])}')
+print(f'  ΟΛΑ: {fm(x[x.book == "Crown"])} | {fm(x[x.book == "SBOBET"])}')
+y = C[(C.rule == 'WIN') & (C.ahl <= -0.5)]
+print(f'  (για συγκριση: νικη οταν γραμμη ≤ −0.5, δηλ. ηδη χαντικαπ φαβορι: {fm(y[y.book == "Crown"])} | {fm(y[y.book == "SBOBET"])})')
+y = C[(C.rule == 'WIN') & (C.ahl >= 0.25)]
+print(f'  (νικη αουτσαιντερ, γραμμη ≥ +0.25: {fm(y[y.book == "Crown"])} | {fm(y[y.book == "SBOBET"])})')
