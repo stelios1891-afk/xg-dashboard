@@ -186,7 +186,27 @@ if T_MODE == 'mix':
     print('T_MODE=mix βαρη (b0, b1·T_live, b2·xG): ' + ' · '.join(f"{k[0]} {k[1]}: {v[0]:+.2f} {v[1]:.2f} {v[2]:.2f}" for k, v in TMIX.items() if k[1] == 'M1'), flush=True)
 
 
+# ---- 2/10/2026 (Στελιος «τρεξτο»): T_MODE=comp — καθε ΚΟΜΜΑΤΙ του T με δικο του βαρος (LOSO) + xG ομαδων ----
+# χαρακτηριστικα: 1, |diff|/100, KO, ΚΟΝΤΙΝΟ, επιπεδο (R_h+R_a)/200, NL, τελικη φαση, xG ομαδων. Ερωτημα: ποσο αξιζει το «κοντινο» οταν ξερουμε xG;
+COMPW = {}
+def _feat(diff, r, xg):
+    return [1.0, abs(diff) / 100, float(bool(r.ko)), float(bool(r.close)), (r.R_h + r.R_a) / 200, float(r.ctype == 'nl'), float(r.ctype == 'tourn'), xg]
+if T_MODE == 'comp':
+    _X = pd.read_csv(f"intl_xg_teamN{os.environ.get('XG_N', '12')}.csv", dtype={'mid': str}); _X = _X[_X.n >= 3]; XGS = dict(zip(_X.mid, _X.xgsum))
+    _C = D[D.ctype.isin(['nl', 'qual', 'tourn'])]
+    for _sea in sorted(D.season.unique()):
+        for _m in MODELS:
+            _tr = [(_feat(getattr(r, f'd_{_m}'), r, XGS[str(r.mid)]), r.tot) for r in _C[_C.season != _sea].itertuples() if str(r.mid) in XGS]
+            COMPW[(_sea, _m)] = np.linalg.lstsq(np.array([a for a, _ in _tr]), np.array([t for _, t in _tr]), rcond=None)[0]
+    for k, v in COMPW.items():
+        if k[1] == 'M1': print(f'T_MODE=comp {k[0]} M1: σταθ {v[0]:+.2f} · |diff| {v[1]:+.2f} · KO {v[2]:+.2f} · ΚΟΝΤΙΝΟ {v[3]:+.2f} · επιπεδο {v[4]:+.2f} · NL {v[5]:+.2f} · τελικη {v[6]:+.2f} · xG {v[7]:+.2f}', flush=True)
+
+
 def T_final(diff, r, m):
+    if T_MODE == 'comp':
+        if str(r.mid) not in XGS:
+            return T_of(diff, r)
+        return max(float(np.dot(COMPW[(r.season, m)], _feat(diff, r, XGS[str(r.mid)]))), 0.8)
     T0 = T_of(diff, r)
     if T_MODE != 'mix' or str(r.mid) not in XGS:
         return T0
