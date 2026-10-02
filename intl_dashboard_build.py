@@ -24,7 +24,7 @@ BOOKS = (('3', 'crown'), ('31', 'sbobet'))              # Nowgoal
 TOA_BOOKS = ('pinnacle', 'matchbook', 'bovada', 'betfair_ex_eu')   # TOA, σειρα προτεραιοτητας (25/9: Bovada με γκανιοτα «Pinnacle», Betfair μονο 1Χ2)
 SRC_BOOKS = ('pinnacle', 'matchbook', 'bovada')                    # TOA βιβλια με AH/OU = «κυρια πηγη» γραμμων
 LAB = {'crown': 'Crown', 'sbobet': 'SBOBET', 'pinnacle': 'Pinnacle', 'matchbook': 'Matchbook', 'betfair_ex_eu': 'Betfair', 'bovada': 'Bovada'}
-RULES = {'ah': 'AH: dog/φαβορι ≥0.5, τιμη 1.70-2.10, edge ≥10% (Pinnacle πρωτα, μετα Matchbook· χωρις TOA: Crown, μετα SBOBET)· γραμμη φαβορι −0.25/0 → ξερη νικη 1Χ2 = −0.5 (1/10)',
+RULES = {'ah': 'AH: dog/φαβορι ≥0.5, τιμη 1.70-2.10, edge ≥10% (Pinnacle πρωτα, μετα Matchbook· χωρις TOA: Crown, μετα SBOBET)· γραμμη φαβορι −0.25/0 → ξερη νικη 1Χ2 = −0.5 (1/10), τιμη ≥1.70 χωρις ανω οριο (2/10)',
          'x12': '1Χ2: φαβορι με P ≥75% (και 1/τιμη <0.95)', 'dead': 'νεκρη ομαδα (αδιαφορη για 1η/υποβιβασμο) = κανενα pick',
          'over': 'OVER: edge ≥8% ΚΑΙ (νοκ-αουτ ή |ΔElo| <150 = «κοντινο»)· αλλιως «εκτος κανονα»',
          'hfa': {'NL': 60, 'AFCONQ': 80}, 'T': 'T = 0.29 + 0.33·|diff|/100 + 0.26·[KO] + 0.49·[κοντινο] + 0.10·(R_h+R_a)/2/100 − 0.05·[NL]',
@@ -217,7 +217,7 @@ def pick_ah(xg_h, xg_a, mk, order, p1=None, p2=None, allow_x12=True, deep=None):
             # 1/10/2026 (Στελιος, Ολλανδια): γραμμη φαβορι −0.25 ή 0 → το ΞΕΡΟ 1Χ2 της νικης ΕΙΝΑΙ το −0.5 (ιδιος κανονας: 1.70-2.10, edge ≥10%)
             if not pick and abs(line) < 0.5 and b.get('o1') and b.get('o2'):
                 for side, odds in ((1, b['o1']), (-1, b['o2'])):
-                    if (line if side == 1 else -line) <= 1e-9 and 1.70 <= odds <= 2.10:
+                    if (line if side == 1 else -line) <= 1e-9 and odds >= 1.70:      # 2/10 (Στελιος): ΧΩΡΙΣ ανω οριο στο 1/2 — οι τιμες νικης σε −0.25/0 ειναι συνηθως 2.00-2.50
                         e = intl_pricing.ah_ev(intl_pricing.dist_for(dist, dd, -0.5), side, -0.5, odds, picks.MARGIN)
                         if e >= .10:
                             pick = f"FAV {'1' if side == 1 else '2'} -0.50 @{odds:.2f} ({LAB[lab]} 1Χ2, {e*100:+.0f}%)"; break

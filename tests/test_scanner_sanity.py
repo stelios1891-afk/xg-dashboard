@@ -601,8 +601,10 @@ def test_intl_x12_win_as_minus_half():
     assert pk.startswith('FAV 2 -0.50 @1.95') and '1Χ2' in pk, pk
     c = ic.parse(pk)[0]
     assert c['mkt'] == 'AH' and c['line'] == -0.5 and c['side'] == 2 and 'νικη (1Χ2)' in ic.label(c, 'A', 'B')
-    mk['pinnacle']['o2'] = 2.15
-    assert B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False) == '', 'εκτος 1.70-2.10 → οχι pick'
+    mk['pinnacle']['o2'] = 2.35        # 2/10: στο 1/2 ΧΩΡΙΣ ανω οριο
+    assert B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False).startswith('FAV 2 -0.50 @2.35'), 'νικη πανω απο 2.10 πρεπει να μενει pick'
+    mk['pinnacle']['o2'] = 1.65
+    assert B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False) == '', 'κατω απο 1.70 → οχι pick'
 
 
 def test_intl_status_better_price_stays_active():
