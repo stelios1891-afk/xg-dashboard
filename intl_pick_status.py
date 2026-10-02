@@ -31,6 +31,8 @@ def status(row, m):
     src, b = market_src(m)
     if not b:
         return None
+    if '1Χ2' in str(row.get('book', '')):        # 2/10: pick ΝΙΚΗΣ (= −0.5 απο το 1Χ2) → κρινεται στην ΤΙΜΗ 1Χ2, οχι στη γραμμη χαντικαπ
+        return _status_x12(row, m, src, b)
     E = m.get('edges') or {}
     edges, needs, raw = {}, [], {}
     if row['mkt'] == 'OVER':
@@ -67,10 +69,36 @@ def status(row, m):
     return dict(active=False, cur_line=line, cur_odds=odds, book=src, edges=edges, need=(needs[1] if len(needs) >= 2 else None), models=None)
 
 
+def _status_x12(row, m, src, b):
+    """Ενεργο αν ≥2 μοντελα δινουν edge ≥10% στη ΝΙΚΗ με την τωρινη τιμη 1Χ2 — ΧΩΡΙΣ ανω οριο (σταλμενο pick: καλυτερη τιμη = δεκτη)."""
+    import picks, intl_pricing as ip
+    home = row['side'] == 1
+    odds = b.get('o1') if home else b.get('o2')
+    if not odds:
+        return None
+    edges, raw, needs = {}, {}, []
+    for v, lab in VERS:
+        V = (m.get('versions') or {}).get(v)
+        if not V or V.get('xg_h') is None:
+            continue
+        dist = picks.gd_dist(max(V['xg_h'], .05), max(V['xg_a'], .05))
+        e = ip.ah_ev(dist, 1 if home else -1, -0.5, odds, picks.MARGIN)
+        raw[lab] = 100 * e; edges[lab] = round(100 * e)
+        pw = sum(q for k, q in dist.items() if (k > 0 if home else k < 0))
+        if pw > 0:
+            needs.append(1 + (1.10 - pw) / (pw * (1 - picks.MARGIN)))
+    needs.sort()
+    act = odds >= 1.70 and sum(1 for x in raw.values() if x >= 10 - 1e-9) >= 2
+    return dict(active=act, cur_line=-0.5, cur_odds=odds, book=src, edges=edges,
+                need=None if act else (needs[1] if len(needs) >= 2 else None), models=None, x12=True)
+
+
 def describe(row, st, home, away):
     """κειμενο για Telegram/dashboard: «Φινλανδια −2.5: τωρα 1.91 (Bovada) · Μ1 +17 / Μ2 +1 / Μ3 +7 · ξανα pick απο ≥1.96»."""
     if row['mkt'] == 'OVER':
         what = f"Over {st['cur_line']:g}"
+    elif st.get('x12'):
+        what = f"{home if row['side'] == 1 else away} νικη (1Χ2)"
     else:
         what = f"{home if row['side'] == 1 else away} {st['cur_line']:+g}"
     eds = ' / '.join(f'{k} {v:+d}%' for k, v in st['edges'].items())
