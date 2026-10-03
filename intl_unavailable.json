@@ -1,10 +1,10 @@
 {
-"_asof": "2026-10-03T11:35",
+"_asof": "2026-10-03T12:13",
 "_xi": {
 "7871": {
 "match": "Finland - Albania",
 "utc": "2026-10-03T13:00",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
 "pid": 66757,
@@ -15,55 +15,55 @@
 "name": "Adam Ståhl"
 },
 {
-"pid": 967867,
-"name": "Tony Miettinen"
+"pid": 1269849,
+"name": "Samuli Miettinen"
 },
 {
-"pid": 1056461,
-"name": "Ville Koski"
+"pid": 967867,
+"name": "Tony Miettinen"
 },
 {
 "pid": 1717547,
 "name": "Juho Lähteenmäki"
 },
 {
-"pid": 547454,
-"name": "Kaan Kairinen"
-},
-{
 "pid": 1062357,
 "name": "Adam Markhiev"
 },
 {
-"pid": 604783,
-"name": "Glen Kamara"
+"pid": 547454,
+"name": "Kaan Kairinen"
 },
 {
 "pid": 1276686,
 "name": "Leo Walta"
 },
 {
+"pid": 1485532,
+"name": "Adrian Svanbäck"
+},
+{
 "pid": 290604,
 "name": "Joel Pohjanpalo"
 },
 {
-"pid": 1261804,
-"name": "Topi Keskinen"
+"pid": 1031428,
+"name": "Daniel Håkans"
 }
 ]
 },
 "10024": {
 "match": "Finland - Albania",
 "utc": "2026-10-03T13:00",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
-"pid": 1178779,
-"name": "Alen Sherri"
+"pid": 150747,
+"name": "Etrit Berisha"
 },
 {
-"pid": 1643777,
-"name": "Samuele Sina"
+"pid": 293160,
+"name": "Elseid Hysaj"
 },
 {
 "pid": 750880,
@@ -78,28 +78,28 @@
 "name": "Mario Mitaj"
 },
 {
-"pid": 1198007,
-"name": "Anis Mehmeti"
-},
-{
-"pid": 1067466,
-"name": "Juljan Shehu"
+"pid": 762028,
+"name": "Ylber Ramadani"
 },
 {
 "pid": 1208969,
 "name": "Kristjan Asllani"
 },
 {
-"pid": 948247,
-"name": "Myrto Uzuni"
+"pid": 1015750,
+"name": "Stavros Pilios"
+},
+{
+"pid": 1121511,
+"name": "Ernest Muçi"
 },
 {
 "pid": 566753,
 "name": "Rey Manaj"
 },
 {
-"pid": 1121511,
-"name": "Ernest Muçi"
+"pid": 857618,
+"name": "Arbër Hoxha"
 }
 ]
 },
@@ -2681,13 +2681,13 @@
 }
 },
 "10024": {
-"858135": {
-"name": "Klisman Cake",
+"1402924": {
+"name": "Luis Hasa",
 "type": "injury",
-"ret": "A few weeks",
-"doubtful": false,
+"ret": "Doubtful",
+"doubtful": true,
 "match": "Finland - Albania",
-"until": "2026-10-24"
+"until": null
 },
 "613262": {
 "name": "Qazim Laçi",
@@ -2696,6 +2696,14 @@
 "doubtful": true,
 "match": "Finland - Albania",
 "until": null
+},
+"858135": {
+"name": "Klisman Cake",
+"type": "injury",
+"ret": "A few weeks",
+"doubtful": false,
+"match": "Albania - San Marino",
+"until": "2026-10-24"
 }
 },
 "10155": {
@@ -3009,6 +3017,16 @@
 "ret": "Doubtful",
 "doubtful": true,
 "match": "Portugal - Norway",
+"until": null
+}
+},
+"8238": {
+"869298": {
+"name": "Nikolas Nartey",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "Wales - Denmark",
 "until": null
 }
 },
@@ -3361,5 +3379,5 @@
 "utc": "2026-10-03T18:45"
 }
 ],
-"_hash": "84febf42427e2f94de9b7afca80e02b2"
+"_hash": "dc0fe7cafbbb765df69a3972abd66812"
 }
