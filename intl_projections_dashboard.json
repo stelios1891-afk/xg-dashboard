@@ -1,236 +1,13 @@
 {
- "generated": "2026-10-03 17:57",
+ "generated": "2026-10-03 18:00",
  "toa_scanned": "2026-10-03 17:57",
- "toa_matches": 22,
- "ng_snapshot": "2026-10-03 17:19",
+ "toa_matches": 19,
+ "ng_snapshot": "2026-10-03 17:57",
  "ng_snapshot_afconq": null,
  "comps": [
   {
    "comp": "NL A",
    "matches": [
-    {
-     "utc": "2026-10-03 16:00",
-     "home": "Croatia",
-     "away": "England",
-     "hid": 10155,
-     "aid": 8491,
-     "dead": "",
-     "callups": "Croatia: Josip Stanišić(26.1M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται), Lovro Majer(13.3M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται) | England: Nico O'Reilly(37.7M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται), Declan Rice(93.0M)",
-     "init_ah": "",
-     "init_ou": "",
-     "versions": {
-      "H": {
-       "R_h": 1828.0,
-       "R_a": 1980.0,
-       "vadj": -58.0,
-       "diff": -150.0,
-       "xg_h": 0.95,
-       "xg_a": 1.69,
-       "T": 2.54,
-       "xg_h_D": 0.999,
-       "xg_a_D": 1.64,
-       "p1": 18,
-       "px": 29,
-       "p2": 53,
-       "fair_1": 5.56,
-       "fair_x": 3.45,
-       "fair_2": 1.89
-      },
-      "A": {
-       "R_h": 1867.0,
-       "R_a": 2052.0,
-       "vadj": 0.0,
-       "diff": -125.0,
-       "xg_h": 1.0,
-       "xg_a": 1.61,
-       "T": 2.6,
-       "xg_h_D": 0.991,
-       "xg_a_D": 1.62,
-       "p1": 19,
-       "px": 31,
-       "p2": 50,
-       "fair_1": 5.26,
-       "fair_x": 3.23,
-       "fair_2": 2.0
-      },
-      "AV": {
-       "R_h": 1867.0,
-       "R_a": 2052.0,
-       "vadj": -58.0,
-       "diff": -183.0,
-       "xg_h": 0.96,
-       "xg_a": 1.84,
-       "T": 2.64,
-       "xg_h_D": 1.014,
-       "xg_a_D": 1.788,
-       "p1": 15,
-       "px": 28,
-       "p2": 57,
-       "fair_1": 6.67,
-       "fair_x": 3.57,
-       "fair_2": 1.75
-      }
-     },
-     "market": {
-      "crown": null,
-      "sbobet": null,
-      "pinnacle": {
-       "ah_line": 0.75,
-       "oh": 2.0,
-       "oa": 1.91,
-       "ou_line": 2.75,
-       "over": 1.85,
-       "under": 2.05,
-       "o1": 5.1,
-       "ox": 4.0,
-       "o2": 1.71
-      },
-      "matchbook": {
-       "ah_line": 0.75,
-       "oh": 1.98,
-       "oa": 1.98,
-       "o1": 5.1,
-       "ox": 4.1,
-       "o2": 1.76
-      },
-      "bovada": {
-       "o1": 4.82,
-       "ox": 3.84,
-       "o2": 1.75,
-       "raw_h": 4.7,
-       "raw_d": 3.75,
-       "raw_a": 1.71,
-       "gap_h2h": 2.58,
-       "gap_h2h_day": "2026-10-03",
-       "over_h2h": 6.42,
-       "over_h2h_adj": 3.84
-      },
-      "betfair_ex_eu": {
-       "o1": 4.91,
-       "ox": 3.95,
-       "o2": 1.71,
-       "raw_h": 5.1,
-       "raw_d": 4.1,
-       "raw_a": 1.78,
-       "raw_over": 0.18,
-       "pin_margin": 4.0
-      },
-      "source": "pinnacle",
-      "ts": "2026-10-03 15:56",
-      "ng_ts": null,
-      "x12_source": "pinnacle",
-      "pin_margin": 4.0,
-      "x12_ts": "2026-10-03 15:56"
-     },
-     "edges": {
-      "H": {
-       "pinnacle": {
-        "ah_home": -7.6,
-        "fair_h": 2.13,
-        "need_h": 2.39,
-        "ah_away": -10.6,
-        "fair_a": 2.14,
-        "need_a": 2.43,
-        "over": -22.7,
-        "p_over": 41.8,
-        "need_over": 2.71
-       },
-       "matchbook": {
-        "ah_home": -8.5,
-        "fair_h": 2.13,
-        "need_h": 2.39,
-        "ah_away": -7.8,
-        "fair_a": 2.14,
-        "need_a": 2.43
-       },
-       "bovada": null,
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "A": {
-       "pinnacle": {
-        "ah_home": -1.5,
-        "fair_h": 2.0,
-        "need_h": 2.24,
-        "ah_away": -16.3,
-        "fair_a": 2.31,
-        "need_a": 2.62,
-        "over": -20.3,
-        "p_over": 43.1,
-        "need_over": 2.61
-       },
-       "matchbook": {
-        "ah_home": -2.4,
-        "fair_h": 2.0,
-        "need_h": 2.24,
-        "ah_away": -13.7,
-        "fair_a": 2.31,
-        "need_a": 2.62
-       },
-       "bovada": null,
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "AV": {
-       "pinnacle": {
-        "ah_home": -14.1,
-        "fair_h": 2.29,
-        "need_h": 2.57,
-        "ah_away": -4.3,
-        "fair_a": 1.98,
-        "need_a": 2.25,
-        "over": -18.3,
-        "p_over": 44.2,
-        "need_over": 2.54
-       },
-       "matchbook": {
-        "ah_home": -14.9,
-        "fair_h": 2.29,
-        "need_h": 2.57,
-        "ah_away": -1.3,
-        "fair_a": 1.98,
-        "need_a": 2.25
-       },
-       "bovada": null,
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      }
-     },
-     "picks": {
-      "H": "",
-      "A": "",
-      "AV": "",
-      "over": "",
-      "over_A": "",
-      "over_AV": ""
-     },
-     "consensus": [],
-     "btts": {
-      "H": 0.5001,
-      "A": 0.5058,
-      "AV": 0.5191,
-      "mkt": 0.5655,
-      "real": {
-       "book": "pinnacle",
-       "yes": 1.58,
-       "no": 2.45,
-       "when": "2026-10-03T15:35",
-       "books": {
-        "matchbook": [
-         1.68,
-         2.44
-        ],
-        "pinnacle": [
-         1.58,
-         2.45
-        ]
-       }
-      }
-     }
-    },
     {
      "utc": "2026-10-03 18:45",
      "home": "Spain",
@@ -245,13 +22,13 @@
       "H": {
        "R_h": 2147.0,
        "R_a": 1689.0,
-       "vadj": 120.0,
-       "diff": 638.0,
-       "xg_h": 3.69,
-       "xg_a": 0.57,
-       "T": 3.9,
-       "xg_h_D": 3.496,
-       "xg_a_D": 0.767,
+       "vadj": 116.0,
+       "diff": 634.0,
+       "xg_h": 3.67,
+       "xg_a": 0.58,
+       "T": 3.89,
+       "xg_h_D": 3.482,
+       "xg_a_D": 0.769,
        "p1": 93,
        "px": 5,
        "p2": 2,
@@ -279,13 +56,13 @@
       "AV": {
        "R_h": 2213.0,
        "R_a": 1672.0,
-       "vadj": 120.0,
-       "diff": 721.0,
-       "xg_h": 4.03,
+       "vadj": 116.0,
+       "diff": 717.0,
+       "xg_h": 4.01,
        "xg_a": 0.54,
-       "T": 4.08,
-       "xg_h_D": 3.808,
-       "xg_a_D": 0.754,
+       "T": 4.07,
+       "xg_h_D": 3.794,
+       "xg_a_D": 0.755,
        "p1": 95,
        "px": 4,
        "p2": 1,
@@ -366,34 +143,34 @@
      "edges": {
       "H": {
        "pinnacle": {
-        "ah_home": -16.0,
-        "fair_h": 2.46,
-        "need_h": 2.82,
-        "ah_away": -7.4,
-        "fair_a": 1.98,
-        "need_a": 2.27,
-        "over": -12.7,
-        "p_over": 45.2,
-        "need_over": 2.52
+        "ah_home": -16.5,
+        "fair_h": 2.49,
+        "need_h": 2.85,
+        "ah_away": -6.4,
+        "fair_a": 1.95,
+        "need_a": 2.23,
+        "over": -13.1,
+        "p_over": 45.1,
+        "need_over": 2.54
        },
        "matchbook": {
-        "ah_home": -14.2,
-        "fair_h": 2.14,
-        "need_h": 2.42,
-        "ah_away": -18.9,
-        "fair_a": 2.45,
-        "need_a": 2.75
+        "ah_home": -14.8,
+        "fair_h": 2.16,
+        "need_h": 2.44,
+        "ah_away": -17.8,
+        "fair_a": 2.42,
+        "need_a": 2.72
        },
        "bovada": {
-        "ah_home": -13.0,
-        "fair_h": 2.14,
-        "need_h": 2.42,
-        "ah_away": -18.5,
-        "fair_a": 2.45,
-        "need_a": 2.75,
-        "over": -13.4,
-        "p_over": 45.3,
-        "need_over": 2.52
+        "ah_home": -13.5,
+        "fair_h": 2.16,
+        "need_h": 2.44,
+        "ah_away": -17.4,
+        "fair_a": 2.42,
+        "need_a": 2.72,
+        "over": -13.7,
+        "p_over": 45.2,
+        "need_over": 2.54
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -436,34 +213,34 @@
       },
       "AV": {
        "pinnacle": {
-        "ah_home": -3.8,
-        "fair_h": 2.08,
-        "need_h": 2.38,
-        "ah_away": -19.8,
-        "fair_a": 2.37,
-        "need_a": 2.72,
-        "over": -5.8,
-        "p_over": 48.8,
-        "need_over": 2.29
+        "ah_home": -4.4,
+        "fair_h": 2.09,
+        "need_h": 2.4,
+        "ah_away": -19.1,
+        "fair_a": 2.35,
+        "need_a": 2.69,
+        "over": -6.1,
+        "p_over": 48.6,
+        "need_over": 2.3
        },
        "matchbook": {
-        "ah_home": -3.2,
-        "fair_h": 1.87,
-        "need_h": 2.11,
-        "ah_away": -32.0,
-        "fair_a": 2.92,
-        "need_a": 3.29
+        "ah_home": -3.7,
+        "fair_h": 1.88,
+        "need_h": 2.13,
+        "ah_away": -31.3,
+        "fair_a": 2.9,
+        "need_a": 3.26
        },
        "bovada": {
-        "ah_home": -1.8,
-        "fair_h": 1.87,
-        "need_h": 2.11,
-        "ah_away": -31.6,
-        "fair_a": 2.92,
-        "need_a": 3.29,
-        "over": -6.5,
-        "p_over": 48.9,
-        "need_over": 2.29
+        "ah_home": -2.3,
+        "fair_h": 1.88,
+        "need_h": 2.13,
+        "ah_away": -31.0,
+        "fair_a": 2.9,
+        "need_a": 3.26,
+        "over": -6.9,
+        "p_over": 48.7,
+        "need_over": 2.3
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -480,9 +257,9 @@
      },
      "consensus": [],
      "btts": {
-      "H": 0.4236,
+      "H": 0.4289,
       "A": 0.4538,
-      "AV": 0.4098,
+      "AV": 0.4097,
       "mkt": 0.4171,
       "real": {
        "book": "pinnacle",
@@ -4154,380 +3931,6 @@
   {
    "comp": "NL C",
    "matches": [
-    {
-     "utc": "2026-10-03 16:00",
-     "home": "Estonia",
-     "away": "Luxembourg",
-     "hid": 8261,
-     "aid": 5792,
-     "dead": "",
-     "callups": "Estonia: Marten-Chris Paalberg(0.9M), Tony Varjund(0.6M) | Luxembourg: Danel Sinani(1.9M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται), Olivier Thill(0.2M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται)",
-     "init_ah": "",
-     "init_ou": "",
-     "versions": {
-      "H": {
-       "R_h": 1416.0,
-       "R_a": 1456.0,
-       "vadj": -43.0,
-       "diff": -22.0,
-       "xg_h": 1.07,
-       "xg_a": 1.17,
-       "T": 2.01,
-       "xg_h_D": 1.072,
-       "xg_a_D": 1.167,
-       "p1": 30,
-       "px": 34,
-       "p2": 36,
-       "fair_1": 3.33,
-       "fair_x": 2.94,
-       "fair_2": 2.78
-      },
-      "A": {
-       "R_h": 1350.0,
-       "R_a": 1418.0,
-       "vadj": 0.0,
-       "diff": -8.0,
-       "xg_h": 1.05,
-       "xg_a": 1.09,
-       "T": 2.0,
-       "xg_h_D": 1.05,
-       "xg_a_D": 1.091,
-       "p1": 31,
-       "px": 34,
-       "p2": 35,
-       "fair_1": 3.23,
-       "fair_x": 2.94,
-       "fair_2": 2.86
-      },
-      "AV": {
-       "R_h": 1350.0,
-       "R_a": 1418.0,
-       "vadj": -43.0,
-       "diff": -51.0,
-       "xg_h": 1.02,
-       "xg_a": 1.26,
-       "T": 2.05,
-       "xg_h_D": 1.033,
-       "xg_a_D": 1.248,
-       "p1": 26,
-       "px": 33,
-       "p2": 40,
-       "fair_1": 3.85,
-       "fair_x": 3.03,
-       "fair_2": 2.5
-      }
-     },
-     "market": {
-      "crown": null,
-      "sbobet": null,
-      "pinnacle": null,
-      "matchbook": null,
-      "bovada": {
-       "ah_line": 0.0,
-       "oh": 1.95,
-       "oa": 1.87,
-       "ou_line": 1.75,
-       "over": 1.8,
-       "under": 2.04,
-       "o1": 2.92,
-       "ox": 2.82,
-       "o2": 2.8,
-       "raw_h": 2.85,
-       "raw_d": 2.75,
-       "raw_a": 2.73,
-       "gap_h2h": 2.58,
-       "gap_h2h_day": "2026-10-03",
-       "over_h2h": 8.08,
-       "over_h2h_adj": 5.5,
-       "raw_oh": 1.95,
-       "raw_oa": 1.87,
-       "gap_spreads": 0.0,
-       "gap_spreads_day": "2026-10-03",
-       "over_spreads": 4.76,
-       "over_spreads_adj": 4.76,
-       "raw_over": 1.8,
-       "raw_under": 2.05,
-       "gap_totals": -0.28,
-       "gap_totals_day": "2026-10-03",
-       "over_totals": 4.34,
-       "over_totals_adj": 4.62
-      },
-      "betfair_ex_eu": {
-       "o1": 2.94,
-       "ox": 2.84,
-       "o2": 2.88,
-       "raw_h": 3.05,
-       "raw_d": 2.94,
-       "raw_a": 2.98,
-       "raw_over": 0.36,
-       "pin_margin": 4.0
-      },
-      "source": "bovada",
-      "ts": "2026-10-03 15:56",
-      "ng_ts": null,
-      "x12_source": "bovada",
-      "pin_margin": 4.0,
-      "x12_ts": "2026-10-03 15:56"
-     },
-     "edges": {
-      "H": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": -7.3,
-        "fair_h": 2.15,
-        "need_h": 2.51,
-        "ah_away": -0.9,
-        "fair_a": 1.87,
-        "need_a": 2.18,
-        "over": -3.2,
-        "p_over": 53.8,
-        "need_over": 2.05
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "A": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": -4.5,
-        "fair_h": 2.06,
-        "need_h": 2.41,
-        "ah_away": -3.5,
-        "fair_a": 1.94,
-        "need_a": 2.27,
-        "over": -3.7,
-        "p_over": 53.5,
-        "need_over": 2.06
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "AV": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": -13.7,
-        "fair_h": 2.4,
-        "need_h": 2.8,
-        "ah_away": 5.2,
-        "fair_a": 1.72,
-        "need_a": 2.0,
-        "over": -1.4,
-        "p_over": 54.8,
-        "need_over": 2.0
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      }
-     },
-     "picks": {
-      "H": "",
-      "A": "",
-      "AV": "",
-      "over": "",
-      "over_A": "",
-      "over_AV": ""
-     },
-     "consensus": [],
-     "btts": {
-      "H": 0.4531,
-      "A": 0.4315,
-      "AV": 0.458,
-      "mkt": 0.4001
-     }
-    },
-    {
-     "utc": "2026-10-03 16:00",
-     "home": "Iceland",
-     "away": "Bulgaria",
-     "hid": 8536,
-     "aid": 10150,
-     "dead": "",
-     "callups": "Iceland: Kristian Hlynsson(2.5M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται), Elías Ólafsson(2.2M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται) | Bulgaria: Georgi Rusev(0.9M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται)",
-     "init_ah": "",
-     "init_ou": "",
-     "versions": {
-      "H": {
-       "R_h": 1646.0,
-       "R_a": 1460.0,
-       "vadj": 49.0,
-       "diff": 295.0,
-       "xg_h": 2.11,
-       "xg_a": 0.66,
-       "T": 2.64,
-       "xg_h_D": 2.016,
-       "xg_a_D": 0.752,
-       "p1": 69,
-       "px": 21,
-       "p2": 10,
-       "fair_1": 1.45,
-       "fair_x": 4.76,
-       "fair_2": 10.0
-      },
-      "A": {
-       "R_h": 1639.0,
-       "R_a": 1406.0,
-       "vadj": 0.0,
-       "diff": 293.0,
-       "xg_h": 2.07,
-       "xg_a": 0.66,
-       "T": 2.7,
-       "xg_h_D": 2.102,
-       "xg_a_D": 0.627,
-       "p1": 68,
-       "px": 22,
-       "p2": 10,
-       "fair_1": 1.47,
-       "fair_x": 4.55,
-       "fair_2": 10.0
-      },
-      "AV": {
-       "R_h": 1639.0,
-       "R_a": 1406.0,
-       "vadj": 49.0,
-       "diff": 342.0,
-       "xg_h": 2.27,
-       "xg_a": 0.62,
-       "T": 2.71,
-       "xg_h_D": 2.17,
-       "xg_a_D": 0.721,
-       "p1": 73,
-       "px": 19,
-       "p2": 8,
-       "fair_1": 1.37,
-       "fair_x": 5.26,
-       "fair_2": 12.5
-      }
-     },
-     "market": {
-      "crown": null,
-      "sbobet": null,
-      "pinnacle": null,
-      "matchbook": null,
-      "bovada": {
-       "ah_line": -1.0,
-       "oh": 1.89,
-       "oa": 1.93,
-       "ou_line": 2.5,
-       "over": 1.94,
-       "under": 1.86,
-       "o1": 1.54,
-       "ox": 4.1,
-       "o2": 6.15,
-       "raw_h": 1.5,
-       "raw_d": 4.0,
-       "raw_a": 6.0,
-       "gap_h2h": 2.58,
-       "gap_h2h_day": "2026-10-03",
-       "over_h2h": 8.33,
-       "over_h2h_adj": 5.75,
-       "raw_oh": 1.89,
-       "raw_oa": 1.93,
-       "gap_spreads": 0.0,
-       "gap_spreads_day": "2026-10-03",
-       "over_spreads": 4.72,
-       "over_spreads_adj": 4.72,
-       "raw_over": 1.95,
-       "raw_under": 1.87,
-       "gap_totals": -0.28,
-       "gap_totals_day": "2026-10-03",
-       "over_totals": 4.76,
-       "over_totals_adj": 5.04
-      },
-      "betfair_ex_eu": {
-       "o1": 1.49,
-       "ox": 4.43,
-       "o2": 6.93,
-       "raw_h": 1.55,
-       "raw_d": 4.6,
-       "raw_a": 7.2,
-       "raw_over": 0.14,
-       "pin_margin": 4.0
-      },
-      "source": "bovada",
-      "ts": "2026-10-03 15:56",
-      "ng_ts": null,
-      "x12_source": "bovada",
-      "pin_margin": 4.0,
-      "x12_ts": "2026-10-03 15:56"
-     },
-     "edges": {
-      "H": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": 8.4,
-        "fair_h": 1.68,
-        "need_h": 1.93,
-        "ah_away": -17.6,
-        "fair_a": 2.48,
-        "need_a": 2.86,
-        "over": -4.5,
-        "p_over": 49.2,
-        "need_over": 2.2
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "A": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": 6.8,
-        "fair_h": 1.71,
-        "need_h": 1.97,
-        "ah_away": -15.9,
-        "fair_a": 2.41,
-        "need_a": 2.78,
-        "over": -1.7,
-        "p_over": 50.7,
-        "need_over": 2.14
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "AV": {
-       "pinnacle": null,
-       "matchbook": null,
-       "bovada": {
-        "ah_home": 16.4,
-        "fair_h": 1.54,
-        "need_h": 1.76,
-        "ah_away": -25.8,
-        "fair_a": 2.87,
-        "need_a": 3.32,
-        "over": -1.3,
-        "p_over": 50.9,
-        "need_over": 2.13
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      }
-     },
-     "picks": {
-      "H": "",
-      "A": "",
-      "AV": "FAV 1 -1.00 @1.89 (Bovada, +16%)",
-      "over": "",
-      "over_A": "",
-      "over_AV": ""
-     },
-     "consensus": [],
-     "btts": {
-      "H": 0.4246,
-      "A": 0.4222,
-      "AV": 0.4143,
-      "mkt": 0.4541
-     }
-    },
     {
      "utc": "2026-10-05 16:00",
      "home": "Cyprus",
