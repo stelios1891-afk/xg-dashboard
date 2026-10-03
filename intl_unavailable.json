@@ -1,5 +1,5 @@
 {
-"_asof": "2026-10-03T13:28",
+"_asof": "2026-10-03T14:33",
 "_xi": {
 "10155": {
 "match": "Croatia - England",
@@ -922,7 +922,7 @@
 "430156": {
 "match": "Kosovo - Austria",
 "utc": "2026-10-04T16:00",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 1053716,
@@ -941,10 +941,6 @@
 "name": "Lumbardh Dellova"
 },
 {
-"pid": 1252806,
-"name": "Milot Avdyli"
-},
-{
 "pid": 1315511,
 "name": "Ermal Krasniqi"
 },
@@ -953,47 +949,51 @@
 "name": "Valmir Matoshi"
 },
 {
-"pid": 1310255,
-"name": "Dion Kacuri"
+"pid": 1478148,
+"name": "Leon Avdullahu"
 },
 {
-"pid": 857133,
-"name": "Muharrem Jashari"
+"pid": 1729818,
+"name": "Dion Gallapeni"
 },
 {
-"pid": 1379468,
-"name": "Albion Rrahmani"
+"pid": 862616,
+"name": "Edon Zhegrova"
 },
 {
 "pid": 1219540,
 "name": "Fisnik Asllani"
+},
+{
+"pid": 1379468,
+"name": "Albion Rrahmani"
 }
 ]
 },
 "8255": {
 "match": "Kosovo - Austria",
 "utc": "2026-10-04T16:00",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
-"pid": 1514693,
-"name": "Florian Wiegele"
+"pid": 450739,
+"name": "Alexander Schlager"
 },
 {
 "pid": 557325,
 "name": "Stefan Posch"
 },
 {
-"pid": 1073980,
-"name": "David Affengruber"
+"pid": 754126,
+"name": "Kevin Danso"
 },
 {
 "pid": 643724,
 "name": "Philipp Lienhart"
 },
 {
-"pid": 423812,
-"name": "Phillipp Mwene"
+"pid": 701149,
+"name": "Maximilian Wöber"
 },
 {
 "pid": 1024672,
@@ -1008,8 +1008,8 @@
 "name": "Patrick Wimmer"
 },
 {
-"pid": 1089685,
-"name": "Carney Chukwuemeka"
+"pid": 526827,
+"name": "Konrad Laimer"
 },
 {
 "pid": 749488,
@@ -1432,7 +1432,7 @@
 "5791": {
 "match": "Ireland - Israel",
 "utc": "2026-10-04T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 776689,
@@ -1451,12 +1451,12 @@
 "name": "Liam Scales"
 },
 {
-"pid": 1269329,
-"name": "James Abankwah"
+"pid": 1098607,
+"name": "Jake O'Brien"
 },
 {
-"pid": 883079,
-"name": "Finn Azaz"
+"pid": 789574,
+"name": "Jayson Molumby"
 },
 {
 "pid": 770256,
@@ -1483,51 +1483,51 @@
 "8567": {
 "match": "Ireland - Israel",
 "utc": "2026-10-04T18:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 1187774,
 "name": "Assaf Tzur"
 },
 {
-"pid": 1477878,
-"name": "Anan Khalaili"
-},
-{
-"pid": 940461,
-"name": "Raz Shlomo"
+"pid": 1687592,
+"name": "Nikita Stoinov"
 },
 {
 "pid": 899188,
 "name": "Idan Nachmias"
 },
 {
-"pid": 1687592,
-"name": "Nikita Stoinov"
+"pid": 940461,
+"name": "Raz Shlomo"
 },
 {
-"pid": 580694,
-"name": "Dor Peretz"
-},
-{
-"pid": 1319182,
-"name": "Ethane Azoulay"
+"pid": 1477878,
+"name": "Anan Khalaili"
 },
 {
 "pid": 763312,
 "name": "Eliel Peretz"
 },
 {
-"pid": 822237,
-"name": "Manor Solomon"
+"pid": 580694,
+"name": "Dor Peretz"
 },
 {
 "pid": 1091975,
 "name": "Liel Abada"
 },
 {
-"pid": 939140,
-"name": "Tai Baribo"
+"pid": 822237,
+"name": "Manor Solomon"
+},
+{
+"pid": 1337911,
+"name": "Oscar Gloukh"
+},
+{
+"pid": 1177306,
+"name": "Dor Turgeman"
 }
 ]
 },
@@ -2979,14 +2979,6 @@
 }
 },
 "5791": {
-"1269329": {
-"name": "James Abankwah",
-"type": "suspension",
-"ret": "Early October 2026",
-"doubtful": false,
-"match": "Ireland - Israel",
-"until": "2026-10-10"
-},
 "1276045": {
 "name": "Bosun Lawal",
 "type": "injury",
@@ -2994,17 +2986,17 @@
 "doubtful": true,
 "match": "Ireland - Israel",
 "until": null
+},
+"1269329": {
+"name": "James Abankwah",
+"type": "suspension",
+"ret": "Early October 2026",
+"doubtful": false,
+"match": "Ireland - Israel",
+"until": "2026-10-10"
 }
 },
 "8567": {
-"1477878": {
-"name": "Anan Khalaili",
-"type": "injury",
-"ret": "A few days",
-"doubtful": false,
-"match": "Ireland - Israel",
-"until": "2026-10-07"
-},
 "949321": {
 "name": "Daniel Peretz",
 "type": "injury",
@@ -3142,10 +3134,10 @@
 "1168311": {
 "name": "Yasin Ayari",
 "type": "injury",
-"ret": "A few days",
+"ret": "About a week",
 "doubtful": false,
 "match": "Romania - Sweden",
-"until": "2026-10-07"
+"until": "2026-10-10"
 },
 "1134825": {
 "name": "Patrik Wålemark",
@@ -3158,10 +3150,10 @@
 "931605": {
 "name": "Benjamin Nygren",
 "type": "injury",
-"ret": "A few days",
+"ret": "About a week",
 "doubtful": false,
 "match": "Romania - Sweden",
-"until": "2026-10-07"
+"until": "2026-10-10"
 },
 "1272349": {
 "name": "Elliot Stroud",
@@ -3174,10 +3166,10 @@
 "919848": {
 "name": "Gustaf Lagerbielke",
 "type": "injury",
-"ret": "Day to day",
+"ret": "About a week",
 "doubtful": false,
 "match": "Romania - Sweden",
-"until": "2026-11-02"
+"until": "2026-10-10"
 },
 "1014630": {
 "name": "Emil Holm",
@@ -3377,7 +3369,25 @@
 "started_last": true,
 "match": "Spain - Czechia",
 "utc": "2026-10-03T18:45"
+},
+{
+"key": "8255|1089685|2026-10-04T16:00",
+"team": "Austria",
+"name": "Carney Chukwuemeka",
+"v": 15.689007,
+"started_last": true,
+"match": "Kosovo - Austria",
+"utc": "2026-10-04T16:00"
+},
+{
+"key": "5791|883079|2026-10-04T18:45",
+"team": "Ireland",
+"name": "Finn Azaz",
+"v": 14.095953,
+"started_last": true,
+"match": "Ireland - Israel",
+"utc": "2026-10-04T18:45"
 }
 ],
-"_hash": "91e7009d527ce2449edd544e1a791b5b"
+"_hash": "64972dfc342c727915d83e066ace2e10"
 }
