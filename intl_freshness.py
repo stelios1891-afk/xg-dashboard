@@ -3,7 +3,7 @@ intl_freshness.py — ΦΡΕΝΟ ΦΡΕΣΚΑΔΑΣ ΕΘΝΙΚΩΝ (1/10/2026, �
 προυποθεση πριν στοιχηματισουμε»). Αφορμη: το intl-refresh εσπαγε σιωπηλα 27/9→1/10 και τα picks εβγαιναν με ratings της 26/9.
 
 ΕΛΕΓΧΟΣ (καλειται απο το intl_picks_ledger μονο οταν υπαρχουν νεα picks — 5 κλησεις FotMob):
-  (α) ΑΠΟΤΕΛΕΣΜΑΤΑ: καθε ματς NL A-D / φιλικο που το FotMob δινει ΤΕΛΕΙΩΜΕΝΟ (τελευταιες 21 μερες) πρεπει να υπαρχει στο intl_matches.csv.
+  (α) ΑΠΟΤΕΛΕΣΜΑΤΑ: καθε ματς NL A-D / φιλικο που το FotMob δινει ΤΕΛΕΙΩΜΕΝΟ ή ΣΕ ΕΞΕΛΙΞΗ (4/10) (τελευταιες 21 μερες) πρεπει να υπαρχει στο intl_matches.csv.
       Αν λειπει → οι δυο ομαδες του ειναι «μπαγιατικες» (το rating τους δεν ξερει το τελευταιο τους ματς).
   (β) RATINGS: καθε ματς του intl_matches.csv (τελευταιες 60 μερες) πρεπει να υπαρχει στις προβλεψεις του Μ1 (intl_preds_H.csv) ΚΑΙ της
       αγκυρας (intl_preds_anchor.csv) — αλλιως τα ratings δεν ξαναχτιστηκαν → ΟΛΑ τα picks σταματουν.
@@ -32,16 +32,21 @@ def fotmob_finished(now):
             ok += 1
             for m in json.loads(raw).get('fixtures', {}).get('allMatches', []):
                 st = m.get('status', {})
-                if not st.get('finished') or st.get('cancelled') or st.get('awarded'):
+                if st.get('cancelled') or st.get('awarded'):
                     continue
                 try:
                     t = dt.datetime.fromisoformat(st['utcTime'].replace('Z', '+00:00'))
                 except Exception:
                     continue
+                # 4/10/2026 (Στελιος, Ουαλια–Δανια): και ματς που ΞΕΚΙΝΗΣΕ αλλα δεν τελειωσε ακομα — αλλιως pick για τον επομενο αγωνα
+                # μπορουσε να βγει ΕΝΩ οι ομαδες επαιζαν (το Δανια −0.5 βγηκε 1/10 στο 2ο ημιχρονο Δανια–Πορτογαλια / Ουαλια–Νορβηγια)
+                live = (not st.get('finished')) and (st.get('started') or t <= now)
+                if not st.get('finished') and not live:
+                    continue
                 if (now - t).days > LOOKBACK_D:
                     continue
                 out.append((str(m['id']), int(m['home']['id']), int(m['away']['id']), t.strftime('%Y-%m-%d %H:%M'), comp,
-                            f"{m['home']['name']} – {m['away']['name']}"))
+                            f"{m['home']['name']} – {m['away']['name']}" + (' (σε εξελιξη)' if live else '')))
         except Exception as e:
             print(f'  φρενο: FotMob {comp} σφαλμα {str(e)[:60]}', flush=True)
         time.sleep(0.3)
