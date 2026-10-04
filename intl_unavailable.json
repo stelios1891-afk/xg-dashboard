@@ -1,5 +1,5 @@
 {
-"_asof": "2026-10-04T17:50",
+"_asof": "2026-10-04T18:12",
 "_xi": {
 "6383": {
 "match": "Greece - Germany",
@@ -243,12 +243,12 @@
 "name": "Francisco Conceição"
 },
 {
-"pid": 422685,
-"name": "Bruno Fernandes"
-},
-{
 "pid": 794427,
 "name": "Joao Félix"
+},
+{
+"pid": 422685,
+"name": "Bruno Fernandes"
 },
 {
 "pid": 940087,
@@ -2617,13 +2617,13 @@
 }
 },
 "6718": {
-"955572": {
-"name": "Danylo Sikan",
-"type": "suspension",
-"ret": "Early October 2026",
-"doubtful": false,
+"874025": {
+"name": "Vitaliy Mykolenko",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
 "match": "Ukraine - Hungary",
-"until": "2026-10-10"
+"until": null
 },
 "656667": {
 "name": "Mykola Matviyenko",
@@ -2633,24 +2633,16 @@
 "match": "Ukraine - Hungary",
 "until": "2026-10-10"
 },
-"874025": {
-"name": "Vitaliy Mykolenko",
-"type": "injury",
-"ret": "Doubtful",
-"doubtful": true,
-"match": "Ukraine - Hungary",
-"until": null
-}
-},
-"8565": {
-"1195281": {
-"name": "Miloš Kerkez",
+"955572": {
+"name": "Danylo Sikan",
 "type": "suspension",
 "ret": "Early October 2026",
 "doubtful": false,
 "match": "Ukraine - Hungary",
 "until": "2026-10-10"
+}
 },
+"8565": {
 "1188420": {
 "name": "Damir Redzic",
 "type": "injury",
@@ -2666,6 +2658,14 @@
 "doubtful": false,
 "match": "Ukraine - Hungary",
 "until": "2026-10-11"
+},
+"1195281": {
+"name": "Miloš Kerkez",
+"type": "suspension",
+"ret": "Early October 2026",
+"doubtful": false,
+"match": "Ukraine - Hungary",
+"until": "2026-10-10"
 }
 },
 "6723": {
@@ -2677,17 +2677,17 @@
 "match": "France - Belgium",
 "until": "2026-10-20"
 },
-"658554": {
-"name": "Dayot Upamecano",
-"type": "suspension",
+"1367615": {
+"name": "Warren Zaïre-Emery",
+"type": "injury",
 "ret": "Early October 2026",
 "doubtful": false,
 "match": "France - Belgium",
 "until": "2026-10-10"
 },
-"1367615": {
-"name": "Warren Zaïre-Emery",
-"type": "injury",
+"658554": {
+"name": "Dayot Upamecano",
+"type": "suspension",
 "ret": "Early October 2026",
 "doubtful": false,
 "match": "France - Belgium",
@@ -3034,5 +3034,5 @@
 "utc": "2026-10-05T18:45"
 }
 ],
-"_hash": "cd1e3d10f67b3e76addb9f701668237b"
+"_hash": "fa899804d32b5b07ce5343f9ee15fe7f"
 }
