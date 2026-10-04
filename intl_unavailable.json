@@ -1,18 +1,18 @@
 {
-"_asof": "2026-10-04T14:34",
+"_asof": "2026-10-04T15:04",
 "_xi": {
 "430156": {
 "match": "Kosovo - Austria",
 "utc": "2026-10-04T16:00",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1053716,
 "name": "Amir Saipi"
 },
 {
-"pid": 560945,
-"name": "Mërgim Vojvoda"
+"pid": 1768687,
+"name": "Ron Raçi"
 },
 {
 "pid": 1373723,
@@ -23,12 +23,12 @@
 "name": "Lumbardh Dellova"
 },
 {
-"pid": 1315511,
-"name": "Ermal Krasniqi"
+"pid": 560945,
+"name": "Mërgim Vojvoda"
 },
 {
-"pid": 1422124,
-"name": "Valmir Matoshi"
+"pid": 1190351,
+"name": "Veldin Hodža"
 },
 {
 "pid": 1478148,
@@ -43,19 +43,19 @@
 "name": "Edon Zhegrova"
 },
 {
-"pid": 1219540,
-"name": "Fisnik Asllani"
+"pid": 1382371,
+"name": "Baton Zabërgja"
 },
 {
-"pid": 1379468,
-"name": "Albion Rrahmani"
+"pid": 517052,
+"name": "Vedat Muriqi"
 }
 ]
 },
 "8255": {
 "match": "Kosovo - Austria",
 "utc": "2026-10-04T16:00",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 450739,
@@ -70,12 +70,12 @@
 "name": "Kevin Danso"
 },
 {
-"pid": 643724,
-"name": "Philipp Lienhart"
+"pid": 951498,
+"name": "Felix Bacher"
 },
 {
-"pid": 701149,
-"name": "Maximilian Wöber"
+"pid": 1027194,
+"name": "Alexander Prass"
 },
 {
 "pid": 1024672,
@@ -98,15 +98,15 @@
 "name": "Romano Schmid"
 },
 {
-"pid": 858198,
-"name": "Saša Kalajdžić"
+"pid": 198316,
+"name": "Michael Gregoritsch"
 }
 ]
 },
 "8495": {
 "match": "Malta - Andorra",
 "utc": "2026-10-04T16:00",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
 "pid": 485565,
@@ -129,8 +129,8 @@
 "name": "Ryan Camenzuli"
 },
 {
-"pid": 762730,
-"name": "Matthew Guillaumier"
+"pid": 898058,
+"name": "Brandon Paiber"
 },
 {
 "pid": 1205177,
@@ -157,51 +157,51 @@
 "10045": {
 "match": "Malta - Andorra",
 "utc": "2026-10-04T16:00",
-"type": "lastStarting11",
+"type": "standard",
 "players": [
 {
-"pid": 1380237,
-"name": "Álex Ruíz"
+"pid": 1101270,
+"name": "Iker Álvarez"
+},
+{
+"pid": 1677239,
+"name": "Biel Borrà"
 },
 {
 "pid": 674240,
 "name": "Max Llovera"
 },
 {
-"pid": 973849,
-"name": "Christian García"
+"pid": 1581138,
+"name": "Ian Olivera"
 },
 {
-"pid": 930041,
-"name": "Francisco Pomares"
-},
-{
-"pid": 183688,
-"name": "Marc García"
-},
-{
-"pid": 553859,
-"name": "Chus Rubio"
+"pid": 388024,
+"name": "Moisés San Nicolás"
 },
 {
 "pid": 807846,
 "name": "Álex Martínez"
 },
 {
-"pid": 1423594,
-"name": "Éric Izquierdo"
+"pid": 1564542,
+"name": "Ot Remolins"
 },
 {
-"pid": 1091095,
-"name": "Éric Vales"
+"pid": 1695137,
+"name": "Pau Babot"
 },
 {
-"pid": 930045,
-"name": "Cucu"
+"pid": 1499307,
+"name": "Arón Rodrigo"
 },
 {
-"pid": 753800,
-"name": "Jordi Aláez"
+"pid": 1091359,
+"name": "Albert Rosas"
+},
+{
+"pid": 1177220,
+"name": "Guillaume López"
 }
 ]
 },
@@ -2553,14 +2553,6 @@
 }
 },
 "430156": {
-"517052": {
-"name": "Vedat Muriqi",
-"type": "injury",
-"ret": "Doubtful",
-"doubtful": true,
-"match": "Kosovo - Austria",
-"until": null
-},
 "1100015": {
 "name": "Donat Rrudhani",
 "type": "injury",
@@ -3268,15 +3260,6 @@
 },
 "_alerts": [
 {
-"key": "8255|1089685|2026-10-04T16:00",
-"team": "Austria",
-"name": "Carney Chukwuemeka",
-"v": 15.689007,
-"started_last": true,
-"match": "Kosovo - Austria",
-"utc": "2026-10-04T16:00"
-},
-{
 "key": "5791|883079|2026-10-04T18:45",
 "team": "Ireland",
 "name": "Finn Azaz",
@@ -3304,5 +3287,5 @@
 "utc": "2026-10-05T18:45"
 }
 ],
-"_hash": "92f1ee1f33bf743ebfe4285fa0b8dc40"
+"_hash": "f87812202c6af0f1fc7ba5ffb96b8d33"
 }
