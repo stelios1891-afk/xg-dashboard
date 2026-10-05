@@ -52,6 +52,8 @@ if os.environ.get('SOS15_SET') == 'tanch':      # 1/10: αγκυρα ΣΥΝΟΛ�
                     e = r.T_mkt - t; off[r.h] = off.get(r.h, 0) + lam * e / 2; off[r.a] = off.get(r.a, 0) + lam * e / 2
         return dict(zip(_W.mid, out / np.maximum(T, .1)))
     TFAC = {lam: _tfac(lam) for lam in (0.5, 0.7)}
+if os.environ.get('SOS15_SET') == 'red':        # 5/10: διορθωση κοκκινων (core7_red_adj_test) — ιδια ΠΡΟ-ΔΗΛΩΣΗ (1)-(4)
+    VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13'), ('ΧΩΡΙΣ κοκκινες', 'cur_0.75_6_13~nored'), ('ΑΝΑΠΟΔΑ κοκκινες', 'cur_0.75_6_13~revred')]
 if os.environ.get('SOS15_SET') == 'alearn':
     VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13@L6')] + [(f'μαθ. απο {n + 1}η', f'cur_0.75_6_13@L{n}') for n in (1, 2, 3, 4, 5)] +           [('+SoS & μαθ. απο 3η', 'cur_0.75_2_13@L2'), ('+SoS & μαθ. απο 4η', 'cur_0.75_3_13@L3')]
 def run_L(lam, carry, L):

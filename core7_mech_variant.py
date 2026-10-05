@@ -11,6 +11,10 @@ core7_mech_variant.py — 28/9/2026 «ανατομια της συμπιεσης
 import sys, os
 import pandas as pd
 V = sys.argv[1]
+OUTV = V
+RED = None
+if '~' in V:                            # 5/10: <variant>~nored | ~revred = ιδια εκδοχη με αλλη διορθωση κοκκινων (core7_red_adj_test)
+    V, RED = V.split('~')
 src_csv = 'teamgame_inputs_5s_wf.csv'
 if V in ('nocomp', 'pen76', 'both'):
     T = pd.read_csv(src_csv)
@@ -21,6 +25,14 @@ if V in ('nocomp', 'pen76', 'both'):
     csv = f'tmp_mech_inputs_{V}.csv'; T.to_csv(csv, index=False)
 else:
     csv = src_csv
+if RED:
+    T = pd.read_csv(csv)
+    sgn = 0.0 if RED == 'nored' else -1.0
+    T['xg_model'] = T['xg_model'] - T['red_xg'] + sgn * T['red_xg']
+    if RED == 'nored':
+        T['ns_eff'] = T['ns_eff'] - T['red_xg'].abs() / 0.10
+    T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1)
+    csv = f'tmp_mech_inputs_{V}_{RED}.csv'; T.to_csv(csv, index=False)
 import sos_test
 _orig = sos_test.load_matches_5s
 sos_test.load_matches_5s = lambda leagues, seasons, csv_=None, **k: _orig(leagues, seasons, csv=csv)
@@ -59,5 +71,5 @@ if V == 'nosos':                       # 1/10: χωρις διορθωση πρ�
     pre = pre.replace('ST = 1.5;', 'ST = 0.0;')
 g = {'__name__': 'mech'}
 exec(pre, g)
-g['P'].to_csv(f'core7_mech_preds_{V}.csv', index=False)
-print(V, 'OK', len(g['P']))
+g['P'].to_csv(f'core7_mech_preds_{OUTV}.csv', index=False)
+print(OUTV, 'OK', len(g['P']))
