@@ -1,5 +1,5 @@
 {
-"_asof": "2026-10-05T17:38",
+"_asof": "2026-10-05T18:00",
 "_xi": {
 "6723": {
 "match": "France - Belgium",
@@ -164,44 +164,44 @@
 "name": "Uğurcan Çakir"
 },
 {
-"pid": 1041660,
-"name": "Eren Elmalı"
-},
-{
-"pid": 845990,
-"name": "Ozan Kabak"
+"pid": 867225,
+"name": "Zeki Çelik"
 },
 {
 "pid": 291399,
 "name": "Abdülkerim Bardakci"
 },
 {
-"pid": 867225,
-"name": "Zeki Çelik"
+"pid": 845990,
+"name": "Ozan Kabak"
 },
 {
 "pid": 774448,
 "name": "Ferdi Kadıoğlu"
 },
 {
-"pid": 845991,
-"name": "Yunus Akgün"
-},
-{
-"pid": 1183589,
-"name": "Ismail Yüksek"
+"pid": 1041660,
+"name": "Eren Elmalı"
 },
 {
 "pid": 738064,
 "name": "Salih Özcan"
 },
 {
-"pid": 316544,
-"name": "İrfan Kahveci"
+"pid": 1183589,
+"name": "Ismail Yüksek"
 },
 {
 "pid": 1126769,
 "name": "Aral Şimşir"
+},
+{
+"pid": 845991,
+"name": "Yunus Akgün"
+},
+{
+"pid": 316544,
+"name": "İrfan Kahveci"
 }
 ]
 },
@@ -514,7 +514,7 @@
 "6718": {
 "match": "Ukraine - Hungary",
 "utc": "2026-10-05T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1022350,
@@ -565,7 +565,7 @@
 "8565": {
 "match": "Ukraine - Hungary",
 "utc": "2026-10-05T18:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 861001,
@@ -1957,14 +1957,6 @@
 "match": "Ukraine - Hungary",
 "until": "2026-10-26"
 },
-"888904": {
-"name": "Bendegúz Bolla",
-"type": "injury",
-"ret": "About a week",
-"doubtful": false,
-"match": "Ukraine - Hungary",
-"until": "2026-10-12"
-},
 "1195281": {
 "name": "Miloš Kerkez",
 "type": "suspension",
@@ -2076,10 +2068,10 @@
 "1056461": {
 "name": "Ville Koski",
 "type": "injury",
-"ret": "Early November 2026",
+"ret": "Mid October 2026",
 "doubtful": false,
 "match": "Belarus - Finland",
-"until": "2026-11-10"
+"until": "2026-10-20"
 },
 "1100598": {
 "name": "Niklas Pyyhtiä",
@@ -2288,15 +2280,6 @@
 },
 "_alerts": [
 {
-"key": "6718|1192398|2026-10-05T18:45",
-"team": "Ukraine",
-"name": "Georgiy Sudakov",
-"v": 20.195851,
-"started_last": true,
-"match": "Ukraine - Hungary",
-"utc": "2026-10-05T18:45"
-},
-{
 "key": "10155|950824|2026-10-06T18:45",
 "team": "Croatia",
 "name": "Josip Stanisic",
@@ -2324,5 +2307,5 @@
 "utc": "2026-10-06T18:45"
 }
 ],
-"_hash": "4a86f6f8ecd8a4d95a8a82982c948a69"
+"_hash": "d1a1d6882b7db3742e715667fc9811ce"
 }
