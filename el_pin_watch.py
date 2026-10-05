@@ -7,12 +7,15 @@
   • ΠΡΩΤΗ εμφανιση ματς στην Pinnacle → Telegram «🟢 ανοιξε η Pinnacle» (γραμμες, τιμες, ορια, edge μοντελου στην κυρια γραμμη)
   • ΑΥΞΗΣΗ οριου χαντικαπ/συνολου → Telegram «💰 οριο ↑» (με τωρινη γραμμη/τιμη & edge)
   • ΙΣΤΟΡΙΚΟ: καθε αλλαγη (γραμμη, τιμη, οριο) → el_pin_hist.jsonl — για να μαθουμε το μοτιβο (ποσο αργοτερα ανεβαινουν τα ορια).
-Telegram: info bot (οχι picks bot — κανονας 26/9). State: el_pin_state.json."""
+Telegram: info bot (οχι picks bot — κανονας 26/9). State: el_pin_state.json.
+5/10/2026 (Στελιος «ακριβως το ιδιο και στο EuroCup»): `python el_pin_watch.py EC` → league 377, ec_projections.json, ec_pin_state.json,
+ec_pin_hist.jsonl, ιδια μηνυματα με «EuroCup ·» μπροστα· edge ΜΟΝΟ χαντικαπ (τα συνολα EuroCup δεν εχουν τεσταριστει — χωρις picks)."""
 import os, sys, json, math, datetime as dt
 import requests
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.abspath(__file__)); F = lambda n: os.path.join(ROOT, n)
-B = 'https://guest.api.arcadia.pinnacle.com/0.1'; LEAGUE = 382
+B = 'https://guest.api.arcadia.pinnacle.com/0.1'
+COMPS = {'EL': dict(league=382, pre='el', lab=''), 'EC': dict(league=377, pre='ec', lab='EuroCup · ')}
 H = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36', 'Accept': 'application/json',
      'Referer': 'https://www.pinnacle.com/', 'Origin': 'https://www.pinnacle.com'}
 WINDOW_H = 48
@@ -29,25 +32,27 @@ def cover(mu, L, sig):
     if abs(L - round(L)) < 1e-9:
         pw = Phi((mu + L - 0.5) / sig); pl = Phi((-mu - L - 0.5) / sig); return pw, 1 - pw - pl
     return Phi((mu + L) / sig), 0.0
-def main(notify_tg=True):
+def main(notify_tg=True, comp='EL'):
+    C = COMPS[comp]; LEAGUE, PRE, LAB = C['league'], C['pre'], C['lab']
     now = dt.datetime.now(dt.timezone.utc)
     try:
         M = requests.get(f'{B}/leagues/{LEAGUE}/matchups', headers=H, timeout=30).json()
         MK = requests.get(f'{B}/leagues/{LEAGUE}/markets/straight', headers=H, timeout=30).json()
     except Exception as e:
         print('Pinnacle: σφαλμα', e); return
-    proj = _load(F('el_projections.json'), {}); sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
+    proj = _load(F(f'{PRE}_projections.json'), {}); sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
     games = [g for g in proj.get('games', []) if not g.get('played')]
+    from el_odds_scan import name_score            # 5/10: ιδιο ταιριασμα ονοματων με τον scanner τιμων (π.χ. «Rigas Zelli», «Aquila Trento»)
     def find(home, away, start):
-        th, ta = tok(home), tok(away)
+        best, bs = None, 0
         for g in games:
             try: t0 = dt.datetime.fromisoformat(g['utc'].replace('Z', '+00:00'))
             except Exception: continue
             if abs((t0 - start).total_seconds()) > 6 * 3600: continue
-            gh, ga = tok(g['home']), tok(g['away'])
-            if (th[:5] in gh or gh[:5] in th) and (ta[:5] in ga or ga[:5] in ta): return g
-        return None
-    state = _load(F('el_pin_state.json'), {}); msgs = []; hist = []
+            sh, sa = name_score(home, g['home']), name_score(away, g['away'])
+            if min(sh, sa) >= 1 and sh + sa > bs: best, bs = g, sh + sa
+        return best
+    state = _load(F(f'{PRE}_pin_state.json'), {}); msgs = []; hist = []
     for m in M:
         ps = m.get('participants') or []
         if len(ps) != 2 or m.get('parentId'): continue
@@ -81,7 +86,7 @@ def main(notify_tg=True):
                 L = float(cur['sp']['line']); pw, pp = cover(float(g['margin']), L, sm); pl = 1 - pw - pp
                 eh, ea = pw * cur['sp']['oh'] + pp - 1, pl * cur['sp']['oa'] + pp - 1
                 out_.append(f"μοντελο γηπ {float(g['margin']):+.1f} → edge {short(home)} {L:+g}: {eh*100:+.0f}% · {short(away)} {-L:+g}: {ea*100:+.0f}%")
-            if cur.get('tot') and cur['tot']['line'] is not None and cur['tot']['oo']:
+            if comp == 'EL' and cur.get('tot') and cur['tot']['line'] is not None and cur['tot']['oo']:
                 T = float(cur['tot']['line']); po, pq = cover(float(g['total']), -T, st); pu = 1 - po - pq
                 out_.append(f"συνολο μοντ. {float(g['total']):.1f} → Over {T:g}: {(po * cur['tot']['oo'] + pq - 1)*100:+.0f}% · Under: {(pu * cur['tot']['ou'] + pq - 1)*100:+.0f}%")
             return '\n'.join(out_)
@@ -92,23 +97,23 @@ def main(notify_tg=True):
             if cur.get('ml'): s_.append(f"νικητης @{cur['ml']['oh']} / {cur['ml']['oa']} · οριο {cur['ml']['lim']:g}")
             return '\n'.join(s_)
         if prev is None:
-            msgs.append(f"🟢 ΑΝΟΙΞΕ Η PINNACLE · {home} - {away} ({tip}, σε {hrs:.0f}ω)\n{desc()}" + (f"\n{edges()}" if edges() else ''))
+            msgs.append(f"🟢 ΑΝΟΙΞΕ Η PINNACLE · {LAB}{home} - {away} ({tip}, σε {hrs:.0f}ω)\n{desc()}" + (f"\n{edges()}" if edges() else ''))
         else:
             ups = []
             for mk_, nm in (('sp', 'χαντικαπ'), ('tot', 'συνολο')):
                 a, b = (prev.get(mk_) or {}).get('lim', 0), (cur.get(mk_) or {}).get('lim', 0)
                 if b > a: ups.append(f'{nm} {a:g} → {b:g}')
             if ups:
-                msgs.append(f"💰 ΟΡΙΟ PINNACLE ↑ · {home} - {away} ({tip}, σε {hrs:.1f}ω)\n{' · '.join(ups)}\n{desc()}" + (f"\n{edges()}" if edges() else ''))
+                msgs.append(f"💰 ΟΡΙΟ PINNACLE ↑ · {LAB}{home} - {away} ({tip}, σε {hrs:.1f}ω)\n{' · '.join(ups)}\n{desc()}" + (f"\n{edges()}" if edges() else ''))
         if prev is None or any((prev.get(x) or {}) != (cur.get(x) or {}) for x in ('sp', 'tot', 'ml')):
             hist.append(dict(t=now.isoformat(timespec='minutes'), id=m['id'], home=home, away=away, start=m['startTime'], hrs=round(hrs, 2), code=(g or {}).get('code'), **cur))
         state[k] = dict(cur, home=home, away=away, start=m['startTime'], first_seen=(prev or {}).get('first_seen', now.isoformat(timespec='minutes')))
     state = {k: v for k, v in state.items() if dt.datetime.fromisoformat(v['start'].replace('Z', '+00:00')) > now - dt.timedelta(days=3)}
-    json.dump(state, open(F('el_pin_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    json.dump(state, open(F(f'{PRE}_pin_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     if hist:
-        with open(F('el_pin_hist.jsonl'), 'a', encoding='utf-8') as fh:
+        with open(F(f'{PRE}_pin_hist.jsonl'), 'a', encoding='utf-8') as fh:
             for r in hist: fh.write(json.dumps(r, ensure_ascii=False) + '\n')
-    print(f'[Pinnacle ορια] ματς ≤{WINDOW_H}ω: {sum(1 for v in state.values())} · αλλαγες {len(hist)} · μηνυματα {len(msgs)}')
+    print(f'[Pinnacle ορια {comp}] ματς ≤{WINDOW_H}ω: {sum(1 for v in state.values())} · αλλαγες {len(hist)} · μηνυματα {len(msgs)}')
     for s_ in msgs: print('  ' + s_.replace('\n', ' | '))
     if msgs and notify_tg:
         try:
@@ -116,4 +121,4 @@ def main(notify_tg=True):
         except Exception as e:
             print('Telegram σφαλμα:', e)
 if __name__ == '__main__':
-    main(notify_tg='--no-tg' not in sys.argv)
+    main(notify_tg='--no-tg' not in sys.argv, comp='EC' if 'EC' in sys.argv[1:] else 'EL')
