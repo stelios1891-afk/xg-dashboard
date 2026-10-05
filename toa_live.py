@@ -216,7 +216,8 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                                       inplay=bool(f.get('inplay')),
                                       pin=list(f['pin']) if f.get('pin') else None,
                                       mb=list(f['mb']) if f.get('mb') else None,
-                                      ou=list(f['ou']) if f.get('ou') else None))
+                                      ou=list(f['ou']) if f.get('ou') else None,
+                                      lim=({k: f['limits'].get(k) for k in ('spreads', 'totals', 'h2h')} if f.get('limits') else None)))   # 5/10: ορια Pinnacle (Στελιος: ποσα δινει 5-7 μερες πριν)
             if f.get('inplay'):
                 continue   # in-play: καταγραφη μονο — ΟΧΙ picks
             rh = blended.get(H); ra = blended.get(A)
