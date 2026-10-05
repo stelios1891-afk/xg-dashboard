@@ -8,7 +8,8 @@ el_pin_pattern.py — ΜΟΤΙΒΟ ΟΡΙΩΝ PINNACLE Ευρωλιγκας (5/1
 import json, collections, statistics, datetime as dt, sys
 from zoneinfo import ZoneInfo
 sys.stdout.reconfigure(encoding='utf-8')
-rows = [json.loads(l) for l in open('el_pin_hist.jsonl', encoding='utf-8') if l.strip()]
+HF = 'ec_pin_hist.jsonl' if 'EC' in sys.argv[1:] else 'el_pin_hist.jsonl'   # python el_pin_pattern.py EC → EuroCup
+rows = [json.loads(l) for l in open(HF, encoding='utf-8') if l.strip()]
 gr = lambda iso: dt.datetime.fromisoformat(iso.replace('Z', '+00:00')).astimezone(ZoneInfo('Europe/Athens'))
 by = collections.defaultdict(list)
 for r in rows: by[(r['start'], r['home'], r['away'])].append(r)
