@@ -1,8 +1,8 @@
 {
- "generated": "2026-10-05 22:13",
- "toa_scanned": "2026-10-05 22:13",
+ "generated": "2026-10-05 22:14",
+ "toa_scanned": "2026-10-05 20:20",
  "toa_matches": 10,
- "ng_snapshot": "2026-10-05 22:12",
+ "ng_snapshot": "2026-10-05 22:13",
  "ng_snapshot_afconq": null,
  "comps": [
   {
@@ -38,14 +38,14 @@
       },
       "A": {
        "R_h": 1837.0,
-       "R_a": 2239.0,
+       "R_a": 2240.0,
        "vadj": 0.0,
-       "diff": -342.0,
+       "diff": -343.0,
        "xg_h": 0.88,
        "xg_a": 2.53,
        "T": 3.3,
        "xg_h_D": 0.842,
-       "xg_a_D": 2.564,
+       "xg_a_D": 2.567,
        "p1": 7,
        "px": 17,
        "p2": 76,
@@ -55,14 +55,14 @@
       },
       "AV": {
        "R_h": 1837.0,
-       "R_a": 2239.0,
+       "R_a": 2240.0,
        "vadj": -64.0,
-       "diff": -406.0,
+       "diff": -407.0,
        "xg_h": 0.83,
        "xg_a": 2.79,
        "T": 3.27,
        "xg_h_D": 0.949,
-       "xg_a_D": 2.669,
+       "xg_a_D": 2.672,
        "p1": 5,
        "px": 13,
        "p2": 81,
@@ -184,7 +184,7 @@
         "ah_away": -12.8,
         "fair_a": 2.24,
         "need_a": 2.54,
-        "over": -8.8,
+        "over": -7.8,
         "p_over": 47.7,
         "need_over": 2.31
        },
@@ -203,8 +203,8 @@
         "ah_away": -12.5,
         "fair_a": 2.24,
         "need_a": 2.54,
-        "over": -8.8,
-        "p_over": 47.7,
+        "over": -8.7,
+        "p_over": 47.8,
         "need_over": 2.31
        },
        "betfair_ex_eu": null,
@@ -219,7 +219,7 @@
         "ah_away": -0.4,
         "fair_a": 1.93,
         "need_a": 2.18,
-        "over": -10.0,
+        "over": -9.1,
         "p_over": 47.1,
         "need_over": 2.35
        },
@@ -238,8 +238,8 @@
         "ah_away": 0.1,
         "fair_a": 1.93,
         "need_a": 2.18,
-        "over": -10.0,
-        "p_over": 47.1,
+        "over": -9.9,
+        "p_over": 47.2,
         "need_over": 2.35
        },
        "betfair_ex_eu": null,
@@ -315,7 +315,7 @@
        "xg_h": 3.05,
        "xg_a": 0.67,
        "T": 3.75,
-       "xg_h_D": 3.102,
+       "xg_h_D": 3.103,
        "xg_a_D": 0.626,
        "p1": 86,
        "px": 10,
@@ -332,7 +332,7 @@
        "xg_h": 3.51,
        "xg_a": 0.59,
        "T": 3.82,
-       "xg_h_D": 3.329,
+       "xg_h_D": 3.33,
        "xg_a_D": 0.77,
        "p1": 92,
        "px": 6,
@@ -466,7 +466,18 @@
         "need_over": 2.09
        },
        "matchbook": {
-        "ah_home": -6.9,
+        "ah_home": -7.7,
+        "fair_h": 2.16,
+        "need_h": 2.42,
+        "ah_away": 2.5,
+        "fair_a": 1.8,
+        "need_a": 2.01,
+        "over": 3.4,
+        "p_over": 51.7,
+        "need_over": 2.09
+       },
+       "bovada": {
+        "ah_home": -9.5,
         "fair_h": 2.16,
         "need_h": 2.42,
         "ah_away": 4.1,
@@ -504,7 +515,18 @@
         "need_over": 2.04
        },
        "matchbook": {
-        "ah_home": -3.0,
+        "ah_home": -3.9,
+        "fair_h": 2.07,
+        "need_h": 2.32,
+        "ah_away": -17.8,
+        "fair_a": 2.24,
+        "need_a": 2.52,
+        "over": 6.0,
+        "p_over": 53.0,
+        "need_over": 2.04
+       },
+       "bovada": {
+        "ah_home": -5.7,
         "fair_h": 2.07,
         "need_h": 2.32,
         "ah_away": -16.5,
@@ -1676,7 +1698,7 @@
         "ah_away": 23.8,
         "fair_a": 1.54,
         "need_a": 1.77,
-        "over": -0.6,
+        "over": -0.5,
         "p_over": 51.0,
         "need_over": 2.12
        },
@@ -1937,7 +1959,7 @@
        "R_a": 1642.0,
        "vadj": 0.0,
        "diff": -275.0,
-       "xg_h": 0.65,
+       "xg_h": 0.64,
        "xg_a": 1.98,
        "T": 2.65,
        "xg_h_D": 0.618,
@@ -2042,15 +2064,15 @@
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": 14.7,
+        "ah_home": 9.2,
         "fair_h": 1.73,
-        "need_h": 1.93,
-        "ah_away": -9.5,
-        "fair_a": 2.08,
-        "need_a": 2.36,
-        "over": -11.2,
-        "p_over": 44.0,
-        "need_over": 2.52
+        "need_h": 1.94,
+        "ah_away": -5.8,
+        "fair_a": 2.07,
+        "need_a": 2.35,
+        "over": -8.9,
+        "p_over": 49.5,
+        "need_over": 2.19
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -2102,7 +2124,7 @@
      ],
      "btts": {
       "H": 0.384,
-      "A": 0.412,
+      "A": 0.4074,
       "AV": 0.376,
       "mkt": 0.4466
      }
