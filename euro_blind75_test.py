@@ -49,7 +49,7 @@ for f in sorted(glob.glob('nowgoal_odds/*_U*.jsonl')):
             _, lh, oh, oa = h[-1]
             for side, L, o in ((1, lh, oh), (-1, -lh, oa)):
                 if L in (-0.5, -0.75, -1.0) and 1.70 <= o <= 2.10:
-                    rows.append(dict(sea=sea, comp=comp, book=BOOK[r['cid']], win=win, line=L, odds=o,
+                    rows.append(dict(mid=str(r['mid']), sea=sea, comp=comp, book=BOOK[r['cid']], win=win, line=L, odds=o,
                                      pnl=picks.settle(m['gd'], side, L, o)))
 B = pd.DataFrame(rows)
 def st(d):
