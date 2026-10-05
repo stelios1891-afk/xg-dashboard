@@ -27,6 +27,9 @@ FANTASY = json.load(open('el_fantasy_prior.json', encoding='utf-8')) if os.path.
 # με τον αριθμο αγωνα της σεζον: +0.34 + 0.098×αγωνιστικη (1η +0.4 · 17η +2.0 · 34η +3.7)· τα σκορ ανεβαινουν ~7 π. μεσα στη σεζον.
 # Περιλαμβανει τις παρατασεις. Τεστ: RMSE 16.48→16.44 (5/6) · b .368→.383 · ROI συνολων ≥8% +7.2→+8.2% (6/6).
 CURVE_A, CURVE_B = 0.34, 0.098
+# 5/10/2026 (αποφαση Στελιου «περνα το»): ΣΥΝΟΛΑ ΠΛΕΙ-ΙΝ/ΠΛΕΙ-ΟΦ/F4 −7.7 π. — το μοντελο (καμπυλη στο τελος κανονικης) υπερεκτιμουσε
+# −7.7 π. (5/5 σεζον, t −4.9)· πραγματικα: −1 κατοχη/ομαδα, −2 π./100 κατοχες. LOSO RMSE 4/5 ✓, picks πλει-οφ −21% → +13% (60).
+PO_TOT_ADJ = -7.7
 OT_ADD = 1.1   # (παλια σταθερη διορθωση — κρατιεται μονο για αναφορα)
 NEWCOMER_PRIOR = {'BES': (-1.0, 1.0, 0.0)}      # (επιθεση, αμυνα, ρυθμος) ποντοι/100 — Μπεσικτας −2 net (συμφωνια 25/9)
 SIGMA_MARGIN, SIGMA_TOTAL = 11.5, 16.7          # διασπορα γυρω απο την αγορα, E2023-25
@@ -275,6 +278,7 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     mg1, tt1, _ = predict(state_at(CTX_V1, cut), hcode, acode, neu, ENG_V1['h'])
     _, tt, _ = predict(state_at(CTX_T, cut), hcode, acode, neu, ENG_TOTAL['h'])
     tt += CURVE_A + CURVE_B * GNO.get(x['code'], GMAX)
+    if x.get('phase') != 'RS': tt += PO_TOT_ADJ        # 5/10: πλει-ιν/πλει-οφ/F4 — πιο σφιχτα ματς (el_clean_tests ΤΕΣΤ 4, el_po_totals_test)
     tt_base = tt                           # συνολο ΧΩΡΙΣ προετοιμασια («παλιο») — για την ενδειξη ✓/✗ στα picks
     if PRESEASON and PRESEASON.get('rT') and GNO.get(x['code'], GMAX) <= PRE_T_UNTIL:   # 1/10: ταση ποντων φιλικων, αγων 1-10
         tt += PRESEASON.get('kappa_T', 0.25) * (PRESEASON['rT'].get(hcode, 0.0) + PRESEASON['rT'].get(acode, 0.0))
