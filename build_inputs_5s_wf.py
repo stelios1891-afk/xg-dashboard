@@ -14,6 +14,7 @@ build_inputs_5s_wf.py — ΑΝΤΙΓΡΑΦΟ του build_inputs_5s.py με ΜΟ
   Εξοδος: teamgame_inputs_5s_wf.csv = ιδιες στηλες + sf_wf, md_wf (η στηλη sf = full-season, για ελεγχο).
 ΔΕΝ πειραζει το build_inputs_5s.py ουτε το teamgame_inputs_5s.csv.
 """
+import red_modes
 import json, pandas as pd, numpy as np, os, sys
 from datetime import datetime
 try: sys.stdout.reconfigure(encoding='utf-8')
@@ -64,11 +65,14 @@ for lg in LEAGUES:
                 dur=max(0,ft-mn)
                 if r['home']: dis_home+=dur
                 else: dis_away+=dur
+            _RADJ=red_modes.live_adj(m)
             for is_home,tid,opp,gf,dis_self,dis_opp in [
                 (1,hid,aid,m['hs'],dis_home,dis_away),
                 (0,aid,hid,m['as'],dis_away,dis_home)]:
                 a=agg[tid]
-                red_xg=0.0083*dis_opp - 0.5*0.0083*dis_self
+                # 5/10/2026: κοκκινες = red_modes.LIVE_MODE (εμπειρικη ανα σκορ, σωστη κατευθυνση) — αντι +0.0083 στον πλεονεκτουντα
+                _ra=_RADJ[tid]; a=dict(a); a['np_raw']*=_ra['fr']; a['np_comp']*=_ra['fc']; a['ns']*=_ra['fn']
+                red_xg=_ra['term']
                 rows.append(dict(league=lg,season=sea,mid=mid,date=isodate(m['date']),
                     team=tid,opp=opp,is_home=is_home,gf=gf,
                     np_raw=a['np_raw'],np_comp=a['np_comp'],pen=a['pen'],ns=a['ns'],red_xg=red_xg))
@@ -118,7 +122,7 @@ for (lg,sea),g in df.groupby(['league','season']):
 
 df['comp_np_scaled']=df['np_comp']*df['sf_wf']
 df['xg_model']=df['comp_np_scaled']+0.25*df['pen']+df['red_xg']
-df['ns_eff']=df['ns']+df['pen']+(df['red_xg'].abs()/0.10)
+df['ns_eff']=np.maximum(df['ns']+df['pen']+df['red_xg']/0.10, 0.5*(df['ns']+df['pen']))   # 5/10: ψευδο-σουτ με προσημο (red_modes)
 df['xgps']=df['xg_model']/df['ns_eff'].clip(lower=1)
 COLS=['league','season','mid','date','team','opp','is_home','gf','np_raw','np_comp','pen','ns','red_xg',
       'comp_np_scaled','sf','xg_model','ns_eff','xgps','sf_wf','md_wf']

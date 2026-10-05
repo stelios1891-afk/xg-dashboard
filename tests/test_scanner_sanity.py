@@ -984,3 +984,22 @@ def test_i_intl_pick_status():
     m['consensus'] = [dict(mkt='AH', side=2, line=-2.5, odds=1.98, book='Bovada', edges={'Μ1': .2, 'Μ3': .1}, models='Μ1+Μ3')]
     assert ps.status(row, m)['active']
 
+
+
+def test_red_card_direction():
+    """5/10/2026 (Στελιος): κοκκινες = red_modes.LIVE_MODE (εμπειρικη ανα σκορ). ΣΩΣΤΗ κατευθυνση: η ομαδα με 11 ΧΑΝΕΙ xG,
+    η ομαδα με 10 ΚΕΡΔΙΖΕΙ (αναιρουμε την κοκκινη). Η παλια φορμουλα εδινε +0.0083/λεπτο ΣΤΟΝ πλεονεκτουντα — να μην ξαναγυρισει."""
+    import red_modes, pandas as pd
+    assert red_modes.LIVE_MODE == 'emps'
+    m = dict(home=dict(id=1), away=dict(id=2), reds=[dict(home=False, min=30)],
+             shots=[dict(tid=1, xg=0.2, min=10, sit='RegularPlay', goal=False), dict(tid=2, xg=0.3, min=20, sit='RegularPlay', goal=False),
+                    dict(tid=1, xg=0.4, min=60, sit='RegularPlay', goal=True), dict(tid=1, xg=0.3, min=70, sit='RegularPlay', goal=False),
+                    dict(tid=2, xg=0.05, min=80, sit='RegularPlay', goal=False)])
+    a = red_modes.live_adj(m)
+    assert a[1]['term'] < 0, 'η ομαδα με 11 πρεπει να ΧΑΝΕΙ xG'
+    assert a[2]['term'] >= 0 and a[2]['fc'] > 1, 'η ομαδα με 10 πρεπει να ΚΕΡΔΙΖΕΙ'
+    for f in ('build_inputs.py', 'add_current_season.py', 'build_inputs_5s.py', 'build_inputs_5s_wf.py', 'brazil_shadow.py', 'dom_fav_shadow.py'):
+        src = open(os.path.join(ROOT, f), encoding='utf-8').read()
+        assert 'red_modes.live_adj' in src and '0.0083 *' not in src.replace('0.0083*', '0.0083 *'), f'{f}: παλια φορμουλα κοκκινων'
+    T = pd.read_csv(os.path.join(ROOT, 'teamgame_inputs.csv'))
+    assert T.red_xg.min() < 0 and T.red_xg.max() <= 1e-9, 'teamgame_inputs.csv: red_xg πρεπει να ειναι ≤0 (μονο αφαιρεση απο την ομαδα με 11)'

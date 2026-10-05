@@ -2,13 +2,14 @@
 """
 add_current_season.py -- Προσθετει/ανανεωνει τις γραμμες της ΦΕΤΙΝΗΣ σεζον (2627, CORE7)
 στο teamgame_inputs.csv, με ΑΚΡΙΒΩΣ την ιδια λογικη με το build_inputs.py (compression +
-penalty 0.25 + red adj + per-league-season rescale). Idempotent: πεταει τις παλιες 2627
+penalty 0.25 + κοκκινες red_modes.LIVE_MODE + per-league-season rescale). Idempotent: πεταει τις παλιες 2627
 γραμμες και τις ξαναχτιζει. ΔΕΝ αγγιζει τις υπολοιπες σεζον (2425/2526).
 
 Τρεξε μετα απο καθε εβδομαδιαιο refresh (discover+dl) των CORE7:  python add_current_season.py
 """
 import json, os, sys
 import pandas as pd
+import red_modes
 from datetime import datetime
 try: sys.stdout.reconfigure(encoding='utf-8')
 except Exception: pass
@@ -59,11 +60,13 @@ for lg in CORE7:
             mn = r.get('min') or 0; dur = max(0, ft - mn)
             if r['home']: dis_home += dur
             else: dis_away += dur
+        _RADJ = red_modes.live_adj(m)
         for is_home, tid, opp, gf, dis_self, dis_opp in [
                 (1, hid, aid, m['hs'], dis_home, dis_away),
                 (0, aid, hid, m['as'], dis_away, dis_home)]:
-            a = agg[tid]
-            red_xg = 0.0083 * dis_opp - 0.5 * 0.0083 * dis_self
+            a = dict(agg[tid]); _ra = _RADJ[tid]   # 5/10/2026: κοκκινες = red_modes.LIVE_MODE (εμπειρικη ανα σκορ, σωστη κατευθυνση)
+            a['np_raw'] *= _ra['fr']; a['np_comp'] *= _ra['fc']; a['ns'] *= _ra['fn']
+            red_xg = _ra['term']
             rows.append(dict(league=lg, season=SEASON, mid=mid, date=isodate(m['date']),
                              team=tid, opp=opp, is_home=is_home, gf=gf,
                              np_raw=a['np_raw'], np_comp=a['np_comp'], pen=a['pen'], ns=a['ns'],
@@ -104,7 +107,7 @@ for (lg, sea), g in new.groupby(['league', 'season']):
     print("  %-13s md%-4.1f  περσινος %.4f · φετινος %.4f · βαρος φετ. %.0f%%  ->  %.4f"
           % (lg, md, prior, live, w * 100, sf))
 new['xg_model'] = new['comp_np_scaled'] + 0.25 * new['pen'] + new['red_xg']
-new['ns_eff'] = new['ns'] + new['pen'] + (new['red_xg'].abs() / 0.10)
+new['ns_eff'] = (new['ns'] + new['pen'] + new['red_xg'] / 0.10).clip(lower=0.5 * (new['ns'] + new['pen']))   # 5/10: ψευδο-σουτ με προσημο
 new['xgps'] = new['xg_model'] / new['ns_eff'].clip(lower=1)
 
 # merge: κρατα ολες τις ΑΛΛΕΣ σεζον ως εχουν, αντικατεστησε τις 2627

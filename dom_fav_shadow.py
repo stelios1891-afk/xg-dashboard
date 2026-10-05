@@ -30,6 +30,7 @@ edge_base = ιδιο ματς με ΚΑΝΟΝΙΚΗ συνθεση + picks.p_cov
 (μονο committed αρχεια). Αν λειπουν αρχεια → graceful μηνυμα, exit 0.
 ΔΕΝ αγγιζει picks.py / scan_value / shadow_scan / live αρχεια.
 """
+import red_modes
 import sys, os, json, math, datetime
 
 try:
@@ -99,8 +100,8 @@ def load_league_season(lg, sea, id2name):
             dur = max(0, FT - mn)
             if r['home']: dis_h += dur
             else: dis_a += dur
-        red = {hid: 0.0083 * dis_a - 0.5 * 0.0083 * dis_h,
-               aid: 0.0083 * dis_h - 0.5 * 0.0083 * dis_a}
+        _RADJ = red_modes.live_adj(m)          # 5/10/2026: κοκκινες = red_modes.LIVE_MODE (ιδιο με build_inputs_5s)
+        red = {hid: _RADJ[hid]['term'], aid: _RADJ[aid]['term']}
         # ανακατασκευη σκορ για game-state: goal=true σουτ κατα (min, σειρα αρχειου)
         shots = sorted(enumerate(m['shots']), key=lambda t: ((t[1].get('min') or 0), t[0]))
         sh = sa = 0
@@ -122,6 +123,8 @@ def load_league_season(lg, sea, id2name):
             if s.get('goal'):
                 if tid == hid: sh += 1
                 else: sa += 1
+        for _t in (hid, aid):
+            agg[_t]['raw'] *= _RADJ[_t]['fr']; agg[_t]['comp'] *= _RADJ[_t]['fc']; agg[_t]['s2'] *= _RADJ[_t]['fc']; agg[_t]['ns'] *= _RADJ[_t]['fn']
         out.append(dict(mid=str(mid), date=isodate(m['date']), hid=hid, aid=aid,
                         hg=int(m['hs']), ag=int(m['as']), agg=agg, red=red))
     out.sort(key=lambda r: (r['date'], r['mid']))
@@ -141,7 +144,7 @@ def teamgames(matches, variant):
         for t, a in m['agg'].items():
             npx = a['comp'] * sf_l if variant == 'base' else a['s2']
             xg[t] = npx + 0.25 * a['pen'] + m['red'][t]
-            ns[t] = a['ns'] + a['pen'] + abs(m['red'][t]) / 0.10   # ns_eff (build_inputs_5s)
+            ns[t] = red_modes.ns_eff(a['ns'], a['pen'], m['red'][t])   # ns_eff (build_inputs_5s, 5/10 με προσημο)
         h, a_ = m['hid'], m['aid']
         rows.append((m['date'], m['mid'], h, a_, ns[h], xg[h], ns[a_], xg[a_],
                      m['hg'], m['ag']))

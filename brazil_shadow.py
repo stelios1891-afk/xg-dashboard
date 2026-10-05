@@ -12,6 +12,7 @@
 Εξοδος: brazil_shadow.jsonl (append σε αλλαγη, state: brazil_shadow_state.json).
 Αξιολογηση: με τα αποτελεσματα του brazil_refresh οταν κριθουν (δες shadow_report λογικη).
 """
+import red_modes
 import sys, os, json, re, datetime, unicodedata
 import urllib.request, gzip
 sys.stdout.reconfigure(encoding='utf-8')
@@ -83,10 +84,12 @@ def build_hist():
             dur = max(0, ft - (r.get('min') or 0))
             if r['home']: dh += dur
             else: da += dur
+        _RADJ = red_modes.live_adj(m)
         for is_home, tid, opp, gf, ds, do in [(1, hid, aid, m['hs'], dh, da),
                                               (0, aid, hid, m['as'], da, dh)]:
-            a = agg[tid]
-            red_xg = 0.0083 * do - 0.5 * 0.0083 * ds
+            a = dict(agg[tid]); _ra = _RADJ[tid]   # 5/10/2026: κοκκινες = red_modes.LIVE_MODE (Βραζ ακριβεια 4/4)
+            a['raw'] *= _ra['fr']; a['comp'] *= _ra['fc']; a['ns'] *= _ra['fn']
+            red_xg = _ra['term']
             rows.append(dict(dt=dt, team=tid, opp=opp, is_home=is_home, gf=gf,
                              raw=a['raw'], comp=a['comp'], pen=a['pen'], ns=a['ns'], red=red_xg))
     rows.sort(key=lambda r: r['dt'])
@@ -99,12 +102,12 @@ def build_hist():
         bymatch.setdefault((r['dt'], r['team'], r['opp']), r)
     for r in rows:
         xg_model = r['comp'] * sf + 0.25 * r['pen'] + r['red']
-        ns_eff = r['ns'] + r['pen'] + abs(r['red']) / 0.10
+        ns_eff = red_modes.ns_eff(r['ns'], r['pen'], r['red'])
         opp_r = bymatch.get((r['dt'], r['opp'], r['team']))
         if opp_r is None:
             continue
         xa_model = opp_r['comp'] * sf + 0.25 * opp_r['pen'] + opp_r['red']
-        sa_eff = opp_r['ns'] + opp_r['pen'] + abs(opp_r['red']) / 0.10
+        sa_eff = red_modes.ns_eff(opp_r['ns'], opp_r['pen'], opp_r['red'])
         h = hist.setdefault(r['team'], dict(sf=[], xf=[], sa=[], xa=[], gf=[], ga=[], opp=[]))
         h['sf'].append(ns_eff); h['xf'].append(xg_model)
         h['sa'].append(sa_eff); h['xa'].append(xa_model)
