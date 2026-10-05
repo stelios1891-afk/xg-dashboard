@@ -1,7 +1,7 @@
 {
- "scanned_at": "2026-10-05T17:46+00:00",
+ "scanned_at": "2026-10-05T17:51+00:00",
  "hc_min": 0.08,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
   {
@@ -50,6 +50,28 @@
   },
   {
    "lg": "EuroCup",
+   "home": "Cosea JL Bourg-en-Bresse",
+   "away": "Tofas Bursa",
+   "hcode": "BOU",
+   "acode": "BUR",
+   "code": 27,
+   "round": 2,
+   "group": "C",
+   "when": "2026-10-06T17:30",
+   "ec": true,
+   "model": "ec1: αφετηρια 0.2×περσινο EuroCup + ειδικοι 4·z (Eurohoops/T",
+   "mkt": "hcap",
+   "side": -1,
+   "hcap": 5.5,
+   "odds": 1.893,
+   "edge": 0.0817,
+   "proj_odds": 1.75,
+   "model_line": -3.4,
+   "mkt_line": -5.5,
+   "hrs_birth": 23.6
+  },
+  {
+   "lg": "EuroCup",
    "home": "Skyliners Frankfurt",
    "away": "Siauliai Basketball",
    "hcode": "FRA",
@@ -85,8 +107,8 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": 13.0,
-   "odds": 1.893,
-   "edge": 0.2745,
+   "odds": 1.935,
+   "edge": 0.3021,
    "proj_odds": 1.47,
    "model_line": 7.9,
    "mkt_line": 13.0,
@@ -135,28 +157,6 @@
    "model_line": 0.1,
    "mkt_line": 4.0,
    "hrs_birth": 27.6
-  },
-  {
-   "lg": "EuroCup",
-   "home": "Buducnost VOLI Podgorica",
-   "away": "Napoli Basketball",
-   "hcode": "BUD",
-   "acode": "NAP",
-   "code": 28,
-   "round": 2,
-   "group": "C",
-   "when": "2026-10-06T17:00",
-   "ec": true,
-   "model": "ec1: αφετηρια 0.2×περσινο EuroCup + ειδικοι 4·z (Eurohoops/T",
-   "mkt": "hcap",
-   "side": 1,
-   "hcap": -4.5,
-   "odds": 1.926,
-   "edge": 0.1065,
-   "proj_odds": 1.74,
-   "model_line": -6.7,
-   "mkt_line": -4.5,
-   "hrs_birth": 25.0
   }
  ]
 }
