@@ -7,6 +7,7 @@ toa_live.py — LIVE value picks μεσω The Odds API (TOA· πληρωμενη
 
 TOA_KEY: inline env var (NEVER σε αρχειο). Κοστος: markets=spreads × region=eu = 1 credit/λιγκα.
 """
+import coach_flags
 import os, sys, time, datetime
 from collections import defaultdict
 import requests
@@ -232,9 +233,15 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
             # 29/9/2026 (Στελιος): ΑΓΚΥΡΑ ΑΓΟΡΑΣ μονο σε κοντες γραμμες (+0.5/+0.75) απο την 15η — core7_anchor.py
             xr_h, xr_a = xg_h, xg_a        # ωμα (χωρις αγκυρα) — τα φαβορι παιρνουν δικη τους αγκυρα .7
             xg_h, xg_a, anc = core7_anchor.apply(lg, H, A, xg_h, xg_a, f['line'], md)
+            _cn = coach_flags.notes(H) + coach_flags.notes(A)          # 5/10: αλλαγη προπονητη (πληροφορια καρτας)
             for b in engine.evaluate_bet(xg_h, xg_a, f['line'], f['home_odds'], f['away_odds']):
+                _why = coach_flags.filter_reason(H if b['side'] == 1 else A, md)   # 5/10 (manager_picks_test): κοψιμο dog 15+ υπερ «κακης και στα δυο» με νεο προπονητη (1-8 ματς)
+                if _why:
+                    coach_flags.log_cut(dict(lg=lg, home=hfot, away=afot, when=f['startTime'], md=md, side=b['side'], hcap=b['hcap'],
+                                             odds=b['odds'], edge=round(b['edge'], 4), line=f['line'], reason=_why))
+                    continue
                 all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
-                                      when=f['startTime'], md=md, role='dog',
+                                      when=f['startTime'], md=md, role='dog', **({'coach_notes': _cn} if _cn else {}),
                                       mxh=round(xg_h, 3), mxa=round(xg_a, 3),
                                       **b, hnote=hnote, anote=anote, **({'anchor': anc} if anc else {})))
             # 1/10/2026 (Στελιος «βαλτα κανονικα»): ΦΑΒΟΡΙ απο την 15η — αγκυρα .7 σε ολες τις γραμμες + σωστα τεταρτα, edge ≥10%
@@ -242,7 +249,7 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                 fx_h, fx_a, fanc = core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)
                 for b in engine.evaluate_fav(fx_h, fx_a, f['line'], f['home_odds'], f['away_odds']):
                     all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
-                                          when=f['startTime'], md=md,
+                                          when=f['startTime'], md=md, **({'coach_notes': _cn} if _cn else {}),
                                           mxh=round(fx_h, 3), mxa=round(fx_a, 3),
                                           **b, hnote=hnote, anote=anote, **({'anchor': fanc} if fanc else {})))
     KELLY_FRAC = 0.125; CAP = 0.20

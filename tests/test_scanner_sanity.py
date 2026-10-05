@@ -1011,3 +1011,25 @@ def test_red_card_direction():
         assert "getattr(r, 'redsj', None)" in open(os.path.join(ROOT, f), encoding='utf-8').read(), f'{f}: adj_xg χωρις redsj'
     assert 'redsj=' in open(os.path.join(ROOT, 'intl_build.py'), encoding='utf-8').read(), 'intl_build χωρις στηλη redsj'
 
+
+def test_coach_filter():
+    """5/10/2026 (manager_picks_test): κοψιμο dog 15η+ ΥΠΕΡ ομαδας στα 1-8 ματς μετα απο αλλαγη προπονητη, αν πριν ηταν «κακη και στα δυο»."""
+    import coach_flags as cf
+    old = cf._CACHE
+    try:
+        cf._CACHE = {'1': dict(name='A', change=dict(next_match_no=3, type='bad_both', perm='X', first='X', date='2026-10-01', pre_luck=0.0)),
+                     '2': dict(name='B', change=dict(next_match_no=3, type='unlucky', perm='Y', first='Y', date='2026-10-01', pre_luck=-0.5)),
+                     '3': dict(name='C', change=dict(next_match_no=9, type='bad_both', perm='Z', first='Z', date='2026-09-01', pre_luck=0.0))}
+        assert cf.filter_reason(1, 16) and not cf.filter_reason(1, 12), 'μονο 15η+'
+        assert not cf.filter_reason(2, 16), 'ατυχη ομαδα δεν κοβεται'
+        assert not cf.filter_reason(3, 16), 'μετα το 8ο ματς δεν κοβεται'
+    finally:
+        cf._CACHE = old
+    # καθαρισμα: «μπλιπ» βοηθου ≤2 ματς αναμεσα στον ιδιο προπονητη αγνοειται
+    g = [dict(coach=c) for c in [7, 7, 7, 9, 7, 7, 5, 5, 5]]
+    runs = cf.runs_of(g)
+    assert [r[0] for r in runs] == [7, 5], runs
+    src = open(os.path.join(ROOT, 'toa_live.py'), encoding='utf-8').read()
+    assert 'coach_flags.filter_reason' in src and 'coach_flags.log_cut' in src, 'toa_live χωρις φιλτρο προπονητη'
+    assert os.path.exists(os.path.join(ROOT, 'coach_flags.json')), 'λειπει coach_flags.json'
+

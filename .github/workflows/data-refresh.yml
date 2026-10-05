@@ -40,6 +40,11 @@ jobs:
           done
           python add_current_season.py
 
+      - name: Coach changes (προπονητες φετινων ματς → coach_flags.json, 5/10)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python coach_flags.py || echo "coach flags failed (κρατιουνται τα χθεσινα)"
+
       - name: Market anchor (κοντες γραμμες, 15η+ — core7_anchor.py, 29/9)
         env:
           PYTHONIOENCODING: utf-8
@@ -77,7 +82,7 @@ jobs:
         run: |
           git config user.name "data-refresh-bot"
           git config user.email "actions@github.com"
-          git add teamgame_inputs.csv data_*_2627.json data_Brazil_2026.json player_matches_2627.json squads_2627.json lineup_lab.json projected_lineups.jsonl projected_fc.jsonl lineup_forward.jsonl
+          git add teamgame_inputs.csv coach_flags.json managers_2627.json data_*_2627.json data_Brazil_2026.json player_matches_2627.json squads_2627.json lineup_lab.json projected_lineups.jsonl projected_fc.jsonl lineup_forward.jsonl
           git add -f season_projections.json || true
           git add -f core7_anchor_offsets.json || true
           git add -f match_projections_archive.json || true

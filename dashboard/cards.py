@@ -130,7 +130,12 @@ def card_html(m, mk=None, ou_pair=None):
     <div class="row"><span>npxG / Shot</span><b>{m['away_xg_shot']:.4f}</b></div>
     <div class="row"><span>Neutral xG</span><b>{m['away_xg']:.3f}</b></div>
     <div class="row"><span>Adj xG</span><b class="acc">{m['away_adj_xg']:.3f}</b></div></div>
-</div><div class="time">{esc(day)}</div></div>{_past_note(m)}</div>"""
+</div><div class="time">{esc(day)}</div></div>{_past_note(m)}{_coach_note(m)}</div>"""
+
+def _coach_note(m):
+    """5/10/2026: αλλαγη προπονητη (coach_flags.json) — πληροφορια για την κριση του Στελιου."""
+    if not m.get('coach_notes'): return ''
+    return ''.join(f'<div style="font-size:11px;color:#f2b84b;padding:2px 10px">🔄 {esc(n)}</div>' for n in m['coach_notes'])
 
 def _past_note(m):
     """29/9/2026: παλια αγωνιστικη απο το αρχειο (proj_archive) — τελικο σκορ + οτι η προβλεψη ειναι η ΠΡΟ-αγωνα."""

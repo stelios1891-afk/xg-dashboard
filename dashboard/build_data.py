@@ -332,6 +332,12 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, current_season=CURRENT_
                        home=f['home_name'], away=f['away_name'],
                        home_id=f['home_id'], away_id=f['away_id'], projectable=False,
                        promoted=(H in promoted or A in promoted))
+            try:                                              # 5/10: αλλαγη προπονητη (coach_flags.json) — μονο πληροφορια
+                import coach_flags
+                _cn = coach_flags.notes(f['home_id']) + coach_flags.notes(f['away_id'])
+                if _cn: rec['coach_notes'] = _cn
+            except Exception:
+                pass
             rh = blended.get(H); ra = blended.get(A)
             if rh and ra:
                 pf = _predict_ratings(rh, ra, lg_shots, lg_xgps, hf)
