@@ -25,7 +25,24 @@ if V in ('nocomp', 'pen76', 'both'):
     csv = f'tmp_mech_inputs_{V}.csv'; T.to_csv(csv, index=False)
 else:
     csv = src_csv
-if RED:
+if RED in ('emp', 'emps', 'empa', 'skrip', 'caley'):     # 5/10: νεες φορμουλες κοκκινων (red_modes.py) — σωστη κατευθυνση
+    import json, glob, numpy as np, red_modes
+    ADJ = {}
+    for lg in ('EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Eredivisie'):
+        for f in glob.glob(f'data_{lg}_*.json'):
+            for mid, m in json.load(open(f, encoding='utf-8')).items():
+                if m.get('reds'):
+                    for tid, a in red_modes.team_adj(m, RED).items(): ADJ[(str(mid), int(tid))] = a
+    T = pd.read_csv(csv, dtype={'mid': str})
+    A = [ADJ.get((mi, int(t)), dict(fc=1., fr=1., fn=1., term=0.)) for mi, t in zip(T.mid, T.team)]
+    T['comp_np_scaled'] = T['comp_np_scaled'] * [a['fc'] for a in A]; T['np_raw'] = T['np_raw'] * [a['fr'] for a in A]
+    T['ns'] = T['ns'] * [a['fn'] for a in A]; T['red_xg'] = [a['term'] for a in A]
+    T['xg_model'] = T['comp_np_scaled'] + 0.25 * T['pen'] + T['red_xg']
+    T['ns_eff'] = np.maximum(T['ns'] + T['pen'] + T['red_xg'] / 0.10, 0.5 * (T['ns'] + T['pen']))
+    T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1)
+    csv = f'tmp_mech_inputs_{V}_{RED}.csv'; T.to_csv(csv, index=False)
+    print('κοκκινες', RED, 'ματς-ομαδες με διορθωση:', sum(1 for a in A if a['term'] or a['fc'] != 1))
+elif RED:
     T = pd.read_csv(csv)
     sgn = 0.0 if RED == 'nored' else -1.0
     T['xg_model'] = T['xg_model'] - T['red_xg'] + sgn * T['red_xg']

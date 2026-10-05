@@ -10,7 +10,9 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8')
 import southam_tune as T
 V = {'live (+ στον πλεονεκτουντα)': {}, 'καθολου': {'red': False}, 'ΑΝΑΠΟΔΑ': {'red': 'rev'}, 'σουτ πριν την κοκκινη': {'red': 'cut'},
-     'σουτ+γκολ πριν': {'red': 'cutg'}, 'σουτ μετα ×½': {'red': 'half'}, 'κοκκινη<70′ εκτος': {'red': 'drop'}}
+     'σουτ+γκολ πριν': {'red': 'cutg'}, 'σουτ μετα ×½': {'red': 'half'}, 'κοκκινη<70′ εκτος': {'red': 'drop'},
+     'ΕΜΠΕΙΡΙΚΗ ×1.72/−.0072': {'red': 'emp'}, 'ΕΜΠΕΙΡ. ανα σκορ': {'red': 'emps'}, 'ΕΜΠΕΙΡ. προσθετικη': {'red': 'empa'},
+     'Skripnikov ×1.8/×.75': {'red': 'skrip'}, 'Caley ×1.4': {'red': 'caley'}}
 SA = dict(T.FILES)
 CORE = {lg: {s: f'data_{lg}_{s}.json' for s in ('2122', '2223', '2324', '2425', '2526')}
         for lg in ('EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Eredivisie')}

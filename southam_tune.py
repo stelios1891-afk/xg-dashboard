@@ -52,7 +52,14 @@ def inputs(comp='std', pen=0.25, red=True):
     key = (comp, pen, red)
     if key in _INP: return _INP[key]
     w = CW[comp]; rows = []
+    NEW = red in ('emp', 'emps', 'skrip', 'caley', 'empa')
+    if NEW:
+        import red_modes
     for lg, sea, mid, ko, stg, H, A, hg, ag, shots, reds in RAW:
+        if NEW:
+            mj = dict(home=dict(id=H), away=dict(id=A), reds=[dict(home=hm, min=mn) for hm, mn in reds],
+                      shots=[dict(tid=t, xg=x, sit=si, min=mn, goal=gl) for t, x, si, mn, gl in shots])
+            ADJ = red_modes.team_adj(mj, red)
         rm = min([mn for hm, mn in reds], default=None)          # λεπτο 1ης κοκκινης
         a = {H: [0., 0., 0, 0, 0], A: [0., 0., 0, 0, 0]}          # raw, comp, pens, ns, goals(πριν)
         for t, x, sit, mn, gl in shots:
@@ -71,6 +78,10 @@ def inputs(comp='std', pen=0.25, red=True):
         elif red == 'rev': hr, ar = -(0.0083 * da - 0.5 * 0.0083 * dh), -(0.0083 * dh - 0.5 * 0.0083 * da)
         else: hr = ar = 0.
         hgx, agx = (a[H][4] * sc, a[A][4] * sc) if (red == 'cutg' and rm is not None) else (hg, ag)
+        if NEW:
+            for t in (H, A):
+                a[t][0] *= ADJ[t]['fr']; a[t][1] *= ADJ[t]['fc']; a[t][3] *= ADJ[t]['fn']
+            hr, ar = ADJ[H]['term'], ADJ[A]['term']
         rows.append(dict(league=lg, season=sea, mid=mid, ko=ko, stage=stg, home=H, away=A, hg=hg, ag=ag, hg_in=hgx, ag_in=agx,
                          drop=(red == 'drop' and rm is not None and rm < 70),
                          h_raw=a[H][0] * sc, h_c=a[H][1] * sc, h_pen=a[H][2] * sc, h_ns=a[H][3] * sc, a_raw=a[A][0] * sc, a_c=a[A][1] * sc, a_pen=a[A][2] * sc, a_ns=a[A][3] * sc,
@@ -80,7 +91,10 @@ def inputs(comp='std', pen=0.25, red=True):
         k = (M.league == lg) & (M.season == sea); sf = (g.h_raw.sum() + g.a_raw.sum()) / (g.h_c.sum() + g.a_c.sum())
         M.loc[k, 'h_c'] *= sf; M.loc[k, 'a_c'] *= sf
     M['h_xg'] = M.h_c + pen * M.h_pen + M.h_red; M['a_xg'] = M.a_c + pen * M.a_pen + M.a_red
-    M['h_nse'] = M.h_ns + M.h_pen + M.h_red.abs() / .1; M['a_nse'] = M.a_ns + M.a_pen + M.a_red.abs() / .1
+    if NEW:     # νεοι τροποι: «σουτ» με προσημο (αφαιρουμε σουτ οταν αφαιρουμε xG), ποτε κατω απο το μισο
+        M['h_nse'] = np.maximum(M.h_ns + M.h_pen + M.h_red / .1, 0.5 * (M.h_ns + M.h_pen)); M['a_nse'] = np.maximum(M.a_ns + M.a_pen + M.a_red / .1, 0.5 * (M.a_ns + M.a_pen))
+    else:
+        M['h_nse'] = M.h_ns + M.h_pen + M.h_red.abs() / .1; M['a_nse'] = M.a_ns + M.a_pen + M.a_red.abs() / .1
     tru = {mid: (sum(x for t, x, si, mn, g in sh if t == H and si != 'Penalty') + 0.76 * sum(1 for t, x, si, mn, g in sh if t == H and si == 'Penalty'),
                  sum(x for t, x, si, mn, g in sh if t == A and si != 'Penalty') + 0.76 * sum(1 for t, x, si, mn, g in sh if t == A and si == 'Penalty'))
            for lg, sea, mid, ko, stg, H, A, hg, ag, sh, reds in RAW}

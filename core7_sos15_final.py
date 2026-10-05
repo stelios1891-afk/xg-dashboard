@@ -54,6 +54,9 @@ if os.environ.get('SOS15_SET') == 'tanch':      # 1/10: αγκυρα ΣΥΝΟΛ�
     TFAC = {lam: _tfac(lam) for lam in (0.5, 0.7)}
 if os.environ.get('SOS15_SET') == 'red':        # 5/10: διορθωση κοκκινων (core7_red_adj_test) — ιδια ΠΡΟ-ΔΗΛΩΣΗ (1)-(4)
     VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13'), ('ΧΩΡΙΣ κοκκινες', 'cur_0.75_6_13~nored'), ('ΑΝΑΠΟΔΑ κοκκινες', 'cur_0.75_6_13~revred')]
+if os.environ.get('SOS15_SET') == 'red2':       # 5/10: φορμουλες κοκκινων σωστης κατευθυνσης (red_modes.py)
+    VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13'), ('ΧΩΡΙΣ', 'cur_0.75_6_13~nored'), ('ΕΜΠΕΙΡΙΚΗ', 'cur_0.75_6_13~emp'),
+           ('ΕΜΠΕΙΡ. σκορ', 'cur_0.75_6_13~emps'), ('ΕΜΠΕΙΡ. προσθ.', 'cur_0.75_6_13~empa'), ('Skripnikov', 'cur_0.75_6_13~skrip')]
 if os.environ.get('SOS15_SET') == 'alearn':
     VAR = [('ΣΗΜΕΡΑ', 'cur_0.75_6_13@L6')] + [(f'μαθ. απο {n + 1}η', f'cur_0.75_6_13@L{n}') for n in (1, 2, 3, 4, 5)] +           [('+SoS & μαθ. απο 3η', 'cur_0.75_2_13@L2'), ('+SoS & μαθ. απο 4η', 'cur_0.75_3_13@L3')]
 def run_L(lam, carry, L):
