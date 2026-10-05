@@ -25,40 +25,66 @@ DEFAULT = dict(comp='std', pen=0.25, red=True, blend=0.60, ramp=True, decay=0.96
                KN=20.0, sos=0.75, sos_lo=6, sos_hi=13, hfa='xg', hfa_K=300, hfa_team_K=0, rho=-0.03, conv=0)
 
 # ---------------- 1. σουτ (μια φορα) ----------------
-RAW = []
-for lg, ss in FILES.items():
-    for sea, path in ss.items():
-        for mid, m in json.load(open(path, encoding='utf-8')).items():
-            if m.get('hs') is None or not m.get('shots'): continue
-            RAW.append((lg, sea, str(mid), datetime.strptime(m['date'].replace(' UTC', ''), '%a, %b %d, %Y, %H:%M'),
-                        m.get('stage') or 'regular', int(m['home']['id']), int(m['away']['id']), int(m['hs']), int(m['as']),
-                        [(s.get('tid'), s.get('xg'), s.get('sit')) for s in m['shots'] if s.get('xg') is not None],
-                        [(r.get('home'), r.get('min') or 0) for r in (m.get('reds') or [])]))
+RAW = None
+def load_raw():
+    global RAW
+    RAW = []
+    for lg, ss in FILES.items():
+        for sea, path in ss.items():
+            for mid, m in json.load(open(path, encoding='utf-8')).items():
+                if m.get('hs') is None or not m.get('shots'): continue
+                tids = {x.get('tid') for x in m['shots']}
+                if int(m['home']['id']) not in tids or int(m['away']['id']) not in tids: continue      # σουτ της μιας ομαδας λειπουν = σφαλμα δεδομενων
+                RAW.append((lg, sea, str(mid), datetime.strptime(m['date'].replace(' UTC', ''), '%a, %b %d, %Y, %H:%M'),
+                            m.get('stage') or 'regular', int(m['home']['id']), int(m['away']['id']), int(m['hs']), int(m['as']),
+                            [(s.get('tid'), s.get('xg'), s.get('sit'), s.get('min') or 0, bool(s.get('goal'))) for s in m['shots'] if s.get('xg') is not None],
+                            [(r.get('home'), r.get('min') or 0) for r in (m.get('reds') or [])]))
+    return RAW
 CW = {'std': lambda x: 1.0 if x <= .2 else (.45 if x <= .4 else (.25 if x <= .5 else (.15 if x <= .7 else .05))),
       'none': lambda x: 1.0,
       'mild': lambda x: 1.0 if x <= .2 else (.7 if x <= .4 else (.5 if x <= .5 else (.4 if x <= .7 else .3)))}
 _INP = {}
 def inputs(comp='std', pen=0.25, red=True):
+    """red: True = live (+0.0083 xG/λεπτο στον πλεονεκτουντα, −½ στον αλλο) · False = τιποτα · 'rev' = ΑΝΑΠΟΔΑ (αφαιρει απο τον πλεονεκτουντα)
+    · 'cut' = μονο τα σουτ ΠΡΙΝ την 1η κοκκινη, αναγωγη σε 95′ · 'cutg' = το ιδιο και για τα γκολ · 'half' = σουτ μετα την κοκκινη ×0.5
+    · 'drop' = ματς με κοκκινη πριν το 70′ ΔΕΝ μπαινουν στο ιστορικο ratings (μονο προβλεπονται)."""
+    if RAW is None: load_raw()
     key = (comp, pen, red)
     if key in _INP: return _INP[key]
     w = CW[comp]; rows = []
     for lg, sea, mid, ko, stg, H, A, hg, ag, shots, reds in RAW:
-        a = {H: [0., 0., 0, 0], A: [0., 0., 0, 0]}          # raw, comp, pens, ns
-        for t, x, sit in shots:
+        rm = min([mn for hm, mn in reds], default=None)          # λεπτο 1ης κοκκινης
+        a = {H: [0., 0., 0, 0, 0], A: [0., 0., 0, 0, 0]}          # raw, comp, pens, ns, goals(πριν)
+        for t, x, sit, mn, gl in shots:
             if t not in a: continue
-            if sit == 'Penalty': a[t][2] += 1
-            else: a[t][0] += x; a[t][1] += x * w(x); a[t][3] += 1
+            post = rm is not None and mn > rm
+            if red in ('cut', 'cutg') and post: continue
+            f = 0.5 if (red == 'half' and post) else 1.0
+            if sit == 'Penalty': a[t][2] += f
+            else: a[t][0] += x * f; a[t][1] += x * w(x) * f; a[t][3] += f
+            if gl: a[t][4] += 1
+        sc = 1.0
+        if red in ('cut', 'cutg') and rm is not None:
+            sc = 95.0 / max(rm, 20)
         dh = sum(max(0, 95 - mn) for hm, mn in reds if hm); da = sum(max(0, 95 - mn) for hm, mn in reds if not hm)
-        rows.append(dict(league=lg, season=sea, mid=mid, ko=ko, stage=stg, home=H, away=A, hg=hg, ag=ag,
-                         h_raw=a[H][0], h_c=a[H][1], h_pen=a[H][2], h_ns=a[H][3], a_raw=a[A][0], a_c=a[A][1], a_pen=a[A][2], a_ns=a[A][3],
-                         h_red=(0.0083 * da - 0.5 * 0.0083 * dh) if red else 0., a_red=(0.0083 * dh - 0.5 * 0.0083 * da) if red else 0.))
+        if red is True: hr, ar = 0.0083 * da - 0.5 * 0.0083 * dh, 0.0083 * dh - 0.5 * 0.0083 * da
+        elif red == 'rev': hr, ar = -(0.0083 * da - 0.5 * 0.0083 * dh), -(0.0083 * dh - 0.5 * 0.0083 * da)
+        else: hr = ar = 0.
+        hgx, agx = (a[H][4] * sc, a[A][4] * sc) if (red == 'cutg' and rm is not None) else (hg, ag)
+        rows.append(dict(league=lg, season=sea, mid=mid, ko=ko, stage=stg, home=H, away=A, hg=hg, ag=ag, hg_in=hgx, ag_in=agx,
+                         drop=(red == 'drop' and rm is not None and rm < 70),
+                         h_raw=a[H][0] * sc, h_c=a[H][1] * sc, h_pen=a[H][2] * sc, h_ns=a[H][3] * sc, a_raw=a[A][0] * sc, a_c=a[A][1] * sc, a_pen=a[A][2] * sc, a_ns=a[A][3] * sc,
+                         h_red=hr, a_red=ar))
     M = pd.DataFrame(rows)
     for (lg, sea), g in M.groupby(['league', 'season']):
         k = (M.league == lg) & (M.season == sea); sf = (g.h_raw.sum() + g.a_raw.sum()) / (g.h_c.sum() + g.a_c.sum())
         M.loc[k, 'h_c'] *= sf; M.loc[k, 'a_c'] *= sf
     M['h_xg'] = M.h_c + pen * M.h_pen + M.h_red; M['a_xg'] = M.a_c + pen * M.a_pen + M.a_red
     M['h_nse'] = M.h_ns + M.h_pen + M.h_red.abs() / .1; M['a_nse'] = M.a_ns + M.a_pen + M.a_red.abs() / .1
-    M['h_xgraw'] = M.h_raw + 0.76 * M.h_pen; M['a_xgraw'] = M.a_raw + 0.76 * M.a_pen      # «πραγματικο xG» για τον κριτη (σταθερο)
+    tru = {mid: (sum(x for t, x, si, mn, g in sh if t == H and si != 'Penalty') + 0.76 * sum(1 for t, x, si, mn, g in sh if t == H and si == 'Penalty'),
+                 sum(x for t, x, si, mn, g in sh if t == A and si != 'Penalty') + 0.76 * sum(1 for t, x, si, mn, g in sh if t == A and si == 'Penalty'))
+           for lg, sea, mid, ko, stg, H, A, hg, ag, sh, reds in RAW}
+    M['h_xgraw'] = M.mid.map(lambda m: tru[m][0]); M['a_xgraw'] = M.mid.map(lambda m: tru[m][1])      # «πραγματικο xG» για τον κριτη (σταθερο)
     M = M.sort_values(['league', 'season', 'ko', 'mid']).reset_index(drop=True)
     _INP[key] = M
     return M
@@ -106,7 +132,7 @@ def run(p=None):
             if prev:
                 Gp = ML[ML.season == prev]; hp = {}
                 for r in Gp.itertuples():
-                    for t, sf, xf, sa, xa, gf, ga in ((r.home, r.h_nse, r.h_xg, r.a_nse, r.a_xg, r.hg, r.ag), (r.away, r.a_nse, r.a_xg, r.h_nse, r.h_xg, r.ag, r.hg)):
+                    for t, sf, xf, sa, xa, gf, ga in (((r.home, r.h_nse, r.h_xg, r.a_nse, r.a_xg, r.hg_in, r.ag_in), (r.away, r.a_nse, r.a_xg, r.h_nse, r.h_xg, r.ag_in, r.hg_in)) if not r.drop else ()):
                         h = hp.setdefault(t, dict(sf=[], xf=[], sa=[], xa=[], gf=[], ga=[]))
                         for k, v in (('sf', sf), ('xf', xf), ('sa', sa), ('xa', xa), ('gf', gf), ('ga', ga)): h[k].append(v)
                 ns = pd.concat([Gp.h_nse, Gp.a_nse]); lgs0 = ns.mean(); lgx0 = pd.concat([Gp.h_xg, Gp.a_xg]).sum() / ns.sum()
@@ -125,7 +151,7 @@ def run(p=None):
             hc = {}; cns = cx = 0.; cnt = 0; bl = dict(prior); sh = sa_ = 0.; ngm = 0
             for r in G.itertuples():
                 H, A = r.home, r.away
-                if cnt:
+                if cnt and cns > 0 and cx > 0:
                     wn = cnt / (cnt + p['KN']); lgs = lgs0 * ((cns / cnt) / lgs0) ** wn; lgx = lgx0 * ((cx / cns) / lgx0) ** wn
                 else: lgs, lgx = lgs0, lgx0
                 def final(t):
@@ -147,7 +173,7 @@ def run(p=None):
                 lh, la = lam(fh, fa, lgs, lgx, hfh)
                 nh = len(hc.get(H, {}).get('sf', [])); na = len(hc.get(A, {}).get('sf', []))
                 out.append((lg, sea, r.mid, r.ko, r.stage, max(nh, na) + 1, lh, la, r.hg, r.ag, r.h_xgraw, r.a_xgraw, prev is None))
-                for t, o, sf, xf, sa, xa, gf, ga in ((H, A, r.h_nse, r.h_xg, r.a_nse, r.a_xg, r.hg, r.ag), (A, H, r.a_nse, r.a_xg, r.h_nse, r.h_xg, r.ag, r.hg)):
+                for t, o, sf, xf, sa, xa, gf, ga in (((H, A, r.h_nse, r.h_xg, r.a_nse, r.a_xg, r.hg_in, r.ag_in), (A, H, r.a_nse, r.a_xg, r.h_nse, r.h_xg, r.ag_in, r.hg_in)) if not r.drop else ()):
                     h = hc.setdefault(t, dict(sf=[], xf=[], sa=[], xa=[], gf=[], ga=[], opp=[]))
                     for k, v in (('sf', sf), ('xf', xf), ('sa', sa), ('xa', xa), ('gf', gf), ('ga', ga), ('opp', o)): h[k].append(v)
                     n = len(h['sf']); bl[t] = shrink(rating(h, n, p), prior[t], n, p['K'])
@@ -158,10 +184,14 @@ def run(p=None):
 
 # ---------------- 3. κριτης ----------------
 _MK = None
+MARKET_F = 'southam_phase3_rows.csv'
 def market():
     global _MK
     if _MK is None:
-        R = pd.read_csv('southam_phase3_rows.csv', dtype={'mid': str})
+        try:
+            R = pd.read_csv(MARKET_F, dtype={'mid': str})
+        except Exception:
+            _MK = pd.DataFrame(columns=['msup', 'mtot']); return _MK
         R = R[(R.win == 'close') & (R.book == 'Crown')].drop_duplicates('mid')
         _MK = R.set_index('mid')[['msup', 'mtot']]
     return _MK
