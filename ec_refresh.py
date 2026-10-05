@@ -5,7 +5,7 @@
   ΑΦΕΤΗΡΙΑ = 0.2 × περσινο EuroCup (νεες 0) + ειδικοι 4·z (Eurohoops + Taking The Charge + αποδοσεις νικητη) + προετοιμασια 0.5·r
   (ec_prior.json ← ec_prior_build.py), + ΦΕΤΙΝΑ ΕΓΧΩΡΙΑ κ 1 απο τον 1ο αγωνα (el_domestic_live: bk_domestic + fs_bk_extra).
   Walk-forward: καθε ματς προβλεπεται με οτι ηταν γνωστο ΠΡΙΝ απο τη μερα του.
-ΜΟΝΟ χαντικαπ για picks (τα συνολα EuroCup δεν εχουν τεσταριστει — εμφανιζονται, δεν παιζονται).
+ΣΥΝΟΛΑ (5/10/2026): ΔΙΚΗ ΤΟΥΣ μηχανη (βλ. «3β») — picks με μιξη 50/50 (ec_picks.py).
 Εξοδος: ec_sched.json · ec_box.json · ec_projections.json (ιδια μορφη με el_projections.json)."""
 import sys, os, json, math, time, datetime as dt, urllib.request, urllib.error
 import numpy as np, pandas as pd
@@ -179,6 +179,108 @@ def predict(st, h, a, neu):
     eh = st['mu'] + st['O'][h] + st['D'][a] + hb; ea = st['mu'] + st['O'][a] + st['D'][h] - hb
     poss = st['pm'] + st['P'][h] + st['P'][a]
     return poss * (eh - ea) / 100, poss * (eh + ea) / 100, poss
+# ---- 3β. ΜΗΧΑΝΗ ΣΥΝΟΛΩΝ (5/10/2026, αποφαση Στελιου «βαλε τη μηχανη live» · ec_totals_mech_test + ec_totals_deep_test) ----
+# ξεχωριστη απο του χαντικαπ (οπως Ευρωλιγκα v2): τυχη .25, περσι .7, επιπεδο διοργανωσης «κολλητο» μ_w 50, λ 8, εδρα 6, χωρις φθορα
+# + φετινα ΕΓΧΩΡΙΑ σκορ (ταση ομαδας vs μεσος πρωταθληματος, n/(n+6) προς ½ περσινης) κ .4 + επιπεδο εγχωριου πρωταθληματος κ .25
+# + καμπυλη σεζον (ολες οι σεζον U2017-25: +2.70 − 0.104×αριθμος αγωνα) + φιλικα κT .25 στους αγωνες 1-10 (rT απο ec_totals_prior.py).
+# Backtest U2020-25 (Crown): λαθος 17.19 vs κλεισιμο 17.21 · Κ2 .49 (t 3.7, 6/6) — η παλια (απο τη μηχανη χαντικαπ) 17.60, Κ2 .13.
+T_LAM, T_H, T_LUCK, T_MUW, T_CARRY = 8, 6.0, .25, 50.0, .7
+T_KD, T_KL, T_KT = .4, .25, float(PRIOR.get('kT', .25))
+CURVE_A, CURVE_B = 2.698, -0.1037
+RT = PRIOR.get('rT', {}) or {}
+_LGP = ns['lg_prev']
+def _luck_eff(w):
+    res = []
+    for side in ('h', 'a'):
+        p3l = np.array([_LGP(s)['p3'] for s in D.season]); ftl = np.array([_LGP(s)['ft'] for s in D.season])
+        m3, a3, mf, af = (D[f'{side}_{c}'].values.astype(float) for c in ('fgm3', 'fga3', 'ftm', 'fta'))
+        p3g = np.where(a3 > 0, m3 / np.maximum(a3, 1), p3l); ftg = np.where(af > 0, mf / np.maximum(af, 1), ftl)
+        res.append(100 * (D[f'{side}_pts'].values - 3 * m3 + 3 * a3 * (w * p3g + (1 - w) * p3l) - mf + af * (w * ftg + (1 - w) * ftl)) / D.poss.values)
+    return res[0], res[1]
+EHT, EAT = _luck_eff(T_LUCK)
+def _fit_eff_mu(hi, ai, eh, ea, hb, w, n, o0, d0, lam, mu0, mu_w):
+    nG = len(hi); sw = np.sqrt(w)
+    A = np.zeros((2 * nG + 2 * n + 1, 1 + 2 * n)); y = np.zeros(2 * nG + 2 * n + 1)
+    r0 = np.arange(nG); r1 = nG + r0
+    A[r0, 0] = sw; A[r0, 1 + hi] = sw; A[r0, 1 + n + ai] = sw; y[r0] = sw * (eh - hb)
+    A[r1, 0] = sw; A[r1, 1 + ai] = sw; A[r1, 1 + n + hi] = sw; y[r1] = sw * (ea + hb)
+    sl = math.sqrt(lam); k = np.arange(n)
+    A[2 * nG + k, 1 + k] = sl; y[2 * nG + k] = sl * o0; A[2 * nG + n + k, 1 + n + k] = sl; y[2 * nG + n + k] = sl * d0
+    A[-1, 0] = math.sqrt(mu_w); y[-1] = math.sqrt(mu_w) * mu0
+    x = np.linalg.lstsq(A, y, rcond=None)[0]
+    return x[0], x[1:1 + n], x[1 + n:]
+def buildT():
+    prior = {}; mu0 = float((EHT.mean() + EAT.mean()) / 2); pm0 = float(D.pace.mean()); C_ = None
+    for s in SEAS:
+        sidx = np.where(D.season.values == s)[0]
+        teams = sorted(set(D.home.values[sidx]) | set(D.away.values[sidx]) | ({x['hcode'] for x in S[s]} | {x['acode'] for x in S[s]} if s == SEASON else set()))
+        ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
+        o0 = np.array([T_CARRY * prior.get(t, (0, 0, 0))[0] for t in teams]); d0 = np.array([T_CARRY * prior.get(t, (0, 0, 0))[1] for t in teams])
+        p0 = np.array([T_CARRY * prior.get(t, (0, 0, 0))[2] for t in teams])
+        hi = np.array([ix[t] for t in D.home.values[sidx]], int); ai = np.array([ix[t] for t in D.away.values[sidx]], int)
+        hb = np.where(D.neutral.values[sidx] == 1, 0.0, T_H / 2)
+        if s == SEASON:
+            C_ = dict(ix=ix, n=n, tl=teams, o0=o0, d0=d0, p0=p0, mu0=mu0, pm0=pm0, sidx=sidx, hi=hi, ai=ai, hb=hb, dn=dnum[sidx], cache={})
+        elif len(sidx):
+            w = np.ones(len(sidx))
+            mu, O, Dd = _fit_eff_mu(hi, ai, EHT[sidx], EAT[sidx], hb, w, n, o0, d0, T_LAM, mu0, T_MUW)
+            pm, Pc = fit_pace(hi, ai, D.pace.values[sidx], w, n, p0, T_LAM, pm0)
+            prior = {t: (O[i], Dd[i], Pc[i]) for t, i in ix.items()}; mu0 = mu; pm0 = pm
+    return C_
+CTXT = buildT()
+def stateT(c, cut):
+    if cut in c['cache']: return c['cache'][cut]
+    past = c['dn'] < cut if len(c['dn']) else np.array([], bool)
+    if past.any():
+        sid = c['sidx'][past]; w = np.ones(int(past.sum()))
+        mu, O, Dd = _fit_eff_mu(c['hi'][past], c['ai'][past], EHT[sid], EAT[sid], c['hb'][past], w, c['n'], c['o0'], c['d0'], T_LAM, c['mu0'], T_MUW)
+        pm, Pc = fit_pace(c['hi'][past], c['ai'][past], D.pace.values[sid], w, c['n'], c['p0'], T_LAM, c['pm0'])
+    else:
+        mu, O, Dd, pm, Pc = c['mu0'], c['o0'], c['d0'], c['pm0'], c['p0']
+    st = dict(mu=mu, pm=pm, O={t: O[i] for t, i in c['ix'].items()}, D={t: Dd[i] for t, i in c['ix'].items()}, P={t: Pc[i] for t, i in c['ix'].items()})
+    c['cache'][cut] = st; return st
+def predictT(st, h, a):
+    return (st['pm'] + st['P'][h] + st['P'][a]) * (2 * st['mu'] + st['O'][h] + st['D'][a] + st['O'][a] + st['D'][h]) / 100
+# φετινα εγχωρια ΣΥΝΟΛΑ (ιδια δεδομενα/αντιστοιχιση με τα εγχωρια του χαντικαπ)
+from el_season import NG as _NG
+_PNG = f'{(int(_NG[:2]) - 1) % 100:02d}-{int(_NG[:2]) % 100:02d}'
+MAPT = getattr(_ddelta, 'map', {}) if DOMSHIFT else {}
+LGG, TMG = {}, {}
+def _tsx(s_):
+    t_ = pd.Timestamp(s_)
+    return (t_.tz_localize(None) if t_.tzinfo else t_).timestamp()
+try:
+    _DT = json.load(open('bk_domestic.json', encoding='utf-8')); _DT.update(extra)
+    for _k, _v in _DT.items():
+        _L, _sea = _k.split('_')
+        if _sea not in (_NG, _PNG): continue
+        for _g in _v['games']:
+            try: _tt = int(_g[4]) + int(_g[5])
+            except Exception: continue
+            _x = _tsx(_g[1])
+            LGG.setdefault((_L, _sea), []).append((_x, _tt))
+            for _t in (_g[2], _g[3]): TMG.setdefault((_L, _sea, int(_t)), []).append((_x, _tt))
+except Exception as _e:
+    print('ΠΡΟΣΟΧΗ: εγχωρια συνολα απενεργα —', _e)
+FULLP = {k[0]: float(np.mean([x[1] for x in v])) for k, v in LGG.items() if k[1] == _PNG and len(v) >= 20}
+def _lgmean(L, ts):
+    cur = [x[1] for x in LGG.get((L, _NG), []) if x[0] < ts - 3600]
+    return float(np.mean(cur)) if len(cur) >= 20 else FULLP.get(L, np.nan)
+def dom_tot(code, ts):
+    """(ταση ομαδας, επιπεδο πρωταθληματος) σε ποντους συνολου — 0 αν δεν υπαρχει αντιστοιχιση."""
+    m = MAPT.get(code)
+    if not m: return 0.0, 0.0
+    L, tid = m[0], int(m[1])
+    lgm = _lgmean(L, ts)
+    tg = [x[1] for x in TMG.get((L, _NG, tid), []) if x[0] < ts - 3600]
+    tp = [x[1] for x in TMG.get((L, _PNG, tid), [])]
+    dprev = (np.mean(tp) - FULLP[L]) if len(tp) >= 10 and L in FULLP else 0.0
+    n = len(tg); dcur = (np.mean(tg) - lgm) if n and np.isfinite(lgm) else 0.0
+    trend = (n * dcur + 6 * .5 * dprev) / (n + 6)
+    allm = [v for v in (_lgmean(l, ts) for l in {k[0] for k in LGG}) if np.isfinite(v)]
+    lvl = (lgm - float(np.mean(allm))) if np.isfinite(lgm) and allm else 0.0
+    return float(trend), float(lvl)
+print(f'μηχανη συνολων: εγχωρια αντιστοιχιση {len(MAPT)} ομαδες · φιλικα (rT) {len(RT)} ομαδες')
 Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
 games = []
 for x in sorted(S[SEASON], key=lambda y: y['utc']):
@@ -187,10 +289,16 @@ for x in sorted(S[SEASON], key=lambda y: y['utc']):
     played = bool(x['played']) and x.get('hs') is not None
     cut = (gdate - d0date).days if played or gdate <= dt.date.today() else today_cut
     neu = bool(x.get('neutral'))
-    mg, tt, poss = predict(state_at(CTX, cut), h, a, neu)
+    mg, tt_h, poss = predict(state_at(CTX, cut), h, a, neu)
+    # συνολο: ξεχωριστη μηχανη συνολων (5/10)
+    gts = pd.Timestamp(x['utc']).timestamp()
+    GNo = max(sum(1 for y in S[SEASON] if y['played'] and y.get('hs') is not None and (c in (y['hcode'], y['acode'])) and y['utc'] < x['utc']) for c in (h, a))
+    th, lh = dom_tot(h, gts); ta_, la = dom_tot(a, gts)
+    tt = (predictT(stateT(CTXT, cut), h, a) + T_KD * (th + ta_) + T_KL * (lh + la) + CURVE_A + CURVE_B * GNo
+          + (T_KT * (RT.get(h, 0.0) + RT.get(a, 0.0)) if GNo <= 9 else 0.0))
     rec = dict(code=x['code'], round=x['rnd'], phase=x['phase'], group=x.get('group'), utc=x['utc'], home=x['home'], away=x['away'], hcode=h, acode=a,
                venue=x.get('vname'), neutral=neu, pts_h=round((tt + mg) / 2, 1), pts_a=round((tt - mg) / 2, 1), margin=round(mg, 2), total=round(tt, 1),
-               poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3), played=played, version='ec1', hcrest=x.get('hcrest'), acrest=x.get('acrest'))
+               poss=round(poss, 1), p_home=round(Phi(mg / SIGMA_MARGIN), 3), played=played, version='ec1', total_h=round(tt_h, 1), gno=GNo, hcrest=x.get('hcrest'), acrest=x.get('acrest'))
     if played: rec.update(hs=x['hs'], as_=x['as_'])
     games.append(rec)
 st = state_at(CTX, today_cut)
@@ -202,7 +310,8 @@ ratings = sorted([dict(code=t, name=names.get(t, t), O=round(st['O'][t], 2), D=r
                        z=PRIOR.get('z', {}).get(t), pre=PRIOR.get('pre', {}).get(t)) for t in CTX['tl']], key=lambda r: -r['net'])
 json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=SEASON, comp='EuroCup',
                model=f'ec1: αφετηρια {CARRY:g}×περσινο EuroCup + ειδικοι {KX:g}·z (Eurohoops/Taking The Charge/αποδοσεις νικητη) + προετοιμασια {KP:g}·r · '
-                     f'φετινα εγχωρια κ {KD:g} απο τον 1ο αγωνα · HL {HL} · λ {LAM} · εδρα {H:g}/100 · τυχη 3P/FT · μονο χαντικαπ για picks',
+                     f'φετινα εγχωρια κ {KD:g} απο τον 1ο αγωνα · HL {HL} · λ {LAM} · εδρα {H:g}/100 · τυχη 3P/FT · '
+                     f'ΣΥΝΟΛΑ (5/10): μηχανη v2 (τυχη .25, περσι .7, μ_w 50, λ 8) + εγχωρια σκορ .4 + επιπεδο πρωταθληματος .25 + καμπυλη + φιλικα .25 (αγων 1-10)',
                sigma_margin=SIGMA_MARGIN, sigma_total=SIGMA_TOTAL, mu=round(st['mu'], 2), pace=round(st['pm'], 2), prior_src=PRIOR.get('src'),
                games=games, ratings=ratings), open(PROJ_OUT, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(f'{PROJ_OUT}: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα) · ratings {len(ratings)}')

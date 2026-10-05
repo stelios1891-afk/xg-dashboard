@@ -3,7 +3,10 @@
 Διαβαζει: ec_projections.json (ec_refresh.py) + ec_odds_latest.json (Pinnacle, ec_odds_scan.py).
 Κανονας: ΜΟΝΟ ΧΑΝΤΙΚΑΠ, edge ≥ 8% (ιστορικα U2020-25 vs Crown: ανοιγμα +5.1% ολη η σεζον, πρωτα 6 ματς +13.3% — ec_carry_test).
   edge = P(μοντελο)·αποδοση + P(push) − 1 · διαφορα ~ N(margin, 11.5) · ακεραιες γραμμες: διορθωση ±0.5 (ιδιο με Ευρωλιγκα).
-  Συνολα: ΟΧΙ (δεν εχουν τεσταριστει στο EuroCup). Οι κανονες alert της Ευρωλιγκας (2ωρο/κινηση) δεν εφαρμοζονται — δεν τεσταριστηκαν εδω.
+  ΣΥΝΟΛΑ (5/10/2026, αποφαση Στελιου «μηχανη live, picks κανονικα»): νεα μηχανη συνολων (ec_refresh «3β») · ΜΙΞΗ 50/50 με την αγορα:
+    μ = αγορα + 0.5·(μοντελο − αγορα), αγορα = γραμμη + 16.7·Φ⁻¹(P over χωρις γκανιοτα) · συνολο ~ N(μ, 16.7) · edge ≥ 6%
+    (ec_totals_final_check U2020-25 ανοιγμα Crown: ολη +5.7% (208, 5/6) · αγων 1-6 +15.9% (83, 5/6) · 7+ −1.1% (125, 3/6)).
+  Οι κανονες alert της Ευρωλιγκας (2ωρο/κινηση) δεν εφαρμοζονται — δεν τεσταριστηκαν εδω.
 Γραφει: ec_value_latest.json (dashboard) · ec_clv_bets.jsonl (ημερολογιο: καθε ΝΕΟ pick με την τιμη εισοδου) · ec_value_state.json.
 Telegram (picks bot): ΜΟΝΟ νεα picks ή αλλαγη αποδοσης ≥ 0.05. Χρηση: python ec_picks.py [--no-tg]"""
 import os, sys, json, datetime as dt
@@ -12,6 +15,15 @@ from el_picks import cover
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 HC_MIN, ODDS_DELTA = 0.08, 0.05
+TOT_MIN, TOT_W = 0.06, 0.5          # 5/10: συνολα — edge ≥6% με μιξη 50/50
+
+def tot_mix(game, pin, st):
+    """Μικτο αναμενομενο συνολο (μοντελο/αγορα 50/50) απο τις τωρινες τιμες Pinnacle· None αν λειπουν."""
+    if not game or pin.get('tl') is None or not pin.get('to') or not pin.get('tu'): return None
+    from statistics import NormalDist
+    T, ov, un = float(pin['tl']), float(pin['to']), float(pin['tu'])
+    po = (1 / ov) / (1 / ov + 1 / un); mk = T + st * NormalDist().inv_cdf(min(max(po, 1e-4), 1 - 1e-4))
+    return mk + TOT_W * (float(game['total']) - mk), mk
 
 def _load(p, d):
     try: return json.load(open(p, encoding='utf-8'))
@@ -19,7 +31,7 @@ def _load(p, d):
 
 def compute():
     proj = _load(F('ec_projections.json'), {}); odds = _load(F('ec_odds_latest.json'), {}).get('odds', {})
-    sm = float(proj.get('sigma_margin', 11.5))
+    sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
     games = {str(g['code']): g for g in proj.get('games', [])}
     now = dt.datetime.now(dt.timezone.utc); picks = []
     for code, o in odds.items():
@@ -37,9 +49,20 @@ def compute():
             if e >= HC_MIN:
                 picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4),
                                   proj_odds=round((p_ + (1 - p_ - pp)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L))
+        # ---- συνολο (5/10): μιξη 50/50 ----
+        tm = tot_mix(g, pin, st)
+        if tm:
+            mu, mk = tm; T = float(pin['tl'])
+            po, pq = cover(mu, -T, st); pu = 1 - po - pq
+            for nm, p_, od in (('Over', po, float(pin['to'])), ('Under', pu, float(pin['tu']))):
+                e = p_ * od + pq - 1
+                if e >= TOT_MIN:
+                    picks.append(dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
+                                      proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(float(g['total']), 1),
+                                      mix_total=round(mu, 1), mkt_total=round(mk, 1), mkt_line=T, gno=g.get('gno')))
     return picks
 
-def key(p): return f"EC|{p['code']}|hcap|{p['side']}|{p['hcap']:g}"
+def key(p): return f"EC|{p['code']}|{p['mkt']}|{p.get('bet') or p['side']}|{p['hcap']:g}"
 def line(p, prev=None):
     t = dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
     try:
@@ -47,11 +70,14 @@ def line(p, prev=None):
     except Exception:
         t = t + dt.timedelta(hours=3)
     tm = f"{['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'][t.weekday()]} {t:%d/%m %H:%M}"
-    team = p['home'] if p['side'] == 1 else p['away']
-    bet = f"{team} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
+    if p['mkt'] == 'total':
+        bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_total']:.1f} · μιξη {p['mix_total']:.1f}"
+    else:
+        team = p['home'] if p['side'] == 1 else p['away']
+        bet = f"{team} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"; why = f"μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f}"
     ch = f" (ηταν {prev:.2f})" if prev else ''
     return (f"🏀 EuroCup · αγων {p['round']}{' · ομιλος ' + p['group'] if p.get('group') else ''} · {tm}\n{p['home']} - {p['away']}\n"
-            f"{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n(μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f})")
+            f"{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})")
 
 def main(notify_tg=True):
     picks = compute()
@@ -74,17 +100,23 @@ def main(notify_tg=True):
     today = now[:10]
     # 1/10/2026: pick που ΔΕΝ ισχυει πια → μηνυμα· ξαναγινεται → «ΞΑΝΑ PICK» (bk_pick_status, ιδιο με Ευρωλιγκα/εθνικες)
     import bk_pick_status as bps
-    proj_ = _load(F('ec_projections.json'), {}); sm_ = float(proj_.get('sigma_margin', 11.5))
-    drops, backs = bps.track(state, picks, F('ec_clv_bets.jsonl'), {str(g['code']): g for g in proj_.get('games', [])},
-                             _load(F('ec_odds_latest.json'), {}).get('odds', {}), lambda m: sm_, lambda m: HC_MIN, cover, 'EuroCup', now)
+    proj_ = _load(F('ec_projections.json'), {}); sm_, st_ = float(proj_.get('sigma_margin', 11.5)), float(proj_.get('sigma_total', 16.7))
+    odds_ = _load(F('ec_odds_latest.json'), {}).get('odds', {})
+    games_ = {str(g['code']): g for g in proj_.get('games', [])}
+    for c_, g_ in list(games_.items()):                  # συνολα: ο ελεγχος «ισχυει ακομα;» με την ιδια μιξη 50/50
+        tm_ = tot_mix(g_, (odds_.get(c_) or {}).get('pin') or {}, st_)
+        if tm_: games_[c_] = dict(g_, total=tm_[0])
+    drops, backs = bps.track(state, picks, F('ec_clv_bets.jsonl'), games_, odds_,
+                             lambda m: sm_ if m == 'hcap' else st_, lambda m: HC_MIN if m == 'hcap' else TOT_MIN, cover, 'EuroCup', now)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
     if new:
         with open(F('ec_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
-                                         model_line=p.get('model_line'), mkt_line=p.get('mkt_line'), model=p.get('model')), ensure_ascii=False) + '\n')
+                                         bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mix_total=p.get('mix_total'),
+                                         mkt_total=p.get('mkt_total'), mkt_line=p.get('mkt_line'), model=p.get('model')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('ec_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    json.dump(dict(scanned_at=now, hc_min=HC_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
+    json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, tot_w=TOT_W, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('ec_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     if notify_tg and (new or changed):
         msg = []

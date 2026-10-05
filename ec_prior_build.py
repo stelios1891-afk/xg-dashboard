@@ -111,3 +111,6 @@ json.dump(out, open('ec_prior.json', 'w', encoding='utf-8'), ensure_ascii=False,
 print(f'{SEASON}: πηγες γνωμης {src} · z {len(Z)}/{len(NAME)} · Flashscore {len(FS)}/{len(NAME)} · προετοιμασια {len(PRE)} ομαδες')
 for c in sorted(NAME, key=lambda c: -Z.get(c, -9)):
     print(f"  {c} {NAME[c][:30]:30s} z {Z.get(c, float('nan')):+.2f} → {KX * Z.get(c, 0):+.1f} · προετ. {PRE.get(c, 0):+.1f} ({len(acc.get(c, []))} ματς) · FS {fsn.get(FS.get(c), '—')}")
+# 5/10/2026: φιλικα στα ΣΥΝΟΛΑ (rT/nT/kT στο ιδιο αρχειο — ec_totals_prior.py, ec_totals_deep_test Ν3)
+import ec_totals_prior
+ec_totals_prior.main()

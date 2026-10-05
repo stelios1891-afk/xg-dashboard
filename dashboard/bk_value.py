@@ -24,7 +24,7 @@ def _cover(mu, L, sig):
     return cover(mu, L, sig)
 
 
-def bk_calc(game, mkt, side, over, center, price, sm, st, team=None):
+def bk_calc(game, mkt, side, over, center, price, sm, st, team=None, thr=THR):
     """Γραμμες γυρω απο το center (γραμμη ΤΗΣ ΠΛΕΥΡΑΣ μας για χαντικαπ · γραμμη συνολου για over/under)· (a, b) με edge = a·τιμη + b."""
     lines = []
     for d in STEPS:
@@ -38,7 +38,7 @@ def bk_calc(game, mkt, side, over, center, price, sm, st, team=None):
             pw = po if over else 1 - po - pp
             lab = f"{'Over' if over else 'Under'} {L:g}"
         lines.append({'l': L, 'lab': lab, 'c': [[round(pw, 6), round(pp - 1, 6)]]})
-    return {'models': ['Μοντελο'], 'need': 1, 'thr': THR, 'lines': lines, 'def': STEPS.index(0.0), 'rng': None, 'minabs': None, 'price': price}
+    return {'models': ['Μοντελο'], 'need': 1, 'thr': thr, 'lines': lines, 'def': STEPS.index(0.0), 'rng': None, 'minabs': None, 'price': price}
 
 
 def rows(prefix, lg):
@@ -49,6 +49,16 @@ def rows(prefix, lg):
     odds = _load(f'{prefix}_odds_latest.json', {}).get('odds', {})
     games = {str(g['code']): g for g in proj.get('games', [])}
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
+    tthr = THR
+    if prefix == 'ec':                     # 5/10: EuroCup συνολα = μιξη 50/50 με την αγορα, edge ≥6% (ec_picks.tot_mix)
+        try:
+            from ec_picks import tot_mix, TOT_MIN
+            tthr = TOT_MIN
+            for c_, g_ in list(games.items()):
+                tm_ = tot_mix(g_, (odds.get(c_) or {}).get('pin') or {}, st)
+                if tm_: games[c_] = dict(g_, total=tm_[0])
+        except Exception:
+            pass
     out, active = [], set()
     for p in lat.get('picks', []):
         q = dict(lg=lg, home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
@@ -62,7 +72,7 @@ def rows(prefix, lg):
         try:
             over = str(p.get('bet', '')).startswith('Over')
             team = p['home'] if p['side'] == 1 else p['away']
-            q['calc'] = bk_calc(g, p['mkt'], p['side'], over, p['hcap'], p['odds'], sm, st, team) if g else None
+            q['calc'] = bk_calc(g, p['mkt'], p['side'], over, p['hcap'], p['odds'], sm, st, team, THR if p['mkt'] == 'hcap' else tthr) if g else None
         except Exception:
             q['calc'] = None
         out.append(q)
@@ -83,7 +93,7 @@ def rows(prefix, lg):
         if b.get('bet'):
             q['bet'] = b['bet']
         try:
-            cv = bs.current_view(b, g, pin, sm if b['mkt'] == 'hcap' else st, THR, _cover)
+            cv = bs.current_view(b, g, pin, sm if b['mkt'] == 'hcap' else st, THR if b['mkt'] == 'hcap' else tthr, _cover)
         except Exception:
             cv = None
         q['gone_now'] = cv and dict(lab=cv[0], odds=cv[1], edge=cv[2], need=cv[3])
@@ -95,7 +105,7 @@ def rows(prefix, lg):
             cen = float(pin['tl']) if pin.get('tl') is not None else float(b['hcap'])
             pr = (pin.get('to') if over else pin.get('tu')) or b['odds']
         try:
-            q['calc'] = bk_calc(g, b['mkt'], side, over, cen, float(pr), sm, st, team)
+            q['calc'] = bk_calc(g, b['mkt'], side, over, cen, float(pr), sm, st, team, THR if b['mkt'] == 'hcap' else tthr)
         except Exception:
             q['calc'] = None
         out.append(q)

@@ -80,4 +80,5 @@ def build_shifts(el_teams, d0, season=None, path='bk_domestic.json', extra=None,
         return v
     shift = lambda code, cut: kap * delta(code, cut) * 100 / 72
     info = {c: (MAP[c][0], names.get(MAP[c])) for c in MAP}
+    delta.map = MAP                                 # 5/10: (πρωταθλημα, id ομαδας) για τα εγχωρια ΣΥΝΟΛΑ του EuroCup (ec_refresh)
     return shift, info, delta
