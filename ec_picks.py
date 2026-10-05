@@ -15,15 +15,23 @@ from el_picks import cover
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 HC_MIN, ODDS_DELTA = 0.08, 0.05
-TOT_MIN, TOT_W = 0.06, 0.5          # 5/10: συνολα — edge ≥6% με μιξη 50/50
+TOT_MIN, TOT_W = 0.06, 0.5          # 5/10: συνολα αγων 1-6 — edge ≥6% με μιξη 50/50
+TOT_MIN_LATE, TOT_W_LATE = 0.06, 1.0   # 5/10 (Στελιος «μιξη ως την 7η, μετα το μοντελο μονο του»): αγων 7+ μοντελο ΜΟΝΟ ΤΟΥ, edge ≥6%
+TOT_EARLY_GNO = 5                    # gno = ματς που εχει ηδη παιξει (max των 2)· 0-5 = αγων 1-6
+# ec_totals_bias_test / ec_totals_thr_test (Crown ανοιγμα U2020-25, αγων 7+): μιξη ≥6% −1.1% (125) · μοντελο μονο ≥6% +10.3% (339, 4/6)·
+#   LOSO κατωφλιου ≤6% σε 6/6 · ζωνη 6-8% +27% (40), CLV +0.62, bootstrap P .96. ΠΡΟΣΟΧΗ: βαθμονομηση φτωχη (edge 15%+ → +2.2%).
+
+def tot_rule(game):
+    """(βαρος μοντελου, κατωφλι edge) για τα συνολα του ματς."""
+    return (TOT_W, TOT_MIN) if int((game or {}).get('gno') or 0) <= TOT_EARLY_GNO else (TOT_W_LATE, TOT_MIN_LATE)
 
 def tot_mix(game, pin, st):
-    """Μικτο αναμενομενο συνολο (μοντελο/αγορα 50/50) απο τις τωρινες τιμες Pinnacle· None αν λειπουν."""
+    """Αναμενομενο συνολο για τα picks (αγων 1-6: μιξη 50/50 με την αγορα · 7+: μοντελο μονο του)· None αν λειπουν τιμες."""
     if not game or pin.get('tl') is None or not pin.get('to') or not pin.get('tu'): return None
     from statistics import NormalDist
     T, ov, un = float(pin['tl']), float(pin['to']), float(pin['tu'])
     po = (1 / ov) / (1 / ov + 1 / un); mk = T + st * NormalDist().inv_cdf(min(max(po, 1e-4), 1 - 1e-4))
-    return mk + TOT_W * (float(game['total']) - mk), mk
+    return mk + tot_rule(game)[0] * (float(game['total']) - mk), mk
 
 def _load(p, d):
     try: return json.load(open(p, encoding='utf-8'))
@@ -56,7 +64,7 @@ def compute():
             po, pq = cover(mu, -T, st); pu = 1 - po - pq
             for nm, p_, od in (('Over', po, float(pin['to'])), ('Under', pu, float(pin['tu']))):
                 e = p_ * od + pq - 1
-                if e >= TOT_MIN:
+                if e >= tot_rule(g)[1]:
                     picks.append(dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
                                       proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(float(g['total']), 1),
                                       mix_total=round(mu, 1), mkt_total=round(mk, 1), mkt_line=T, gno=g.get('gno')))
@@ -71,7 +79,7 @@ def line(p, prev=None):
         t = t + dt.timedelta(hours=3)
     tm = f"{['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'][t.weekday()]} {t:%d/%m %H:%M}"
     if p['mkt'] == 'total':
-        bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_total']:.1f} · μιξη {p['mix_total']:.1f}"
+        bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_total']:.1f}" + (f" · μιξη {p['mix_total']:.1f}" if abs(p['mix_total'] - p['model_total']) > .05 else '')
     else:
         team = p['home'] if p['side'] == 1 else p['away']
         bet = f"{team} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"; why = f"μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f}"
@@ -107,7 +115,7 @@ def main(notify_tg=True):
         tm_ = tot_mix(g_, (odds_.get(c_) or {}).get('pin') or {}, st_)
         if tm_: games_[c_] = dict(g_, total=tm_[0])
     drops, backs = bps.track(state, picks, F('ec_clv_bets.jsonl'), games_, odds_,
-                             lambda m: sm_ if m == 'hcap' else st_, lambda m: HC_MIN if m == 'hcap' else TOT_MIN, cover, 'EuroCup', now)
+                             lambda m: sm_ if m == 'hcap' else st_, lambda m, g=None: HC_MIN if m == 'hcap' else tot_rule(g)[1], cover, 'EuroCup', now)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
     if new:
         with open(F('ec_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:

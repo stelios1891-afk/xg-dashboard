@@ -49,11 +49,11 @@ def rows(prefix, lg):
     odds = _load(f'{prefix}_odds_latest.json', {}).get('odds', {})
     games = {str(g['code']): g for g in proj.get('games', [])}
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
-    tthr = THR
-    if prefix == 'ec':                     # 5/10: EuroCup συνολα = μιξη 50/50 με την αγορα, edge ≥6% (ec_picks.tot_mix)
+    tthr = lambda g_: THR
+    if prefix == 'ec':                     # 5/10: EuroCup συνολα = αγων 1-6 μιξη 50/50, 7+ μοντελο μονο του, edge ≥6% (ec_picks.tot_rule)
         try:
-            from ec_picks import tot_mix, TOT_MIN
-            tthr = TOT_MIN
+            from ec_picks import tot_mix, tot_rule
+            tthr = lambda g_: tot_rule(g_)[1]
             for c_, g_ in list(games.items()):
                 tm_ = tot_mix(g_, (odds.get(c_) or {}).get('pin') or {}, st)
                 if tm_: games[c_] = dict(g_, total=tm_[0])
@@ -72,7 +72,7 @@ def rows(prefix, lg):
         try:
             over = str(p.get('bet', '')).startswith('Over')
             team = p['home'] if p['side'] == 1 else p['away']
-            q['calc'] = bk_calc(g, p['mkt'], p['side'], over, p['hcap'], p['odds'], sm, st, team, THR if p['mkt'] == 'hcap' else tthr) if g else None
+            q['calc'] = bk_calc(g, p['mkt'], p['side'], over, p['hcap'], p['odds'], sm, st, team, THR if p['mkt'] == 'hcap' else tthr(g)) if g else None
         except Exception:
             q['calc'] = None
         out.append(q)
@@ -93,7 +93,7 @@ def rows(prefix, lg):
         if b.get('bet'):
             q['bet'] = b['bet']
         try:
-            cv = bs.current_view(b, g, pin, sm if b['mkt'] == 'hcap' else st, THR if b['mkt'] == 'hcap' else tthr, _cover)
+            cv = bs.current_view(b, g, pin, sm if b['mkt'] == 'hcap' else st, THR if b['mkt'] == 'hcap' else tthr(g), _cover)
         except Exception:
             cv = None
         q['gone_now'] = cv and dict(lab=cv[0], odds=cv[1], edge=cv[2], need=cv[3])
@@ -105,7 +105,7 @@ def rows(prefix, lg):
             cen = float(pin['tl']) if pin.get('tl') is not None else float(b['hcap'])
             pr = (pin.get('to') if over else pin.get('tu')) or b['odds']
         try:
-            q['calc'] = bk_calc(g, b['mkt'], side, over, cen, float(pr), sm, st, team, THR if b['mkt'] == 'hcap' else tthr)
+            q['calc'] = bk_calc(g, b['mkt'], side, over, cen, float(pr), sm, st, team, THR if b['mkt'] == 'hcap' else tthr(g))
         except Exception:
             q['calc'] = None
         out.append(q)

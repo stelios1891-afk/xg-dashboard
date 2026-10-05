@@ -72,7 +72,9 @@ def track(state, picks, bets_path, games, odds, sig_of, min_edge_of, cover, lg_l
         if st.get('active', True) and not is_active:
             st.update(active=False, at=now_iso, when=b['when'])
             game = games.get(str(b['code'])); pin = (odds.get(str(b['code'])) or {}).get('pin') or {}
-            cv = current_view(b, game, pin, sig_of(b['mkt']), min_edge_of(b['mkt']), cover) if game else None
+            try: me_ = min_edge_of(b['mkt'], game)          # 5/10: EuroCup συνολα — κατωφλι ανα ματς (αγων 1-6 / 7+)
+            except TypeError: me_ = min_edge_of(b['mkt'])
+            cv = current_view(b, game, pin, sig_of(b['mkt']), me_, cover) if game else None
             ent = f"{b.get('bet') or ((b['home'] if int(b['side']) == 1 else b['away']) + (' +' if float(b['hcap']) >= 0 else ' ') + format(float(b['hcap']), 'g'))} @{float(b['odds']):.2f}"
             txt = (f"⚠ {lg_label} · {b['home']} – {b['away']}\nμπηκε: {ent} ({_gr(b['seen'])})\n"
                    + (f"τωρα: {cv[0]} @{cv[1]:.2f} · edge {cv[2]*100:+.0f}% · για pick χρειαζεται @{cv[3]:.2f}" if cv and cv[3] else 'τωρα: χωρις τιμη στην αγορα'))
