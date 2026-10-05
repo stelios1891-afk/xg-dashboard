@@ -13,7 +13,9 @@ import numpy as np, pandas as pd
 sys.stdout.reconfigure(encoding='utf-8')
 import picks
 
-P = pd.read_csv('southam_preds.csv', dtype={'mid': str, 'season': str})
+import os
+SFX = os.environ.get('SA_SFX', '')
+P = pd.read_csv(os.environ.get('SA_PREDS', 'southam_preds.csv'), dtype={'mid': str, 'season': str})
 L = pd.read_csv('southam_lines.csv', dtype={'mid': str, 'ng': str, 'season': str})
 L = L[(L['sub'] == 'League') & L.mid.isin(set(P.mid))]
 D = L.merge(P[['mid', 'lh_base', 'la_base', 'md', 'noprior', 'h_xg_act', 'a_xg_act', 'newc_h', 'newc_a']], on='mid')
@@ -57,7 +59,7 @@ def mkt(ah, oh, oa, ou, ov, un):
 R = np.array([mkt(*v) for v in D[['ah', 'oh', 'oa', 'ou', 'ov', 'un']].values])
 D['msup'], D['mtot'] = R[:, 0], R[:, 1]
 D['sup'] = D.lh_base - D.la_base; D['tot'] = D.lh_base + D.la_base
-D.to_csv('southam_phase3_rows.csv', index=False)
+D.to_csv(f'southam_phase3_rows{SFX}.csv', index=False)
 
 def bfit(x, y):
     x = np.asarray(x, float); y = np.asarray(y, float); k = np.isfinite(x) & np.isfinite(y); x, y = x[k], y[k]
@@ -114,7 +116,7 @@ for r in D[D.win.isin(['open', '24h', 'close'])].itertuples():
                 e = ou_edge(r.lh_base, r.la_base, r.ou, o, over)
                 if e >= 0.08:
                     BETS.append(dict(base, kind=nm, edge=e, odds=o, line=r.ou, home=None, pnl=settle_ou(r.tg, r.ou, o, over)))
-BT = pd.DataFrame(BETS); BT.to_pickle('southam_phase3_bets.pkl')
+BT = pd.DataFrame(BETS); BT.to_pickle(f'southam_phase3_bets{SFX}.pkl')
 def st(d):
     if len(d) < 16: return f'n{len(d)//2:4d}' + ' ' * 27
     a = [d[d.book == b].pnl.mean() for b in ('Crown', 'SBOBET')]

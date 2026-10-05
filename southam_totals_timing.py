@@ -11,7 +11,8 @@ southam_totals_timing.py — 5/10/2026 ΦΑΣΗ 3β: ΣΥΝΟΛΑ (και υπε
 import sys
 import numpy as np, pandas as pd
 sys.stdout.reconfigure(encoding='utf-8')
-D = pd.read_csv('southam_phase3_rows.csv', dtype={'mid': str, 'season': str})
+import os
+D = pd.read_csv(f"southam_phase3_rows{os.environ.get('SA_SFX', '')}.csv", dtype={'mid': str, 'season': str})
 D = D[D.per != '1-6'].copy()          # 1-6: μοντελο σχεδον περσινο — χωριστα στο τελος
 def parts(x): return [x] if (x * 4) % 2 == 0 else [x - .25, x + .25]
 def settle_ou(tg, line, odds, over):
