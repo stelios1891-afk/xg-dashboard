@@ -76,6 +76,7 @@ for f in sorted(glob.glob('data_*.json')):
                          xgc_h=(comp_xg(xh) if has_xg else np.nan), xgc_a=(comp_xg(xa) if has_xg else np.nan),
                          mv_h=(sq.get('h') or {}).get('mv'), mv_a=(sq.get('a') or {}).get('mv'),
                          neutral=bool(neutral), reds=len(m.get('reds') or []),
+                         redsj=json.dumps([[int(bool(r.get('home'))), r.get('min') or 0] for r in (m.get('reds') or [])]),   # 5/10: για τη φορμουλα κοκκινων
                          shots=json.dumps([(int(s['tid'] == hid), s.get('min'), round(float(s['xg']), 4), int(bool(s.get('goal'))), s.get('sit') == 'Penalty')
                                            for s in sh if s.get('xg') is not None]) if has_xg else ''))
         seen.add(str(mid))

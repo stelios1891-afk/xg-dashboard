@@ -114,8 +114,23 @@ def margin_mult(gd):
     return 1.75 + 0.125 * (gd - 3)
 
 
-def adj_xg(shots_json, fav, mode):
-    """(xg_h, xg_a) διορθωμενα. fav: +1 γηπεδουχος φαβορι, -1 φιλοξ. φαβορι, 0 κανενας. mode: 'raw'|'comp'|'gs'."""
+def adj_xg(shots_json, fav, mode, reds_json=None):
+    """(xg_h, xg_a) διορθωμενα. fav: +1 γηπεδουχος φαβορι, -1 φιλοξ. φαβορι, 0 κανενας. mode: 'raw'|'comp'|'gs'.
+    reds_json (5/10/2026): [[1 αν γηπεδουχος, λεπτο], ...] → κοκκινες με red_modes.LIVE_MODE (ιδια με εγχωρια/Ευρωπη)."""
+    xh_, xa_ = _adj_xg0(shots_json, fav, mode)
+    if isinstance(reds_json, str) and len(reds_json) > 2:
+        import red_modes
+        sh = json.loads(shots_json); rd = json.loads(reds_json)
+        if rd:
+            mj = dict(home=dict(id=1), away=dict(id=2), reds=[dict(home=bool(h), min=mn) for h, mn in rd],
+                      shots=[dict(tid=1 if is_h else 2, xg=xg, min=mn or 0, sit='Penalty' if pen else 'RegularPlay', goal=bool(goal))
+                             for is_h, mn, xg, goal, pen in sh])
+            a = red_modes.live_adj(mj)
+            xh_ = max(xh_ * a[1]['fr'] + a[1]['term'], 0.0); xa_ = max(xa_ * a[2]['fr'] + a[2]['term'], 0.0)
+    return xh_, xa_
+
+
+def _adj_xg0(shots_json, fav, mode):
     sh = json.loads(shots_json)
     sh.sort(key=lambda s: (s[1] if s[1] is not None else 0))
     hs = as_ = 0; xh = xa = 0.0

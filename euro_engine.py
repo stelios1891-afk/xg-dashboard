@@ -21,6 +21,7 @@ euro_engine.py — ΕΥΡΩΠΑΪΚΟ ΜΟΝΤΕΛΟ v2: builder (module, θα �
 Read-only στα production αρχεια. Γραφει euro_preds.pkl + euro_ratings.pkl (μονο αν κληθει ως main
 ή μεσω build_and_save()).
 """
+import red_modes
 import json, glob, os, sys, pickle, bisect
 import numpy as np, pandas as pd
 from datetime import datetime, timedelta
@@ -182,11 +183,13 @@ class Engine:
                         dur = max(0, ft - mn)
                         if r['home']: dis_home += dur
                         else: dis_away += dur
+                    _RADJ = red_modes.live_adj(m)
                     for is_home, tid, gf, dis_self, dis_opp in [
                             (1, hid, m['hs'], dis_home, dis_away),
                             (0, aid, m['as'], dis_away, dis_home)]:
-                        a = agg[tid]
-                        red_xg = 0.0083 * dis_opp - 0.5 * 0.0083 * dis_self
+                        a = dict(agg[tid]); _ra = _RADJ[tid]   # 5/10/2026: κοκκινες = red_modes.LIVE_MODE (ιδια με εγχωρια)
+                        a['np_raw'] *= _ra['fr']; a['np_comp'] *= _ra['fc']; a['ns'] *= _ra['fn']
+                        red_xg = _ra['term']
                         rows.append(dict(date=dt, team=tid, is_home=is_home, gf=gf,
                                          np_raw=a['np_raw'], np_comp=a['np_comp'], pen=a['pen'],
                                          ns=a['ns'], red_xg=red_xg))
@@ -199,7 +202,7 @@ class Engine:
                 else:
                     sf = g.np_raw.sum() / max(g.np_comp.sum(), EPS)   # per-league-season rescale
                     g['xg_model'] = g['np_comp'] * sf + 0.25 * g['pen'] + g['red_xg']
-                    g['ns_eff'] = g['ns'] + g['pen'] + g['red_xg'].abs() / 0.10
+                    g['ns_eff'] = np.maximum(g['ns'] + g['pen'] + g['red_xg'] / 0.10, 0.5 * (g['ns'] + g['pen']))   # 5/10: ψευδο-σουτ με προσημο
                 # στοιχεια ανα ομαδα (υπερ + κατα) απο τα ΖΕΥΓΗ rows (home,away του ιδιου ματς)
                 per_team = {}
                 for i in range(0, len(g) - 1, 2):

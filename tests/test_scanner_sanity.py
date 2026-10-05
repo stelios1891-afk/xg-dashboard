@@ -998,8 +998,16 @@ def test_red_card_direction():
     a = red_modes.live_adj(m)
     assert a[1]['term'] < 0, 'η ομαδα με 11 πρεπει να ΧΑΝΕΙ xG'
     assert a[2]['term'] >= 0 and a[2]['fc'] > 1, 'η ομαδα με 10 πρεπει να ΚΕΡΔΙΖΕΙ'
-    for f in ('build_inputs.py', 'add_current_season.py', 'build_inputs_5s.py', 'build_inputs_5s_wf.py', 'brazil_shadow.py', 'dom_fav_shadow.py'):
+    for f in ('build_inputs.py', 'add_current_season.py', 'build_inputs_5s.py', 'build_inputs_5s_wf.py', 'brazil_shadow.py', 'dom_fav_shadow.py',
+              'euro_engine.py', 'euro_live_projections.py'):
         src = open(os.path.join(ROOT, f), encoding='utf-8').read()
         assert 'red_modes.live_adj' in src and '0.0083 *' not in src.replace('0.0083*', '0.0083 *'), f'{f}: παλια φορμουλα κοκκινων'
     T = pd.read_csv(os.path.join(ROOT, 'teamgame_inputs.csv'))
     assert T.red_xg.min() < 0 and T.red_xg.max() <= 1e-9, 'teamgame_inputs.csv: red_xg πρεπει να ειναι ≤0 (μονο αφαιρεση απο την ομαδα με 11)'
+    # εθνικες (Μ1/Μ2/Μ3): adj_xg με κοκκινες απο τη στηλη redsj
+    src = open(os.path.join(ROOT, 'intl_rating.py'), encoding='utf-8').read()
+    assert 'reds_json=None' in src and 'red_modes.live_adj' in src, 'intl_rating.adj_xg χωρις κοκκινες'
+    for f in ('intl_rating2_hist.py', 'intl_mkt_anchor.py'):
+        assert "getattr(r, 'redsj', None)" in open(os.path.join(ROOT, f), encoding='utf-8').read(), f'{f}: adj_xg χωρις redsj'
+    assert 'redsj=' in open(os.path.join(ROOT, 'intl_build.py'), encoding='utf-8').read(), 'intl_build χωρις στηλη redsj'
+

@@ -58,12 +58,12 @@ P_(f'ματς με s_mkt (closing AH Crown): {len(SMK)}')
 GOAL_PER_ELO = 0.0049
 raw = adj = 0.0; XS = {}
 for r in M[M.has_xg].itertuples():
-    a, b = adj_xg(r.shots, 0, 'gs'); raw += r.xg_h + r.xg_a; adj += a + b
+    a, b = adj_xg(r.shots, 0, 'gs', getattr(r, 'redsj', None)); raw += r.xg_h + r.xg_a; adj += a + b
 scale = raw / adj
 for r in M[M.has_xg].itertuples():
     XS[r.mid] = {}
     for fav in (-1, 0, 1):
-        xh, xa = adj_xg(r.shots, fav, 'gs'); xh *= scale; xa *= scale
+        xh, xa = adj_xg(r.shots, fav, 'gs', getattr(r, 'redsj', None)); xh *= scale; xa *= scale
         XS[r.mid][fav] = (exp_score(xh, xa), margin_mult(round(xh - xa)))
 ROWS = [(r.mid, r.season, r.ctype, r.comp, r.hid, r.aid, bool(r.neutral), int(r.hs) - int(r.ag), bool(r.has_xg)) for r in M.itertuples()]
 def run(lam, keep=False):

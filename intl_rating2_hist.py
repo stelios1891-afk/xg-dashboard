@@ -76,7 +76,7 @@ def run(mode):
     R = dict(SEED); rows = []
     scale = 1.0; raw = adj = 0.0
     for r in M[M.has_xg].itertuples():
-        a, b = adj_xg(r.shots, 0, 'gs'); raw += r.xg_h + r.xg_a; adj += a + b
+        a, b = adj_xg(r.shots, 0, 'gs', getattr(r, 'redsj', None)); raw += r.xg_h + r.xg_a; adj += a + b
     scale = raw / adj
     res_h = {}; res_a = {}          # για H4: λιστες υπολοιπων εντος/εκτος ανα ομαδα (μονο παρελθον)
     for r in M.itertuples():
@@ -121,7 +121,7 @@ def run(mode):
         S_res = 1.0 if gd > 0 else (0.5 if gd == 0 else 0.0)
         if r.has_xg:
             fav = 1 if d >= FAV_D else (-1 if d <= -FAV_D else 0)
-            xh, xa = adj_xg(r.shots, fav, 'gs'); xh *= scale; xa *= scale
+            xh, xa = adj_xg(r.shots, fav, 'gs', getattr(r, 'redsj', None)); xh *= scale; xa *= scale
             S = 0.5 * S_res + 0.5 * exp_score(xh, xa); mm = margin_mult(round(0.5 * gd + 0.5 * (xh - xa)))
         else:
             S = S_res; mm = margin_mult(gd)
