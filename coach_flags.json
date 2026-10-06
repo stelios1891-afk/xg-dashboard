@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-05 19:51 UTC",
+ "updated": "2026-10-06 11:39 UTC",
  "season": "2627",
  "teams": {
   "8650": {
@@ -7,14 +7,14 @@
    "lg": "EPL",
    "coach": "Andoni Iraola",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8678": {
    "name": "AFC Bournemouth",
    "lg": "EPL",
    "coach": "Marco Rose",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "10252": {
    "name": "Aston Villa",
@@ -28,7 +28,7 @@
    "lg": "EPL",
    "coach": "Matthias Jaissle",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "10204": {
    "name": "Brighton & Hove Albion",
@@ -42,7 +42,7 @@
    "lg": "EPL",
    "coach": "Álvaro Arbeloa",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8472": {
    "name": "Sunderland",
@@ -63,28 +63,28 @@
    "lg": "EPL",
    "coach": "Enzo Maresca",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8455": {
    "name": "Chelsea",
    "lg": "EPL",
    "coach": "Xabi Alonso",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9826": {
    "name": "Crystal Palace",
    "lg": "EPL",
    "coach": "Pierre Sage",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "10203": {
    "name": "Nottingham Forest",
    "lg": "EPL",
    "coach": "Oliver Glasner",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9937": {
    "name": "Brentford",
@@ -144,14 +144,14 @@
    "lg": "LaLiga",
    "coach": "Beñat San José",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "10205": {
    "name": "Villarreal",
    "lg": "LaLiga",
    "coach": "Inigo Pérez",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "8634": {
    "name": "Barcelona",
@@ -220,7 +220,7 @@
    "lg": "LaLiga",
    "coach": "Edin Terzić",
    "played": 6,
-   "summer_new": true
+   "summer_new": false
   },
   "8302": {
    "name": "Sevilla",
@@ -248,7 +248,7 @@
    "lg": "LaLiga",
    "coach": "Martín Anselmi",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "8603": {
    "name": "Real Betis",
@@ -262,14 +262,14 @@
    "lg": "LaLiga",
    "coach": "José Mourinho",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "8371": {
    "name": "Osasuna",
    "lg": "LaLiga",
    "coach": "Luis Ramis",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "8696": {
    "name": "Racing Santander",
@@ -308,21 +308,21 @@
    "lg": "SerieA",
    "coach": "Alberto Aquilani",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9875": {
    "name": "Napoli",
    "lg": "SerieA",
    "coach": "Massimiliano Allegri",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8564": {
    "name": "Milan",
    "lg": "SerieA",
    "coach": "Ruben Amorim",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8686": {
    "name": "Roma",
@@ -336,7 +336,20 @@
    "lg": "SerieA",
    "coach": "Raffaele Palladino",
    "played": 5,
-   "summer_new": true
+   "summer_new": false,
+   "change": {
+    "date": "2026-09-13",
+    "old": "Domenico Tedesco",
+    "first": "Andrea Tarozzi",
+    "caretaker_first": true,
+    "perm": "Raffaele Palladino",
+    "played_since": 2,
+    "next_match_no": 3,
+    "pre_luck": -0.164,
+    "pre_gd": -0.25,
+    "pre_xgd": -0.09,
+    "type": "bad_both"
+   }
   },
   "8529": {
    "name": "Cagliari",
@@ -350,7 +363,7 @@
    "lg": "SerieA",
    "coach": "Paolo Vanoli",
    "played": 5,
-   "summer_new": true,
+   "summer_new": false,
    "change": {
     "date": "2026-09-11",
     "old": "Fabio Grosso",
@@ -377,14 +390,14 @@
    "lg": "SerieA",
    "coach": "Gennaro Gattuso",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8524": {
    "name": "Atalanta",
    "lg": "SerieA",
    "coach": "Maurizio Sarri",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9885": {
    "name": "Juventus",
@@ -419,7 +432,7 @@
    "lg": "SerieA",
    "coach": "Ignazio Abate",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "6504": {
    "name": "Monza",
@@ -451,14 +464,14 @@
    "lg": "Bundesliga",
    "coach": "Martín Demichelis",
    "played": 4,
-   "summer_new": true
+   "summer_new": false
   },
   "8178": {
    "name": "Bayer Leverkusen",
    "lg": "Bundesliga",
    "coach": "Carles Martínez",
    "played": 4,
-   "summer_new": true
+   "summer_new": false
   },
   "8226": {
    "name": "Hoffenheim",
@@ -472,7 +485,7 @@
    "lg": "Bundesliga",
    "coach": "Adolf Hütter",
    "played": 4,
-   "summer_new": true
+   "summer_new": false
   },
   "8697": {
    "name": "Werder Bremen",
@@ -500,7 +513,7 @@
    "lg": "Bundesliga",
    "coach": "Mauro Lustrinelli",
    "played": 4,
-   "summer_new": true
+   "summer_new": false
   },
   "10269": {
    "name": "VfB Stuttgart",
@@ -587,14 +600,27 @@
    "lg": "Ligue1",
    "coach": "Bruno Génésio",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8588": {
    "name": "Lens",
    "lg": "Ligue1",
    "coach": "Yannick Cahuzac",
    "played": 5,
-   "summer_new": true
+   "summer_new": false,
+   "change": {
+    "date": "2026-09-18",
+    "old": "Dino Toppmöller",
+    "first": "Yannick Cahuzac",
+    "caretaker_first": false,
+    "perm": "Yannick Cahuzac",
+    "played_since": 1,
+    "next_match_no": 2,
+    "pre_luck": 0.348,
+    "pre_gd": 0.5,
+    "pre_xgd": 0.15,
+    "type": "lucky"
+   }
   },
   "9748": {
    "name": "Lyon",
@@ -608,7 +634,7 @@
    "lg": "Ligue1",
    "coach": "Filipe Luís",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9746": {
    "name": "Le Havre",
@@ -622,63 +648,63 @@
    "lg": "Ligue1",
    "coach": "Olivier Pantaloni",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9941": {
    "name": "Toulouse",
    "lg": "Ligue1",
    "coach": "Jens Berthel Askou",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8521": {
    "name": "Brest",
    "lg": "Ligue1",
    "coach": "Julien Lachuer",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8639": {
    "name": "Lille",
    "lg": "Ligue1",
    "coach": "Davide Ancelotti",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8121": {
    "name": "Angers",
    "lg": "Ligue1",
    "coach": "Stéphane Gilli",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "6379": {
    "name": "Paris FC",
    "lg": "Ligue1",
    "coach": "Liam Rosenior",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8583": {
    "name": "Auxerre",
    "lg": "Ligue1",
    "coach": "Will Still",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "8689": {
    "name": "Lorient",
    "lg": "Ligue1",
    "coach": "Alexandre Dujeux",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9848": {
    "name": "Strasbourg",
    "lg": "Ligue1",
    "coach": "Hugo Oliveira",
    "played": 5,
-   "summer_new": true
+   "summer_new": false
   },
   "9847": {
    "name": "Paris Saint-Germain",
@@ -704,7 +730,7 @@
    "lg": "PrimeiraLiga",
    "coach": "Filipe Coelho",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "9768": {
    "name": "Sporting CP",
@@ -718,7 +744,7 @@
    "lg": "PrimeiraLiga",
    "coach": "Alexandre Santos",
    "played": 7,
-   "summer_new": true,
+   "summer_new": false,
    "change": {
     "date": "2026-09-12",
     "old": "João Gião",
@@ -738,7 +764,7 @@
    "lg": "PrimeiraLiga",
    "coach": "Luís Pinto",
    "played": 6,
-   "summer_new": true
+   "summer_new": false
   },
   "158085": {
    "name": "Arouca",
@@ -752,7 +778,7 @@
    "lg": "PrimeiraLiga",
    "coach": "Carlos Carvalhal",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "1567": {
    "name": "Santa Clara",
@@ -780,21 +806,21 @@
    "lg": "PrimeiraLiga",
    "coach": "Sérgio Ferreira",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "7842": {
    "name": "Estoril",
    "lg": "PrimeiraLiga",
    "coach": "Vasco Matos",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "1074320": {
    "name": "Estrela da Amadora",
    "lg": "PrimeiraLiga",
    "coach": "Pepa",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "9773": {
    "name": "FC Porto",
@@ -808,14 +834,14 @@
    "lg": "PrimeiraLiga",
    "coach": "Tiago Margarido",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "9772": {
    "name": "Benfica",
    "lg": "PrimeiraLiga",
    "coach": "Marco Silva",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "7841": {
    "name": "Rio Ave",
@@ -848,7 +874,7 @@
    "lg": "Eredivisie",
    "coach": "Joseph Oosting",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "8464": {
    "name": "NEC Nijmegen",
@@ -869,7 +895,7 @@
    "lg": "Eredivisie",
    "coach": "Giovanni van Bronckhorst",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "10228": {
    "name": "SC Heerenveen",
@@ -890,7 +916,7 @@
    "lg": "Eredivisie",
    "coach": "Rogier Meijer",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "6413": {
    "name": "PEC Zwolle",
@@ -911,14 +937,14 @@
    "lg": "Eredivisie",
    "coach": "Míchel",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "6414": {
    "name": "Telstar",
    "lg": "Eredivisie",
    "coach": "Henk Brugge",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "10229": {
    "name": "AZ Alkmaar",
@@ -939,7 +965,7 @@
    "lg": "Eredivisie",
    "coach": "Anthony Correia",
    "played": 7,
-   "summer_new": true
+   "summer_new": false
   },
   "7788": {
    "name": "Cambuur",
