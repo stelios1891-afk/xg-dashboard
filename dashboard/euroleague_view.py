@@ -35,7 +35,10 @@ COMP_FILES = {'EL': dict(proj=PROJ_F, odds=ODDS_F, hist=(HIST_F, os.path.join(RO
                          hist=(os.path.join(ROOT, 'ec_odds_hist.jsonl'), os.path.join(ROOT, 'ec_closing_backfill.jsonl')), now=None),
               # 6/10/2026: Basketball Champions League (bcl_refresh / bcl_odds_scan) — comp='BCL'
               'BCL': dict(proj=os.path.join(ROOT, 'bcl_projections.json'), odds=os.path.join(ROOT, 'bcl_odds_latest.json'),
-                          hist=(os.path.join(ROOT, 'bcl_odds_hist.jsonl'),), now=None)}
+                          hist=(os.path.join(ROOT, 'bcl_odds_hist.jsonl'),), now=None),
+              # 6/10/2026: NBA (nba_refresh / nba_odds_scan) — comp='NBA'
+              'NBA': dict(proj=os.path.join(ROOT, 'nba_projections.json'), odds=os.path.join(ROOT, 'nba_odds_latest.json'),
+                          hist=(os.path.join(ROOT, 'nba_odds_hist.jsonl'),), now=None)}
 
 EDGE_HI = 0.05          # edge ≥5% -> πρασινο (οπως το «value» των αλλων tabs)
 esc = cards.esc

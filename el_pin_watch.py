@@ -15,7 +15,7 @@ import requests
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.abspath(__file__)); F = lambda n: os.path.join(ROOT, n)
 B = 'https://guest.api.arcadia.pinnacle.com/0.1'
-COMPS = {'EL': dict(league=382, pre='el', lab=''), 'EC': dict(league=377, pre='ec', lab='EuroCup · '), 'BCL': dict(league=197844, pre='bcl', lab='BCL · ')}   # 6/10: + BCL
+COMPS = {'EL': dict(league=382, pre='el', lab=''), 'EC': dict(league=377, pre='ec', lab='EuroCup · '), 'BCL': dict(league=197844, pre='bcl', lab='BCL · '), 'NBA': dict(league=487, pre='nba', lab='NBA · ')}   # 6/10: + BCL
 H = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36', 'Accept': 'application/json',
      'Referer': 'https://www.pinnacle.com/', 'Origin': 'https://www.pinnacle.com'}
 WINDOW_H = 48
@@ -86,7 +86,7 @@ def main(notify_tg=True, comp='EL'):
                 L = float(cur['sp']['line']); pw, pp = cover(float(g['margin']), L, sm); pl = 1 - pw - pp
                 eh, ea = pw * cur['sp']['oh'] + pp - 1, pl * cur['sp']['oa'] + pp - 1
                 out_.append(f"μοντελο γηπ {float(g['margin']):+.1f} → edge {short(home)} {L:+g}: {eh*100:+.0f}% · {short(away)} {-L:+g}: {ea*100:+.0f}%")
-            if (comp == 'EL' or (comp == 'BCL' and g.get('total_src') == 'μοντελο')) and cur.get('tot') and cur['tot']['line'] is not None and cur['tot']['oo']:   # 6/10: + συνολα BCL
+            if (comp == 'EL' or (comp in ('BCL', 'NBA') and g.get('total_src') == 'μοντελο')) and cur.get('tot') and cur['tot']['line'] is not None and cur['tot']['oo']:   # 6/10: + συνολα BCL
                 T = float(cur['tot']['line']); po, pq = cover(float(g['total']), -T, st); pu = 1 - po - pq
                 out_.append(f"συνολο μοντ. {float(g['total']):.1f} → Over {T:g}: {(po * cur['tot']['oo'] + pq - 1)*100:+.0f}% · Under: {(pu * cur['tot']['ou'] + pq - 1)*100:+.0f}%")
             return '\n'.join(out_)

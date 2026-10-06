@@ -76,12 +76,13 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο (χαντικαπ v1 + συνολο v2) vs αγορα (TOA)
          ('eurocup', 'EuroCup', '🏀'),         # 1/10/2026: EuroCup — μοντελο ec1 vs Pinnacle (ιδια σελιδα με την Ευρωλιγκα)
          ('bcl', 'Champions League (FIBA)', '🏀'),   # 6/10/2026: Basketball Champions League — μοντελο bcl1 vs Pinnacle
+         ('nba', 'NBA', '🏀'),                 # 6/10/2026: NBA — μοντελο nba1 vs Pinnacle (picks σε καταγραφη)
          ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup', 'bcl'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup', 'bcl', 'nba'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -428,6 +429,14 @@ def _bcl_picks():
     except Exception:
         return [], None
 
+def _nba_picks():
+    """Value picks NBA (6/10/2026): nba_picks.py στον scanner · χαντικαπ & συνολα (ΚΑΤΑΓΡΑΦΗ) · Pinnacle 487."""
+    try:
+        import bk_value
+        return bk_value.rows('nba', 'NBA')
+    except Exception:
+        return [], None
+
 
 def render_value(league):
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#34d17a">💰 VALUE PICKS</div>'
@@ -444,6 +453,7 @@ def render_value(league):
     el_picks, el_scan = _el_picks()
     ec_picks, ec_scan = _ec_picks()          # 1/10: EuroCup
     bcl_picks, bcl_scan = _bcl_picks()       # 6/10: Basketball Champions League
+    nba_picks, nba_scan = _nba_picks()       # 6/10: NBA (καταγραφη)
     # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
     # ως pick, ακομα κι αν το αρχειο του scan ειναι παλιοτερο απο τη σεντρα.
     import datetime as _dt
@@ -463,6 +473,7 @@ def render_value(league):
     el_picks = [p for p in el_picks if _upcoming(p)]
     ec_picks = [p for p in ec_picks if _upcoming(p)]
     bcl_picks = [p for p in bcl_picks if _upcoming(p)]
+    nba_picks = [p for p in nba_picks if _upcoming(p)]
     # 1/10 (Στελιος): ποδοσφαιρο — picks που βγηκαν και «χαθηκαν» μενουν ως τη σεντρα (⚠ δεν ισχυει πια + 🧮 με γραμμες)
     gone_fb = []
     try:
@@ -470,7 +481,7 @@ def render_value(league):
         gone_fb = fb_value.core7_gone(picks) + fb_value.euro_gone(eu_picks) + fb_value.intl_gone(in_picks)
     except Exception:
         gone_fb = []
-    eu_picks = eu_picks + in_picks + el_picks + ec_picks + bcl_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
+    eu_picks = eu_picks + in_picks + el_picks + ec_picks + bcl_picks + nba_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
     if not res:
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
         if not eu_picks:
@@ -563,7 +574,7 @@ def render_ledger(league):
                "Σε ολα: ενα pick ανα ματς & πλευρα, η πρωτη φορα που ηταν ενεργο ≤72ω πριν τη σεντρα.")
     try:
         settled, pending = _ledger_data(_stamp('clv_ledger.jsonl', 'clv_bets.jsonl', 'intl_picks_ledger.jsonl', 'intl_closing.jsonl',
-                                               'euro_picks_ledger.jsonl', 'el_clv_bets.jsonl', 'el_projections.json', 'el_odds_hist.jsonl', 'ec_clv_bets.jsonl', 'ec_projections.json', 'ec_odds_hist.jsonl', 'bcl_clv_bets.jsonl', 'bcl_projections.json', 'bcl_odds_hist.jsonl',
+                                               'euro_picks_ledger.jsonl', 'el_clv_bets.jsonl', 'el_projections.json', 'el_odds_hist.jsonl', 'ec_clv_bets.jsonl', 'ec_projections.json', 'ec_odds_hist.jsonl', 'bcl_clv_bets.jsonl', 'bcl_projections.json', 'bcl_odds_hist.jsonl', 'nba_clv_bets.jsonl', 'nba_projections.json', 'nba_odds_hist.jsonl',
                                                'dashboard/ledger_view.py'))
     except Exception as e:
         st.error(f"Σφαλμα φορτωσης: {e}")
@@ -932,6 +943,35 @@ def render_bcl(league):
         st.caption('Net = κοινη κλιμακα σε ΠΟΝΤΟΥΣ ανα ματς vs μεσο ορο των ομαδων της σελιδας · O/D = μοντελο μονο-BCL (ποντοι/100 κατοχες), 0 = χωρις ματς BCL.')
 
 
+def render_nba(league):
+    """🏀 NBA (6/10/2026): ιδια σελιδα με Ευρωλιγκα/EuroCup/BCL — μοντελο nba1 vs Pinnacle."""
+    import euroleague_view as elv
+    data = _el_data(elv.files_mtime('NBA'), 'NBA')
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 NBA</div>'
+                '<div class="co">NBA 2026/27 · ΜΟΝΤΕΛΟ nba1 · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ (PINNACLE) · PICKS ΣΕ ΚΑΤΑΓΡΑΦΗ</div></div></div>',
+                unsafe_allow_html=True)
+    if not data:
+        st.info('Δεν υπαρχουν ακομα προβλεψεις — ο scanner τις γραφει 48ω πριν το τζαμπολ (η σεζον ξεκινα 20/10).')
+        return
+    proj = data['proj']; scan = data.get('scanned_at')
+    st.caption("Ratings επιθεσης/αμυνας/ρυθμου ανα ομαδα (box score, τυχη, φθορα 60 μερες) · αφετηρια: 80% περσινο + αλλαγη ροστερ + αποδοσεις νικων/τιτλου & rankings + φιλικα · "
+               "back-to-back 3 π. · συνολα: δικη μηχανη + διορθωση επιπεδου (τελευταια 150 ματς). Picks (καταγραφη): edge ≥8%, μονο αν υπηρχαν στην πρωτη γραμμη, "
+               "χωρις pick οταν η ομαδα μας εχει νεα απουσια ≥30′ (ESPN), χαντικαπ οχι απο τον 71ο αγωνα. "
+               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
+               + (f" · αγορα: **{str(scan)[:16].replace('T', ' ')} UTC**" if scan else ''))
+    vis = dict(proj, games=list(proj.get('games', [])))
+    keys = elv.rounds(vis)
+    if not keys:
+        st.info('Δεν βρεθηκαν ματς.'); return
+    dflt = elv.default_round(vis, keys)
+    key = st.selectbox('Εβδομαδα', keys, index=keys.index(dflt), format_func=lambda k: f'Εβδομαδα {k[1]}', key='nba_round')
+    games = elv.round_games(vis, key)
+    st.components.v1.html(elv.cards_block(games, data), height=elv.block_height(games), scrolling=True)
+    with st.expander('Ratings ομαδων'):
+        st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
+        st.caption('Net = επιθεση − αμυνα (ποντοι/100 κατοχες) · Ρυθμος = κατοχες ±.')
+
+
 def render_euroleague(league):
     """🏀 Euroleague (25/9/2026): ιδιο στησιμο με Europe / Match Projections — 1-2 μοντελου διπλα στην αγορα,
     «Match odds» = σκαλες handicap & συνολου. Επερχομενα ματς + η 1η αγωνιστικη (για συγκριση εκδοσεων)."""
@@ -1108,7 +1148,7 @@ RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': ren
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
           'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl,
-          'euroleague': render_euroleague, 'eurocup': render_eurocup, 'bcl': render_bcl}
+          'euroleague': render_euroleague, 'eurocup': render_eurocup, 'bcl': render_bcl, 'nba': render_nba}
 if page in RENDER:
     RENDER[page](league)
 else:

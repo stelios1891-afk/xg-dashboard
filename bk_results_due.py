@@ -9,7 +9,8 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 ST_F = os.path.join(ROOT, 'bk_results_due_state.json')
 GAP_MIN, AFTER_H, GIVEUP_H = 30, 2.5, 18
 JOBS = (('el', 'el_projections.json', 'el_refresh.py'), ('ec', 'ec_projections.json', 'ec_refresh.py'),
-        ('bcl', 'bcl_projections.json', 'flashscore_bcl_stats.py+bcl_odds_scan.py --results'))   # 6/10: BCL — σκορ Flashscore → bcl_projections
+        ('bcl', 'bcl_projections.json', 'flashscore_bcl_stats.py+bcl_odds_scan.py --results'),
+        ('nba', 'nba_projections.json', 'nba_espn.py --days 2+nba_odds_scan.py --results'))   # 6/10: NBA — σκορ ESPN   # 6/10: BCL — σκορ Flashscore → bcl_projections
 
 def main():
     now = dt.datetime.now(dt.timezone.utc)
@@ -20,7 +21,7 @@ def main():
         except Exception: continue
         due = []
         for g in P.get('games', []):
-            if g.get('played') and (key != 'bcl' or g.get('hs') is not None): continue   # BCL: played απο το τζαμπολ, σκορ αργοτερα
+            if g.get('played') and (key not in ('bcl', 'nba') or g.get('hs') is not None): continue   # BCL: played απο το τζαμπολ, σκορ αργοτερα
             try: ko = dt.datetime.fromisoformat(str(g['utc']).replace('Z', '+00:00'))
             except Exception: continue
             h = (now - ko).total_seconds() / 3600

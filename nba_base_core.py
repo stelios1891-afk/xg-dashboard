@@ -6,6 +6,9 @@ run2(h, lam, HL, carry, lw, lam_u=None, beta=0) → προβλεψη διαφο�
 import sys, io, json, math, contextlib
 import numpy as np
 _src = open('nba_model_test.py', encoding='utf-8').read().split("P('')\nP('=== ΒΑΣΙΚΟ ΜΟΝΤΕΛΟ")[0].replace("sys.stdout.reconfigure(encoding='utf-8')", '')
+import os as _os
+if not _os.path.exists('nowgoal_nba/odds.jsonl'):          # 6/10: live (GitHub, χωρις αρχειο αποδοσεων) — μονο μηχανη, χωρις αγορα
+    _src = _src.split('# ---------------- αγορα: Crown closing')[0] + chr(10) + 'EVAL = []' + chr(10) + 'SIG = 13.5' + chr(10)
 with contextlib.redirect_stdout(io.StringIO()):
     exec(_src)
 RADJ = json.load(open('nba_roster_adj.json', encoding='utf-8'))['delta']
