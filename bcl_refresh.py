@@ -11,7 +11,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 from el_season import Y as CUR
 M1_CFG = dict(carry=1.4, lam=8, HL=9999, w=0.5)      # bcl_engine_test2: επιλογη σε ολες τις 5 σεζον (με φιλικα), 6/10
 M2_CFG = (1.3, 1.5, 9999.0, 25.0, 0.5)                # (περσι, λ, HL, ψαλιδισμα, βαρος φιλικων) — bcl_engine_test2 (φιλικα: 21/24 ρυθμισεις καλυτερες ≥4/5)
-KX = 0.0                                               # ειδικοι/αποδοσεις: αφετηρια += KX · z (bcl_expert_z.json, bcl_expert_test.py)
+KX = 4.5                                               # ειδικοι/αποδοσεις: αφετηρια += KX · z (bcl_expert_z.json, bcl_expert_test.py) — 6/10 Στελιος: μονο αποδοσεις νικητη (ιστορικο δεν υπαρχει, κx απο 2024-25 ειδικους)
 A = 0.75                                               # μιξη Μ1/Μ2 (bcl_engine_test2)
 SIGMA = 12.0                                           # sd (πραγματικο − κλεισιμο) 2024-26
 if '--no-fetch' not in sys.argv:

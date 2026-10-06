@@ -91,5 +91,39 @@
   },
   "note": "'Odds valid 5/10 15:35' (Greek time). Top 8 only. Book not named in text (WebFetch summary guessed Stoiximan - unverified)."
  },
- "_notes": "Structure matches ec_outrights.json (season key U<start year>). Only 2026-27 preseason odds found; 2021-22..2025-26 not found (no Wayback snapshot of oddschecker/bwin/oddsportal BCL winner pages before round 1; Greek odds pages are evergreen and not archived pre-season)."
+ "_notes": "Structure matches ec_outrights.json (season key U<start year>). Preseason odds found: 2026-27 (2 books) and 2022-23 (1 book, published mid-round-1, flagged). NOT found: 2021-22, 2023-24, 2024-25, 2025-26. Searched: OddsPortal and BetExplorer are geo-blocked from Greece (live, browser and WebFetch all show the 'not available in Greece' page; I did not try to get around it); Wayback has no pre-season oddsportal/betexplorer BCL outrights snapshots (only 2017-02, 2021-12, 2022-05, 2023-06). Oddschecker BCL winner: one snapshot (2022-01). bwin BCL page snapshots before round 1 (sports.bwin.com 2021-09-30, bwin.es 2025-09-09) contain no outright market/data. Novibet BCL page snapshot 2024-07-17 is an empty JS shell. Stoiximan/Betano/Marathonbet/William Hill/Paddy Power/Betfair/Interwetten: no archived BCL pages. Greek betting news (betarades, kingbet, foxbet, agones, betmarket, matchmoney, bet.gr, sentragoal): evergreen pages are overwritten each year and are archived only off-season; Spanish/Italian/Turkish/Lithuanian searches found no articles with pre-season BCL outright odds.",
+ "U2022": {
+  "date": "2022-10-04",
+  "src": "unnamed Greek-licensed book (sentragoal.gr evergreen BCL page, Wayback 2022-10-07)",
+  "after_round": 0,
+  "url": "https://web.archive.org/web/20221007145338/https://www.sentragoal.gr/126637/basketball-champions-league-stoixima/",
+  "odds": {
+   "Lenovo Tenerife": 6.0,
+   "Unicaja": 6.5,
+   "Galatasaray": 9.0,
+   "BAXI Manresa": 11.0,
+   "UCAM Murcia": 13.0,
+   "MHP RIESEN Ludwigsburg": 13.0,
+   "SIG Strasbourg": 16.0,
+   "Pinar Karsiyaka": 16.0,
+   "Peristeri": 26.0,
+   "AEK": 36.0,
+   "PAOK": 61.0
+  },
+  "names_as_written": {
+   "Lenovo Tenerife": "Τενερίφη",
+   "Unicaja": "Ουνικάχα",
+   "Galatasaray": "Γαλατασαράι",
+   "BAXI Manresa": "Μανρέσα",
+   "UCAM Murcia": "Μούρθια",
+   "MHP RIESEN Ludwigsburg": "Λούντβιχσμπουργκ",
+   "SIG Strasbourg": "Στρασβούργο",
+   "Pinar Karsiyaka": "Πινάρ Καρσίγιακα",
+   "Peristeri": "Περιστέρι",
+   "AEK": "ΑΕΚ",
+   "PAOK": "ΠΑΟΚ"
+  },
+  "pre_round1_verified": false,
+  "note": "Article dated 04/10/2022 13:31 Greek time. Round 1 ran 3-5 Oct 2022 and the text already reports Peristeri-Bnei Herzliya 86-70 (played 3 Oct), so it was published DURING round 1. The page says group-winner odds 'will be refreshed after the round ends', so the prices are probably the pre-round-1 set, but the quote date is not shown. Only 11 teams (the favourites plus the Greek clubs). Same page also has group-winner odds for all 8 groups (not stored)."
+ }
 }
