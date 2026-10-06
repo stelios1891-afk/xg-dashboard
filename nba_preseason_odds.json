@@ -1,0 +1,3855 @@
+{
+ "meta": {
+  "odds_format": "title_odds = american (int, +450 => 450)· title_odds_decimal = δεκαδική (ευρωπαϊκή, με το κεφάλαιο)· win_total = over/under νικών κανονικής περιόδου",
+  "team_codes": "Basketball-Reference (BRK, CHO, PHO)",
+  "sources": {
+   "primary": "Basketball-Reference /leagues/NBA_{year}_preseason_odds.html (στηρίζεται σε sportsoddshistory.com)",
+   "secondary": "Covers Sports Odds History (sportsoddshistory.com → covers.com/sportsoddshistory), γραμμές BetMGM· δίνει χρονοσειρά προ-σεζόν + over/under τιμές"
+  },
+  "fetched": "2026-10-06",
+  "caveats": [
+   "Το B-R ΔΕΝ δίνει ημερομηνία γραμμής· ταυτίστηκε (title odds) με στήλη του sportsoddshistory: 2021-22 = Aug 27/Oct 19, 2022-23 = Oct 18, 2023-24 = Jun 24 (ΠΑΛΙΑ, πριν την ελεύθερη αγορά!), 2024-25 = Oct 1, 2025-26 = Oct 21.",
+   "Για 2023-24 υπάρχει νεότερη στήλη στο sec: title_odds_last_pre_opener (Oct 24).",
+   "win_total B-R = sportsoddshistory σε 149/150 (εξαίρεση SAC 2025-26: B-R 35.5 vs SOH 32.5)."
+  ]
+ },
+ "seasons": {
+  "2021-22": {
+   "teams": {
+    "ATL": {
+     "win_total": 47.5,
+     "title_odds": 3500,
+     "title_odds_decimal": 36.0,
+     "bbr_actual_result": "43-39 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+3500",
+       "Aug 4": "+3500",
+       "Aug 27": "+3500",
+       "Oct 19": "+3500"
+      },
+      "title_odds_last_pre_opener": 3500,
+      "title_odds_last_pre_opener_decimal": 36.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 47.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "BOS": {
+     "win_total": 45.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "51-31 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+4000",
+       "Aug 4": "+4000",
+       "Aug 27": "+4000",
+       "Oct 19": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 45.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "BRK": {
+     "win_total": 56.5,
+     "title_odds": 240,
+     "title_odds_decimal": 3.4,
+     "bbr_actual_result": "44-38 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+225",
+       "Aug 4": "+225",
+       "Aug 27": "+240",
+       "Oct 19": "+240"
+      },
+      "title_odds_last_pre_opener": 240,
+      "title_odds_last_pre_opener_decimal": 3.4,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 56.5,
+      "win_over_price": "+105",
+      "win_under_price": "-125"
+     }
+    },
+    "CHI": {
+     "win_total": 42.5,
+     "title_odds": 6600,
+     "title_odds_decimal": 67.0,
+     "bbr_actual_result": "46-36 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+12500",
+       "Aug 4": "+6600",
+       "Aug 27": "+6600",
+       "Oct 19": "+6600"
+      },
+      "title_odds_last_pre_opener": 6600,
+      "title_odds_last_pre_opener_decimal": 67.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 42.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "CHO": {
+     "win_total": 38.5,
+     "title_odds": 10000,
+     "title_odds_decimal": 101.0,
+     "bbr_actual_result": "43-39 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+20000",
+       "Aug 4": "+10000",
+       "Aug 27": "+10000",
+       "Oct 19": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 38.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "CLE": {
+     "win_total": 26.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "44-38 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+50000",
+       "Aug 4": "+50000",
+       "Aug 27": "+50000",
+       "Oct 19": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 26.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "DAL": {
+     "win_total": 48.5,
+     "title_odds": 3000,
+     "title_odds_decimal": 31.0,
+     "bbr_actual_result": "52-30 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+3000",
+       "Aug 4": "+3000",
+       "Aug 27": "+3000",
+       "Oct 19": "+3000"
+      },
+      "title_odds_last_pre_opener": 3000,
+      "title_odds_last_pre_opener_decimal": 31.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 48.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "DEN": {
+     "win_total": 47.5,
+     "title_odds": 2200,
+     "title_odds_decimal": 23.0,
+     "bbr_actual_result": "48-34 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+2000",
+       "Aug 4": "+2200",
+       "Aug 27": "+2200",
+       "Oct 19": "+2200"
+      },
+      "title_odds_last_pre_opener": 2200,
+      "title_odds_last_pre_opener_decimal": 23.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 47.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "DET": {
+     "win_total": 24.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "23-59 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+50000",
+       "Aug 4": "+50000",
+       "Aug 27": "+50000",
+       "Oct 19": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 24.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "GSW": {
+     "win_total": 48.5,
+     "title_odds": 900,
+     "title_odds_decimal": 10.0,
+     "bbr_actual_result": "53-29 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+1200",
+       "Aug 4": "+1100",
+       "Aug 27": "+900",
+       "Oct 19": "+900"
+      },
+      "title_odds_last_pre_opener": 900,
+      "title_odds_last_pre_opener_decimal": 10.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 48.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "HOU": {
+     "win_total": 27.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "20-62 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+50000",
+       "Aug 4": "+50000",
+       "Aug 27": "+50000",
+       "Oct 19": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 27.5,
+      "win_over_price": "+110",
+      "win_under_price": "-130"
+     }
+    },
+    "IND": {
+     "win_total": 42.5,
+     "title_odds": 10000,
+     "title_odds_decimal": 101.0,
+     "bbr_actual_result": "25-57 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+10000",
+       "Aug 4": "+10000",
+       "Aug 27": "+10000",
+       "Oct 19": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 42.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "LAC": {
+     "win_total": 45.5,
+     "title_odds": 1600,
+     "title_odds_decimal": 17.0,
+     "bbr_actual_result": "42-40 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+1800",
+       "Aug 4": "+1600",
+       "Aug 27": "+1600",
+       "Oct 19": "+1600"
+      },
+      "title_odds_last_pre_opener": 1600,
+      "title_odds_last_pre_opener_decimal": 17.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 45.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "LAL": {
+     "win_total": 52.5,
+     "title_odds": 400,
+     "title_odds_decimal": 5.0,
+     "bbr_actual_result": "33-49 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+450",
+       "Aug 4": "+400",
+       "Aug 27": "+400",
+       "Oct 19": "+400"
+      },
+      "title_odds_last_pre_opener": 400,
+      "title_odds_last_pre_opener_decimal": 5.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 52.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "MEM": {
+     "win_total": 41.5,
+     "title_odds": 10000,
+     "title_odds_decimal": 101.0,
+     "bbr_actual_result": "56-26 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+15000",
+       "Aug 4": "+10000",
+       "Aug 27": "+10000",
+       "Oct 19": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 41.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "MIA": {
+     "win_total": 48.5,
+     "title_odds": 2500,
+     "title_odds_decimal": 26.0,
+     "bbr_actual_result": "53-29 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+3500",
+       "Aug 4": "+2500",
+       "Aug 27": "+2500",
+       "Oct 19": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 48.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "MIL": {
+     "win_total": 54.5,
+     "title_odds": 900,
+     "title_odds_decimal": 10.0,
+     "bbr_actual_result": "51-31 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+800",
+       "Aug 4": "+900",
+       "Aug 27": "+900",
+       "Oct 19": "+900"
+      },
+      "title_odds_last_pre_opener": 900,
+      "title_odds_last_pre_opener_decimal": 10.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 54.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "MIN": {
+     "win_total": 35.5,
+     "title_odds": 25000,
+     "title_odds_decimal": 251.0,
+     "bbr_actual_result": "46-36 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+25000",
+       "Aug 4": "+25000",
+       "Aug 27": "+25000",
+       "Oct 19": "+25000"
+      },
+      "title_odds_last_pre_opener": 25000,
+      "title_odds_last_pre_opener_decimal": 251.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 35.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "NOP": {
+     "win_total": 39.5,
+     "title_odds": 10000,
+     "title_odds_decimal": 101.0,
+     "bbr_actual_result": "36-46 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+12500",
+       "Aug 4": "+10000",
+       "Aug 27": "+10000",
+       "Oct 19": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 39.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "NYK": {
+     "win_total": 41.5,
+     "title_odds": 8000,
+     "title_odds_decimal": 81.0,
+     "bbr_actual_result": "37-45 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+8000",
+       "Aug 4": "+8000",
+       "Aug 27": "+8000",
+       "Oct 19": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 41.5,
+      "win_over_price": "-140",
+      "win_under_price": "+115"
+     }
+    },
+    "OKC": {
+     "win_total": 23.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "24-58 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+50000",
+       "Aug 4": "+50000",
+       "Aug 27": "+50000",
+       "Oct 19": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 23.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "ORL": {
+     "win_total": 22.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "22-60 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+50000",
+       "Aug 4": "+50000",
+       "Aug 27": "+50000",
+       "Oct 19": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 22.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "PHI": {
+     "win_total": 50.5,
+     "title_odds": 1600,
+     "title_odds_decimal": 17.0,
+     "bbr_actual_result": "51-31 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+1600",
+       "Aug 4": "+1600",
+       "Aug 27": "+1600",
+       "Oct 19": "+1600"
+      },
+      "title_odds_last_pre_opener": 1600,
+      "title_odds_last_pre_opener_decimal": 17.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 50.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "PHO": {
+     "win_total": 51.5,
+     "title_odds": 1500,
+     "title_odds_decimal": 16.0,
+     "bbr_actual_result": "64-18 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+1400",
+       "Aug 4": "+1400",
+       "Aug 27": "+1500",
+       "Oct 19": "+1500"
+      },
+      "title_odds_last_pre_opener": 1500,
+      "title_odds_last_pre_opener_decimal": 16.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 51.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "POR": {
+     "win_total": 44.5,
+     "title_odds": 5000,
+     "title_odds_decimal": 51.0,
+     "bbr_actual_result": "27-55 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+4000",
+       "Aug 4": "+5000",
+       "Aug 27": "+5000",
+       "Oct 19": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 44.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "SAC": {
+     "win_total": 36.5,
+     "title_odds": 25000,
+     "title_odds_decimal": 251.0,
+     "bbr_actual_result": "30-52 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+25000",
+       "Aug 4": "+25000",
+       "Aug 27": "+25000",
+       "Oct 19": "+25000"
+      },
+      "title_odds_last_pre_opener": 25000,
+      "title_odds_last_pre_opener_decimal": 251.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 36.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "SAS": {
+     "win_total": 28.5,
+     "title_odds": 30000,
+     "title_odds_decimal": 301.0,
+     "bbr_actual_result": "34-48 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+25000",
+       "Aug 4": "+30000",
+       "Aug 27": "+30000",
+       "Oct 19": "+30000"
+      },
+      "title_odds_last_pre_opener": 30000,
+      "title_odds_last_pre_opener_decimal": 301.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 28.5,
+      "win_over_price": "-140",
+      "win_under_price": "+115"
+     }
+    },
+    "TOR": {
+     "win_total": 35.5,
+     "title_odds": 15000,
+     "title_odds_decimal": 151.0,
+     "bbr_actual_result": "48-34 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+10000",
+       "Aug 4": "+15000",
+       "Aug 27": "+15000",
+       "Oct 19": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 35.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "UTA": {
+     "win_total": 52.5,
+     "title_odds": 1600,
+     "title_odds_decimal": 17.0,
+     "bbr_actual_result": "49-33 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+1200",
+       "Aug 4": "+1400",
+       "Aug 27": "+1600",
+       "Oct 19": "+1600"
+      },
+      "title_odds_last_pre_opener": 1600,
+      "title_odds_last_pre_opener_decimal": 17.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 52.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "WAS": {
+     "win_total": 33.5,
+     "title_odds": 15000,
+     "title_odds_decimal": 151.0,
+     "bbr_actual_result": "35-47 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jul 21": "+15000",
+       "Aug 4": "+15000",
+       "Aug 27": "+15000",
+       "Oct 19": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Oct 19",
+      "win_total_soh": 33.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    }
+   },
+   "source": "Basketball-Reference preseason odds",
+   "url": "https://www.basketball-reference.com/leagues/NBA_2022_preseason_odds.html",
+   "secondary_urls": [
+    "https://www.covers.com/sportsoddshistory/nba-main/?y=2021-2022&sa=nba&a=finals",
+    "https://www.covers.com/sportsoddshistory/nba-win/?y=2021-2022&sa=nba&t=win"
+   ],
+   "season_preodds_columns": [
+    "Jul 21",
+    "Aug 4",
+    "Aug 27",
+    "Oct 19"
+   ],
+   "n_teams_title_odds": 30,
+   "n_teams_win_total": 30
+  },
+  "2022-23": {
+   "teams": {
+    "ATL": {
+     "win_total": 46.5,
+     "title_odds": 5000,
+     "title_odds_decimal": 51.0,
+     "bbr_actual_result": "41-41 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+8000",
+       "Jul 8": "+5000",
+       "Jul 16": "+5000",
+       "Aug 1": "+5000",
+       "Sep 1": "+5000",
+       "Oct 18": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 46.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "BOS": {
+     "win_total": 54.5,
+     "title_odds": 500,
+     "title_odds_decimal": 6.0,
+     "bbr_actual_result": "57-25 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+650",
+       "Jul 8": "+550",
+       "Jul 16": "+550",
+       "Aug 1": "+450",
+       "Sep 1": "+500",
+       "Oct 18": "+500"
+      },
+      "title_odds_last_pre_opener": 500,
+      "title_odds_last_pre_opener_decimal": 6.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 54.5,
+      "win_over_price": "+110",
+      "win_under_price": "-130"
+     }
+    },
+    "BRK": {
+     "win_total": 50.5,
+     "title_odds": 700,
+     "title_odds_decimal": 8.0,
+     "bbr_actual_result": "45-37 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+700",
+       "Jul 8": "+2500",
+       "Jul 16": "+2000",
+       "Aug 1": "+1600",
+       "Sep 1": "+700",
+       "Oct 18": "+700"
+      },
+      "title_odds_last_pre_opener": 700,
+      "title_odds_last_pre_opener_decimal": 8.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 50.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "CHI": {
+     "win_total": 41.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "40-42 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+6600",
+       "Jul 8": "+4000",
+       "Jul 16": "+4000",
+       "Aug 1": "+4000",
+       "Sep 1": "+4000",
+       "Oct 18": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 41.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "CHO": {
+     "win_total": 34.5,
+     "title_odds": 15000,
+     "title_odds_decimal": 151.0,
+     "bbr_actual_result": "27-55 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+10000",
+       "Jul 8": "+12500",
+       "Jul 16": "+25000",
+       "Aug 1": "+25000",
+       "Sep 1": "+15000",
+       "Oct 18": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 34.5,
+      "win_over_price": "+125",
+      "win_under_price": "-155"
+     }
+    },
+    "CLE": {
+     "win_total": 46.5,
+     "title_odds": 3000,
+     "title_odds_decimal": 31.0,
+     "bbr_actual_result": "51-31 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+10000",
+       "Jul 8": "+10000",
+       "Jul 16": "+10000",
+       "Aug 1": "+10000",
+       "Sep 1": "+10000",
+       "Oct 18": "+3000"
+      },
+      "title_odds_last_pre_opener": 3000,
+      "title_odds_last_pre_opener_decimal": 31.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 46.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "DAL": {
+     "win_total": 48.5,
+     "title_odds": 2500,
+     "title_odds_decimal": 26.0,
+     "bbr_actual_result": "38-44 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+1400",
+       "Jul 8": "+2200",
+       "Jul 16": "+2200",
+       "Aug 1": "+2200",
+       "Sep 1": "+2200",
+       "Oct 18": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 48.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "DEN": {
+     "win_total": 51.5,
+     "title_odds": 1800,
+     "title_odds_decimal": 19.0,
+     "bbr_actual_result": "53-29 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+1400",
+       "Jul 8": "+2000",
+       "Jul 16": "+2000",
+       "Aug 1": "+1800",
+       "Sep 1": "+1800",
+       "Oct 18": "+1800"
+      },
+      "title_odds_last_pre_opener": 1800,
+      "title_odds_last_pre_opener_decimal": 19.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 51.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "DET": {
+     "win_total": 29.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "17-65 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+75000",
+       "Jul 8": "+50000",
+       "Jul 16": "+50000",
+       "Aug 1": "+50000",
+       "Sep 1": "+50000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 29.5,
+      "win_over_price": "-130",
+      "win_under_price": "+110"
+     }
+    },
+    "GSW": {
+     "win_total": 52.5,
+     "title_odds": 600,
+     "title_odds_decimal": 7.0,
+     "bbr_actual_result": "44-38 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+550",
+       "Jul 8": "+650",
+       "Jul 16": "+650",
+       "Aug 1": "+650",
+       "Sep 1": "+600",
+       "Oct 18": "+600"
+      },
+      "title_odds_last_pre_opener": 600,
+      "title_odds_last_pre_opener_decimal": 7.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 52.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "HOU": {
+     "win_total": 23.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "22-60 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+200000",
+       "Jul 8": "+50000",
+       "Jul 16": "+50000",
+       "Aug 1": "+50000",
+       "Sep 1": "+50000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 23.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "IND": {
+     "win_total": 24.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "35-47 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+25000",
+       "Jul 8": "+50000",
+       "Jul 16": "+25000",
+       "Aug 1": "+50000",
+       "Sep 1": "+50000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 24.5,
+      "win_over_price": "+100",
+      "win_under_price": "-130"
+     }
+    },
+    "LAC": {
+     "win_total": 52.5,
+     "title_odds": 700,
+     "title_odds_decimal": 8.0,
+     "bbr_actual_result": "44-38 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+700",
+       "Jul 8": "+650",
+       "Jul 16": "+650",
+       "Aug 1": "+650",
+       "Sep 1": "+700",
+       "Oct 18": "+700"
+      },
+      "title_odds_last_pre_opener": 700,
+      "title_odds_last_pre_opener_decimal": 8.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 52.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "LAL": {
+     "win_total": 44.5,
+     "title_odds": 1800,
+     "title_odds_decimal": 19.0,
+     "bbr_actual_result": "43-39 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+1400",
+       "Jul 8": "+1000",
+       "Jul 16": "+1000",
+       "Aug 1": "+1000",
+       "Sep 1": "+1800",
+       "Oct 18": "+1800"
+      },
+      "title_odds_last_pre_opener": 1800,
+      "title_odds_last_pre_opener_decimal": 19.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 44.5,
+      "win_over_price": "+110",
+      "win_under_price": "-135"
+     }
+    },
+    "MEM": {
+     "win_total": 49.5,
+     "title_odds": 2000,
+     "title_odds_decimal": 21.0,
+     "bbr_actual_result": "51-31 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+1400",
+       "Jul 8": "+2500",
+       "Jul 16": "+2200",
+       "Aug 1": "+2200",
+       "Sep 1": "+2000",
+       "Oct 18": "+2000"
+      },
+      "title_odds_last_pre_opener": 2000,
+      "title_odds_last_pre_opener_decimal": 21.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 49.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "MIA": {
+     "win_total": 49.5,
+     "title_odds": 1600,
+     "title_odds_decimal": 17.0,
+     "bbr_actual_result": "44-38 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+1400",
+       "Jul 8": "+1100",
+       "Jul 16": "+1100",
+       "Aug 1": "+1400",
+       "Sep 1": "+1600",
+       "Oct 18": "+1600"
+      },
+      "title_odds_last_pre_opener": 1600,
+      "title_odds_last_pre_opener_decimal": 17.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 49.5,
+      "win_over_price": "+105",
+      "win_under_price": "-125"
+     }
+    },
+    "MIL": {
+     "win_total": 53.5,
+     "title_odds": 650,
+     "title_odds_decimal": 7.5,
+     "bbr_actual_result": "58-24 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+800",
+       "Jul 8": "+550",
+       "Jul 16": "+550",
+       "Aug 1": "+650",
+       "Sep 1": "+650",
+       "Oct 18": "+650"
+      },
+      "title_odds_last_pre_opener": 650,
+      "title_odds_last_pre_opener_decimal": 7.5,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 53.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "MIN": {
+     "win_total": 49.5,
+     "title_odds": 2800,
+     "title_odds_decimal": 29.0,
+     "bbr_actual_result": "42-40 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+6600",
+       "Jul 8": "+3500",
+       "Jul 16": "+3500",
+       "Aug 1": "+3500",
+       "Sep 1": "+3500",
+       "Oct 18": "+2800"
+      },
+      "title_odds_last_pre_opener": 2800,
+      "title_odds_last_pre_opener_decimal": 29.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 49.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "NOP": {
+     "win_total": 45.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "42-40 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+4000",
+       "Jul 8": "+4000",
+       "Jul 16": "+4000",
+       "Aug 1": "+4000",
+       "Sep 1": "+4000",
+       "Oct 18": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 45.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "NYK": {
+     "win_total": 38.5,
+     "title_odds": 6600,
+     "title_odds_decimal": 67.0,
+     "bbr_actual_result": "47-35 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+25000",
+       "Jul 8": "+10000",
+       "Jul 16": "+6600",
+       "Aug 1": "+6600",
+       "Sep 1": "+6600",
+       "Oct 18": "+6600"
+      },
+      "title_odds_last_pre_opener": 6600,
+      "title_odds_last_pre_opener_decimal": 67.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 38.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "OKC": {
+     "win_total": 23.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "40-42 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+100000",
+       "Jul 8": "+50000",
+       "Jul 16": "+50000",
+       "Aug 1": "+50000",
+       "Sep 1": "+50000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 23.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "ORL": {
+     "win_total": 26.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "34-48 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+200000",
+       "Jul 8": "+50000",
+       "Jul 16": "+50000",
+       "Aug 1": "+50000",
+       "Sep 1": "+50000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 26.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "PHI": {
+     "win_total": 50.5,
+     "title_odds": 1400,
+     "title_odds_decimal": 15.0,
+     "bbr_actual_result": "54-28 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+1400",
+       "Jul 8": "+1200",
+       "Jul 16": "+1200",
+       "Aug 1": "+1400",
+       "Sep 1": "+1400",
+       "Oct 18": "+1400"
+      },
+      "title_odds_last_pre_opener": 1400,
+      "title_odds_last_pre_opener_decimal": 15.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 50.5,
+      "win_over_price": "-135",
+      "win_under_price": "+110"
+     }
+    },
+    "PHO": {
+     "win_total": 52.5,
+     "title_odds": 1000,
+     "title_odds_decimal": 11.0,
+     "bbr_actual_result": "45-37 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+900",
+       "Jul 8": "+650",
+       "Jul 16": "+700",
+       "Aug 1": "+850",
+       "Sep 1": "+1000",
+       "Oct 18": "+1000"
+      },
+      "title_odds_last_pre_opener": 1000,
+      "title_odds_last_pre_opener_decimal": 11.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 52.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "POR": {
+     "win_total": 39.5,
+     "title_odds": 8000,
+     "title_odds_decimal": 81.0,
+     "bbr_actual_result": "33-49 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+10000",
+       "Jul 8": "+8000",
+       "Jul 16": "+8000",
+       "Aug 1": "+8000",
+       "Sep 1": "+8000",
+       "Oct 18": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 39.5,
+      "win_over_price": "+105",
+      "win_under_price": "-125"
+     }
+    },
+    "SAC": {
+     "win_total": 34.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "48-34 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+75000",
+       "Jul 8": "+50000",
+       "Jul 16": "+50000",
+       "Aug 1": "+50000",
+       "Sep 1": "+50000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 34.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "SAS": {
+     "win_total": 22.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "22-60 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+25000",
+       "Jul 8": "+50000",
+       "Jul 16": "+50000",
+       "Aug 1": "+50000",
+       "Sep 1": "+50000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 22.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "TOR": {
+     "win_total": 46.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "41-41 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+6600",
+       "Jul 8": "+3000",
+       "Jul 16": "+3000",
+       "Aug 1": "+3000",
+       "Sep 1": "+5000",
+       "Oct 18": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 46.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "UTA": {
+     "win_total": 23.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "37-45 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+4000",
+       "Jul 8": "+12500",
+       "Jul 16": "+12500",
+       "Aug 1": "+12500",
+       "Sep 1": "+15000",
+       "Oct 18": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 23.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "WAS": {
+     "win_total": 35.5,
+     "title_odds": 25000,
+     "title_odds_decimal": 251.0,
+     "bbr_actual_result": "35-47 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 16": "+25000",
+       "Jul 8": "+25000",
+       "Jul 16": "+25000",
+       "Aug 1": "+25000",
+       "Sep 1": "+25000",
+       "Oct 18": "+25000"
+      },
+      "title_odds_last_pre_opener": 25000,
+      "title_odds_last_pre_opener_decimal": 251.0,
+      "title_odds_last_pre_opener_date": "Oct 18",
+      "win_total_soh": 35.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    }
+   },
+   "source": "Basketball-Reference preseason odds",
+   "url": "https://www.basketball-reference.com/leagues/NBA_2023_preseason_odds.html",
+   "secondary_urls": [
+    "https://www.covers.com/sportsoddshistory/nba-main/?y=2022-2023&sa=nba&a=finals",
+    "https://www.covers.com/sportsoddshistory/nba-win/?y=2022-2023&sa=nba&t=win"
+   ],
+   "season_preodds_columns": [
+    "Jun 16",
+    "Jul 8",
+    "Jul 16",
+    "Aug 1",
+    "Sep 1",
+    "Oct 18"
+   ],
+   "n_teams_title_odds": 30,
+   "n_teams_win_total": 30
+  },
+  "2023-24": {
+   "teams": {
+    "ATL": {
+     "win_total": 42.5,
+     "title_odds": 8000,
+     "title_odds_decimal": 81.0,
+     "bbr_actual_result": "36-46 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+6600",
+       "Jun 24": "+8000",
+       "Jul 12": "+8000",
+       "Sep 27": "+8000",
+       "Sep 28": "+8000",
+       "Oct 2": "+8000",
+       "Oct 24": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 42.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "BOS": {
+     "win_total": 54.5,
+     "title_odds": 450,
+     "title_odds_decimal": 5.5,
+     "bbr_actual_result": "64-18 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+550",
+       "Jun 24": "+450",
+       "Jul 12": "+500",
+       "Sep 27": "+475",
+       "Sep 28": "+500",
+       "Oct 2": "+400",
+       "Oct 24": "+400"
+      },
+      "title_odds_last_pre_opener": 400,
+      "title_odds_last_pre_opener_decimal": 5.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 54.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "BRK": {
+     "win_total": 37.5,
+     "title_odds": 12500,
+     "title_odds_decimal": 126.0,
+     "bbr_actual_result": "32-50 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+10000",
+       "Jun 24": "+12500",
+       "Jul 12": "+8000",
+       "Sep 27": "+10000",
+       "Sep 28": "+10000",
+       "Oct 2": "+10000",
+       "Oct 24": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 37.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "CHI": {
+     "win_total": 37.5,
+     "title_odds": 12500,
+     "title_odds_decimal": 126.0,
+     "bbr_actual_result": "39-43 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+12500",
+       "Jun 24": "+12500",
+       "Jul 12": "+15000",
+       "Sep 27": "+12500",
+       "Sep 28": "+15000",
+       "Oct 2": "+15000",
+       "Oct 24": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 37.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "CHO": {
+     "win_total": 31.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "21-61 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+50000",
+       "Jun 24": "+50000",
+       "Jul 12": "+50000",
+       "Sep 27": "+50000",
+       "Sep 28": "+50000",
+       "Oct 2": "+50000",
+       "Oct 24": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 31.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "CLE": {
+     "win_total": 50.5,
+     "title_odds": 2500,
+     "title_odds_decimal": 26.0,
+     "bbr_actual_result": "48-34 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+2500",
+       "Jun 24": "+2500",
+       "Jul 12": "+2500",
+       "Sep 27": "+2200",
+       "Sep 28": "+2500",
+       "Oct 2": "+2500",
+       "Oct 24": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 50.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "DAL": {
+     "win_total": 45.5,
+     "title_odds": 2500,
+     "title_odds_decimal": 26.0,
+     "bbr_actual_result": "50-32 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+1200",
+       "Jun 24": "+2500",
+       "Jul 12": "+2000",
+       "Sep 27": "+2200",
+       "Sep 28": "+2200",
+       "Oct 2": "+2500",
+       "Oct 24": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 45.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "DEN": {
+     "win_total": 52.5,
+     "title_odds": 450,
+     "title_odds_decimal": 5.5,
+     "bbr_actual_result": "57-25 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+500",
+       "Jun 24": "+450",
+       "Jul 12": "+475",
+       "Sep 27": "+475",
+       "Sep 28": "+475",
+       "Oct 2": "+500",
+       "Oct 24": "+550"
+      },
+      "title_odds_last_pre_opener": 550,
+      "title_odds_last_pre_opener_decimal": 6.5,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 52.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "DET": {
+     "win_total": 28.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "14-68 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+50000",
+       "Jun 24": "+50000",
+       "Jul 12": "+50000",
+       "Sep 27": "+50000",
+       "Sep 28": "+50000",
+       "Oct 2": "+50000",
+       "Oct 24": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 28.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "GSW": {
+     "win_total": 48.5,
+     "title_odds": 1200,
+     "title_odds_decimal": 13.0,
+     "bbr_actual_result": "46-36 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+1200",
+       "Jun 24": "+1200",
+       "Jul 12": "+1200",
+       "Sep 27": "+1400",
+       "Sep 28": "+1400",
+       "Oct 2": "+1400",
+       "Oct 24": "+1400"
+      },
+      "title_odds_last_pre_opener": 1400,
+      "title_odds_last_pre_opener_decimal": 15.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 48.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "HOU": {
+     "win_total": 31.5,
+     "title_odds": 25000,
+     "title_odds_decimal": 251.0,
+     "bbr_actual_result": "41-41 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+10000",
+       "Jun 24": "+25000",
+       "Jul 12": "+25000",
+       "Sep 27": "+35000",
+       "Sep 28": "+35000",
+       "Oct 2": "+35000",
+       "Oct 24": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 31.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "IND": {
+     "win_total": 38.5,
+     "title_odds": 25000,
+     "title_odds_decimal": 251.0,
+     "bbr_actual_result": "47-35 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+15000",
+       "Jun 24": "+25000",
+       "Jul 12": "+25000",
+       "Sep 27": "+25000",
+       "Sep 28": "+25000",
+       "Oct 2": "+25000",
+       "Oct 24": "+25000"
+      },
+      "title_odds_last_pre_opener": 25000,
+      "title_odds_last_pre_opener_decimal": 251.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 38.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "LAC": {
+     "win_total": 46.5,
+     "title_odds": 2200,
+     "title_odds_decimal": 23.0,
+     "bbr_actual_result": "51-31 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+1400",
+       "Jun 24": "+2200",
+       "Jul 12": "+1800",
+       "Sep 27": "+2000",
+       "Sep 28": "+2000",
+       "Oct 2": "+2000",
+       "Oct 24": "+2000"
+      },
+      "title_odds_last_pre_opener": 2000,
+      "title_odds_last_pre_opener_decimal": 21.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 46.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "LAL": {
+     "win_total": 47.5,
+     "title_odds": 1500,
+     "title_odds_decimal": 16.0,
+     "bbr_actual_result": "47-35 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+1200",
+       "Jun 24": "+1500",
+       "Jul 12": "+1200",
+       "Sep 27": "+1200",
+       "Sep 28": "+1200",
+       "Oct 2": "+1200",
+       "Oct 24": "+1300"
+      },
+      "title_odds_last_pre_opener": 1300,
+      "title_odds_last_pre_opener_decimal": 14.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 47.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "MEM": {
+     "win_total": 45.5,
+     "title_odds": 2200,
+     "title_odds_decimal": 23.0,
+     "bbr_actual_result": "27-55 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+2000",
+       "Jun 24": "+2200",
+       "Jul 12": "+2500",
+       "Sep 27": "+3000",
+       "Sep 28": "+3000",
+       "Oct 2": "+3000",
+       "Oct 24": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 45.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "MIA": {
+     "win_total": 45.5,
+     "title_odds": 1600,
+     "title_odds_decimal": 17.0,
+     "bbr_actual_result": "46-36 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+2000",
+       "Jun 24": "+1600",
+       "Jul 12": "+1000",
+       "Sep 27": "+1000",
+       "Sep 28": "+3000",
+       "Oct 2": "+3000",
+       "Oct 24": "+3000"
+      },
+      "title_odds_last_pre_opener": 3000,
+      "title_odds_last_pre_opener_decimal": 31.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 45.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "MIL": {
+     "win_total": 54.5,
+     "title_odds": 600,
+     "title_odds_decimal": 7.0,
+     "bbr_actual_result": "49-33 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+600",
+       "Jun 24": "+600",
+       "Jul 12": "+700",
+       "Sep 27": "+650",
+       "Sep 28": "+400",
+       "Oct 2": "+375",
+       "Oct 24": "+400"
+      },
+      "title_odds_last_pre_opener": 400,
+      "title_odds_last_pre_opener_decimal": 5.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 54.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "MIN": {
+     "win_total": 44.5,
+     "title_odds": 6600,
+     "title_odds_decimal": 67.0,
+     "bbr_actual_result": "56-26 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+6600",
+       "Jun 24": "+6600",
+       "Jul 12": "+6600",
+       "Sep 27": "+8000",
+       "Sep 28": "+8000",
+       "Oct 2": "+8000",
+       "Oct 24": "+6600"
+      },
+      "title_odds_last_pre_opener": 6600,
+      "title_odds_last_pre_opener_decimal": 67.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 44.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "NOP": {
+     "win_total": 44.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "49-33 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+3500",
+       "Jun 24": "+4000",
+       "Jul 12": "+4000",
+       "Sep 27": "+5000",
+       "Sep 28": "+5000",
+       "Oct 2": "+5000",
+       "Oct 24": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 44.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "NYK": {
+     "win_total": 45.5,
+     "title_odds": 5000,
+     "title_odds_decimal": 51.0,
+     "bbr_actual_result": "50-32 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+4000",
+       "Jun 24": "+5000",
+       "Jul 12": "+5000",
+       "Sep 27": "+5000",
+       "Sep 28": "+5000",
+       "Oct 2": "+5000",
+       "Oct 24": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 45.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "OKC": {
+     "win_total": 44.5,
+     "title_odds": 10000,
+     "title_odds_decimal": 101.0,
+     "bbr_actual_result": "57-25 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+6600",
+       "Jun 24": "+10000",
+       "Jul 12": "+10000",
+       "Sep 27": "+8000",
+       "Sep 28": "+8000",
+       "Oct 2": "+8000",
+       "Oct 24": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 44.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "ORL": {
+     "win_total": 37.5,
+     "title_odds": 25000,
+     "title_odds_decimal": 251.0,
+     "bbr_actual_result": "47-35 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+15000",
+       "Jun 24": "+25000",
+       "Jul 12": "+25000",
+       "Sep 27": "+35000",
+       "Sep 28": "+35000",
+       "Oct 2": "+35000",
+       "Oct 24": "+35000"
+      },
+      "title_odds_last_pre_opener": 35000,
+      "title_odds_last_pre_opener_decimal": 351.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 37.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "PHI": {
+     "win_total": 48.5,
+     "title_odds": 1800,
+     "title_odds_decimal": 19.0,
+     "bbr_actual_result": "47-35 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+1400",
+       "Jun 24": "+1800",
+       "Jul 12": "+1600",
+       "Sep 27": "+1600",
+       "Sep 28": "+1600",
+       "Oct 2": "+2000",
+       "Oct 24": "+2000"
+      },
+      "title_odds_last_pre_opener": 2000,
+      "title_odds_last_pre_opener_decimal": 21.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 48.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "PHO": {
+     "win_total": 51.5,
+     "title_odds": 600,
+     "title_odds_decimal": 7.0,
+     "bbr_actual_result": "49-33 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+850",
+       "Jun 24": "+600",
+       "Jul 12": "+600",
+       "Sep 27": "+650",
+       "Sep 28": "+650",
+       "Oct 2": "+650",
+       "Oct 24": "+650"
+      },
+      "title_odds_last_pre_opener": 650,
+      "title_odds_last_pre_opener_decimal": 7.5,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 51.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "POR": {
+     "win_total": 28.5,
+     "title_odds": 12500,
+     "title_odds_decimal": 126.0,
+     "bbr_actual_result": "21-61 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+10000",
+       "Jun 24": "+12500",
+       "Jul 12": "+25000",
+       "Sep 27": "+25000",
+       "Sep 28": "+25000",
+       "Oct 2": "+25000",
+       "Oct 24": "+25000"
+      },
+      "title_odds_last_pre_opener": 25000,
+      "title_odds_last_pre_opener_decimal": 251.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 28.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "SAC": {
+     "win_total": 44.5,
+     "title_odds": 3500,
+     "title_odds_decimal": 36.0,
+     "bbr_actual_result": "46-36 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+3000",
+       "Jun 24": "+3500",
+       "Jul 12": "+5000",
+       "Sep 27": "+5000",
+       "Sep 28": "+5000",
+       "Oct 2": "+5000",
+       "Oct 24": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 44.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "SAS": {
+     "win_total": 28.5,
+     "title_odds": 15000,
+     "title_odds_decimal": 151.0,
+     "bbr_actual_result": "22-60 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+20000",
+       "Jun 24": "+15000",
+       "Jul 12": "+25000",
+       "Sep 27": "+25000",
+       "Sep 28": "+25000",
+       "Oct 2": "+25000",
+       "Oct 24": "+25000"
+      },
+      "title_odds_last_pre_opener": 25000,
+      "title_odds_last_pre_opener_decimal": 251.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 28.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "TOR": {
+     "win_total": 36.5,
+     "title_odds": 8000,
+     "title_odds_decimal": 81.0,
+     "bbr_actual_result": "25-57 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+8000",
+       "Jun 24": "+8000",
+       "Jul 12": "+10000",
+       "Sep 27": "+8000",
+       "Sep 28": "+10000",
+       "Oct 2": "+10000",
+       "Oct 24": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 36.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "UTA": {
+     "win_total": 35.5,
+     "title_odds": 25000,
+     "title_odds_decimal": 251.0,
+     "bbr_actual_result": "31-51 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+15000",
+       "Jun 24": "+25000",
+       "Jul 12": "+25000",
+       "Sep 27": "+25000",
+       "Sep 28": "+25000",
+       "Oct 2": "+25000",
+       "Oct 24": "+25000"
+      },
+      "title_odds_last_pre_opener": 25000,
+      "title_odds_last_pre_opener_decimal": 251.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 35.5,
+      "win_over_price": "-130",
+      "win_under_price": "+110"
+     }
+    },
+    "WAS": {
+     "win_total": 24.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "15-67 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 12": "+15000",
+       "Jun 24": "+50000",
+       "Jul 12": "+50000",
+       "Sep 27": "+50000",
+       "Sep 28": "+50000",
+       "Oct 2": "+50000",
+       "Oct 24": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 24",
+      "win_total_soh": 24.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    }
+   },
+   "source": "Basketball-Reference preseason odds",
+   "url": "https://www.basketball-reference.com/leagues/NBA_2024_preseason_odds.html",
+   "secondary_urls": [
+    "https://www.covers.com/sportsoddshistory/nba-main/?y=2023-2024&sa=nba&a=finals",
+    "https://www.covers.com/sportsoddshistory/nba-win/?y=2023-2024&sa=nba&t=win"
+   ],
+   "season_preodds_columns": [
+    "Jun 12",
+    "Jun 24",
+    "Jul 12",
+    "Sep 27",
+    "Sep 28",
+    "Oct 2",
+    "Oct 24"
+   ],
+   "n_teams_title_odds": 30,
+   "n_teams_win_total": 30
+  },
+  "2024-25": {
+   "teams": {
+    "ATL": {
+     "win_total": 36.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "40-42 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+10000",
+       "Jun 28": "+15000",
+       "Jul 3": "+50000",
+       "Oct 1": "+50000",
+       "Oct 23": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 36.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "BOS": {
+     "win_total": 58.5,
+     "title_odds": 325,
+     "title_odds_decimal": 4.25,
+     "bbr_actual_result": "61-21 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+310",
+       "Jun 28": "+300",
+       "Jul 3": "+325",
+       "Oct 1": "+325",
+       "Oct 23": "+310"
+      },
+      "title_odds_last_pre_opener": 310,
+      "title_odds_last_pre_opener_decimal": 4.1,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 58.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "BRK": {
+     "win_total": 19.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "26-56 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+50000",
+       "Jun 28": "+100000",
+       "Jul 3": "+100000",
+       "Oct 1": "+100000",
+       "Oct 23": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 19.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "CHI": {
+     "win_total": 28.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "39-43 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+15000",
+       "Jun 28": "+50000",
+       "Jul 3": "+50000",
+       "Oct 1": "+100000",
+       "Oct 23": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 28.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "CHO": {
+     "win_total": 30.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "19-63 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+50000",
+       "Jun 28": "+100000",
+       "Jul 3": "+100000",
+       "Oct 1": "+100000",
+       "Oct 23": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 30.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "CLE": {
+     "win_total": 48.5,
+     "title_odds": 3500,
+     "title_odds_decimal": 36.0,
+     "bbr_actual_result": "64-18 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+5000",
+       "Jun 28": "+5000",
+       "Jul 3": "+5000",
+       "Oct 1": "+3500",
+       "Oct 23": "+3500"
+      },
+      "title_odds_last_pre_opener": 3500,
+      "title_odds_last_pre_opener_decimal": 36.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 48.5,
+      "win_over_price": "-130",
+      "win_under_price": "+110"
+     }
+    },
+    "DAL": {
+     "win_total": 49.5,
+     "title_odds": 1100,
+     "title_odds_decimal": 12.0,
+     "bbr_actual_result": "39-43 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+950",
+       "Jun 28": "+1000",
+       "Jul 3": "+1100",
+       "Oct 1": "+1100",
+       "Oct 23": "+1200"
+      },
+      "title_odds_last_pre_opener": 1200,
+      "title_odds_last_pre_opener_decimal": 13.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 49.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "DEN": {
+     "win_total": 51.5,
+     "title_odds": 1100,
+     "title_odds_decimal": 12.0,
+     "bbr_actual_result": "50-32 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+750",
+       "Jun 28": "+750",
+       "Jul 3": "+800",
+       "Oct 1": "+1100",
+       "Oct 23": "+1100"
+      },
+      "title_odds_last_pre_opener": 1100,
+      "title_odds_last_pre_opener_decimal": 12.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 51.5,
+      "win_over_price": "+110",
+      "win_under_price": "-130"
+     }
+    },
+    "DET": {
+     "win_total": 25.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "44-38 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+50000",
+       "Jun 28": "+100000",
+       "Jul 3": "+100000",
+       "Oct 1": "+100000",
+       "Oct 23": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 25.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "GSW": {
+     "win_total": 43.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "48-34 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+2500",
+       "Jun 28": "+3000",
+       "Jul 3": "+4000",
+       "Oct 1": "+4000",
+       "Oct 23": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 43.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "HOU": {
+     "win_total": 43.5,
+     "title_odds": 8000,
+     "title_odds_decimal": 81.0,
+     "bbr_actual_result": "52-30 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+10000",
+       "Jun 28": "+10000",
+       "Jul 3": "+12500",
+       "Oct 1": "+8000",
+       "Oct 23": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 43.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "IND": {
+     "win_total": 46.5,
+     "title_odds": 6600,
+     "title_odds_decimal": 67.0,
+     "bbr_actual_result": "50-32 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+5000",
+       "Jun 28": "+5000",
+       "Jul 3": "+6600",
+       "Oct 1": "+6600",
+       "Oct 23": "+6600"
+      },
+      "title_odds_last_pre_opener": 6600,
+      "title_odds_last_pre_opener_decimal": 67.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 46.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "LAC": {
+     "win_total": 35.5,
+     "title_odds": 12500,
+     "title_odds_decimal": 126.0,
+     "bbr_actual_result": "50-32 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+2000",
+       "Jun 28": "+3000",
+       "Jul 3": "+5000",
+       "Oct 1": "+12500",
+       "Oct 23": "+12500"
+      },
+      "title_odds_last_pre_opener": 12500,
+      "title_odds_last_pre_opener_decimal": 126.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 35.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "LAL": {
+     "win_total": 43.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "50-32 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+2500",
+       "Jun 28": "+3000",
+       "Jul 3": "+3000",
+       "Oct 1": "+4000",
+       "Oct 23": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 43.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "MEM": {
+     "win_total": 47.5,
+     "title_odds": 3500,
+     "title_odds_decimal": 36.0,
+     "bbr_actual_result": "48-34 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+4000",
+       "Jun 28": "+4000",
+       "Jul 3": "+4000",
+       "Oct 1": "+3500",
+       "Oct 23": "+3500"
+      },
+      "title_odds_last_pre_opener": 3500,
+      "title_odds_last_pre_opener_decimal": 36.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 47.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "MIA": {
+     "win_total": 44.5,
+     "title_odds": 5000,
+     "title_odds_decimal": 51.0,
+     "bbr_actual_result": "37-45 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+3500",
+       "Jun 28": "+4000",
+       "Jul 3": "+4000",
+       "Oct 1": "+5000",
+       "Oct 23": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 44.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "MIL": {
+     "win_total": 49.5,
+     "title_odds": 1400,
+     "title_odds_decimal": 15.0,
+     "bbr_actual_result": "48-34 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+1000",
+       "Jun 28": "+1100",
+       "Jul 3": "+1300",
+       "Oct 1": "+1400",
+       "Oct 23": "+1400"
+      },
+      "title_odds_last_pre_opener": 1400,
+      "title_odds_last_pre_opener_decimal": 15.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 49.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "MIN": {
+     "win_total": 51.5,
+     "title_odds": 1100,
+     "title_odds_decimal": 12.0,
+     "bbr_actual_result": "49-33 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+1000",
+       "Jun 28": "+850",
+       "Jul 3": "+1000",
+       "Oct 1": "+1100",
+       "Oct 23": "+1200"
+      },
+      "title_odds_last_pre_opener": 1200,
+      "title_odds_last_pre_opener_decimal": 13.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 51.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "NOP": {
+     "win_total": 46.5,
+     "title_odds": 5000,
+     "title_odds_decimal": 51.0,
+     "bbr_actual_result": "21-61 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+5000",
+       "Jun 28": "+5000",
+       "Jul 3": "+5000",
+       "Oct 1": "+5000",
+       "Oct 23": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 46.5,
+      "win_over_price": "+105",
+      "win_under_price": "-125"
+     }
+    },
+    "NYK": {
+     "win_total": 53.5,
+     "title_odds": 700,
+     "title_odds_decimal": 8.0,
+     "bbr_actual_result": "51-31 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+1600",
+       "Jun 28": "+725",
+       "Jul 3": "+1000",
+       "Oct 1": "+700",
+       "Oct 23": "+800"
+      },
+      "title_odds_last_pre_opener": 800,
+      "title_odds_last_pre_opener_decimal": 9.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 53.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "OKC": {
+     "win_total": 57.5,
+     "title_odds": 675,
+     "title_odds_decimal": 7.75,
+     "bbr_actual_result": "68-14 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+950",
+       "Jun 28": "+900",
+       "Jul 3": "+800",
+       "Oct 1": "+675",
+       "Oct 23": "+500"
+      },
+      "title_odds_last_pre_opener": 500,
+      "title_odds_last_pre_opener_decimal": 6.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 57.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "ORL": {
+     "win_total": 47.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "41-41 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+5000",
+       "Jun 28": "+8000",
+       "Jul 3": "+8000",
+       "Oct 1": "+4000",
+       "Oct 23": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 47.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "PHI": {
+     "win_total": 50.5,
+     "title_odds": 1000,
+     "title_odds_decimal": 11.0,
+     "bbr_actual_result": "24-58 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+1600",
+       "Jun 28": "+1400",
+       "Jul 3": "+800",
+       "Oct 1": "+1000",
+       "Oct 23": "+1000"
+      },
+      "title_odds_last_pre_opener": 1000,
+      "title_odds_last_pre_opener_decimal": 11.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 50.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "PHO": {
+     "win_total": 48.5,
+     "title_odds": 1500,
+     "title_odds_decimal": 16.0,
+     "bbr_actual_result": "36-46 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+2500",
+       "Jun 28": "+3500",
+       "Jul 3": "+3500",
+       "Oct 1": "+1500",
+       "Oct 23": "+2000"
+      },
+      "title_odds_last_pre_opener": 2000,
+      "title_odds_last_pre_opener_decimal": 21.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 48.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "POR": {
+     "win_total": 21.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "36-46 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+50000",
+       "Jun 28": "+100000",
+       "Jul 3": "+100000",
+       "Oct 1": "+100000",
+       "Oct 23": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 21.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "SAC": {
+     "win_total": 46.5,
+     "title_odds": 6600,
+     "title_odds_decimal": 67.0,
+     "bbr_actual_result": "40-42 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+5000",
+       "Jun 28": "+6600",
+       "Jul 3": "+8000",
+       "Oct 1": "+6600",
+       "Oct 23": "+6600"
+      },
+      "title_odds_last_pre_opener": 6600,
+      "title_odds_last_pre_opener_decimal": 67.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 46.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "SAS": {
+     "win_total": 35.5,
+     "title_odds": 15000,
+     "title_odds_decimal": 151.0,
+     "bbr_actual_result": "34-48 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+10000",
+       "Jun 28": "+10000",
+       "Jul 3": "+15000",
+       "Oct 1": "+15000",
+       "Oct 23": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 35.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "TOR": {
+     "win_total": 29.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "30-52 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+25000",
+       "Jun 28": "+50000",
+       "Jul 3": "+100000",
+       "Oct 1": "+100000",
+       "Oct 23": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 29.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "UTA": {
+     "win_total": 28.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "17-65 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+25000",
+       "Jun 28": "+50000",
+       "Jul 3": "+50000",
+       "Oct 1": "+50000",
+       "Oct 23": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 28.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "WAS": {
+     "win_total": 20.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "18-64 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 17": "+50000",
+       "Jun 28": "+100000",
+       "Jul 3": "+100000",
+       "Oct 1": "+100000",
+       "Oct 23": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 23",
+      "win_total_soh": 20.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    }
+   },
+   "source": "Basketball-Reference preseason odds",
+   "url": "https://www.basketball-reference.com/leagues/NBA_2025_preseason_odds.html",
+   "secondary_urls": [
+    "https://www.covers.com/sportsoddshistory/nba-main/?y=2024-2025&sa=nba&a=finals",
+    "https://www.covers.com/sportsoddshistory/nba-win/?y=2024-2025&sa=nba&t=win"
+   ],
+   "season_preodds_columns": [
+    "Jun 17",
+    "Jun 28",
+    "Jul 3",
+    "Oct 1",
+    "Oct 23"
+   ],
+   "n_teams_title_odds": 30,
+   "n_teams_win_total": 30
+  },
+  "2025-26": {
+   "teams": {
+    "ATL": {
+     "win_total": 46.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "46-36 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+25000",
+       "Jun 29": "+8000",
+       "Jul 10": "+2500",
+       "Sep 24": "+2500",
+       "Oct 21": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 46.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "BOS": {
+     "win_total": 41.5,
+     "title_odds": 6000,
+     "title_odds_decimal": 61.0,
+     "bbr_actual_result": "56-26 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+1600",
+       "Jun 29": "+2200",
+       "Jul 10": "+4000",
+       "Sep 24": "+5500",
+       "Oct 21": "+6000"
+      },
+      "title_odds_last_pre_opener": 6000,
+      "title_odds_last_pre_opener_decimal": 61.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 41.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "BRK": {
+     "win_total": 19.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "20-62 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+50000",
+       "Jun 29": "+100000",
+       "Jul 10": "+100000",
+       "Sep 24": "+100000",
+       "Oct 21": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 19.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "CHI": {
+     "win_total": 33.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "31-51 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+30000",
+       "Jun 29": "+50000",
+       "Jul 10": "+50000",
+       "Sep 24": "+50000",
+       "Oct 21": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 33.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "CHO": {
+     "win_total": 27.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "44-38 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+50000",
+       "Jun 29": "+100000",
+       "Jul 10": "+100000",
+       "Sep 24": "+100000",
+       "Oct 21": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 27.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "CLE": {
+     "win_total": 56.5,
+     "title_odds": 750,
+     "title_odds_decimal": 8.5,
+     "bbr_actual_result": "52-30 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+700",
+       "Jun 29": "+700",
+       "Jul 10": "+800",
+       "Sep 24": "+750",
+       "Oct 21": "+750"
+      },
+      "title_odds_last_pre_opener": 750,
+      "title_odds_last_pre_opener_decimal": 8.5,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 56.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "DAL": {
+     "win_total": 41.5,
+     "title_odds": 3500,
+     "title_odds_decimal": 36.0,
+     "bbr_actual_result": "26-56 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+3500",
+       "Jun 29": "+3500",
+       "Jul 10": "+3500",
+       "Sep 24": "+3500",
+       "Oct 21": "+3500"
+      },
+      "title_odds_last_pre_opener": 3500,
+      "title_odds_last_pre_opener_decimal": 36.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 41.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "DEN": {
+     "win_total": 53.5,
+     "title_odds": 550,
+     "title_odds_decimal": 6.5,
+     "bbr_actual_result": "54-28 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+1600",
+       "Jun 29": "+1600",
+       "Jul 10": "+700",
+       "Sep 24": "+750",
+       "Oct 21": "+550"
+      },
+      "title_odds_last_pre_opener": 550,
+      "title_odds_last_pre_opener_decimal": 6.5,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 53.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "DET": {
+     "win_total": 46.5,
+     "title_odds": 3300,
+     "title_odds_decimal": 34.0,
+     "bbr_actual_result": "60-22 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+6600",
+       "Jun 29": "+5000",
+       "Jul 10": "+6000",
+       "Sep 24": "+4500",
+       "Oct 21": "+3300"
+      },
+      "title_odds_last_pre_opener": 3300,
+      "title_odds_last_pre_opener_decimal": 34.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 46.5,
+      "win_over_price": "+105",
+      "win_under_price": "-125"
+     }
+    },
+    "GSW": {
+     "win_total": 47.5,
+     "title_odds": 2500,
+     "title_odds_decimal": 26.0,
+     "bbr_actual_result": "37-45 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+3000",
+       "Jun 29": "+2500",
+       "Jul 10": "+3000",
+       "Sep 24": "+2800",
+       "Oct 21": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 47.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "HOU": {
+     "win_total": 52.5,
+     "title_odds": 1400,
+     "title_odds_decimal": 15.0,
+     "bbr_actual_result": "52-30 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+800",
+       "Jun 29": "+750",
+       "Jul 10": "+850",
+       "Sep 24": "+750",
+       "Oct 21": "+1400"
+      },
+      "title_odds_last_pre_opener": 1400,
+      "title_odds_last_pre_opener_decimal": 15.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 52.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "IND": {
+     "win_total": 37.5,
+     "title_odds": 10000,
+     "title_odds_decimal": 101.0,
+     "bbr_actual_result": "19-63 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+6600",
+       "Jun 29": "+6600",
+       "Jul 10": "+8000",
+       "Sep 24": "+8000",
+       "Oct 21": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 37.5,
+      "win_over_price": "+100",
+      "win_under_price": "-120"
+     }
+    },
+    "LAC": {
+     "win_total": 49.5,
+     "title_odds": 1800,
+     "title_odds_decimal": 19.0,
+     "bbr_actual_result": "42-40 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+2500",
+       "Jun 29": "+3500",
+       "Jul 10": "+2000",
+       "Sep 24": "+1800",
+       "Oct 21": "+1800"
+      },
+      "title_odds_last_pre_opener": 1800,
+      "title_odds_last_pre_opener_decimal": 19.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 49.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "LAL": {
+     "win_total": 46.5,
+     "title_odds": 1600,
+     "title_odds_decimal": 17.0,
+     "bbr_actual_result": "53-29 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+1500",
+       "Jun 29": "+1400",
+       "Jul 10": "+1600",
+       "Sep 24": "+1800",
+       "Oct 21": "+1600"
+      },
+      "title_odds_last_pre_opener": 1600,
+      "title_odds_last_pre_opener_decimal": 17.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 46.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "MEM": {
+     "win_total": 39.5,
+     "title_odds": 12500,
+     "title_odds_decimal": 126.0,
+     "bbr_actual_result": "25-57 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+15000",
+       "Jun 29": "+15000",
+       "Jul 10": "+12500",
+       "Sep 24": "+10000",
+       "Oct 21": "+12500"
+      },
+      "title_odds_last_pre_opener": 12500,
+      "title_odds_last_pre_opener_decimal": 126.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 39.5,
+      "win_over_price": "-125",
+      "win_under_price": "+105"
+     }
+    },
+    "MIA": {
+     "win_total": 37.5,
+     "title_odds": 20000,
+     "title_odds_decimal": 201.0,
+     "bbr_actual_result": "43-39 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+25000",
+       "Jun 29": "+25000",
+       "Jul 10": "+30000",
+       "Sep 24": "+12500",
+       "Oct 21": "+20000"
+      },
+      "title_odds_last_pre_opener": 20000,
+      "title_odds_last_pre_opener_decimal": 201.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 37.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "MIL": {
+     "win_total": 43.5,
+     "title_odds": 5500,
+     "title_odds_decimal": 56.0,
+     "bbr_actual_result": "32-50 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+10000",
+       "Jun 29": "+8000",
+       "Jul 10": "+6600",
+       "Sep 24": "+5500",
+       "Oct 21": "+5500"
+      },
+      "title_odds_last_pre_opener": 5500,
+      "title_odds_last_pre_opener_decimal": 56.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 43.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "MIN": {
+     "win_total": 49.5,
+     "title_odds": 1300,
+     "title_odds_decimal": 14.0,
+     "bbr_actual_result": "49-33 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+1400",
+       "Jun 29": "+1400",
+       "Jul 10": "+1800",
+       "Sep 24": "+1700",
+       "Oct 21": "+1300"
+      },
+      "title_odds_last_pre_opener": 1300,
+      "title_odds_last_pre_opener_decimal": 14.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 49.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "NOP": {
+     "win_total": 30.5,
+     "title_odds": 30000,
+     "title_odds_decimal": 301.0,
+     "bbr_actual_result": "26-56 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+25000",
+       "Jun 29": "+25000",
+       "Jul 10": "+25000",
+       "Sep 24": "+30000",
+       "Oct 21": "+30000"
+      },
+      "title_odds_last_pre_opener": 30000,
+      "title_odds_last_pre_opener_decimal": 301.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 30.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "NYK": {
+     "win_total": 53.5,
+     "title_odds": 900,
+     "title_odds_decimal": 10.0,
+     "bbr_actual_result": "53-29 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+700",
+       "Jun 29": "+950",
+       "Jul 10": "+800",
+       "Sep 24": "+750",
+       "Oct 21": "+900"
+      },
+      "title_odds_last_pre_opener": 900,
+      "title_odds_last_pre_opener_decimal": 10.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 53.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "OKC": {
+     "win_total": 62.5,
+     "title_odds": 240,
+     "title_odds_decimal": 3.4,
+     "bbr_actual_result": "64-18 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+240",
+       "Jun 29": "+240",
+       "Jul 10": "+275",
+       "Sep 24": "+275",
+       "Oct 21": "+240"
+      },
+      "title_odds_last_pre_opener": 240,
+      "title_odds_last_pre_opener_decimal": 3.4,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 62.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "ORL": {
+     "win_total": 51.5,
+     "title_odds": 1800,
+     "title_odds_decimal": 19.0,
+     "bbr_actual_result": "45-37 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+1800",
+       "Jun 29": "+1500",
+       "Jul 10": "+1300",
+       "Sep 24": "+1700",
+       "Oct 21": "+1800"
+      },
+      "title_odds_last_pre_opener": 1800,
+      "title_odds_last_pre_opener_decimal": 19.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 51.5,
+      "win_over_price": "-115",
+      "win_under_price": "-105"
+     }
+    },
+    "PHI": {
+     "win_total": 43.5,
+     "title_odds": 4000,
+     "title_odds_decimal": 41.0,
+     "bbr_actual_result": "45-37 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+3500",
+       "Jun 29": "+3500",
+       "Jul 10": "+3000",
+       "Sep 24": "+4000",
+       "Oct 21": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 43.5,
+      "win_over_price": "-105",
+      "win_under_price": "-115"
+     }
+    },
+    "PHO": {
+     "win_total": 30.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "45-37 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+30000",
+       "Jun 29": "+50000",
+       "Jul 10": "+75000",
+       "Sep 24": "+50000",
+       "Oct 21": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 30.5,
+      "win_over_price": "-120",
+      "win_under_price": "+100"
+     }
+    },
+    "POR": {
+     "win_total": 35.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "42-40 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+50000",
+       "Jun 29": "+50000",
+       "Jul 10": "+50000",
+       "Sep 24": "+50000",
+       "Oct 21": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 35.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "SAC": {
+     "win_total": 35.5,
+     "title_odds": 50000,
+     "title_odds_decimal": 501.0,
+     "bbr_actual_result": "22-60 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+30000",
+       "Jun 29": "+50000",
+       "Jul 10": "+75000",
+       "Sep 24": "+50000",
+       "Oct 21": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 32.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "SAS": {
+     "win_total": 44.5,
+     "title_odds": 6600,
+     "title_odds_decimal": 67.0,
+     "bbr_actual_result": "62-20 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+2500",
+       "Jun 29": "+3000",
+       "Jul 10": "+5000",
+       "Sep 24": "+6600",
+       "Oct 21": "+6600"
+      },
+      "title_odds_last_pre_opener": 6600,
+      "title_odds_last_pre_opener_decimal": 67.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 44.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "TOR": {
+     "win_total": 39.5,
+     "title_odds": 10000,
+     "title_odds_decimal": 101.0,
+     "bbr_actual_result": "46-36 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+20000",
+       "Jun 29": "+20000",
+       "Jul 10": "+25000",
+       "Sep 24": "+12500",
+       "Oct 21": "+10000"
+      },
+      "title_odds_last_pre_opener": 10000,
+      "title_odds_last_pre_opener_decimal": 101.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 39.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    },
+    "UTA": {
+     "win_total": 18.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "22-60 (over)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+100000",
+       "Jun 29": "+100000",
+       "Jul 10": "+100000",
+       "Sep 24": "+100000",
+       "Oct 21": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 18.5,
+      "win_over_price": "-135",
+      "win_under_price": "+110"
+     }
+    },
+    "WAS": {
+     "win_total": 20.5,
+     "title_odds": 100000,
+     "title_odds_decimal": 1001.0,
+     "bbr_actual_result": "17-65 (under)",
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 22": "+100000",
+       "Jun 29": "+100000",
+       "Jul 10": "+100000",
+       "Sep 24": "+100000",
+       "Oct 21": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Oct 21",
+      "win_total_soh": 20.5,
+      "win_over_price": "-110",
+      "win_under_price": "-110"
+     }
+    }
+   },
+   "source": "Basketball-Reference preseason odds",
+   "url": "https://www.basketball-reference.com/leagues/NBA_2026_preseason_odds.html",
+   "secondary_urls": [
+    "https://www.covers.com/sportsoddshistory/nba-main/?y=2025-2026&sa=nba&a=finals",
+    "https://www.covers.com/sportsoddshistory/nba-win/?y=2025-2026&sa=nba&t=win"
+   ],
+   "season_preodds_columns": [
+    "Jun 22",
+    "Jun 29",
+    "Jul 10",
+    "Sep 24",
+    "Oct 21"
+   ],
+   "n_teams_title_odds": 30,
+   "n_teams_win_total": 30
+  },
+  "2026-27": {
+   "teams": {
+    "ATL": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+10000",
+       "Jun 23": "+8000",
+       "Jun 29": "+8000",
+       "Jul 2": "+8000",
+       "Jul 24": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "BOS": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+700",
+       "Jun 23": "+650",
+       "Jun 29": "+650",
+       "Jul 2": "+1400",
+       "Jul 24": "+1400"
+      },
+      "title_odds_last_pre_opener": 1400,
+      "title_odds_last_pre_opener_decimal": 15.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "BRK": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+100000",
+       "Jun 23": "+50000",
+       "Jun 29": "+50000",
+       "Jul 2": "+75000",
+       "Jul 24": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "CHI": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+75000",
+       "Jun 23": "+75000",
+       "Jun 29": "+75000",
+       "Jul 2": "+75000",
+       "Jul 24": "+75000"
+      },
+      "title_odds_last_pre_opener": 75000,
+      "title_odds_last_pre_opener_decimal": 751.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "CHO": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+10000",
+       "Jun 23": "+8000",
+       "Jun 29": "+12500",
+       "Jul 2": "+12500",
+       "Jul 24": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "CLE": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+3300",
+       "Jun 23": "+4000",
+       "Jun 29": "+4000",
+       "Jul 2": "+3000",
+       "Jul 24": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "DAL": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+8000",
+       "Jun 23": "+15000",
+       "Jun 29": "+15000",
+       "Jul 2": "+20000",
+       "Jul 24": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "DEN": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+2000",
+       "Jun 23": "+2500",
+       "Jun 29": "+2500",
+       "Jul 2": "+2500",
+       "Jul 24": "+2200"
+      },
+      "title_odds_last_pre_opener": 2200,
+      "title_odds_last_pre_opener_decimal": 23.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "DET": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+3300",
+       "Jun 23": "+2500",
+       "Jun 29": "+2500",
+       "Jul 2": "+2500",
+       "Jul 24": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "GSW": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+6600",
+       "Jun 23": "+6000",
+       "Jun 29": "+5000",
+       "Jul 2": "+3000",
+       "Jul 24": "+6000"
+      },
+      "title_odds_last_pre_opener": 6000,
+      "title_odds_last_pre_opener_decimal": 61.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "HOU": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+6600",
+       "Jun 23": "+6000",
+       "Jun 29": "+6000",
+       "Jul 2": "+6000",
+       "Jul 24": "+6000"
+      },
+      "title_odds_last_pre_opener": 6000,
+      "title_odds_last_pre_opener_decimal": 61.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "IND": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+3000",
+       "Jun 23": "+4000",
+       "Jun 29": "+4000",
+       "Jul 2": "+4000",
+       "Jul 24": "+5000"
+      },
+      "title_odds_last_pre_opener": 5000,
+      "title_odds_last_pre_opener_decimal": 51.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "LAC": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+6600",
+       "Jun 23": "+10000",
+       "Jun 29": "+10000",
+       "Jul 2": "+50000",
+       "Jul 24": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "LAL": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+2500",
+       "Jun 23": "+2500",
+       "Jun 29": "+2500",
+       "Jul 2": "+3000",
+       "Jul 24": "+4000"
+      },
+      "title_odds_last_pre_opener": 4000,
+      "title_odds_last_pre_opener_decimal": 41.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "MEM": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+75000",
+       "Jun 23": "+50000",
+       "Jun 29": "+50000",
+       "Jul 2": "+75000",
+       "Jul 24": "+75000"
+      },
+      "title_odds_last_pre_opener": 75000,
+      "title_odds_last_pre_opener_decimal": 751.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "MIA": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+3500",
+       "Jun 23": "+1800",
+       "Jun 29": "+2200",
+       "Jul 2": "+2500",
+       "Jul 24": "+3000"
+      },
+      "title_odds_last_pre_opener": 3000,
+      "title_odds_last_pre_opener_decimal": 31.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "MIL": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+25000",
+       "Jun 23": "+50000",
+       "Jun 29": "+50000",
+       "Jul 2": "+50000",
+       "Jul 24": "+75000"
+      },
+      "title_odds_last_pre_opener": 75000,
+      "title_odds_last_pre_opener_decimal": 751.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "MIN": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+2500",
+       "Jun 23": "+3000",
+       "Jun 29": "+2200",
+       "Jul 2": "+2500",
+       "Jul 24": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "NOP": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+25000",
+       "Jun 23": "+50000",
+       "Jun 29": "+50000",
+       "Jul 2": "+50000",
+       "Jul 24": "+50000"
+      },
+      "title_odds_last_pre_opener": 50000,
+      "title_odds_last_pre_opener_decimal": 501.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "NYK": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+700",
+       "Jun 23": "+750",
+       "Jun 29": "+750",
+       "Jul 2": "+900",
+       "Jul 24": "+850"
+      },
+      "title_odds_last_pre_opener": 850,
+      "title_odds_last_pre_opener_decimal": 9.5,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "OKC": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+260",
+       "Jun 23": "+260",
+       "Jun 29": "+260",
+       "Jul 2": "+260",
+       "Jul 24": "+275"
+      },
+      "title_odds_last_pre_opener": 275,
+      "title_odds_last_pre_opener_decimal": 3.75,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "ORL": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+5000",
+       "Jun 23": "+8000",
+       "Jun 29": "+8000",
+       "Jul 2": "+8000",
+       "Jul 24": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "PHI": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+6000",
+       "Jun 23": "+6000",
+       "Jun 29": "+6600",
+       "Jul 2": "+2000",
+       "Jul 24": "+1000"
+      },
+      "title_odds_last_pre_opener": 1000,
+      "title_odds_last_pre_opener_decimal": 11.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "PHO": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+8000",
+       "Jun 23": "+15000",
+       "Jun 29": "+12500",
+       "Jul 2": "+12500",
+       "Jul 24": "+12500"
+      },
+      "title_odds_last_pre_opener": 12500,
+      "title_odds_last_pre_opener_decimal": 126.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "POR": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+8000",
+       "Jun 23": "+10000",
+       "Jun 29": "+10000",
+       "Jul 2": "+8000",
+       "Jul 24": "+8000"
+      },
+      "title_odds_last_pre_opener": 8000,
+      "title_odds_last_pre_opener_decimal": 81.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "SAC": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+75000",
+       "Jun 23": "+75000",
+       "Jun 29": "+75000",
+       "Jul 2": "+100000",
+       "Jul 24": "+100000"
+      },
+      "title_odds_last_pre_opener": 100000,
+      "title_odds_last_pre_opener_decimal": 1001.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "SAS": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+270",
+       "Jun 23": "+260",
+       "Jun 29": "+260",
+       "Jul 2": "+260",
+       "Jul 24": "+275"
+      },
+      "title_odds_last_pre_opener": 275,
+      "title_odds_last_pre_opener_decimal": 3.75,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "TOR": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+15000",
+       "Jun 23": "+12500",
+       "Jun 29": "+6000",
+       "Jul 2": "+2200",
+       "Jul 24": "+2500"
+      },
+      "title_odds_last_pre_opener": 2500,
+      "title_odds_last_pre_opener_decimal": 26.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "UTA": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+15000",
+       "Jun 23": "+25000",
+       "Jun 29": "+15000",
+       "Jul 2": "+20000",
+       "Jul 24": "+20000"
+      },
+      "title_odds_last_pre_opener": 20000,
+      "title_odds_last_pre_opener_decimal": 201.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    },
+    "WAS": {
+     "win_total": null,
+     "title_odds": null,
+     "title_odds_decimal": null,
+     "secondary_sportsoddshistory": {
+      "title_odds_series_betmgm": {
+       "Jun 14": "+15000",
+       "Jun 23": "+20000",
+       "Jun 29": "+20000",
+       "Jul 2": "+20000",
+       "Jul 24": "+15000"
+      },
+      "title_odds_last_pre_opener": 15000,
+      "title_odds_last_pre_opener_decimal": 151.0,
+      "title_odds_last_pre_opener_date": "Jul 24"
+     }
+    }
+   },
+   "source": "sportsoddshistory.com/Covers (BetMGM) — B-R page κενή",
+   "url": "https://www.basketball-reference.com/leagues/NBA_2027_preseason_odds.html",
+   "secondary_urls": [
+    "https://www.covers.com/sportsoddshistory/nba-main/?y=2026-2027&sa=nba&a=finals",
+    "https://www.covers.com/sportsoddshistory/nba-win/?y=2026-2027&sa=nba&t=win"
+   ],
+   "season_preodds_columns": [
+    "Jun 14",
+    "Jun 23",
+    "Jun 29",
+    "Jul 2",
+    "Jul 24"
+   ],
+   "n_teams_title_odds": 30,
+   "n_teams_win_total": 0,
+   "note": "B-R: κενός πίνακας (0 ομάδες)· win totals ΔΕΝ έχουν δημοσιευτεί ακόμα στο sportsoddshistory (κενός πίνακας)· title odds = τελευταία στήλη Jul 24, 2026 (BetMGM)"
+  }
+ }
+}
