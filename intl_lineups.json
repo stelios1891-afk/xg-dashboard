@@ -11778,46 +11778,46 @@
 "update": false
 },
 "NL C|Kazakhstan|Faroe Islands|2026-10-06 14:00": {
-"t": "2026-10-06 12:34",
+"t": "2026-10-06 13:03",
 "sig": [
 269806,
 387960,
+462023,
+489507,
 489579,
-552451,
 634251,
-762729,
 931332,
 980776,
 988184,
-1066256,
 1066266,
 1066269,
 1068585,
-1068586,
 1210914,
+1241852,
 1251303,
+1269250,
 1270388,
 1284420,
 1296656,
 1652799,
-1780058,
+1780059,
 1781547,
-1786952,
+1819380,
 0,
 138124,
 214352,
 451644,
 551281,
 652263,
-652278,
 762747,
 765401,
 833474,
-846006,
+857150,
 857959,
 1016081,
 1067673,
 1149809,
+1150612,
 1150615,
 1154746,
 1155663,
@@ -11829,22 +11829,23 @@
 1623465
 ],
 "mid": "5181939",
-"min_before": 85,
+"min_before": 57,
 "teams": {
 "h": {
 "nm": "Kazakhstan",
-"v0": 9644773.0,
-"v1": 5526028.4,
-"dE": -31.2,
+"v0": 5526028.0,
+"v1": 7683936.4,
+"dE": 18.5,
 "out23": [
-"Maksim Samorodov(3.5M)",
-"Islam Chesnokov(1.0M)"
+"Islam Chesnokov(1.0M)",
+"Galymzhan Kenzhebek(0.7M)",
+"Azamat Tuyakbaev(0.5M)",
+"Aleksandr Mrynskiy(0.5M)"
 ],
 "new": [],
 "bench": [
-"Temirlan Anarbekov",
-"Azamat Tuyakbayev",
-"Zhasulan Amir"
+"Zhasulan Amir",
+"Damir Kasabulat"
 ],
 "unav": [
 "Dastan Satpaev (τραυμ.)"
@@ -11852,67 +11853,37 @@
 },
 "a": {
 "nm": "Faroe Islands",
-"v0": 3128691.0,
-"v1": 5187902.0,
-"dE": 28.4,
+"v0": 5187902.0,
+"v1": 3138773.0,
+"dE": -28.2,
 "out23": [
-"Asi Dam(0.2M)",
-"Noah Mneney(0.2M)",
-"Arnbjorn Svensson(0.1M)"
+"Noah Mneney(0.2M)"
 ],
 "new": [
-"Andrias Edmundsson(1.9M)",
-"Adrian Justinussen(0.5M)",
 "Mattias Hellisdal(0.2M)"
 ],
 "bench": [
-"Áki Samuelsen",
-"Adrian Justinussen",
-"Samuel Chukwudi"
+"Samuel Chukwudi",
+"Poul Kallsberg",
+"Ási Dam"
 ],
 "unav": []
 }
 },
-"delta_elo": -59.6,
+"delta_elo": 46.7,
 "src": "bovada",
 "ev0": {
-"Μ1": {
-"xg": [
-1.51,
-0.98
-],
-"picks": [],
-"e_h": 13.6,
-"f_h": 1.45,
-"e_a": -22.5,
-"f_a": 2.94,
-"e_o": 2.6
-},
-"Μ3": {
-"xg": [
-1.31,
-1.0
-],
-"picks": [],
-"e_h": 5.2,
-"f_h": 1.6,
-"e_a": -12.6,
-"f_a": 2.46,
-"e_o": -3.8
-}
-},
-"ev1": {
 "Μ1": {
 "xg": [
 1.27,
 1.02
 ],
 "picks": [],
-"e_h": 2.4,
-"f_h": 1.67,
-"e_a": -9.3,
-"f_a": 2.33,
-"e_o": -5.0
+"e_h": 4.5,
+"f_h": 1.66,
+"e_a": -11.6,
+"f_a": 2.32,
+"e_o": -3.3
 },
 "Μ3": {
 "xg": [
@@ -11920,22 +11891,48 @@
 1.05
 ],
 "picks": [],
-"e_h": -6.6,
+"e_h": -4.8,
 "f_h": 1.91,
-"e_a": 1.5,
+"e_a": -1.2,
 "f_a": 1.97,
-"e_o": -11.8
+"e_o": -10.2
+}
+},
+"ev1": {
+"Μ1": {
+"xg": [
+1.46,
+0.99
+],
+"picks": [],
+"e_h": 13.6,
+"f_h": 1.48,
+"e_a": -21.8,
+"f_a": 2.79,
+"e_o": 2.9
+},
+"Μ3": {
+"xg": [
+1.26,
+1.01
+],
+"picks": [],
+"e_h": 4.8,
+"f_h": 1.66,
+"e_a": -12.0,
+"f_a": 2.34,
+"e_o": -3.8
 }
 },
 "m2": {
-"e_h": -7.1,
-"e_a": 2.1,
-"e_o": -9.3,
+"e_h": -5.5,
+"e_a": -0.5,
+"e_o": -7.7,
 "picks": []
 },
 "cons0": "καμια",
 "cons1": "καμια",
-"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Kazakhstan – Faroe Islands (17:00)\nKazakhstan: αξια 9.6→5.5M (-31 Elo) · εκτος 23: Maksim Samorodov(3.5M), Islam Chesnokov(1.0M) · μη διαθεσιμοι: Dastan Satpaev (τραυμ.) · ακριβοι στον παγκο: Temirlan Anarbekov, Azamat Tuyakbayev, Zhasulan Amir\nFaroe Islands: αξια 3.1→5.2M (+28 Elo) · εκτος 23: Asi Dam(0.2M), Noah Mneney(0.2M), Arnbjorn Svensson(0.1M) · νεοι (οχι στη λιστα TM): Andrias Edmundsson(1.9M), Adrian Justinussen(0.5M), Mattias Hellisdal(0.2M) · ακριβοι στον παγκο: Áki Samuelsen, Adrian Justinussen, Samuel Chukwudi\nAH +0 @1.80/2.11 (Bovada): Μ1 γηπ +14→+2% / φιλ -22→-9% · Μ3 γηπ +5→-7% / φιλ -13→+2% · Μ2 -7/+2%\nΣυναινεση: πριν καμια → με αποστολες καμια",
-"update": false
+"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Kazakhstan – Faroe Islands (17:00)\nKazakhstan: αξια 5.5→7.7M (+18 Elo) · εκτος 23: Islam Chesnokov(1.0M), Galymzhan Kenzhebek(0.7M), Azamat Tuyakbaev(0.5M), Aleksandr Mrynskiy(0.5M) · μη διαθεσιμοι: Dastan Satpaev (τραυμ.) · ακριβοι στον παγκο: Zhasulan Amir, Damir Kasabulat\nFaroe Islands: αξια 5.2→3.1M (-28 Elo) · εκτος 23: Noah Mneney(0.2M) · νεοι (οχι στη λιστα TM): Mattias Hellisdal(0.2M) · ακριβοι στον παγκο: Samuel Chukwudi, Poul Kallsberg, Ási Dam\nAH +0 @1.85/2.03 (Bovada): Μ1 γηπ +4→+14% / φιλ -12→-22% · Μ3 γηπ -5→+5% / φιλ -1→-12% · Μ2 -6/-0%\nΣυναινεση: πριν καμια → με αποστολες καμια",
+"update": true
 }
 }
