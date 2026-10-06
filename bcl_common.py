@@ -32,7 +32,7 @@ def load(pre=False):
     rows.sort(key=lambda r: r[2])
     return rows
 
-def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, comp='BCL', years=None, today_ts=None, want_state=False, prior_adj=None):
+def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL', years=None, today_ts=None, want_state=False, prior_adj=None):
     by_y = collections.defaultdict(list)
     for r in rows:
         if r[1] == 'PRE' and kf <= 0: continue
@@ -65,7 +65,7 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, comp='BCL', years
             for r in todays:
                 if r[5] is None: continue
                 i, j = ix[r[3]], ix[r[4]]; yv = float(np.clip(r[5] - r[6], -clip, clip))
-                wt = kf if r[1] == 'PRE' else 1.0
+                wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else wo)   # wo = βαρος ματς αλλων διοργανωσεων (εγχωρια/Ευρωπη)
                 v = np.zeros(n + 1); v[i] = 1; v[j] = -1; v[n] = 0 if r[1] == 'PRE' else 1
                 nz = (i, j, n)
                 for a_ in nz:

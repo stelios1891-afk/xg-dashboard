@@ -11,6 +11,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 from el_season import Y as CUR
 M1_CFG = dict(carry=1.4, lam=8, HL=9999, w=0.5)      # bcl_engine_test2: επιλογη σε ολες τις 5 σεζον (με φιλικα), 6/10
 M2_CFG = (1.3, 1.5, 9999.0, 25.0, 0.5)                # (περσι, λ, HL, ψαλιδισμα, βαρος φιλικων) — bcl_engine_test2 (φιλικα: 21/24 ρυθμισεις καλυτερες ≥4/5)
+WO = 1.5                                               # βαρος εγχωριων/Ευρωπης vs BCL στην κοινη κλιμακα (bcl_round_anchor_test Β: 4/5)
 KX = 4.5                                               # ειδικοι/αποδοσεις: αφετηρια += KX · z (bcl_expert_z.json, bcl_expert_test.py) — 6/10 Στελιος: μονο αποδοσεις νικητη (ιστορικο δεν υπαρχει, κx απο 2024-25 ειδικους)
 A = 0.75                                               # μιξη Μ1/Μ2 (bcl_engine_test2)
 SIGMA = 12.0                                           # sd (πραγματικο − κλεισιμο) 2024-26
@@ -51,7 +52,7 @@ if KX > 0:
                 if best[0] >= .5: _Z.setdefault(best[1], []).append((x - _mu) / _sd)
         if _Z: ADJ[CUR] = {t: KX * float(np.mean(v)) for t, v in _Z.items()}; print(f'αποδοσεις νικητη {CUR}: {len(_Z)} ομαδες στην αφετηρια (κx {KX})')
     except Exception as e: print('ΠΡΟΣΟΧΗ: bcl_outrights.json —', e)
-_, states = B.run(rows, *M2_CFG[:4], kf=M2_CFG[4], want_state=True, prior_adj=ADJ)
+_, states = B.run(rows, *M2_CFG[:4], kf=M2_CFG[4], wo=WO, want_state=True, prior_adj=ADJ)
 st2 = states.get(CUR) or states[max(states)]
 # ομαδες χωρις ματς φετος: περσινο × carry (οπως στο τεστ, οπου η αφετηρια ειναι carry × περσινο τελος)
 if CUR in states and CUR - 1 in states:
@@ -101,6 +102,6 @@ for key, L in FG.items():
             if t and comp == 'BCL' and int(y) == CUR: bcl_now.add(t)
 json.dump(dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=CUR, A=A, sigma=SIGMA, m1_cfg=M1_CFG, m2_cfg=list(M2_CFG),
                m2=dict(r=st2['r'], h=st2['h']), m1=m1, names={t: sorted(v) for t, v in names.items()}, bcl_teams=sorted(bcl_now),
-               model=f'BCL: (1−{A})·μονο BCL (περσι {M1_CFG["carry"]}, λ {M1_CFG["lam"]}, HL {M1_CFG["HL"]}, τυχη {M1_CFG["w"]}) + {A}·κοινη κλιμακα (ολα τα ματς, περσι {M2_CFG[0]}, λ {M2_CFG[1]}, φιλικα {M2_CFG[4]}, ειδικοι {KX})'),
+               model=f'BCL: (1−{A})·μονο BCL (περσι {M1_CFG["carry"]}, λ {M1_CFG["lam"]}, HL {M1_CFG["HL"]}, τυχη {M1_CFG["w"]}) + {A}·κοινη κλιμακα (ολα τα ματς, περσι {M2_CFG[0]}, λ {M2_CFG[1]}, φιλικα {M2_CFG[4]}, εγχωρια ×{WO}, αποδοσεις νικητη {KX})'),
           open('bcl_state.json', 'w', encoding='utf-8'), ensure_ascii=False)
 print(f'bcl_state.json: Μ2 {len(st2["r"])} ομαδες · Μ1 {len(m1["O"]) if m1 else 0} (ματς φετος {m1["n"] if m1 else 0}) · ομαδες BCL φετος {len(bcl_now)}')

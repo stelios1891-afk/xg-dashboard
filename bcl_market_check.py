@@ -49,6 +49,7 @@ for f in sorted(os.listdir('nowgoal_bcl')):
                 return (-L, -mu, o2, o1) if sw else (L, mu, o1, o2)
             rec[cid] = dict(o=cv(R[0]), c=cv(R[-1]))
         if rec: MK[hit] = rec
+pickle.dump({ids[i]: v for i, v in MK.items()}, open('bcl_mk.pkl', 'wb'))   # αγορα ανα ματς (για αλλα τεστ)
 EVS = sorted({int(YS[i]) for i in MK if np.isfinite(FIN[i])})
 NEED = math.ceil(.75 * len(EVS))   # 4 σεζον → 3 · 5 σεζον → 4 (ιδιο με τον προ-δηλωμενο κανονα του bcl_engine_test)
 ii = [i for i in MK if 3 in MK[i] and np.isfinite(FIN[i])]
