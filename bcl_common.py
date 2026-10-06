@@ -75,3 +75,45 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
         prior = {t: float(rr[ix[t]]) for t in teams}
         if want_state: states[y] = dict(r=dict(prior), h=float(h))
     return (preds, states) if want_state else preds
+
+def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False):
+    """6/10/2026 — ΚΟΙΝΗ ΚΛΙΜΑΚΑ ΣΥΝΟΛΩΝ: συνολο = μ_διοργανωσης + s_γηπ + s_φιλ (s = «ταση συνολου» ομαδας: επιθεση + αμυνα που δεχεται).
+    Ενα s ανα ομαδα απο ΟΛΑ τα ματς (καθε διοργανωση με δικο της επιπεδο μ — τα πρωταθληματα σκοραρουν διαφορετικα), walk-forward καθε μερα.
+    Ridge: s → carry × περσινο (νεες 0)· μ → περσινο μ της διοργανωσης (βαρος lam_mu). Φιλικα (comp 'PRE') βαρος kf, αλλες διοργανωσεις wo."""
+    by_y = collections.defaultdict(list)
+    for r in rows:
+        if r[1] == 'PRE' and kf <= 0: continue
+        by_y[r[0]].append(r)
+    prior, pmu = {}, {}; preds = {}; states = {}
+    for y in sorted(by_y):
+        R = by_y[y]
+        teams = sorted({r[3] for r in R} | {r[4] for r in R}); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
+        comps = sorted({r[1] for r in R}); cx = {c: n + k for k, c in enumerate(comps)}; N = n + len(comps)
+        done = [r[5] + r[6] for r in R if r[5] is not None]; gmean = float(np.mean(done)) if done else 160.0
+        m0 = np.array([carry * prior.get(t, 0.0) for t in teams] + [pmu.get(c, gmean) for c in comps])
+        M = np.zeros((N, N)); b = np.zeros(N)
+        days = collections.defaultdict(list)
+        for r in R: days[int(r[2] // 86400)].append(r)
+        def solve():
+            A = M.copy(); A[np.arange(n), np.arange(n)] += lam
+            for c in comps: A[cx[c], cx[c]] += lam_mu if c in pmu else 1.0
+            rhs = b.copy(); rhs[:n] += lam * m0[:n]
+            for c in comps: rhs[cx[c]] += (lam_mu if c in pmu else 1.0) * m0[cx[c]]
+            return np.linalg.solve(A, rhs)
+        for d in sorted(days):
+            todays = days[d]
+            need = [r for r in todays if r[1] == comp]
+            if need:
+                x = solve()
+                for r in need: preds[r[7]] = (float(x[cx[comp]] + x[ix[r[3]]] + x[ix[r[4]]]), y)
+            for r in todays:
+                if r[5] is None: continue
+                i, j, c = ix[r[3]], ix[r[4]], cx[r[1]]; yv = float(r[5] + r[6])
+                wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else wo)
+                for a_ in (i, j, c):
+                    for c_ in (i, j, c): M[a_, c_] += wt
+                    b[a_] += wt * yv
+        x = solve()
+        prior = {t: float(x[ix[t]]) for t in teams}; pmu = {c: float(x[cx[c]]) for c in comps}
+        if want_state: states[y] = dict(s=dict(prior), mu=dict(pmu))
+    return (preds, states) if want_state else preds
