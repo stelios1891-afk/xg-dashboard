@@ -72,9 +72,12 @@ def main():
                     for o in mk_.get('outcomes', []):
                         if o.get('point') is not None: tl = float(o['point'])
         T = tl if tl is not None else (games.get(code) or {}).get('total') or TOT_DEFAULT
+        tS = st.get('tot') or {}; T_src = 'αγορα' if tl is not None else 'μεσος ορος'
+        if tS and h in tS.get('s', {}) and a in tS.get('s', {}):          # 6/10: ΜΗΧΑΝΗ ΣΥΝΟΛΩΝ (κοινη κλιμακα + διορθωση τυχης)
+            T = tS['mu_bcl'] + tS['s'][h] + tS['s'][a]; T_src = 'μοντελο'
         games[code] = dict(code=code, round=None, phase='RS', group=None, utc=ko.isoformat().replace('+00:00', 'Z'), home=g['home_team'], away=g['away_team'], hcode=h, acode=a,
                            margin=round(mg, 2), m_bcl=None if p1 is None else round(p1, 2), m_common=None if p2 is None else round(p2, 2), played=False,
-                           total=round(T, 1), total_src='αγορα' if tl is not None else 'μεσος ορος', pts_h=round((T + mg) / 2, 1), pts_a=round((T - mg) / 2, 1),
+                           total=round(T, 1), total_src=T_src, mkt_tl=tl, pts_h=round((T + mg) / 2, 1), pts_a=round((T - mg) / 2, 1),
                            p_home=round(Phi(mg / st.get('sigma', 12.0)), 3), version='bcl1', venue='')
     finish(games, st, now)
     up = [dict(code=g['code'], round=None, utc=E._pdt(g['utc']), hcode=g['hcode'], acode=g['acode'], home=g['home'], away=g['away']) for g in games.values() if not g['played']]
@@ -112,7 +115,7 @@ def finish(games, st, now):
             for t in (g['hcode'], g['acode']): ng[t] = ng.get(t, 0) + 1
     ratings = [dict(code=t, name=nm.get(t) or (st['names'].get(t) or [t])[0], net=round(r2.get(t, 0) - mu, 2),
                     O=round(m1.get('O', {}).get(t, 0), 2), D=round(m1.get('D', {}).get(t, 0), 2), pace=0.0, games=ng.get(t, 0)) for t in tm if t in r2]
-    json.dump(dict(generated=now.isoformat(timespec='minutes'), season=st['season'], comp='BCL', model=st.get('model'), sigma_margin=st.get('sigma', 12.5), sigma_total=16.0,
+    json.dump(dict(generated=now.isoformat(timespec='minutes'), season=st['season'], comp='BCL', model=st.get('model'), sigma_margin=st.get('sigma', 12.5), sigma_total=(st.get('tot') or {}).get('sigma', 17.3),
                    games=sorted(games.values(), key=lambda g: g['utc']), ratings=ratings), open(F('bcl_projections.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 def results_only():

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """bcl_picks.py — VALUE PICKS Basketball Champions League + Telegram (6/10/2026, Στελιος «BCL σημερα»). Αντιγραφο του ec_picks.py
-(ιδια λογικη/ημερολογιο/κατασταση/μηνυματα «δεν ισχυει πια») με αρχεια bcl_* — ΜΟΝΟ ΧΑΝΤΙΚΑΠ (τα συνολα BCL δεν εχουν τεσταριστει).
+(ιδια λογικη/ημερολογιο/κατασταση/μηνυματα «δεν ισχυει πια») με αρχεια bcl_* — ΧΑΝΤΙΚΑΠ + ΣΥΝΟΛΑ (6/10 βραδυ: μοντελο μονο του ≥8%, bcl_totals_luck_test).
 Κανονας και σ: απο bcl_engine_test (βλ. HC_MIN και sigma_margin στο bcl_projections.json)."""
 import os, sys, json, datetime as dt
 sys.stdout.reconfigure(encoding='utf-8')
@@ -9,9 +9,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 HC_MIN, ODDS_DELTA = 0.08, 0.05
 PAPER = False       # 6/10 Στελιος: «βαλτα στο dashboard οπως Euroleague/EuroCup, alerts, picks — το βλεπουμε στην πραξη» (backtest ≥8% Crown −0.4% / B365 +1.8%)
-TOT_MIN, TOT_W = 0.06, 0.5          # 5/10: συνολα αγων 1-6 — edge ≥6% με μιξη 50/50
-TOT_MIN_LATE, TOT_W_LATE = 0.06, 1.0   # 5/10 (Στελιος «μιξη ως την 7η, μετα το μοντελο μονο του»): αγων 7+ μοντελο ΜΟΝΟ ΤΟΥ, edge ≥6%
-TOT_EARLY_GNO = 5                    # gno = ματς που εχει ηδη παιξει (max των 2)· 0-5 = αγων 1-6
+TOT_MIN, TOT_W = 0.08, 1.0          # 6/10 ΣΥΝΟΛΑ BCL: μοντελο ΜΟΝΟ ΤΟΥ, edge ≥8% (bcl_totals_luck_test LOSO: Crown ανοιγμα +7.1% 4/5, Bet365 +11.5% 4/5, Κ2 .41 t 2.8)
+TOT_MIN_LATE, TOT_W_LATE = 0.08, 1.0   # (ιδιο ολη τη σεζον — η μιξη 50/50 δεν ηταν καλυτερη)
+TOT_EARLY_GNO = 5
 # ec_totals_bias_test / ec_totals_thr_test (Crown ανοιγμα U2020-25, αγων 7+): μιξη ≥6% −1.1% (125) · μοντελο μονο ≥6% +10.3% (339, 4/6)·
 #   LOSO κατωφλιου ≤6% σε 6/6 · ζωνη 6-8% +27% (40), CLV +0.62, bootstrap P .96. ΠΡΟΣΟΧΗ: βαθμονομηση φτωχη (edge 15%+ → +2.2%).
 
@@ -21,7 +21,7 @@ def tot_rule(game):
 
 def tot_mix(game, pin, st):
     """Αναμενομενο συνολο για τα picks (αγων 1-6: μιξη 50/50 με την αγορα · 7+: μοντελο μονο του)· None αν λειπουν τιμες."""
-    if not game or game.get('total') is None or pin.get('tl') is None or not pin.get('to') or not pin.get('tu'): return None
+    if not game or game.get('total') is None or game.get('total_src') != 'μοντελο' or pin.get('tl') is None or not pin.get('to') or not pin.get('tu'): return None
     from statistics import NormalDist
     T, ov, un = float(pin['tl']), float(pin['to']), float(pin['tu'])
     po = (1 / ov) / (1 / ov + 1 / un); mk = T + st * NormalDist().inv_cdf(min(max(po, 1e-4), 1 - 1e-4))
@@ -51,6 +51,17 @@ def compute():
             if e >= HC_MIN:
                 picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4),
                                   proj_odds=round((p_ + (1 - p_ - pp)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L))
+        # ---- συνολο (6/10): μοντελο μονο του ≥8% ----
+        tm = tot_mix(g, pin, st)
+        if tm:
+            mu, mk = tm; T = float(pin['tl'])
+            po, pq = cover(mu, -T, st); pu = 1 - po - pq
+            for nm, p_, od in (('Over', po, float(pin['to'])), ('Under', pu, float(pin['tu']))):
+                e = p_ * od + pq - 1
+                if e >= tot_rule(g)[1]:
+                    picks.append(dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
+                                      proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(float(g['total']), 1),
+                                      mix_total=round(mu, 1), mkt_total=round(mk, 1), mkt_line=T, gno=g.get('gno')))
     return picks
 
 def key(p): return f"BCL|{p['code']}|{p['mkt']}|{p.get('bet') or p['side']}|{p['hcap']:g}"

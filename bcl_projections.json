@@ -1,10 +1,10 @@
 {
- "generated": "2026-10-06T11:45+00:00",
+ "generated": "2026-10-06T11:47+00:00",
  "season": 2026,
  "comp": "BCL",
  "model": "BCL: (1−0.75)·μονο BCL (περσι 1.4, λ 8, HL 9999, τυχη 0.5) + 0.75·κοινη κλιμακα (ολα τα ματς, περσι 1.3, λ 1.5, φιλικα 0.5, εγχωρια ×1.5, αποδοσεις νικητη 4.5)",
  "sigma_margin": 12.0,
- "sigma_total": 16.0,
+ "sigma_total": 17.3,
  "games": [
   {
    "code": "pin1637487387",
@@ -20,10 +20,11 @@
    "m_bcl": -0.14,
    "m_common": 2.58,
    "played": false,
-   "total": 167.5,
-   "total_src": "αγορα",
-   "pts_h": 84.7,
-   "pts_a": 82.8,
+   "total": 173.0,
+   "total_src": "μοντελο",
+   "mkt_tl": 167.5,
+   "pts_h": 87.4,
+   "pts_a": 85.5,
    "p_home": 0.563,
    "version": "bcl1",
    "venue": ""
@@ -42,10 +43,11 @@
    "m_bcl": null,
    "m_common": -8.76,
    "played": false,
-   "total": 164.5,
-   "total_src": "αγορα",
-   "pts_h": 77.9,
-   "pts_a": 86.6,
+   "total": 169.1,
+   "total_src": "μοντελο",
+   "mkt_tl": 164.5,
+   "pts_h": 80.2,
+   "pts_a": 88.9,
    "p_home": 0.233,
    "version": "bcl1",
    "venue": ""
@@ -64,10 +66,11 @@
    "m_bcl": null,
    "m_common": 1.63,
    "played": false,
-   "total": 172.0,
-   "total_src": "αγορα",
-   "pts_h": 86.8,
-   "pts_a": 85.2,
+   "total": 174.3,
+   "total_src": "μοντελο",
+   "mkt_tl": 172.0,
+   "pts_h": 88.0,
+   "pts_a": 86.3,
    "p_home": 0.554,
    "version": "bcl1",
    "venue": ""
@@ -86,10 +89,11 @@
    "m_bcl": 20.51,
    "m_common": 26.34,
    "played": false,
-   "total": 179.0,
-   "total_src": "αγορα",
-   "pts_h": 101.9,
-   "pts_a": 77.1,
+   "total": 180.0,
+   "total_src": "μοντελο",
+   "mkt_tl": 179.0,
+   "pts_h": 102.4,
+   "pts_a": 77.6,
    "p_home": 0.981,
    "version": "bcl1",
    "venue": ""
@@ -108,10 +112,11 @@
    "m_bcl": null,
    "m_common": -9.38,
    "played": false,
-   "total": 171.5,
-   "total_src": "αγορα",
-   "pts_h": 81.1,
-   "pts_a": 90.4,
+   "total": 175.3,
+   "total_src": "μοντελο",
+   "mkt_tl": 171.5,
+   "pts_h": 82.9,
+   "pts_a": 92.3,
    "p_home": 0.217,
    "version": "bcl1",
    "venue": ""
@@ -130,10 +135,11 @@
    "m_bcl": null,
    "m_common": 9.99,
    "played": false,
-   "total": 166.0,
-   "total_src": "αγορα",
-   "pts_h": 88.0,
-   "pts_a": 78.0,
+   "total": 169.3,
+   "total_src": "μοντελο",
+   "mkt_tl": 166.0,
+   "pts_h": 89.6,
+   "pts_a": 79.7,
    "p_home": 0.798,
    "version": "bcl1",
    "venue": ""
@@ -152,25 +158,17 @@
    "m_bcl": 13.61,
    "m_common": 15.18,
    "played": false,
-   "total": 178.5,
-   "total_src": "αγορα",
-   "pts_h": 96.6,
-   "pts_a": 81.9,
+   "total": 175.6,
+   "total_src": "μοντελο",
+   "mkt_tl": 178.5,
+   "pts_h": 95.2,
+   "pts_a": 80.4,
    "p_home": 0.891,
    "version": "bcl1",
    "venue": ""
   }
  ],
  "ratings": [
-  {
-   "code": "6TSpW3Cb",
-   "name": "Cholet Basket",
-   "net": 0.24,
-   "O": 8.38,
-   "D": 0.14,
-   "pace": 0.0,
-   "games": 0
-  },
   {
    "code": "vaT6tQCQ",
    "name": "BK Sabah Baku",
@@ -190,11 +188,56 @@
    "games": 0
   },
   {
+   "code": "pYaI8xaK",
+   "name": "KK Cibona",
+   "net": -6.72,
+   "O": 0,
+   "D": 0,
+   "pace": 0.0,
+   "games": 0
+  },
+  {
+   "code": "QR2OmUw1",
+   "name": "Galatasaray",
+   "net": 5.23,
+   "O": 10.36,
+   "D": -6.78,
+   "pace": 0.0,
+   "games": 0
+  },
+  {
+   "code": "6TSpW3Cb",
+   "name": "Cholet Basket",
+   "net": 0.24,
+   "O": 8.38,
+   "D": 0.14,
+   "pace": 0.0,
+   "games": 0
+  },
+  {
+   "code": "bH3GbrA3",
+   "name": "Igokea",
+   "net": -4.25,
+   "O": -3.63,
+   "D": 4.87,
+   "pace": 0.0,
+   "games": 0
+  },
+  {
    "code": "Sn9ppE18",
    "name": "Club Joventut Badalona",
    "net": 10.41,
    "O": 10.95,
    "D": -6.08,
+   "pace": 0.0,
+   "games": 0
+  },
+  {
+   "code": "8CRfmy39",
+   "name": "Brose Bamberg",
+   "net": 1.67,
+   "O": 0,
+   "D": 0,
    "pace": 0.0,
    "games": 0
   },
@@ -217,45 +260,9 @@
    "games": 0
   },
   {
-   "code": "QBvnpKKH",
-   "name": "Bnei Herzliya",
-   "net": -1.58,
-   "O": 2.0,
-   "D": -0.35,
-   "pace": 0.0,
-   "games": 0
-  },
-  {
-   "code": "pYaI8xaK",
-   "name": "KK Cibona",
-   "net": -6.72,
-   "O": 0,
-   "D": 0,
-   "pace": 0.0,
-   "games": 0
-  },
-  {
-   "code": "bH3GbrA3",
-   "name": "Igokea",
-   "net": -4.25,
-   "O": -3.63,
-   "D": 4.87,
-   "pace": 0.0,
-   "games": 0
-  },
-  {
-   "code": "QR2OmUw1",
-   "name": "Galatasaray",
-   "net": 5.23,
-   "O": 10.36,
-   "D": -6.78,
-   "pace": 0.0,
-   "games": 0
-  },
-  {
-   "code": "GWZ15Sne",
-   "name": "Bilbao Basket",
-   "net": 8.33,
+   "code": "Q96Izpwc",
+   "name": "Peristeri BC",
+   "net": 0.1,
    "O": 0,
    "D": 0,
    "pace": 0.0,
@@ -271,20 +278,20 @@
    "games": 0
   },
   {
-   "code": "8CRfmy39",
-   "name": "Brose Bamberg",
-   "net": 1.67,
+   "code": "GWZ15Sne",
+   "name": "Bilbao Basket",
+   "net": 8.33,
    "O": 0,
    "D": 0,
    "pace": 0.0,
    "games": 0
   },
   {
-   "code": "Q96Izpwc",
-   "name": "Peristeri BC",
-   "net": 0.1,
-   "O": 0,
-   "D": 0,
+   "code": "QBvnpKKH",
+   "name": "Bnei Herzliya",
+   "net": -1.58,
+   "O": 2.0,
+   "D": -0.35,
    "pace": 0.0,
    "games": 0
   }

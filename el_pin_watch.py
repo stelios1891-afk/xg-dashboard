@@ -86,7 +86,7 @@ def main(notify_tg=True, comp='EL'):
                 L = float(cur['sp']['line']); pw, pp = cover(float(g['margin']), L, sm); pl = 1 - pw - pp
                 eh, ea = pw * cur['sp']['oh'] + pp - 1, pl * cur['sp']['oa'] + pp - 1
                 out_.append(f"μοντελο γηπ {float(g['margin']):+.1f} → edge {short(home)} {L:+g}: {eh*100:+.0f}% · {short(away)} {-L:+g}: {ea*100:+.0f}%")
-            if comp == 'EL' and cur.get('tot') and cur['tot']['line'] is not None and cur['tot']['oo']:
+            if (comp == 'EL' or (comp == 'BCL' and g.get('total_src') == 'μοντελο')) and cur.get('tot') and cur['tot']['line'] is not None and cur['tot']['oo']:   # 6/10: + συνολα BCL
                 T = float(cur['tot']['line']); po, pq = cover(float(g['total']), -T, st); pu = 1 - po - pq
                 out_.append(f"συνολο μοντ. {float(g['total']):.1f} → Over {T:g}: {(po * cur['tot']['oo'] + pq - 1)*100:+.0f}% · Under: {(pu * cur['tot']['ou'] + pq - 1)*100:+.0f}%")
             return '\n'.join(out_)

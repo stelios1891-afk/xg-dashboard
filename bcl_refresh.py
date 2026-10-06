@@ -11,6 +11,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 from el_season import Y as CUR
 M1_CFG = dict(carry=1.4, lam=8, HL=9999, w=0.5)      # bcl_engine_test2: επιλογη σε ολες τις 5 σεζον (με φιλικα), 6/10
 M2_CFG = (1.3, 1.5, 9999.0, 25.0, 0.5)                # (περσι, λ, HL, ψαλιδισμα, βαρος φιλικων) — bcl_engine_test2 (φιλικα: 21/24 ρυθμισεις καλυτερες ≥4/5)
+TOT_CFG = dict(carry=.35, lam=20.0, kf=1.0, wo=1.0, luck=.1)   # ΣΥΝΟΛΑ (bcl_totals_luck_test 6/10: LOSO 5/5, Κ2 .41 t 2.8 5/5) — Στελιος «ναι» live
+SIGMA_TOT = 17.3                                       # sd (πραγματικο − κλεισιμο συνολου) 2021-26
 WO = 1.5                                               # βαρος εγχωριων/Ευρωπης vs BCL στην κοινη κλιμακα (bcl_round_anchor_test Β: 4/5)
 KX = 4.5                                               # ειδικοι/αποδοσεις: αφετηρια += KX · z (bcl_expert_z.json, bcl_expert_test.py) — 6/10 Στελιος: μονο αποδοσεις νικητη (ιστορικο δεν υπαρχει, κx απο 2024-25 ειδικους)
 A = 0.75                                               # μιξη Μ1/Μ2 (bcl_engine_test2)
@@ -57,6 +59,18 @@ st2 = states.get(CUR) or states[max(states)]
 # ομαδες χωρις ματς φετος: περσινο × carry (οπως στο τεστ, οπου η αφετηρια ειναι carry × περσινο τελος)
 if CUR in states and CUR - 1 in states:
     st2 = dict(r={**{t: M2_CFG[0] * v + (ADJ or {}).get(CUR, {}).get(t, 0.0) for t, v in states[CUR - 1]['r'].items()}, **states[CUR]['r']}, h=states[CUR]['h'])
+# ---- ΣΥΝΟΛΑ: κοινη κλιμακα συνολων με διορθωση τυχης ----
+tot = None
+try:
+    _, tst = B.run_tot(B.load(pre=True), TOT_CFG['carry'], TOT_CFG['lam'], kf=TOT_CFG['kf'], wo=TOT_CFG['wo'], tmap=B.luck_totals(TOT_CFG['luck']), want_state=True)
+    tc = tst.get(CUR) or tst[max(tst)]
+    s_ = dict(tc['s'])
+    if CUR in tst and CUR - 1 in tst:                   # ομαδες χωρις ματς φετος: carry × περσινο
+        s_ = {**{t: TOT_CFG['carry'] * v for t, v in tst[CUR - 1]['s'].items()}, **tst[CUR]['s']}
+    mu_bcl = tc['mu'].get('BCL', (tst.get(CUR - 1) or {}).get('mu', {}).get('BCL', 160.0))
+    tot = dict(s=s_, mu_bcl=mu_bcl, cfg=TOT_CFG, sigma=SIGMA_TOT)
+except Exception as e:
+    print('ΠΡΟΣΟΧΗ: συνολα απενεργα —', e)
 # ---- Μ1 μονο BCL ----
 src = open('dom_bk_engine_test.py', encoding='utf-8').read().split("LIVE = (.7, 8, 9999, .5, False)")[0]
 src = src.replace("sys.stdout.reconfigure(encoding='utf-8')", '', 1).replace("ARGS = [a for a in sys.argv[1:] if not a.startswith('--')] or ['ACB', 'LBA']", "ARGS = ['BCL']")
@@ -101,7 +115,8 @@ for key, L in FG.items():
             if t and nm: names.setdefault(t, set()).add(nm)
             if t and comp == 'BCL' and int(y) == CUR: bcl_now.add(t)
 json.dump(dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=CUR, A=A, sigma=SIGMA, m1_cfg=M1_CFG, m2_cfg=list(M2_CFG),
-               m2=dict(r=st2['r'], h=st2['h']), m1=m1, names={t: sorted(v) for t, v in names.items()}, bcl_teams=sorted(bcl_now),
+               m2=dict(r=st2['r'], h=st2['h']), m1=m1, tot=tot, names={t: sorted(v) for t, v in names.items()}, bcl_teams=sorted(bcl_now),
                model=f'BCL: (1−{A})·μονο BCL (περσι {M1_CFG["carry"]}, λ {M1_CFG["lam"]}, HL {M1_CFG["HL"]}, τυχη {M1_CFG["w"]}) + {A}·κοινη κλιμακα (ολα τα ματς, περσι {M2_CFG[0]}, λ {M2_CFG[1]}, φιλικα {M2_CFG[4]}, εγχωρια ×{WO}, αποδοσεις νικητη {KX})'),
           open('bcl_state.json', 'w', encoding='utf-8'), ensure_ascii=False)
+print(f'συνολα: μ BCL {tot["mu_bcl"]:.1f} · {len(tot["s"])} ομαδες' if tot else 'συνολα: —')
 print(f'bcl_state.json: Μ2 {len(st2["r"])} ομαδες · Μ1 {len(m1["O"]) if m1 else 0} (ματς φετος {m1["n"] if m1 else 0}) · ομαδες BCL φετος {len(bcl_now)}')
