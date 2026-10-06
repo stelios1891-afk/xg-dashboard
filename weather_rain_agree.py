@@ -39,5 +39,13 @@ for dd in (1, 3):
     for thr in (1, 2, 4):
         print(row(F[F[f'f{dd}_rain'] >= thr], f'προγνωση {dd} μερα/ες πριν: βροχη ≥{thr}mm'))
 print(row(F[F.f1_rain < 0.2], 'προγνωση 1 μερα: στεγνο'))
+if 'f0_rain' in B:
+    F0 = B.dropna(subset=['f0_rain'])
+    print(f'\nΠΡΟΓΝΩΣΗ ΙΔΙΑΣ ΜΕΡΑΣ (day0, λιγες ωρες πριν, n{len(F0)})')
+    print(f'   συσχετιση με πραγματικη βροχη: σταθμος {F0.f0_rain.corr(F0.rain_ms):.2f} · ERA5 {F0.f0_rain.corr(F0.rain):.2f} (1 μερα πριν: σταθμος {F0.f1_rain.corr(F0.rain_ms):.2f})')
+    for thr in (0.5, 1, 2, 4): print(row(F0[F0.f0_rain >= thr], f'ιδια μερα: βροχη ≥{thr}mm'))
+    print(row(F0[F0.f0_rain < 0.2], 'ιδια μερα: στεγνο'))
+    print(row(F0[(F0.f0_rain >= 1) & (F0.f1_rain < 1)], 'ιδια μερα ≥1 ενω 1 μερα πριν <1'))
+    print(row(F0[F0.f0_gust >= 55], 'ιδια μερα: ριπες ≥55'))
 print(row(F[(F.f1_rain >= 2) & (F.rain_ms >= 2)], 'προγνωση ≥2 & επεσε (σταθμος ≥2)'))
 print(row(F[(F.f1_rain >= 2) & (F.rain_ms < 2)], 'προγνωση ≥2 αλλα δεν επεσε (σταθμος)'))

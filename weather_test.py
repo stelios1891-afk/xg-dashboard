@@ -124,6 +124,10 @@ for lg in LG:
                     rec[f'f{dd}_wind'] = vl(F[1], f'wind_speed_10m_previous_day{dd}', fr, np.mean)
                     rec[f'f{dd}_gust'] = vl(F[1], f'wind_gusts_10m_previous_day{dd}', fr, max)
                     rec[f'f{dd}_temp'] = vl(F[1], f'temperature_2m_previous_day{dd}', fr, np.mean)
+            F0 = wx('fc0', la, lo, sea)                     # προγνωση ιδιας μερας (weather_fetch_day0.py)
+            if F0 and h0 in F0[0]:
+                fi = F0[0][h0]; fr = [j for j in (fi, fi + 1) if j < len(F0[1]['time'])]
+                rec['f0_rain'] = vl(F0[1], 'precipitation', fr, sum); rec['f0_gust'] = vl(F0[1], 'wind_gusts_10m', fr, max)
             # αγορα συνολων
             kos = int(ko.tz_localize('UTC').timestamp())
             for cid, bk in ((3, 'cr'), (8, 'b365')):
