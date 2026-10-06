@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-06 15:00",
- "toa_scanned": "2026-10-06 15:00",
+ "generated": "2026-10-06 15:05",
+ "toa_scanned": "2026-10-06 15:05",
  "toa_matches": 10,
  "ng_snapshot": "2026-10-06 14:37",
  "ng_snapshot_afconq": null,
@@ -81,14 +81,14 @@
        "ou_line": 3.25,
        "over": 1.95,
        "under": 1.92,
-       "o1": 10.28,
+       "o1": 10.3,
        "ox": 6.11,
        "o2": 1.28
       },
       "matchbook": {
-       "ah_line": 1.5,
-       "oh": 2.1,
-       "oa": 1.88,
+       "ah_line": 1.75,
+       "oh": 1.9,
+       "oa": 2.1,
        "o1": 12.0,
        "ox": 6.8,
        "o2": 1.29
@@ -106,10 +106,10 @@
        "raw_h": 9.75,
        "raw_d": 5.75,
        "raw_a": 1.27,
-       "gap_h2h": 2.32,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
        "over_h2h": 6.39,
-       "over_h2h_adj": 4.06,
+       "over_h2h_adj": 4.05,
        "raw_oh": 1.82,
        "raw_oa": 2.02,
        "gap_spreads": 1.49,
@@ -124,21 +124,21 @@
        "over_totals_adj": 3.37
       },
       "betfair_ex_eu": {
-       "o1": 11.13,
-       "ox": 6.58,
-       "o2": 1.25,
-       "raw_h": 11.5,
+       "o1": 11.57,
+       "ox": 6.56,
+       "o2": 1.24,
+       "raw_h": 12.0,
        "raw_d": 6.8,
        "raw_a": 1.29,
-       "raw_over": 0.92,
-       "pin_margin": 4.3
+       "raw_over": 0.56,
+       "pin_margin": 4.29
       },
       "source": "pinnacle",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "pinnacle",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
@@ -154,12 +154,12 @@
         "need_over": 2.55
        },
        "matchbook": {
-        "ah_home": -0.8,
+        "ah_home": -10.1,
         "fair_h": 2.08,
         "need_h": 2.34,
-        "ah_away": -3.6,
-        "fair_a": 1.92,
-        "need_a": 2.15
+        "ah_away": -3.7,
+        "fair_a": 2.15,
+        "need_a": 2.44
        },
        "bovada": {
         "ah_home": -12.4,
@@ -189,12 +189,12 @@
         "need_over": 2.31
        },
        "matchbook": {
-        "ah_home": 2.8,
+        "ah_home": -6.9,
         "fair_h": 2.01,
         "need_h": 2.25,
-        "ah_away": -6.8,
-        "fair_a": 1.99,
-        "need_a": 2.23
+        "ah_away": -7.0,
+        "fair_a": 2.24,
+        "need_a": 2.54
        },
        "bovada": {
         "ah_home": -9.3,
@@ -224,12 +224,12 @@
         "need_over": 2.35
        },
        "matchbook": {
-        "ah_home": -10.8,
+        "ah_home": -19.2,
         "fair_h": 2.32,
         "need_h": 2.6,
-        "ah_away": 5.4,
-        "fair_a": 1.76,
-        "need_a": 1.97
+        "ah_away": 6.4,
+        "fair_a": 1.93,
+        "need_a": 2.18
        },
        "bovada": {
         "ah_home": -21.3,
@@ -354,18 +354,18 @@
        "under": 2.1,
        "o1": 1.12,
        "ox": 10.26,
-       "o2": 18.68
+       "o2": 18.69
       },
       "matchbook": {
        "ah_line": -2.5,
-       "oh": 1.94,
+       "oh": 1.96,
        "oa": 2.02,
        "ou_line": 3.5,
-       "over": 1.86,
-       "under": 2.12,
+       "over": 1.85,
+       "under": 2.14,
        "o1": 1.13,
-       "ox": 11.5,
-       "o2": 27.0
+       "ox": 11.0,
+       "o2": 29.0
       },
       "bovada": {
        "ah_line": -2.5,
@@ -380,10 +380,10 @@
        "raw_h": 1.11,
        "raw_d": 9.5,
        "raw_a": 16.0,
-       "gap_h2h": 2.32,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
        "over_h2h": 6.87,
-       "over_h2h_adj": 4.54,
+       "over_h2h_adj": 4.53,
        "raw_oh": 1.89,
        "raw_oa": 1.93,
        "gap_spreads": 1.49,
@@ -399,20 +399,20 @@
       },
       "betfair_ex_eu": {
        "o1": 1.09,
-       "ox": 11.12,
+       "ox": 11.13,
        "o2": 26.12,
        "raw_h": 1.13,
        "raw_d": 11.5,
        "raw_a": 27.0,
        "raw_over": 0.89,
-       "pin_margin": 4.3
+       "pin_margin": 4.29
       },
       "source": "pinnacle",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "pinnacle",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
@@ -428,13 +428,13 @@
         "need_over": 2.27
        },
        "matchbook": {
-        "ah_home": -26.8,
+        "ah_home": -26.0,
         "fair_h": 2.61,
         "need_h": 2.93,
         "ah_away": 11.1,
         "fair_a": 1.79,
         "need_a": 2.0,
-        "over": -11.2,
+        "over": -11.6,
         "p_over": 47.8,
         "need_over": 2.27
        },
@@ -466,13 +466,13 @@
         "need_over": 2.09
        },
        "matchbook": {
-        "ah_home": -11.3,
+        "ah_home": -10.4,
         "fair_h": 2.16,
         "need_h": 2.42,
         "ah_away": 10.6,
         "fair_a": 1.8,
         "need_a": 2.01,
-        "over": -3.8,
+        "over": -4.3,
         "p_over": 51.7,
         "need_over": 2.09
        },
@@ -504,13 +504,13 @@
         "need_over": 2.04
        },
        "matchbook": {
-        "ah_home": -7.6,
+        "ah_home": -6.7,
         "fair_h": 2.07,
         "need_h": 2.32,
         "ah_away": -11.3,
         "fair_a": 2.24,
         "need_a": 2.52,
-        "over": -1.4,
+        "over": -1.9,
         "p_over": 53.0,
         "need_over": 2.04
        },
@@ -637,33 +637,33 @@
       "matchbook": null,
       "bovada": {
        "ah_line": -0.5,
-       "oh": 1.85,
-       "oa": 2.05,
+       "oh": 1.86,
+       "oa": 2.03,
        "ou_line": 2.0,
-       "over": 2.05,
-       "under": 1.84,
+       "over": 2.08,
+       "under": 1.82,
        "o1": 1.85,
        "ox": 3.22,
        "o2": 5.27,
        "raw_h": 1.81,
        "raw_d": 3.15,
        "raw_a": 5.15,
-       "gap_h2h": 2.32,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
        "over_h2h": 6.41,
-       "over_h2h_adj": 4.09,
-       "raw_oh": 1.82,
-       "raw_oa": 2.02,
+       "over_h2h_adj": 4.08,
+       "raw_oh": 1.83,
+       "raw_oa": 2.0,
        "gap_spreads": 1.49,
        "gap_spreads_day": "2026-10-06",
-       "over_spreads": 4.45,
-       "over_spreads_adj": 2.96,
-       "raw_over": 2.02,
-       "raw_under": 1.82,
+       "over_spreads": 4.64,
+       "over_spreads_adj": 3.16,
+       "raw_over": 2.05,
+       "raw_under": 1.8,
        "gap_totals": 1.36,
        "gap_totals_day": "2026-10-06",
-       "over_totals": 4.45,
-       "over_totals_adj": 3.09
+       "over_totals": 4.34,
+       "over_totals_adj": 2.98
       },
       "betfair_ex_eu": {
        "o1": 1.83,
@@ -673,28 +673,28 @@
        "raw_d": 3.35,
        "raw_a": 5.5,
        "raw_over": 0.66,
-       "pin_margin": 4.3
+       "pin_margin": 4.29
       },
       "source": "bovada",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "bovada",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -3.1,
+        "ah_home": -2.6,
         "fair_h": 1.88,
         "need_h": 2.11,
-        "ah_away": -5.3,
+        "ah_away": -6.3,
         "fair_a": 2.13,
         "need_a": 2.39,
-        "over": 27.0,
-        "p_over": 61.9,
+        "over": 28.5,
+        "p_over": 61.8,
         "need_over": 1.67
        },
        "betfair_ex_eu": null,
@@ -705,14 +705,14 @@
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -7.7,
+        "ah_home": -7.3,
         "fair_h": 1.98,
         "need_h": 2.22,
-        "ah_away": -0.2,
+        "ah_away": -1.2,
         "fair_a": 2.02,
         "need_a": 2.27,
-        "over": 29.9,
-        "p_over": 63.4,
+        "over": 31.4,
+        "p_over": 63.2,
         "need_over": 1.63
        },
        "betfair_ex_eu": null,
@@ -723,14 +723,14 @@
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -0.2,
+        "ah_home": 0.3,
         "fair_h": 1.83,
         "need_h": 2.05,
-        "ah_away": -8.5,
+        "ah_away": -9.4,
         "fair_a": 2.21,
         "need_a": 2.48,
-        "over": 28.2,
-        "p_over": 62.5,
+        "over": 29.7,
+        "p_over": 62.4,
         "need_over": 1.65
        },
        "betfair_ex_eu": null,
@@ -742,9 +742,9 @@
       "H": "",
       "A": "",
       "AV": "",
-      "over": "OVER 2 @2.05 (Bovada, +27%)",
-      "over_A": "OVER 2 @2.05 (Bovada, +30%)",
-      "over_AV": "OVER 2 @2.05 (Bovada, +28%)"
+      "over": "OVER 2 @2.08 (Bovada, +28%)",
+      "over_A": "OVER 2 @2.08 (Bovada, +31%)",
+      "over_AV": "OVER 2 @2.08 (Bovada, +30%)"
      },
      "consensus": [
       {
@@ -752,15 +752,15 @@
        "role": "over",
        "side": 0,
        "line": 2.0,
-       "odds": 2.05,
+       "odds": 2.08,
        "book": "Bovada",
-       "edge": 0.27,
+       "edge": 0.28,
        "models": "Μ1+Μ2+Μ3",
        "n": 3,
        "edges": {
-        "Μ1": 0.27,
-        "Μ2": 0.3,
-        "Μ3": 0.28
+        "Μ1": 0.28,
+        "Μ2": 0.31,
+        "Μ3": 0.3
        }
       }
      ],
@@ -768,7 +768,7 @@
       "H": 0.5573,
       "A": 0.5528,
       "AV": 0.5606,
-      "mkt": 0.3799
+      "mkt": 0.3772
      }
     },
     {
@@ -852,10 +852,10 @@
        "raw_h": 1.07,
        "raw_d": 11.0,
        "raw_a": 26.0,
-       "gap_h2h": 2.32,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
        "over_h2h": 6.4,
-       "over_h2h_adj": 4.07,
+       "over_h2h_adj": 4.06,
        "raw_oh": 2.02,
        "raw_oa": 1.82,
        "gap_spreads": 1.49,
@@ -872,19 +872,19 @@
       "betfair_ex_eu": {
        "o1": 1.05,
        "ox": 13.54,
-       "o2": 48.36,
+       "o2": 48.37,
        "raw_h": 1.09,
        "raw_d": 14.0,
        "raw_a": 50.0,
        "raw_over": 0.89,
-       "pin_margin": 4.3
+       "pin_margin": 4.29
       },
       "source": "bovada",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "bovada",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
@@ -1408,10 +1408,10 @@
        "raw_h": 4.2,
        "raw_d": 3.1,
        "raw_a": 1.95,
-       "gap_h2h": 2.32,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
        "over_h2h": 7.35,
-       "over_h2h_adj": 5.02,
+       "over_h2h_adj": 5.01,
        "raw_oh": 1.85,
        "raw_oa": 1.98,
        "gap_spreads": 1.49,
@@ -1427,20 +1427,20 @@
       },
       "betfair_ex_eu": {
        "o1": 4.46,
-       "ox": 3.15,
-       "o2": 2.0,
+       "ox": 3.2,
+       "o2": 1.98,
        "raw_h": 4.6,
-       "raw_d": 3.25,
-       "raw_a": 2.06,
-       "raw_over": 1.05,
-       "pin_margin": 4.3
+       "raw_d": 3.3,
+       "raw_a": 2.04,
+       "raw_over": 1.06,
+       "pin_margin": 4.29
       },
       "source": "bovada",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "bovada",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
@@ -1584,65 +1584,65 @@
       "matchbook": null,
       "bovada": {
        "ah_line": 1.0,
-       "oh": 1.83,
-       "oa": 2.08,
-       "ou_line": 2.5,
-       "over": 2.05,
-       "under": 1.84,
-       "o1": 5.72,
-       "ox": 3.83,
-       "o2": 1.59,
-       "raw_h": 5.6,
-       "raw_d": 3.75,
-       "raw_a": 1.56,
-       "gap_h2h": 2.32,
+       "oh": 1.81,
+       "oa": 2.11,
+       "ou_line": 2.25,
+       "over": 1.84,
+       "under": 2.05,
+       "o1": 5.88,
+       "ox": 3.78,
+       "o2": 1.6,
+       "raw_h": 5.75,
+       "raw_d": 3.7,
+       "raw_a": 1.57,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
-       "over_h2h": 8.63,
-       "over_h2h_adj": 6.3,
-       "raw_oh": 1.8,
-       "raw_oa": 2.05,
+       "over_h2h": 8.11,
+       "over_h2h_adj": 5.78,
+       "raw_oh": 1.78,
+       "raw_oa": 2.08,
        "gap_spreads": 1.49,
        "gap_spreads_day": "2026-10-06",
-       "over_spreads": 4.34,
-       "over_spreads_adj": 2.85,
-       "raw_over": 2.02,
-       "raw_under": 1.82,
+       "over_spreads": 4.26,
+       "over_spreads_adj": 2.77,
+       "raw_over": 1.82,
+       "raw_under": 2.02,
        "gap_totals": 1.36,
        "gap_totals_day": "2026-10-06",
        "over_totals": 4.45,
        "over_totals_adj": 3.09
       },
       "betfair_ex_eu": {
-       "o1": 5.98,
-       "ox": 4.05,
-       "o2": 1.59,
+       "o1": 6.01,
+       "ox": 3.98,
+       "o2": 1.6,
        "raw_h": 6.2,
-       "raw_d": 4.2,
+       "raw_d": 4.1,
        "raw_a": 1.65,
-       "raw_over": 0.54,
-       "pin_margin": 4.3
+       "raw_over": 1.13,
+       "pin_margin": 4.29
       },
       "source": "bovada",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "bovada",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -20.5,
+        "ah_home": -21.1,
         "fair_h": 2.48,
         "need_h": 2.86,
-        "ah_away": 16.7,
+        "ah_away": 18.0,
         "fair_a": 1.68,
         "need_a": 1.93,
-        "over": 2.5,
-        "p_over": 50.0,
-        "need_over": 2.16
+        "over": 4.3,
+        "p_over": 56.7,
+        "need_over": 1.92
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1652,15 +1652,15 @@
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -1.3,
+        "ah_home": -2.1,
         "fair_h": 1.84,
         "need_h": 2.12,
-        "ah_away": -4.9,
+        "ah_away": -3.9,
         "fair_a": 2.19,
         "need_a": 2.54,
-        "over": -8.3,
-        "p_over": 44.7,
-        "need_over": 2.42
+        "over": -4.8,
+        "p_over": 51.8,
+        "need_over": 2.13
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1670,15 +1670,15 @@
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -28.1,
+        "ah_home": -28.6,
         "fair_h": 2.85,
         "need_h": 3.3,
-        "ah_away": 25.2,
+        "ah_away": 26.7,
         "fair_a": 1.54,
         "need_a": 1.77,
-        "over": 4.6,
-        "p_over": 51.0,
-        "need_over": 2.12
+        "over": 6.0,
+        "p_over": 57.6,
+        "need_over": 1.88
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1686,35 +1686,19 @@
       }
      },
      "picks": {
-      "H": "FAV 2 -1.00 @2.08 (Bovada, +17%)",
+      "H": "",
       "A": "",
-      "AV": "FAV 2 -1.00 @2.08 (Bovada, +25%) · 1Χ2 φαβ εκτος ≥75% @1.59",
+      "AV": "1Χ2 φαβ εκτος ≥75% @1.60",
       "over": "",
       "over_A": "",
       "over_AV": ""
      },
-     "consensus": [
-      {
-       "mkt": "AH",
-       "role": "fav",
-       "side": 2,
-       "line": -1.0,
-       "odds": 2.08,
-       "book": "Bovada",
-       "edge": 0.17,
-       "models": "Μ1+Μ3",
-       "n": 2,
-       "edges": {
-        "Μ1": 0.17,
-        "Μ3": 0.25
-       }
-      }
-     ],
+     "consensus": [],
      "btts": {
       "H": 0.4194,
       "A": 0.4164,
       "AV": 0.4085,
-      "mkt": 0.4558
+      "mkt": 0.4458
      }
     },
     {
@@ -1789,27 +1773,27 @@
        "ah_line": -0.25,
        "oh": 2.01,
        "oa": 1.88,
-       "ou_line": 2.0,
-       "over": 2.11,
-       "under": 1.8,
-       "o1": 2.34,
+       "ou_line": 1.75,
+       "over": 1.8,
+       "under": 2.11,
+       "o1": 2.35,
        "ox": 2.91,
        "o2": 3.42,
-       "raw_h": 2.29,
+       "raw_h": 2.3,
        "raw_d": 2.85,
        "raw_a": 3.35,
-       "gap_h2h": 2.32,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
-       "over_h2h": 8.61,
-       "over_h2h_adj": 6.28,
+       "over_h2h": 8.42,
+       "over_h2h_adj": 6.08,
        "raw_oh": 1.98,
        "raw_oa": 1.85,
        "gap_spreads": 1.49,
        "gap_spreads_day": "2026-10-06",
        "over_spreads": 4.56,
        "over_spreads_adj": 3.07,
-       "raw_over": 2.08,
-       "raw_under": 1.78,
+       "raw_over": 1.78,
+       "raw_under": 2.08,
        "gap_totals": 1.36,
        "gap_totals_day": "2026-10-06",
        "over_totals": 4.26,
@@ -1823,14 +1807,14 @@
        "raw_d": 3.2,
        "raw_a": 3.55,
        "raw_over": 0.4,
-       "pin_margin": 4.3
+       "pin_margin": 4.29
       },
       "source": "bovada",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "bovada",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
@@ -1843,9 +1827,9 @@
         "ah_away": 27.2,
         "fair_a": 1.46,
         "need_a": 1.63,
-        "over": -1.8,
-        "p_over": 46.5,
-        "need_over": 2.41
+        "over": -1.5,
+        "p_over": 54.7,
+        "need_over": 2.0
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1861,9 +1845,9 @@
         "ah_away": 10.0,
         "fair_a": 1.69,
         "need_a": 1.88,
-        "over": 4.2,
-        "p_over": 49.4,
-        "need_over": 2.22
+        "over": 3.6,
+        "p_over": 57.5,
+        "need_over": 1.89
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1879,9 +1863,9 @@
         "ah_away": 27.2,
         "fair_a": 1.46,
         "need_a": 1.63,
-        "over": -3.6,
-        "p_over": 45.7,
-        "need_over": 2.47
+        "over": -3.0,
+        "p_over": 53.9,
+        "need_over": 2.04
        },
        "betfair_ex_eu": null,
        "crown": null,
@@ -1901,7 +1885,7 @@
       "H": 0.4591,
       "A": 0.4642,
       "AV": 0.4483,
-      "mkt": 0.4052
+      "mkt": 0.4013
      }
     },
     {
@@ -1974,33 +1958,33 @@
       "matchbook": null,
       "bovada": {
        "ah_line": 1.25,
-       "oh": 2.08,
-       "oa": 1.83,
+       "oh": 2.05,
+       "oa": 1.85,
        "ou_line": 2.75,
-       "over": 2.03,
-       "under": 1.85,
+       "over": 2.05,
+       "under": 1.84,
        "o1": 8.69,
        "ox": 4.8,
        "o2": 1.36,
        "raw_h": 8.5,
        "raw_d": 4.7,
        "raw_a": 1.33,
-       "gap_h2h": 2.32,
+       "gap_h2h": 2.34,
        "gap_h2h_day": "2026-10-06",
        "over_h2h": 8.23,
-       "over_h2h_adj": 5.9,
-       "raw_oh": 2.05,
-       "raw_oa": 1.8,
+       "over_h2h_adj": 5.89,
+       "raw_oh": 2.02,
+       "raw_oa": 1.82,
        "gap_spreads": 1.49,
        "gap_spreads_day": "2026-10-06",
-       "over_spreads": 4.34,
-       "over_spreads_adj": 2.85,
-       "raw_over": 2.0,
-       "raw_under": 1.83,
+       "over_spreads": 4.45,
+       "over_spreads_adj": 2.96,
+       "raw_over": 2.02,
+       "raw_under": 1.82,
        "gap_totals": 1.36,
        "gap_totals_day": "2026-10-06",
-       "over_totals": 4.64,
-       "over_totals_adj": 3.29
+       "over_totals": 4.45,
+       "over_totals_adj": 3.09
       },
       "betfair_ex_eu": {
        "o1": 9.69,
@@ -2010,27 +1994,27 @@
        "raw_d": 5.1,
        "raw_a": 1.4,
        "raw_over": 1.04,
-       "pin_margin": 4.3
+       "pin_margin": 4.29
       },
       "source": "bovada",
-      "ts": "2026-10-06 15:00",
+      "ts": "2026-10-06 15:05",
       "ng_ts": null,
       "x12_source": "bovada",
-      "pin_margin": 4.3,
-      "x12_ts": "2026-10-06 15:00"
+      "pin_margin": 4.29,
+      "x12_ts": "2026-10-06 15:05"
      },
      "edges": {
       "H": {
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -13.5,
+        "ah_home": -14.8,
         "fair_h": 2.37,
         "need_h": 2.66,
-        "ah_away": 15.0,
+        "ah_away": 16.1,
         "fair_a": 1.55,
         "need_a": 1.74,
-        "over": 2.0,
+        "over": 2.9,
         "p_over": 50.2,
         "need_over": 2.17
        },
@@ -2042,13 +2026,13 @@
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": 18.2,
+        "ah_home": 16.5,
         "fair_h": 1.73,
         "need_h": 1.94,
-        "ah_away": -11.1,
+        "ah_away": -10.3,
         "fair_a": 2.07,
         "need_a": 2.35,
-        "over": -10.8,
+        "over": -10.0,
         "p_over": 43.9,
         "need_over": 2.52
        },
@@ -2060,14 +2044,14 @@
        "pinnacle": null,
        "matchbook": null,
        "bovada": {
-        "ah_home": -18.5,
+        "ah_home": -19.6,
         "fair_h": 2.51,
         "need_h": 2.82,
-        "ah_away": 19.0,
+        "ah_away": 20.2,
         "fair_a": 1.49,
         "need_a": 1.68,
-        "over": 2.9,
-        "p_over": 50.7,
+        "over": 3.8,
+        "p_over": 50.6,
         "need_over": 2.15
        },
        "betfair_ex_eu": null,
@@ -2076,9 +2060,9 @@
       }
      },
      "picks": {
-      "H": "FAV 2 -1.25 @1.83 (Bovada, +15%) · 1Χ2 φαβ εκτος ≥75% @1.36",
-      "A": "DOG 1 +1.25 @2.08 (Bovada, +18%)",
-      "AV": "FAV 2 -1.25 @1.83 (Bovada, +19%) · 1Χ2 φαβ εκτος ≥75% @1.36",
+      "H": "FAV 2 -1.25 @1.85 (Bovada, +16%) · 1Χ2 φαβ εκτος ≥75% @1.36",
+      "A": "DOG 1 +1.25 @2.05 (Bovada, +16%)",
+      "AV": "FAV 2 -1.25 @1.85 (Bovada, +20%) · 1Χ2 φαβ εκτος ≥75% @1.36",
       "over": "",
       "over_A": "",
       "over_AV": ""
@@ -2089,14 +2073,14 @@
        "role": "fav",
        "side": 2,
        "line": -1.25,
-       "odds": 1.83,
+       "odds": 1.85,
        "book": "Bovada",
-       "edge": 0.15,
+       "edge": 0.16,
        "models": "Μ1+Μ3",
        "n": 2,
        "edges": {
-        "Μ1": 0.15,
-        "Μ3": 0.19
+        "Μ1": 0.16,
+        "Μ3": 0.2
        }
       }
      ],
@@ -2104,7 +2088,7 @@
       "H": 0.384,
       "A": 0.4074,
       "AV": 0.376,
-      "mkt": 0.4342
+      "mkt": 0.4353
      }
     }
    ]
