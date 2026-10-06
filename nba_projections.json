@@ -1,0 +1,282 @@
+{
+ "generated": "2026-10-06T21:50+00:00",
+ "season": 2027,
+ "comp": "NBA",
+ "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
+ "sigma_margin": 13.5,
+ "sigma_total": 18.0,
+ "res_t": 0.0,
+ "games": [],
+ "ratings": [
+  {
+   "code": "ATL",
+   "name": "Atlanta Hawks",
+   "net": 1.46,
+   "O": 0.31,
+   "D": -1.15,
+   "pace": 1.86,
+   "games": 0
+  },
+  {
+   "code": "BOS",
+   "name": "Boston Celtics",
+   "net": 6.25,
+   "O": 3.3,
+   "D": -2.95,
+   "pace": -3.29,
+   "games": 0
+  },
+  {
+   "code": "BRK",
+   "name": "Brooklyn Nets",
+   "net": -6.51,
+   "O": -5.16,
+   "D": 1.35,
+   "pace": -1.63,
+   "games": 0
+  },
+  {
+   "code": "CHI",
+   "name": "Chicago Bulls",
+   "net": -2.73,
+   "O": -1.5,
+   "D": 1.23,
+   "pace": 3.04,
+   "games": 0
+  },
+  {
+   "code": "CHO",
+   "name": "Charlotte Hornets",
+   "net": 2.4,
+   "O": 0.88,
+   "D": -1.52,
+   "pace": -1.98,
+   "games": 0
+  },
+  {
+   "code": "CLE",
+   "name": "Cleveland Cavaliers",
+   "net": 5.28,
+   "O": 4.1,
+   "D": -1.18,
+   "pace": -0.16,
+   "games": 0
+  },
+  {
+   "code": "DAL",
+   "name": "Dallas Mavericks",
+   "net": -2.81,
+   "O": -1.53,
+   "D": 1.28,
+   "pace": 1.76,
+   "games": 0
+  },
+  {
+   "code": "DEN",
+   "name": "Denver Nuggets",
+   "net": 3.75,
+   "O": 4.89,
+   "D": 1.13,
+   "pace": -0.59,
+   "games": 0
+  },
+  {
+   "code": "DET",
+   "name": "Detroit Pistons",
+   "net": 5.68,
+   "O": 1.63,
+   "D": -4.05,
+   "pace": 0.11,
+   "games": 0
+  },
+  {
+   "code": "GSW",
+   "name": "Golden State Warriors",
+   "net": 1.72,
+   "O": 0.62,
+   "D": -1.1,
+   "pace": -0.49,
+   "games": 0
+  },
+  {
+   "code": "HOU",
+   "name": "Houston Rockets",
+   "net": 3.9,
+   "O": 1.71,
+   "D": -2.2,
+   "pace": -1.96,
+   "games": 0
+  },
+  {
+   "code": "IND",
+   "name": "Indiana Pacers",
+   "net": -3.34,
+   "O": -1.38,
+   "D": 1.96,
+   "pace": 1.45,
+   "games": 0
+  },
+  {
+   "code": "LAC",
+   "name": "Los Angeles Clippers",
+   "net": -3.09,
+   "O": -1.18,
+   "D": 1.91,
+   "pace": -1.99,
+   "games": 0
+  },
+  {
+   "code": "LAL",
+   "name": "Los Angeles Lakers",
+   "net": 3.43,
+   "O": 2.76,
+   "D": -0.67,
+   "pace": -1.13,
+   "games": 0
+  },
+  {
+   "code": "MEM",
+   "name": "Memphis Grizzlies",
+   "net": -5.53,
+   "O": -2.21,
+   "D": 3.32,
+   "pace": 2.02,
+   "games": 0
+  },
+  {
+   "code": "MIA",
+   "name": "Miami Heat",
+   "net": 2.14,
+   "O": 1.8,
+   "D": -0.34,
+   "pace": 2.02,
+   "games": 0
+  },
+  {
+   "code": "MIL",
+   "name": "Milwaukee Bucks",
+   "net": -6.07,
+   "O": -2.63,
+   "D": 3.44,
+   "pace": -1.57,
+   "games": 0
+  },
+  {
+   "code": "MIN",
+   "name": "Minnesota Timberwolves",
+   "net": 3.09,
+   "O": 0.85,
+   "D": -2.24,
+   "pace": 0.69,
+   "games": 0
+  },
+  {
+   "code": "NOP",
+   "name": "New Orleans Pelicans",
+   "net": -3.37,
+   "O": -1.05,
+   "D": 2.32,
+   "pace": 1.22,
+   "games": 0
+  },
+  {
+   "code": "NYK",
+   "name": "New York Knicks",
+   "net": 1.1,
+   "O": 0.7,
+   "D": -0.4,
+   "pace": -2.53,
+   "games": 0
+  },
+  {
+   "code": "OKC",
+   "name": "Oklahoma City Thunder",
+   "net": 10.93,
+   "O": 3.75,
+   "D": -7.18,
+   "pace": 0.13,
+   "games": 0
+  },
+  {
+   "code": "ORL",
+   "name": "Orlando Magic",
+   "net": 1.83,
+   "O": -0.23,
+   "D": -2.06,
+   "pace": 0.41,
+   "games": 0
+  },
+  {
+   "code": "PHI",
+   "name": "Philadelphia 76ers",
+   "net": 4.22,
+   "O": 1.79,
+   "D": -2.43,
+   "pace": 0.27,
+   "games": 0
+  },
+  {
+   "code": "PHO",
+   "name": "Phoenix Suns",
+   "net": 0.17,
+   "O": -0.55,
+   "D": -0.72,
+   "pace": -1.73,
+   "games": 0
+  },
+  {
+   "code": "POR",
+   "name": "Portland Trail Blazers",
+   "net": 2.17,
+   "O": -0.72,
+   "D": -2.89,
+   "pace": 0.73,
+   "games": 0
+  },
+  {
+   "code": "SAC",
+   "name": "Sacramento Kings",
+   "net": -7.06,
+   "O": -2.48,
+   "D": 4.57,
+   "pace": -0.46,
+   "games": 0
+  },
+  {
+   "code": "SAS",
+   "name": "San Antonio Spurs",
+   "net": 8.3,
+   "O": 4.29,
+   "D": -4.01,
+   "pace": 0.64,
+   "games": 0
+  },
+  {
+   "code": "TOR",
+   "name": "Toronto Raptors",
+   "net": 4.04,
+   "O": 1.28,
+   "D": -2.77,
+   "pace": -0.51,
+   "games": 0
+  },
+  {
+   "code": "UTA",
+   "name": "Utah Jazz",
+   "net": -1.31,
+   "O": 0.81,
+   "D": 2.12,
+   "pace": 2.62,
+   "games": 0
+  },
+  {
+   "code": "WAS",
+   "name": "Washington Wizards",
+   "net": -6.25,
+   "O": -2.32,
+   "D": 3.93,
+   "pace": 1.72,
+   "games": 0
+  }
+ ]
+}
