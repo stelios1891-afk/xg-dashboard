@@ -13,7 +13,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 out = []
 def P(s=''): print(s, flush=True); out.append(str(s))
 nd = NormalDist(); Phi = nd.cdf
-D = pickle.load(open('bcl_engine_preds.pkl', 'rb'))
+PK = sys.argv[1] if len(sys.argv) > 1 else 'bcl_engine_preds.pkl'
+D = pickle.load(open(PK, 'rb'))
 ids, YS, act, FIN, H1, T = D['id'], D['y'], D['act'], D['FIN'], D['H1'], D['t']
 FG = json.load(open('fs_bk_games.json', encoding='utf-8'))
 sc = {e['id']: (int(e['hs']), int(e['as_'])) for k, L in FG.items() if k.startswith('BCL_') for e in L if e.get('hs') not in (None, '')}
@@ -48,7 +49,8 @@ for f in sorted(os.listdir('nowgoal_bcl')):
                 return (-L, -mu, o2, o1) if sw else (L, mu, o1, o2)
             rec[cid] = dict(o=cv(R[0]), c=cv(R[-1]))
         if rec: MK[hit] = rec
-EVS = sorted({int(YS[i]) for i in MK})
+EVS = sorted({int(YS[i]) for i in MK if np.isfinite(FIN[i])})
+NEED = math.ceil(.75 * len(EVS))   # 4 σεζον → 3 · 5 σεζον → 4 (ιδιο με τον προ-δηλωμενο κανονα του bcl_engine_test)
 ii = [i for i in MK if 3 in MK[i] and np.isfinite(FIN[i])]
 P(f'ΑΓΟΡΑ Nowgoal: {len(MK)} ματς BCL με χαντικαπ · ' + ' · '.join(f'{y}-{(y+1)%100:02d}: {sum(1 for i in MK if YS[i] == y)}' for y in EVS))
 SIG = float(np.std([act[i] - MK[i][3]['c'][1] for i in ii]))
@@ -58,13 +60,13 @@ for y in EVS + ['ΟΛΑ']:
     s = [i for i in ii if y == 'ΟΛΑ' or YS[i] == y]
     if not s: continue
     a = act[s]; P(f'  {str(y):5s} n {len(s):3d} · μοντελο {np.sqrt(np.mean((a - FIN[s])**2)):.2f} · ανοιγμα {np.sqrt(np.mean((a - np.array([MK[i][3]["o"][1] for i in s]))**2)):.2f} · κλεισιμο {np.sqrt(np.mean((a - np.array([MK[i][3]["c"][1] for i in s]))**2)):.2f}')
-P(''); P('=== 2. Κ2: ξερει το μοντελο κατι που δεν ξερει η αγορα; (b ≥ .15, t ≥ 2, ≥3/4) ===')
+P(''); P('=== 2. Κ2: ξερει το μοντελο κατι που δεν ξερει η αγορα; (b ≥ .15, t ≥ 2, ≥3/4 των σεζον) ===')
 def k2(s, wh):
     x = np.array([FIN[i] - MK[i][3][wh][1] for i in s]); z = np.array([act[i] - MK[i][3][wh][1] for i in s])
     c = np.polyfit(x, z, 1); r_ = z - np.polyval(c, x); se = math.sqrt(np.sum(r_ ** 2) / (len(x) - 2) / np.sum((x - x.mean()) ** 2)); return c[0], c[0] / se
 for wh, lab in (('c', 'κλεισιμο'), ('o', 'ανοιγμα')):
     b, t = k2(ii, wh); per = [k2([i for i in ii if YS[i] == y], wh)[0] for y in EVS if sum(YS[i] == y for i in ii) > 20]
-    ok = b >= .15 and t >= 2 and sum(q > 0 for q in per) >= 3
+    ok = b >= .15 and t >= 2 and sum(q > 0 for q in per) >= NEED
     P(f'  vs {lab:9s} b {b:+.2f} (t {t:+.1f}) · ανα σεζον ' + ' '.join(f'{q:+.2f}' for q in per) + ('  ✓' if ok and wh == 'c' else ('  ✗' if wh == 'c' else '')))
 def cover(m_, L, s):
     if abs(L - round(L)) < 1e-9: pw = Phi((m_ + L - .5) / s); pl = Phi((-m_ - L - .5) / s); return pw, 1 - pw - pl, pl
@@ -90,8 +92,8 @@ for book, wh, lab in ((3, 'o', 'Crown ανοιγμα'), (3, 'c', 'Crown κλει
     P('      ανα σεζον: ' + ' · '.join(f'{y}-{(y+1)%100:02d} {cell([q for q in R if q[1] == y])}' for y in EVS))
 R = main[(3, 'o')]; u = [q[0] for q in R]
 pos = sum(1 for y in EVS if [q for q in R if q[1] == y] and np.mean([q[0] for q in R if q[1] == y]) > 0)
-okR = R and np.mean(u) > 0 and pos >= 3 and main[(8, 'o')] and np.mean([q[0] for q in main[(8, 'o')]]) > 0
-P(f'  ΚΡΙΣΗ (Crown ανοιγμα > 0, ≥3/4 σεζον, Bet365 ανοιγμα > 0): ' + ('✓ ΠΕΡΝΑ' if okR else '✗ ΔΕΝ ΠΕΡΝΑ'))
+okR = R and np.mean(u) > 0 and pos >= NEED and main[(8, 'o')] and np.mean([q[0] for q in main[(8, 'o')]]) > 0
+P(f'  ΚΡΙΣΗ (Crown ανοιγμα > 0, ≥{NEED}/{len(EVS)} σεζον, Bet365 ανοιγμα > 0): ' + ('✓ ΠΕΡΝΑ' if okR else '✗ ΔΕΝ ΠΕΡΝΑ'))
 P(''); P('=== 4. Αλλα ορια / μιξη (περιγραφικα, Crown ανοιγμα) ===')
 for thr in (.04, .06, .08, .12, .16):
     P(f'  μοντελο ≥{thr:.0%}: {cell(bets(ii, 3, "o", thr))}  |  μιξη 50/50 ≥{thr:.0%}: {cell(bets(ii, 3, "o", thr, .5))}')
@@ -106,4 +108,4 @@ for lo, hi in ((0, 3), (3, 5), (5, 8), (8, 99)):
     toward = np.mean([np.sign(FIN[i] - MK[i][3]['o'][1]) * (act[i] - MK[i][3]['o'][1]) for i in s])
     gap = np.mean([abs(FIN[i] - MK[i][3]['o'][1]) for i in s])
     P(f'  διαφωνια {lo}-{hi if hi < 99 else "+"}: n {len(s):3d} · μεση διαφωνια {gap:.1f} · το αποτελεσμα πηγε προς το μοντελο κατα {toward:+.1f} ποντους (θα ηταν {gap:.1f} αν ειχε απολυτο δικιο)')
-open('bcl_market_check_out.txt', 'w', encoding='utf-8').write(chr(10).join(out))
+open(PK.replace('bcl_engine_preds', 'bcl_market_check_out').replace('.pkl', '.txt'), 'w', encoding='utf-8').write(chr(10).join(out))
