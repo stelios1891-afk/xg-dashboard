@@ -1,5 +1,5 @@
 {
-"_asof": "2026-10-06T14:27",
+"_asof": "2026-10-06T15:28",
 "_xi": {
 "10155": {
 "match": "Croatia - Spain",
@@ -11,8 +11,8 @@
 "name": "Dominik Livaković"
 },
 {
-"pid": 1353289,
-"name": "Ivan Smolčić"
+"pid": 950824,
+"name": "Josip Stanišić"
 },
 {
 "pid": 1186228,
@@ -313,8 +313,8 @@
 "type": "predicted",
 "players": [
 {
-"pid": 764018,
-"name": "Gregor Kobel"
+"pid": 1107298,
+"name": "Marvin Keller"
 },
 {
 "pid": 1595629,
@@ -368,8 +368,8 @@
 "name": "Stole Dimitrievski"
 },
 {
-"pid": 1100692,
-"name": "Mario Mladenovski"
+"pid": 1696551,
+"name": "Gjorge Djekov"
 },
 {
 "pid": 308469,
@@ -388,12 +388,12 @@
 "name": "Matej Gashtarov"
 },
 {
-"pid": 1180897,
-"name": "Luka Stankovski"
+"pid": 1256465,
+"name": "Agon Elezi"
 },
 {
-"pid": 653453,
-"name": "Sebastián Herrera"
+"pid": 831482,
+"name": "Din Alomerovic"
 },
 {
 "pid": 592783,
@@ -921,6 +921,14 @@
 }
 },
 "10155": {
+"1353289": {
+"name": "Ivan Smolčić",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "Croatia - Spain",
+"until": null
+},
 "616170": {
 "name": "Martin Erlić",
 "type": "injury",
@@ -1196,15 +1204,6 @@
 },
 "_alerts": [
 {
-"key": "10155|950824|2026-10-06T18:45",
-"team": "Croatia",
-"name": "Josip Stanisic",
-"v": 41.15589,
-"started_last": true,
-"match": "Croatia - Spain",
-"utc": "2026-10-06T18:45"
-},
-{
 "key": "8491|1077894|2026-10-06T18:45",
 "team": "England",
 "name": "Jude Bellingham",
@@ -1221,7 +1220,16 @@
 "started_last": true,
 "match": "England - Czechia",
 "utc": "2026-10-06T18:45"
+},
+{
+"key": "6717|764018|2026-10-06T18:45",
+"team": "Switzerland",
+"name": "Gregor Kobel",
+"v": 35.376847,
+"started_last": true,
+"match": "Switzerland - North Macedonia",
+"utc": "2026-10-06T18:45"
 }
 ],
-"_hash": "2eb339d0b02658c9bc7f305489db726a"
+"_hash": "d6c18b36863ee5a9c11ee97b5377de71"
 }
