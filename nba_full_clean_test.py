@@ -210,6 +210,9 @@ def main():
     # ---------- Γ. χαντικαπ B2B ----------
     P(''); P('################ Γ. ΧΑΝΤΙΚΑΠ — back-to-back ################')
     HHb, okb = loso_add(HH, B2A - B2H, (0, 1, 2, 3), ACT, 'Γ back-to-back (φιλ − γηπ)')
+    import pickle   # 6/10: δεδομενα για τη διαγνωση (nba_diag.py)
+    pickle.dump(dict(G=G[['season', 'date', 'home', 'away', 'hs', 'as_', 'neutral', 'pace']].copy(), HH=HHb, HT=HT, MKH=MKH, MKT=MKT, GN=GN, B2H=B2H, B2A=B2A, EV=EV, SIG=SIG, SIGT=SIGT),
+                open('nba_diag_data.pkl', 'wb'))
     # ---------- Δ. πλει-οφ ----------
     P(''); P('################ Δ. ΠΛΕΙ-ΟΦ (κατασταση τελους κανονικης) ################')
     Lg = pd.read_csv('nba_gamelogs.csv', low_memory=False); Lp = Lg[(Lg.table == 'team_game_log_post') & (Lg.game_location.fillna('') != '@')]
