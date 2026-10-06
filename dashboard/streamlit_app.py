@@ -419,6 +419,15 @@ def _ec_picks():
         return [], None
 
 
+def _bcl_picks():
+    """Value picks Basketball Champions League (6/10/2026): bcl_picks.py στον scanner · ΜΟΝΟ χαντικαπ · Pinnacle 197844."""
+    try:
+        import bk_value
+        return bk_value.rows('bcl', 'BCL')
+    except Exception:
+        return [], None
+
+
 def render_value(league):
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#34d17a">💰 VALUE PICKS</div>'
                 '<div class="co">LIVE · THE ODDS API · PINNACLE/MATCHBOOK AH</div></div></div>', unsafe_allow_html=True)
@@ -433,6 +442,7 @@ def render_value(league):
     in_picks, in_scan = _intl_picks()
     el_picks, el_scan = _el_picks()
     ec_picks, ec_scan = _ec_picks()          # 1/10: EuroCup
+    bcl_picks, bcl_scan = _bcl_picks()       # 6/10: Basketball Champions League
     # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
     # ως pick, ακομα κι αν το αρχειο του scan ειναι παλιοτερο απο τη σεντρα.
     import datetime as _dt
@@ -451,6 +461,7 @@ def render_value(league):
     in_picks = [p for p in in_picks if _upcoming(p)]
     el_picks = [p for p in el_picks if _upcoming(p)]
     ec_picks = [p for p in ec_picks if _upcoming(p)]
+    bcl_picks = [p for p in bcl_picks if _upcoming(p)]
     # 1/10 (Στελιος): ποδοσφαιρο — picks που βγηκαν και «χαθηκαν» μενουν ως τη σεντρα (⚠ δεν ισχυει πια + 🧮 με γραμμες)
     gone_fb = []
     try:
@@ -458,7 +469,7 @@ def render_value(league):
         gone_fb = fb_value.core7_gone(picks) + fb_value.euro_gone(eu_picks) + fb_value.intl_gone(in_picks)
     except Exception:
         gone_fb = []
-    eu_picks = eu_picks + in_picks + el_picks + ec_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
+    eu_picks = eu_picks + in_picks + el_picks + ec_picks + bcl_picks      # 25/9: εθνικες (συναινεση) στην ιδια λιστα, ιδιο stake με τα ευρωπαϊκα
     if not res:
         st.info("Δεν υπαρχει ακομα scan. Τρεξε `python scan_value.py` (η το Task Scheduler) για να γεμισει.")
         if not eu_picks:
@@ -551,7 +562,7 @@ def render_ledger(league):
                "Σε ολα: ενα pick ανα ματς & πλευρα, η πρωτη φορα που ηταν ενεργο ≤72ω πριν τη σεντρα.")
     try:
         settled, pending = _ledger_data(_stamp('clv_ledger.jsonl', 'clv_bets.jsonl', 'intl_picks_ledger.jsonl', 'intl_closing.jsonl',
-                                               'euro_picks_ledger.jsonl', 'el_clv_bets.jsonl', 'el_projections.json', 'el_odds_hist.jsonl', 'ec_clv_bets.jsonl', 'ec_projections.json', 'ec_odds_hist.jsonl',
+                                               'euro_picks_ledger.jsonl', 'el_clv_bets.jsonl', 'el_projections.json', 'el_odds_hist.jsonl', 'ec_clv_bets.jsonl', 'ec_projections.json', 'ec_odds_hist.jsonl', 'bcl_clv_bets.jsonl', 'bcl_projections.json', 'bcl_odds_hist.jsonl',
                                                'dashboard/ledger_view.py'))
     except Exception as e:
         st.error(f"Σφαλμα φορτωσης: {e}")

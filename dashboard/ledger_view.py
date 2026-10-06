@@ -73,7 +73,7 @@ def prepare(current_season):
             except Exception:
                 pass
     settled, pending = _first_alert(settled), _first_alert(pending)
-    for fn in (_intl_rows, _euro_rows, _el_rows, lambda: _el_rows('EC')):     # 1/10: + EuroCup
+    for fn in (_intl_rows, _euro_rows, _el_rows, lambda: _el_rows('EC'), lambda: _el_rows('BCL')):     # 1/10: + EuroCup
         try:
             s_i, p_i = fn()
             settled += s_i; pending += p_i
@@ -215,7 +215,7 @@ def _euro_rows():
 # Αλλη γραμμη στο κλεισιμο → ≈CLV: το κλεισιμο μεταφρασμενο στη γραμμη μας (κανονικη κατανομη, σ του μοντελου), ιδια γκανιοτα.
 def _el_rows(comp='EL'):
     """comp='EC' (1/10/2026): EuroCup — ιδια λογικη με ec_clv_bets.jsonl / ec_projections.json / ec_odds_hist.jsonl."""
-    pre, lg_ = ('el', 'Euroleague') if comp == 'EL' else ('ec', 'EuroCup')
+    pre, lg_ = {'EL': ('el', 'Euroleague'), 'EC': ('ec', 'EuroCup'), 'BCL': ('bcl', 'BCL')}[comp]
     import el_report as er
     proj = json.load(open(os.path.join(ROOT, f'{pre}_projections.json'), encoding='utf-8'))
     games = {g['code']: g for g in proj.get('games', [])}

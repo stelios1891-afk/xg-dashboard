@@ -5,7 +5,7 @@ import build_data
 
 TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
 LLOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}.png'
-LEAGUE_LABELS = {'Euroleague': 'Euroleague', 'EuroCup': 'EuroCup', 'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
+LEAGUE_LABELS = {'Euroleague': 'Euroleague', 'EuroCup': 'EuroCup', 'BCL': 'Champions League (FIBA)', 'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
                  'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
                  'PrimeiraLiga': 'Primeira',
                  'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League',
