@@ -8,7 +8,7 @@ from el_picks import cover
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 HC_MIN, ODDS_DELTA = 0.08, 0.05
-PAPER = True        # 6/10: ΜΟΝΟ ΚΑΤΑΓΡΑΦΗ (χωρις Telegram) μεχρι αποφαση Στελιου — bcl_engine_test: μοντελο 0.9 π. πισω απο την αγορα, Κ2 ≈ 0
+PAPER = False       # 6/10 Στελιος: «βαλτα στο dashboard οπως Euroleague/EuroCup, alerts, picks — το βλεπουμε στην πραξη» (backtest ≥8% Crown −0.4% / B365 +1.8%)
 TOT_MIN, TOT_W = 0.06, 0.5          # 5/10: συνολα αγων 1-6 — edge ≥6% με μιξη 50/50
 TOT_MIN_LATE, TOT_W_LATE = 0.06, 1.0   # 5/10 (Στελιος «μιξη ως την 7η, μετα το μοντελο μονο του»): αγων 7+ μοντελο ΜΟΝΟ ΤΟΥ, edge ≥6%
 TOT_EARLY_GNO = 5                    # gno = ματς που εχει ηδη παιξει (max των 2)· 0-5 = αγων 1-6

@@ -15,7 +15,7 @@ import requests
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.abspath(__file__)); F = lambda n: os.path.join(ROOT, n)
 B = 'https://guest.api.arcadia.pinnacle.com/0.1'
-COMPS = {'EL': dict(league=382, pre='el', lab=''), 'EC': dict(league=377, pre='ec', lab='EuroCup · ')}
+COMPS = {'EL': dict(league=382, pre='el', lab=''), 'EC': dict(league=377, pre='ec', lab='EuroCup · '), 'BCL': dict(league=197844, pre='bcl', lab='BCL · ')}   # 6/10: + BCL
 H = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36', 'Accept': 'application/json',
      'Referer': 'https://www.pinnacle.com/', 'Origin': 'https://www.pinnacle.com'}
 WINDOW_H = 48
@@ -121,4 +121,4 @@ def main(notify_tg=True, comp='EL'):
         except Exception as e:
             print('Telegram σφαλμα:', e)
 if __name__ == '__main__':
-    main(notify_tg='--no-tg' not in sys.argv, comp='EC' if 'EC' in sys.argv[1:] else 'EL')
+    main(notify_tg='--no-tg' not in sys.argv, comp=next((a for a in sys.argv[1:] if a in COMPS), 'EL'))

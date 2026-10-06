@@ -10,6 +10,9 @@ import el_odds_scan as E
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 WINDOW_H, GAP_MIN, LEAGUE = 48, 10, 197844
+TOT_DEFAULT = 162.0   # μεσο συνολο BCL (για καρτα οταν δεν υπαρχει γραμμη) — η BCL ΔΕΝ εχει μοντελο συνολων
+import math
+Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
 FORCE = os.environ.get('BCL_FORCE') == '1'
 STOP = {'basket', 'basketball', 'bc', 'bk', 'kk', 'club', 'cb', 'sc', 'fc', 'kc', 'bbc', 'telekom', 'the'}
 def toks(s):
@@ -62,10 +65,29 @@ def main():
         if not h or not a: nomatch.append(f"{g['home_team']} - {g['away_team']}"); continue
         mg, p1, p2 = predict(st, h, a)
         if mg is None: nomatch.append(f"{g['home_team']} - {g['away_team']} (χωρις rating)"); continue
-        games[code] = dict(code=code, round=None, group=None, utc=ko.isoformat().replace('+00:00', 'Z'), home=g['home_team'], away=g['away_team'], hcode=h, acode=a,
-                           margin=round(mg, 2), m_bcl=None if p1 is None else round(p1, 2), m_common=None if p2 is None else round(p2, 2), played=False)
-    # ματς που ξεκινησαν → played (κρατιουνται 2 μερες για το Pick History)
-    # ματς που ξεκινησαν → played· σκορ απο Flashscore (fs_bk_games, ανανεωνεται στο bcl_refresh) για το Pick History
+        tl = None
+        for bm in g.get('bookmakers', []):
+            for mk_ in bm.get('markets', []):
+                if mk_.get('key') == 'totals':
+                    for o in mk_.get('outcomes', []):
+                        if o.get('point') is not None: tl = float(o['point'])
+        T = tl if tl is not None else (games.get(code) or {}).get('total') or TOT_DEFAULT
+        games[code] = dict(code=code, round=None, phase='RS', group=None, utc=ko.isoformat().replace('+00:00', 'Z'), home=g['home_team'], away=g['away_team'], hcode=h, acode=a,
+                           margin=round(mg, 2), m_bcl=None if p1 is None else round(p1, 2), m_common=None if p2 is None else round(p2, 2), played=False,
+                           total=round(T, 1), total_src='αγορα' if tl is not None else 'μεσος ορος', pts_h=round((T + mg) / 2, 1), pts_a=round((T - mg) / 2, 1),
+                           p_home=round(Phi(mg / st.get('sigma', 12.0)), 3), version='bcl1', venue='')
+    finish(games, st, now)
+    up = [dict(code=g['code'], round=None, utc=E._pdt(g['utc']), hcode=g['hcode'], acode=g['acode'], home=g['home'], away=g['away']) for g in games.values() if not g['played']]
+    odds, hist_rows, unmatched, nmatch = E.build_records(list(data), up, now, old.get('odds', {}))
+    json.dump(dict(scanned_at=now.isoformat()[:16], season=st['season'], src='pinnacle', n_games=nmatch, unmatched=unmatched[:20], odds=odds),
+              open(F('bcl_odds_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+    if hist_rows:
+        with open(F('bcl_odds_hist.jsonl'), 'a', encoding='utf-8') as hf:
+            for row in hist_rows: hf.write(json.dumps(row, ensure_ascii=False) + chr(10))
+    print(f'BCL: Pinnacle {len(data)} ματς · με προβλεψη {len(up)} · τιμες {nmatch}' + (f' · ΧΩΡΙΣ ταιριασμα: {"; ".join(nomatch[:6])}' if nomatch else ''))
+
+def finish(games, st, now):
+    """Σκορ (Flashscore) + αγωνιστικη (ανα εβδομαδα) + ratings → bcl_projections.json."""
     res = {}
     try:
         for e in json.load(open(F('fs_bk_games.json'), encoding='utf-8')).get(f"BCL_{st['season']}", []):
@@ -77,15 +99,29 @@ def main():
         if g['played'] and g.get('hs') is None:
             for ts, hs, as_ in res.get((g['hcode'], g['acode']), []):
                 if abs(ts - ko.timestamp()) <= 36 * 3600: g['hs'], g['as_'] = hs, as_
-    json.dump(dict(generated=now.isoformat(timespec='minutes'), season=st['season'], comp='BCL', model=st.get('model'), sigma_margin=st.get('sigma', 12.5),
-                   games=sorted(games.values(), key=lambda g: g['utc'])), open(F('bcl_projections.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    up = [dict(code=g['code'], round=None, utc=E._pdt(g['utc']), hcode=g['hcode'], acode=g['acode'], home=g['home'], away=g['away']) for g in games.values() if not g['played']]
-    odds, hist_rows, unmatched, nmatch = E.build_records(list(data), up, now, old.get('odds', {}))
-    json.dump(dict(scanned_at=now.isoformat()[:16], season=st['season'], src='pinnacle', n_games=nmatch, unmatched=unmatched[:20], odds=odds),
-              open(F('bcl_odds_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False)
-    if hist_rows:
-        with open(F('bcl_odds_hist.jsonl'), 'a', encoding='utf-8') as hf:
-            for row in hist_rows: hf.write(json.dumps(row, ensure_ascii=False) + chr(10))
-    print(f'BCL: Pinnacle {len(data)} ματς · με προβλεψη {len(up)} · τιμες {nmatch}' + (f' · ΧΩΡΙΣ ταιριασμα: {"; ".join(nomatch[:6])}' if nomatch else ''))
+    wk = sorted({E._pdt(g['utc']).date().isocalendar()[:2] for g in games.values()})
+    for g in games.values(): g['round'] = wk.index(E._pdt(g['utc']).date().isocalendar()[:2]) + 1
+    m1 = st.get('m1') or {}; r2 = st['m2']['r']
+    tm = {t for g in games.values() for t in (g['hcode'], g['acode'])}
+    mu = sum(r2.get(t, 0) for t in tm) / max(1, len(tm))
+    nm = {}
+    for g in games.values(): nm[g['hcode']] = g['home']; nm[g['acode']] = g['away']
+    ng = {}
+    for g in games.values():
+        if g.get('hs') is not None:
+            for t in (g['hcode'], g['acode']): ng[t] = ng.get(t, 0) + 1
+    ratings = [dict(code=t, name=nm.get(t) or (st['names'].get(t) or [t])[0], net=round(r2.get(t, 0) - mu, 2),
+                    O=round(m1.get('O', {}).get(t, 0), 2), D=round(m1.get('D', {}).get(t, 0), 2), pace=0.0, games=ng.get(t, 0)) for t in tm if t in r2]
+    json.dump(dict(generated=now.isoformat(timespec='minutes'), season=st['season'], comp='BCL', model=st.get('model'), sigma_margin=st.get('sigma', 12.5), sigma_total=16.0,
+                   games=sorted(games.values(), key=lambda g: g['utc']), ratings=ratings), open(F('bcl_projections.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+
+def results_only():
+    """--results: μονο σκορ (bk_results_due, μετα το flashscore_bcl_stats.py) — χωρις Pinnacle."""
+    now = datetime.datetime.now(datetime.timezone.utc)
+    st = json.load(open(F('bcl_state.json'), encoding='utf-8'))
+    P = json.load(open(F('bcl_projections.json'), encoding='utf-8'))
+    finish({str(g['code']): g for g in P.get('games', [])}, st, now)
+    print('BCL: σκορ ενημερωθηκαν')
+
 if __name__ == '__main__':
-    main()
+    results_only() if '--results' in sys.argv else main()

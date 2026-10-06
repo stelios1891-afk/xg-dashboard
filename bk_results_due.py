@@ -8,7 +8,8 @@ import os, sys, json, subprocess, datetime as dt
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ST_F = os.path.join(ROOT, 'bk_results_due_state.json')
 GAP_MIN, AFTER_H, GIVEUP_H = 30, 2.5, 18
-JOBS = (('el', 'el_projections.json', 'el_refresh.py'), ('ec', 'ec_projections.json', 'ec_refresh.py'))
+JOBS = (('el', 'el_projections.json', 'el_refresh.py'), ('ec', 'ec_projections.json', 'ec_refresh.py'),
+        ('bcl', 'bcl_projections.json', 'flashscore_bcl_stats.py+bcl_odds_scan.py --results'))   # 6/10: BCL — σκορ Flashscore → bcl_projections
 
 def main():
     now = dt.datetime.now(dt.timezone.utc)
@@ -19,7 +20,7 @@ def main():
         except Exception: continue
         due = []
         for g in P.get('games', []):
-            if g.get('played'): continue
+            if g.get('played') and (key != 'bcl' or g.get('hs') is not None): continue   # BCL: played απο το τζαμπολ, σκορ αργοτερα
             try: ko = dt.datetime.fromisoformat(str(g['utc']).replace('Z', '+00:00'))
             except Exception: continue
             h = (now - ko).total_seconds() / 3600
@@ -32,7 +33,8 @@ def main():
         print(f'{key}: {len(due)} ματς χωρις σκορ ({"; ".join(due[:4])}) → {script}', flush=True)
         st[key] = now.isoformat(timespec='minutes')
         try:
-            subprocess.run([sys.executable, script], cwd=ROOT, timeout=600, check=False)
+            for part in script.split('+'):
+                subprocess.run([sys.executable] + part.split(), cwd=ROOT, timeout=600, check=False)
         except Exception as e:
             print(f'{key}: {script} σφαλμα: {e}')
     json.dump(st, open(ST_F, 'w', encoding='utf-8'))

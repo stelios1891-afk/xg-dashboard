@@ -706,6 +706,43 @@ def euroleague_html():
     return h
 
 
+def bcl_html():
+    h = head("🏀 ΜΟΝΤΕΛΟ BASKETBALL CHAMPIONS LEAGUE (FIBA)", "bcl1 (6/10/2026) · 25% μόνο BCL + 75% κοινή κλίμακα · LIVE picks ΜΟΝΟ χάντικαπ (edge ≥8%, Pinnacle) — «το βλέπουμε στην πράξη»")
+    h += ("<div class=\"mg-intro\">Δεδομένα: Flashscore (BCL 2020-26 με box score, 1.153 ματς + όλα τα εγχώρια/ευρωπαϊκά ματς των ομάδων + φιλικά), "
+          "Nowgoal Crown/Bet365 2020-26 (χάντικαπ & σύνολα, 1.147 ματς), Pinnacle live (league 197844). "
+          "Γνώμες ειδικών πριν την 1η αγωνιστική ΔΕΝ υπάρχουν για παλιές σεζόν (μόνο επίσημο BCL 2024-25) · αποδόσεις νικητή μόνο φέτος.</div>")
+    h += card("Μηχανή: 25% μόνο BCL + 75% κοινή κλίμακα", "live",
+              "Μ1 = ratings επίθεσης/άμυνας μόνο από ματς BCL (box score, τύχη 50%, περσινό ×1.4, λ 8). "
+              "Μ2 = ΚΟΙΝΗ ΚΛΙΜΑΚΑ: ένα rating ανά ομάδα από ΟΛΑ τα ματς (εγχώρια, Euroleague/EuroCup/FIBA Europe Cup, BCL), κάθε μέρα, περσινό ×1.3, λ 1.5, διαφορά ψαλιδισμένη ±25.",
+              "Η κοινή κλίμακα είναι η μεγάλη πηγή: οι ομάδες BCL παίζουν λίγα ματς BCL αλλά πολλά εγχώρια.",
+              "bcl_refresh.py (euro-refresh, κάθε πρωί) → bcl_state.json · bcl_common.py",
+              "bcl_engine_test2 (LOSO 5 σεζόν, ~80 εκδοχές Μ2 + ~40 Μ1, 2 επεκτάσεις πλέγματος): σφάλμα 12.93 (μόνο BCL) → 12.43 · κοινή κλίμακα καλύτερη 5/5.")
+    h += card("Εγχώρια: βοηθούν 5/5 στα ματς 1-6, ουδέτερα μετά · βάρος ×1.5", "live",
+              "Τα ματς εκτός BCL (κυρίως εγχώρια) μετράνε 1.5 φορές όσο ένα ματς BCL στην κοινή κλίμακα.",
+              "Σφάλμα μόνο-BCL vs κοινή κλίμακα: ματς 1-3 13.74 → 13.39 (5/5) · 4-6 12.58 → 12.18 (5/5) · 7-10 11.76 → 11.63 (2/5). Διαφορετική μίξη ανά ζώνη ✗ (2/5).",
+              "bcl_round_anchor_test.py", "Βάρος ×1.5 vs ×1: καλύτερο 4/5 (μικρό, −0.02) · ×2 3/5 · ×0.5 0/5.")
+    h += card("Φιλικά προετοιμασίας (μισό ματς, ουδέτερη έδρα)", "live",
+              "Φιλικά & Super Cups (fs_bk_preseason.json) μπαίνουν στην κοινή κλίμακα με βάρος 0.5.",
+              "Βοηθούν κυρίως στα πρώτα 3 ματς (13.45 → 13.27).",
+              "bcl_common.load(pre=True)", "Ζευγαρωτό τεστ: καλύτερα σε 21/24 ρυθμίσεις (≥4/5 σεζόν)· στο LOSO 3/5 λόγω αστάθειας επιλογής ρύθμισης.")
+    h += card("Αποδόσεις νικητή στην αφετηρία (μόνο φέτος)", "live",
+              "Αφετηρία += 4.5 πόντοι × z (Novibet + 2ο βιβλίο, 6/10). Απόφαση Στέλιου — ΧΩΡΙΣ backtest (δεν υπάρχει ιστορικό).",
+              "Η μόνη ιστορική γνώμη (επίσημο BCL 2024-25) βοήθησε εκείνη τη σεζόν: 12.31 → 12.13 (1/1).",
+              "bcl_outrights.json · bcl_expert_test.py", "")
+    h += card("Picks: μοντέλο μόνο του, χάντικαπ edge ≥8%", "live",
+              "Ίδιο με EuroCup: Pinnacle από 48ω πριν, Telegram picks bot, alerts ανοίγματος/ορίων Pinnacle (info bot), Pick History, σελίδα 🏀 Champions League (FIBA). Σύνολα: ΚΑΝΕΝΑ μοντέλο.",
+              "Backtest (5 σεζόν, με φιλικά, χωρίς αποδόσεις νικητή): Crown άνοιγμα −0.4% (534) · Bet365 +1.8% · Κ2 b .15 (t 1.9, 3/5) ✗ · "
+              "ματς 1-3: +4.7% (345, 4/5), Κ2 .20 · ματς 4+: −9.7% (189, 0/5). Σφάλμα μοντέλου 12.45 vs αγορά άνοιγμα 11.89.",
+              "bcl_odds_scan.py · bcl_picks.py · el_pin_watch.py BCL (scanner_tick)", "bcl_market_check.py · bcl_engine_test2")
+    h += card("Άγκυρα / μίξη με την αγορά", "closed",
+              "Εκτίμηση = αγορά + w × (μοντέλο − αγορά), w × όριο × «μόνο πρώτα Ν ματς», επιλογή LOSO.",
+              "LOSO κανόνας +7.6u vs σημερινός −2.2u (Crown), Bet365 +19.1 vs +8.1 — αλλά καλύτερος σε 3/5 σεζόν (χρειαζόταν 4/5). Επιλογές: πάντα μίξη 50-75% και πρώτα 6 ματς.",
+              "bcl_round_anchor_test.py", "")
+    h += note("ΓΝΩΣΤΕΣ ΑΔΥΝΑΜΙΕΣ: λίγκες εκτός δεδομένων (π.χ. Τσεχία → Pardubice χωρίς πρόβλεψη· Αζερμπαϊτζάν → Sabah μόνο από ματς BCL) · "
+              "περσινό ×1.3 μεγαλώνει τις περσινές διαφορές (μεγάλες διαφωνίες με την αγορά στην αρχή). Ιστορικά, σε διαφωνίες 8+ π. το αποτέλεσμα κινήθηκε ~1.8 από τους 11.5 π. προς το μοντέλο.")
+    return h
+
+
 def eurocup_html():
     h = head("🏀 ΜΟΝΤΕΛΟ EUROCUP", "ec1 (1/10/2026) · ίδια μηχανή με την Ευρωλίγκα · αφετηρία από ειδικούς · φετινά εγχώρια από τον 1ο αγώνα · LIVE picks ΜΟΝΟ χάντικαπ (edge ≥8%, Pinnacle)")
     h += ("<div class=\"mg-intro\">Ίδιο σχήμα με την Ευρωλίγκα (κατοχές × πόντοι/κατοχή). Δεδομένα: επίσημο API (competition U, box 2017-26), "
@@ -898,7 +935,7 @@ def render():
                 unsafe_allow_html=True)
     st.caption('Χρώμα αριστερής γραμμής: 🟢 LIVE (τρέχει στα projections/scanner) · 🟡 ΣΚΙΑ (χάρτινο, κρίνεται) · 🟣 ΚΑΝΟΝΑΣ/ΣΥΜΠΕΡΑΣΜΑ · ⚪ ΚΛΕΙΣΤΟ (δοκιμάστηκε, δεν μπήκε). '
                'Τα νούμερα είναι από τα backtests (closing Pinnacle/Crown) — τα ονόματα αρχείων με γκρι είναι για όποιον θέλει να τα ξανατρέξει.')
-    tabs = st.tabs(['🏠 Εγχώρια (CORE7)', '🌍 Ευρωπαϊκά', '🌐 Εθνικές', '🏀 Ευρωλίγκα', '🏀 EuroCup', '🧭 Κοινά μαθήματα', '🗂 Σκιές & εκκρεμή'])
+    tabs = st.tabs(['🏠 Εγχώρια (CORE7)', '🌍 Ευρωπαϊκά', '🌐 Εθνικές', '🏀 Ευρωλίγκα', '🏀 EuroCup', '🏀 BCL', '🧭 Κοινά μαθήματα', '🗂 Σκιές & εκκρεμή'])
     with tabs[0]:
         st.markdown(f'<div class="mg-wrap">{domestic_html()}</div>', unsafe_allow_html=True)
     with tabs[1]:
@@ -910,6 +947,8 @@ def render():
     with tabs[4]:
         st.markdown(f'<div class="mg-wrap">{eurocup_html()}</div>', unsafe_allow_html=True)
     with tabs[5]:
-        st.markdown(f'<div class="mg-wrap">{lessons_html()}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="mg-wrap">{bcl_html()}</div>', unsafe_allow_html=True)
     with tabs[6]:
+        st.markdown(f'<div class="mg-wrap">{lessons_html()}</div>', unsafe_allow_html=True)
+    with tabs[7]:
         st.markdown(f'<div class="mg-wrap">{backlog_html()}</div>', unsafe_allow_html=True)

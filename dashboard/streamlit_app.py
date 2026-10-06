@@ -75,12 +75,13 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('lineup', 'Lineup Lab', '🧪'), ('europe', 'Europe', '🌍'),
          ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο (χαντικαπ v1 + συνολο v2) vs αγορα (TOA)
          ('eurocup', 'EuroCup', '🏀'),         # 1/10/2026: EuroCup — μοντελο ec1 vs Pinnacle (ιδια σελιδα με την Ευρωλιγκα)
+         ('bcl', 'Champions League (FIBA)', '🏀'),   # 6/10/2026: Basketball Champions League — μοντελο bcl1 vs Pinnacle
          ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup', 'bcl'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -902,6 +903,35 @@ def render_eurocup(league):
         st.caption('Net = επιθεση − αμυνα σε ποντους/100 κατοχες vs μεσο ορο · ×0.72 ≈ ποντοι διαφορας ανα ματς.')
 
 
+def render_bcl(league):
+    """🏀 Basketball Champions League (6/10/2026): ιδια σελιδα με Ευρωλιγκα/EuroCup — μοντελο bcl1 vs Pinnacle."""
+    import euroleague_view as elv
+    data = _el_data(elv.files_mtime('BCL'), 'BCL')
+    st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 BASKETBALL CHAMPIONS LEAGUE</div>'
+                '<div class="co">FIBA BCL 2026/27 · ΜΟΝΤΕΛΟ bcl1 · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ (PINNACLE)</div></div></div>',
+                unsafe_allow_html=True)
+    if not data:
+        st.info('Δεν υπαρχουν ακομα προβλεψεις — ο scanner τις γραφει οταν ανοιξει η Pinnacle (48ω πριν το τζαμπολ).')
+        return
+    proj = data['proj']; scan = data.get('scanned_at')
+    st.caption("Μηχανη: 25% μονο ματς BCL + 75% «κοινη κλιμακα» (rating απο ΟΛΑ τα ματς: εγχωρια ×1.5, Ευρωπη, BCL, φιλικα ×0.5) · "
+               "αφετηρια: 1.3 × περσινο + αποδοσεις νικητη (Novibet). Picks ΜΟΝΟ χαντικαπ (μοντελο ≥8%). "
+               "**Συνολο: ΔΕΝ υπαρχει μοντελο** — η καρτα δειχνει τη γραμμη της αγορας. "
+               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
+               + (f" · αγορα: **{str(scan)[:16].replace('T', ' ')} UTC**" if scan else ''))
+    vis = dict(proj, games=list(proj.get('games', [])))
+    keys = elv.rounds(vis)
+    if not keys:
+        st.info('Δεν βρεθηκαν ματς.'); return
+    dflt = elv.default_round(vis, keys)
+    key = st.selectbox('Αγωνιστικη', keys, index=keys.index(dflt), format_func=lambda k: f'Αγωνιστικη {k[1]}', key='bcl_round')
+    games = elv.round_games(vis, key)
+    st.components.v1.html(elv.cards_block(games, data), height=elv.block_height(games), scrolling=True)
+    with st.expander('Ratings ομαδων'):
+        st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
+        st.caption('Net = κοινη κλιμακα σε ΠΟΝΤΟΥΣ ανα ματς vs μεσο ορο των ομαδων της σελιδας · O/D = μοντελο μονο-BCL (ποντοι/100 κατοχες), 0 = χωρις ματς BCL.')
+
+
 def render_euroleague(league):
     """🏀 Euroleague (25/9/2026): ιδιο στησιμο με Europe / Match Projections — 1-2 μοντελου διπλα στην αγορα,
     «Match odds» = σκαλες handicap & συνολου. Επερχομενα ματς + η 1η αγωνιστικη (για συγκριση εκδοσεων)."""
@@ -1078,7 +1108,7 @@ RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': ren
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
           'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl,
-          'euroleague': render_euroleague, 'eurocup': render_eurocup}
+          'euroleague': render_euroleague, 'eurocup': render_eurocup, 'bcl': render_bcl}
 if page in RENDER:
     RENDER[page](league)
 else:

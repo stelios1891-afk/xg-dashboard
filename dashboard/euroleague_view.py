@@ -32,7 +32,10 @@ FILES = (PROJ_F, ODDS_F, HIST_F, NOW_F)
 # 1/10/2026: ιδια σελιδα και για το EuroCup (ec_refresh / ec_odds_scan) — comp='EC'
 COMP_FILES = {'EL': dict(proj=PROJ_F, odds=ODDS_F, hist=(HIST_F, os.path.join(ROOT, 'el_closing_backfill.jsonl')), now=NOW_F),
               'EC': dict(proj=os.path.join(ROOT, 'ec_projections.json'), odds=os.path.join(ROOT, 'ec_odds_latest.json'),
-                         hist=(os.path.join(ROOT, 'ec_odds_hist.jsonl'), os.path.join(ROOT, 'ec_closing_backfill.jsonl')), now=None)}
+                         hist=(os.path.join(ROOT, 'ec_odds_hist.jsonl'), os.path.join(ROOT, 'ec_closing_backfill.jsonl')), now=None),
+              # 6/10/2026: Basketball Champions League (bcl_refresh / bcl_odds_scan) — comp='BCL'
+              'BCL': dict(proj=os.path.join(ROOT, 'bcl_projections.json'), odds=os.path.join(ROOT, 'bcl_odds_latest.json'),
+                          hist=(os.path.join(ROOT, 'bcl_odds_hist.jsonl'),), now=None)}
 
 EDGE_HI = 0.05          # edge ≥5% -> πρασινο (οπως το «value» των αλλων tabs)
 esc = cards.esc
