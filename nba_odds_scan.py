@@ -106,5 +106,15 @@ def results_only():
     now = datetime.datetime.now(datetime.timezone.utc)
     st = json.load(open(F('nba_state.json'), encoding='utf-8')); P = json.load(open(F('nba_projections.json'), encoding='utf-8'))
     finish({str(g['code']): g for g in P.get('games', [])}, st, now); print('NBA: σκορ ενημερωθηκαν')
+def _status(ok, msg):
+    try: json.dump(dict(t=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='minutes'), ok=ok, msg=str(msg)[:300]), open(F('nba_scan_status.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+    except Exception: pass
 if __name__ == '__main__':
-    results_only() if '--results' in sys.argv else main()
+    import io, contextlib, traceback
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf):
+            results_only() if '--results' in sys.argv else main()
+        print(buf.getvalue(), end=''); _status(True, (buf.getvalue().strip().splitlines() or [''])[-1])   # 7/10: κατασταση για διαγνωση στο GitHub
+    except Exception as e:
+        print(buf.getvalue(), end=''); traceback.print_exc(); _status(False, f'{type(e).__name__}: {e}'); raise
