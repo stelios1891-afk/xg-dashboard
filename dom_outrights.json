@@ -73,7 +73,6 @@
     "Manresa": 67.0,
     "G.Canaria": 81.0,
     "Malaga": 81.0,
-    "Afficher plus Pari sur la saison": 92.864,
     "Bilbao": 201.0,
     "Breogán": 201.0,
     "Basquet Girona": 201.0,
@@ -663,14 +662,14 @@
    }
   },
   "2024-25": {
-   "date": "2024-09-17",
-   "src": "bwin/Entain (sports.bwin.com) via Wayback",
-   "url": "https://web.archive.org/web/20240917124240/https://sports.bwin.com/pt-br/sports/basquete-7/aposta/fran%C3%A7a-16/championnat-pro-a-1241",
+   "date": "2024-09-09",
+   "src": "bwin/Entain (www.bwin.be) via Wayback",
+   "url": "https://web.archive.org/web/20240909213359/https://www.bwin.be/nl/sports/basketbal-7/wedden/frankrijk-16/championnat-pro-a-1241",
    "season_start": "2024-09-20",
-   "days_vs_start": -3,
-   "n_teams": 11,
+   "days_vs_start": -11,
+   "n_teams": 16,
    "odds": {
-    "Mônaco": 1.3,
+    "AS Monaco": 1.3,
     "Asvel Villeurbanne": 7.0,
     "Paris Basketball": 7.0,
     "Bourg-en-Bresse": 26.0,
@@ -678,10 +677,16 @@
     "Cholet": 67.0,
     "Dijon": 67.0,
     "Le Mans": 67.0,
-    "Estrasburgo": 67.0,
+    "Strasbourg": 67.0,
     "Le Portel": 101.0,
-    "Limoges": 101.0
-   }
+    "Limoges": 101.0,
+    "St, Quentin": 151.0,
+    "Nancy": 151.0,
+    "Gravelines-Dunkerque": 201.0,
+    "Chalon/Saone": 301.0,
+    "Stade Rochelais Rupella": 301.0
+   },
+   "note": "FULL 16-team list; replaces the incomplete 11-team 2024-09-17 entry in dom_outrights.json (same prices for the 11 overlapping teams)."
   },
   "2025-26": {
    "date": "2025-08-09",
@@ -838,7 +843,7 @@
   }
  },
  "_meta": {
-  "note": "Preseason league-winner (title incl. playoffs) decimal odds. Keys = bk_domestic.json league codes: {\"ACB\": \"Spain Liga ACB\", \"LBA\": \"Italy LBA Serie A\", \"GBL\": \"Greece Basket League\", \"TBL\": \"Turkey BSL\", \"LNB\": \"France LNB Pro A / Betclic Elite\", \"BBL\": \"Germany easyCredit BBL\"}. bwin/sportingbet/partypoker/gamebookers share one Entain feed = single-bookmaker prices (with margin). oddschecker = mean decimal across bookmakers. days_vs_start = snapshot date minus first game date (negative = before start). American odds on English pages converted to decimal.",
+  "note": "Preseason league-winner (title incl. playoffs) decimal odds. Keys = bk_domestic.json league codes: {\"ACB\": \"Spain Liga ACB\", \"LBA\": \"Italy LBA Serie A\", \"GBL\": \"Greece Basket League\", \"TBL\": \"Turkey BSL\", \"LNB\": \"France LNB Pro A / Betclic Elite\", \"BBL\": \"Germany easyCredit BBL\"}. bwin/sportingbet/partypoker/gamebookers share one Entain feed = single-bookmaker prices (with margin). oddschecker = mean decimal across bookmakers. days_vs_start = snapshot date minus first game date (negative = before start). American odds on English pages converted to decimal. | 7/10: LNB 2024-25 αντικατασταθηκε (πληρης λιστα bwin.be −11 μερες, dom_outrights_new.json)· ACB 2022-23 αφαιρεθηκε λαθος κλειδι.",
   "built": "2026-10-05"
  }
 }
