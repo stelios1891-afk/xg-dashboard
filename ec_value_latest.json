@@ -1,10 +1,10 @@
 {
- "scanned_at": "2026-10-07T08:57+00:00",
+ "scanned_at": "2026-10-07T09:02+00:00",
  "hc_min": 0.08,
  "tot_min": 0.06,
  "tot_w": 0.5,
- "n_new": 0,
- "n_changed": 0,
+ "n_new": 2,
+ "n_changed": 1,
  "picks": [
   {
    "lg": "EuroCup",
@@ -75,6 +75,28 @@
    "mkt_line": 171.5,
    "gno": 1,
    "hrs_birth": 17.9
+  },
+  {
+   "lg": "EuroCup",
+   "home": "NINERS Chemnitz",
+   "away": "Neptunas Klaipeda",
+   "hcode": "NIN",
+   "acode": "KLA",
+   "code": 26,
+   "round": 2,
+   "group": "C",
+   "when": "2026-10-07T17:00",
+   "ec": true,
+   "model": "ec1: αφετηρια 0.2×περσινο EuroCup + ειδικοι 4·z (Eurohoops/T",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": -4.0,
+   "odds": 1.943,
+   "edge": 0.1158,
+   "proj_odds": 1.74,
+   "model_line": -6.1,
+   "mkt_line": -4.0,
+   "hrs_birth": 8.0
   },
   {
    "lg": "EuroCup",
@@ -186,13 +208,13 @@
    "model": "ec1: αφετηρια 0.2×περσινο EuroCup + ειδικοι 4·z (Eurohoops/T",
    "mkt": "hcap",
    "side": 1,
-   "hcap": -4.0,
-   "odds": 1.855,
-   "edge": 0.3682,
-   "proj_odds": 1.35,
+   "hcap": -5.0,
+   "odds": 1.826,
+   "edge": 0.2942,
+   "proj_odds": 1.4,
    "model_line": -11.3,
-   "mkt_line": -4.0,
-   "hrs_birth": 13.2
+   "mkt_line": -5.0,
+   "hrs_birth": 13.9
   },
   {
    "lg": "EuroCup",
@@ -208,17 +230,17 @@
    "model": "ec1: αφετηρια 0.2×περσινο EuroCup + ειδικοι 4·z (Eurohoops/T",
    "mkt": "total",
    "side": 0,
-   "hcap": 174.5,
-   "bet": "Over 174.5",
-   "odds": 1.877,
-   "edge": 0.1262,
-   "proj_odds": 1.67,
+   "hcap": 175.5,
+   "bet": "Over 175.5",
+   "odds": 1.901,
+   "edge": 0.1125,
+   "proj_odds": 1.71,
    "model_total": 182.6,
-   "mix_total": 178.7,
-   "mkt_total": 174.9,
-   "mkt_line": 174.5,
+   "mix_total": 179.1,
+   "mkt_total": 175.6,
+   "mkt_line": 175.5,
    "gno": 1,
-   "hrs_birth": 18.9
+   "hrs_birth": 9.5
   }
  ]
 }
