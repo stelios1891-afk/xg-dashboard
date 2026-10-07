@@ -68,6 +68,7 @@ ALIAS = {'Barcelona': ['barcelon'], 'Real Madrid': ['real madrid', '=real'], 'Re
          'Trapani': ['trapan'], 'Udine': ['udine']}
 def norm(s): return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode().lower().strip()
 OUTR = json.load(open('dom_outrights.json', encoding='utf-8'))
+NMAP = json.load(open('dom_outrights_names.json', encoding='utf-8'))
 Z = {}
 for lg in ARGS:
     for sea, e in OUTR[lg].items():
@@ -77,6 +78,7 @@ for lg in ARGS:
         od = e['odds'] if isinstance(e['odds'], dict) else dict(e['odds'])
         got, miss = {}, []
         for on, o in od.items():
+            if NMAP.get(lg, {}).get(on) in ids: got[ids[NMAP[lg][on]]] = float(o); continue      # 7/10: σταθερος πινακας ονοματων
             n_ = norm(on); hit = [fs for fs in ids if any((k[1:] == n_) if k.startswith('=') else (k in n_) for k in ALIAS.get(fs, [w for w in norm(fs).split() if len(w) >= 4] or [norm(fs)]))]
             if len(hit) == 1: got[ids[hit[0]]] = float(o)
             else: miss.append(on)
