@@ -12,6 +12,7 @@ from el_season import Y as CUR
 M1_CFG = dict(carry=1.4, lam=8, HL=9999, w=0.5)      # bcl_engine_test2: επιλογη σε ολες τις 5 σεζον (με φιλικα), 6/10
 M2_CFG = (1.3, 1.5, 9999.0, 25.0, 0.5)                # (περσι, λ, HL, ψαλιδισμα, βαρος φιλικων) — bcl_engine_test2 (φιλικα: 21/24 ρυθμισεις καλυτερες ≥4/5)
 TOT_CFG = dict(carry=.35, lam=20.0, kf=1.0, wo=1.0, luck=.1)   # ΣΥΝΟΛΑ (bcl_totals_luck_test 6/10: LOSO 5/5, Κ2 .41 t 2.8 5/5) — Στελιος «ναι» live
+TOT_QMODE = 'own'   # 7/10 Στελιος «κρατα το δικο τους»: προκριματικα BCL = ΔΙΚΟ ΤΟΥΣ επιπεδο συνολων (φετος 183 π. vs ιστορικα 157-162) — το επιπεδο της κανονικης ξεκινα απο το περσινο (bcl_qual_test)
 SIGMA_TOT = 17.3                                       # sd (πραγματικο − κλεισιμο συνολου) 2021-26
 WO = 1.5                                               # βαρος εγχωριων/Ευρωπης vs BCL στην κοινη κλιμακα (bcl_round_anchor_test Β: 4/5)
 KX = 4.5                                               # ειδικοι/αποδοσεις: αφετηρια += KX · z (bcl_expert_z.json, bcl_expert_test.py) — 6/10 Στελιος: μονο αποδοσεις νικητη (ιστορικο δεν υπαρχει, κx απο 2024-25 ειδικους)
@@ -62,13 +63,13 @@ if CUR in states and CUR - 1 in states:
 # ---- ΣΥΝΟΛΑ: κοινη κλιμακα συνολων με διορθωση τυχης ----
 tot = None
 try:
-    _, tst = B.run_tot(B.load(pre=True), TOT_CFG['carry'], TOT_CFG['lam'], kf=TOT_CFG['kf'], wo=TOT_CFG['wo'], tmap=B.luck_totals(TOT_CFG['luck']), want_state=True)
+    _, tst = B.run_tot(B.load(pre=True), TOT_CFG['carry'], TOT_CFG['lam'], kf=TOT_CFG['kf'], wo=TOT_CFG['wo'], tmap=B.luck_totals(TOT_CFG['luck']), want_state=True, qmode=TOT_QMODE)
     tc = tst.get(CUR) or tst[max(tst)]
     s_ = dict(tc['s'])
     if CUR in tst and CUR - 1 in tst:                   # ομαδες χωρις ματς φετος: carry × περσινο
         s_ = {**{t: TOT_CFG['carry'] * v for t, v in tst[CUR - 1]['s'].items()}, **tst[CUR]['s']}
     mu_bcl = tc['mu'].get('BCL', (tst.get(CUR - 1) or {}).get('mu', {}).get('BCL', 160.0))
-    tot = dict(s=s_, mu_bcl=mu_bcl, cfg=TOT_CFG, sigma=SIGMA_TOT)
+    tot = dict(s=s_, mu_bcl=mu_bcl, cfg=dict(TOT_CFG, qmode=TOT_QMODE), sigma=SIGMA_TOT)
 except Exception as e:
     print('ΠΡΟΣΟΧΗ: συνολα απενεργα —', e)
 # ---- Μ1 μονο BCL ----

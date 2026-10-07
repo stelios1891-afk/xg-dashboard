@@ -105,7 +105,7 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
         if want_state: states[y] = dict(r=dict(prior), h=float(h))
     return (preds, states) if want_state else preds
 
-def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False, tmap=None, ext=None, ext_w=None, qmode='same'):
+def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False, tmap=None, ext=None, ext_w=None, qmode='same', qw=.5):
     """qmode (7/10): προκριματικα BCL 'same' = ιδιο επιπεδο με την κανονικη · 'own' = δικο τους επιπεδο · 'half' = ιδιο επιπεδο, μισο βαρος."""
     isq = lambda r: len(r) > 8 and bool(r[8])
     ck = lambda r: 'BCLQ' if (qmode == 'own' and isq(r)) else r[1]
@@ -142,7 +142,7 @@ def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', wa
                 if r[5] is None: continue
                 i, j, c = ix[r[3]], ix[r[4]], cx[ck(r)]; yv = float(tmap.get(r[7], r[5] + r[6])) if tmap else float(r[5] + r[6])   # tmap: συνολο «χωρις τυχη» (luck_totals)
                 wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else (ext_w if (ext and r[1] in ext and ext_w is not None) else wo))
-                if qmode == 'half' and isq(r): wt = .5
+                if qmode == 'half' and isq(r): wt = qw
                 for a_ in (i, j, c):
                     for c_ in (i, j, c): M[a_, c_] += wt
                     b[a_] += wt * yv
