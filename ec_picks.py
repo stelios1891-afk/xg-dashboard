@@ -70,7 +70,8 @@ def compute():
                                       mix_total=round(mu, 1), mkt_total=round(mk, 1), mkt_line=T, gno=g.get('gno')))
     return picks
 
-def key(p): return f"EC|{p['code']}|{p['mkt']}|{p.get('bet') or p['side']}|{p['hcap']:g}"
+def key(p):                                   # 7/10: ΕΝΑ pick ανα ματς & πλευρα (η γραμμη εκτος κλειδιου)
+    import bk_pick_status as _b; return _b.side_key('EC', p)
 def line(p, prev=None):
     t = dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
     try:
@@ -91,11 +92,14 @@ def main(notify_tg=True):
     picks = compute()
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
     state = _load(F('ec_value_state.json'), {})
+    import bk_pick_status as _b; _b.migrate_keys(state, 'EC')
     new, changed, cur = [], [], set()
     for p in picks:
         k = key(p); cur.add(k); prev = state.get(k)
         if prev is None:
-            new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now)
+            new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now, hcap=p['hcap'])
+        elif not _b.same_line(prev, p):                 # 7/10: ιδια πλευρα, αλλη γραμμη → ΙΔΙΟ pick, σιωπηλα (οχι νεο/ημερολογιο/Telegram)
+            state[k].update(hcap=p['hcap'], odds=p['odds'], edge=p['edge'])
         elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
             changed.append((p, prev.get('odds'))); state[k].update(odds=p['odds'], edge=p['edge'])
     for p in picks:

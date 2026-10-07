@@ -3,7 +3,7 @@ bk_pick_status.py — ΠΑΡΑΚΟΛΟΥΘΗΣΗ ΚΑΤΑΣΤΑΣΗΣ PICKS ΜΠ
 στις 5 για over 171, τωρα δεν υπαρχει αυτη η γραμμη — γιατι δεν ηρθε μηνυμα;»). Ιδια λογικη με τις εθνικες (intl_picks_ledger.track_status):
 για καθε pick που ΒΓΗΚΕ (ημερολογιο *_clv_bets.jsonl, οχι paper) και δεν αρχισε το ματς:
   · ειναι ακομα pick η ΙΔΙΑ αγορα & κατευθυνση (χαντικαπ πλευρα / Over-Under) σε ΟΠΟΙΑΔΗΠΟΤΕ γραμμη;
-  · ΝΑΙ → τιποτα (αν αλλαξε γραμμη και ειναι pick, ερχεται ηδη ως «νεο pick»).
+  · ΝΑΙ → τιποτα (7/10: αλλη γραμμη στην ιδια πλευρα = ΙΔΙΟ pick, σιωπηλα — βλ. side_key/migrate_keys).
   · ΟΧΙ → «⚠ δεν ισχυει πια» (σιωπηλο, picks bot): γραμμη/αποδοση τωρα, edge τωρα, ποια αποδοση χρειαζεται για pick.
   · ξαναγινεται pick → «🔁 ΞΑΝΑ PICK».
 Οχι «πινγκ-πονγκ»: νεο μηνυμα για το ιδιο pick μονο αν περασαν ≥30′ απο το προηγουμενο. Κατασταση στο *_value_state.json (κλειδι STATUS|...).
@@ -15,6 +15,30 @@ QUIET_MIN = 30
 
 def _dir(mkt, side, bet):
     return str(side) if mkt == 'hcap' else str(bet or '').split(' ')[0]          # 1/-1 ή Over/Under
+
+
+def side_key(lg, p):
+    """7/10/2026 (Στελιος: «επαιξα Βοννη −9.5 και εμφανιζεται σαν νεο στο −8.5»): ΕΝΑ pick ανα ματς & πλευρα — η γραμμη ΔΕΝ ειναι μερος του κλειδιου."""
+    return f"{lg}|{p['code']}|{p['mkt']}|{_dir(p['mkt'], p.get('side'), p.get('bet'))}"
+
+
+def migrate_keys(state, lg):
+    """Παλια κλειδια state «LG|code|mkt|bet-ή-πλευρα|γραμμη» → «LG|code|mkt|κατευθυνση» (πρωτη εμφανιση κρατα first_seen/paper, τελευταια τιμη/γραμμη)."""
+    for k in [k for k in state if k.startswith(lg + '|') and k.count('|') == 4]:
+        a = k.split('|'); v = state.pop(k)
+        try: v.setdefault('hcap', float(a[4]))
+        except ValueError: pass
+        nk = '|'.join([a[0], a[1], a[2], a[3].split(' ')[0]])
+        o = state.get(nk)
+        if o is None: state[nk] = v; continue
+        first, last = (v, o) if v.get('first_seen', '') <= o.get('first_seen', '') else (o, v)
+        state[nk] = dict(first, odds=last.get('odds'), edge=last.get('edge'), hcap=last.get('hcap'))
+    return state
+
+
+def same_line(prev, p):
+    """Ιδια γραμμη με την τελευταια που ειδαμε; (χωρις αποθηκευμενη γραμμη → ναι)"""
+    return prev.get('hcap') is None or abs(float(prev['hcap']) - float(p['hcap'])) < 1e-9
 
 
 def open_bets(bets_path, now):

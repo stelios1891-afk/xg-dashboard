@@ -148,7 +148,8 @@ def compute():
                     picks.append(pk)
     return picks
 
-def key(p): return f"EL|{p['code']}|{p['mkt']}|{p.get('bet') or p['side']}|{p['hcap']:g}"
+def key(p):                                   # 7/10: ΕΝΑ pick ανα ματς & πλευρα (η γραμμη εκτος κλειδιου)
+    import bk_pick_status as _b; return _b.side_key('EL', p)
 def line(p, prev=None):
     t = dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
     try:
@@ -228,12 +229,13 @@ def main(notify_tg=True):
     picks = compute()
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
     state = _load(F('el_value_state.json'), {})
+    import bk_pick_status as _b; _b.migrate_keys(state, 'EL')
     new, changed, cur = [], [], set()
     proj_ = _load(F('el_projections.json'), {}); sm_, st_ = float(proj_.get('sigma_margin', 11.5)), float(proj_.get('sigma_total', 16.7))
     for p in picks:
         k = key(p); cur.add(k); prev = state.get(k)
         if prev is None:
-            new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now)
+            new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now, hcap=p['hcap'])
             hrs = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc) - dt.datetime.fromisoformat(now)).total_seconds() / 3600
             if p['mkt'] == 'hcap' and hrs < LATE_H: state[k]['paper'] = 'late2h'
             if p['mkt'] == 'total':
@@ -242,6 +244,8 @@ def main(notify_tg=True):
                 if d_open is not None and d_open <= -MOVE_PTS:
                     hx = move_cross_hours(p, st_); state[k]['move_h'] = hx
                     if hx is None or hx >= MOVE_LATE_H: state[k]['paper'] = 'move15'     # νωρις κοντρα → καταγραφη· <6ω → κανονικο pick
+        elif not _b.same_line(prev, p):                 # 7/10: ιδια πλευρα, αλλη γραμμη → ΙΔΙΟ pick, σιωπηλα (οχι νεο/ημερολογιο/Telegram)
+            state[k].update(hcap=p['hcap'], odds=p['odds'], edge=p['edge'])
         elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
             changed.append((p, prev.get('odds'))); state[k].update(odds=p['odds'], edge=p['edge'])
     for p in picks:

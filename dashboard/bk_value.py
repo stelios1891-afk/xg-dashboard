@@ -60,6 +60,15 @@ def rows(prefix, lg):
         except Exception:
             pass
     out, active = [], set()
+    first = {}                                   # 7/10: πρωτη εγγραφη ανα ματς & πλευρα (για «βγηκε πρωτα» οταν αλλαξε η γραμμη)
+    try:
+        for ln in open(os.path.join(ROOT, f'{prefix}_clv_bets.jsonl'), encoding='utf-8'):
+            try: b = json.loads(ln)
+            except Exception: continue
+            k_ = (str(b['code']), b['mkt'], bs._dir(b['mkt'], b.get('side'), b.get('bet')))
+            if k_ not in first or b['seen'] < first[k_]['seen']: first[k_] = b
+    except FileNotFoundError:
+        pass
     for p in lat.get('picks', []):
         q = dict(lg=lg, home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
                  proj_odds=p.get('proj_odds'), when=p['when'], el=True, mkt=p.get('mkt'), mkt_note=p.get('mkt_note'), drift=p.get('drift'),
@@ -68,6 +77,10 @@ def rows(prefix, lg):
         if p.get('bet'):
             q['bet'] = p['bet']
         active.add((str(p['code']), p.get('mkt'), bs._dir(p.get('mkt'), p.get('side'), p.get('bet'))))
+        f0 = first.get((str(p['code']), p.get('mkt'), bs._dir(p.get('mkt'), p.get('side'), p.get('bet'))))
+        if f0 and abs(float(f0['hcap']) - float(p['hcap'])) > 1e-9:
+            lab0 = f0.get('bet') or ((f0['home'] if int(f0['side']) == 1 else f0['away']) + (' +' if float(f0['hcap']) >= 0 else ' ') + format(float(f0['hcap']), 'g'))
+            q['first_note'] = f"βγήκε πρώτα: {lab0} @{float(f0['odds']):.2f} ({bs._gr(f0['seen'])})"
         g = games.get(str(p['code']))
         try:
             over = str(p.get('bet', '')).startswith('Over')

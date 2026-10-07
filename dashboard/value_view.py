@@ -136,7 +136,9 @@ def pick_card(p):
         stake_k, stake_v = 'Ποντ.', '— (αναμονη ανανεωσης)'
     if p.get('gone'):
         stake_k, stake_v = 'Ποντ.', '— (δες 🧮)'
-    pk = _h.escape(f"{p['lg']}|{p['home']}|{p['away']}|{p.get('mkt') or ''}|{p.get('bet') or side}|{p['hcap']:g}|{(p.get('when') or '')[:10]}", quote=True)
+    pk = _h.escape(f"{p['lg']}|{p['home']}|{p['away']}|{p.get('mkt') or ''}|{str(p.get('bet') or side).split(' ')[0]}|{(p.get('when') or '')[:10]}", quote=True)   # 7/10: χωρις γραμμη (ιδια πλευρα = ιδιο pick)
+    if p.get('first_note'):
+        tags += f'<span class="tag" title="η γραμμη αλλαξε απο τοτε — ιδιο pick">{_h.escape(p["first_note"])}</span>'
     return f"""
 <div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late') or p.get('stale') or p.get('gone')) else ''}" data-k="{pk}">
   <div class="top">
@@ -247,6 +249,8 @@ PLAYED_JS = """<script>
   var KEY='vp_played_v1', mem={}, ok=true, filt='all';
   try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; }
   var now=Date.now(); for(var k in mem){ if(now-mem[k]>14*864e5) delete mem[k]; }
+  for(var k in mem){ var a=k.split('|'); if(a.length===7){ var nk=[a[0],a[1],a[2],a[3],a[4].split(' ')[0],a[6]].join('|'); if(!mem[nk]) mem[nk]=mem[k]; delete mem[k]; } }   // 7/10: παλια κλειδια (με γραμμη) → νεα
+  save();
   function save(){ if(!ok) return; try{ localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
   function paint(){
     var cards=document.querySelectorAll('.pc[data-k]'), n=0;
