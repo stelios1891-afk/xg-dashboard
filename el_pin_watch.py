@@ -5,7 +5,7 @@
   Δουλευει και απο GitHub Actions (pinnacle_ci_probe 30/9). Οριο = maxRiskStake (μεγιστο ρισκο· νομισμα ΑΓΝΩΣΤΟ — δεν το γραφει η υπηρεσια).
 Καθε σαρωση (scanner_tick, ~15′), για τα ματς των επομενων 48 ωρων, ΚΥΡΙΕΣ αγορες (χαντικαπ, συνολο, νικητης):
   • ΠΡΩΤΗ εμφανιση ματς στην Pinnacle → Telegram «🟢 ανοιξε η Pinnacle» (γραμμες, τιμες, ορια, edge μοντελου στην κυρια γραμμη)
-  • ΑΥΞΗΣΗ οριου χαντικαπ/συνολου → Telegram «💰 οριο ↑» (με τωρινη γραμμη/τιμη & edge)
+  • ΑΥΞΗΣΗ οριου χαντικαπ/συνολου → Telegram «💰 οριο ↑» (με τωρινη γραμμη/τιμη & edge) — 7/10: ΜΟΝΟ για ματς με pick
   • ΙΣΤΟΡΙΚΟ: καθε αλλαγη (γραμμη, τιμη, οριο) → el_pin_hist.jsonl — για να μαθουμε το μοτιβο (ποσο αργοτερα ανεβαινουν τα ορια).
 Telegram: info bot (οχι picks bot — κανονας 26/9). State: el_pin_state.json.
 5/10/2026 (Στελιος «ακριβως το ιδιο και στο EuroCup»): `python el_pin_watch.py EC` → league 377, ec_projections.json, ec_pin_state.json,
@@ -53,6 +53,13 @@ def main(notify_tg=True, comp='EL'):
             if min(sh, sa) >= 1 and sh + sa > bs: best, bs = g, sh + sa
         return best
     state = _load(F(f'{PRE}_pin_state.json'), {}); msgs = []; hist = []
+    act = set()                                    # 7/10 Στελιος («απειρα μηνυματα»): «οριο ↑» ΜΟΝΟ για ματς με pick (ενεργο ή που βγηκε και δεν αρχισε)
+    try:
+        act = {str(p['code']) for p in _load(F(f'{PRE}_value_latest.json'), {}).get('picks', [])}
+        import bk_pick_status as _b
+        act |= {str(k[0]) for k in _b.open_bets(F(f'{PRE}_clv_bets.jsonl'), now)}
+    except Exception as e:
+        print('picks για ορια: σφαλμα', e)
     for m in M:
         ps = m.get('participants') or []
         if len(ps) != 2 or m.get('parentId'): continue
@@ -103,7 +110,7 @@ def main(notify_tg=True, comp='EL'):
             for mk_, nm in (('sp', 'χαντικαπ'), ('tot', 'συνολο')):
                 a, b = (prev.get(mk_) or {}).get('lim', 0), (cur.get(mk_) or {}).get('lim', 0)
                 if b > a: ups.append(f'{nm} {a:g} → {b:g}')
-            if ups:
+            if ups and g and str(g.get('code')) in act:
                 msgs.append(f"💰 ΟΡΙΟ PINNACLE ↑ · {LAB}{home} - {away} ({tip}, σε {hrs:.1f}ω)\n{' · '.join(ups)}\n{desc()}" + (f"\n{edges()}" if edges() else ''))
         if prev is None or any((prev.get(x) or {}) != (cur.get(x) or {}) for x in ('sp', 'tot', 'ml')):
             hist.append(dict(t=now.isoformat(timespec='minutes'), id=m['id'], home=home, away=away, start=m['startTime'], hrs=round(hrs, 2), code=(g or {}).get('code'), **cur))

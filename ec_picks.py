@@ -130,10 +130,9 @@ def main(notify_tg=True):
     json.dump(state, open(F('ec_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, tot_w=TOT_W, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('ec_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    if notify_tg and (new or changed):
+    if notify_tg and new:          # 7/10 Στελιος: ΟΧΙ πια μηνυματα «🔄 αλλαξαν odds» (η τιμη φαινεται στα Value Picks)
         msg = []
         if new: msg += [f'🏀 {len(new)} ΝΕΑ value picks EuroCup', ''] + [line(p) + '\n' for p in sorted(new, key=lambda x: x['when'])]
-        if changed: msg += [f'🔄 {len(changed)} ΑΛΛΑΞΑΝ odds (EuroCup)'] + [line(p, pr) for p, pr in changed]
         try:
             import notify; notify.send('\n'.join(msg))
         except Exception as e:
