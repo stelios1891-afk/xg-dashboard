@@ -53,7 +53,7 @@ def _main_comp(R):
     return {t: v.most_common(1)[0][0] for t, v in c.items()}
 
 def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL', years=None, today_ts=None, want_state=False, prior_adj=None,
-        ext=None, ext_w=None, ext_clip=None, lgprior=False, qual_neutral=False, lglevel=False, lamL=2.0, carryL=1.0):
+        ext=None, ext_w=None, ext_clip=None, lgprior=False, qual_neutral=False, lglevel=False, lamL=2.0, carryL=1.0, ext_scale=None):
     """7/10: ext = συνολο «περιφερειακων» πρωταθληματων με δικο τους βαρος ext_w και ψαλιδι ext_clip · lgprior = νεες ομαδες ξεκινουν απο τον
     (περσινο) μεσο ορο των ομαδων του πρωταθληματος τους αντι για 0.
     lglevel (7/10, Στελιος «οπως το Elo στο ποδοσφαιρο»): ΕΠΙΠΕΔΟ ΠΡΩΤΑΘΛΗΜΑΤΟΣ — r_ομαδας = L_πρωταθληματος + u· το ridge τραβα την ομαδα προς
@@ -113,6 +113,7 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
                 isx = bool(ext) and r[1] in ext
                 cl = ext_clip if (isx and ext_clip) else clip
                 i, j = ix[r[3]], ix[r[4]]; yv = float(np.clip(r[5] - r[6], -cl, cl))
+                if isx and ext_scale is not None: yv *= ext_scale          # 7/10: ΜΕΤΑΦΡΑΣΗ εγχωριας υπεροχης μικρων πρωταθληματων (συμπιεση)
                 wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else (ext_w if (isx and ext_w is not None) else wo))   # wo = βαρος ματς αλλων διοργανωσεων (εγχωρια/Ευρωπη)
                 v = np.zeros(n + 1); v[i] = 1; v[j] = -1; v[n] = 0 if (r[1] == 'PRE' or (qual_neutral and len(r) > 8 and r[8])) else 1
                 nz = (i, j, n)
