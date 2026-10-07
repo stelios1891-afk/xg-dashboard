@@ -12,6 +12,9 @@ import numpy as np
 
 # 7/10/2026: ΙΔΙΑ ομαδα με νεο κωδικο Flashscore (αλλαγη ονοματος) → ενωση με τον παλιο, ωστε να κρατα το ιστορικο της
 ALIAS = {'hOKbcTyq': 'Cjh1xKbk'}          # «Slavia Prague ERA NBK» (2026-27) = «Slavia Prague» (CZE 2021-25)
+# 7/10/2026 (Στελιος «βγαλ' τες για αρχη»): πρωταθληματα ΕΚΤΟΣ κοινης κλιμακας — bcl_periph_test: χωρις Τσεχια/Φινλανδια λαθος 13.12 → 12.75
+# (LOSO 4/5)· οσο μικροτερο βαρος τοσο καλυτερα (η Nymburk «φουσκωνει» απο τις εγχωριες νικες). Τα δεδομενα μενουν στο fs_bk_extra.json.
+EXCLUDE = {'CZE', 'FIN'}
 
 def load(pre=False):
     FG = json.load(open('fs_bk_games.json', encoding='utf-8'))
@@ -27,6 +30,7 @@ def load(pre=False):
     for key, L in FG.items():
         if key.startswith('PRE_'): comp, y = 'PRE', int(key.split('_')[1])
         else: comp, y = key.rsplit('_', 1); y = int(y)
+        if comp in EXCLUDE: continue
         for e in L:
             if not e.get('hid') or not e.get('aid') or not e.get('ts'): continue
             try: hs, as_ = int(e['hs']), int(e['as_'])

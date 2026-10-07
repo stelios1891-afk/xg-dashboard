@@ -63,9 +63,15 @@ def main():
         if ko <= now or (ko - now).total_seconds() > WINDOW_H * 3600:
             continue
         h, a = match_team(g['home_team'], st), match_team(g['away_team'], st)
-        if not h or not a: nomatch.append(f"{g['home_team']} - {g['away_team']}"); continue
+        if not h or not a:
+            nomatch.append(f"{g['home_team']} - {g['away_team']}")
+            if code in games and not games[code].get('played'): games.pop(code)       # 7/10: δεν αναγνωριζεται πια → χωρις παλια προβλεψη
+            continue
         mg, p1, p2 = predict(st, h, a)
-        if mg is None: nomatch.append(f"{g['home_team']} - {g['away_team']} (χωρις rating)"); continue
+        if mg is None:
+            nomatch.append(f"{g['home_team']} - {g['away_team']} (χωρις rating)")
+            if code in games and not games[code].get('played'): games.pop(code)
+            continue
         tl = None
         for bm in g.get('bookmakers', []):
             for mk_ in bm.get('markets', []):

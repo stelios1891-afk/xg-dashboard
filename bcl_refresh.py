@@ -109,7 +109,7 @@ except Exception: pass
 names, bcl_now = {}, set()
 for key, L in FG.items():
     comp, y = key.rsplit('_', 1)
-    if int(y) < CUR - 1: continue
+    if int(y) < CUR - 1 or comp in B.EXCLUDE: continue        # 7/10: ομαδες μονο απο Τσεχια/Φινλανδια δεν αναγνωριζονται → χωρις προβλεψη ως το 1ο ματς BCL
     for e in L:
         for t, nm in ((B.ALIAS.get(e.get('hid'), e.get('hid')), e.get('home')), (B.ALIAS.get(e.get('aid'), e.get('aid')), e.get('away'))):
             if t and nm: names.setdefault(t, set()).add(nm)
