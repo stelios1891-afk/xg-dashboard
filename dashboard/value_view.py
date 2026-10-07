@@ -136,11 +136,12 @@ def pick_card(p):
         stake_k, stake_v = 'Ποντ.', '— (αναμονη ανανεωσης)'
     if p.get('gone'):
         stake_k, stake_v = 'Ποντ.', '— (δες 🧮)'
+    pk = _h.escape(f"{p['lg']}|{p['home']}|{p['away']}|{p.get('mkt') or ''}|{p.get('bet') or side}|{p['hcap']:g}|{(p.get('when') or '')[:10]}", quote=True)
     return f"""
-<div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late') or p.get('stale') or p.get('gone')) else ''}">
+<div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late') or p.get('stale') or p.get('gone')) else ''}" data-k="{pk}">
   <div class="top">
     <div class="lg">{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
-    <div class="when">{_h.escape((p.get('when') or '').replace('T', ' '))}</div>
+    <div class="when">{_h.escape((p.get('when') or '').replace('T', ' '))}<button class="played" onclick="tgPlayed(this)" title="Σημειωσε οτι το επαιξες (αποθηκευεται σε αυτη τη συσκευη)">☐ το έπαιξα</button></div>
   </div>
   <div class="mrow">
     <div class="tm {hcls}">{_logo(p.get('home_id'))}{_h.escape(p['home'])}</div>
@@ -224,4 +225,41 @@ function vpCalc(i){
 
 def picks_html(picks):
     picks = sorted(picks, key=lambda p: (p.get('when') or '9999'))   # χρονολογικα: νωριτερο πανω, πιο μετα κατω
-    return CSS + '<div class="wrap">' + ''.join(pick_card(p) for p in picks) + '</div>' + CALC_JS
+    return (CSS + PLAYED_CSS + '<div class="wrap"><div class="pbar2"><span id="pcnt">✅ παιγμένα 0</span>'
+            '<button class="pf on" data-f="all" onclick="pfSet(this)">Όλα</button><button class="pf" data-f="todo" onclick="pfSet(this)">Μη παιγμένα</button>'
+            '<button class="pf" data-f="done" onclick="pfSet(this)">Παιγμένα</button></div>'
+            + ''.join(pick_card(p) for p in picks) + '</div>' + CALC_JS + PLAYED_JS)
+
+# 7/10/2026 (Στελιος «ενδειξη τικ — να την πατω και να αποθηκευεται»): «✅ το επαιξα» ανα pick, στη μνημη του browser (localStorage)·
+# κλειδι = λιγκα|γηπ|φιλ|αγορα|στοιχημα|γραμμη|μερα (αλλη γραμμη του ιδιου ματς = αλλο pick)· σβηνονται μετα απο 14 μερες.
+PLAYED_CSS = """<style>
+.played{margin-left:8px;background:none;border:1px solid #2a3a5c;color:#8fa3c8;border-radius:6px;padding:1px 7px;font-size:10px;cursor:pointer;font-family:inherit}
+.played:hover{border-color:#34d17a;color:#cdd8ee}
+.pc.done{border-color:#34d17a !important;background:linear-gradient(0deg,#0f2a1d,#101a2e) !important}
+.pc.done .played{background:#16402a;border-color:#34d17a;color:#7ff0b0;font-weight:600}
+.pbar2{display:flex;gap:6px;align-items:center;margin:0 0 8px 2px;font-size:11px;color:#8fa3c8}
+.pbar2 #pcnt{margin-right:8px}
+.pf{background:none;border:1px solid #2a3a5c;color:#8fa3c8;border-radius:12px;padding:2px 10px;font-size:10px;cursor:pointer;font-family:inherit}
+.pf.on{background:#16203a;color:#e8edf8;border-color:#4a6390}
+</style>"""
+PLAYED_JS = """<script>
+(function(){
+  var KEY='vp_played_v1', mem={}, ok=true, filt='all';
+  try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; }
+  var now=Date.now(); for(var k in mem){ if(now-mem[k]>14*864e5) delete mem[k]; }
+  function save(){ if(!ok) return; try{ localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
+  function paint(){
+    var cards=document.querySelectorAll('.pc[data-k]'), n=0;
+    cards.forEach(function(c){
+      var d=!!mem[c.getAttribute('data-k')]; if(d) n++;
+      c.classList.toggle('done', d);
+      var b=c.querySelector('.played'); if(b) b.textContent = d ? '✅ το έπαιξα' : '☐ το έπαιξα';
+      c.style.display = (filt==='all' || (filt==='done')===d) ? '' : 'none';
+    });
+    var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (ok?'':' (ο browser δεν επιτρέπει αποθήκευση)');
+  }
+  window.tgPlayed=function(btn){ var c=btn.closest('.pc'); var k=c.getAttribute('data-k'); if(mem[k]) delete mem[k]; else mem[k]=Date.now(); save(); paint(); };
+  window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); document.querySelectorAll('.pf').forEach(function(x){x.classList.toggle('on', x===btn);}); paint(); };
+  paint();
+})();
+</script>"""
