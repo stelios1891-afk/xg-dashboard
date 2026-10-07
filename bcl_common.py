@@ -16,7 +16,8 @@ ALIAS = {'hOKbcTyq': 'Cjh1xKbk'}          # «Slavia Prague ERA NBK» (2026-27) 
 # (LOSO 4/5)· οσο μικροτερο βαρος τοσο καλυτερα (η Nymburk «φουσκωνει» απο τις εγχωριες νικες). Τα δεδομενα μενουν στο fs_bk_extra.json.
 EXCLUDE = {'CZE', 'FIN'}
 
-def load(pre=False):
+def load(pre=False, extra2=False, include=()):
+    """extra2 (7/10): + fs_bk_extra2.json (BUL POR SUI CYP DEN GEO SVK — μονο για τεστ) · include: πρωταθληματα του EXCLUDE που ΜΠΑΙΝΟΥΝ (τεστ)."""
     FG = json.load(open('fs_bk_games.json', encoding='utf-8'))
     if pre:   # 6/10: φιλικα/Super Cups (fs_bk_preseason.json) ως comp 'PRE' — βαρος kf στο run, ουδετερη εδρα
         try:
@@ -26,11 +27,13 @@ def load(pre=False):
         XT = json.load(open('fs_bk_extra.json', encoding='utf-8'))
         for k, v in XT.items(): FG.setdefault(k, v)
     except Exception: pass
+    if extra2:
+        for k, v in json.load(open('fs_bk_extra2.json', encoding='utf-8')).items(): FG.setdefault(k, v)
     rows = []
     for key, L in FG.items():
         if key.startswith('PRE_'): comp, y = 'PRE', int(key.split('_')[1])
         else: comp, y = key.rsplit('_', 1); y = int(y)
-        if comp in EXCLUDE: continue
+        if comp in EXCLUDE and comp not in include: continue
         for e in L:
             if not e.get('hid') or not e.get('aid') or not e.get('ts'): continue
             try: hs, as_ = int(e['hs']), int(e['as_'])
@@ -50,14 +53,16 @@ def _main_comp(R):
     return {t: v.most_common(1)[0][0] for t, v in c.items()}
 
 def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL', years=None, today_ts=None, want_state=False, prior_adj=None,
-        ext=None, ext_w=None, ext_clip=None, lgprior=False, qual_neutral=False):
+        ext=None, ext_w=None, ext_clip=None, lgprior=False, qual_neutral=False, lglevel=False, lamL=2.0, carryL=1.0):
     """7/10: ext = συνολο «περιφερειακων» πρωταθληματων με δικο τους βαρος ext_w και ψαλιδι ext_clip · lgprior = νεες ομαδες ξεκινουν απο τον
-    (περσινο) μεσο ορο των ομαδων του πρωταθληματος τους αντι για 0."""
+    (περσινο) μεσο ορο των ομαδων του πρωταθληματος τους αντι για 0.
+    lglevel (7/10, Στελιος «οπως το Elo στο ποδοσφαιρο»): ΕΠΙΠΕΔΟ ΠΡΩΤΑΘΛΗΜΑΤΟΣ — r_ομαδας = L_πρωταθληματος + u· το ridge τραβα την ομαδα προς
+    το επιπεδο του πρωταθληματος της (οχι προς το 0)· L ξεκινα απο carryL × περσινο L (βαρος lamL ματς) και ορίζεται απο τα ευρωπαικα ματς."""
     by_y = collections.defaultdict(list)
     for r in rows:
         if r[1] == 'PRE' and kf <= 0: continue
         by_y[r[0]].append(r)
-    prior = {}; preds = {}; states = {}
+    prior = {}; preds = {}; states = {}; priorL = {}; prev_mc = {}
     for y in sorted(by_y):
         R = by_y[y]
         teams = sorted({r[3] for r in R} | {r[4] for r in R}); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
@@ -71,13 +76,27 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
             m0 = np.array([carry * prior.get(t, 0.0) for t in teams])
         if prior_adj and y in prior_adj:            # ειδικοι/αποδοσεις: μετατοπιση αφετηριας (ποντοι)
             m0 = m0 + np.array([prior_adj[y].get(t, 0.0) for t in teams])
-        M = np.zeros((n + 1, n + 1)); b = np.zeros(n + 1)       # τελευταια στηλη = εδρα
+        if lglevel:
+            mc = _main_comp(R); lgs = sorted({mc[t] for t in teams if t in mc}); lx = {c_: n + 1 + k for k, c_ in enumerate(lgs)}
+            m0 = np.array([carry * (prior[t] - priorL.get(prev_mc.get(t), 0.0)) if t in prior else 0.0 for t in teams]) if prior else np.zeros(n)
+            if prior_adj and y in prior_adj: m0 = m0 + np.array([prior_adj[y].get(t, 0.0) for t in teams])
+            L0 = np.array([carryL * priorL.get(c_, 0.0) for c_ in lgs])
+            tl = np.array([lx.get(mc.get(t), -1) for t in teams])
+        else:
+            lgs, lx = [], {}
+        NN = n + 1 + len(lgs)
+        M = np.zeros((NN, NN)); b = np.zeros(NN)       # στηλη n = εδρα · n+1.. = επιπεδα πρωταθληματων (lglevel)
         last_day = None
         days = collections.defaultdict(list)
         for r in R: days[int(r[2] // 86400)].append(r)
         def solve():
             A = M.copy(); A[:n, :n] += lam * np.eye(n); A[n, n] += 50.0
             rhs = b.copy(); rhs[:n] += lam * m0; rhs[n] += 50.0 * 2.5
+            if lgs:
+                for i_, c_ in enumerate(tl):
+                    if c_ < 0: continue
+                    A[i_, c_] -= lam; A[c_, i_] -= lam; A[c_, c_] += lam; rhs[c_] -= lam * m0[i_]
+                for k, c_ in enumerate(lgs): A[n + 1 + k, n + 1 + k] += lamL; rhs[n + 1 + k] += lamL * L0[k]
             x = np.linalg.solve(A, rhs); return x[:n], x[n]
         for d in sorted(days):
             if last_day is not None and HL < 9000:
@@ -102,7 +121,15 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
                     b[a_] += wt * v[a_] * yv
         rr, h = solve()
         prior = {t: float(rr[ix[t]]) for t in teams}
-        if want_state: states[y] = dict(r=dict(prior), h=float(h))
+        if lgs:
+            A_ = M.copy(); A_[:n, :n] += lam * np.eye(n); A_[n, n] += 50.0      # επιπεδα τελους σεζον (ιδιο συστημα)
+            rhs_ = b.copy(); rhs_[:n] += lam * m0; rhs_[n] += 50.0 * 2.5
+            for i_, c_ in enumerate(tl):
+                if c_ < 0: continue
+                A_[i_, c_] -= lam; A_[c_, i_] -= lam; A_[c_, c_] += lam; rhs_[c_] -= lam * m0[i_]
+            for k, c_ in enumerate(lgs): A_[n + 1 + k, n + 1 + k] += lamL; rhs_[n + 1 + k] += lamL * L0[k]
+            xx = np.linalg.solve(A_, rhs_); priorL = {c_: float(xx[n + 1 + k]) for k, c_ in enumerate(lgs)}; prev_mc = dict(mc)
+        if want_state: states[y] = dict(r=dict(prior), h=float(h), L=dict(priorL) if lgs else {})
     return (preds, states) if want_state else preds
 
 def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False, tmap=None, ext=None, ext_w=None, qmode='same', qw=.5):
