@@ -35,7 +35,8 @@ def load(pre=False):
             if not e.get('hid') or not e.get('aid') or not e.get('ts'): continue
             try: hs, as_ = int(e['hs']), int(e['as_'])
             except Exception: hs = as_ = None
-            rows.append((y, comp, e['ts'], ALIAS.get(e['hid'], e['hid']), ALIAS.get(e['aid'], e['aid']), hs, as_, e['id']))
+            rows.append((y, comp, e['ts'], ALIAS.get(e['hid'], e['hid']), ALIAS.get(e['aid'], e['aid']), hs, as_, e['id'],
+                         comp == 'BCL' and 'Qualif' in (e.get('stage') or '')))     # 7/10: [8] = προκριματικα BCL
     rows.sort(key=lambda r: r[2])
     return rows
 
@@ -49,7 +50,7 @@ def _main_comp(R):
     return {t: v.most_common(1)[0][0] for t, v in c.items()}
 
 def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL', years=None, today_ts=None, want_state=False, prior_adj=None,
-        ext=None, ext_w=None, ext_clip=None, lgprior=False):
+        ext=None, ext_w=None, ext_clip=None, lgprior=False, qual_neutral=False):
     """7/10: ext = συνολο «περιφερειακων» πρωταθληματων με δικο τους βαρος ext_w και ψαλιδι ext_clip · lgprior = νεες ομαδες ξεκινουν απο τον
     (περσινο) μεσο ορο των ομαδων του πρωταθληματος τους αντι για 0."""
     by_y = collections.defaultdict(list)
@@ -87,14 +88,14 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
             if need:
                 rr, h = solve()
                 for r in need:
-                    if r[3] in ix and r[4] in ix: preds[r[7]] = (float(rr[ix[r[3]]] - rr[ix[r[4]]] + h), y)
+                    if r[3] in ix and r[4] in ix: preds[r[7]] = (float(rr[ix[r[3]]] - rr[ix[r[4]]] + (0.0 if (qual_neutral and len(r) > 8 and r[8]) else h)), y)
             for r in todays:
                 if r[5] is None: continue
                 isx = bool(ext) and r[1] in ext
                 cl = ext_clip if (isx and ext_clip) else clip
                 i, j = ix[r[3]], ix[r[4]]; yv = float(np.clip(r[5] - r[6], -cl, cl))
                 wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else (ext_w if (isx and ext_w is not None) else wo))   # wo = βαρος ματς αλλων διοργανωσεων (εγχωρια/Ευρωπη)
-                v = np.zeros(n + 1); v[i] = 1; v[j] = -1; v[n] = 0 if r[1] == 'PRE' else 1
+                v = np.zeros(n + 1); v[i] = 1; v[j] = -1; v[n] = 0 if (r[1] == 'PRE' or (qual_neutral and len(r) > 8 and r[8])) else 1
                 nz = (i, j, n)
                 for a_ in nz:
                     for c_ in nz: M[a_, c_] += wt * v[a_] * v[c_]
@@ -104,7 +105,10 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
         if want_state: states[y] = dict(r=dict(prior), h=float(h))
     return (preds, states) if want_state else preds
 
-def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False, tmap=None, ext=None, ext_w=None):
+def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False, tmap=None, ext=None, ext_w=None, qmode='same'):
+    """qmode (7/10): προκριματικα BCL 'same' = ιδιο επιπεδο με την κανονικη · 'own' = δικο τους επιπεδο · 'half' = ιδιο επιπεδο, μισο βαρος."""
+    isq = lambda r: len(r) > 8 and bool(r[8])
+    ck = lambda r: 'BCLQ' if (qmode == 'own' and isq(r)) else r[1]
     """6/10/2026 — ΚΟΙΝΗ ΚΛΙΜΑΚΑ ΣΥΝΟΛΩΝ: συνολο = μ_διοργανωσης + s_γηπ + s_φιλ (s = «ταση συνολου» ομαδας: επιθεση + αμυνα που δεχεται).
     Ενα s ανα ομαδα απο ΟΛΑ τα ματς (καθε διοργανωση με δικο της επιπεδο μ — τα πρωταθληματα σκοραρουν διαφορετικα), walk-forward καθε μερα.
     Ridge: s → carry × περσινο (νεες 0)· μ → περσινο μ της διοργανωσης (βαρος lam_mu). Φιλικα (comp 'PRE') βαρος kf, αλλες διοργανωσεις wo."""
@@ -116,7 +120,7 @@ def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', wa
     for y in sorted(by_y):
         R = by_y[y]
         teams = sorted({r[3] for r in R} | {r[4] for r in R}); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
-        comps = sorted({r[1] for r in R}); cx = {c: n + k for k, c in enumerate(comps)}; N = n + len(comps)
+        comps = sorted({ck(r) for r in R}); cx = {c: n + k for k, c in enumerate(comps)}; N = n + len(comps)
         done = [r[5] + r[6] for r in R if r[5] is not None]; gmean = float(np.mean(done)) if done else 160.0
         m0 = np.array([carry * prior.get(t, 0.0) for t in teams] + [pmu.get(c, gmean) for c in comps])
         M = np.zeros((N, N)); b = np.zeros(N)
@@ -133,11 +137,12 @@ def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', wa
             need = [r for r in todays if r[1] == comp]
             if need:
                 x = solve()
-                for r in need: preds[r[7]] = (float(x[cx[comp]] + x[ix[r[3]]] + x[ix[r[4]]]), y)
+                for r in need: preds[r[7]] = (float(x[cx[ck(r)]] + x[ix[r[3]]] + x[ix[r[4]]]), y)
             for r in todays:
                 if r[5] is None: continue
-                i, j, c = ix[r[3]], ix[r[4]], cx[r[1]]; yv = float(tmap.get(r[7], r[5] + r[6])) if tmap else float(r[5] + r[6])   # tmap: συνολο «χωρις τυχη» (luck_totals)
+                i, j, c = ix[r[3]], ix[r[4]], cx[ck(r)]; yv = float(tmap.get(r[7], r[5] + r[6])) if tmap else float(r[5] + r[6])   # tmap: συνολο «χωρις τυχη» (luck_totals)
                 wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else (ext_w if (ext and r[1] in ext and ext_w is not None) else wo))
+                if qmode == 'half' and isq(r): wt = .5
                 for a_ in (i, j, c):
                     for c_ in (i, j, c): M[a_, c_] += wt
                     b[a_] += wt * yv
