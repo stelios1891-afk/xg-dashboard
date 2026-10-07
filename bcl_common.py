@@ -35,7 +35,19 @@ def load(pre=False):
     rows.sort(key=lambda r: r[2])
     return rows
 
-def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL', years=None, today_ts=None, want_state=False, prior_adj=None):
+EU_COMPS = {'BCL', 'EC', 'EL', 'FEC', 'PRE'}
+def _main_comp(R):
+    """κυριο εγχωριο πρωταθλημα καθε ομαδας μεσα στις γραμμες μιας σεζον."""
+    c = collections.defaultdict(collections.Counter)
+    for r in R:
+        if r[1] not in EU_COMPS:
+            c[r[3]][r[1]] += 1; c[r[4]][r[1]] += 1
+    return {t: v.most_common(1)[0][0] for t, v in c.items()}
+
+def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL', years=None, today_ts=None, want_state=False, prior_adj=None,
+        ext=None, ext_w=None, ext_clip=None, lgprior=False):
+    """7/10: ext = συνολο «περιφερειακων» πρωταθληματων με δικο τους βαρος ext_w και ψαλιδι ext_clip · lgprior = νεες ομαδες ξεκινουν απο τον
+    (περσινο) μεσο ορο των ομαδων του πρωταθληματος τους αντι για 0."""
     by_y = collections.defaultdict(list)
     for r in rows:
         if r[1] == 'PRE' and kf <= 0: continue
@@ -44,7 +56,14 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
     for y in sorted(by_y):
         R = by_y[y]
         teams = sorted({r[3] for r in R} | {r[4] for r in R}); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
-        m0 = np.array([carry * prior.get(t, 0.0) for t in teams])
+        if lgprior:
+            mc = _main_comp(R); acc = collections.defaultdict(list)
+            for t in teams:
+                if t in prior and t in mc: acc[mc[t]].append(prior[t])
+            lgm = {c_: float(np.mean(v)) for c_, v in acc.items() if len(v) >= 3}
+            m0 = np.array([carry * prior[t] if t in prior else carry * lgm.get(mc.get(t), 0.0) for t in teams])
+        else:
+            m0 = np.array([carry * prior.get(t, 0.0) for t in teams])
         if prior_adj and y in prior_adj:            # ειδικοι/αποδοσεις: μετατοπιση αφετηριας (ποντοι)
             m0 = m0 + np.array([prior_adj[y].get(t, 0.0) for t in teams])
         M = np.zeros((n + 1, n + 1)); b = np.zeros(n + 1)       # τελευταια στηλη = εδρα
@@ -67,8 +86,10 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
                     if r[3] in ix and r[4] in ix: preds[r[7]] = (float(rr[ix[r[3]]] - rr[ix[r[4]]] + h), y)
             for r in todays:
                 if r[5] is None: continue
-                i, j = ix[r[3]], ix[r[4]]; yv = float(np.clip(r[5] - r[6], -clip, clip))
-                wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else wo)   # wo = βαρος ματς αλλων διοργανωσεων (εγχωρια/Ευρωπη)
+                isx = bool(ext) and r[1] in ext
+                cl = ext_clip if (isx and ext_clip) else clip
+                i, j = ix[r[3]], ix[r[4]]; yv = float(np.clip(r[5] - r[6], -cl, cl))
+                wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else (ext_w if (isx and ext_w is not None) else wo))   # wo = βαρος ματς αλλων διοργανωσεων (εγχωρια/Ευρωπη)
                 v = np.zeros(n + 1); v[i] = 1; v[j] = -1; v[n] = 0 if r[1] == 'PRE' else 1
                 nz = (i, j, n)
                 for a_ in nz:
@@ -79,7 +100,7 @@ def run(rows, carry=.7, lam=10.0, HL=120.0, clip=25.0, kf=0.0, wo=1.0, comp='BCL
         if want_state: states[y] = dict(r=dict(prior), h=float(h))
     return (preds, states) if want_state else preds
 
-def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False, tmap=None):
+def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', want_state=False, tmap=None, ext=None, ext_w=None):
     """6/10/2026 — ΚΟΙΝΗ ΚΛΙΜΑΚΑ ΣΥΝΟΛΩΝ: συνολο = μ_διοργανωσης + s_γηπ + s_φιλ (s = «ταση συνολου» ομαδας: επιθεση + αμυνα που δεχεται).
     Ενα s ανα ομαδα απο ΟΛΑ τα ματς (καθε διοργανωση με δικο της επιπεδο μ — τα πρωταθληματα σκοραρουν διαφορετικα), walk-forward καθε μερα.
     Ridge: s → carry × περσινο (νεες 0)· μ → περσινο μ της διοργανωσης (βαρος lam_mu). Φιλικα (comp 'PRE') βαρος kf, αλλες διοργανωσεις wo."""
@@ -112,7 +133,7 @@ def run_tot(rows, carry=.8, lam=5.0, kf=0.0, wo=1.0, lam_mu=20.0, comp='BCL', wa
             for r in todays:
                 if r[5] is None: continue
                 i, j, c = ix[r[3]], ix[r[4]], cx[r[1]]; yv = float(tmap.get(r[7], r[5] + r[6])) if tmap else float(r[5] + r[6])   # tmap: συνολο «χωρις τυχη» (luck_totals)
-                wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else wo)
+                wt = kf if r[1] == 'PRE' else (1.0 if r[1] == comp else (ext_w if (ext and r[1] in ext and ext_w is not None) else wo))
                 for a_ in (i, j, c):
                     for c_ in (i, j, c): M[a_, c_] += wt
                     b[a_] += wt * yv
