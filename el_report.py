@@ -8,12 +8,20 @@
   κλεισιμο· % picks που ηρθε ΠΡΟΣ εμας / ΚΟΝΤΡΑ (≥0.5 π.) vs ιστορικο (el_alert_types, Crown 5 σεζον, χωρις καταγραφες):
   χαντικαπ 32% / 25% (μ.ο. +0.12 π.) · συνολα 44% / 22% (μ.ο. +0.39 π.). Αν πεφτει κατω απο αυτα → το μοντελο χανει την αιχμη του.
   Οι καταγραφες (paper: χαντικαπ τελευταιου 2ωρου, συνολα μετα απο κοντρα ≥1.5π) μετρανε ΞΕΧΩΡΙΣΤΑ.
-Χρηση: python el_report.py report [μερες]  ·  python el_report.py weekly (Δευτερα, μια φορα → Telegram· απο scanner_tick)"""
+8/10/2026 (Στελιος «το θερμομετρο βαλτο»): ΚΑΙ BCL — `python el_report.py weekly BCL` (bcl_* αρχεια, bcl_report_last.txt, ιστορικο θερμομετρου BCL:
+  χαντικαπ ≥8% 31% προς / 28% κοντρα / +0.01 π. (bcl_mk, 511 picks 2021-26) · συνολα ≥8% Crown 43% / 38% / +0.05 π. (μονο γραμμη, 267)).
+Χρηση: python el_report.py report [μερες] [BCL]  ·  python el_report.py weekly [BCL] (Δευτερα, μια φορα → Telegram· απο scanner_tick)"""
 import os, sys, json, math, datetime as dt
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 STATE = F('el_report_last.txt')
+PRE, TITLE = 'el', 'EUROLEAGUE'
+def setup(comp):
+    global PRE, TITLE, STATE, BENCH
+    if comp == 'BCL':
+        PRE, TITLE, STATE = 'bcl', 'CHAMPIONS LEAGUE (FIBA)', F('bcl_report_last.txt')
+        BENCH = {'hcap': (0.31, 0.28, 0.01), 'total': (0.43, 0.38, 0.05)}
 Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
 
 def _jl(p):
@@ -31,19 +39,19 @@ def implied_mu(L, oh, oa, sig):
     return (lo + hi) / 2
 
 def settled():
-    proj = json.load(open(F('el_projections.json'), encoding='utf-8'))
+    proj = json.load(open(F(f'{PRE}_projections.json'), encoding='utf-8'))
     games = {g['code']: g for g in proj['games']}
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
     close = {}
-    for r in _jl(F('el_odds_hist.jsonl')) + _jl(F('el_closing_backfill.jsonl')):
+    for r in _jl(F(f'{PRE}_odds_hist.jsonl')) + _jl(F(f'{PRE}_closing_backfill.jsonl')):
         if r.get('line') is None or r['t'] + ':00' >= r['commence'][:19]: continue
         if r['code'] not in close or r['t'] > close[r['code']]['t']: close[r['code']] = r
     hist = {}
-    for r in _jl(F('el_odds_hist.jsonl')):
+    for r in _jl(F(f'{PRE}_odds_hist.jsonl')):
         if r.get('line') is not None or r.get('tl') is not None: hist.setdefault(r['code'], []).append(r)
     for v in hist.values(): v.sort(key=lambda r: r['t'])
     first = {}
-    for b in _jl(F('el_clv_bets.jsonl')):
+    for b in _jl(F(f'{PRE}_clv_bets.jsonl')):
         k = (b['code'], b['mkt'], b.get('bet', '').split(' ')[0] if b['mkt'] == 'total' else b['side'])
         if k not in first or b['seen'] < first[k]['seen']: first[k] = b
     out = []
@@ -115,12 +123,13 @@ def report(days=7):
     rows = [r for r in allr if not r.get('paper')]; paper = [r for r in allr if r.get('paper')]
     cut = (now - dt.timedelta(days=days)).strftime('%Y-%m-%dT%H:%M')
     week = [r for r in rows if r['when'] >= cut]
-    lines = ['🏀 EUROLEAGUE — εβδομαδιαια αναφορα picks', summarize(week, f'τελευταιες {days} μερες'), summarize(rows, 'σεζον ως τωρα')]
+    lines = [f'🏀 {TITLE} — εβδομαδιαια αναφορα picks', summarize(week, f'τελευταιες {days} μερες'), summarize(rows, 'σεζον ως τωρα')]
     th = thermo([r for r in rows if r['settled']])
     if th: lines.append(th + ' — σεζον ως τωρα')
     ps = [r for r in paper if r['settled']]
     if ps: lines.append(f'📝 καταγραφες (δεν παιζονται): {len(ps)} · {sum(r["pnl"] for r in ps):+.2f} μον. αν παιζονταν'
-                        f' (χαντικαπ 2ωρου {sum(1 for r in ps if r.get("paper") == "late2h")} · συνολα κοντρα ≥1.5 {sum(1 for r in ps if r.get("paper") == "move15")})')
+                        + (f' (χαντικαπ 2ωρου {sum(1 for r in ps if r.get("paper") == "late2h")} · συνολα κοντρα ≥1.5 {sum(1 for r in ps if r.get("paper") == "move15")})' if PRE == 'el'
+                         else f' (λιγα δεδομενα {sum(1 for r in ps if r.get("paper") == "lowinfo")})'))
     det = [r for r in week if r['settled']]
     if det:
         lines.append('\nαναλυτικα:')
@@ -148,6 +157,7 @@ def weekly(notify_tg=True):
     print(msg)
 
 if __name__ == '__main__':
+    if 'BCL' in sys.argv: setup('BCL')
     if 'weekly' in sys.argv:
         weekly(notify_tg='--no-tg' not in sys.argv)
     else:
