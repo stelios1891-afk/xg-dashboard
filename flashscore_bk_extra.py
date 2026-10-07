@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """flashscore_bk_extra.py — ΕΠΙΠΛΕΟΝ ΕΓΧΩΡΙΑ ΠΡΩΤΑΘΛΗΜΑΤΑ για το EuroCup (1/10/2026, Στελιος: «πρεπει πρωτα να βρεις ολα τα δεδομενα για ολες
-τις ομαδες»). Πολωνια, Ρουμανια, Αγγλια, Βελγιο-Ολλανδια (BNXT απο 2021, πριν Βελγιο), Λετονια-Εσθονια, Ουκρανια — σεζον 2016-17 … τρεχουσα.
+τις ομαδες»). Πολωνια, Ρουμανια, Αγγλια, Βελγιο-Ολλανδια (BNXT απο 2021, πριν Βελγιο), Λετονια-Εσθονια, Ουκρανια, Τσεχια, Φινλανδια (7/10) — σεζον 2016-17 … τρεχουσα.
 Ιδια μεθοδος με flashscore_bk_domestic.py (σελιδα results + feed tr_… απο page 0, κωδικος ομαδας PX/PY). Μονο αποτελεσματα (οχι στατιστικα).
 Εξοδος: fs_bk_extra.json {"{LG}_{Y}": [ματς]}"""
 import sys, os, re, json, time
@@ -9,7 +9,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 H = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36'}
 HF = {**H, 'x-fsign': 'SW9D1eZo', 'Referer': 'https://www.flashscore.com/'}
 C = {'PLK': ['poland/basket-liga'], 'ROM': ['romania/divizia-a'], 'GBR': ['united-kingdom/slb'],
-     'BNX': ['europe/bnxt-league', 'belgium/pro-basketball-league'], 'LEL': ['europe/latvian-estonian-league'], 'UKR': ['ukraine/superleague']}
+     'BNX': ['europe/bnxt-league', 'belgium/pro-basketball-league'], 'LEL': ['europe/latvian-estonian-league'], 'UKR': ['ukraine/superleague'],
+     'CZE': ['czech-republic/nbl'], 'FIN': ['finland/korisliiga']}   # 7/10: Τσεχια (Slavia, Pardubice) & Φινλανδια (Salon Vilpas) για το BCL
 from el_season import Y as CUR
 OF = 'fs_bk_extra.json'
 S = requests.Session()

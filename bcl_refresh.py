@@ -111,7 +111,7 @@ for key, L in FG.items():
     comp, y = key.rsplit('_', 1)
     if int(y) < CUR - 1: continue
     for e in L:
-        for t, nm in ((e.get('hid'), e.get('home')), (e.get('aid'), e.get('away'))):
+        for t, nm in ((B.ALIAS.get(e.get('hid'), e.get('hid')), e.get('home')), (B.ALIAS.get(e.get('aid'), e.get('aid')), e.get('away'))):
             if t and nm: names.setdefault(t, set()).add(nm)
             if t and comp == 'BCL' and int(y) == CUR: bcl_now.add(t)
 json.dump(dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=CUR, A=A, sigma=SIGMA, m1_cfg=M1_CFG, m2_cfg=list(M2_CFG),

@@ -10,6 +10,9 @@ state(...) → ratings σημερα (για live)."""
 import json, math, collections
 import numpy as np
 
+# 7/10/2026: ΙΔΙΑ ομαδα με νεο κωδικο Flashscore (αλλαγη ονοματος) → ενωση με τον παλιο, ωστε να κρατα το ιστορικο της
+ALIAS = {'hOKbcTyq': 'Cjh1xKbk'}          # «Slavia Prague ERA NBK» (2026-27) = «Slavia Prague» (CZE 2021-25)
+
 def load(pre=False):
     FG = json.load(open('fs_bk_games.json', encoding='utf-8'))
     if pre:   # 6/10: φιλικα/Super Cups (fs_bk_preseason.json) ως comp 'PRE' — βαρος kf στο run, ουδετερη εδρα
@@ -28,7 +31,7 @@ def load(pre=False):
             if not e.get('hid') or not e.get('aid') or not e.get('ts'): continue
             try: hs, as_ = int(e['hs']), int(e['as_'])
             except Exception: hs = as_ = None
-            rows.append((y, comp, e['ts'], e['hid'], e['aid'], hs, as_, e['id']))
+            rows.append((y, comp, e['ts'], ALIAS.get(e['hid'], e['hid']), ALIAS.get(e['aid'], e['aid']), hs, as_, e['id']))
     rows.sort(key=lambda r: r[2])
     return rows
 

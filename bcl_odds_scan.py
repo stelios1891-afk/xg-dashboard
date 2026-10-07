@@ -7,6 +7,7 @@ import os, sys, json, re, unicodedata, datetime
 try: sys.stdout.reconfigure(encoding='utf-8')
 except Exception: pass
 import el_odds_scan as E
+from bcl_common import ALIAS as _AL      # 7/10: ιδια ομαδα με νεο κωδικο Flashscore
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 WINDOW_H, GAP_MIN, LEAGUE = 48, 10, 197844
@@ -94,7 +95,7 @@ def finish(games, st, now):
     res = {}
     try:
         for e in json.load(open(F('fs_bk_games.json'), encoding='utf-8')).get(f"BCL_{st['season']}", []):
-            if e.get('hs') not in (None, '') and e.get('ts'): res.setdefault((e['hid'], e['aid']), []).append((e['ts'], int(e['hs']), int(e['as_'])))
+            if e.get('hs') not in (None, '') and e.get('ts'): res.setdefault((_AL.get(e['hid'], e['hid']), _AL.get(e['aid'], e['aid'])), []).append((e['ts'], int(e['hs']), int(e['as_'])))
     except Exception: pass
     for k, g in list(games.items()):
         ko = E._pdt(g['utc'])
