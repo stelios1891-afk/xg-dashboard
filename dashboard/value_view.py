@@ -115,7 +115,7 @@ def pick_card(p):
                  + (f" · χρειαζεται @{g_['need']:.2f}" if g_.get('need') and g_['need'] > 1 else '')) if g_ and g_.get('lab') else 'τωρα χωρις τιμη')
         tags += f'<span class="tag np" title="Βγηκε pick στην τιμη που φαινεται· η αγορα αλλαξε. Δες στο 🧮 αλλες γραμμες / τιμες του broker.">⚠ δεν ισχυει πια · {_h.escape(now_)}</span>'
     if p.get('paper_late'):              # 1/10: EL χαντικαπ τελευταιου 2ωρου = καταγραφη (ιστορικα −9%, 1/5)
-        tags += f'<span class="tag np" title="{_h.escape(p.get("mkt_note") or "")}">📝 καταγραφη · δεν παιζεται</span>'
+        tags += f'<span class="tag np" title="{_h.escape(p.get("mkt_note") or "")}">📝 καταγραφη · δεν παιζεται' + (' · ⚠ λίγα δεδομένα' if p.get('late_kind') == 'λιγα δεδομενα' else '') + '</span>'
     if p.get('stale'):                   # 1/10: φρενο φρεσκαδας εθνικων
         tags += f'<span class="tag np" title="{_h.escape(p["stale"])}">⏸ περιμενει ανανεωση αποτελεσματων · δεν παιζεται ακομα</span>'
     if p.get('no_play'):

@@ -5,7 +5,7 @@
    προβλεψη = (1 − A)·Μ1 + A·Μ2 (Μ1 λειπει → μονο Μ2).
 3. bcl_state.json: ratings σημερα ανα κωδικο Flashscore + ονοματα (για ταιριασμα με Pinnacle στο bcl_odds_scan.py).
 Χρηση: python bcl_refresh.py [--no-fetch]"""
-import sys, os, json, subprocess, datetime as dt, io, contextlib
+import sys, os, json, subprocess, datetime as dt, io, contextlib, collections
 import numpy as np
 sys.stdout.reconfigure(encoding='utf-8')
 from el_season import Y as CUR
@@ -115,7 +115,13 @@ for key, L in FG.items():
         for t, nm in ((B.ALIAS.get(e.get('hid'), e.get('hid')), e.get('home')), (B.ALIAS.get(e.get('aid'), e.get('aid')), e.get('away'))):
             if t and nm: names.setdefault(t, set()).add(nm)
             if t and comp == 'BCL' and int(y) == CUR: bcl_now.add(t)
-json.dump(dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=CUR, A=A, sigma=SIGMA, m1_cfg=M1_CFG, m2_cfg=list(M2_CFG),
+# 7/10 (Στελιος «βαλε τη σημειωση, περιμενουμε 3-4 αγωνιστικες και μετα παιζουμε»): ομαδες BCL ΧΩΡΙΣ κανενα ματς στη μηχανη πριν τη φετινη σεζον
+# (σημερα Σλαβια, Παρντουμπιτσε) → {κωδικος: ματς BCL φετος}· τα picks τους = καταγραφη ως το LOWINFO_N-οστο ματς (bcl_picks)
+_hist = {t for r in rows if r[0] < CUR for t in (r[3], r[4])}
+_nb = collections.Counter(t for r in rows if r[0] == CUR and r[1] == 'BCL' and r[5] is not None for t in (r[3], r[4]))
+lowinfo = {t: int(_nb.get(t, 0)) for t in bcl_now if t not in _hist}
+print('ομαδες χωρις ιστορικο:', {(names.get(t) and sorted(names[t])[0]) or t: n for t, n in lowinfo.items()})
+json.dump(dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=CUR, A=A, sigma=SIGMA, m1_cfg=M1_CFG, m2_cfg=list(M2_CFG), lowinfo=lowinfo,
                m2=dict(r=st2['r'], h=st2['h']), m1=m1, tot=tot, names={t: sorted(v) for t, v in names.items()}, bcl_teams=sorted(bcl_now),
                model=f'BCL: (1−{A})·μονο BCL (περσι {M1_CFG["carry"]}, λ {M1_CFG["lam"]}, HL {M1_CFG["HL"]}, τυχη {M1_CFG["w"]}) + {A}·κοινη κλιμακα (ολα τα ματς, περσι {M2_CFG[0]}, λ {M2_CFG[1]}, φιλικα {M2_CFG[4]}, εγχωρια ×{WO}, αποδοσεις νικητη {KX})'),
           open('bcl_state.json', 'w', encoding='utf-8'), ensure_ascii=False)

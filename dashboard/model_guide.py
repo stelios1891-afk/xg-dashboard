@@ -738,7 +738,8 @@ def bcl_html():
               "bcl_totals_test + bcl_totals_luck_test (LOSO 2021-25): τύχη 5/5 (17.46 → 17.38) · σφάλμα 17.40 vs άνοιγμα 17.41 / κλείσιμο 17.37 · Κ2 .41 (t 2.8, 5/5) ✓ · "
               "≥8% ανοίγματος Crown +7.1% (334, 4/5) · Bet365 +11.5% (344, 4/5) · κλείσιμο Crown +10.0% · τυφλό under −0.5% / −3.8% (όχι τάση αγοράς) · μίξη 50/50 χειρότερη.")
     h += card("Picks: μοντέλο μόνο του, χάντικαπ & σύνολα edge ≥8%", "live",
-              "Ίδιο με EuroCup: Pinnacle από 48ω πριν, Telegram picks bot, alerts ανοίγματος/ορίων Pinnacle (info bot), Pick History, σελίδα 🏀 Champions League (FIBA). Σύνολα: ΚΑΝΕΝΑ μοντέλο.",
+              "Ίδιο με EuroCup: Pinnacle από 48ω πριν, Telegram picks bot, alerts ανοίγματος/ορίων Pinnacle (info bot), Pick History, σελίδα 🏀 Champions League (FIBA). "
+              "7/10: ομάδα ΧΩΡΙΣ κανένα ματς στη μηχανή πριν τη σεζόν (Σλάβια, Πάρντουμπιτσε) → picks σε ματς της = 📝 καταγραφή «⚠ λίγα δεδομένα» ως το 4ο ματς BCL της (όχι Telegram).",
               "Backtest (5 σεζόν, με φιλικά, χωρίς αποδόσεις νικητή): Crown άνοιγμα −0.4% (534) · Bet365 +1.8% · Κ2 b .15 (t 1.9, 3/5) ✗ · "
               "ματς 1-3: +4.7% (345, 4/5), Κ2 .20 · ματς 4+: −9.7% (189, 0/5). Σφάλμα μοντέλου 12.45 vs αγορά άνοιγμα 11.89.",
               "bcl_odds_scan.py · bcl_picks.py · el_pin_watch.py BCL (scanner_tick)", "bcl_market_check.py · bcl_engine_test2")

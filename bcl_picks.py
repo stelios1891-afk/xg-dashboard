@@ -31,8 +31,10 @@ def _load(p, d):
     try: return json.load(open(p, encoding='utf-8'))
     except Exception: return d
 
+LOWINFO_N = 4      # 7/10 Στελιος: ομαδα χωρις ιστορικο στη μηχανη → picks σε καταγραφη ως να παιξει 4 ματς BCL (bcl_state.json lowinfo)
 def compute():
     proj = _load(F('bcl_projections.json'), {}); odds = _load(F('bcl_odds_latest.json'), {}).get('odds', {})
+    low = _load(F('bcl_state.json'), {}).get('lowinfo', {})
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
     games = {str(g['code']): g for g in proj.get('games', [])}
     now = dt.datetime.now(dt.timezone.utc); picks = []
@@ -44,6 +46,10 @@ def compute():
         if pin.get('line') is None or not pin.get('oh') or not pin.get('oa'): continue
         base = dict(lg='BCL', paper=PAPER, home=g['home'], away=g['away'], hcode=g['hcode'], acode=g['acode'], code=g['code'], round=g['round'], group=g.get('group'),
                     when=ko.strftime('%Y-%m-%dT%H:%M'), bcl=True, model=proj.get('model', '')[:60])
+        lw = [(nm_, low[c_]) for c_, nm_ in ((g['hcode'], g['home']), (g['acode'], g['away'])) if c_ in low and low[c_] < LOWINFO_N]
+        if lw:
+            base.update(paper='lowinfo', late_kind='λιγα δεδομενα', mkt_note='⚠ λίγα δεδομένα: ' + ' · '.join(f'{n_} χωρίς ιστορικό στη μηχανή, {k_} ματς BCL φέτος' for n_, k_ in lw)
+                        + f' — καταγραφή ως το {LOWINFO_N}ο ματς')
         L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa']); m = float(g['margin'])
         pw, pp = cover(m, L, sm); pl = 1 - pw - pp
         for side, p_, od, hc in ((1, pw, oh, L), (-1, pl, oa, -L)):
@@ -119,11 +125,12 @@ def main(notify_tg=True):
         with open(F('bcl_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
-                                         bet=p.get('bet'), paper=PAPER, model_line=p.get('model_line'), model_total=p.get('model_total'), mix_total=p.get('mix_total'),
+                                         bet=p.get('bet'), paper=p.get('paper') or PAPER, model_line=p.get('model_line'), model_total=p.get('model_total'), mix_total=p.get('mix_total'),
                                          mkt_total=p.get('mkt_total'), mkt_line=p.get('mkt_line'), model=p.get('model')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('bcl_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, tot_w=TOT_W, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('bcl_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    new = [p for p in new if not p.get('paper')]; changed = [(p, pr) for p, pr in changed if not p.get('paper')]     # 7/10: καταγραφη («λιγα δεδομενα») οχι Telegram
     if notify_tg and not PAPER and (new or changed):
         msg = []
         if new: msg += [f'🏀 {len(new)} ΝΕΑ value picks BCL', ''] + [line(p) + '\n' for p in sorted(new, key=lambda x: x['when'])]
