@@ -39,7 +39,7 @@ tgt = (sh + sa) > 0; EV = [2021, 2022, 2023, 2024, 2025]; ev = np.isin(ys, EV)
 def pred(d, kk):
     f = (lambda n: kk / (kk + n)) if kk else (lambda n: 1.0 + 0 * n)
     return base + d * sh * f(nh) - d * sa * f(na)
-GRID = [(d, kk) for d in (-2, -4, -6, -8) for kk in (1.5, 3, 6, None)]
+GRID = [(d, kk) for d in (-2, -4, -6, -8, -10, -12) for kk in (1.5, 3, 6, None)]   # 7/10: + −10, −12 (το −8 ηταν ακρη πλεγματος, Στελιος «δοκιμασε και το 10»)
 PR = {g: pred(*g) for g in GRID}; PR[(0, None)] = base
 def rm(v, m): m = m & np.isfinite(v) & np.isfinite(act); return float(np.sqrt(np.mean((act - v)[m] ** 2)))
 BINS = [('1-3', 1, 3), ('4-6', 4, 6), ('7-10', 7, 10), ('11+', 11, 99)]
