@@ -117,7 +117,7 @@ def main():
             side, e, od = (1, e1, o1) if e1 >= e2 else (-1, e2, o2)
             if e < .06: continue
             v = (r.act + L) * side; u = (od - 1) if v > 0 else (0 if v == 0 else -1)
-            d_ = dict(y=r.y, u=u)
+            d_ = dict(y=r.y, u=u, lg=r.lg)
             for C in CS:
                 d_[f'us{C}'] = r[f'h{C}'] if side == 1 else r[f'a{C}']; d_[f'op{C}'] = r[f'a{C}'] if side == 1 else r[f'h{C}']
             out.append(d_)
@@ -137,6 +137,15 @@ def main():
             ny = sum(1 for Y in EV if (cut.y == Y).sum() >= 3)
             ok = ny >= 4 and worse >= 4 and len(keep) and keep.u.mean() > K.u.mean()
             W(f'  C {C}′ Χ {X}′: κοβει {cell(cut)} · μενουν {cell(keep)} · χειροτερα σε {worse}/{ny}' + ('  <- ΠΕΡΝΑ' if ok else '  ✗'))
+    W(''); W('## ΑΝΑ ΠΡΩΤΑΘΛΗΜΑ: αγορα (ανοιγμα/κλεισιμο, κλιση ανα 10′, C 20′) · φιλτρο C15/Χ20 και C20/Χ20 (κοβει · μενουν · ολα)')
+    for lg in LGS:
+        S = R[R.lg == lg]; x = (S['a20'] - S['h20']) / 10
+        bo = np.polyfit(x, S.act - S.mo, 1)[0]; bc = np.polyfit(x, S.act - S.mc, 1)[0]
+        Kl = K[K.lg == lg]; cells = []
+        for C, X in ((15, 20), (20, 20)):
+            cut = Kl[Kl[f'us{C}'] >= X]; keep = Kl[Kl[f'us{C}'] < X]
+            cells.append(f'C{C}: κοβει {cut.u.mean()*100 if len(cut) else 0:+.1f}% ({len(cut)}) · μενουν {keep.u.mean()*100 if len(keep) else 0:+.1f}% ({len(keep)})')
+        W(f'  {NAME[lg]:9s} ματς {len(S):4d} · αγορα ανοιγμα {bo:+.2f} / κλεισιμο {bc:+.2f} · ολα τα picks {Kl.u.mean()*100:+.1f}% ({len(Kl)}) · ' + ' | '.join(cells))
     open('dom_bk_absence_out.txt', 'w', encoding='utf-8').write(chr(10).join(O))
 
 if __name__ == '__main__':
