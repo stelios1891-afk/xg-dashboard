@@ -65,6 +65,20 @@ def drift_before(p, first_seen, sm, st, hours=DRIFT_H):
     if m0 is None or m1 is None: return None
     s_ = p['side'] if p['mkt'] == 'hcap' else (1 if str(p.get('bet', '')).startswith('Over') else -1)
     return round((m1 - m0) * s_, 1)
+MOVE_LATE_H = 6.0     # 7/10/2026 (Στελιος «περνα το»): κοντρα ≥1.5 που ΞΕΠΕΡΑΣΤΗΚΕ <6ω πριν το τζαμπολ = κανονικο pick (el_totals_move_deep:
+                      # <6ω +19.5% (44, 4/5) · 6-12ω −29.8% (41) · 12-24ω −32.9% (23) — οι νωρις κοντρα κινησεις ειναι «εξυπνα» λεφτα)
+def move_cross_hours(p, st):
+    """Ωρες πριν το τζαμπολ οταν η αγορα ΠΡΩΤΟΞΕΠΕΡΑΣΕ τα MOVE_PTS κοντρα απο την πρωτη τιμη (αναμενομενο συνολο)· None αν δεν βρεθηκε."""
+    H = [r for r in (_HIST or {}).get(int(p['code']), []) if r.get('tl') is not None]
+    if not H: return None
+    s_ = 1 if str(p.get('bet', '')).startswith('Over') else -1
+    m0 = _mu(H[0], 'total', None, st)
+    tip = dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
+    for r in H:
+        m = _mu(r, 'total', None, st)
+        if m0 is not None and m is not None and (m - m0) * s_ <= -MOVE_PTS:
+            return round((tip - dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)).total_seconds() / 3600, 1)
+    return None
 def drift_note(p):
     d = p.get('drift')
     if d is None or d > -DRIFT_MIN: return None
@@ -225,7 +239,9 @@ def main(notify_tg=True):
             if p['mkt'] == 'total':
                 d_open = drift_before(p, now, sm_, st_, hours=1e4)       # απο την ΠΡΩΤΗ τιμη του ιστορικου ως τωρα (+ = προς εμας)
                 state[k]['move_open'] = d_open
-                if d_open is not None and d_open <= -MOVE_PTS: state[k]['paper'] = 'move15'
+                if d_open is not None and d_open <= -MOVE_PTS:
+                    hx = move_cross_hours(p, st_); state[k]['move_h'] = hx
+                    if hx is None or hx >= MOVE_LATE_H: state[k]['paper'] = 'move15'     # νωρις κοντρα → καταγραφη· <6ω → κανονικο pick
         elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
             changed.append((p, prev.get('odds'))); state[k].update(odds=p['odds'], edge=p['edge'])
     for p in picks:
