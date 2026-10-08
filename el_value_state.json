@@ -9,9 +9,9 @@
   "when": "2026-10-08T18:15"
  },
  "STATUS|34|hcap|1": {
-  "active": false,
+  "active": true,
   "when": "2026-10-08T18:30",
-  "at": "2026-10-08T09:34+00:00"
+  "at": "2026-10-08T11:26+00:00"
  },
  "STATUS|40|hcap|-1": {
   "active": true,
@@ -26,9 +26,9 @@
   "when": "2026-10-08T16:00"
  },
  "STATUS|32|total|Over": {
-  "active": true,
+  "active": false,
   "when": "2026-10-08T16:00",
-  "at": "2026-10-08T10:17+00:00"
+  "at": "2026-10-08T11:26+00:00"
  },
  "STATUS|34|total|Over": {
   "active": false,
@@ -55,8 +55,8 @@
   "hcap": -4.0
  },
  "EL|34|hcap|1": {
-  "odds": 1.909,
-  "edge": 0.1142,
+  "odds": 1.855,
+  "edge": 0.084,
   "when": "2026-10-08T18:30",
   "first_seen": "2026-10-06T08:01+00:00",
   "drift": 0.0,
@@ -73,13 +73,13 @@
   "hcap": 10.5
  },
  "EL|35|hcap|-1": {
-  "odds": 1.935,
-  "edge": 0.1792,
+  "odds": 1.901,
+  "edge": 0.2173,
   "when": "2026-10-08T18:45",
   "first_seen": "2026-10-06T08:01+00:00",
   "drift": -0.0,
   "kind1h": "σταδιακη",
-  "hcap": 9.0
+  "hcap": 10.0
  },
  "EL|37|total|Over": {
   "odds": 1.917,
