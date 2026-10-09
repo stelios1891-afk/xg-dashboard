@@ -406,6 +406,22 @@ def evaluate_fav(xg_h, xg_a, line, oh, oa):
                             proj_odds=((1 - pp) / pw if pw > 0 else float('inf'))))
     return out
 
+# ---------- 9/10/2026 ΣΚΙΑ «κοντα φαβορι 7-14» (Στελιος «ναι περνα τα») — ΚΑΤΑΓΡΑΦΗ, ΔΕΝ παιζεται ----------
+# Κανονας R (core7_714_shortfav_test): αγωνιστικες 7-14, γραμμη φαβορι ακριβως −0.5 ή −0.75, αποδοση 1.70-2.10,
+# edge ≥ 0% με σωστα τεταρτα, μηχανη live (χωρις αγκυρα). Κρινεται στην ΤΙΜΗ ΚΛΕΙΣΙΜΑΤΟΣ (τελευταια καταγραφη πριν τη σεντρα):
+# backtest Pinnacle 135 +5.7% 4/4 · Crown +16.6% · Bet365 +22.3% · λιγκες 4/7 (γι' αυτο σκια, οχι live).
+FAV714_MD = (7, 14); FAV714_LINES = (0.5, 0.75)
+
+def fav_edge_q(xg_h, xg_a, side, ud, odds):
+    """edge φαβορι με σωστα τεταρτα (ιδιος τυπος με evaluate_fav, χωρις κατωφλι)."""
+    dist = gd_dist_dom(max(xg_h, 0.05), max(xg_a, 0.05))
+    parts = [ud] if (ud * 4) % 2 == 0 else [ud - 0.25, ud + 0.25]
+    e = 0.0
+    for L in parts:
+        w, q = p_cover(dist, side, L)
+        e += (w * (odds - 1) * (1 - MARGIN) - (1 - w - q)) / len(parts)
+    return e
+
 # ---------- signals: παραγει ΚΑΘΕ value bet (pre-match) [backtest, με football-data odds] ----------
 def bet_signals(P, Om, resolve):
     rows = []

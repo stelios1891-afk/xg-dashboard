@@ -20,6 +20,8 @@ MARKET_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 για Ο
 HIST_F = os.path.join(ROOT, 'odds_history.jsonl')         # ιστορικο τιμων: μια γραμμη ανα ΑΛΛΑΓΗ (2026-08-28)
 HSTATE_F = os.path.join(ROOT, 'odds_history_state.json')  # τελευταιο στιγμιοτυπο ανα ματς (για ανιχνευση αλλαγης)
 DLIVE_F = os.path.join(ROOT, 'dom_live_odds.jsonl')       # in-play καταγραφη (12/9: εως ΚΟ+150', ΧΩΡΙΣΤΑ απο το pregame)
+FAV714_F = os.path.join(ROOT, 'dom_fav714_shadow.jsonl')          # 9/10: σκια κοντα φαβορι 7-14 (καταγραφη, οχι Telegram)
+FAV714_STATE_F = os.path.join(ROOT, 'dom_fav714_shadow_state.json')
 CLVBETS_F = os.path.join(ROOT, 'clv_bets.jsonl')          # CLV ημερολογιο: μια γραμμη ανα ΝΕΟ pick (2026-08-29)
 RATINGS_SEASON = '2526'   # warm-start· αλλαξε σε '2627' οταν μαζευτουν φετινα ματς
 ODDS_DELTA = 0.05         # κατωφλι αλλαγης αποδοσης για re-alert
@@ -191,6 +193,23 @@ def scan(notify_tg=True):
                 fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
     except Exception as e:
         print(f"clv_bets ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
+
+    # ---- 9/10/2026 ΣΚΙΑ κοντα φαβορι 7-14: append-on-change· η τελευταια γραμμη πριν τη σεντρα = κλεισιμο (κρινεται εκει) ----
+    try:
+        st714 = _load(FAV714_STATE_F, {}); n714 = 0
+        with open(FAV714_F, 'a', encoding='utf-8') as fh:
+            for r in res.get('fav714', []):
+                k = f"{r['hid']}_{r['aid']}_{str(r['ko'])[:16]}"; sig = f"{r['hcap']}|{r['odds']}|{r['q']}"
+                if st714.get(k) != sig:
+                    st714[k] = sig; n714 += 1
+                    fh.write(json.dumps(dict(seen=now_utc, **r), ensure_ascii=False) + chr(10))
+        for k in list(st714):                       # prune: ματς που περασαν (>2 μερες)
+            if k.split('_')[2][:10] < (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=2)).strftime('%Y-%m-%d'):
+                del st714[k]
+        _save(FAV714_STATE_F, st714)
+        print(f"σκια κοντα φαβορι 7-14: {len(res.get('fav714', []))} ματς · {n714} αλλαγες")
+    except Exception as e:
+        print(f"fav714 σκια ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
 
     _save(STATE_F, state)
     _save(LATEST_F, dict(scanned_at=now, ratings_season=RATINGS_SEASON,

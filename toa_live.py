@@ -182,6 +182,7 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
     all_picks, all_blocked, all_norating = [], [], []
     market_1x2 = {}   # "{home_id}_{away_id}" -> {h,d,a,when} (ολα τα matched fixtures, οχι μονο picks)
     odds_rows = []    # στιγμιοτυπα γραμμων/αποδοσεων για το odds_history (ολα τα matched fixtures)
+    fav714 = []       # 9/10: σκια κοντα φαβορι 7-14 (scan_value → dom_fav714_shadow.jsonl)
     for lg in leagues:
         # ΚΟΙΝΗ λογικη με το dashboard -> build_data.league_ratings()
         # (flat περσινο prior + διορθωμενες νεοφωτιστες + warm-start blend K=K_WARM).
@@ -244,6 +245,16 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                                       when=f['startTime'], md=md, role='dog', **({'coach_notes': _cn} if _cn else {}),
                                       mxh=round(xg_h, 3), mxa=round(xg_a, 3),
                                       **b, hnote=hnote, anote=anote, **({'anchor': anc} if anc else {})))
+            # 9/10/2026 (Στελιος «ναι περνα τα»): ΣΚΙΑ κοντα φαβορι 7-14 — καθε στιγμιοτυπο (και οταν ΔΕΝ πληροι), κρινεται στο κλεισιμο
+            try:
+                if engine.FAV714_MD[0] <= md <= engine.FAV714_MD[1] and abs(f['line']) in engine.FAV714_LINES:
+                    _s = 1 if f['line'] < 0 else -1; _o = f['home_odds'] if _s == 1 else f['away_odds']; _ud = -abs(f['line'])
+                    _e = engine.fav_edge_q(xr_h, xr_a, _s, _ud, _o)
+                    fav714.append(dict(lg=lg, home=hfot, away=afot, hid=H, aid=A, ko=f['startTime'], md=md, side=_s, hcap=_ud,
+                                       odds=round(_o, 3), edge=round(_e, 4), q=bool(engine.OMIN <= _o <= engine.OMAX and _e >= 0),
+                                       mxh=round(xr_h, 3), mxa=round(xr_a, 3), pin=list(f['pin']) if f.get('pin') else None))
+            except Exception as _ex:
+                print(f'  fav714 σκια σφαλμα (μη κρισιμο): {type(_ex).__name__}: {_ex}')
             # 1/10/2026 (Στελιος «βαλτα κανονικα»): ΦΑΒΟΡΙ απο την 15η — αγκυρα .7 σε ολες τις γραμμες + σωστα τεταρτα, edge ≥10%
             if md >= engine.FAV_MIN_MD:
                 fx_h, fx_a, fanc = core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)
@@ -261,7 +272,7 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
         p['stake_final'] = p['stake'] * scale
     return dict(picks=all_picks, blocked=all_blocked, norating=all_norating,
                 gross=gross, scale=scale, cap=CAP, credits_remaining=rem, credits_cost=cost,
-                market_1x2=market_1x2, odds_rows=odds_rows)
+                market_1x2=market_1x2, odds_rows=odds_rows, fav714=fav714)
 
 if __name__ == '__main__':
     res = compute_picks_toa(list(SPORT), sys.argv[1] if len(sys.argv) > 1 else '2526')
