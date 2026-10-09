@@ -10,7 +10,7 @@ data-refresh) και να μπλοκαρει τα προφανη:
       + MIN_PRIOR: cloud=6 (committed), τοπικα 6 ή 14
   (c) λογικη picks πανω στο τρεχον value_picks_latest.json
   (d) αναπαραγωγη pricing (golden values απο picks.evaluate_bet, 18/9/2026)
-  (e) ευρωπαικα picks (euro_value_latest.json) — UEL μονο ως σκια (no_play=True)
+  (e) ευρωπαικα picks (euro_value_latest.json) — UEL μονο ως σκια (no_play=True), ΕΚΤΟΣ UEL φαβορι εντος 12-36ω (9/10)
 
 ΧΩΡΙΣ δικτυο. Εξαρτησεις: pytest (+ οτι ηδη χρειαζεται το picks.py: pandas/numpy).
 Τρεξιμο:  python -m pytest -q tests/test_scanner_sanity.py
@@ -29,6 +29,7 @@ IS_CLOUD = os.environ.get('GITHUB_ACTIONS') == 'true'
 CORE7 = ['EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Eredivisie']
 EURO_ALLOWED = {'ChampionsLeague', 'ConferenceLeague'}        # παιζονται
 EURO_SHADOW = {'EuropaLeague'}                                # UEL ΚΛΕΙΣΤΟ 11/9 → ορατο ως ΣΚΙΑ (no_play=True), 18/9
+UEL_HF_RULES = {'uel_home_fav', 'uel_home_fav_wait'}          # 9/10/2026: ΕΞΑΙΡΕΣΗ — UEL φαβορι εντος (80% xG) κανονικα 12-36ω
 KELLY_FRAC, STAKE_CAP = 0.125, 0.20
 EPS = 1e-9
 
@@ -212,7 +213,11 @@ def test_a_euro_ledger_once_within_72h():
     for r in rows:
         assert 0 < r['hours_before'] <= 72, f'euro_picks_ledger εκτος 72ω: {r["home"]}-{r["away"]} {r["hours_before"]}'
         if r['comp'] == 'EuropaLeague':
-            assert r['no_play'], f'euro_picks_ledger: UEL χωρις no_play ({r["home"]}-{r["away"]})'
+            if r.get('rule') == 'uel_home_fav':          # 9/10: κανονικο — μονο γηπεδουχος φαβορι
+                assert r['side'] == 1 and r['role'] == 'fav' and r['line'] <= -0.5 and r['key'].endswith('|uel_hf'),                     f'euro_picks_ledger: uel_home_fav εκτος κανονα ({r["home"]}-{r["away"]})'
+            else:
+                assert r['no_play'], f'euro_picks_ledger: UEL χωρις no_play ({r["home"]}-{r["away"]})'
+        assert r.get('rule') != 'uel_home_fav_wait', 'euro_picks_ledger: γραφτηκε uel_home_fav_wait (μονο ενδειξη)'
 
 
 def test_a_clv_bets_fields():
@@ -718,7 +723,18 @@ def test_e_uel_only_as_shadow():
     bad = []
     for p in P:
         c = p.get('comp')
-        if c in EURO_SHADOW:
+        if c in EURO_SHADOW and p.get('rule') in UEL_HF_RULES:
+            # 9/10/2026: UEL φαβορι εντος — γηπεδουχος, γραμμη ≤ −0.5, edge ≥4%· κανονικο ΜΟΝΟ 12-36ω πριν
+            ko = datetime.datetime.fromisoformat(str(p['ko']).replace('Z', '+00:00'))
+            sc = datetime.datetime.fromisoformat(str(d.get('scanned_at'))).replace(tzinfo=datetime.timezone.utc)
+            hb = (ko - sc).total_seconds() / 3600
+            if p.get('side') != 1 or p.get('role') != 'fav' or float(p['line']) > -0.5 + EPS or float(p['edge']) < 0.04 - EPS:
+                bad.append(f'{_elab(p)}: {p.get("rule")} εκτος κανονα (γηπ. φαβορι ≤−0.5, edge ≥4%)')
+            if p.get('rule') == 'uel_home_fav' and (p.get('no_play') or not (12 - 0.1 <= hb <= 36 + 0.1)):
+                bad.append(f'{_elab(p)}: uel_home_fav κανονικο εκτος 12-36ω ({hb:.1f}ω) ή με no_play')
+            if p.get('rule') == 'uel_home_fav_wait' and p.get('no_play') is not True:
+                bad.append(f'{_elab(p)}: uel_home_fav_wait χωρις no_play')
+        elif c in EURO_SHADOW:
             if p.get('no_play') is not True:
                 bad.append(f'{_elab(p)}: UEL pick ΧΩΡΙΣ no_play=True (UEL κλειστο 11/9, μονο σκια)')
         elif c in EURO_ALLOWED:
@@ -771,12 +787,17 @@ def test_e_ucl_kappa_applied():
     assert _approx(proj.get('ucl_fav_scale'), 1.16), \
         f'euro_projections.ucl_fav_scale={proj.get("ucl_fav_scale")!r} — το κ=1.16 ΔΕΝ εφαρμοστηκε στα projections'
     by_mid = {str(m.get('mid')): m for m in proj.get('matches', [])}
+    # 9/10/2026: το euro-refresh ξαναγραφει τα projections ΠΡΙΝ ξανατρεξει ο scanner → τα picks ειναι (σωστα) απο τα
+    # προηγουμενα projections. Η συνεπεια xG ελεγχεται ΜΟΝΟ αν η σαρωση ειναι νεοτερη απο τα projections (αλλιως
+    # το test μπλοκαρε ΚΑΘΕ commit του euro-refresh απο 6/10 οταν εμφανιστηκαν αποδοσεις UCL R3).
+    d_ = _json('euro_value_latest.json')
+    fresh = str(d_.get('scanned_at') or '')[:16] >= str(proj.get('generated') or '')[:16].replace('Z', '')
     bad = []
-    for p in P:
+    for p in (P if fresh else []):
         m = by_mid.get(str(p.get('mid')))
         if m is None:
             bad.append(f'{_elab(p)}: mid {p.get("mid")} δεν υπαρχει στο euro_projections.json'); continue
-        if p.get('role') in ('fav', 'dog'):
+        if p.get('role') in ('fav', 'dog') and p.get('rule') not in UEL_HF_RULES:   # UEL φαβ εντος: xG απο euro_projections_uel80.json
             if not (_approx(p.get('xgh'), m.get('xgh'), 1e-6) and _approx(p.get('xga'), m.get('xga'), 1e-6)):
                 bad.append(f'{_elab(p)}: xG pick {p.get("xgh")}/{p.get("xga")} ≠ projection {m.get("xgh")}/{m.get("xga")} (μπαγιατικο pricing)')
         if p.get('comp') == 'ChampionsLeague' and m.get('covered'):
@@ -787,6 +808,23 @@ def test_e_ucl_kappa_applied():
             if fav_ratio < 1.0:
                 bad.append(f'{_elab(p)}: UCL φαβορι xG/βαση = {fav_ratio:.3f} < 1 — το κ δεν φαινεται εφαρμοσμενο')
     assert not bad, 'κ UCL / συνεπεια projections:\n' + '\n'.join(bad)
+
+
+def test_e_uel_home_fav_uses_80():
+    """9/10/2026: τα UEL φαβορι εντος τιμολογουνται απο το euro_projections_uel80.json (μιξη 80% xG)."""
+    d, P = _euro()
+    hf = [p for p in P if p.get('rule') in UEL_HF_RULES]
+    if not hf:
+        pytest.skip('κανενα UEL φαβορι εντος τωρα')
+    assert os.path.exists(_p('euro_projections_uel80.json')), 'uel_home_fav picks χωρις euro_projections_uel80.json'
+    pr = _json('euro_projections_uel80.json')
+    if str(d.get('scanned_at') or '')[:16] < str(pr.get('generated') or '')[:16].replace('Z', ''):
+        pytest.skip('η σαρωση ειναι παλαιοτερη απο τα projections 80% (θα ελεγχθει στην επομενη σαρωση)')
+    by = {str(m.get('mid')): m for m in pr.get('matches', [])}
+    bad = [f'{_elab(p)}: xG {p.get("xgh")}/{p.get("xga")} ≠ 80%' for p in hf
+           if not (str(p['mid']) in by and _approx(p.get('xgh'), round(by[str(p['mid'])]['xgh'], 3), 1e-6)
+                   and _approx(p.get('xga'), round(by[str(p['mid'])]['xga'], 3), 1e-6))]
+    assert not bad, 'UEL φαβ εντος ≠ projections 80%:' + chr(10) + chr(10).join(bad)
 
 
 # ---------------------------------------------------------------- F. ΕΘΝΙΚΕΣ: κλειδι ασφαλειας κατα των διπλων ματς (25/9/2026)

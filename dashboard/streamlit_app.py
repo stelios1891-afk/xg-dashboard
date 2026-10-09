@@ -396,7 +396,8 @@ def _euro_picks():
                  home_id=p.get('hid'), away_id=p.get('aid'),
                  side=p['side'], hcap=p['line'], odds=p['odds'], edge=p['edge'],
                  proj_odds=p.get('proj_odds'), when=str(p.get('ko') or '').replace('Z', '')[:16],
-                 eu=True, tag75=bool(p.get('tag75')), no_play=bool(p.get('no_play')))
+                 eu=True, tag75=bool(p.get('tag75')), no_play=bool(p.get('no_play')),
+                 rule=p.get('rule'), eu_note=p.get('note'))       # 9/10: rule uel_home_fav(_wait) = UEL φαβορι εντος
         if p.get('role') == 'over':
             q['bet'] = p['team']          # π.χ. "Over 3.00"
         out.append(q)

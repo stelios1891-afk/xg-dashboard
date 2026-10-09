@@ -16,6 +16,9 @@ import picks
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 PROJ_F = os.path.join(ROOT, 'euro_projections.json')
+PROJ80_F = os.path.join(ROOT, 'euro_projections_uel80.json')   # 9/10/2026: UEL μηχανη 80% xG (euro_live_projections με EURO_BLEND=0.8)
+UEL_HF_EDGE = 0.04          # 9/10/2026 (Στελιος «βαλτο κανονικα»): UEL ΦΑΒΟΡΙ ΕΝΤΟΣ = ΚΑΝΟΝΙΚΑ picks (μικρο stake)
+UEL_HF_WIN = (12.0, 36.0)   # εισοδος ~24ω πριν (backtest 24ω: 49 picks +24.2%, 4/4 σεζον, Crown +32 / SBOBET +19)
 ODDS_F = os.path.join(ROOT, 'euro_odds_latest.json')
 OUT_F = os.path.join(ROOT, 'euro_shadow.jsonl')
 ST_F = os.path.join(ROOT, 'euro_shadow_state.json')
@@ -159,6 +162,14 @@ def main():
     # OVERS στα picks (εντολη Στελιου 10/9): συνθεση W2 (πεναλτι 0.76, ζευγος xgh_ou/xga_ou),
     # ΜΟΝΟ FotMob ματς, καθαρο quarter pricing στη γραμμη της αγορας, κατωφλι 4%.
     picks_out = []
+    # UEL ΦΑΒΟΡΙ ΕΝΤΟΣ (9/10/2026, uel_homefav_methods/_market): μιξη 80% xG για τα εγχωρια ratings (LOSO 4/4),
+    # σωστα τεταρτα, edge ≥4%, γηπεδουχος δινει ≥0.5, 1.70-2.10, FotMob+FotMob, εισοδος 12-36ω πριν (~24ω).
+    # ΚΑΝΟΝΙΚΟ pick (no_play=False, rule='uel_home_fav'). Ολα τα αλλα UEL μενουν σκια. Χωρις το αρχειο 80% → τιποτα.
+    try:
+        L80 = {str(x['mid']): (x['xgh'], x['xga']) for x in json.load(open(PROJ80_F, encoding='utf-8')).get('matches', [])
+               if x.get('covered') and x.get('xgh') is not None}
+    except Exception:
+        L80 = {}
     for m in P.get('matches', []):
         if not m.get('covered') or m.get('finished'):
             continue
@@ -202,6 +213,30 @@ def main():
                     xgh=m['xgh'], xga=m['xga'], when=mk.get('when'),
                     no_play=(m['comp'] == 'EuropaLeague'),
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
+        # --- UEL ΦΑΒΟΡΙ ΕΝΤΟΣ (κανονικο pick) ---
+        if m['comp'] == 'EuropaLeague' and str(m['mid']) in L80:
+            hb = (ko - now).total_seconds() / 3600
+            o = mk.get('oh')
+            if lf <= -0.5 and o and 1.70 <= float(o) <= 2.10:
+                x8h, x8a = L80[str(m['mid'])]
+                d8 = eu_dist(x8h, x8a, scale)
+                pw, pp = cover_q(d8, 1, lf)
+                e8 = edge_of(pw, pp, float(o))
+                if e8 >= UEL_HF_EDGE:
+                    live = UEL_HF_WIN[0] <= hb <= UEL_HF_WIN[1]
+                    picks_out.append(dict(
+                        mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
+                        home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
+                        team=m['home'], side=1, line=round(lf, 2), odds=round(float(o), 2),
+                        edge=round(e8, 4), role='fav', band=None,
+                        proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
+                        tag75=bool(abs(lf + 0.75) < 0.01),
+                        xgh=round(x8h, 3), xga=round(x8a, 3), when=mk.get('when'),
+                        rule=('uel_home_fav' if live else 'uel_home_fav_wait'),
+                        no_play=not live,
+                        note=('⭐ UEL φαβορί εντός — κανονικό pick (μικρό stake), είσοδος ~24ω πριν' if live else
+                              (f'⏳ UEL φαβορί εντός — γίνεται κανονικό 12-36ω πριν τη σέντρα (τώρα {hb:.0f}ω), αν μείνει edge ≥4%'
+                               if hb > UEL_HF_WIN[1] else '⌛ UEL φαβορί εντός — πέρασε το παράθυρο εισόδου (12-36ω)'))))
         # --- OVERS (W2) ---
         if (m.get('xgh_ou') is not None and mk.get('tl') is not None and mk.get('to')
                 and 1.70 <= float(mk['to']) <= 2.10):
@@ -220,12 +255,17 @@ def main():
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'),
                     no_play=(m['comp'] == 'EuropaLeague'),
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
+    hf = {p['mid'] for p in picks_out if str(p.get('rule') or '').startswith('uel_home_fav')}
+    picks_out = [p for p in picks_out if not (p['mid'] in hf and p['comp'] == 'EuropaLeague' and p['side'] == 1
+                                              and p['role'] == 'fav' and not p.get('rule'))]
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
                               edge_dog_ucl=EDGE_DOG_UCL,
                               zone=[1.70, 2.10],
                               no_play_comps=['EuropaLeague'],
+                              uel_home_fav=dict(edge=UEL_HF_EDGE, hours=list(UEL_HF_WIN), blend_xg=0.8,
+                                                note='εξαιρεση: UEL φαβορι εντος παιζονται κανονικα (9/10)'),
                               src='FotMob+FotMob', pricing='as-live (w2 + X x0.85 · dogs p_cover · φαβορι σωστα τεταρτα 30/9)')),
               open(os.path.join(ROOT, 'euro_value_latest.json'), 'w', encoding='utf-8'),
               ensure_ascii=False)
@@ -233,7 +273,8 @@ def main():
           f'({sum(1 for p in picks_out if p["role"]=="fav")} fav / '
           f'{sum(1 for p in picks_out if p["role"]=="dog")} dog, '
           f'{sum(1 for p in picks_out if p["tag75"])} στο -0.75, '
-          f'{sum(1 for p in picks_out if p.get("no_play"))} UEL σκια/δεν παιζονται)')
+          f'{sum(1 for p in picks_out if p.get("no_play"))} UEL σκια/δεν παιζονται, '
+          f'{sum(1 for p in picks_out if p.get("rule") == "uel_home_fav")} UEL φαβ εντος ΚΑΝΟΝΙΚΑ)')
 
 
 if __name__ == '__main__':

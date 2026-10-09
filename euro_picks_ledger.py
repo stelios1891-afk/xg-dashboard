@@ -6,7 +6,7 @@ euro_picks_ledger.py — ΗΜΕΡΟΛΟΓΙΟ ευρωπαϊκων picks (UCL/UE
     ενα pick ανα ματς & πλευρα (AH γηπ./φιλοξ., over). Ενα pick που ηρθε νωριτερα μπαινει οταν «περασει» στις 72ω.
   • ΚΛΕΙΣΙΜΟ = τελευταια καταγραφη του euro_odds_hist.jsonl πριν τη σεντρα (Odds API, ιδιο feed με τα picks).
   • ΑΠΟΤΕΛΕΣΜΑ + xG = FotMob matchDetails (σκορ, αθροισμα xG σουτ ανα ομαδα).
-  • UEL = ΣΚΙΑ (no_play) — γραφεται, δεν παιζεται.
+  • UEL = ΣΚΙΑ (no_play) — γραφεται, δεν παιζεται. ΕΞΑΙΡΕΣΗ 9/10/2026: UEL φαβορι εντος (rule='uel_home_fav', κλειδι mid|1|uel_hf) = ΚΑΝΟΝΙΚΟ.
 Τρεχει στον scanner (scanner_tick.sh) μετα το euro_shadow_scan.py. Αρχειο: euro_picks_ledger.jsonl.
 
 Χρηση:  python euro_picks_ledger.py              (καταγραφη + εκκαθαριση)
@@ -46,6 +46,8 @@ def _jsonl(f):
 
 
 def _key(p):
+    if p.get('rule') == 'uel_home_fav':        # 9/10/2026: χωριστο ρευμα — το κανονικο UEL φαβορι εντος δεν μπλοκαρεται απο τη σκια
+        return f"{p['mid']}|1|uel_hf"
     return f"{p['mid']}|{'over' if p.get('role') == 'over' else p['side']}"
 
 
@@ -57,14 +59,18 @@ def entries(picks, t, have):
         if ko is None:
             continue
         hb = (ko - t).total_seconds() / 3600
+        if p.get('rule') == 'uel_home_fav_wait':   # 9/10: UEL φαβορι εντος εκτος παραθυρου 12-36ω = μονο ενδειξη, δεν γραφεται
+            continue
         k = _key(p)
         if 0 < hb <= ENTRY_H and k not in have:
             have.add(k)
             out.append(dict(key=k, seen=t.isoformat(timespec='minutes'), hours_before=round(hb, 1), mid=str(p['mid']), comp=p['comp'],
                             rnd=p.get('rnd'), ko=ko.strftime('%Y-%m-%dT%H:%M'), home=p['home'], away=p['away'], hid=p.get('hid'),
                             aid=p.get('aid'), mkt=('OVER' if p.get('role') == 'over' else 'AH'), role=p.get('role'), side=p['side'],
-                            line=p['line'], odds=p['odds'], edge=p['edge'], band=p.get('band'),
-                            no_play=bool(p.get('no_play')) or p['comp'] == 'EuropaLeague'))   # UEL κλειστο 11/9 (πριν απο ολα τα ματς League Phase)
+                            line=p['line'], odds=p['odds'], edge=p['edge'], band=p.get('band'), rule=p.get('rule'),
+                            # UEL κλειστο 11/9 (σκια) — ΕΞΑΙΡΕΣΗ 9/10/2026: UEL φαβορι εντος (rule uel_home_fav) = κανονικο
+                            no_play=(bool(p.get('no_play')) if p.get('rule') == 'uel_home_fav'
+                                     else bool(p.get('no_play')) or p['comp'] == 'EuropaLeague')))
     return out
 
 

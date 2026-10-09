@@ -80,6 +80,16 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python euro_live_projections.py
 
+      # 9/10/2026: UEL ΦΑΒΟΡΙ ΕΝΤΟΣ = κανονικα picks με μιξη 80% xG (euro_blend_eval LOSO 4/4) -> euro_projections_uel80.json.
+      # Το διαβαζει ο euro_shadow_scan (κανονας uel_home_fav). Μη κρισιμο: αν αποτυχει, μενει το προηγουμενο αρχειο.
+      - name: Euro projections UEL 80% xG
+        continue-on-error: true
+        env:
+          PYTHONIOENCODING: utf-8
+          EURO_BLEND: '0.8'
+          EURO_PROJ_OUT: euro_projections_uel80.json
+        run: python euro_live_projections.py
+
       # 25/9: 🏀 Ευρωλιγκα — προγραμμα + box scores (επισημο API, χωρις κλειδι) + μοντελο v1 -> el_projections.json.
       # Χρειαζεται στο repo: el_refresh.py, el_model_test.py, el_fatigue_travel.py, el_box.json, el_sched.json, el_expert_prior.json, el_fantasy_prior.json (μονο numpy/pandas).
       # Μη κρισιμο: αν αποτυχει, το υπολοιπο euro-refresh συνεχιζει κανονικα.
@@ -155,6 +165,7 @@ jobs:
           git config user.name "euro-refresh-bot"
           git config user.email "actions@github.com"
           git add -f data_*_2627.json data_*_2026.json griffis_matches.csv clubelo_current.csv euro_projections.json europe_fixtures_2627.json el_projections.json el_box.json el_sched.json el_shadow_lines.json bk_domestic.json el_preseason_prior.json fs_bk_preseason.json fs_bk_games.json el_season_warned.txt ec_projections.json ec_box.json ec_sched.json fs_bk_extra.json bcl_state.json fs_bk_stats.jsonl nba_state.json nba_espn_games.json nba_injuries.json nba_full_z.json   # -f: νεες λιγκες ειναι gitignored (data_*.json)
+          for f in euro_projections_uel80.json; do if [ -e "$f" ]; then git add -f "$f"; fi; done   # 9/10 (προαιρετικο → ΜΟΝΟ στον βροχο)
           if git diff --cached --quiet; then
             echo "no changes — skip commit"
           else

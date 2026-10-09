@@ -103,7 +103,11 @@ def pick_card(p):
                      + ('✓ και το παλιο' if p['old_agree'] else '✗ μονο με φιλικα') + '</span>')
     if p.get('coach_notes') and not p.get('el'):   # 5/10: αλλαγη προπονητη στα εγχωρια (μονο πληροφορια· το φιλτρο κοβει ηδη τα «κακη και στα δυο»)
         tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 προπονητης</span>'
-    if p.get('rule') == 'fav714':      # 9/10: κοντο φαβορι 7-14 (καταγραφη/paper οπως ολα τα 7-14)
+    if p.get('rule') == 'uel_home_fav':   # 9/10: UEL φαβορι εντος — ΚΑΝΟΝΙΚΟ (μιξη 80% xG, εισοδος 12-36ω)
+        tags += '<span class="tag eu" title="UEL φαβορι εντος: μηχανη 80% xG, σωστα τεταρτα, edge ≥4%, εισοδος ~24ω πριν· backtest 49 picks +24%, 4/4 σεζον· μικρο stake">⭐ UEL φαβορι εντος</span>'
+    elif p.get('rule') == 'uel_home_fav_wait':
+        tags += f'<span class="tag np" title="{_h.escape(p.get("eu_note") or "")}">⏳ UEL φαβορι εντος · κανονικο 12-36ω πριν</span>'
+    elif p.get('rule') == 'fav714':      # 9/10: κοντο φαβορι 7-14 (καταγραφη/paper οπως ολα τα 7-14)
         tags += '<span class="tag eu" title="Κοντο φαβορι 7-14: γραμμη −0.5/−0.75, 1.70-2.10, edge ≥0% σωστα τεταρτα· κρινεται στο κλεισιμο (συνηθως η τιμη ανεβαινει ως τη σεντρα)">⭐ φαβορι 7-14</span>'
     elif p.get('role') == 'fav':       # 1/10: φαβορι 15η+ (αγκυρα .7 + σωστα τεταρτα)
         tags +='<span class="tag eu" title="Φαβορι 15η+: αγκυρα αγορας ×0.7 σε ολες τις γραμμες, σωστα τεταρτα, edge ≥10%">⭐ φαβορι</span>'
@@ -122,7 +126,7 @@ def pick_card(p):
         tags += f'<span class="tag np" title="{_h.escape(p.get("mkt_note") or "")}">📝 καταγραφη · δεν παιζεται' + (' · ⚠ λίγα δεδομένα' if p.get('late_kind') == 'λιγα δεδομενα' else '') + '</span>'
     if p.get('stale'):                   # 1/10: φρενο φρεσκαδας εθνικων
         tags += f'<span class="tag np" title="{_h.escape(p["stale"])}">⏸ περιμενει ανανεωση αποτελεσματων · δεν παιζεται ακομα</span>'
-    if p.get('no_play'):
+    if p.get('no_play') and p.get('rule') != 'uel_home_fav_wait':
         tags += '<span class="tag np" title="UEL κλειστο 11/9 (b=0.02 στο κλεισιμο) — μονο για παρακολουθηση">👁 ΣΚΙΑ · δεν παιζεται</span>'
     if over:
         bet = _h.escape(p.get('bet') or f"Over {p['hcap']:g}")
@@ -133,7 +137,9 @@ def pick_card(p):
     stake_k, stake_v = ('Ποντ.', '~¼ μον.') if (p.get('eu') or p.get('intl') or p.get('el')) else \
         ('Ποντ. (καβα)', f"{p['stake_final']*100:.1f}%")
     if p.get('no_play'):
-        stake_k, stake_v = 'Ποντ.', '— (σκια)'
+        stake_k, stake_v = 'Ποντ.', ('— (αναμονη 12-36ω)' if p.get('rule') == 'uel_home_fav_wait' else '— (σκια)')
+    elif p.get('rule') == 'uel_home_fav':
+        stake_k, stake_v = 'Ποντ.', 'μικρο'
     if p.get('paper_late'):
         stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
     if p.get('stale'):

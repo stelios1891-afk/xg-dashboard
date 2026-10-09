@@ -28,6 +28,12 @@ except Exception:
     pass
 
 import picks
+# 9/10/2026 (Στελιος «βαλτο κανονικα»): δευτερο τρεξιμο ΓΙΑ ΤΟ UEL με μιξη xG 80% (euro_blend_eval: LOSO 4/4) →
+# EURO_BLEND=0.8 EURO_PROJ_OUT=euro_projections_uel80.json. Χωρις env = ακριβως το σημερινο (60%, euro_projections.json).
+if os.environ.get('EURO_BLEND'):
+    _b = float(os.environ['EURO_BLEND'])
+    picks.BLEND = _b; picks._BLEND_D = (picks.BLEND_EARLY - _b) * (picks.BLEND_SPLIT + picks.BLEND_KG) / picks.BLEND_SPLIT
+PROJ_OUT = os.environ.get('EURO_PROJ_OUT', 'euro_projections.json')
 import euro_engine as EE
 from euro_engine import (Engine, team_xg_raw, kodt, EU_SEASONS, EU_EVAL,
                          GAMMA_PLAYER, NS_CONST, EPS, w, player_offsets)
@@ -716,7 +722,7 @@ out = dict(generated=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
            engine='euro V4 — bridges ρ=1.0 + ClubElo offsets, warm-start K=8',
            hfa=round(HF_LIVE, 4),
            matches=matches)
-with open('euro_projections.json', 'w', encoding='utf-8') as f:
+with open(PROJ_OUT, 'w', encoding='utf-8') as f:
     json.dump(out, f, ensure_ascii=False, indent=1)
 
 # ================================================================ ΑΝΑΦΟΡΑ / SANITY
