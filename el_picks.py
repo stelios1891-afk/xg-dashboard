@@ -135,6 +135,7 @@ def compute():
                     when=when, el=True, model=proj.get('model', '')[:60])
         ab = ABS.get(str(code)) or {}
         if ab.get('note'): base.update(abs_adj=ab.get('adj', 0.0), abs_note=ab['note'])
+        tadj = float(ab.get('tot', 0.0) or 0.0)                          # 9/10 (Στελιος «αμυνα και επιθεση»): ΣΥΝΟΛΑ — on/off απουσιων (el_absence)
         # ---- χαντικαπ ----
         if pin.get('line') is not None and pin.get('oh') and pin.get('oa'):
             L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa'])
@@ -148,16 +149,18 @@ def compute():
         # ---- συνολο ----
         if pin.get('tl') is not None and pin.get('to') and pin.get('tu'):
             T, ov, un = float(pin['tl']), float(pin['to']), float(pin['tu'])
-            t = float(g['total'])
+            t = float(g['total']) + tadj
             po, pq = cover(t, -T, st); pu_ = 1 - po - pq
             for nm, p_, od in (('Over', po, ov), ('Under', pu_, un)):
                 e = p_ * od + pq - 1
                 if e >= TOT_MIN:
                     pk = dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
                               proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(t, 1), mkt_line=T)
+                    if tadj: pk['abs_tot'] = round(tadj, 2)
                     # 1/10/2026: αγων 1-10 το συνολο εχει ταση ποντων προετοιμασιας· ενδειξη αν ΣΥΜΦΩΝΕΙ και το παλιο (χωρις προετοιμασια)
                     # — μονο καταγραφη για κριση με πραγματικα δεδομενα (el_preseason_totals_deep.py F/G), δεν αλλαζει τα picks
                     tb = g.get('total_base')
+                    if tb is not None: tb = float(tb) + tadj
                     if tb is not None and abs(float(tb) - t) >= 0.05:
                         bo, bq = cover(float(tb), -T, st); bp = bo if nm == 'Over' else 1 - bo - bq
                         pk['old_agree'] = bool(bp * od + bq - 1 >= TOT_MIN); pk['total_base'] = round(float(tb), 1)
@@ -181,6 +184,7 @@ def line(p, prev=None):
         if p.get('abs_adj'): why += f" · απουσιες {p['abs_adj']:+.1f} στη διαφορα γηπ."
     else:
         bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_line']:g}"
+        if p.get('abs_tot'): why += f" · απουσιες {p['abs_tot']:+.1f} στο συνολο"
         if p.get('old_agree') is not None:
             why += f" · {'✓ συμφωνει και το παλιο' if p['old_agree'] else '✗ μονο με την προετοιμασια'} ({p['total_base']:.1f} χωρις φιλικα)"
     ch = f" (ηταν {prev:.2f})" if prev else ''
@@ -298,7 +302,8 @@ def main(notify_tg=True):
     close_msgs = close_check(state, now, sm_, st_)
     # 1/10/2026 (Στελιος, Virtus–Olympiakos over 171): pick που ΔΕΝ ισχυει πια (σε καμια γραμμη) → μηνυμα· ξαναγινεται → «ΞΑΝΑ PICK»
     import bk_pick_status as bps
-    drops, backs = bps.track(state, picks, F('el_clv_bets.jsonl'), {str(g['code']): (dict(g, margin=float(g['margin']) + (ABS.get(str(g['code'])) or {}).get('adj', 0.0)) if g.get('margin') is not None else g) for g in proj_.get('games', [])},
+    drops, backs = bps.track(state, picks, F('el_clv_bets.jsonl'), {str(g['code']): (dict(g, margin=float(g['margin']) + (ABS.get(str(g['code'])) or {}).get('adj', 0.0),
+                                                                               total=float(g['total']) + float((ABS.get(str(g['code'])) or {}).get('tot', 0.0) or 0.0)) if g.get('margin') is not None and g.get('total') is not None else g) for g in proj_.get('games', [])},
                              _load(F('el_odds_latest.json'), {}).get('odds', {}), lambda m: sm_ if m == 'hcap' else st_,
                              lambda m: HC_MIN if m == 'hcap' else TOT_MIN, cover, 'Euroleague', now)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
@@ -307,7 +312,7 @@ def main(notify_tg=True):
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
-                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'),
+                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'), abs_tot=p.get('abs_tot'),
                                          paper=p.get('paper'), late_kind=p.get('late_kind'), move_open=state.get(key(p), {}).get('move_open')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),

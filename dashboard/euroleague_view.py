@@ -126,17 +126,18 @@ def _morning(proj):
 
 def _apply_absences(proj):
     """9/10/2026 (Στελιος): κοστος απουσιων (el_absence_now.json, γραφεται απο el_picks καθε ~5' με RotoWire OUT) στα μη παιγμενα ματς.
-    Αλλαζει ΜΟΝΟ τη διαφορα (margin, p_home, πονταρισμα ±μισο σε καθε ομαδα)· το συνολο μενει ιδιο (δεν δοκιμαστηκε ακομα για συνολα)."""
+    Διαφορα: κοστος λεπτων (adj) · συνολο: on/off αμυνα & επιθεση (tot, 9/10 βραδυ)· ποντοι ομαδων = (συνολο ± διαφορα)/2."""
     ab = (_json(os.path.join(ROOT, 'el_absence_now.json')) or {}).get('games') or {}
     if not ab:
         return proj
     sm = float(proj.get('sigma_margin', 11.5)); games = []
     for g in proj.get('games', []):
         a = ab.get(str(g.get('code')))
-        if a and not g.get('played') and g.get('margin') is not None and (a.get('note') or a.get('adj')):
+        if a and not g.get('played') and g.get('margin') is not None and g.get('total') is not None and (a.get('note') or a.get('adj')):
             adj = float(a.get('adj') or 0.0); m = float(g['margin']) + adj
-            g = dict(g, margin=m, p_home=Phi(m / sm), pts_h=float(g['pts_h']) + adj / 2, pts_a=float(g['pts_a']) - adj / 2,
-                     margin_base=float(g['margin']), abs_adj=adj, abs_note=a.get('note') or '')
+            tot = float(a.get('tot') or 0.0); T = float(g['total']) + tot
+            g = dict(g, margin=m, total=T, p_home=Phi(m / sm), pts_h=(T + m) / 2, pts_a=(T - m) / 2,
+                     margin_base=float(g['margin']), total_base_abs=float(g['total']), abs_adj=adj, abs_tot=tot, abs_note=a.get('note') or '')
         games.append(g)
     return dict(proj, games=games)
 
@@ -544,7 +545,8 @@ def _abs_line(g):
     adj = float(g.get('abs_adj') or 0.0)
     return (f'<div style="font-size:9px;color:#f5b731;text-align:center;padding:4px 8px;border-top:1px solid #16203a;line-height:1.5">'
             f'🩹 απουσιες: {adj:+.1f} στη διαφορα γηπ. (χωρις απουσιες {float(g["margin_base"]):+.1f} → {float(g["margin"]):+.1f})'
-            f'<br><span style="color:#8fa3c8">{esc(g["abs_note"])}</span></div>')
+            + (f' · {float(g.get("abs_tot") or 0):+.1f} στο συνολο ({float(g["total_base_abs"]):.1f} → {float(g["total"]):.1f})' if g.get('abs_tot') else '')
+            + f'<br><span style="color:#8fa3c8">{esc(g["abs_note"])}</span></div>')
 
 
 def card_html(g, data, rm, now=None):

@@ -73,7 +73,7 @@ def rows(prefix, lg):
         q = dict(lg=lg, home=p['home'], away=p['away'], side=p['side'], hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
                  proj_odds=p.get('proj_odds'), when=p['when'], el=True, mkt=p.get('mkt'), mkt_note=p.get('mkt_note'), drift=p.get('drift'),
                  old_agree=p.get('old_agree'), total_base=p.get('total_base'),
-                 paper_late=bool(p.get('paper')), late_kind=p.get('late_kind'), travel=p.get('travel'), coach_notes=p.get('coach_notes'), abs_adj=p.get('abs_adj'), abs_note=p.get('abs_note'))
+                 paper_late=bool(p.get('paper')), late_kind=p.get('late_kind'), travel=p.get('travel'), coach_notes=p.get('coach_notes'), abs_adj=p.get('abs_adj'), abs_tot=p.get('abs_tot'), abs_note=p.get('abs_note'))
         if p.get('bet'):
             q['bet'] = p['bet']
         active.add((str(p['code']), p.get('mkt'), bs._dir(p.get('mkt'), p.get('side'), p.get('bet'))))

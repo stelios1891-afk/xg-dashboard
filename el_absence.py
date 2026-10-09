@@ -7,7 +7,12 @@
   3. Λεπτα = μεσος ορος των 10 τελευταιων ματς Ευρωλιγκας που επαιξε (φετος + περσι/παλιοτερα, el_player_min_prev.json)· ≥10′.
   4. k = ποσα συνεχομενα ματς της ομαδας λειπει (μαζι με το σημερινο): k 1-3 → πληρες· 4-10 → μισο· >10 → 0 (το μοντελο το εχει «μαθει» απο τα αποτελεσματα).
   5. ΚΟΣΤΟΣ = 0.922 × λεπτα/40 × (1 / 0.5 / 0) ποντοι.  Προβλεψη γηπ. = μοντελο + κοστος φιλοξ − κοστος γηπ.
-Δεδομενα φετινα: el_box.json (ph/pa = [id, ονομα, λεπτα] ανα ματς — backfill() τα συμπληρωνει απο το επισημο API)."""
+Δεδομενα φετινα: el_box.json (ph/pa = [id, ονομα, λεπτα] ανα ματς — backfill() τα συμπληρωνει απο το επισημο API).
+ΣΥΝΟΛΑ (9/10/2026, Στελιος «ας περασουμε το αμυνα και επιθεση»): ΔΙΑΦΟΡΕΤΙΚΟΣ μηχανισμος — ON/OFF του αποντα (3StepsBasket, ΠΕΡΣΙΝΗ σεζον,
+  el_onoff_prev.json απο el_onoff_build.py). Για τους ιδιους μετρουμενους αποντες (βαρος w = λεπτα/40 × 1/0.5):
+  ποντοι ομαδας += bO·Σ_δικοι w·onO/sdO + bD·Σ_αντιπαλου w·onD/sdD  (bO −0.43: λειπει καλος επιθετικος → η ομαδα του βαζει λιγοτερα ·
+  bD −0.80: λειπει καλος αμυντικος (onD αρνητικο) → ο αντιπαλος βαζει περισσοτερα). Συνολο += αθροισμα των δυο ομαδων. Χωρις περσινο προφιλ → 0.
+  Τεστ el_absence_onoff_test.py W4: EL RMSE 3/5, picks συνολων +52.4 → +59.0μ (5/5)· EuroCup 4/5 (t −2.7 / −2.6)."""
 import os, re, json, html, time, unicodedata, datetime as dt, urllib.request
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
@@ -76,14 +81,37 @@ def _match(name, roster):
             else: return None                                          # διφορουμενο
     return best
 
-def team_cost(B, season, code, out_names, before_utc, prev):
-    """→ (κοστος, [λεπτομερειες])"""
+def _otok(s):
+    s = unicodedata.normalize('NFKD', str(s or '')).encode('ascii', 'ignore').decode().lower()
+    return [w for w in re.split(r'[^a-z]+', s) if w]
+
+def load_onoff():
+    """→ (profiles {(sur, first): (onO, onD)}, κατα επωνυμο, coef, sd) ή None"""
+    try: d = json.load(open(F('el_onoff_prev.json'), encoding='utf-8'))
+    except Exception: return None
+    P_, S_ = {}, {}
+    for x in d.get('players', []):
+        k = (tuple(x['sur']), x['first']); P_[k] = (x['onO'], x['onD']); S_.setdefault(k[0], []).append(k)
+    return P_, S_, d['coef'], d['sd']
+
+def onoff_of(name, OO):
+    """ονομα ρόστερ «SURNAME, FIRST» → (onO, onD) περσινα ή None (ιδια αντιστοιχιση με το τεστ)"""
+    if not OO: return None
+    P_, S_ = OO[0], OO[1]
+    sur, fst = (str(name).split(',', 1) + [''])[:2] if ',' in str(name) else (str(name), '')
+    k = (tuple(_otok(sur)), (_otok(fst) or [''])[0])
+    if k in P_: return P_[k]
+    c = [x for x in S_.get(k[0], []) if x[1][:1] == k[1][:1]]
+    return P_[c[0]] if len(c) == 1 else None
+
+def team_cost(B, season, code, out_names, before_utc, prev, OO=None):
+    """→ (κοστος χαντικαπ, [λεπτομερειες], Σ w·onO/sd, Σ w·onD/sd)"""
     tg = [x for x in _team_games(B, season, code) if x[0] < before_utc]
-    if not tg: return 0.0, []
+    if not tg: return 0.0, [], 0.0, 0.0
     roster = {}
     for _, _, nm in tg: roster.update(nm)
     last10 = tg[-10:]; played = {pid: sum(1 for _, mn, _ in last10 if mn.get(pid, 0) > 0) for pid in roster}
-    cost, det = 0.0, []
+    cost, det, so, sd_ = 0.0, [], 0.0, 0.0
     for name in out_names:
         pid = _match(name, roster)
         if not pid: det.append(f'{name}: δεν επαιξε φετος'); continue
@@ -97,14 +125,18 @@ def team_cost(B, season, code, out_names, before_utc, prev):
             k += 1
         g = 1.0 if k <= 3 else (G_LONG if k <= 10 else 0.0)
         c = COEF * avg / 40 * g; cost += c
-        det.append(f'{name} {avg:.0f}′ ×{g:g} → {c:.2f}')
-    return round(cost, 2), det
+        oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
+        if oo and OO:
+            so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
+        det.append(f'{name} {avg:.0f}′ ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 else ''))
+    return round(cost, 2), det, so, sd_
 
 def adjustments(games, B=None):
     """games: λιστα ματς el_projections (home, away, hcode, acode, utc). → {code: dict(adj, cost_h, cost_a, note)}"""
     B = B if B is not None else json.load(open(F('el_box.json'), encoding='utf-8'))
     try: prev = json.load(open(F('el_player_min_prev.json'), encoding='utf-8'))['players']
     except Exception: prev = {}
+    OO = load_onoff()
     rw = fetch_rotowire()
     if not rw: return {}
     season = max((k.split('_')[0] for k in B if k.startswith('E')), default=None)
@@ -121,13 +153,18 @@ def adjustments(games, B=None):
         if not best: continue
         out_h = [n for n, s in best['inj']['home'] if s.upper() == 'OUT']; out_a = [n for n, s in best['inj']['visit'] if s.upper() == 'OUT']
         gtd = [n for side in ('home', 'visit') for n, s in best['inj'][side] if s.upper() != 'OUT']
-        ch, dh = team_cost(B, season, g['hcode'], out_h, g['utc'], prev)
-        ca, da = team_cost(B, season, g['acode'], out_a, g['utc'], prev)
+        ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO)
+        ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO)
+        tot = 0.0
+        if OO:                                                     # ΣΥΝΟΛΑ: ποντοι γηπ += bO·δικα επιθ + bD·αμυνα φιλοξ (και αντιστροφα)
+            bO, bD = OO[2]['bO'], OO[2]['bD']
+            tot = round(bO * oh_ + bD * da_ + bO * oa_ + bD * dh_, 2)
         parts = []
         if dh: parts.append(f"{g['home']}: " + ', '.join(dh))
         if da: parts.append(f"{g['away']}: " + ', '.join(da))
         if gtd: parts.append('αμφιβολοι (δεν μετρανε): ' + ', '.join(gtd))
-        res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, note=' · '.join(parts))
+        res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, note=' · '.join(parts))
+        if tot: parts.append(f'συνολο {tot:+.1f} (on/off αμυνα & επιθεση)'); res[str(g['code'])]['note'] = ' · '.join(parts)
     return res
 
 if __name__ == '__main__':
@@ -135,4 +172,4 @@ if __name__ == '__main__':
     P = json.load(open(F('el_projections.json'), encoding='utf-8'))
     for c, v in adjustments(P['games']).items():
         g = next(x for x in P['games'] if str(x['code']) == c)
-        print(f"{g['home']} - {g['away']}: μοντελο {g['margin']:+.1f} → {g['margin'] + v['adj']:+.1f} (γηπ −{v['cost_h']}, φιλ −{v['cost_a']}) · {v['note']}")
+        print(f"{g['home']} - {g['away']}: διαφορα {g['margin']:+.1f} → {g['margin'] + v['adj']:+.1f} (γηπ −{v['cost_h']}, φιλ −{v['cost_a']}) · συνολο {g['total']:.1f} → {g['total'] + v['tot']:.1f} · {v['note']}")
