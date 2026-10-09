@@ -112,6 +112,11 @@ def _abs(games):
         import el_absence; ABS = el_absence.adjustments(games)
     except Exception as e:
         print('απουσιες σφαλμα:', e); ABS = {}
+    try:                                                                     # 9/10: και για τη σελιδα 🏀 Euroleague (καρτες με απουσιες)
+        json.dump(dict(updated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'), games=ABS),
+                  open(F('el_absence_now.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+    except Exception as e:
+        print('el_absence_now σφαλμα:', e)
     return ABS
 def compute():
     proj = _load(F('el_projections.json'), {}); odds = _load(F('el_odds_latest.json'), {}).get('odds', {})
