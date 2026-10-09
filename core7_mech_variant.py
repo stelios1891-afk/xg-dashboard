@@ -40,7 +40,9 @@ if RED in ('emp', 'emps', 'empa', 'skrip', 'caley'):     # 5/10: νεες φορ
     T['xg_model'] = T['comp_np_scaled'] + 0.25 * T['pen'] + T['red_xg']
     T['ns_eff'] = np.maximum(T['ns'] + T['pen'] + T['red_xg'] / 0.10, 0.5 * (T['ns'] + T['pen']))
     T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1)
-    csv = f'tmp_mech_inputs_{V}_{RED}.csv'; T.to_csv(csv, index=False)
+    if os.environ.get('NOCOMP'):        # 9/10: χωρις Caley συμπιεση (np_raw) ΜΑΖΙ με κοκκινες emps & σωστο SoS — core7_nocomp_714
+        T['xg_model'] = T['np_raw'] + 0.25 * T['pen'] + T['red_xg']; T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1); OUTV += '@nocomp'
+    csv = f'tmp_mech_inputs_{V}_{RED}{os.environ.get("NOCOMP", "")}.csv'; T.to_csv(csv, index=False)
     print('κοκκινες', RED, 'ματς-ομαδες με διορθωση:', sum(1 for a in A if a['term'] or a['fc'] != 1))
 elif RED:
     T = pd.read_csv(csv)
