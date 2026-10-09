@@ -86,6 +86,9 @@ if V.startswith('bl_'):                 # 1/10: bl_<BL> = LIVE (σωστο SoS 0
 if V == 'nosos':                       # 1/10: χωρις διορθωση προγραμματος (SoS) στις αγων. 7-14
     assert 'ST = 1.5;' in pre
     pre = pre.replace('ST = 1.5;', 'ST = 0.0;')
+if os.environ.get('KWARM'):              # 9/10: K warm-start απο env (μεγαλο = μονο περσινο, ~0 = μονο φετινο) — core7_early_weakness
+    assert 'K = 8.0;' in pre
+    pre = pre.replace('K = 8.0;', f"K = {float(os.environ['KWARM'])};", 1); OUTV += f"@K{os.environ['KWARM']}"
 g = {'__name__': 'mech'}
 exec(pre, g)
 g['P'].to_csv(f'core7_mech_preds_{OUTV}.csv', index=False)
