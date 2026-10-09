@@ -105,12 +105,21 @@ def cover(mu, L, sig):
         pw = Phi((mu + L - 0.5) / sig); pl = Phi((-mu - L - 0.5) / sig); return pw, 1 - pw - pl
     return Phi((mu + L) / sig), 0.0
 
+ABS = {}       # 9/10/2026 (Στελιος «να περασουν τα λεπτα»): κοστος απουσιων (el_absence.py, RotoWire OUT) ανα κωδικο ματς — ιδιο σε compute & track
+def _abs(games):
+    global ABS
+    try:
+        import el_absence; ABS = el_absence.adjustments(games)
+    except Exception as e:
+        print('απουσιες σφαλμα:', e); ABS = {}
+    return ABS
 def compute():
     proj = _load(F('el_projections.json'), {}); odds = _load(F('el_odds_latest.json'), {}).get('odds', {})
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
     games = {str(g['code']): g for g in proj.get('games', [])}
     now = dt.datetime.now(dt.timezone.utc)
     picks = []
+    _abs(list(games.values()))
     for code, o in odds.items():
         g = games.get(str(code)); pin = o.get('pin') or {}
         if not g or g.get('played'): continue
@@ -119,10 +128,12 @@ def compute():
         when = ko.strftime('%Y-%m-%dT%H:%M')
         base = dict(lg='Euroleague', home=g['home'], away=g['away'], hcode=g['hcode'], acode=g['acode'], code=g['code'], round=g['round'], coach_notes=g.get('coach_notes'),
                     when=when, el=True, model=proj.get('model', '')[:60])
+        ab = ABS.get(str(code)) or {}
+        if ab.get('note'): base.update(abs_adj=ab.get('adj', 0.0), abs_note=ab['note'])
         # ---- χαντικαπ ----
         if pin.get('line') is not None and pin.get('oh') and pin.get('oa'):
             L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa'])
-            m = float(g['margin'])
+            m = float(g['margin']) + float(ab.get('adj', 0.0))          # 9/10: + κοστος απουσιων (φιλοξ − γηπ)
             pw, pp = cover(m, L, sm); pl = 1 - pw - pp
             for side, p_, pu, od, hc in ((1, pw, pp, oh, L), (-1, pl, pp, oa, -L)):
                 e = p_ * od + pu - 1
@@ -162,6 +173,7 @@ def line(p, prev=None):
         bet = f"{team} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
         why = f"μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f}"
         if p.get('travel'): why += f" · {p['travel']['note']}"
+        if p.get('abs_adj'): why += f" · απουσιες {p['abs_adj']:+.1f} στη διαφορα γηπ."
     else:
         bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_line']:g}"
         if p.get('old_agree') is not None:
@@ -281,7 +293,7 @@ def main(notify_tg=True):
     close_msgs = close_check(state, now, sm_, st_)
     # 1/10/2026 (Στελιος, Virtus–Olympiakos over 171): pick που ΔΕΝ ισχυει πια (σε καμια γραμμη) → μηνυμα· ξαναγινεται → «ΞΑΝΑ PICK»
     import bk_pick_status as bps
-    drops, backs = bps.track(state, picks, F('el_clv_bets.jsonl'), {str(g['code']): g for g in proj_.get('games', [])},
+    drops, backs = bps.track(state, picks, F('el_clv_bets.jsonl'), {str(g['code']): (dict(g, margin=float(g['margin']) + (ABS.get(str(g['code'])) or {}).get('adj', 0.0)) if g.get('margin') is not None else g) for g in proj_.get('games', [])},
                              _load(F('el_odds_latest.json'), {}).get('odds', {}), lambda m: sm_ if m == 'hcap' else st_,
                              lambda m: HC_MIN if m == 'hcap' else TOT_MIN, cover, 'Euroleague', now)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
@@ -290,7 +302,7 @@ def main(notify_tg=True):
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
-                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'),
+                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'),
                                          paper=p.get('paper'), late_kind=p.get('late_kind'), move_open=state.get(key(p), {}).get('move_open')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),

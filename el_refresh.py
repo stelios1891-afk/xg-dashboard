@@ -86,6 +86,9 @@ for x in S.get(SEASON, []):
     else:
         rec['err'] = 'no box'
     B[k] = rec; n_new += 1
+try:                                                     # 9/10: λεπτα παικτων (ph/pa) για το κοστος απουσιων (el_absence.py)
+    import el_absence; print('λεπτα παικτων (backfill):', el_absence.backfill(B, SEASON, J, S.get(SEASON, [])))
+except Exception as _e: print('backfill παικτων σφαλμα:', _e)
 json.dump(B, open('el_box.json', 'w', encoding='utf-8'), ensure_ascii=False)
 print(f'νεα box scores: {n_new}')
 
