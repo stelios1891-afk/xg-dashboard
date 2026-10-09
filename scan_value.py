@@ -57,7 +57,8 @@ def _pick_line(p, prev_odds=None):
     sign = '+' if p['hcap'] >= 0 else ''
     return (f"{p['lg']} {tm}\n"
             f"{p['home']} - {p['away']}, {team} {sign}{p['hcap']:g} @{p['odds']:.2f}{ch} bet {p['stake_final']*100:.1f}%\n"
-            f"Fair odds {p['proj_odds']:.2f}, edge {p['edge']*100:.0f}%")
+            f"Fair odds {p['proj_odds']:.2f}, edge {p['edge']*100:.0f}%"
+            + ("\n⭐ κοντό φαβορί 7-14 — καλύτερη τιμή συνήθως κοντά στη σέντρα" if p.get('rule') == 'fav714' else ""))
 
 def _build_msg(new_alerts, changed_alerts):
     out = []
@@ -180,7 +181,8 @@ def scan(notify_tg=True):
                            side=p['side'], hcap=p['hcap'], odds=p['odds'],
                            edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4),
                            md=p.get('md'), mxh=p.get('mxh'), mxa=p.get('mxa'),
-                           anchor=p.get('anchor'), role=p.get('role', 'dog'),   # 1/10: 'fav' = φαβορι 15η+   # 29/9: αγκυρα αγορας (κοντες γραμμες 15η+) — None αν δεν εφαρμοστηκε
+                           anchor=p.get('anchor'), role=p.get('role', 'dog'), rule=p.get('rule'),   # 9/10: 'fav714' = κοντο φαβορι 7-14
+                             # 1/10: 'fav' = φαβορι 15η+   # 29/9: αγκυρα αγορας (κοντες γραμμες 15η+) — None αν δεν εφαρμοστηκε
                            # 13/9 (ledger πακετο 5.1): ζωνη + χειροκινητα πεδια εκτελεσης
                            # (τα υπολοιπα — προελευση/κινηση/CLV Pin−6h/πεθαμενα — βγαινουν
                            # post-hoc απο odds_history με το ledger_enrich, οχι εδω)
