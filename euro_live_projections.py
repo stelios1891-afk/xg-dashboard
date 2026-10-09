@@ -604,12 +604,14 @@ apply_prior_eu(eng, announce=True)
 # (euro_adj_methods: ο μονος δικαιος σε ολους τους τυπους ματς ΚΑΙ λιγκες, RPS −0.62 4/4, ROI ιδιο· euro_inseason_count:
 # καμια αναμονη, κορυφη στα 7-8 ματς): obs = rating_base × πραγματικο_xGblend / E[xG], E απο Poisson στις 4 σεζον
 # (euro_m8_coef.json, euro_m8_fit.py) πανω στην καθαρη V4 προβλεψη (εδρα, χωρις γ/κ) + χασμα λιγκας + εδρα.
-# Τα features υπολογιζονται με τα ratings ΧΩΡΙΣ φετινα ευρωπαικα (οπως στο τεστ). EURO_INSEASON=0 → απενεργο
-# (το τρεξιμο UEL 80% το κλεινει: ο κανονας uel_home_fav ελεγχθηκε χωρις φετινα). Το OU ζευγος (W2) ΔΕΝ αλλαζει.
+# Τα features υπολογιζονται με τα ratings ΧΩΡΙΣ φετινα ευρωπαικα (οπως στο τεστ). EURO_INSEASON=0 → απενεργο.
+# Και το τρεξιμο UEL 80% τα εχει (uel_homefav_inseason: 24ω @4% +19.6% 4/4 vs +19.3%, συντελεστες 0.8). Το OU ζευγος (W2) ΔΕΝ αλλαζει.
 INS = dict(on=False, obs={}, n_obs=0, n_teams=0)
 try:
     _m8 = json.load(open('euro_m8_coef.json', encoding='utf-8'))
-    M8C = [float(x) for x in _m8['coef']]; W_IN = float(_m8.get('w_in', 0.5))
+    # 9/10: συντελεστες ανα μιξη xG (60% κυρια μηχανη · 80% κανονας UEL φαβ εντος — uel_homefav_inseason, «περνα το»)
+    _bk = f'{picks.blend_at(None):.1f}'
+    M8C = [float(x) for x in _m8.get('coef_by_blend', {}).get(_bk, _m8['coef'])]; W_IN = float(_m8.get('w_in', 0.5))
 except Exception:
     M8C = None; W_IN = 0.5
 INS_ENABLED = os.environ.get('EURO_INSEASON', '1') != '0' and M8C is not None and os.path.exists('data_Europe_2627.json')

@@ -833,6 +833,10 @@ def test_e_uel_home_fav_uses_80():
     """9/10/2026: τα UEL φαβορι εντος τιμολογουνται απο το euro_projections_uel80.json (μιξη 80% xG)."""
     d, P = _euro()
     hf = [p for p in P if p.get('rule') in UEL_HF_RULES]
+    pr0 = _json('euro_projections_uel80.json') if os.path.exists(_p('euro_projections_uel80.json')) else {}
+    ins = pr0.get('eu_inseason')
+    if ins is not None and os.path.exists(_p('data_Europe_2627.json')) and             any(v.get('shots') and v.get('hs') is not None for v in _json('data_Europe_2627.json').values()):
+        assert ins.get('on'), 'euro_projections_uel80: φετινα ευρωπαικα ανενεργα (9/10: πρεπει να ειναι ενεργα και στο 80%)'
     if not hf:
         pytest.skip('κανενα UEL φαβορι εντος τωρα')
     assert os.path.exists(_p('euro_projections_uel80.json')), 'uel_home_fav picks χωρις euro_projections_uel80.json'

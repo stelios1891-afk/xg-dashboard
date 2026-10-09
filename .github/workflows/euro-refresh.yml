@@ -95,8 +95,7 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           EURO_BLEND: '0.8'
-          EURO_PROJ_OUT: euro_projections_uel80.json
-          EURO_INSEASON: '0'      # ο κανονας uel_home_fav ελεγχθηκε χωρις φετινα ευρωπαικα
+          EURO_PROJ_OUT: euro_projections_uel80.json   # 9/10: ΜΕ φετινα ευρωπαικα (Μ8 συντελεστες 0.8)
         run: python euro_live_projections.py
 
       # 25/9: 🏀 Ευρωλιγκα — προγραμμα + box scores (επισημο API, χωρις κλειδι) + μοντελο v1 -> el_projections.json.
