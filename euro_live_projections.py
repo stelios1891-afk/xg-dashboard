@@ -598,6 +598,100 @@ def apply_prior_eu(E, announce=False):
 
 apply_prior_eu(eng, announce=True)
 
+# ================================================================ ΦΕΤΙΝΑ ΕΥΡΩΠΑΪΚΑ ΣΤΟ RATING (9/10/2026, «πέρνα το» Στελιου)
+# Καθε φετινο ευρωπαικο ματς (data_Europe_2627.json, europe_2627_shots_fetch στο euro-refresh) μπαινει στο φετινο
+# rating της ομαδας με ΒΑΡΟΣ 0.5 εγχωριου ματς, απο το 1ο ευρωπαικο. ADJUST αντιπαλου = Μ8 «τι xG να περιμενω»
+# (euro_adj_methods: ο μονος δικαιος σε ολους τους τυπους ματς ΚΑΙ λιγκες, RPS −0.62 4/4, ROI ιδιο· euro_inseason_count:
+# καμια αναμονη, κορυφη στα 7-8 ματς): obs = rating_base × πραγματικο_xGblend / E[xG], E απο Poisson στις 4 σεζον
+# (euro_m8_coef.json, euro_m8_fit.py) πανω στην καθαρη V4 προβλεψη (εδρα, χωρις γ/κ) + χασμα λιγκας + εδρα.
+# Τα features υπολογιζονται με τα ratings ΧΩΡΙΣ φετινα ευρωπαικα (οπως στο τεστ). EURO_INSEASON=0 → απενεργο
+# (το τρεξιμο UEL 80% το κλεινει: ο κανονας uel_home_fav ελεγχθηκε χωρις φετινα). Το OU ζευγος (W2) ΔΕΝ αλλαζει.
+INS = dict(on=False, obs={}, n_obs=0, n_teams=0)
+try:
+    _m8 = json.load(open('euro_m8_coef.json', encoding='utf-8'))
+    M8C = [float(x) for x in _m8['coef']]; W_IN = float(_m8.get('w_in', 0.5))
+except Exception:
+    M8C = None; W_IN = 0.5
+INS_ENABLED = os.environ.get('EURO_INSEASON', '1') != '0' and M8C is not None and os.path.exists('data_Europe_2627.json')
+_orig_side_state = eng.side_state
+_orig_rating_of = eng.rating_of
+
+def _ss_tag(tid, d):
+    st_ = _orig_side_state(tid, d)
+    if st_ is not None:
+        st_ = dict(st_); st_['tid'] = int(tid); st_['d'] = d
+    return st_
+
+def _ins_obs(st_):
+    return [o for o in INS['obs'].get(st_.get('tid'), ()) if o[0] < st_['d'] and o[3] == (st_['lg'], st_['sea'])]
+
+def _rating_ins(st_, K_):
+    if not INS['on']:
+        return _orig_rating_of(st_, K_)
+    obs_ = _ins_obs(st_)
+    if not obs_:
+        return _orig_rating_of(st_, K_)
+    cur_, n_, pr_ = st_['cur'], st_['n'], st_['prior']
+    den_ = n_ + W_IN * len(obs_)
+    sA_ = sum(o[1] for o in obs_); sD_ = sum(o[2] for o in obs_)
+    if cur_ is not None:
+        sf_, sa_ = cur_[2], cur_[3]; ca_, cd_ = cur_[0] * sf_, cur_[1] * sa_
+    else:
+        sf_, sa_ = pr_[2], pr_[3]; ca_ = cd_ = 0.0
+    cur2_ = ((n_ * ca_ + W_IN * sA_) / den_ / max(sf_, EPS), (n_ * cd_ + W_IN * sD_) / den_ / max(sa_, EPS), sf_, sa_)
+    if pr_ is None:
+        return cur2_
+    return EE._shrink(cur2_, pr_, den_, K_)
+
+def _att_leak(st_, nm_, d_):
+    a_, l_, SL_, XL_, sr_ = side_terms(eng, st_, d_, GKEYS)
+    if sr_ == 'goals':
+        el_, _ = team_elo(nm_, st_['lg'])
+        if el_ is not None:
+            u_ = A_CAL + B_CAL * el_ / 100.0 - RHO * s_v4(st_['lg'])
+            a_, l_ = u_, -u_
+    return a_, l_, SL_, XL_
+
+eng.side_state = _ss_tag
+eng.rating_of = _rating_ins
+if INS_ENABLED:
+    a8, b1_, b2_, b3_, b4_ = M8C
+    _de27 = json.load(open('data_Europe_2627.json', encoding='utf-8'))
+    for mid_, m_ in _de27.items():
+        if m_.get('hs') is None or m_.get('as') is None or not m_.get('shots'):
+            continue
+        d_ = kodt(m_['date'])
+        if d_ is None:
+            continue
+        hid_, aid_ = int(m_['home']['id']), int(m_['away']['id'])
+        sth_, sta_ = eng.side_state(hid_, d_), eng.side_state(aid_, d_)
+        if sth_ is None or sta_ is None:
+            continue
+        xh_, xa_ = team_xg_raw(m_)
+        ah_, lh_, SLh_, XLh_ = _att_leak(sth_, m_['home']['name'], d_)
+        aa_, la_, SLa_, XLa_ = _att_leak(sta_, m_['away']['name'], d_)
+        lXs_ = math.log(((SLh_ * SLa_) ** 0.5) * ((XLh_ * XLa_) ** 0.5))
+        D_ = s_v4(sth_['lg']) - s_v4(sta_['lg'])
+        lamH = math.exp(lXs_ + ah_ + la_ + RHO * D_) * HF_LIVE
+        lamA = math.exp(lXs_ + aa_ + lh_ - RHO * D_) / HF_LIVE
+        for tid_, st_, ish_, xf_, xa2_, gf_, ga_, lF_, lO_, Dt_ in (
+                (hid_, sth_, 1, xh_, xa_, int(m_['hs']), int(m_['as']), lamH, lamA, D_),
+                (aid_, sta_, -1, xa_, xh_, int(m_['as']), int(m_['hs']), lamA, lamH, -D_)):
+            r_ = _orig_rating_of(st_, K)
+            if r_ is None:
+                continue
+            Ea = math.exp(a8 + b1_ * math.log(lF_) + b2_ * math.log(lO_) + b3_ * Dt_ + b4_ * ish_)
+            Ed = math.exp(a8 + b1_ * math.log(lO_) + b2_ * math.log(lF_) - b3_ * Dt_ - b4_ * ish_)
+            ya_ = b_blend * xf_ + (1 - b_blend) * gf_; yd_ = b_blend * xa2_ + (1 - b_blend) * ga_
+            INS['obs'].setdefault(tid_, []).append((d_, r_[0] * r_[2] * ya_ / Ea, r_[1] * r_[3] * yd_ / Ed,
+                                                    (st_['lg'], st_['sea']), str(mid_), m_.get('comp')))
+            INS['n_obs'] += 1
+    INS['n_teams'] = len(INS['obs'])
+    INS['on'] = True
+    print(f'ΦΕΤΙΝΑ ΕΥΡΩΠΑΪΚΑ ΣΤΟ RATING (Μ8, βαρος {W_IN:g}): {INS["n_obs"]} παρατηρησεις · {INS["n_teams"]} ομαδες')
+else:
+    print('ΦΕΤΙΝΑ ΕΥΡΩΠΑΪΚΑ ΣΤΟ RATING: ΑΝΕΝΕΡΓΟ' + (' (EURO_INSEASON=0)' if os.environ.get('EURO_INSEASON') == '0' else ' (λειπει αρχειο/συντελεστες)'))
+
 # ================================================================ OU engine (συνθεση W2)
 # ΜΟΝΟ για τα fair γκολ της οθονης/σκιας (αποφαση Στελιου 10/9): πεναλτι 0.76 αντι 0.25
 # στα ratings — τιποτα αλλο (euro_ou_comp: κλεινει το μισο χασμα βαθμονομησης γκολ, 1Χ2
@@ -677,6 +771,23 @@ for key in sorted(fx):
                 xgh *= UCL_FAV_SCALE
             else:
                 xga *= UCL_FAV_SCALE
+        # 9/10: φετινα ευρωπαικα — ποσα μετρησαν + η προβλεψη ΧΩΡΙΣ αυτα (για συγκριση στο dashboard)
+        nin_h = len(_ins_obs(sth)) if INS['on'] else 0
+        nin_a = len(_ins_obs(sta)) if INS['on'] else 0
+        xgh_ni, xga_ni = xgh, xga
+        if nin_h or nin_a:
+            INS['on'] = False
+            ah0, lh0, _, _, _ = side_terms(eng, sth, d, GKEYS)
+            aa0, la0, _, _, _ = side_terms(eng, sta, d, GKEYS)
+            INS['on'] = True
+            if lab['h'] == 'γκολ+Elo': ah0, lh0 = att_h, leak_h
+            if lab['a'] == 'γκολ+Elo': aa0, la0 = att_a, leak_a
+            xgh_ni = max(math.exp(lXs + ah0 + la0 + RHO * D) * HF_LIVE - c_lg / 2.0, 0.05)
+            xga_ni = max(math.exp(lXs + aa0 + lh0 - RHO * D) / HF_LIVE + c_lg / 2.0, 0.05)
+            if comp == 'ChampionsLeague':
+                if xgh_ni >= xga_ni: xgh_ni *= UCL_FAV_SCALE
+                else: xga_ni *= UCL_FAV_SCALE
+        rec.update(eu_in_h=nin_h, eu_in_a=nin_a, xgh_noins=round(xgh_ni, 3), xga_noins=round(xga_ni, 3))
         # fair γκολ (συνθεση W2, πεναλτι 0.76) — ΜΟΝΟ FotMob+FotMob ματς (το OU πασο
         # δεν κανει Elo-αντικατασταση· στα γκολ/Ben ματς μενει το κυριο ζευγος)
         try:
@@ -718,6 +829,7 @@ for key in sorted(fx):
 
 out = dict(generated=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
            eu_draw_scale=EU_DRAW_SCALE, w_eu_prior=W_EU, lg_deflate=GAMMA_LG_DEFLATE,
+           eu_inseason=dict(on=bool(INS['on']), method='M8', w=W_IN, n_obs=INS['n_obs'], n_teams=INS['n_teams']),
            ucl_fav_scale=UCL_FAV_SCALE,
            engine='euro V4 — bridges ρ=1.0 + ClubElo offsets, warm-start K=8',
            hfa=round(HF_LIVE, 4),
@@ -727,7 +839,7 @@ with open(PROJ_OUT, 'w', encoding='utf-8') as f:
 
 # ================================================================ ΑΝΑΦΟΡΑ / SANITY
 cov = [m for m in matches if m['covered']]
-print(f'\nΓραφτηκε euro_projections.json: {len(matches)} ματς ({len(cov)} covered, {len(matches)-len(cov)} οχι)')
+print(f'\nΓραφτηκε {PROJ_OUT}: {len(matches)} ματς ({len(cov)} covered, {len(matches)-len(cov)} οχι)')
 per = '  '.join(f'{c}: {sum(1 for m in matches if m["comp"] == c)} '
                 f'(cov {sum(1 for m in cov if m["comp"] == c)})'
                 for c in ['ChampionsLeague', 'EuropaLeague', 'ConferenceLeague'])

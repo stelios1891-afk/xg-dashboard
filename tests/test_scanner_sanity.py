@@ -810,6 +810,25 @@ def test_e_ucl_kappa_applied():
     assert not bad, 'κ UCL / συνεπεια projections:\n' + '\n'.join(bad)
 
 
+def test_e_inseason_european_in_rating():
+    """9/10/2026: φετινα ευρωπαικα στο ευρωπαικο rating (Μ8, βαρος 0.5) — ενεργο οταν υπαρχουν τελειωμενα ματς με σουτ."""
+    if not os.path.exists(_p('euro_projections.json')):
+        pytest.skip('euro_projections.json δεν υπαρχει')
+    proj = _json('euro_projections.json')
+    ins = proj.get('eu_inseason')
+    if ins is None:
+        pytest.skip('παλια projections (πριν 9/10)')
+    assert ins.get('method') == 'M8' and _approx(ins.get('w'), 0.5), f'eu_inseason={ins!r} (περιμενα Μ8, βαρος 0.5)'
+    assert os.path.exists(_p('euro_m8_coef.json')), 'λειπει euro_m8_coef.json'
+    if os.path.exists(_p('data_Europe_2627.json')):
+        n27 = sum(1 for v in _json('data_Europe_2627.json').values() if v.get('shots') and v.get('hs') is not None)
+        if n27:
+            assert ins.get('on') and ins.get('n_obs', 0) > 0, f'{n27} φετινα ευρωπαικα με σουτ αλλα eu_inseason ανενεργο: {ins!r}'
+    for m in proj.get('matches', []):
+        if m.get('covered'):
+            assert 'xgh_noins' in m and 'eu_in_h' in m, f'{m.get("home")}-{m.get("away")}: λειπουν πεδια φετινων ευρωπαικων'
+
+
 def test_e_uel_home_fav_uses_80():
     """9/10/2026: τα UEL φαβορι εντος τιμολογουνται απο το euro_projections_uel80.json (μιξη 80% xG)."""
     d, P = _euro()

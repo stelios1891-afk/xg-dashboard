@@ -65,6 +65,9 @@ FM_CAL = {                                    # ημερολογιακη σεζ�
     'FinlandVeikkausliiga': 51, 'GeorgiaErovnuliLiga': 439,
     'KazakhstanPremierLeague': 225, 'LatviaVirsliga': 226,
     'LithuaniaALyga': 228, 'NorwayOBOS': 203,
+    # 9/10/2026: ΕΛΕΙΠΑΝ — Bodø/Glimt, Brann, Viking και η σουηδικη ομαδα βαθμολογουνταν ΜΟΝΟ με τη σεζον 2025
+    # (ιστορικα data_Eliteserien_2526 / data_Allsvenskan_2526 = σεζον 2025). Η σειρα σεζον στο engine βγαινει απο τις ημερομηνιες.
+    'Eliteserien': 59, 'Allsvenskan': 67,
 }
 
 # Griffis (Ben) — οι 9 λιγκες του euro engine (ιδια ονοματα/πηγες με griffis_fetch.py)

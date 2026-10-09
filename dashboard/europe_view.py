@@ -347,14 +347,18 @@ def card_html(m, mk=None, draw_scale=EU_DRAW_SCALE_DEF):
     <div class="row"><span>Λιγκα</span><b>{esc(m.get('lg_h') or '—')}</b></div>
     <div class="row"><span>Πηγη rating</span><b>{esc(m.get('src_h') or '—')}</b></div>
     <div class="row"><span>Φετινα ματς</span><b>{m.get('n_h', 0)}</b></div>
+    <div class="row"><span>Φετινα ευρωπαϊκα</span><b>{m.get('eu_in_h', 0)}</b></div>
     <div class="row"><span>Neutral xG</span><b>{m['xgh0']:.3f}</b></div>
-    <div class="row"><span>Adj xG (HFA)</span><b class="acc">{m['xgh']:.3f}</b></div></div>
+    <div class="row"><span>Adj xG (HFA)</span><b class="acc">{m['xgh']:.3f}</b></div>
+    <div class="row"><span>χωρις φετινα ευρωπ.</span><b>{m.get('xgh_noins', m['xgh']):.3f}</b></div></div>
   <div class="inp"><div class="h">{esc(m['away'])} (away)</div>
     <div class="row"><span>Λιγκα</span><b>{esc(m.get('lg_a') or '—')}</b></div>
     <div class="row"><span>Πηγη rating</span><b>{esc(m.get('src_a') or '—')}</b></div>
     <div class="row"><span>Φετινα ματς</span><b>{m.get('n_a', 0)}</b></div>
+    <div class="row"><span>Φετινα ευρωπαϊκα</span><b>{m.get('eu_in_a', 0)}</b></div>
     <div class="row"><span>Neutral xG</span><b>{m['xga0']:.3f}</b></div>
-    <div class="row"><span>Adj xG</span><b class="acc">{m['xga']:.3f}</b></div></div>
+    <div class="row"><span>Adj xG</span><b class="acc">{m['xga']:.3f}</b></div>
+    <div class="row"><span>χωρις φετινα ευρωπ.</span><b>{m.get('xga_noins', m['xga']):.3f}</b></div></div>
 </div><div class="time">{_ko_fmt(m.get('utc'))} · αγωνιστικη {esc(m.get('round') or '?')}</div></div></div>"""
 
 

@@ -75,6 +75,14 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python europe_fixtures_2627_fetch.py
 
+      # 9/10/2026: xG ανα σουτ των ΦΕΤΙΝΩΝ ευρωπαικων (FotMob matchDetails) -> data_Europe_2627.json.
+      # Τα διαβαζει το euro_live_projections: φετινα ευρωπαικα στο rating (Μ8, βαρος 0.5). Μη κρισιμο.
+      - name: Euro cups — xG φετινων ευρωπαικων (FotMob)
+        continue-on-error: true
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python europe_2627_shots_fetch.py
+
       - name: Fresh euro projections
         env:
           PYTHONIOENCODING: utf-8
@@ -88,6 +96,7 @@ jobs:
           PYTHONIOENCODING: utf-8
           EURO_BLEND: '0.8'
           EURO_PROJ_OUT: euro_projections_uel80.json
+          EURO_INSEASON: '0'      # ο κανονας uel_home_fav ελεγχθηκε χωρις φετινα ευρωπαικα
         run: python euro_live_projections.py
 
       # 25/9: 🏀 Ευρωλιγκα — προγραμμα + box scores (επισημο API, χωρις κλειδι) + μοντελο v1 -> el_projections.json.
