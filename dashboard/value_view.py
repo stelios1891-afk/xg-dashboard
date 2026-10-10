@@ -69,6 +69,23 @@ WATCH = {'PrimeiraLiga'}
 def _logo(tid, cls='', tpl=TLOGO):
     return f'<img class="{cls}" src="{tpl.format(tid)}" onerror="this.style.visibility=\'hidden\'">' if tid else ''
 
+def _when_ath(w):
+    """10/10/2026 (Στελιος «value picks σε ωρα Ελλαδος»): τα αρχεια ειναι UTC → ωρα Ελλαδας (θερινη/χειμερινη σωστα)."""
+    import datetime
+    try:
+        d = datetime.datetime.fromisoformat(str(w).replace(' ', 'T').replace('Z', '+00:00')[:25])
+        d = d.replace(tzinfo=datetime.timezone.utc) if d.tzinfo is None else d
+        try:
+            from zoneinfo import ZoneInfo
+            a = d.astimezone(ZoneInfo('Europe/Athens'))
+        except Exception:
+            last_sun = max(datetime.date(d.year, 10, x) for x in range(25, 32) if datetime.date(d.year, 10, x).weekday() == 6)
+            a = d + datetime.timedelta(hours=3 if datetime.date(d.year, 3, 25) <= d.date() < last_sun else 2)
+        return f'{a:%Y-%m-%d %H:%M}'
+    except Exception:
+        return (w or '').replace('T', ' ')
+
+
 def pick_card(p):
     side = p['side']
     over = side == 0                     # ευρωπαϊκο pick στα γκολ (Over)
@@ -158,7 +175,7 @@ def pick_card(p):
 <div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late') or p.get('stale') or p.get('gone')) else ''}" data-k="{pk}">
   <div class="top">
     <div class="lg">{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
-    <div class="when">{_h.escape((p.get('when') or '').replace('T', ' '))}<button class="played" onclick="tgPlayed(this)" title="Σημειωσε οτι το επαιξες (αποθηκευεται σε αυτη τη συσκευη)">☐ το έπαιξα</button></div>
+    <div class="when">{_h.escape(_when_ath(p.get('when')))}<button class="played" onclick="tgPlayed(this)" title="Σημειωσε οτι το επαιξες (αποθηκευεται σε αυτη τη συσκευη)">☐ το έπαιξα</button></div>
   </div>
   <div class="mrow">
     <div class="tm {hcls}">{_logo(p.get('home_id'))}{_h.escape(p['home'])}</div>
