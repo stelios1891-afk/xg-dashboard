@@ -54,6 +54,16 @@ for i, mid in enumerate(MIDS):
                          sup0=BASE[0][i] - BASE[1][i], sup1=LH[i] - LA[i], mk=msup(*CR[mid], BASE[0][i] + BASE[1][i]),
                          f0=b['fair'], f1=n['fair'], e0=b['e'], e1=n['e'], pnl=b['pnl'], pin=pin_too))
 R = pd.DataFrame(rows).sort_values(['kind', 'date'])
+# ανα βιβλιο (ιδιος ορισμος με το euro_value_all_test: picks που αλλαζουν ΣΕ ΚΑΘΕ βιβλιο χωριστα)
+for bk, OD in (('Crown', CR), ('Pinnacle', PIN)):
+    go, nw = [], []
+    for i in range(len(MIDS)):
+        b0, b1 = evalp(BASE[0][i], BASE[1][i], i, OD), evalp(LH[i], LA[i], i, OD)
+        for sd in (1, -1):
+            if b0.get(sd) and b1.get(sd):
+                if b0[sd]['pick'] and not b1[sd]['pick']: go.append(b0[sd]['pnl'])
+                if b1[sd]['pick'] and not b0[sd]['pick']: nw.append(b1[sd]['pnl'])
+    print(f'{bk:9s}: φευγουν {len(go)} ({100 * np.mean(go):+.1f}%, {sum(go):+.1f}μ) · μπαινουν {len(nw)} ({100 * np.mean(nw):+.1f}%, {sum(nw):+.1f}μ)')
 for k in ('ΕΦΥΓΕ', 'ΜΠΗΚΕ'):
     x = R[R.kind == k]
     print(f'\n===== {k} ({len(x)} picks Crown · ROI {100 * x.pnl.mean():+.1f}% · {x.pnl.sum():+.1f}μ) =====')
