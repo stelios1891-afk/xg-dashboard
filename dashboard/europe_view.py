@@ -69,20 +69,26 @@ def _eu_dist(xgh, xga, draw_scale):
     return {g: (p * draw_scale if g == 0 else p * k) for g, p in dist.items()}
 
 
-def _tot_dist(xgh, xga):
-    """Κατανομη ΣΥΝΟΛΟΥ γκολ (ιδιος πυρηνας με gd_dist: Poisson × draw boost διαγωνιου)."""
+def _tot_dist(xgh, xga, draw_scale=1.0):
+    """Κατανομη ΣΥΝΟΛΟΥ γκολ (ιδιος πυρηνας με gd_dist: Poisson × draw boost διαγωνιου).
+    10/10: ΙΔΙΟ βαρος ισοπαλιων με το χαντικαπ — μαζα διαγωνιου ×draw_scale, τα υπολοιπα αναλογικα."""
     lh, la = max(xgh, 0.05), max(xga, 0.05)
     F = [math.factorial(i) for i in range(13)]
     ph = [math.exp(-lh) * lh ** i / F[i] for i in range(13)]
     pa = [math.exp(-la) * la ** j / F[j] for j in range(13)]
-    tot = {}
+    M = {}
     s = 0.0
     for i in range(13):
         for j in range(13):
             p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
-            tot[i + j] = tot.get(i + j, 0.0) + p
+            M[(i, j)] = p
             s += p
-    return {t: p / s for t, p in tot.items()}
+    D = sum(M[(i, i)] for i in range(13)) / s
+    k = (1.0 - draw_scale * D) / (1.0 - D) if 0 < D < 1 else 1.0
+    tot = {}
+    for (i, j), p in M.items():
+        tot[i + j] = tot.get(i + j, 0.0) + p / s * (draw_scale if i == j else k)
+    return tot
 
 
 def _cover_q(dist, side, line):
@@ -217,7 +223,7 @@ def _odds_pane(m, mk, draw_scale):
     mk = mk or {}
     dist = _eu_dist(m['xgh'], m['xga'], draw_scale)
     # γκολ: συνθεση W2 (πεναλτι 0.76) οπου υπαρχει — διορθωνει τη μετρημενη Under-κλιση ~3%
-    tot = _tot_dist(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'])
+    tot = _tot_dist(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'], draw_scale)
     ml_ah = _model_ah_line(dist)
     ml_ou = _model_ou_line(tot)
     ah_lad = mk.get('ah') or ([[mk['line'], mk['oh'], mk['oa']]] if mk.get('line') is not None else [])
@@ -257,7 +263,7 @@ def _lines_table(m, mk, draw_scale):
         rows.append(('AH', f'{-(m["xgh"] - m["xga"]):+.2f}', 'μοντ γραμμη', '—'))
     if mk.get('tl') is not None:
         tl = float(mk['tl'])
-        fo = _fair_ou(_tot_dist(m['xgh'], m['xga']), tl)
+        fo = _fair_ou(_tot_dist(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'], draw_scale), tl)   # ιδιο ζευγος W2 με το κουτι γκολ
         rows.append(('O/U', f'{tl:.2f}',
                      f'{fo[0]:.2f}/{fo[1]:.2f}' if fo else '—',
                      f'{mk.get("to", 0):.2f}/{mk.get("tu", 0):.2f}'))

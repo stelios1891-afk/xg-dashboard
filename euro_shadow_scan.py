@@ -50,17 +50,24 @@ def edge_of(pw, pp, o):
     return pw * (o - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
 
 
-def tot_dist(lh, la):
+def tot_dist(lh, la, scale=1.0):
+    """Κατανομη συνολου γκολ. 10/10 (Στελιος «περνα το»): ΙΔΙΟ βαρος ισοπαλιων με το χαντικαπ —
+    ×DRAW_BOOST στη διαγωνιο, μετα συνολικη μαζα ισοπαλιας ×scale (eu_draw_scale), τα υπολοιπα αναλογικα."""
     import math
     F = [math.factorial(i) for i in range(13)]
     ph = [math.exp(-max(lh, .05)) * max(lh, .05) ** i / F[i] for i in range(13)]
     pa = [math.exp(-max(la, .05)) * max(la, .05) ** j / F[j] for j in range(13)]
-    tot = {}; s = 0.0
+    M = {}; s = 0.0
     for i in range(13):
         for j in range(13):
             p = ph[i] * pa[j] * (picks.DRAW_BOOST if i == j else 1.0)
-            tot[i + j] = tot.get(i + j, 0.0) + p; s += p
-    return {t: p / s for t, p in tot.items()}
+            M[(i, j)] = p; s += p
+    D = sum(M[(i, i)] for i in range(13)) / s
+    k = (1.0 - scale * D) / (1.0 - D) if 0 < D < 1 else 1.0
+    tot = {}
+    for (i, j), p in M.items():
+        tot[i + j] = tot.get(i + j, 0.0) + p / s * (scale if i == j else k)
+    return tot
 
 
 def p_over(tot, line):
@@ -120,7 +127,7 @@ def main():
             rec['dside'] = 1 if lf > 0 else (-1 if lf < 0 else (1 if oh > oa else -1))
             # σκια OVERS (συνθεση W2 πεναλτι-0.76, καθαρο quarter pricing) — γραμμη σκιας 10/9
             if mk.get('tl') is not None and m.get('xgh_ou') is not None:
-                td = tot_dist(m['xgh_ou'], m['xga_ou'])
+                td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
                 po, pu = p_over(td, float(mk['tl']))
                 rec['xgh_ou'] = m['xgh_ou']; rec['xga_ou'] = m['xga_ou']
                 if mk.get('to'):
@@ -240,7 +247,7 @@ def main():
         # --- OVERS (W2) ---
         if (m.get('xgh_ou') is not None and mk.get('tl') is not None and mk.get('to')
                 and 1.70 <= float(mk['to']) <= 2.10):
-            td = tot_dist(m['xgh_ou'], m['xga_ou'])
+            td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
             po, pu = p_over(td, float(mk['tl']))
             e_o = po * (float(mk['to']) - 1) * (1 - picks.MARGIN) - pu
             if e_o >= EDGE_OVER:
