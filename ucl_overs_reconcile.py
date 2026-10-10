@@ -38,8 +38,7 @@ for eng in ('ΚΥΡΙΟ (παλιο τεστ)', 'W2 (live overs)'):
 
 # ---- ροη πρωτης εμφανισης (απο euro_totals_test) ανα μορφη ----
 F = pd.read_pickle('euro_totals_first.pkl')
-print('
-ΡΟΗ «πρωτη εμφανιση ≤72ω» @4% (μεσος Crown/SBOBET) ανα μορφη')
+print(chr(10) + 'ΡΟΗ «πρωτη εμφανιση ≤72ω» @4% (μεσος Crown/SBOBET) ανα μορφη')
 for side in ('over', 'under'):
     for fmt, ss in (('νεα μορφη 2425-26', ('2425', '2526')), ('παλια 2223-24', ('2223', '2324'))):
         x = F[(F.side == side) & F.sea.isin(ss)]; m = x.groupby('bk').pnl.agg(['mean', 'size']); ps = x.groupby('sea').pnl.mean()
