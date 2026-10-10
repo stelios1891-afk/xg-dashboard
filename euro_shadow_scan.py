@@ -227,6 +227,26 @@ def main():
                     xgh=m['xgh'], xga=m['xga'], when=mk.get('when'), lim=mk.get('lim'),
                     no_play=(m['comp'] == 'EuropaLeague'),
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
+        # --- ΣΚΙΑ (10/10/2026, Στελιος «το 3»): κατηγορια Β (UCL, μια ομαδα χωρις FotMob) — χαντικαπ ΥΠΕΡ της ομαδας FotMob («μεγαλη»)
+        # οταν ειναι φαβορι (≤−0.5), σωστα τεταρτα, edge ≥10%, 1.70-2.10, ΧΩΡΙΣ διορθωση (ucl_nonfm_fix_test: 27 picks +6.1%, λιγα).
+        # ΚΑΤΑΓΡΑΦΗ μονο (no_play): οχι Telegram, δεν μετραει.
+        if fm_one and m['comp'] == 'ChampionsLeague':
+            big = 1 if m.get('src_h') == 'FotMob' else -1
+            ln = lf if big == 1 else -lf
+            o = mk.get('oh') if big == 1 else mk.get('oa')
+            if o and 1.70 <= float(o) <= 2.10 and ln <= -0.5:
+                pw, pp = cover_q(dist, big, ln)
+                e_b = edge_of(pw, pp, float(o))
+                if e_b >= EDGE_FAV_UCL:
+                    picks_out.append(dict(
+                        mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
+                        home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
+                        team=(m['home'] if big == 1 else m['away']), side=int(big), line=round(ln, 2), odds=round(float(o), 2),
+                        edge=round(e_b, 4), role='fav', band=None,
+                        proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
+                        tag75=False, xgh=m['xgh'], xga=m['xga'], when=mk.get('when'), lim=mk.get('lim'),
+                        rule='nonfm_fav_shadow', src=f"{m.get('src_h')}/{m.get('src_a')}", no_play=True,
+                        note='👁 ΣΚΙΑ — χάντικαπ υπέρ μεγάλης, ομάδα χωρίς FotMob (καταγραφή, δεν παίζεται)'))
         # --- UEL ΦΑΒΟΡΙ ΕΝΤΟΣ (κανονικο pick) ---
         if m['comp'] == 'EuropaLeague' and str(m['mid']) in L80:
             hb = (ko - now).total_seconds() / 3600
