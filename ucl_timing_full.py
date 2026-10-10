@@ -140,3 +140,29 @@ for mk in ('fav', 'dog', 'over'):
         y = z[m]
         if len(y): print(f'      {gl:36s} {c(y)}')
 first.to_pickle('ucl_timing_full_first.pkl')
+
+# ---------------- (Δ) ΠΟΤΕ ΤΟ ΠΑΙΖΩ: ιδια picks (πρωτη εμφανιση) παιγμενα σε καθε μεταγενεστερη στιγμη ----------------
+print('\n(Δ) ΠΟΤΕ ΤΟ ΠΑΙΖΩ — picks ανα ωρα ΠΡΩΤΗΣ εμφανισης · ROI αν τα παιζαμε τοτε ή αργοτερα (τιμη/γραμμη εκεινης της στιγμης) · κινηση αγορας ως το κλεισιμο (+ = προς εμας)')
+PX = R.set_index(['i', 'bk', 'mk', 'side', 'h']).pnl
+BUCK = ((72, 72, 'βγηκε 72ω (ηδη απο την αρχη)'), (60, 48, 'βγηκε 60-48ω'), (36, 36, 'βγηκε 36ω'), (24, 24, 'βγηκε 24ω'),
+        (18, 12, 'βγηκε 18-12ω'), (8, 6, 'βγηκε 8-6ω'), (4, 2, 'βγηκε 4-2ω'), (1, 0, 'βγηκε 1ω-κλεισ'))
+PLAY = (('στην εμφανιση', None), ('24ω', 24), ('12ω', 12), ('6ω', 6), ('2ω', 2), ('κλεισ', 0))
+def cc(v):
+    v = [x for x in v if x is not None and np.isfinite(x)]
+    return f'{len(v) / 2:3.0f}/{100 * np.mean(v):+4.0f}%' if v else '   —    '
+for mk in ('fav', 'dog', 'over'):
+    print(f'\n   {NAME[mk]}')
+    print(f'      {"":30s} ' + ' '.join(f'{p:>12s}' for p, _ in PLAY) + '   κιν ως κλεισ')
+    for hi, lo, bl in BUCK:
+        x = first[(first.mk == mk) & (first.h <= hi) & (first.h >= lo)]
+        if len(x) == 0: continue
+        cells = []
+        for pl_, hp in PLAY:
+            if hp is None:
+                vals = list(x.pnl)
+            elif hp > hi:
+                cells.append(f'{"":>12s}'); continue
+            else:
+                vals = [PX.get((r.i, r.bk, r.mk, r.side, hp), np.nan) for r in x.itertuples()]
+            cells.append(f'{cc(vals):>12s}')
+        print(f'      {bl:30s} ' + ' '.join(cells) + f'   {x.mv_after.mean():+.2f}')
