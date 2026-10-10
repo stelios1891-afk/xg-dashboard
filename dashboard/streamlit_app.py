@@ -682,13 +682,18 @@ def render_moves(league):
     with c2:
         rng = st.radio("Παραθυρο", ['6H', '12H', '24H', '48H', 'ΟΛΑ'], index=4, horizontal=True, key='mw_rng')
     hrs = {'6H': 6, '12H': 12, '24H': 24, '48H': 48, 'ΟΛΑ': None}[rng]
-    tabs = st.tabs(["1Χ2", "Ασιατικο χαντικαπ", "Ιστορικο αλλαγων"])
+    _ou = mv.has_ou(D)                       # 10/10: συνολα γκολ (ευρωπαϊκα)
+    tabs = st.tabs(["1Χ2", "Ασιατικο χαντικαπ"] + (["Γκολ (συνολα)"] if _ou else []) + ["Ιστορικο αλλαγων"])
     with tabs[0]:
         st.plotly_chart(mv.match_fig(D, '1x2', mode, hrs), use_container_width=True, config={'displayModeBar': False})
     with tabs[1]:
         st.components.v1.html(mv.ah_cards_html(D), height=175)
         st.plotly_chart(mv.match_fig(D, 'ah', mode, hrs), use_container_width=True, config={'displayModeBar': False})
-    with tabs[2]:
+    if _ou:
+        with tabs[2]:
+            st.components.v1.html(mv.ou_cards_html(D), height=175)
+            st.plotly_chart(mv.match_fig(D, 'ou', mode, hrs), use_container_width=True, config={'displayModeBar': False})
+    with tabs[-1]:
         st.components.v1.html(mv.history_html(D), height=min(len(D['snaps']) * 38 + 90, 700), scrolling=True)
 
 @st.cache_data(ttl=6 * 3600)

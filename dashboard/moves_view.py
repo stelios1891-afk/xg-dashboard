@@ -123,7 +123,8 @@ def _load_euro(H):
         if r.get('ko'):
             d['meta']['ko'] = r['ko']
         h2h = [r.get('h'), r.get('d'), r.get('a')] if (r.get('h') and r.get('d') and r.get('a')) else None
-        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book='Pinnacle'))
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book='Pinnacle',
+                               tl=r.get('tl'), to=r.get('to'), tu=r.get('tu')))      # 10/10: + συνολα γκολ (ευρωπαϊκα)
 
 
 def upcoming(H, horizon_days=8):
@@ -303,6 +304,7 @@ def movers_html(rows):
 # ---------- λιστα ματς πρωταθληματος ----------
 def league_html(H, lg):
     rows = []
+    any_ou = any(has_ou(d) for _, d, _ in upcoming(H) if d['meta']['lg'] == lg)
     for key, d, ko in upcoming(H):
         if d['meta']['lg'] != lg:
             continue
@@ -325,6 +327,9 @@ def league_html(H, lg):
         last = d['snaps'][-1]
         ah = (f'{last["line"]:+g} <span class="dim">({last["oh"]:.2f}/{last["oa"]:.2f})</span>'
               if last.get('line') is not None else '—')
+        if any_ou:
+            ah += '</td><td class="c od">' + (f'{last["tl"]:g} <span class="dim">({last["to"]:.2f}/{last["tu"]:.2f})</span>'
+                                              if (last.get('tl') is not None and last.get('to') and last.get('tu')) else '—')
         m = d['meta']
         rows.append(f'<tr><td><span class="mt"><img src="{TLOGO.format(m["hid"])}">'
                     f'{_h.escape(m["home"])} – {_h.escape(m["away"])}</span>'
@@ -333,7 +338,7 @@ def league_html(H, lg):
     if not rows:
         return CSS + '<div class="dim" style="padding:14px">Δεν υπαρχουν καταγραφες για επερχομενα ματς εδω ακομα.</div>'
     return (CSS + '<table><tr><th>Ματς</th><th class="c">1</th><th class="c">Χ</th>'
-                  '<th class="c">2</th><th class="c">Γραμμη AH</th></tr>' + ''.join(rows) + '</table>')
+                  '<th class="c">2</th><th class="c">Γραμμη AH</th>' + ('<th class="c">Γκολ (O/U)</th>' if any_ou else '') + '</tr>' + ''.join(rows) + '</table>')
 
 
 # ---------- σελιδα ματς: καρτες, line-moves, ιστορικο ----------
@@ -424,6 +429,57 @@ def ah_cards_html(d):
     return CSS + html
 
 
+C_OVER, C_UNDER = '#3ec98f', '#b98cff'
+
+
+def has_ou(d):
+    return any(s.get('tl') is not None for s in d['snaps'])
+
+
+def ou_summary(d):
+    """10/10/2026: συνολα γκολ — τρεχουσα γραμμη/αποδοσεις, ανοιγμα, αλυσιδα αλλαγων γραμμης."""
+    snaps = [s for s in d['snaps'] if s.get('tl') is not None and s.get('to') and s.get('tu')]
+    if not snaps:
+        return None
+    o, c = snaps[0], snaps[-1]
+    moves = []
+    for s in snaps:
+        if not moves or abs(s['tl'] - moves[-1][0]) > 0.01:
+            moves.append((s['tl'], s['t']))
+    return dict(open_line=o['tl'], open_o=o['to'], open_u=o['tu'], line=c['tl'], o=c['to'], u=c['tu'],
+                chg_o=(c['to'] - o['to']) / o['to'] * 100, chg_u=(c['tu'] - o['tu']) / o['tu'] * 100, moves=moves)
+
+
+def ou_cards_html(d):
+    s = ou_summary(d)
+    if s is None:
+        return CSS + '<div class="dim" style="padding:10px">Χωρις καταγραφες συνολων.</div>'
+
+    def pct(v):
+        col = '#e05563' if v > 0.05 else ('#34d17a' if v < -0.05 else '#5a6b8c')
+        sym = '↑' if v > 0.05 else ('↓' if v < -0.05 else '·')
+        return f'<span style="color:{col};font-size:11px">{sym}{abs(v):.1f}%</span>'
+
+    chain = ''
+    if len(s['moves']) > 1:
+        parts = [f'<b>{ln:g}</b> <span class="dim">({t.astimezone(ATHENS):%d/%m %H:%M})</span>' for ln, t in s['moves']]
+        chain = ('<div style="margin-top:8px;padding:8px 12px;background:#182444;border:1px solid #2d4470;'
+                 'border-radius:8px;font-size:12px">LINE MOVED&nbsp;&nbsp;' + ' → '.join(parts) + '</div>')
+    box = 'flex:1;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px'
+    html = (f'<div style="display:flex;gap:10px">'
+            f'<div style="flex:1.2;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px">'
+            f'<div class="dim">ΓΡΑΜΜΗ ΓΚΟΛ</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:26px;font-weight:700">{s["line"]:g}</span>'
+            f'<div class="dim">Open {s["open_line"]:g}</div></div>'
+            f'<div style="{box}"><div class="dim"><span style="color:{C_OVER}">●</span> OVER</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:700">{s["o"]:.2f}</span> {pct(s["chg_o"])}'
+            f'<div class="dim">Open {s["open_o"]:.2f}</div></div>'
+            f'<div style="{box}"><div class="dim"><span style="color:{C_UNDER}">●</span> UNDER</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:700">{s["u"]:.2f}</span> {pct(s["chg_u"])}'
+            f'<div class="dim">Open {s["open_u"]:.2f}</div></div></div>{chain}')
+    return CSS + html
+
+
 def history_html(d):
     """Πινακας Odds History (αλλαγες μονο, νεοτερο πρωτα) με ↑↓ βελακια."""
     snaps = [s for s in d['snaps'] if s.get('h2h')]
@@ -431,6 +487,7 @@ def history_html(d):
         return CSS + '<div class="dim" style="padding:10px">Χωρις καταγραφες.</div>'
     rows = []
     prev = None
+    with_ou = has_ou(d)
     for s in snaps:
         cells = ''
         for i in range(3):
@@ -443,14 +500,18 @@ def history_html(d):
                     mark = ' <span style="color:#34d17a">↓</span>'
             cells += f'<td class="c od">{v:.2f}{mark}</td>' if v else '<td class="c dim">—</td>'
         ah = f'{s["line"]:+g} ({s["oh"]:.2f}/{s["oa"]:.2f})' if s.get('line') is not None else '—'
+        ou = ''
+        if with_ou:
+            ou = (f'<td class="c od">{s["tl"]:g} ({s["to"]:.2f}/{s["tu"]:.2f})</td>' if (s.get('tl') is not None and s.get('to') and s.get('tu'))
+                  else '<td class="c dim">—</td>')
         tag = ' <span class="dim">(πρωτη)</span>' if prev is None else ''
         rows.append(f'<tr><td class="od">{s["t"].astimezone(ATHENS):%d/%m %H:%M}{tag}</td>{cells}'
-                    f'<td class="c od">{ah}</td></tr>')
+                    f'<td class="c od">{ah}</td>{ou}</tr>')
         prev = s
     rows.reverse()
     return (CSS + f'<div class="dim" style="padding:4px 0 8px">{len(snaps)} αλλαγες καταγεγραμμενες</div>'
             '<table><tr><th>Χρονος</th><th class="c">1</th><th class="c">Χ</th><th class="c">2</th>'
-            '<th class="c">AH</th></tr>' + ''.join(rows) + '</table>')
+            '<th class="c">AH</th>' + ('<th class="c">Γκολ (O/U)</th>' if with_ou else '') + '</tr>' + ''.join(rows) + '</table>')
 
 
 # ---------- διαγραμμα ματς ----------
@@ -506,6 +567,16 @@ def match_fig(d, market='1x2', mode='ΑΠΟΔΟΣΕΙΣ', hours=None):
         for nm, col, ys in transform(raw):
             fig.add_trace(go.Scatter(x=xs, y=ys, name=nm, mode='lines',
                                      line=dict(color=col, width=2, shape='hv'), connectgaps=True))
+    elif market == 'ou':                       # 10/10: συνολα γκολ (ευρωπαϊκα)
+        raw = [('Over', C_OVER, [s.get('to') for s in snaps]), ('Under', C_UNDER, [s.get('tu') for s in snaps])]
+        for nm, col, ys in transform(raw):
+            fig.add_trace(go.Scatter(x=xs, y=ys, name=nm, mode='lines',
+                                     line=dict(color=col, width=2, shape='hv'), connectgaps=True))
+        fig.add_trace(go.Scatter(x=xs, y=[s.get('tl') for s in snaps], name='Γραμμη γκολ',
+                                 mode='lines', line=dict(color='#7ea2ff', width=1.5, dash='dot', shape='hv'),
+                                 yaxis='y2'))
+        lay['yaxis2'] = dict(overlaying='y', side='right', showgrid=False, title='γραμμη γκολ',
+                             zerolinecolor='#26324e')
     else:
         m = d['meta']
         raw = [(str(m['home']), C_HOME, [s.get('oh') for s in snaps]),

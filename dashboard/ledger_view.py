@@ -400,6 +400,27 @@ def _pick_cell(r):
     return f'{_logo(r, r["side"] == 1)}{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}' + _later(r)
 
 
+def _ath(ko):
+    """10/10/2026 (Στελιος «η ωρα στο Pick History σε ωρα Ελλαδος»): τα αρχεια ειναι UTC → ωρα Ελλαδας (θερινη/χειμερινη σωστα)."""
+    try:
+        d = datetime.datetime.fromisoformat(str(ko).replace(' ', 'T').replace('Z', '+00:00')[:25])
+        d = d.replace(tzinfo=UTC) if d.tzinfo is None else d
+        try:
+            from zoneinfo import ZoneInfo
+            return d.astimezone(ZoneInfo('Europe/Athens'))
+        except Exception:
+            last_sun = max(datetime.date(d.year, 10, x) for x in range(25, 32) if datetime.date(d.year, 10, x).weekday() == 6)
+            return d + datetime.timedelta(hours=3 if datetime.date(d.year, 3, 25) <= d.date() < last_sun else 2)
+    except Exception:
+        return None
+
+
+def _ko_txt(r):
+    a = _ath(r.get('ko'))
+    ko = str(r.get('ko') or '')
+    return f'{a:%Y-%m-%d %H:%M}' if a else f'{ko[:10]} {ko[11:16]}'
+
+
 def _when(r):
     """ποτε μπηκε το pick (ωρες πριν τη σεντρα) + σημα «καταγραφη» για τα paper (αγωνιστικη <15, δεν παιζονται)."""
     try:
@@ -424,7 +445,8 @@ def table_html(settled, pending):
     _day = [None]
 
     def _hdr(r):
-        d = str(r.get('ko') or '')[:10]
+        a = _ath(r.get('ko'))
+        d = f'{a:%Y-%m-%d}' if a else str(r.get('ko') or '')[:10]
         if d and d != _day[0]:
             _day[0] = d
             try:
@@ -441,7 +463,7 @@ def table_html(settled, pending):
         H.append(
             f'<tr class="pend"><td class="l">{_logo(r)}'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else ("🏀 " if r.get("bk") else ""))}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)} · ΕΚΚΡΕΜΕΙ</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else ("🏀 " if r.get("bk") else ""))}{r["lg"]} · {_ko_txt(r)}{_when(r)} · ΕΚΚΡΕΜΕΙ</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td colspan="7" class="mut">παιζεται…</td></tr>')
     for r in settled:
@@ -464,7 +486,7 @@ def table_html(settled, pending):
         H.append(
             f'<tr><td class="l">{_logo(r)}'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}'
-            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else ("🏀 " if r.get("bk") else ""))}{r["lg"]} · {ko[:10]} {ko[11:16]}{_when(r)}</div></td>'
+            f'<div class="dim">{"🌐 " if r.get("intl") else ("🇪🇺 " if r.get("euro") else ("🏀 " if r.get("bk") else ""))}{r["lg"]} · {_ko_txt(r)}{_when(r)}</div></td>'
             f'<td class="pick">{_pick_cell(r)}</td>'
             f'<td>{r["odds"]:.2f}</td><td>{closes}</td><td>{clv}</td>'
             f'<td>{_h.escape(str(r.get("score") or "—"))}</td><td>{xg}</td>'
