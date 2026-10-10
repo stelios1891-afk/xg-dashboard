@@ -86,6 +86,7 @@ ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
+    # v2 (10/10): αλλαγη κωδικα = νεα cache (το παλιο αποθηκευμενο δεν ειχε mkt_key → οι τιμες αγορας εμεναν παλιες)
     return build_data.build_matches()
 
 st.markdown("""
@@ -138,7 +139,7 @@ def _fresh_market(mtime):
 try:
     _mk = _fresh_market(os.path.getmtime(build_data.MARKET_1X2_F))
     for _m in matches:
-        _mo = _mk.get(_m.get('mkt_key') or '')
+        _mo = _mk.get(_m.get('mkt_key') or '') or _mk.get(f"{_m.get('home_id')}_{_m.get('away_id')}")
         if _mo:
             _m['mkt_hw_odds'], _m['mkt_d_odds'], _m['mkt_aw_odds'] = _mo.get('h'), _mo.get('d'), _mo.get('a')
 except Exception:
