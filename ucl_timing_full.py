@@ -166,3 +166,33 @@ for mk in ('fav', 'dog', 'over'):
                 vals = [PX.get((r.i, r.bk, r.mk, r.side, hp), np.nan) for r in x.itertuples()]
             cells.append(f'{cc(vals):>12s}')
         print(f'      {bl:30s} ' + ' '.join(cells) + f'   {x.mv_after.mean():+.2f}')
+
+# ---------------- (Ε) ΤΙΜΕΣ, οχι μονο ROI: τι κανει η τιμη ΜΕΤΑ την πρωτη εμφανιση (χαντικαπ) ----------------
+# θεση αγορας για την πλευρα μας σε ΚΑΘΕ στιγμη (ανεξαρτητα απο ζωνη τιμης): + αν η αγορα «ερχεται» στην πλευρα μας (τιμη μας χειροτερευει)
+print('\n(Ε) ΤΙΜΕΣ ΜΕΤΑ ΤΗΝ ΠΡΩΤΗ ΕΜΦΑΝΙΣΗ (χαντικαπ) — η αγορα μετα την εισοδο: ΠΡΟΣ εμας (+, η τιμη μας χαλαει → παιξε αμεσως) ή ΑΚΟΜΑ ΜΑΚΡΙΑ (−, «κοντρα» → καλυτερη τιμη αν περιμενεις)')
+POS = {}
+for r in first[first.mk.isin(['fav', 'dog'])].itertuples():
+    mid = MIDS[r.i]; T = LH[r.i] + LA[r.i]
+    for h in HS:
+        s = snap(mid, r.bk, h)
+        if s: POS[(r.i, r.bk, r.side, h)] = msup(*s, T) * r.side
+GR = ((72, 72, 'βγηκε 72ω'), (60, 48, 'βγηκε 60-48ω'), (40, 24, 'βγηκε 36-24ω'), (18, 12, 'βγηκε 18-12ω'), (8, 4, 'βγηκε 8-4ω'), (2, 0, 'βγηκε 2ω-κλεισ'))
+def pct(v, f): v = [x for x in v if np.isfinite(x)]; return 100 * np.mean([f(x) for x in v]) if v else np.nan
+for mk in ('fav', 'dog'):
+    print(f'\n   {NAME[mk]} — κινηση τιμης απο την εισοδο ως το κλεισιμο (γκολ): μεση · % που η αγορα ΗΡΘΕ προς εμας (≥0.05) · % ΚΟΝΤΡΑ συνεχισε (≤−0.05) · κοντρα ΠΡΙΝ την εισοδο')
+    for hi, lo, gl in GR:
+        x = first[(first.mk == mk) & (first.h <= hi) & (first.h >= lo)]
+        if len(x) == 0: continue
+        mv = np.array([POS.get((r.i, r.bk, r.side, 0), np.nan) - POS.get((r.i, r.bk, r.side, r.h), np.nan) for r in x.itertuples()])
+        print(f'      {gl:16s} n{len(x) / 2:4.0f} · ROI στην εμφανιση {100 * x.pnl.mean():+5.0f}% · κιν μετα {np.nanmean(mv):+.2f} · προς εμας {pct(mv, lambda v: v >= .05):3.0f}% · κοντρα συνεχισε {pct(mv, lambda v: v <= -.05):3.0f}% · κοντρα πριν {x.mv_before.mean():+.2f}')
+# αουτσαιντερ: με/χωρις κοντρα πριν την εισοδο × τι εγινε μετα · και ROI αν περιμεναμε ως τις 2ω / κλεισιμο
+print('\n   ΑΟΥΤΣΑΙΝΤΕΡ — ανα ωρα εμφανισης × κοντρα ΠΡΙΝ την εισοδο: ROI στην εμφανιση / αν περιμενα ως 2ω / ως κλεισιμο · κινηση μετα')
+for hi, lo, gl in GR:
+    x = first[(first.mk == 'dog') & (first.h <= hi) & (first.h >= lo)]
+    for kl, m in (('χωρις κοντρα πριν', x.mv_before > -0.05), ('με κοντρα πριν (≥0.05)', x.mv_before <= -0.05)):
+        y = x[m]
+        if len(y) == 0: continue
+        p2 = [PX.get((r.i, r.bk, r.mk, r.side, 2), np.nan) for r in y.itertuples()] if hi >= 2 else []
+        pc = [PX.get((r.i, r.bk, r.mk, r.side, 0), np.nan) for r in y.itertuples()]
+        mv = np.array([POS.get((r.i, r.bk, r.side, 0), np.nan) - POS.get((r.i, r.bk, r.side, r.h), np.nan) for r in y.itertuples()])
+        print(f'      {gl:16s} {kl:24s} n{len(y) / 2:4.0f} · εμφανιση {100 * y.pnl.mean():+5.0f}% · 2ω {cc(p2) if p2 else "   —    ":>9s} · κλεισ {cc(pc):>9s} · κιν μετα {np.nanmean(mv):+.2f}')
