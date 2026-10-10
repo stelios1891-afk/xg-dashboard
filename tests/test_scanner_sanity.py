@@ -380,15 +380,27 @@ def test_c_odds_in_zone():
 def test_c_only_dog_side_hcap_ge_half():
     import picks
     _, P = _picks()
-    bad = [f'{_lab(p)} (hcap {p["hcap"]})' for p in P if p['hcap'] < picks.MIN_LINE - EPS]
-    assert not bad, f'picks με hcap < {picks.MIN_LINE} (ΜΟΝΟ +handicap πλευρα dog >= 0.5 επιτρεπεται):\n' + '\n'.join(bad)
+    # 10/10/2026: και τα ΦΑΒΟΡΙ (role 'fav': 15η+ απο 1/10 · rule 'fav714' κοντα φαβορι 7-14 απο 9/10). Πριν το τεστ ηξερε μονο dogs:
+    # το πρωτο fav714 pick (Santa Clara −0.5) το εριχνε → ακυρωνοταν ΚΑΘΕ commit του scanner → το ιδιο alert ξαναστελνοταν καθε σαρωση
+    bad = []
+    for p in P:
+        if p.get('role') == 'fav':
+            if p['hcap'] > -picks.MIN_LINE + EPS:
+                bad.append(f'{_lab(p)} φαβορι με hcap {p["hcap"]}')
+            if p.get('rule') == 'fav714' and (abs(p['hcap']) not in picks.FAV714_LINES
+                                              or not (picks.FAV714_MD[0] <= (p.get('md') or 0) <= picks.FAV714_MD[1])):
+                bad.append(f'{_lab(p)} fav714 εκτος κανονα (γραμμη {p["hcap"]}, αγων {p.get("md")})')
+        elif p['hcap'] < picks.MIN_LINE - EPS:
+            bad.append(f'{_lab(p)} (hcap {p["hcap"]})')
+    assert not bad, f'picks με λαθος γραμμη (dog >= +{picks.MIN_LINE} · φαβορι <= −{picks.MIN_LINE} · fav714 μονο −0.5/−0.75 αγων 7-14):\n' + '\n'.join(bad)
 
 
 def test_c_edge_threshold():
     import picks
     _, P = _picks()
-    bad = [f'{_lab(p)} edge {p["edge"]*100:.2f}%' for p in P if p['edge'] < picks.EDGE - EPS]
-    assert not bad, f'picks με edge < {picks.EDGE*100:.0f}% (εγχωριο κατωφλι):\n' + '\n'.join(bad)
+    # 10/10: fav714 (κοντα φαβορι 7-14) εχει δικο του κατωφλι: edge >= 0 (core7_714_shortfav_test)
+    bad = [f'{_lab(p)} edge {p["edge"]*100:.2f}%' for p in P if p['edge'] < (0.0 if p.get('rule') == 'fav714' else picks.EDGE) - EPS]
+    assert not bad, f'picks με edge κατω απο το κατωφλι ({picks.EDGE*100:.0f}% · fav714 0%):\n' + '\n'.join(bad)
 
 
 def test_c_league_in_core7():

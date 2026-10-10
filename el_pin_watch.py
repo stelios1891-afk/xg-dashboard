@@ -40,6 +40,8 @@ def main(notify_tg=True, comp='EL'):
         MK = requests.get(f'{B}/leagues/{LEAGUE}/markets/straight', headers=H, timeout=30).json()
     except Exception as e:
         print('Pinnacle: σφαλμα', e); return
+    if not isinstance(M, list) or not isinstance(MK, list):          # 10/10: π.χ. HTTP 401 → dict σφαλματος (BCL/EC «'str'.get» καθε τικ)
+        print(f'Pinnacle {LAB}: μη εγκυρη απαντηση ({str(M)[:80]}) — skip'); return
     proj = _load(F(f'{PRE}_projections.json'), {}); sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
     games = [g for g in proj.get('games', []) if not g.get('played')]
     from el_odds_scan import name_score            # 5/10: ιδιο ταιριασμα ονοματων με τον scanner τιμων (π.χ. «Rigas Zelli», «Aquila Trento»)
