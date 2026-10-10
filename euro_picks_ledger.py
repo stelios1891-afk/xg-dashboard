@@ -81,7 +81,8 @@ def entries(picks, t, have):
 
 # 10/10/2026 (Στελιος): TELEGRAM για τα ΚΑΝΟΝΙΚΑ ευρωπαικα picks — ΜΟΝΟ Champions League (φαβορι/αουτσαιντερ) και
 # UEL φαβορι εντος (rule uel_home_fav). ΟΧΙ Conference League («να το δουλεψουμε πρωτα»), ΟΧΙ σκιες.
-# 10/10 (βραδυ, «περνα 4% για over και 10% για under»): + ΣΥΝΟΛΑ Champions League (over ≥4%, under ≥10%) — ΟΧΙ UEL/UECL συνολα. Ενα μηνυμα ανα pick, τη στιγμη που γραφεται στο ημερολογιο (πρωτη εμφανιση ≤72ω· UEL στο παραθυρο 12-36ω).
+# 10/10 (βραδυ, «περνα 4% για over και 10% για under»): + ΣΥΝΟΛΑ Champions League (over ≥4%, under ≥10%) — ΟΧΙ UEL/UECL συνολα.
+# 10/10 («περνα μονο τα dnb»): + DNB Champions League (γραμμη 0, ≥4%). Ενα μηνυμα ανα pick, τη στιγμη που γραφεται στο ημερολογιο (πρωτη εμφανιση ≤72ω· UEL στο παραθυρο 12-36ω).
 TG_COMPS = {'ChampionsLeague'}
 COMP_LAB = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League', 'ConferenceLeague': 'Conference League'}
 _DAYS = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
@@ -92,7 +93,7 @@ def tg_ok(r):
         return False
     if r.get('mkt') in ('OVER', 'UNDER'):
         return r.get('comp') in TG_COMPS
-    if r.get('mkt') != 'AH' or r.get('role') not in ('fav', 'dog'):
+    if r.get('mkt') != 'AH' or r.get('role') not in ('fav', 'dog', 'dnb'):     # 10/10: + DNB UCL
         return False
     return r.get('rule') == 'uel_home_fav' or r.get('comp') in TG_COMPS
 
@@ -121,8 +122,9 @@ def tg_msg(rows):
         team = r['home'] if r['side'] == 1 else r['away']
         tag = (NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else ''
         out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
-                   f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}" + NL +
-                   f"edge {r['edge'] * 100:.0f}% · {'φαβορί' if r['role'] == 'fav' else 'αουτσάιντερ'}"
+                   (f"{r['home']} - {r['away']}, {team} DNB (0) @{r['odds']:.2f}" if r.get('role') == 'dnb' else
+                    f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}") + NL +
+                   f"edge {r['edge'] * 100:.0f}% · {'DNB' if r.get('role') == 'dnb' else ('φαβορί' if r['role'] == 'fav' else 'αουτσάιντερ')}"
                    + (f" · όριο Pinnacle {r['lim']['spreads']:,.0f}".replace(',', '.') if (r.get('lim') or {}).get('spreads') else '') + tag)
     return NL.join(out)
 

@@ -166,6 +166,7 @@ def main():
     # UNDER (10/10/2026, Στελιος «περνα 4% για over και 10% για under»): ΜΟΝΟ Champions League, edge ≥10%
     # (LOSO 4 σεζον: 10% σε 3/4 · εκτος δειγματος +10.3% / 100 picks — ucl_totals_threshold_loso)· ενα pick συνολων ανα ματς (ledger).
     EDGE_UNDER_UCL = 0.10
+    EDGE_DNB_UCL = 0.04            # 10/10/2026: DNB (γραμμη 0) μονο UCL, FotMob και οι 2
     NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
     EDGE_FAV_UCL = 0.10
     EDGE_DOG_UCL = 0.04
@@ -205,16 +206,21 @@ def main():
             if not o or not (1.70 <= o <= 2.10):
                 continue
             role = 'fav' if ln <= -0.5 else ('dog' if ln >= 0.5 else None)
+            # 10/10/2026 (Στελιος «περνα μονο τα dnb κανονικα σαν picks»): ΜΟΝΟ UCL, κυρια γραμμη 0 (DNB), edge ≥4%.
+            # ucl_other_lines_deep: Κ1-Κ4 ✓ (84 picks +20.2%, LOSO +20.1%, μοντελο 64% / πραγμ 65% / αγορα 50%)·
+            # xG (ucl_other_lines_xg): ιδιο ειδος με τα live φαβορι. Τα −0.25 / +0.25 ΟΧΙ (1/4, 2/4).
+            if role is None and m['comp'] == 'ChampionsLeague' and abs(ln) < 0.01:
+                role = 'dnb'
             if role is None:
                 continue
             # 30/9/2026 (Στελιος): ΦΑΒΟΡΙ = ΣΩΣΤΑ τεταρτα (cover_q), ΑΟΥΤΣΑΙΝΤΕΡ = p_cover ως εχει.
             # quarters_all_markets / intl_quarters_compare: και στις 3 αγορες τα φαβορι κερδιζουν με σωστα τεταρτα
             # (Ευρωπη UCL+UECL +11.0% → +18.4%, φευγουν 25 picks −18% 0/4), τα dogs με τον παλιο (+12.0% vs −4.2%).
-            pw, pp = cover_q(dist, side, ln) if role == 'fav' else picks.p_cover(dist, side, ln)
+            pw, pp = cover_q(dist, side, ln) if role in ('fav', 'dnb') else picks.p_cover(dist, side, ln)
             edge = edge_of(pw, pp, o)
             thr_fav = EDGE_FAV_UCL if m['comp'] == 'ChampionsLeague' else EDGE_FAV
             thr_dog = EDGE_DOG_UCL if m['comp'] == 'ChampionsLeague' else EDGE_DOG
-            if (role == 'dog' and edge >= thr_dog) or (role == 'fav' and edge >= thr_fav):
+            if (role == 'dog' and edge >= thr_dog) or (role == 'fav' and edge >= thr_fav) or (role == 'dnb' and edge >= EDGE_DNB_UCL):
                 picks_out.append(dict(
                     mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
@@ -314,7 +320,7 @@ def main():
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
-                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_under_ucl=EDGE_UNDER_UCL,
+                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_under_ucl=EDGE_UNDER_UCL, edge_dnb_ucl=EDGE_DNB_UCL,
                               zone=[1.70, 2.10],
                               no_play_comps=['EuropaLeague'],
                               uel_home_fav=dict(edge=UEL_HF_EDGE, hours=list(UEL_HF_WIN), blend_xg=0.8,
@@ -324,7 +330,7 @@ def main():
               ensure_ascii=False)
     print(f'euro value picks (beta): {len(picks_out)} '
           f'({sum(1 for p in picks_out if p["role"]=="fav")} fav / '
-          f'{sum(1 for p in picks_out if p["role"]=="dog")} dog, '
+          f'{sum(1 for p in picks_out if p["role"]=="dog")} dog, {sum(1 for p in picks_out if p["role"]=="dnb")} dnb, '
           f'{sum(1 for p in picks_out if p["role"]=="over")} over / {sum(1 for p in picks_out if p["role"]=="under")} under, '
           f'{sum(1 for p in picks_out if p["tag75"])} στο -0.75, '
           f'{sum(1 for p in picks_out if p.get("no_play"))} UEL σκια/δεν παιζονται, '

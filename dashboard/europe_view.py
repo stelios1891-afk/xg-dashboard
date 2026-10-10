@@ -375,7 +375,8 @@ def euro_value_html(picks):
         role = {'fav': '<span style="color:#f5b731;font-weight:700">ΦΑΒΟΡΙ</span>',
                 'dog': '<span style="color:#7ea2ff;font-weight:700">OUTSIDER</span>',
                 'over': '<span style="color:#3ec98f;font-weight:700">ΓΚΟΛ OVER</span>',
-                'under': '<span style="color:#3ec98f;font-weight:700">ΓΚΟΛ UNDER</span>'}.get(p['role'], p['role'])
+                'under': '<span style="color:#3ec98f;font-weight:700">ΓΚΟΛ UNDER</span>',
+                'dnb': '<span style="color:#f5b731;font-weight:700">DNB</span>'}.get(p['role'], p['role'])
         tag = ' <span title="γραμμη -0.75 — το επιβεβαιωμενο σε Crown+Pinnacle κελι">🎯</span>' if p.get('tag75') else ''
         comp = {'ChampionsLeague': 'UCL', 'EuropaLeague': 'UEL', 'ConferenceLeague': 'UECL'}.get(p['comp'], p['comp'])
         if p.get('no_play'):

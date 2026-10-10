@@ -671,7 +671,7 @@ def test_e_euro_fav_proper_quarters():
     """30/9/2026: ευρωπαϊκα ΦΑΒΟΡΙ = σωστα τεταρτα (cover_q), ΑΟΥΤΣΑΙΝΤΕΡ = p_cover ως εχει (quarters_all_markets)."""
     import euro_shadow_scan as E, picks
     src = open(os.path.join(ROOT, 'euro_shadow_scan.py'), encoding='utf-8').read()
-    assert "cover_q(dist, side, ln) if role == 'fav' else picks.p_cover(dist, side, ln)" in src, \
+    assert "cover_q(dist, side, ln) if role in ('fav', 'dnb') else picks.p_cover(dist, side, ln)" in src, \
         'euro_shadow_scan: τα φαβορι πρεπει να τιμολογουνται με cover_q και τα dogs με p_cover'
     d = picks.gd_dist(1.8, 0.9)
     pw, pp = E.cover_q(d, 1, -0.75)            # −0.75 = μισο −0.5 + μισο −1: νικη με 1 γκολ = μισο νικη + μισο επιστροφη
@@ -784,6 +784,13 @@ def test_e_zone_role_and_thresholds():
         elif role == 'over':
             if e < 0.04 - EPS:
                 bad.append(f'{_elab(p)}: over edge {e*100:.1f}% < 4%')
+        elif role == 'dnb':                      # 10/10/2026: DNB ΜΟΝΟ Champions League, γραμμη 0, edge ≥4%
+            if not ucl:
+                bad.append(f'{_elab(p)}: DNB εκτος Champions League')
+            if abs(ln) > EPS:
+                bad.append(f'{_elab(p)}: DNB με γραμμη {ln} (περιμενα 0)')
+            if e < 0.04 - EPS:
+                bad.append(f'{_elab(p)}: DNB edge {e*100:.1f}% < 4%')
         elif role == 'under':                    # 10/10/2026: ΜΟΝΟ Champions League, edge ≥10%
             if not ucl:
                 bad.append(f'{_elab(p)}: under εκτος Champions League')
