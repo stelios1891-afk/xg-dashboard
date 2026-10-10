@@ -496,6 +496,10 @@ UCL_FAV_SCALE = 1.16        # euro_ucl_goals/kappa2/cover_calib 11/9 (αποφα
                             # P(φ>=2) +2.3→−0.5, Brier totals 2/2 σεζον, καλυψη AH z +2.2→−0.1.
                             # ΜΟΝΟ ChampionsLeague, πλευρα του φαβορι (μεγαλυτερο λ), ΚΑΙ στα
                             # δυο ζευγη (AH + OU). Συνοδευεται απο fav κατωφλι @10 στον scanner.
+# 10/10/2026 (Στελιος «περνα τη διορθωση στα over»): UCL ματς με ΜΙΑ ομαδα χωρις FotMob (Ben / γκολ+Elo) — η ομαδα FotMob
+# (απεναντι στη μη-FotMob) × 1.22 ΜΟΝΟ στο ζευγος συνολων (ucl_nonfm_fix2_test: LOSO δ 0.16-0.30, ολα 0.22· λαθος συνολου
+# +0.51 → −0.01, over 35 → 76 picks +31 → +26.6%, 4/4). Χαντικαπ ανεγγιχτο (η μετατοπιση διαφορας ✗), under μενουν κλειστα.
+UCL_NONFM_OU_SCALE = 1.22
 P_EU_SEA = '2526'
 b_blend = picks.blend_at(None)
 lhf_eu = math.log(HF_LIVE)
@@ -809,6 +813,10 @@ for key in sorted(fx):
                 if comp == 'ChampionsLeague':
                     kou = 'xgh_ou' if rec['xgh_ou'] >= rec['xga_ou'] else 'xga_ou'
                     rec[kou] = round(rec[kou] * UCL_FAV_SCALE, 3)
+                    if (lab.get('h') == 'FotMob') != (lab.get('a') == 'FotMob'):     # μια μη-FotMob → η FotMob ×1.22 (μονο συνολα)
+                        kfm = 'xgh_ou' if lab.get('h') == 'FotMob' else 'xga_ou'
+                        rec[kfm] = round(rec[kfm] * UCL_NONFM_OU_SCALE, 3)
+                        rec['nonfm_ou'] = UCL_NONFM_OU_SCALE
         except Exception:
             pass
         dist = picks.gd_dist(max(xgh, 0.05), max(xga, 0.05))
@@ -835,7 +843,7 @@ for key in sorted(fx):
 out = dict(generated=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
            eu_draw_scale=EU_DRAW_SCALE, w_eu_prior=W_EU, lg_deflate=GAMMA_LG_DEFLATE,
            eu_inseason=dict(on=bool(INS['on']), method='M8', w=W_IN, n_obs=INS['n_obs'], n_teams=INS['n_teams']),
-           ucl_fav_scale=UCL_FAV_SCALE,
+           ucl_fav_scale=UCL_FAV_SCALE, ucl_nonfm_ou_scale=UCL_NONFM_OU_SCALE,
            engine='euro V4 — bridges ρ=1.0 + ClubElo offsets, warm-start K=8',
            hfa=round(HF_LIVE, 4),
            matches=matches)
