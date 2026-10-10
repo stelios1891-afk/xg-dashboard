@@ -270,6 +270,12 @@ for r in F.itertuples():
                     R_home_A=(round(rhA) if pd.notna(rhA) else np.nan), R_away_A=(round(raA) if pd.notna(raA) else np.nan),
                     diff_AV=(round(dAV) if pd.notna(dAV) else np.nan), xg_h_AV=(round(lhAV, 2) if pd.notna(lhAV) else np.nan), xg_a_AV=(round(laAV, 2) if pd.notna(laAV) else np.nan), P1_AV=(round(phAV * 100) if pd.notna(phAV) else np.nan), PX_AV=(round(pdAV * 100) if pd.notna(pdAV) else np.nan), P2_AV=(round(paAV * 100) if pd.notna(paAV) else np.nan)))
 O = pd.DataFrame(out)
+if O.empty:      # 10/10/2026: εκτος παραθυρου εθνικων (κανενα μελλοντικο ματς) → αρχειο ΜΕ στηλες, οχι εντελως κενο (αλλιως EmptyDataError
+    try:         # στα επομενα βηματα & στα tests → ακυρωνοταν το commit του intl-refresh → ιδιο «νεα αποτελεσματα» μηνυμα σε καθε τρεξιμο)
+        O = pd.DataFrame(columns=pd.read_csv('intl_projections.csv', nrows=0).columns)
+    except Exception:
+        O = pd.DataFrame(columns=['comp', 'utc', 'home', 'away', 'hid', 'aid'])
+    print('κανενα μελλοντικο ματς εθνικων — intl_projections.csv με μονο στηλες')
 O.to_csv('intl_projections.csv', index=False)
 # 26/9: συντελεστες για τον ελεγχο ενδεκαδων πριν το ματς (intl_lineups_check.py ξαναβγαζει Μ1/Μ3 με την αξια της πραγματικης αποστολης)
 json.dump(dict(a=a, aA=aA, adeep=ADEEP, elo_per_ln=ELO_LN_CALL, hfa=HFA), open('intl_project_coefs.json', 'w', encoding='utf-8'), indent=1)

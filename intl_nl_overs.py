@@ -67,7 +67,10 @@ for r in P.itertuples():
     rec['PICK_over'] = best
     for v_ in ('A', 'AV'): rec[f'PICK_over_{v_}'] = bestV.get(v_, '')
     rows.append(rec)
-T = pd.DataFrame(rows); pd.set_option('display.width', 300); pd.set_option('display.max_columns', 30)
+T = pd.DataFrame(rows)
+if T.empty:          # 10/10/2026: εκτος παραθυρου εθνικων — τιποτα να βγει (πριν: AttributeError 'κοντινο' → ΣΦΑΛΜΑ στο intl-refresh)
+    print('κανενα ματς εθνικων — καμια σκια over'); sys.exit(0)
+pd.set_option('display.width', 300); pd.set_option('display.max_columns', 30)
 cols = [c for c in ['comp', 'utc', 'ματς', 'ΔElo', 'κοντινο', 'T_παλιο', 'T_μοντ', 'T_μαζι', 'αρχικη_OU', 'Crown', 'Crown_p_over', 'Crown_edge', 'Crown_edge_μαζι', 'SBOBET', 'SBOBET_edge', 'PICK_over', 'T_A', 'Crown_edge_A', 'PICK_over_A', 'T_AV', 'Crown_edge_AV', 'PICK_over_AV'] if c in T.columns]
 print(T[cols].fillna('').to_string(index=False)); print(f'\nκοντινα ματς: {int((T.κοντινο=="ναι").sum())}/{len(T)} · με γραμμη O/U: {int(T.Crown.fillna("—").ne("—").sum()) if "Crown" in T else 0} · picks over: {int((T.PICK_over!="").sum())} · A: {int((T.PICK_over_A!="").sum())} · AV: {int((T.PICK_over_AV!="").sum())}')
 T.to_csv('intl_nl_overs_2627.csv', index=False)

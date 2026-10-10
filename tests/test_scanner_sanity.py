@@ -1024,7 +1024,7 @@ def test_g_intl_refresh_guards():
     if os.path.exists(pr):
         import pandas as pd
         P = pd.read_csv(pr)
-        if 'val_src' in P:
+        if 'val_src' in P and len(P):      # 10/10: εκτος παραθυρου εθνικων το αρχειο εχει μονο στηλες
             assert (P.val_src.astype(str).str.count('κληση') >= 1).mean() > 0.5, 'λιγοτερα απο τα μισα ματς με αξια κλησης'
 
 
