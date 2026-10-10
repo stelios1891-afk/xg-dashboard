@@ -81,3 +81,52 @@ def single_calc(p, thr):
     lab = p.get('bet') or f"{'+' if p['hcap'] > 0 else ''}{p['hcap']:g}"
     return {'models': ['Μοντελο'], 'need': 1, 'thr': thr, 'lines': [{'l': p['hcap'], 'lab': lab, 'c': [[round(pr, 6), -1.0]]}],
             'def': 0, 'rng': None, 'minabs': None, 'price': p.get('odds')}
+
+
+def euro_calc(p):
+    """10/10/2026 (Στελιος «περνα το κομπιουτερακι στα ευρωπαικα»): ΙΔΙΟΙ τυποι με τον euro_shadow_scan.
+    Χαντικαπ: eu_dist (ισοπαλιες ×eu_draw_scale), φαβορι & DNB = σωστα τεταρτα (cover_q), αουτσαιντερ = p_cover, edge_of (κουρεμα MARGIN).
+    Συνολα: tot_dist(xgh_ou, xga_ou, ×eu_draw_scale) + p_over. Κατωφλια ανα διοργανωση/ρολο οπως ο scanner.
+    Τα xgh/xga του pick ειναι ηδη το σωστο ζευγος (κυριο για χαντικαπ, 80% xG για UEL φαβ εντος, W2(+διορθωσεις) για συνολα)."""
+    import json, os
+    import euro_shadow_scan as E
+    try:
+        scale = float(json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                                  'euro_projections.json'), encoding='utf-8')).get('eu_draw_scale', 0.85))
+    except Exception:
+        scale = 0.85
+    role, comp = p.get('role'), p.get('comp')
+    if p.get('xgh') is None or p.get('xga') is None or role not in ('fav', 'dog', 'dnb', 'over', 'under'):
+        return None
+    ucl = comp == 'ChampionsLeague'
+    lines = []
+    if role in ('over', 'under'):
+        td = E.tot_dist(float(p['xgh']), float(p['xga']), scale)
+        for st in STEPS:
+            ln = round(float(p['line']) + st, 2)
+            if ln < 0.5:
+                continue
+            po, pu = E.p_over(td, ln)
+            pw, pl = (po, pu) if role == 'over' else (pu, po)
+            lines.append({'l': ln, 'lab': f"{'Over' if role == 'over' else 'Under'} {ln:g}",
+                          'c': [_lin(lambda o, pw=pw, pl=pl: pw * (o - 1) * (1 - picks.MARGIN) - pl)]})
+        thr = 0.04 if role == 'over' else 0.10
+        return {'models': ['Μοντελο'], 'need': 1, 'thr': thr, 'lines': lines,
+                'def': next(i for i, L in enumerate(lines) if abs(L['l'] - float(p['line'])) < 1e-9),
+                'rng': [1.70, 2.10], 'minabs': None, 'price': p.get('odds')}
+    dist = E.eu_dist(float(p['xgh']), float(p['xga']), scale)
+    side = 1 if p['side'] == 1 else -1
+    for st in STEPS:
+        ln = round(float(p['line']) + st, 2)
+        def ev(o, L=ln):
+            pw, pp = E.cover_q(dist, side, L) if role in ('fav', 'dnb') else picks.p_cover(dist, side, L)
+            return E.edge_of(pw, pp, o)
+        lines.append({'l': ln, 'lab': _fmt(ln, False), 'c': [_lin(ev)]})
+    if role == 'dnb':
+        thr = 0.04
+    elif role == 'fav':
+        thr = 0.10 if ucl else 0.04
+    else:
+        thr = 0.04 if ucl else 0.10
+    return {'models': ['Μοντελο'], 'need': 1, 'thr': thr, 'lines': lines, 'def': 2, 'rng': [1.70, 2.10],
+            'minabs': None if role == 'dnb' else 0.5, 'price': p.get('odds')}

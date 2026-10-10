@@ -415,6 +415,11 @@ def _euro_picks():
                  rule=p.get('rule'), eu_note=p.get('note'))       # 9/10: rule uel_home_fav(_wait) = UEL φαβορι εντος
         if p.get('role') in ('over', 'under'):
             q['bet'] = p['team']          # π.χ. "Over 3.00" / "Under 3.25" (10/10: under UCL)
+        try:
+            import calc_data
+            q['calc'] = calc_data.euro_calc(p)        # 10/10: κομπιουτερακι και στα ευρωπαϊκα (ιδιοι τυποι με τον scanner)
+        except Exception:
+            pass
         out.append(q)
     return out, ev_res.get('scanned_at')
 

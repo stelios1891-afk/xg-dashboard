@@ -50,6 +50,10 @@ def edge_of(pw, pp, o):
     return pw * (o - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
 
 
+PICK_HORIZON_H = 200      # 10/10/2026: picks & σκια ΜΟΝΟ για ματς ως 200ω μπροστα (οπως πριν)· οι τιμες καταγραφονται πλεον ως 30 μερες
+                          # (euro_odds_scan PIN_HOURS_AHEAD) μονο για το Market Watch.
+
+
 def tot_dist(lh, la, scale=1.0):
     """Κατανομη συνολου γκολ. 10/10 (Στελιος «περνα το»): ΙΔΙΟ βαρος ισοπαλιων με το χαντικαπ —
     ×DRAW_BOOST στη διαγωνιο, μετα συνολικη μαζα ισοπαλιας ×scale (eu_draw_scale), τα υπολοιπα αναλογικα."""
@@ -107,7 +111,7 @@ def main():
                 ko = datetime.datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00'))
             except Exception:
                 continue
-            if ko < now:
+            if ko < now or (ko - now).total_seconds() > PICK_HORIZON_H * 3600:
                 continue
             lf, oh, oa = float(mk['line']), mk.get('oh'), mk.get('oa')
             if not oh or not oa:
@@ -197,7 +201,7 @@ def main():
             ko = datetime.datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00'))
         except Exception:
             continue
-        if ko < now:
+        if ko < now or (ko - now).total_seconds() > PICK_HORIZON_H * 3600:     # 10/10: τιμες ως 30 μερες = μονο παρακολουθηση
             continue
         lf = float(mk['line'])
         dist = eu_dist(m['xgh'], m['xga'], scale)

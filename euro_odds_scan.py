@@ -19,6 +19,9 @@ OUT_F = os.path.join(ROOT, 'euro_odds_latest.json')
 
 LIVE_HOURS = 2.5     # in-play καταγραφη σε euro_live_odds.jsonl εως 2.5h μετα το ΚΟ (αιτημα 9/9)
 HOURS_AHEAD = 200    # 10/9: 8+ μερες μπροστα (αιτημα Στελιου — trajectory επομενης αγωνιστικης απο ΤΩΡΑ)
+PIN_HOURS_AHEAD = 720  # 10/10/2026 (Στελιος «να περναμε τις αποδοσεις των ευρωπαικων πιο πριν — για παρακολουθηση, οχι picks»):
+                       # με Pinnacle (0 credits, μια κληση ανα διοργανωση) καταγραφη ως 30 μερες μπροστα· με TOA μενει HOURS_AHEAD.
+                       # Τα picks/σκια (euro_shadow_scan) βλεπουν ΜΟΝΟ ≤ PICK_HORIZON_H (200ω) — κανενα pick/alert απο τα μακρινα.
 ALT_MAX_H = 96       # σκαλες (2 credits/ματς) ΜΟΝΟ εντος 96h — οι κυριες γραμμες αρκουν για το trajectory
                      # (Τρ+Τετ+Πεμ)· 96h ωστε τα ματς της Πεμπτης να πιανονται απο Δευτερα πρωι.
                      # Κοστος: ~3 credits/scan μονο τις μερες Δευ-Πεμ ευρωπαικων εβδομαδων.
@@ -224,7 +227,7 @@ def main():
         dt_s = (ko - now).total_seconds()
         # ΜΟΝΟ ματς που ΔΕΝ εχουν σεντραρει μπαινουν στο κυριο αρχειο: μετα το ΚΟ η εγγραφη
         # παγωνει στην τελευταια προ-ΚΟ τιμη (= το «κλεισιμο» μας).
-        if 0 <= dt_s <= HOURS_AHEAD * 3600:
+        if 0 <= dt_s <= (PIN_HOURS_AHEAD if use_pin else HOURS_AHEAD) * 3600:
             upc.setdefault(m['comp'], []).append(dict(mid=m['mid'], ko=ko,
                                                       home=m['home'], away=m['away']))
         elif -LIVE_HOURS * 3600 <= dt_s < 0:
