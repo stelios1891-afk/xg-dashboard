@@ -33,6 +33,7 @@ python intl_picks_ledger.py || echo "intl ledger failed (μη κρισιμο)"
 python intl_lineups_check.py || echo "intl lineups failed (μη κρισιμο)"
 # 26/9: ματς εθνικων τελειωσε (≥110′ απο σεντρα) και δεν εχει περασει → ζητα αμεσως intl-refresh (σκορ/xG/Elo/προβολες + Telegram)
 python intl_refresh_due.py || echo "intl refresh due failed (μη κρισιμο)"
+python euro_refresh_due.py || echo "euro refresh due failed (μη κρισιμο)"   # 10/10: euro-refresh στην ωρα του (το cron του GitHub αργει ~7ω)
 # 25/9: 🏀 Euroleague — TOA odds (3 credits/request, gating μεσα στο script: ≤48h πριν το τζαμπολ, 60'/15')
 # 3/10: αποτελεσματα Ευρωλιγκας/EuroCup αμεσως μετα τα ματς (το euro-refresh του GitHub αργει ~6ω) → el/ec_refresh οταν χρειαζεται
 python bk_results_due.py || echo "bk results due failed (μη κρισιμο)"

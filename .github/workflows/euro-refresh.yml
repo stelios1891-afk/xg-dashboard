@@ -21,13 +21,29 @@ on:
 
 permissions:
   contents: write
+  actions: read          # 10/10: guard (λιστα runs)
 
 concurrency:
   group: euro-refresh
   cancel-in-progress: false
 
 jobs:
+  # 10/10/2026: ο scanner ζηταει το euro-refresh στην ωρα του (euro_refresh_due.py) γιατι το cron του GitHub αργει ~7 ωρες.
+  # Οταν φτασει αργοτερα και το προγραμματισμενο run, ο guard το παραλειπει (η ιδια «ωρα» εχει ηδη καλυφθει) — οχι διπλο τρεξιμο.
+  guard:
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: g
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 euro_refresh_due.py --guard
+
   refresh:
+    needs: guard
+    if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
