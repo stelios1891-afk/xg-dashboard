@@ -336,12 +336,20 @@ def main():
                 rec.update(tl=tt[0], to=round(tt[1], 2), tu=round(tt[2], 2))
             if bt:
                 rec.update(by=round(bt[0], 2), bn=round(bt[1], 2))
+            # 10/10/2026 (Στελιος): ΟΡΙΑ Pinnacle (μεγιστο πονταρισμα ανα αγορα) — ιδια καταγραφη με τα εγχωρια (5/10)
+            try:
+                _lim = (g.get('bookmakers') or [{}])[0].get('limits') or {}
+                if _lim:
+                    rec['lim'] = {k: _lim.get(k) for k in ('spreads', 'totals', 'h2h')}
+            except Exception:
+                pass
             if h2 or sp or tt or bt:
-                # διαδρομη γραμμων: append-on-change (εντολη Στελιου 9/9 — κραταμε ΟΛΑ τα snapshots)
-                sig = lambda r: tuple(r.get(x) for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn'))
+                # διαδρομη γραμμων: append-on-change (εντολη Στελιου 9/9 — κραταμε ΟΛΑ τα snapshots) · 10/10 + ορια
+                sig = lambda r: tuple(r.get(x) if x != 'lim' else json.dumps(r.get('lim'), sort_keys=True)
+                                      for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn', 'lim'))
                 if sig(rec) != sig(old_rec):
                     row = dict(t=now.isoformat()[:16], mid=best['mid'], comp=comp, ko=rec['ko'])
-                    row.update({x: rec[x] for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn')
+                    row.update({x: rec[x] for x in ('h', 'd', 'a', 'line', 'oh', 'oa', 'tl', 'to', 'tu', 'by', 'bn', 'lim')
                                 if rec.get(x) is not None})
                     hist_rows.append(row)
                 odds[best['mid']] = rec; nmatch += 1

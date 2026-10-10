@@ -210,7 +210,7 @@ def main():
                                      and edge < EDGE_DOG) else None),
                     proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
                     tag75=bool(role == 'fav' and abs(ln + 0.75) < 0.01),
-                    xgh=m['xgh'], xga=m['xga'], when=mk.get('when'),
+                    xgh=m['xgh'], xga=m['xga'], when=mk.get('when'), lim=mk.get('lim'),
                     no_play=(m['comp'] == 'EuropaLeague'),
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
         # --- UEL ΦΑΒΟΡΙ ΕΝΤΟΣ (κανονικο pick) ---
@@ -231,7 +231,7 @@ def main():
                         edge=round(e8, 4), role='fav', band=None,
                         proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
                         tag75=bool(abs(lf + 0.75) < 0.01),
-                        xgh=round(x8h, 3), xga=round(x8a, 3), when=mk.get('when'),
+                        xgh=round(x8h, 3), xga=round(x8a, 3), when=mk.get('when'), lim=mk.get('lim'),
                         rule=('uel_home_fav' if live else 'uel_home_fav_wait'),
                         no_play=not live,
                         note=('⭐ UEL φαβορί εντός — κανονικό pick (μικρό stake), είσοδος ~24ω πριν' if live else
@@ -252,7 +252,7 @@ def main():
                     edge=round(e_o, 4), role='over',
                     proj_odds=round((1 - max(1 - po - pu, 0)) / po, 3) if po > 0 else None,
                     tag75=False,
-                    xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'),
+                    xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'), lim=mk.get('lim'),
                     no_play=(m['comp'] == 'EuropaLeague'),
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
     hf = {p['mid'] for p in picks_out if str(p.get('rule') or '').startswith('uel_home_fav')}

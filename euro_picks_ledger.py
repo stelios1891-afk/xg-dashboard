@@ -68,6 +68,7 @@ def entries(picks, t, have):
                             rnd=p.get('rnd'), ko=ko.strftime('%Y-%m-%dT%H:%M'), home=p['home'], away=p['away'], hid=p.get('hid'),
                             aid=p.get('aid'), mkt=('OVER' if p.get('role') == 'over' else 'AH'), role=p.get('role'), side=p['side'],
                             line=p['line'], odds=p['odds'], edge=p['edge'], band=p.get('band'), rule=p.get('rule'),
+                            lim=p.get('lim'),   # 10/10: ορια Pinnacle τη στιγμη της εισοδου
                             # UEL κλειστο 11/9 (σκια) — ΕΞΑΙΡΕΣΗ 9/10/2026: UEL φαβορι εντος (rule uel_home_fav) = κανονικο
                             no_play=(bool(p.get('no_play')) if p.get('rule') == 'uel_home_fav'
                                      else bool(p.get('no_play')) or p['comp'] == 'EuropaLeague')))
@@ -107,7 +108,8 @@ def tg_msg(rows):
         tag = (NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else ''
         out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
                    f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}" + NL +
-                   f"edge {r['edge'] * 100:.0f}% · {'φαβορί' if r['role'] == 'fav' else 'αουτσάιντερ'}{tag}")
+                   f"edge {r['edge'] * 100:.0f}% · {'φαβορί' if r['role'] == 'fav' else 'αουτσάιντερ'}"
+                   + (f" · όριο Pinnacle {r['lim']['spreads']:,.0f}".replace(',', '.') if (r.get('lim') or {}).get('spreads') else '') + tag)
     return NL.join(out)
 
 
