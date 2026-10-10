@@ -186,8 +186,9 @@ def main():
         # 10/10/2026: ματς με ομαδα χωρις FotMob (Ben / γκολ+Elo) → ΜΟΝΟ UCL OVER (ucl_totals_sources: +30.8% 4/4·
         # under −22.9% 0/4, UEL/UECL δεν επαναλαμβανεται· διορθωση χασματος ✗ ucl_gap_totals_test). Χαντικαπ/under: μονο FotMob+FotMob.
         fm_both = m.get('src_h') == 'FotMob' and m.get('src_a') == 'FotMob'
-        if not fm_both and m['comp'] != 'ChampionsLeague':
-            continue
+        fm_one = (m.get('src_h') == 'FotMob') != (m.get('src_a') == 'FotMob')
+        if not fm_both and not (fm_one and m['comp'] == 'ChampionsLeague'):
+            continue                     # 10/10: ματς χωρις FotMob ΚΑΙ στις 2 ομαδες (κατηγορια Γ) → εκτος (Στελιος «αστα στην ακρη»)
         mk = O.get(str(m['mid']))
         if not mk or mk.get('line') is None:
             continue
