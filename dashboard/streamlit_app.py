@@ -631,8 +631,9 @@ def render_moves(league):
                 unsafe_allow_html=True)
     st.caption("Απο τις καταγραφες του scanner (καθε 30′ σε μερα αγωνων, 2h τις τελευταιες 3 μερες, 1×/μερα νωριτερα). "
                "↓ = η αποδοση επεσε (πηρε χρημα). Το βαθος ιστοριας μεγαλωνει μερα με τη μερα — η συλλογη ξεκινησε 28/8/2026. "
-               "**Εθνικες (NL A-D)** εμφανιζονται οσο υπαρχει διεθνες παραθυρο — Odds API: Pinnacle, αλλιως Bovada (γκανιοτα «σαν Pinnacle»), 1Χ2 Betfair οπου λειπει.")
-    H = _moves_hist(_stamp('odds_history.jsonl', 'intl_odds_hist.jsonl', 'dashboard/moves_view.py'))
+               "**Εθνικες (NL A-D)** εμφανιζονται οσο υπαρχει διεθνες παραθυρο — Odds API: Pinnacle, αλλιως Bovada (γκανιοτα «σαν Pinnacle»), 1Χ2 Betfair οπου λειπει. "
+               "**Ευρωπαϊκα (Champions / Europa / Conference League)** απο 10/10 — Pinnacle, απο τον ευρωπαϊκο scanner.")
+    H = _moves_hist(_stamp('odds_history.jsonl', 'intl_odds_hist.jsonl', 'euro_odds_hist.jsonl', 'euro_projections.json', 'dashboard/moves_view.py'))
     if not H:
         st.info("Δεν υπαρχουν καταγραφες ακομα.")
         return
@@ -653,8 +654,10 @@ def render_moves(league):
     # ---- 2. Ανα πρωταθλημα ----
     st.markdown("#### Ολα τα επερχομενα ανα πρωταθλημα")
     _up = {d['meta']['lg'] for _, d, _ in mv.upcoming(H)}
-    lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg') and (not d['meta'].get('intl') or d['meta']['lg'] in _up)},
-                 key=lambda x: (list(build_data.LEAGUE_FOTMOB).index(x) if x in build_data.LEAGUE_FOTMOB else (90 if str(x).startswith('NL') else 99), str(x)))
+    _EU_ORD = {'Champions League': 80, 'Europa League': 81, 'Conference League': 82}
+    lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg') and (not (d['meta'].get('intl') or d['meta'].get('euro')) or d['meta']['lg'] in _up)},
+                 key=lambda x: (list(build_data.LEAGUE_FOTMOB).index(x) if x in build_data.LEAGUE_FOTMOB else
+                                _EU_ORD.get(x, 90 if str(x).startswith('NL') else 99), str(x)))
     # 26/9: προεπιλογη = λιγκα που εχει επερχομενα ματς με κινηση (στη διακοπη π.χ. οι εθνικες), αλλιως το διαγραμμα «εξαφανιζοταν»
     _chart_lgs = {d['meta']['lg'] for _, d, _ in mv.upcoming(H) if len(d['snaps']) >= 2}
     _def = league if (league in lgs and league in _chart_lgs) else next((x for x in lgs if x in _chart_lgs), league)

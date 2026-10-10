@@ -47,6 +47,7 @@ def load_history():
         d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'),
                                h2h=r.get('h2h')))
     _load_intl(H)
+    _load_euro(H)
     for d in H.values():
         d['snaps'].sort(key=lambda s: s['t'])
     return H
@@ -90,6 +91,39 @@ def _load_intl(H):
                                                             hid=hid, aid=aid, ko=r.get('ko'), intl=True), snaps=[]))
         h2h = [r.get('h'), r.get('d'), r.get('a')] if (r.get('h') and r.get('d') and r.get('a')) else None
         d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book=r.get('book')))
+
+
+EURO_F = os.path.join(ROOT, 'euro_odds_hist.jsonl')
+EURO_LG = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League', 'ConferenceLeague': 'Conference League'}
+
+
+def _load_euro(H):
+    """10/10/2026 (Στελιος «ενεργοποιησε το market watch στα ευρωπαικα»): Champions / Europa / Conference League απο το
+    euro_odds_hist.jsonl (euro_odds_scan: Pinnacle, μια γραμμη ανα αλλαγη — 1Χ2, κυρια γραμμη χαντικαπ γηπεδουχου, ορια).
+    Ονοματα / ids ομαδων απο το euro_projections.json (κλειδι mid)."""
+    if not os.path.exists(EURO_F):
+        return
+    names = {}
+    try:
+        for m in json.load(open(os.path.join(ROOT, 'euro_projections.json'), encoding='utf-8')).get('matches', []):
+            names[str(m['mid'])] = (m['home'], m['away'], m.get('hid'), m.get('aid'))
+    except Exception:
+        pass
+    for line in open(EURO_F, encoding='utf-8'):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        t = _dt(r.get('t')); mid = str(r.get('mid') or '')
+        nm = names.get(mid)
+        if t is None or not nm:
+            continue
+        d = H.setdefault('euro_' + mid, dict(meta=dict(lg=EURO_LG.get(r.get('comp'), r.get('comp')), home=nm[0], away=nm[1],
+                                                         hid=nm[2], aid=nm[3], ko=r.get('ko'), euro=True), snaps=[]))
+        if r.get('ko'):
+            d['meta']['ko'] = r['ko']
+        h2h = [r.get('h'), r.get('d'), r.get('a')] if (r.get('h') and r.get('d') and r.get('a')) else None
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book='Pinnacle'))
 
 
 def upcoming(H, horizon_days=8):
