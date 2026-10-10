@@ -74,6 +74,43 @@ def entries(picks, t, have):
     return out
 
 
+# 10/10/2026 (Στελιος): TELEGRAM για τα ΚΑΝΟΝΙΚΑ ευρωπαικα picks — ΜΟΝΟ Champions League (φαβορι/αουτσαιντερ) και
+# UEL φαβορι εντος (rule uel_home_fav). ΟΧΙ Conference League («να το δουλεψουμε πρωτα»), ΟΧΙ overs («να τα δουμε ξανα»),
+# ΟΧΙ σκιες. Ενα μηνυμα ανα pick, τη στιγμη που γραφεται στο ημερολογιο (πρωτη εμφανιση ≤72ω· UEL στο παραθυρο 12-36ω).
+TG_COMPS = {'ChampionsLeague'}
+COMP_LAB = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League', 'ConferenceLeague': 'Conference League'}
+_DAYS = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
+
+
+def tg_ok(r):
+    if r.get('no_play') or r.get('mkt') != 'AH' or r.get('role') not in ('fav', 'dog'):
+        return False
+    return r.get('rule') == 'uel_home_fav' or r.get('comp') in TG_COMPS
+
+
+def _athens(ko):
+    try:
+        from zoneinfo import ZoneInfo
+        return ko.astimezone(ZoneInfo('Europe/Athens'))
+    except Exception:                               # χωρις tzdata: θερινη ως την τελευταια Κυριακη Οκτωβριου
+        last_sun = max(dt.date(ko.year, 10, d) for d in range(25, 32) if dt.date(ko.year, 10, d).weekday() == 6)
+        dst = dt.date(ko.year, 3, 25) <= ko.date() < last_sun
+        return ko + dt.timedelta(hours=3 if dst else 2)
+
+
+def tg_msg(rows):
+    NL = chr(10)
+    out = [f"🌍 {len(rows)} ΝΕΑ ευρωπαϊκά picks"]
+    for r in sorted(rows, key=lambda x: x['ko']):
+        lk = _athens(_dt(r['ko']))
+        team = r['home'] if r['side'] == 1 else r['away']
+        tag = (NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else ''
+        out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
+                   f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}" + NL +
+                   f"edge {r['edge'] * 100:.0f}% · {'φαβορί' if r['role'] == 'fav' else 'αουτσάιντερ'}{tag}")
+    return NL.join(out)
+
+
 def record(now=None):
     try:
         d = json.load(open(LATEST_F, encoding='utf-8'))
@@ -82,10 +119,20 @@ def record(now=None):
     now = now or dt.datetime.now(UTC)
     have = {r['key'] for r in _jsonl(LED_F)}
     new = entries(d.get('picks', []), now, have)
+    send = [r for r in new if tg_ok(r)]
+    if send and os.environ.get('TELEGRAM_TOKEN') and os.environ.get('TELEGRAM_CHAT_ID'):
+        try:
+            import notify
+            if notify.send(tg_msg(send)):
+                stamp = now.isoformat(timespec='minutes')
+                for r in send:
+                    r['tg'] = stamp
+        except Exception as e:
+            print(f'Telegram σφαλμα (μη κρισιμο): {type(e).__name__}: {e}')
     if new:
         with open(LED_F, 'a', encoding='utf-8') as fh:
             for r in new:
-                fh.write(json.dumps(r, ensure_ascii=False) + '\n')
+                fh.write(json.dumps(r, ensure_ascii=False) + chr(10))
     return len(new)
 
 

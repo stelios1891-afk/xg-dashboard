@@ -221,12 +221,23 @@ def scan(notify_tg=True):
     _save(MARKET_F, dict(scanned_at=now, odds=res.get('market_1x2', {})))   # market 1X2 -> dashboard cards
 
     # ---- Telegram ----
-    if notify_tg and (new_alerts or changed_alerts):
+    # 10/10/2026 (Στελιος): ΟΧΙ πια οι καταγραφες (αγωνιστικες 1-14 = paper) — «ειναι ασκοπα αυτη τη στιγμη και πολλες
+    # ειδοποιησεις». Στελνονται ΜΟΝΟ οσα ενδεχεται να παιξουμε: κοντα φαβορι 7-14 (rule fav714) και τα κανονικα 15η+.
+    # Ολα τα αλλα γραφονται κανονικα σε value_picks_latest / clv_bets (καταγραφη), απλως χωρις ειδοποιηση.
+    def _tg_ok(p):
+        md = p.get('md')
+        return p.get('rule') == 'fav714' or md is None or md >= 15
+    tg_new = [p for p in new_alerts if _tg_ok(p)]
+    tg_changed = [(p, o) for p, o in changed_alerts if _tg_ok(p)]
+    if notify_tg and (tg_new or tg_changed):
         try:
             import notify
-            notify.send(_build_msg(new_alerts, changed_alerts))
+            notify.send(_build_msg(tg_new, tg_changed))
         except Exception as e:
             print("Telegram σφαλμα:", e)
+    if len(tg_new) + len(tg_changed) < len(new_alerts) + len(changed_alerts):
+        print(f"Telegram: σταλθηκαν {len(tg_new)} νεα / {len(tg_changed)} αλλαγες · καταγραφη χωρις ειδοποιηση "
+              f"{len(new_alerts) - len(tg_new)} / {len(changed_alerts) - len(tg_changed)}")
 
     print(f"[{now}] {len(picks)} picks total · {len(new_alerts)} νεα · {len(changed_alerts)} changed")
     return new_alerts, changed_alerts

@@ -354,7 +354,7 @@ def europe_html():
               'euro_live_projections.py: PEN_XG=0.79 (xgh_ou/xga_ou) · scanner EDGE_OVER=0.04',
               'Απόφαση Στέλιου 10/9 (παρά εισήγηση για σκιά): overs ≥4% live. UCL overs με κ: +11.9% @4 n=123 — ΕΥΑΙΣΘΗΤΟ (4σ κ έδινε −7.6) → <b>κρίση Ιανουάριο</b> αναδρομικά.')
 
-    h += head('ΚΑΝΟΝΕΣ SCANNER (euro_shadow_scan.py → euro_value_latest.json)', 'ζώνη 1.70-2.10 · μόνο ματς με πλήρες FotMob xG και στις δύο')
+    h += head('ΚΑΝΟΝΕΣ SCANNER (euro_shadow_scan.py → euro_value_latest.json)', 'ζώνη 1.70-2.10 · μόνο ματς με πλήρες FotMob xG και στις δύο · Telegram (10/10): ΜΟΝΟ UCL φαβορί/αουτσάιντερ + UEL φαβορί εντός — όχι UECL, όχι overs, όχι σκιές')
     h += table(['ρόλος', 'UCL', 'UEL', 'UECL', 'σημείωση'],
                [['outsider (παίρνει ≥0.5)', 'edge ≥4% (ζώνη 4-10% = χωριστό ρεύμα)', '≥10% <span class="neu">ΣΚΙΑ</span>', '≥10%', 'UCL @4: το κ ξεφουσκώνει τα dog edges, το @10 ήταν διπλή σύσφιξη· επανεξέταση ζώνης μόνο σε n≥15 με CLV'],
                 ['φαβορί (δίνει ≥0.5)', 'edge ≥10%', '≥4% <span class="neu">ΣΚΙΑ</span>', '≥4%', '<b>Από 30/9: ΣΩΣΤΑ τέταρτα</b> (−0.75 = μισό −0.5 + μισό −1). Τεστ σε 3 αγορές (quarters_all_markets / intl_quarters_compare): φαβορί με σωστά τέταρτα κερδίζουν παντού — '
