@@ -129,6 +129,20 @@ h1,h2,h3{color:#e8edf8;font-family:'DM Sans',sans-serif;}
 """, unsafe_allow_html=True)
 
 matches, stats = load_matches()
+
+# 10/10/2026 (Στελιος «οι τιμες στα projections δεν ανανεωνονται»): οι τιμες αγορας ερχονταν ΜΕΣΑ στο load_matches (cache 6 ωρες) →
+# η σελιδα εδειχνε τιμες εως 6 ωρες πισω. Τωρα ξαναδιαβαζονται χωριστα καθε φορα που αλλαζει το market_1x2_latest.json (scanner).
+@st.cache_data(ttl=600)
+def _fresh_market(mtime):
+    return build_data._market_1x2()
+try:
+    _mk = _fresh_market(os.path.getmtime(build_data.MARKET_1X2_F))
+    for _m in matches:
+        _mo = _mk.get(_m.get('mkt_key') or '')
+        if _mo:
+            _m['mkt_hw_odds'], _m['mkt_d_odds'], _m['mkt_aw_odds'] = _mo.get('h'), _mo.get('d'), _mo.get('a')
+except Exception:
+    pass
 proj = [m for m in matches if m.get('projectable')]
 avail_lgs = [lg for lg in build_data.LEAGUE_FOTMOB if any(m['league'] == lg for m in proj)]
 

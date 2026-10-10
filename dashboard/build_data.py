@@ -345,6 +345,7 @@ def build_matches(ratings_season=RATINGS_SEASON_DEFAULT, current_season=CURRENT_
                 nh = ns.get(H, 0); na = ns.get(A, 0)
                 pf['warm_cur'] = round((nh / (nh + K_WARM) + na / (na + K_WARM)) / 2, 3)  # μεσο βαρος φετινου
                 rec.update(pf); rec['projectable'] = True; proj += 1
+                rec['mkt_key'] = f"{H}_{A}"                        # 10/10: για φρεσκες τιμες εξω απο την 6ωρη cache (streamlit_app)
                 mo = market.get(f"{H}_{A}")
                 if mo:
                     rec['mkt_hw_odds'], rec['mkt_d_odds'], rec['mkt_aw_odds'] = mo.get('h'), mo.get('d'), mo.get('a')
