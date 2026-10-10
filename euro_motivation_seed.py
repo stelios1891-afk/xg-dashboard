@@ -200,7 +200,7 @@ for r in M.itertuples():
     gh, ga = sc(r.score); gf, gaa = (gh, ga) if r.side == 1 else (ga, gh)
     x = XG.get(r.mid); xf, xa = ((x[0], x[1]) if r.side == 1 else (x[1], x[0])) if x else (np.nan, np.nan)
     lf, la = ((lam[0], lam[1]) if r.side == 1 else (lam[1], lam[0])) if lam else (np.nan, np.nan)
-    row = dict(mid=r.mid, sea=r.sea, comp=r.comp, new=r.new, side=r.side, team=r.team, status=r.status, needg=r.needg, ws=r.ws, gn=r.gn, ws_seed=r.ws_seed, wsd=r.wsd, rnd=r.rnd,
+    row = dict(mid=r.mid, sea=r.sea, comp=r.comp, new=r.new, side=r.side, team=r.team, status=r.status, needg=r.needg, ws=r.ws, gn=r.gn, ws_seed=r.ws_seed, wsd=r.wsd, rnd=r.rnd, probs=r.probs,
                gf=gf, ga=gaa, xf=xf, xa=xa, lf=lf, la=la, tot=gh + ga)
     for bk in ('Crown', 'SBOBET'):
         c = CL.get((r.mid, bk), {})
