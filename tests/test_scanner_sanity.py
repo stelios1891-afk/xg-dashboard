@@ -784,6 +784,11 @@ def test_e_zone_role_and_thresholds():
         elif role == 'over':
             if e < 0.04 - EPS:
                 bad.append(f'{_elab(p)}: over edge {e*100:.1f}% < 4%')
+        elif role == 'under':                    # 10/10/2026: ΜΟΝΟ Champions League, edge ≥10%
+            if not ucl:
+                bad.append(f'{_elab(p)}: under εκτος Champions League')
+            if e < 0.10 - EPS:
+                bad.append(f'{_elab(p)}: under edge {e*100:.1f}% < 10%')
         else:
             bad.append(f'{_elab(p)}: αγνωστος ρολος {role!r}')
     assert not bad, 'ευρωπαικα picks εκτος κανονων:\n' + '\n'.join(bad)

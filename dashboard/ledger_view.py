@@ -119,6 +119,8 @@ def _intl_xg_value(r, xg):
     r['xg_h'], r['xg_a'] = round(xg[0], 2), round(xg[1], 2)
     if r['mkt'] == 'OVER':
         fair = ip.over_fair(max(xg[0] + xg[1], 0.1), r['hcap'])
+    elif r['mkt'] == 'UNDER':                         # 10/10: under UCL
+        fair = ip.under_fair(max(xg[0] + xg[1], 0.1), r['hcap'])
     else:
         dist = engine.gd_dist(max(xg[0], 0.05), max(xg[1], 0.05))
         pw, pp = engine.p_cover(dist, r['side'], r['hcap'])
@@ -151,15 +153,16 @@ def _intl_close(r, c):
     r['close_odds'] = r['clv'] = None
     if not c:
         return
-    if r['mkt'] == 'OVER':
+    if r['mkt'] in ('OVER', 'UNDER'):                 # 10/10: + under (ευρωπαϊκα UCL)
         if not (c.get('ou_line') is not None and c.get('over') and c.get('under')):
             return
-        r['close_line'] = float(c['ou_line']); r['close_odds'] = float(c['over'])
+        un = r['mkt'] == 'UNDER'; fair = ip.under_fair if un else ip.over_fair
+        r['close_line'] = float(c['ou_line']); r['close_odds'] = float(c['under'] if un else c['over'])
         if abs(r['close_line'] - r['hcap']) < 0.01:
             r['clv'] = round(r['odds'] - r['close_odds'], 3); r['clv_pct'] = round(r['odds'] / r['close_odds'] - 1, 4)
         else:
             T = _ou_T(r['close_line'], c['over'], c['under'])
-            eq = r['close_odds'] * ip.over_fair(T, r['hcap']) / ip.over_fair(T, r['close_line'])
+            eq = r['close_odds'] * fair(T, r['hcap']) / fair(T, r['close_line'])
             r['close_eq'] = round(eq, 3); r['clv_est_pct'] = round(r['odds'] / eq - 1, 4)
         return
     if not (c.get('line') is not None and c.get('oh') and c.get('oa')):
@@ -185,11 +188,11 @@ EURO_LG = {'ChampionsLeague': 'UCL', 'EuropaLeague': 'UEL', 'ConferenceLeague': 
 def _euro_rows():
     settled, pending = [], []
     for p in _jsonl(os.path.join(ROOT, 'euro_picks_ledger.jsonl')):
-        ou = p.get('mkt') == 'OVER'
+        ou = p.get('mkt') in ('OVER', 'UNDER')
         r = dict(lg=EURO_LG.get(p.get('comp'), p.get('comp')), home=p['home'], away=p['away'], hid=p.get('hid'), aid=p.get('aid'),
                  ko=p['ko'], euro=True, mkt=p.get('mkt'), side=(0 if ou else (1 if p.get('side') == 1 else -1)), hcap=float(p['line']),
                  odds=float(p['odds']), edge=p.get('edge'), seen=p.get('seen'), no_play=bool(p.get('no_play')),
-                 bet_label=(f"Over {float(p['line']):g}" if ou else None),
+                 bet_label=(f"{'Under' if p.get('mkt') == 'UNDER' else 'Over'} {float(p['line']):g}" if ou else None),
                  score=(p.get('score') or '').replace('-', ' - ') or None, pnl=p.get('pnl'),
                  xg_h=None, xg_a=None, xg_fair=None, xg_value=None)
         if p.get('pnl') is None:

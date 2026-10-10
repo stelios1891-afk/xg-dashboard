@@ -3,7 +3,7 @@ euro_picks_ledger.py — ΗΜΕΡΟΛΟΓΙΟ ευρωπαϊκων picks (UCL/UE
 
 Ιδιος κανονας με τα εγχωρια και τις εθνικες:
   • ΕΙΣΟΔΟΣ = η πρωτη σαρωση μεσα σε 72ω πριν τη σεντρα οπου το pick ειναι ενεργο (τιμη/γραμμη εκεινης της στιγμης)·
-    ενα pick ανα ματς & πλευρα (AH γηπ./φιλοξ., over). Ενα pick που ηρθε νωριτερα μπαινει οταν «περασει» στις 72ω.
+    ενα pick ανα ματς & πλευρα (AH γηπ./φιλοξ., over/under — ενα pick συνολων ανα ματς, 10/10). Ενα pick που ηρθε νωριτερα μπαινει οταν «περασει» στις 72ω.
   • ΚΛΕΙΣΙΜΟ = τελευταια καταγραφη του euro_odds_hist.jsonl πριν τη σεντρα (Odds API, ιδιο feed με τα picks).
   • ΑΠΟΤΕΛΕΣΜΑ + xG = FotMob matchDetails (σκορ, αθροισμα xG σουτ ανα ομαδα).
   • UEL = ΣΚΙΑ (no_play) — γραφεται, δεν παιζεται. ΕΞΑΙΡΕΣΗ 9/10/2026: UEL φαβορι εντος (rule='uel_home_fav', κλειδι mid|1|uel_hf) = ΚΑΝΟΝΙΚΟ.
@@ -48,7 +48,9 @@ def _jsonl(f):
 def _key(p):
     if p.get('rule') == 'uel_home_fav':        # 9/10/2026: χωριστο ρευμα — το κανονικο UEL φαβορι εντος δεν μπλοκαρεται απο τη σκια
         return f"{p['mid']}|1|uel_hf"
-    return f"{p['mid']}|{'over' if p.get('role') == 'over' else p['side']}"
+    if p.get('role') in ('over', 'under'):        # 10/10: over / under = χωριστα κλειδια, αλλα ΕΝΑ pick συνολων ανα ματς (βλ. entries)
+        return f"{p['mid']}|{p['role']}"
+    return f"{p['mid']}|{p['side']}"
 
 
 def entries(picks, t, have):
@@ -62,11 +64,13 @@ def entries(picks, t, have):
         if p.get('rule') == 'uel_home_fav_wait':   # 9/10: UEL φαβορι εντος εκτος παραθυρου 12-36ω = μονο ενδειξη, δεν γραφεται
             continue
         k = _key(p)
+        if p.get('role') in ('over', 'under') and f"{p['mid']}|{'under' if p['role'] == 'over' else 'over'}" in have:
+            continue                                   # 10/10: ηδη pick στην αντιθετη πλευρα του συνολου → δεν γραφεται/στελνεται
         if 0 < hb <= ENTRY_H and k not in have:
             have.add(k)
             out.append(dict(key=k, seen=t.isoformat(timespec='minutes'), hours_before=round(hb, 1), mid=str(p['mid']), comp=p['comp'],
                             rnd=p.get('rnd'), ko=ko.strftime('%Y-%m-%dT%H:%M'), home=p['home'], away=p['away'], hid=p.get('hid'),
-                            aid=p.get('aid'), mkt=('OVER' if p.get('role') == 'over' else 'AH'), role=p.get('role'), side=p['side'],
+                            aid=p.get('aid'), mkt={'over': 'OVER', 'under': 'UNDER'}.get(p.get('role'), 'AH'), role=p.get('role'), side=p['side'],
                             line=p['line'], odds=p['odds'], edge=p['edge'], band=p.get('band'), rule=p.get('rule'),
                             lim=p.get('lim'),   # 10/10: ορια Pinnacle τη στιγμη της εισοδου
                             # UEL κλειστο 11/9 (σκια) — ΕΞΑΙΡΕΣΗ 9/10/2026: UEL φαβορι εντος (rule uel_home_fav) = κανονικο
@@ -76,15 +80,19 @@ def entries(picks, t, have):
 
 
 # 10/10/2026 (Στελιος): TELEGRAM για τα ΚΑΝΟΝΙΚΑ ευρωπαικα picks — ΜΟΝΟ Champions League (φαβορι/αουτσαιντερ) και
-# UEL φαβορι εντος (rule uel_home_fav). ΟΧΙ Conference League («να το δουλεψουμε πρωτα»), ΟΧΙ overs («να τα δουμε ξανα»),
-# ΟΧΙ σκιες. Ενα μηνυμα ανα pick, τη στιγμη που γραφεται στο ημερολογιο (πρωτη εμφανιση ≤72ω· UEL στο παραθυρο 12-36ω).
+# UEL φαβορι εντος (rule uel_home_fav). ΟΧΙ Conference League («να το δουλεψουμε πρωτα»), ΟΧΙ σκιες.
+# 10/10 (βραδυ, «περνα 4% για over και 10% για under»): + ΣΥΝΟΛΑ Champions League (over ≥4%, under ≥10%) — ΟΧΙ UEL/UECL συνολα. Ενα μηνυμα ανα pick, τη στιγμη που γραφεται στο ημερολογιο (πρωτη εμφανιση ≤72ω· UEL στο παραθυρο 12-36ω).
 TG_COMPS = {'ChampionsLeague'}
 COMP_LAB = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League', 'ConferenceLeague': 'Conference League'}
 _DAYS = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
 
 
 def tg_ok(r):
-    if r.get('no_play') or r.get('mkt') != 'AH' or r.get('role') not in ('fav', 'dog'):
+    if r.get('no_play'):
+        return False
+    if r.get('mkt') in ('OVER', 'UNDER'):
+        return r.get('comp') in TG_COMPS
+    if r.get('mkt') != 'AH' or r.get('role') not in ('fav', 'dog'):
         return False
     return r.get('rule') == 'uel_home_fav' or r.get('comp') in TG_COMPS
 
@@ -104,6 +112,12 @@ def tg_msg(rows):
     out = [f"🌍 {len(rows)} ΝΕΑ ευρωπαϊκά picks"]
     for r in sorted(rows, key=lambda x: x['ko']):
         lk = _athens(_dt(r['ko']))
+        if r.get('mkt') in ('OVER', 'UNDER'):        # 10/10: συνολα UCL
+            lim = (r.get('lim') or {}).get('totals')
+            out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
+                       f"{r['home']} - {r['away']}, {'Over' if r['mkt'] == 'OVER' else 'Under'} {r['line']:g} @{r['odds']:.2f}" + NL +
+                       f"edge {r['edge'] * 100:.0f}% · γκολ" + (f" · όριο Pinnacle {lim:,.0f}".replace(',', '.') if lim else ''))
+            continue
         team = r['home'] if r['side'] == 1 else r['away']
         tag = (NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else ''
         out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
@@ -194,6 +208,7 @@ def settle(now=None):
         hs, as_, xh, xa = res
         r['score'] = f'{hs}-{as_}'; r['xg_h'], r['xg_a'] = xh, xa
         r['pnl'] = round(intl_pricing.settle_over(hs + as_, r['line'], r['odds']) if r['mkt'] == 'OVER'
+                         else intl_pricing.settle_under(hs + as_, r['line'], r['odds']) if r['mkt'] == 'UNDER'
                          else picks.settle(hs - as_, 1 if r['side'] == 1 else -1, r['line'], r['odds']), 4)
         r['close'] = _closing(r['mid'], ko)
         changed += 1

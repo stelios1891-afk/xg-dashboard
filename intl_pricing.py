@@ -103,6 +103,39 @@ def settle_over(total, line, odds):
     return 0.0 if abs(total - q) < 1e-9 else -1.0
 
 
+# 10/10/2026: UNDER (Champions League σύνολα — Στελιος «περνα 4% για over και 10% για under»). Ιδιοι κανονες τεταρτων/push.
+def settle_under(total, line, odds):
+    """Αποτελεσμα (μοναδες ανα 1 πονταρισμα) ενος under: x.5 κερδος/ηττα, ακεραια push = 0, x.25/x.75 μισο/μισο."""
+    q = round(float(line) * 4) / 4
+    if abs(q * 2 - round(q * 2)) > 1e-9:
+        return 0.5 * settle_under(total, q - 0.25, odds) + 0.5 * settle_under(total, q + 0.25, odds)
+    if total < q:
+        return odds - 1
+    return 0.0 if abs(total - q) < 1e-9 else -1.0
+
+
+def under_ev(T, line, odds):
+    """Edge ενος under στη γραμμη `line` με τιμη `odds`, συνολο γκολ ~ Poisson(T)."""
+    q = round(float(line) * 4) / 4
+    if abs(q * 2 - round(q * 2)) > 1e-9:
+        return 0.5 * under_ev(T, q - 0.25, odds) + 0.5 * under_ev(T, q + 0.25, odds)
+    pw = sum(_pk(T, k) for k in range(int(math.ceil(q))))                 # κερδιζει: συνολο < γραμμη
+    pp = _pk(T, int(q)) if float(q).is_integer() else 0.0
+    return pw * (odds - 1) - (1 - pw - pp)
+
+
+def under_fair(T, line):
+    """Fair τιμη (edge 0) του under στη γραμμη."""
+    lo, hi = 1.01, 50.0
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if under_ev(T, line, mid) < 0:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
 # ---------------- 26/9/2026 (δ) ΝΕΟ T ΓΙΑ ΤΑ OVER (αποφαση Στελιου): T + xG επιθεσης/αμυνας ομαδων ----------------
 # Το T «καταστασης» (διαφορα/κοντινο/επιπεδο) δεν ηξερε ΠΩΣ παιζουν οι ομαδες (π.χ. Βουλγαρια−Λουξεμβουργο: 0.3-0.5 γκολ υπερ ανα ματς).
 # T_over = b0 + b1·T + b2·(λh_xG + λa_xG) (intl_tmix_config.json· xG ομαδων intl_xg_attdef.json, 12 αγωνιστικα, διορθωση αντιπαλου).

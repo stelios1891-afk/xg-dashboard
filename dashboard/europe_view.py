@@ -374,12 +374,13 @@ def euro_value_html(picks):
     for p in picks:
         role = {'fav': '<span style="color:#f5b731;font-weight:700">ΦΑΒΟΡΙ</span>',
                 'dog': '<span style="color:#7ea2ff;font-weight:700">OUTSIDER</span>',
-                'over': '<span style="color:#3ec98f;font-weight:700">ΓΚΟΛ OVER</span>'}.get(p['role'], p['role'])
+                'over': '<span style="color:#3ec98f;font-weight:700">ΓΚΟΛ OVER</span>',
+                'under': '<span style="color:#3ec98f;font-weight:700">ΓΚΟΛ UNDER</span>'}.get(p['role'], p['role'])
         tag = ' <span title="γραμμη -0.75 — το επιβεβαιωμενο σε Crown+Pinnacle κελι">🎯</span>' if p.get('tag75') else ''
         comp = {'ChampionsLeague': 'UCL', 'EuropaLeague': 'UEL', 'ConferenceLeague': 'UECL'}.get(p['comp'], p['comp'])
         if p.get('no_play'):
             tag += ' <span title="UEL κλειστο 11/9 — δειχνεται, δεν παιζεται" style="color:#b9b9b9">👁 ΣΚΙΑ</span>'
-        pick_txt = (f'{esc(p["team"])} @{p["odds"]:.2f}' if p['role'] == 'over'
+        pick_txt = (f'{esc(p["team"])} @{p["odds"]:.2f}' if p['role'] in ('over', 'under')
                     else f'{esc(p["team"])} <b>{p["line"]:+.2f}</b> @{p["odds"]:.2f}')
         rows += (f'<div style="display:flex;gap:10px;align-items:center;background:#111827;'
                  f'border:1px solid #1e2d47;border-radius:10px;padding:9px 13px;margin-bottom:7px;'

@@ -413,8 +413,8 @@ def _euro_picks():
                  proj_odds=p.get('proj_odds'), when=str(p.get('ko') or '').replace('Z', '')[:16],
                  eu=True, tag75=bool(p.get('tag75')), no_play=bool(p.get('no_play')),
                  rule=p.get('rule'), eu_note=p.get('note'))       # 9/10: rule uel_home_fav(_wait) = UEL φαβορι εντος
-        if p.get('role') == 'over':
-            q['bet'] = p['team']          # π.χ. "Over 3.00"
+        if p.get('role') in ('over', 'under'):
+            q['bet'] = p['team']          # π.χ. "Over 3.00" / "Under 3.25" (10/10: under UCL)
         out.append(q)
     return out, ev_res.get('scanned_at')
 

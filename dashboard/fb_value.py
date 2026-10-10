@@ -91,7 +91,7 @@ def core7_gone(active):
 
 def euro_gone(active):
     now = dt.datetime.now(dt.timezone.utc)
-    act = {(p['lg'], p['home'], p['away'], 0 if str(p.get('bet') or '').startswith('Over') else p['side']) for p in active}
+    act = {(p['lg'], p['home'], p['away'], 0 if str(p.get('bet') or '').startswith(('Over', 'Under')) else p['side']) for p in active}
     odds = _load('euro_odds_latest.json', {}).get('odds', {})
     out = []
     for b in _jsonl('euro_picks_ledger.jsonl'):
@@ -99,13 +99,14 @@ def euro_gone(active):
         except Exception: continue
         if ko <= now or b.get('no_play'):
             continue
-        over = b.get('mkt') == 'OVER'
+        over = b.get('mkt') in ('OVER', 'UNDER')     # 10/10: + under UCL (συνολο)
+        un = b.get('mkt') == 'UNDER'
         side = 0 if over else int(b['side'])
         if (b['comp'], b['home'], b['away'], side) in act:
             continue
         r = odds.get(str(b.get('mid'))) or {}
         if over:
-            lab = f"Over {r['tl']:g}" if r.get('tl') is not None else None; od = r.get('to')
+            lab = f"{'Under' if un else 'Over'} {r['tl']:g}" if r.get('tl') is not None else None; od = r.get('tu' if un else 'to')
         else:
             L = r.get('line')
             lab = (f"{b['home'] if side == 1 else b['away']} {'+' if (L if side == 1 else -L) >= 0 else ''}{(L if side == 1 else -L):g}"
@@ -115,7 +116,7 @@ def euro_gone(active):
                  hcap=float(b['line']), odds=float(b['odds']), edge=float(b.get('edge') or 0), proj_odds=None,
                  when=str(b['ko'])[:16], eu=True, gone=True, gone_now=_now_tag(lab, od, None, 0.0))
         if over:
-            q['bet'] = f"Over {float(b['line']):g}"
+            q['bet'] = f"{'Under' if un else 'Over'} {float(b['line']):g}"
         out.append(q)
     return out
 

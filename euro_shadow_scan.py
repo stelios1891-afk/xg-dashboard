@@ -163,6 +163,9 @@ def main():
     # παιζουμε επισημα»): τα UEL picks ΓΡΑΦΟΝΤΑΙ κανονικα (ιδια κατωφλια @10/@4) αλλα φερουν
     # no_play=True + note — δεν παιζονται (b=0.02 στο κλεισιμο, κλειστο 11/9), δειχνονται μονο.
     EDGE_DOG, EDGE_FAV, EDGE_OVER = 0.10, 0.04, 0.04
+    # UNDER (10/10/2026, Στελιος «περνα 4% για over και 10% για under»): ΜΟΝΟ Champions League, edge ≥10%
+    # (LOSO 4 σεζον: 10% σε 3/4 · εκτος δειγματος +10.3% / 100 picks — ucl_totals_threshold_loso)· ενα pick συνολων ανα ματς (ledger).
+    EDGE_UNDER_UCL = 0.10
     NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
     EDGE_FAV_UCL = 0.10
     EDGE_DOG_UCL = 0.04
@@ -262,13 +265,30 @@ def main():
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'), lim=mk.get('lim'),
                     no_play=(m['comp'] == 'EuropaLeague'),
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
+        # --- UNDERS (W2 + ισοπαλιες ×scale) — ΜΟΝΟ UCL ---
+        if (m['comp'] == 'ChampionsLeague' and m.get('xgh_ou') is not None and mk.get('tl') is not None
+                and mk.get('tu') and 1.70 <= float(mk['tu']) <= 2.10):
+            td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
+            po, pu = p_over(td, float(mk['tl']))
+            e_u = pu * (float(mk['tu']) - 1) * (1 - picks.MARGIN) - po
+            if e_u >= EDGE_UNDER_UCL:
+                picks_out.append(dict(
+                    mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
+                    home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
+                    team=f"Under {float(mk['tl']):.2f}", side=0,
+                    line=round(float(mk['tl']), 2), odds=round(float(mk['tu']), 2),
+                    edge=round(e_u, 4), role='under',
+                    proj_odds=round((1 - max(1 - po - pu, 0)) / pu, 3) if pu > 0 else None,
+                    tag75=False,
+                    xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'), lim=mk.get('lim'),
+                    no_play=False, note=None))
     hf = {p['mid'] for p in picks_out if str(p.get('rule') or '').startswith('uel_home_fav')}
     picks_out = [p for p in picks_out if not (p['mid'] in hf and p['comp'] == 'EuropaLeague' and p['side'] == 1
                                               and p['role'] == 'fav' and not p.get('rule'))]
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
-                              edge_dog_ucl=EDGE_DOG_UCL,
+                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_under_ucl=EDGE_UNDER_UCL,
                               zone=[1.70, 2.10],
                               no_play_comps=['EuropaLeague'],
                               uel_home_fav=dict(edge=UEL_HF_EDGE, hours=list(UEL_HF_WIN), blend_xg=0.8,
@@ -279,6 +299,7 @@ def main():
     print(f'euro value picks (beta): {len(picks_out)} '
           f'({sum(1 for p in picks_out if p["role"]=="fav")} fav / '
           f'{sum(1 for p in picks_out if p["role"]=="dog")} dog, '
+          f'{sum(1 for p in picks_out if p["role"]=="over")} over / {sum(1 for p in picks_out if p["role"]=="under")} under, '
           f'{sum(1 for p in picks_out if p["tag75"])} στο -0.75, '
           f'{sum(1 for p in picks_out if p.get("no_play"))} UEL σκια/δεν παιζονται, '
           f'{sum(1 for p in picks_out if p.get("rule") == "uel_home_fav")} UEL φαβ εντος ΚΑΝΟΝΙΚΑ)')
