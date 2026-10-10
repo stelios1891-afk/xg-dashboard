@@ -1,4 +1,4 @@
-"""euro_prev_venue_test.py — 10/10/2026 (Στελιος: «δεν εχουμε δει καθολου κουραση, ειναι το ιδιο να ερχεσαι απο ματς πρωταθληματος εκτος με το να ερχεσαι
+"""euro_prev_venue_test.py — 10/10/2026 (v2: Στελιος «δεν θελουμε μεχρι 8 μερες, θελουμε το σκ επαιξε εκτος και τριτη/τεταρτη εκτος» → ΜΟΝΟ εγχωριο Παρ-Δευ και ευρωπαικο την αμεσως επομενη Τρ/Τετ/Πεμ, 1.5-6 μερες) (Στελιος: «δεν εχουμε δει καθολου κουραση, ειναι το ιδιο να ερχεσαι απο ματς πρωταθληματος εκτος με το να ερχεσαι
 εντος? ειναι το ιδιο το εκτος πρωταθλημα → εκτος τσαμπιονς λιγκ με το εντος → εντος?»).
 Για καθε ευρωπαικο ματς (UCL/UEL/UECL 2223-2526) και καθε ομαδα: το ΤΕΛΕΥΤΑΙΟ εγχωριο ματς πριν (εντος/εκτος, μερες ξεκουρασης).
 Αποτελεσμα: λαθος διαφορας γκολ (πραγματικη − μοντελο live χαντικαπ / − αγορα κλεισιματος), σκοπια ομαδας.
@@ -27,7 +27,8 @@ def prev(tid, ko):
     xs = [x for x in DOM.get(tid, []) if x[0] < ko - pd.Timedelta(hours=12)]
     if not xs: return None, None
     t, h = xs[-1]; days = (ko - t).total_seconds() / 86400
-    return (h if days <= 8 else None), days
+    ok = 1.5 <= days <= 6 and t.weekday() in (4, 5, 6, 0) and ko.weekday() in (1, 2, 3)   # Παρ-Δευ → Τρ/Τετ/Πεμ ιδιας εβδομαδας
+    return (h if ok else None), days
 rows = []
 for r in X.itertuples():
     if pd.isna(r.ko): continue
@@ -37,7 +38,7 @@ for r in X.itertuples():
         rows.append(dict(sea=r.sea, comp=r.comp, team=r.home if is_home else r.away, eu_home=is_home, prev_home=bool(pv), days=days,
                          res=sg * r.res, resk=sg * r.res_k))
 T = pd.DataFrame(rows)
-print(f'ομαδο-ματς με εγχωριο ματς ≤8 μερες πριν: {len(T)} · μερες ξεκουρασης: διαμεσος {T.days.median():.1f}')
+print(f'ομαδο-ματς με εγχωριο ΣΚ (Παρ-Δευ) → ευρωπαικο Τρ/Τετ/Πεμ: {len(T)} · μερες ξεκουρασης: διαμεσος {T.days.median():.1f}')
 def line(x, lab, rest=None):
     se = x.resk.std() / np.sqrt(len(x))
     tt = ''
@@ -62,7 +63,7 @@ for cm in ('ChampionsLeague', 'EuropaLeague', 'ConferenceLeague'):
         a1 = t[(~t.prev_home) & (t.eu_home == b)]; a0 = t[(t.prev_home) & (t.eu_home == b)]
         line(a1, f'{cm[:8]} εκτος → {"ΕΝΤΟΣ" if b else "ΕΚΤΟΣ"}', a0)
 print('\nΔ. ΜΕΡΕΣ ΞΕΚΟΥΡΑΣΗΣ (απο το εγχωριο ως το ευρωπαικο)')
-for lo, hi in ((0, 3.0), (3.0, 3.6), (3.6, 4.6), (4.6, 8.1)):
+for lo, hi in ((1.5, 3.0), (3.0, 3.6), (3.6, 4.6), (4.6, 6.1)):
     m = (T.days >= lo) & (T.days < hi)
     if m.sum() == 0: continue
     line(T[m], f'{lo:.1f}-{hi:.1f} μερες', T[~m])
