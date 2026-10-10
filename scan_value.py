@@ -224,9 +224,13 @@ def scan(notify_tg=True):
     # 10/10/2026 (Στελιος): ΟΧΙ πια οι καταγραφες (αγωνιστικες 1-14 = paper) — «ειναι ασκοπα αυτη τη στιγμη και πολλες
     # ειδοποιησεις». Στελνονται ΜΟΝΟ οσα ενδεχεται να παιξουμε: κοντα φαβορι 7-14 (rule fav714) και τα κανονικα 15η+.
     # Ολα τα αλλα γραφονται κανονικα σε value_picks_latest / clv_bets (καταγραφη), απλως χωρις ειδοποιηση.
+    # 10/10 (Στελιος «περνα το», core7_714_homeaway/core7_home_refit): κοντα φαβορι 7-14 ΜΟΝΟ ΕΝΤΟΣ στο Telegram — τα εκτος
+    # (Pinnacle −12.5%, χειροτερα απο τα τυφλα) γινονται καταγραφη: γραφονται κανονικα (picks/ledger/σκια), χωρις ειδοποιηση.
     def _tg_ok(p):
         md = p.get('md')
-        return p.get('rule') == 'fav714' or md is None or md >= 15
+        if p.get('rule') == 'fav714':
+            return p.get('side') == 1
+        return md is None or md >= 15
     tg_new = [p for p in new_alerts if _tg_ok(p)]
     tg_changed = [(p, o) for p, o in changed_alerts if _tg_ok(p)]
     if notify_tg and (tg_new or tg_changed):
