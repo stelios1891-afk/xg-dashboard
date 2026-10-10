@@ -183,7 +183,10 @@ def main():
     for m in P.get('matches', []):
         if not m.get('covered') or m.get('finished'):
             continue
-        if m.get('src_h') != 'FotMob' or m.get('src_a') != 'FotMob':
+        # 10/10/2026: ματς με ομαδα χωρις FotMob (Ben / γκολ+Elo) → ΜΟΝΟ UCL OVER (ucl_totals_sources: +30.8% 4/4·
+        # under −22.9% 0/4, UEL/UECL δεν επαναλαμβανεται· διορθωση χασματος ✗ ucl_gap_totals_test). Χαντικαπ/under: μονο FotMob+FotMob.
+        fm_both = m.get('src_h') == 'FotMob' and m.get('src_a') == 'FotMob'
+        if not fm_both and m['comp'] != 'ChampionsLeague':
             continue
         mk = O.get(str(m['mid']))
         if not mk or mk.get('line') is None:
@@ -196,8 +199,8 @@ def main():
             continue
         lf = float(mk['line'])
         dist = eu_dist(m['xgh'], m['xga'], scale)
-        for side, ln, o, team in ((1, lf, mk.get('oh'), m['home']),
-                                  (-1, -lf, mk.get('oa'), m['away'])):
+        for side, ln, o, team in (((1, lf, mk.get('oh'), m['home']),
+                                   (-1, -lf, mk.get('oa'), m['away'])) if fm_both else ()):
             if not o or not (1.70 <= o <= 2.10):
                 continue
             role = 'fav' if ln <= -0.5 else ('dog' if ln >= 0.5 else None)
@@ -264,9 +267,11 @@ def main():
                     tag75=False,
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'), lim=mk.get('lim'),
                     no_play=(m['comp'] == 'EuropaLeague'),
-                    note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
-        # --- UNDERS (W2 + ισοπαλιες ×scale) — ΜΟΝΟ UCL ---
-        if (m['comp'] == 'ChampionsLeague' and m.get('xgh_ou') is not None and mk.get('tl') is not None
+                    src=(None if fm_both else f"{m.get('src_h')}/{m.get('src_a')}"),
+                    note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else
+                          (None if fm_both else 'ομάδα χωρίς FotMob — μόνο over (10/10)'))))
+        # --- UNDERS (W2 + ισοπαλιες ×scale) — ΜΟΝΟ UCL, ΜΟΝΟ FotMob+FotMob ---
+        if (fm_both and m['comp'] == 'ChampionsLeague' and m.get('xgh_ou') is not None and mk.get('tl') is not None
                 and mk.get('tu') and 1.70 <= float(mk['tu']) <= 2.10):
             td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
             po, pu = p_over(td, float(mk['tl']))

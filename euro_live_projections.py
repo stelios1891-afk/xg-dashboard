@@ -790,14 +790,17 @@ for key in sorted(fx):
                 if xgh_ni >= xga_ni: xgh_ni *= UCL_FAV_SCALE
                 else: xga_ni *= UCL_FAV_SCALE
         rec.update(eu_in_h=nin_h, eu_in_a=nin_a, xgh_noins=round(xgh_ni, 3), xga_noins=round(xga_ni, 3))
-        # fair γκολ (συνθεση W2, πεναλτι 0.76) — ΜΟΝΟ FotMob+FotMob ματς (το OU πασο
-        # δεν κανει Elo-αντικατασταση· στα γκολ/Ben ματς μενει το κυριο ζευγος)
+        # fair γκολ (συνθεση W2, πεναλτι 0.76). 10/10/2026 (Στελιος «αν δεν πετυχει κραταμε μονο τα over»):
+        # ΚΑΙ για Ben / γκολ+Elo ματς, οπως στο backtest (euro_v6w2_test_pen76: W2 + goals→Elo αντικατασταση) —
+        # ucl_totals_sources: UCL μη-FotMob over +30.8% (38, 4/4)· η διορθωση χασματος (ucl_gap_totals_test) ΔΕΝ περασε.
         try:
-            sh2 = ENG_OU.side_state(int(m['hid']), d) if (sr_h == 'shots' and sr_a == 'shots') else None
+            sh2 = ENG_OU.side_state(int(m['hid']), d)
             sa2 = ENG_OU.side_state(int(m['aid']), d) if sh2 else None
             if sh2 and sa2:
                 att_h2, leak_h2, SLh2, XLh2, _ = side_terms(ENG_OU, sh2, d, GKEYS)
                 att_a2, leak_a2, SLa2, XLa2, _ = side_terms(ENG_OU, sa2, d, GKEYS)
+                if lab.get('h') == 'γκολ+Elo': att_h2, leak_h2 = att_h, leak_h      # ιδια Elo αντικατασταση με το κυριο ζευγος
+                if lab.get('a') == 'γκολ+Elo': att_a2, leak_a2 = att_a, leak_a
                 lXs2 = math.log(((SLh2 * SLa2) ** 0.5) * ((XLh2 * XLa2) ** 0.5))
                 D2 = s_v4(sh2['lg']) - s_v4(sa2['lg'])
                 rec['xgh_ou'] = round(math.exp(lXs2 + att_h2 + leak_a2 + RHO * D2) * HF_LIVE, 3)
