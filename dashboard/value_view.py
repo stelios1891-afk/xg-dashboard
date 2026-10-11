@@ -100,6 +100,9 @@ def pick_card(p):
         tags += '<span class="tag lc">low-conf</span>'
     if p.get('eu'):
         tags += '<span class="tag eu">EU beta</span>'
+        _lm = (p.get('lim') or {}).get(p.get('lim_mkt') or 'spreads')      # 11/10 (Στελιος): τρεχον οριο Pinnacle της αγορας του pick
+        if _lm:
+            tags += f'<span class="tag" title="Τρεχον οριο Pinnacle ({"γκολ" if p.get("lim_mkt") == "totals" else "χαντικαπ"}), απο την τελευταια σαρωση">💰 οριο {_lm:g}</span>'
     if p.get('intl'):
         tags += f'<span class="tag eu" title="συναινεση μοντελων εθνικων">ΕΘΝ. · {_h.escape(p.get("models") or "")}</span>'
         if p.get('late'):
