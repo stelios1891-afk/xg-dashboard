@@ -170,6 +170,10 @@ def main():
     # UNDER (10/10/2026, Στελιος «περνα 4% για over και 10% για under»): ΜΟΝΟ Champions League, edge ≥10%
     # (LOSO 4 σεζον: 10% σε 3/4 · εκτος δειγματος +10.3% / 100 picks — ucl_totals_threshold_loso)· ενα pick συνολων ανα ματς (ledger).
     EDGE_UNDER_UCL = 0.10
+    # OVER CONFERENCE κατηγορια Α (12/10/2026, Στελιος «παμε στο -2%»): uecl_over_low_threshold — η αγορα ΚΑΙ το μοντελο υποτιμουν
+    # τα γκολ στα UECL FotMob+FotMob (xG +0.10/πλευρα, τυφλο over +14.5% 4/4)· ζωνες 4→2→0→−2% ολες ✓ κανονα UCL (θετικες 2 βιβλια,
+    # ≥3/4 σεζον, 2 νεας μορφης), −2→−4% ✗ → κατωφλι −2% (106 picks +26.5%, +28.2μ). Ελεγχος ανα αγωνιστικη: uecl_monitor.py.
+    EDGE_OVER_UECL = -0.02
     EDGE_DNB_UCL = 0.04            # 10/10/2026: DNB (γραμμη 0) μονο UCL, FotMob και οι 2
     NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
     EDGE_FAV_UCL = 0.10
@@ -287,7 +291,8 @@ def main():
             td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
             po, pu = p_over(td, float(mk['tl']))
             e_o = po * (float(mk['to']) - 1) * (1 - picks.MARGIN) - pu
-            if e_o >= EDGE_OVER:
+            thr_over = EDGE_OVER_UECL if (m['comp'] == 'ConferenceLeague' and fm_both) else EDGE_OVER
+            if e_o >= thr_over:
                 picks_out.append(dict(
                     mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
@@ -324,7 +329,7 @@ def main():
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
-                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_under_ucl=EDGE_UNDER_UCL, edge_dnb_ucl=EDGE_DNB_UCL,
+                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_over_uecl=EDGE_OVER_UECL, edge_under_ucl=EDGE_UNDER_UCL, edge_dnb_ucl=EDGE_DNB_UCL,
                               zone=[1.70, 2.10],
                               no_play_comps=['EuropaLeague'],
                               uel_home_fav=dict(edge=UEL_HF_EDGE, hours=list(UEL_HF_WIN), blend_xg=0.8,

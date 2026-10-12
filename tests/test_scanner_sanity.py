@@ -341,7 +341,7 @@ def test_b_euro_locked_constants():
     bad = [f'{k}={_src_const("euro_live_projections.py", k)!r} (περιμενα {v})' for k, v in exp_proj.items()
            if not _approx(_src_const('euro_live_projections.py', k), v)]
     assert not bad, 'euro_live_projections.py: αλλαξαν σταθερες (γ ξεφουσκωμα / κ UCL / X-scale / w prior): ' + ', '.join(bad)
-    exp_scan = dict(EDGE_DOG=0.10, EDGE_FAV=0.04, EDGE_OVER=0.04, EDGE_FAV_UCL=0.10, EDGE_DOG_UCL=0.04)
+    exp_scan = dict(EDGE_DOG=0.10, EDGE_FAV=0.04, EDGE_OVER=0.04, EDGE_FAV_UCL=0.10, EDGE_DOG_UCL=0.04, EDGE_OVER_UECL=-0.02)
     bad = [f'{k}={_src_const("euro_shadow_scan.py", k)!r} (περιμενα {v})' for k, v in exp_scan.items()
            if not _approx(_src_const('euro_shadow_scan.py', k), v)]
     assert not bad, 'euro_shadow_scan.py: αλλαξαν κατωφλια (UCL favs @10 / UCL dogs @4 / dogs @10 / favs @4): ' + ', '.join(bad)

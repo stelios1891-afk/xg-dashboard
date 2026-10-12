@@ -110,7 +110,7 @@ def euro_calc(p):
             pw, pl = (po, pu) if role == 'over' else (pu, po)
             lines.append({'l': ln, 'lab': f"{'Over' if role == 'over' else 'Under'} {ln:g}",
                           'c': [_lin(lambda o, pw=pw, pl=pl: pw * (o - 1) * (1 - picks.MARGIN) - pl)]})
-        thr = 0.04 if role == 'over' else 0.10
+        thr = (-0.02 if comp == 'ConferenceLeague' else 0.04) if role == 'over' else 0.10     # 12/10: UECL over Α @−2% (scanner EDGE_OVER_UECL)
         return {'models': ['Μοντελο'], 'need': 1, 'thr': thr, 'lines': lines,
                 'def': next(i for i, L in enumerate(lines) if abs(L['l'] - float(p['line'])) < 1e-9),
                 'rng': [1.70, 2.10], 'minabs': None, 'price': p.get('odds')}
