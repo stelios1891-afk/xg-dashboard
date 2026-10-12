@@ -412,7 +412,8 @@ def _euro_picks():
                  side=p['side'], hcap=p['line'], odds=p['odds'], edge=p['edge'],
                  proj_odds=p.get('proj_odds'), when=str(p.get('ko') or '').replace('Z', '')[:16],
                  eu=True, tag75=bool(p.get('tag75')), no_play=bool(p.get('no_play')),
-                 rule=p.get('rule'), eu_note=p.get('note'))       # 9/10: rule uel_home_fav(_wait) = UEL φαβορι εντος
+                 rule=p.get('rule'), eu_note=p.get('note'),       # 9/10: rule uel_home_fav(_wait) = UEL φαβορι εντος
+                 lim=p.get('lim'), lim_mkt=('totals' if p.get('role') in ('over', 'under') else 'spreads'))   # 11/10: οριο Pinnacle στην καρτα
         if p.get('role') in ('over', 'under'):
             q['bet'] = p['team']          # π.χ. "Over 3.00" / "Under 3.25" (10/10: under UCL)
         try:
@@ -541,7 +542,27 @@ def render_value(league):
                           format_func=lambda x: 'Όλα τα πρωταθληματα' if x == 'Όλα' else value_view.LEAGUE_LABELS.get(x, x),
                           key='vp_league')
     shown = combined if sel_lg == 'Όλα' else [p for p in combined if p['lg'] == sel_lg]
-    st.components.v1.html(value_view.picks_html(shown), height=min(len(shown) * 150 + 140, 4000), scrolling=True)
+    _h_vp = min(len(shown) * 150 + 140, 4000)
+    # 12/10/2026 (Στελιος «το "το έπαιξα" σε ολες τις συσκευες»): με GH_TOKEN στα secrets → component που στελνει το πατημα στον server
+    # (played_store → played_picks.json στο repo)· χωρις token → οπως πριν (μνημη του browser).
+    import played_store, time as _time
+    if played_store.enabled():
+        _vp_comp = st.components.v1.declare_component('vp_cards', path=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vp_component'))
+        if 'vp_played' not in st.session_state or _time.time() - st.session_state.get('vp_played_t', 0) > 60:
+            _d = played_store.load()
+            if _d is not None:
+                st.session_state.vp_played = _d; st.session_state.vp_played_t = _time.time()
+        _ev = _vp_comp(html=value_view.picks_html(shown), played=st.session_state.get('vp_played', {}), sync=True, height=_h_vp,
+                       key='vp_cards', default=None)
+        if isinstance(_ev, dict) and _ev.get('n') and _ev.get('n') != st.session_state.get('vp_last_n'):
+            st.session_state.vp_last_n = _ev['n']
+            _new = played_store.toggle(_ev.get('k'), bool(_ev.get('on')))
+            if _new is not None:
+                st.session_state.vp_played = _new; st.session_state.vp_played_t = _time.time()
+            else:
+                st.warning('⚠ Το «το έπαιξα» δεν αποθηκεύτηκε (σφάλμα GitHub) — ξαναπάτα σε λίγο.')
+    else:
+        st.components.v1.html(value_view.picks_html(shown), height=_h_vp, scrolling=True)
     st.caption('🧮 = κομπιουτερακι: βαλε την τιμη (και γραμμη) που βρισκεις τωρα → edge ανα μοντελο με το ΤΡΕΧΟΝ μοντελο και την ελαχιστη τιμη που κραταει το pick (εθνικες: συναινεση = ≥2 απο τα 3 μοντελα πανω απο το οριο).')
     if eu_picks:
         st.caption('🌍 **EU beta** = ευρωπαϊκα picks (UCL/UEL/UECL) · μονο ματς με πληρες FotMob xG · '

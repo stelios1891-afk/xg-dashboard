@@ -311,11 +311,13 @@ PLAYED_CSS = """<style>
 PLAYED_JS = """<script>
 (function(){
   var KEY='vp_played_v1', mem={}, ok=true, filt='all';
-  try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; }
+  var S = !!(window.VP_SYNC && window.VP_SYNC.on);     // 12/10: κοινο σε ολες τις συσκευες (played_store → GitHub)· αλλιως μνημη browser
+  if(S){ mem = window.VP_SYNC.played || {}; }
+  else { try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; } }
   var now=Date.now(); for(var k in mem){ if(now-mem[k]>14*864e5) delete mem[k]; }
   for(var k in mem){ var a=k.split('|'); if(a.length===7){ var nk=[a[0],a[1],a[2],a[3],a[4].split(' ')[0],a[6]].join('|'); if(!mem[nk]) mem[nk]=mem[k]; delete mem[k]; } }   // 7/10: παλια κλειδια (με γραμμη) → νεα
   save();
-  function save(){ if(!ok) return; try{ localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
+  function save(){ if(S||!ok) return; try{ localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
   function paint(){
     var cards=document.querySelectorAll('.pc[data-k]'), n=0;
     cards.forEach(function(c){
@@ -324,9 +326,11 @@ PLAYED_JS = """<script>
       var b=c.querySelector('.played'); if(b) b.textContent = d ? '✅ το έπαιξα' : '☐ το έπαιξα';
       c.style.display = (filt==='all' || (filt==='done')===d) ? '' : 'none';
     });
-    var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (ok?'':' (ο browser δεν επιτρέπει αποθήκευση)');
+    var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (S?' · 🔄 κοινό σε όλες τις συσκευές':(ok?' · μόνο σε αυτή τη συσκευή':' (ο browser δεν επιτρέπει αποθήκευση)'));
   }
-  window.tgPlayed=function(btn){ var c=btn.closest('.pc'); var k=c.getAttribute('data-k'); if(mem[k]) delete mem[k]; else mem[k]=Date.now(); save(); paint(); };
+  window.tgPlayed=function(btn){ var c=btn.closest('.pc'); var k=c.getAttribute('data-k'); var on=!mem[k]; if(on) mem[k]=Date.now(); else delete mem[k];
+    if(S){ window.VP_SYNC.send(k, on); } else { save(); } paint(); };
+  window.vpRepaint=function(){ if(window.VP_SYNC && window.VP_SYNC.on){ S=true; mem=window.VP_SYNC.played||{}; } paint(); };
   window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); document.querySelectorAll('.pf').forEach(function(x){x.classList.toggle('on', x===btn);}); paint(); };
   paint();
 })();
