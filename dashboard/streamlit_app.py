@@ -546,12 +546,15 @@ def render_value(league):
     # 12/10/2026 (Στελιος «το "το έπαιξα" σε ολες τις συσκευες»): με GH_TOKEN στα secrets → component που στελνει το πατημα στον server
     # (played_store → played_picks.json στο repo)· χωρις token → οπως πριν (μνημη του browser).
     import played_store, time as _time
-    if played_store.enabled():
+    _vp_msg = st.empty()                       # 13/10: μηνυματα ΠΑΝΩ απο τη λιστα (πριν εβγαιναν κατω απο ολα τα picks)
+    if played_store.enabled() and not st.session_state.get('vp_sync_off'):
         _vp_comp = st.components.v1.declare_component('vp_cards', path=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vp_component'))
         if 'vp_played' not in st.session_state or _time.time() - st.session_state.get('vp_played_t', 0) > 60:
             _d = played_store.load()
             if _d is not None:
                 st.session_state.vp_played = _d; st.session_state.vp_played_t = _time.time()
+            elif played_store.LAST_ERR:
+                _vp_msg.error('⚠ «το έπαιξα»: δεν διαβάζεται το GitHub — ' + played_store.LAST_ERR)
         _ev = _vp_comp(html=value_view.picks_html(shown), played=st.session_state.get('vp_played', {}), sync=True, height=_h_vp,
                        key='vp_cards', default=None)
         if isinstance(_ev, dict) and _ev.get('n') and _ev.get('n') != st.session_state.get('vp_last_n'):
@@ -560,9 +563,13 @@ def render_value(league):
             if _new is not None:
                 st.session_state.vp_played = _new; st.session_state.vp_played_t = _time.time()
             else:
-                st.error('⚠ Το «το έπαιξα» ΔΕΝ αποθηκεύτηκε στο GitHub. Απάντηση: ' + (played_store.LAST_ERR or 'άγνωστο σφάλμα')
-                         + ' — συνήθως φταίει το κλειδί (GH_TOKEN): χρειάζεται πρόσβαση στο repo xg-dashboard με Contents: Read and write.')
+                st.session_state.vp_sync_off = True; st.session_state.vp_sync_err = played_store.LAST_ERR or 'άγνωστο σφάλμα'
+                st.rerun()
     else:
+        if st.session_state.get('vp_sync_off'):
+            _vp_msg.error('⚠ Το «το έπαιξα» ΔΕΝ αποθηκεύεται στο GitHub (κοινό για όλες τις συσκευές). Απάντηση GitHub: '
+                          + st.session_state.get('vp_sync_err', '') + ' — συνήθως φταίει το κλειδί GH_TOKEN (πρόσβαση στο repo xg-dashboard με '
+                          'Contents: Read and write). Προσωρινά: αποθήκευση μόνο σε αυτή τη συσκευή.')
         st.components.v1.html(value_view.picks_html(shown), height=_h_vp, scrolling=True)
     st.caption('🧮 = κομπιουτερακι: βαλε την τιμη (και γραμμη) που βρισκεις τωρα → edge ανα μοντελο με το ΤΡΕΧΟΝ μοντελο και την ελαχιστη τιμη που κραταει το pick (εθνικες: συναινεση = ≥2 απο τα 3 μοντελα πανω απο το οριο).')
     if eu_picks:
