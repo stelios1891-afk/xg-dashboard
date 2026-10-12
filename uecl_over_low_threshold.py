@@ -15,7 +15,7 @@ print('OVER κατηγοριας Α — κατωφλια (πρωτη εμφαν�
 for th in (-.10, -.06, -.04, -.02, 0, .02, .04, .06, .08):
     F = first_o(th); print(f'   ≥{100 * th:+4.0f}%  {cc(F)} · μοναδες {units(F):+5.1f}')
 print('\nΖΩΝΕΣ — τι προσθετει καθε σκαλι (picks που μπαινουν με το χαμηλοτερο αλλα οχι με το ψηλοτερο κατωφλι)')
-for lo, hi in ((-.10, -.04), (-.04, 0), (0, .02), (.02, .04)):
+for lo, hi in ((-.10, -.04), (-.04, -.02), (-.02, 0), (-.04, 0), (0, .02), (.02, .04)):
     a = first_o(lo); b = first_o(hi); band = a.merge(b[['i', 'bk']], on=['i', 'bk'], how='left', indicator=True); band = band[band._merge == 'left_only']
     bk = band.groupby('bk').pnl.mean(); ps = band.groupby('sea').pnl.mean(); pn = ps[ps.index.isin(NEW)]
     ok = bool((bk > 0).all()) and (ps > 0).sum() >= 3 and len(pn) == 2 and bool((pn > 0).all())
