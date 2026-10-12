@@ -86,6 +86,29 @@ def _when_ath(w):
         return (w or '').replace('T', ' ')
 
 
+def play_status(p):
+    """12/10/2026 (Στελιος «να ειναι ξεκαθαρο το δεν παιζεται»): → (παιζεται;, λογος). Ενα ξεκαθαρο σημα σε ΚΑΘΕ καρτα."""
+    if p.get('gone'):
+        return False, 'δεν ισχυει πια'
+    if p.get('stale'):
+        return False, 'αναμονη ανανεωσης αποτελεσματων'
+    if p.get('rule') == 'uel_home_fav_wait':
+        return False, 'αναμονη: κανονικο 12-36ω πριν'
+    if p.get('no_play'):
+        return False, 'σκια'
+    if p.get('paper_late'):
+        n = p.get('mkt_note') or ''
+        return False, ('τελευταιο 2ωρο' if '2ωρο' in n else ('αγορα κοντρα ≥1.5 απο το ανοιγμα' if 'κοντρα' in n else
+                       ('λιγα δεδομενα' if p.get('late_kind') == 'λιγα δεδομενα' else 'καταγραφη')))
+    if p.get('rule') == 'fav714':
+        return (p.get('side') == 1), 'κοντο φαβορι 7-14 εκτος'
+    if p.get('lg') == 'NBA':
+        return False, 'NBA σε καταγραφη'
+    if not (p.get('eu') or p.get('intl') or p.get('el')) and p.get('md') is not None and p.get('md') < 15:
+        return False, f"αγωνιστικη {p.get('md')} (<15)"
+    return True, ''
+
+
 def pick_card(p):
     side = p['side']
     over = side == 0                     # ευρωπαϊκο pick στα γκολ (Over)
@@ -100,6 +123,9 @@ def pick_card(p):
         tags += '<span class="tag lc">low-conf</span>'
     if p.get('eu'):
         tags += '<span class="tag eu">EU beta</span>'
+        _lm = (p.get('lim') or {}).get(p.get('lim_mkt') or 'spreads')      # 11/10 (Στελιος): τρεχον οριο Pinnacle της αγορας του pick
+        if _lm:
+            tags += f'<span class="tag" title="Τρεχον οριο Pinnacle ({"γκολ" if p.get("lim_mkt") == "totals" else "χαντικαπ"}), απο την τελευταια σαρωση">💰 οριο {_lm:g}</span>'
     if p.get('intl'):
         tags += f'<span class="tag eu" title="συναινεση μοντελων εθνικων">ΕΘΝ. · {_h.escape(p.get("models") or "")}</span>'
         if p.get('late'):
@@ -120,7 +146,7 @@ def pick_card(p):
             tags += f'<span class="tag eu" title="{_h.escape(p["travel"].get("note", ""))}">🧳 ταξιδι +{p["travel"].get("adj", 0):g}</span>'
         if p.get('old_agree') is not None:   # 1/10: συνολα αγων 1-10 — συμφωνει και το μοντελο χωρις προετοιμασια; (μονο ενδειξη)
             tags += (f'<span class="tag eu" title="Συνολο χωρις την ταση ποντων των φιλικων: {p.get("total_base")}">'
-                     + ('✓ και το παλιο' if p['old_agree'] else '✗ μονο με φιλικα') + '</span>')
+                     + ('ℹ ✓ και το παλιο' if p['old_agree'] else 'ℹ μονο με φιλικα (σημειωση)') + '</span>')
     if p.get('coach_notes') and not p.get('el'):   # 5/10: αλλαγη προπονητη στα εγχωρια (μονο πληροφορια· το φιλτρο κοβει ηδη τα «κακη και στα δυο»)
         tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 προπονητης</span>'
     if p.get('rule') == 'uel_home_fav':   # 9/10: UEL φαβορι εντος — ΚΑΝΟΝΙΚΟ (μιξη 80% xG, εισοδος 12-36ω)
@@ -171,10 +197,16 @@ def pick_card(p):
     pk = _h.escape(f"{p['lg']}|{p['home']}|{p['away']}|{p.get('mkt') or ''}|{str(p.get('bet') or side).split(' ')[0]}|{(p.get('when') or '')[:10]}", quote=True)   # 7/10: χωρις γραμμη (ιδια πλευρα = ιδιο pick)
     if p.get('first_note'):
         tags += f'<span class="tag" title="η γραμμη αλλαξε απο τοτε — ιδιο pick">{_h.escape(p["first_note"])}</span>'
+    _ok, _why = play_status(p)          # 12/10: ΞΕΚΑΘΑΡΟ σημα πρωτο στην καρτα
+    badge = ('<span style="background:#123d27;color:#4ee28f;border:1px solid #2f9d5e;border-radius:6px;padding:1px 7px;'
+             'font-weight:700;font-size:11px;margin-right:6px">✅ ΠΑΙΖΕΤΑΙ</span>') if _ok else             (f'<span style="background:#4a1518;color:#ff7b82;border:1px solid #b23a42;border-radius:6px;padding:1px 7px;'
+             f'font-weight:700;font-size:11px;margin-right:6px" title="{_h.escape(_why)}">⛔ ΔΕΝ ΠΑΙΖΕΤΑΙ · {_h.escape(_why)}</span>')
+    if not _ok and stake_v not in ('— (καταγραφη)', '— (σκια)', '— (αναμονη ανανεωσης)', '— (δες 🧮)', '— (αναμονη 12-36ω)'):
+        stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
     return f"""
-<div class="pc {hi} {'np' if (p.get('no_play') or p.get('paper_late') or p.get('stale') or p.get('gone')) else ''}" data-k="{pk}">
+<div class="pc {hi} {'np' if not _ok else ''}" data-k="{pk}">
   <div class="top">
-    <div class="lg">{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
+    <div class="lg">{badge}{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
     <div class="when">{_h.escape(_when_ath(p.get('when')))}<button class="played" onclick="tgPlayed(this)" title="Σημειωσε οτι το επαιξες (αποθηκευεται σε αυτη τη συσκευη)">☐ το έπαιξα</button></div>
   </div>
   <div class="mrow">
