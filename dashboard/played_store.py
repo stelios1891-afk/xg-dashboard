@@ -11,6 +11,7 @@ REPO = os.environ.get('GH_REPO_PLAYED', 'stelios1891-afk/xg-dashboard')
 PATH = 'played_picks.json'
 API = f'https://api.github.com/repos/{REPO}/contents/{PATH}'
 KEEP_MS = 14 * 86400 * 1000
+LAST_ERR = ''          # 13/10: τι απαντησε το GitHub στο τελευταιο σφαλμα (εμφανιζεται στη σελιδα)
 
 
 def _token():
@@ -35,9 +36,12 @@ def _get():
     t = _token()
     if not t:
         return None, None
+    global LAST_ERR
     r = requests.get(API, headers={'Authorization': f'Bearer {t}', 'Accept': 'application/vnd.github+json'}, params={'ref': 'main'}, timeout=15)
     if r.status_code == 404:
         return {}, None
+    if r.status_code != 200:
+        LAST_ERR = f'ανάγνωση HTTP {r.status_code}: {r.text[:160]}'
     r.raise_for_status()
     j = r.json()
     try:
@@ -61,6 +65,8 @@ def load():
 
 def toggle(key, on, tries=3):
     """Σημειωνει/ξεσημειωνει ενα pick. → νεο dict ή None αν απετυχε."""
+    global LAST_ERR
+    LAST_ERR = ''
     if FAKE and key:
         d = load(); d = dict(d or {})
         if on: d[key] = int(time.time() * 1000)
@@ -88,7 +94,10 @@ def toggle(key, on, tries=3):
                 return data
             if r.status_code == 409:          # αλλαξε στο μεταξυ (αλλη συσκευη / scanner) → ξαναδιαβαζω
                 continue
+            LAST_ERR = f'εγγραφή HTTP {r.status_code}: {r.text[:160]}'
             return None
-        except Exception:
+        except Exception as e:
+            if not LAST_ERR:
+                LAST_ERR = f'{type(e).__name__}: {str(e)[:160]}'
             time.sleep(1)
     return None

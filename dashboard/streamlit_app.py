@@ -560,7 +560,8 @@ def render_value(league):
             if _new is not None:
                 st.session_state.vp_played = _new; st.session_state.vp_played_t = _time.time()
             else:
-                st.warning('⚠ Το «το έπαιξα» δεν αποθηκεύτηκε (σφάλμα GitHub) — ξαναπάτα σε λίγο.')
+                st.error('⚠ Το «το έπαιξα» ΔΕΝ αποθηκεύτηκε στο GitHub. Απάντηση: ' + (played_store.LAST_ERR or 'άγνωστο σφάλμα')
+                         + ' — συνήθως φταίει το κλειδί (GH_TOKEN): χρειάζεται πρόσβαση στο repo xg-dashboard με Contents: Read and write.')
     else:
         st.components.v1.html(value_view.picks_html(shown), height=_h_vp, scrolling=True)
     st.caption('🧮 = κομπιουτερακι: βαλε την τιμη (και γραμμη) που βρισκεις τωρα → edge ανα μοντελο με το ΤΡΕΧΟΝ μοντελο και την ελαχιστη τιμη που κραταει το pick (εθνικες: συναινεση = ≥2 απο τα 3 μοντελα πανω απο το οριο).')
