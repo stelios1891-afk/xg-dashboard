@@ -1,9 +1,33 @@
 {
- "scanned_at": "2026-10-12T11:12+00:00",
+ "scanned_at": "2026-10-12T11:18+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
- "picks": []
+ "picks": [
+  {
+   "lg": "BCL",
+   "paper": false,
+   "home": "Nanterre",
+   "away": "Rytas Vilnius",
+   "hcode": "SA51NIt1",
+   "acode": "d2OmwT1J",
+   "code": "pin1637833092",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-13T18:00",
+   "bcl": true,
+   "model": "BCL: (1−0.75)·μονο BCL (περσι 1.4, λ 8, HL 9999, τυχη 0.5) +",
+   "mkt": "hcap",
+   "side": -1,
+   "hcap": 1.5,
+   "odds": 1.901,
+   "edge": 0.2524,
+   "proj_odds": 1.52,
+   "model_line": 3.4,
+   "mkt_line": -1.5,
+   "hrs_birth": 30.7
+  }
+ ]
 }
