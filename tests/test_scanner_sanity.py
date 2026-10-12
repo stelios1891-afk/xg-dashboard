@@ -781,9 +781,10 @@ def test_e_zone_role_and_thresholds():
                 bad.append(f'{_elab(p)}: dog edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
             if ucl and e < 0.10 and p.get('band') != '4-10':
                 bad.append(f'{_elab(p)}: UCL dog στη ζωνη 4-10% χωρις band="4-10"')
-        elif role == 'over':
-            if e < 0.04 - EPS:
-                bad.append(f'{_elab(p)}: over edge {e*100:.1f}% < 4%')
+        elif role == 'over':                     # 12/10/2026: Conference (κατηγορια Α) over ≥ −2% (EDGE_OVER_UECL), αλλου ≥4%
+            thr = -0.02 if comp == 'ConferenceLeague' else 0.04
+            if e < thr - EPS:
+                bad.append(f'{_elab(p)}: over edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
         elif role == 'dnb':                      # 10/10/2026: DNB ΜΟΝΟ Champions League, γραμμη 0, edge ≥4%
             if not ucl:
                 bad.append(f'{_elab(p)}: DNB εκτος Champions League')
