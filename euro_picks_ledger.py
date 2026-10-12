@@ -83,7 +83,9 @@ def entries(picks, t, have):
 # UEL φαβορι εντος (rule uel_home_fav). ΟΧΙ Conference League («να το δουλεψουμε πρωτα»), ΟΧΙ σκιες.
 # 10/10 (βραδυ, «περνα 4% για over και 10% για under»): + ΣΥΝΟΛΑ Champions League (over ≥4%, under ≥10%) — ΟΧΙ UEL/UECL συνολα.
 # 10/10 («περνα μονο τα dnb»): + DNB Champions League (γραμμη 0, ≥4%). Ενα μηνυμα ανα pick, τη στιγμη που γραφεται στο ημερολογιο (πρωτη εμφανιση ≤72ω· UEL στο παραθυρο 12-36ω).
-TG_COMPS = {'ChampionsLeague'}
+# 12/10/2026 (Στελιος «θελω να ερχονται στο telegram και να μετρανε σαν κανονικα picks»): + CONFERENCE LEAGUE — κατηγορια Α:
+# φαβορι ≥4%, αουτσαιντερ ≥10%, over ≥−2% (οι σκιες/no_play ΟΧΙ). Τα UECL ηταν ηδη κανονικα στο ημερολογιο, τωρα και Telegram.
+TG_COMPS = {'ChampionsLeague', 'ConferenceLeague'}
 COMP_LAB = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League', 'ConferenceLeague': 'Conference League'}
 _DAYS = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
 
