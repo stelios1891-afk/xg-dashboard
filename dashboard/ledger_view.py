@@ -581,7 +581,9 @@ def enrich(rows, played=None):
             elif r.get('lg') == 'NBA':
                 st_, why = 'Καταγραφή', 'NBA σε καταγραφή'
         elif r.get('euro'):
-            if r.get('no_play'):
+            if r.get('rule') == 'late2h':                         # 13/10: UCL χαντικαπ που πρωτοβγηκε <2ω πριν
+                st_, why = 'Καταγραφή', 'τελευταίο 2ωρο (ενδεκάδες)'
+            elif r.get('no_play'):
                 st_, why = 'Σκιά', 'σκιά (δεν παίζεται)'
         elif not r.get('intl'):                                   # εγχωρια ποδοσφαιρα
             if r.get('rule') == 'fav714':
@@ -593,7 +595,8 @@ def enrich(rows, played=None):
         if r.get('bk'):
             rule = f"{r['lg']} · {r['_mkt'].lower()} · {r['_side'].lower()}"
         elif r.get('euro'):
-            rule = 'UEL φαβορί εντός' if r.get('rule') == 'uel_home_fav' else f"{r['lg']} · {r['_side'].lower()}"
+            rule = ('UEL φαβορί εντός' if r.get('rule') == 'uel_home_fav' else
+                    f"{r['lg']} · χάντικαπ τελ. 2ωρο (καταγραφή)" if r.get('rule') == 'late2h' else f"{r['lg']} · {r['_side'].lower()}")
         elif r.get('intl'):
             rule = f"Εθνικές · {r['_mkt'].lower()}"
         else:

@@ -750,7 +750,11 @@ def test_e_uel_only_as_shadow():
             if p.get('no_play') is not True:
                 bad.append(f'{_elab(p)}: UEL pick ΧΩΡΙΣ no_play=True (UEL κλειστο 11/9, μονο σκια)')
         elif c in EURO_ALLOWED:
-            if p.get('no_play'):
+            # 13/10/2026: εξαιρεσεις UCL με no_play = late2h (χαντικαπ που πρωτοβγαινει <2ω) & nonfm_fav_shadow (σκια κατηγοριας Β)
+            if p.get('rule') == 'late2h':
+                if c != 'ChampionsLeague' or p.get('role') not in ('fav', 'dog') or p.get('no_play') is not True:
+                    bad.append(f'{_elab(p)}: late2h εκτος κανονα (μονο UCL φαβορι/αουτσαιντερ, no_play=True)')
+            elif p.get('no_play') and not (c == 'ChampionsLeague' and p.get('rule') == 'nonfm_fav_shadow'):
                 bad.append(f'{_elab(p)}: no_play σε {c} (μονο το UEL ειναι σκια)')
         else:
             bad.append(f'{_elab(p)}: αγνωστη διοργανωση {c!r}')

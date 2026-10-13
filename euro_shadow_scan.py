@@ -177,6 +177,7 @@ def main():
     EDGE_DNB_UCL = 0.04            # 10/10/2026: DNB (γραμμη 0) μονο UCL, FotMob και οι 2
     NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
     EDGE_FAV_UCL = 0.10
+    LATE2H_UCL = 2.0               # 13/10/2026: UCL χαντικαπ που πρωτοβγαινει <2ω πριν = καταγραφη (rule late2h)
     EDGE_DOG_UCL = 0.04
     # OVERS στα picks (εντολη Στελιου 10/9): συνθεση W2 (πεναλτι 0.76, ζευγος xgh_ou/xga_ou),
     # ΜΟΝΟ FotMob ματς, καθαρο quarter pricing στη γραμμη της αγορας, κατωφλι 4%.
@@ -326,10 +327,32 @@ def main():
     hf = {p['mid'] for p in picks_out if str(p.get('rule') or '').startswith('uel_home_fav')}
     picks_out = [p for p in picks_out if not (p['mid'] in hf and p['comp'] == 'EuropaLeague' and p['side'] == 1
                                               and p['role'] == 'fav' and not p.get('rule'))]
+    # UCL ΧΑΝΤΙΚΑΠ ΤΕΛΕΥΤΑΙΟΥ 2ΩΡΟΥ = ΚΑΤΑΓΡΑΦΗ (13/10/2026, Στελιος «περνα το 1» — «επηρεαζεται απο ενδεκαδες που το μοντελο δεν ξερει»):
+    # φαβορι/αουτσαιντερ Champions League που ΠΡΩΤΟΒΓΑΙΝΟΥΝ < 2ω πριν τη σεντρα → no_play, rule='late2h' (ημερολογιο ναι, Telegram οχι).
+    # ucl_last2h_test / ucl_late_picks_table: χαντικαπ −13% (21, 2022-26) / −28% (14, νεα μορφη, 0/2)· φαβορι περνα κριτηρια (1ω & 3ω, 2 βιβλια).
+    # «Πρωτη εμφανιση» = δεν υπαρχει ηδη στο euro_picks_ledger (ενα κλειδι ανα ματς/πλευρα)· αν γραφτηκε late2h, μενει late2h ως τη σεντρα.
+    try:
+        _led = {}
+        for _ln in open(os.path.join(ROOT, 'euro_picks_ledger.jsonl'), encoding='utf-8'):
+            if _ln.strip():
+                _r = json.loads(_ln); _led[_r.get('key')] = _r
+    except Exception:
+        _led = {}
+    for p in picks_out:
+        if p['comp'] != 'ChampionsLeague' or p.get('role') not in ('fav', 'dog') or p.get('no_play') or p.get('rule'):
+            continue
+        prev = _led.get(f"{p['mid']}|{p['side']}")
+        try:
+            hb = (datetime.datetime.fromisoformat(str(p['ko']).replace('Z', '+00:00')) - now).total_seconds() / 3600
+        except Exception:
+            continue
+        if (prev is not None and prev.get('rule') == 'late2h') or (prev is None and 0 < hb < LATE2H_UCL):
+            p.update(no_play=True, rule='late2h',
+                     note='📝 βγήκε στο τελευταίο 2ωρο — καταγραφή, δεν παίζεται (ενδεκάδες· ιστορικά UCL χάντικαπ εδώ −13%)')
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
-                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_over_uecl=EDGE_OVER_UECL, edge_under_ucl=EDGE_UNDER_UCL, edge_dnb_ucl=EDGE_DNB_UCL,
+                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_over_uecl=EDGE_OVER_UECL, edge_under_ucl=EDGE_UNDER_UCL, edge_dnb_ucl=EDGE_DNB_UCL, late2h_ucl_hours=LATE2H_UCL,
                               zone=[1.70, 2.10],
                               no_play_comps=['EuropaLeague'],
                               uel_home_fav=dict(edge=UEL_HF_EDGE, hours=list(UEL_HF_WIN), blend_xg=0.8,

@@ -113,8 +113,9 @@ def _athens(ko):
 # 13/10/2026 (Στελιος «αν προκυπτουν μπετς το τελευταιο 2ωρο να ερχεται στο αλερτ και αυτο το αποτελεσμα … να μου το θυμιζει»):
 # ΣΗΜΕΙΩΣΗ μονο (το pick μενει κανονικο). ucl_last2h_test: Champions League, πρωτη εμφανιση <2ω πριν τη σεντρα —
 # χαντικαπ −13% (21 picks 2022-26) / −28% (14, νεα μορφη, 0/2 σεζον)· συνολα θετικα (over +17% 13 · under +35% 6). Μικρο δειγμα.
-LATE2H_NOTE = {'AH': '⏱ βγήκε στο τελευταίο 2ωρο · ιστορικά τα χάντικαπ UCL εδώ −13% (21 picks· νέα μορφή −28%) · μικρό δείγμα',
-               'TOT': '⏱ βγήκε στο τελευταίο 2ωρο · ιστορικά τα σύνολα UCL εδώ θετικά (over +17%, under +35%) · μικρό δείγμα'}
+# 13/10 (αργοτερα, «περνα το 1»): τα ΧΑΝΤΙΚΑΠ UCL του τελευταιου 2ωρου εγιναν ΚΑΤΑΓΡΑΦΗ (euro_shadow_scan rule late2h, no_play) → δεν
+# στελνονται· η σημειωση μενει μονο για τα ΣΥΝΟΛΑ (κανονικα).
+LATE2H_NOTE = {'TOT': '⏱ βγήκε στο τελευταίο 2ωρο · ιστορικά τα σύνολα UCL εδώ θετικά (over +17%, under +35%) · μικρό δείγμα'}
 
 
 def _late2h(r):
@@ -138,8 +139,6 @@ def tg_msg(rows):
             continue
         team = r['home'] if r['side'] == 1 else r['away']
         tag = (NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else ''
-        if _late2h(r) and r.get('role') in ('fav', 'dog'):
-            tag += NL + LATE2H_NOTE['AH']
         out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
                    (f"{r['home']} - {r['away']}, {team} DNB (0) @{r['odds']:.2f}" if r.get('role') == 'dnb' else
                     f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}") + NL +

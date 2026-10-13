@@ -411,7 +411,10 @@ def _euro_picks():
                  home_id=p.get('hid'), away_id=p.get('aid'),
                  side=p['side'], hcap=p['line'], odds=p['odds'], edge=p['edge'],
                  proj_odds=p.get('proj_odds'), when=str(p.get('ko') or '').replace('Z', '')[:16],
-                 eu=True, tag75=bool(p.get('tag75')), no_play=bool(p.get('no_play')),
+                 eu=True, tag75=bool(p.get('tag75')),
+                 # 13/10: UCL χαντικαπ τελευταιου 2ωρου (rule late2h) = «📝 καταγραφη · τελευταιο 2ωρο», οχι «ΣΚΙΑ»
+                 no_play=bool(p.get('no_play')) and p.get('rule') != 'late2h',
+                 paper_late=(p.get('rule') == 'late2h'), mkt_note=(p.get('note') if p.get('rule') == 'late2h' else None),
                  rule=p.get('rule'), eu_note=p.get('note'),       # 9/10: rule uel_home_fav(_wait) = UEL φαβορι εντος
                  lim=p.get('lim'), lim_mkt=('totals' if p.get('role') in ('over', 'under') else 'spreads'))   # 11/10: οριο Pinnacle στην καρτα
         if p.get('role') in ('over', 'under'):
