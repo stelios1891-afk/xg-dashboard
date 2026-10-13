@@ -555,8 +555,9 @@ def render_value(league):
                 st.session_state.vp_played = _d; st.session_state.vp_played_t = _time.time()
             elif played_store.LAST_ERR:
                 _vp_msg.error('⚠ «το έπαιξα»: δεν διαβάζεται το GitHub — ' + played_store.LAST_ERR)
-        _ev = _vp_comp(html=value_view.picks_html(shown), played=st.session_state.get('vp_played', {}), sync=True, height=_h_vp,
-                       key='vp_cards', default=None)
+        # 13/10: το πατημα επεξεργαζεται ΠΡΙΝ ξανασχεδιαστει η λιστα (η τιμη του component υπαρχει ηδη στο session_state) —
+        # αλλιως η λιστα εβγαινε πρωτα με την παλια κατασταση και το «το έπαιξα» ξεπρασινιζε (ηθελε 2 πατηματα)
+        _ev = st.session_state.get('vp_cards')
         if isinstance(_ev, dict) and _ev.get('n') and _ev.get('n') != st.session_state.get('vp_last_n'):
             st.session_state.vp_last_n = _ev['n']
             _new = played_store.toggle(_ev.get('k'), bool(_ev.get('on')))
@@ -565,6 +566,8 @@ def render_value(league):
             else:
                 st.session_state.vp_sync_off = True; st.session_state.vp_sync_err = played_store.LAST_ERR or 'άγνωστο σφάλμα'
                 st.rerun()
+        _vp_comp(html=value_view.picks_html(shown), played=st.session_state.get('vp_played', {}), sync=True, height=_h_vp,
+                 key='vp_cards', default=None)
     else:
         if st.session_state.get('vp_sync_off'):
             _vp_msg.error('⚠ Το «το έπαιξα» ΔΕΝ αποθηκεύεται στο GitHub (κοινό για όλες τις συσκευές). Απάντηση GitHub: '

@@ -328,9 +328,13 @@ PLAYED_JS = """<script>
     });
     var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (S?' · 🔄 κοινό σε όλες τις συσκευές':(ok?' · μόνο σε αυτή τη συσκευή':' (ο browser δεν επιτρέπει αποθήκευση)'));
   }
+  var pend={};   // 13/10: πατηματα που δεν εχει επιβεβαιωσει ακομα ο server (κρατανε την κατασταση τους ως 20″)
   window.tgPlayed=function(btn){ var c=btn.closest('.pc'); var k=c.getAttribute('data-k'); var on=!mem[k]; if(on) mem[k]=Date.now(); else delete mem[k];
-    if(S){ window.VP_SYNC.send(k, on); } else { save(); } paint(); };
-  window.vpRepaint=function(){ if(window.VP_SYNC && window.VP_SYNC.on){ S=true; mem=window.VP_SYNC.played||{}; } paint(); };
+    if(S){ pend[k]={on:on, t:Date.now()}; window.VP_SYNC.send(k, on); } else { save(); } paint(); };
+  window.vpRepaint=function(){
+    if(window.VP_SYNC && window.VP_SYNC.on){ S=true; var srv=window.VP_SYNC.played||{}; mem={}; for(var k in srv) mem[k]=srv[k];
+      var now=Date.now(); for(var k in pend){ var p=pend[k]; if(now-p.t>20000 || (!!srv[k])===p.on){ delete pend[k]; continue; } if(p.on) mem[k]=p.t; else delete mem[k]; } }
+    paint(); };
   window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); document.querySelectorAll('.pf').forEach(function(x){x.classList.toggle('on', x===btn);}); paint(); };
   paint();
 })();
