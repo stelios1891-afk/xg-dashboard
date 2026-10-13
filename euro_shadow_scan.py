@@ -174,6 +174,13 @@ def main():
     # τα γκολ στα UECL FotMob+FotMob (xG +0.10/πλευρα, τυφλο over +14.5% 4/4)· ζωνες 4→2→0→−2% ολες ✓ κανονα UCL (θετικες 2 βιβλια,
     # ≥3/4 σεζον, 2 νεας μορφης), −2→−4% ✗ → κατωφλι −2% (106 picks +26.5%, +28.2μ). Ελεγχος ανα αγωνιστικη: uecl_monitor.py.
     EDGE_OVER_UECL = -0.02
+    # CONFERENCE ΚΑΤΗΓΟΡΙΑ Β (μια ομαδα χωρις FotMob) — 13/10/2026, Στελιος «βαλε και τα under και τα αουτσαιντερ Β κανονικα»:
+    #  ΑΟΥΤΣΑΙΝΤΕΡ = η ομαδα ΧΩΡΙΣ FotMob οταν παιρνει ≥0.5, p_cover, edge ≥10%, ΧΩΡΙΣ διορθωση (uecl_b_dog_test: 63 picks +25.2% 4/4,
+    #   Κ1-Κ4 + γειτονικα 5/5, τυφλα +15.4%, αξια xG +8.7%· αιτια = στο UEL/UECL οι αποστασεις κλεινουν, compression_battery). Φαβορι Β ΠΟΤΕ (−23.5%).
+    #  UNDER ≥14% (uecl_battery: 42 picks +42.9% 4/5, CLV +0.10 γκολ 65% προς εμας, αξια xG +13.7%· η αγορα πεφτει 12→8ω πριν).
+    #  Over Β ΟΧΙ (−1.7%). Ματς Γ (καμια FotMob) εκτος.
+    EDGE_DOG_UECL_B = 0.10
+    EDGE_UNDER_UECL_B = 0.14
     EDGE_DNB_UCL = 0.04            # 10/10/2026: DNB (γραμμη 0) μονο UCL, FotMob και οι 2
     NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
     EDGE_FAV_UCL = 0.10
@@ -197,7 +204,7 @@ def main():
         # under −22.9% 0/4, UEL/UECL δεν επαναλαμβανεται· διορθωση χασματος ✗ ucl_gap_totals_test). Χαντικαπ/under: μονο FotMob+FotMob.
         fm_both = m.get('src_h') == 'FotMob' and m.get('src_a') == 'FotMob'
         fm_one = (m.get('src_h') == 'FotMob') != (m.get('src_a') == 'FotMob')
-        if not fm_both and not (fm_one and m['comp'] == 'ChampionsLeague'):
+        if not fm_both and not (fm_one and m['comp'] in ('ChampionsLeague', 'ConferenceLeague')):   # 13/10: + UECL Β (μονο dogs χωρις FotMob & under)
             continue                     # 10/10: ματς χωρις FotMob ΚΑΙ στις 2 ομαδες (κατηγορια Γ) → εκτος (Στελιος «αστα στην ακρη»)
         mk = O.get(str(m['mid']))
         if not mk or mk.get('line') is None:
@@ -262,6 +269,24 @@ def main():
                         tag75=False, xgh=m['xgh'], xga=m['xga'], when=mk.get('when'), lim=mk.get('lim'),
                         rule='nonfm_fav_shadow', src=f"{m.get('src_h')}/{m.get('src_a')}", no_play=True,
                         note='👁 ΣΚΙΑ — χάντικαπ υπέρ μεγάλης, ομάδα χωρίς FotMob (καταγραφή, δεν παίζεται)'))
+        # --- CONFERENCE Β: ΑΟΥΤΣΑΙΝΤΕΡ ΧΩΡΙΣ FotMob (κανονικο pick, 13/10/2026) ---
+        if fm_one and m['comp'] == 'ConferenceLeague':
+            sm = -1 if m.get('src_h') == 'FotMob' else 1                 # πλευρα της ομαδας ΧΩΡΙΣ FotMob
+            ln = lf if sm == 1 else -lf
+            o = mk.get('oh') if sm == 1 else mk.get('oa')
+            if o and 1.70 <= float(o) <= 2.10 and ln >= 0.5:
+                pw, pp = picks.p_cover(dist, sm, ln)
+                e_d = edge_of(pw, pp, float(o))
+                if e_d >= EDGE_DOG_UECL_B:
+                    picks_out.append(dict(
+                        mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
+                        home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
+                        team=(m['home'] if sm == 1 else m['away']), side=int(sm), line=round(ln, 2), odds=round(float(o), 2),
+                        edge=round(e_d, 4), role='dog', band=None,
+                        proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
+                        tag75=False, xgh=m['xgh'], xga=m['xga'], when=mk.get('when'), lim=mk.get('lim'),
+                        rule='uecl_b_dog', src=f"{m.get('src_h')}/{m.get('src_a')}", no_play=False,
+                        note='Conference Β — αουτσάιντερ χωρίς FotMob'))
         # --- UEL ΦΑΒΟΡΙ ΕΝΤΟΣ (κανονικο pick) ---
         if m['comp'] == 'EuropaLeague' and str(m['mid']) in L80:
             hb = (ko - now).total_seconds() / 3600
@@ -287,8 +312,8 @@ def main():
                               (f'⏳ UEL φαβορί εντός — γίνεται κανονικό 12-36ω πριν τη σέντρα (τώρα {hb:.0f}ω), αν μείνει edge ≥4%'
                                if hb > UEL_HF_WIN[1] else '⌛ UEL φαβορί εντός — πέρασε το παράθυρο εισόδου (12-36ω)'))))
         # --- OVERS (W2) ---
-        if (m.get('xgh_ou') is not None and mk.get('tl') is not None and mk.get('to')
-                and 1.70 <= float(mk['to']) <= 2.10):
+        if ((fm_both or m['comp'] == 'ChampionsLeague') and m.get('xgh_ou') is not None and mk.get('tl') is not None and mk.get('to')
+                and 1.70 <= float(mk['to']) <= 2.10):      # 13/10: over στα ματς χωρις FotMob ΜΟΝΟ UCL (UECL Β over −1.7%)
             td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
             po, pu = p_over(td, float(mk['tl']))
             e_o = po * (float(mk['to']) - 1) * (1 - picks.MARGIN) - pu
@@ -307,13 +332,14 @@ def main():
                     src=(None if fm_both else f"{m.get('src_h')}/{m.get('src_a')}"),
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else
                           (None if fm_both else 'ομάδα χωρίς FotMob — μόνο over (10/10)'))))
-        # --- UNDERS (W2 + ισοπαλιες ×scale) — ΜΟΝΟ UCL, ΜΟΝΟ FotMob+FotMob ---
-        if (fm_both and m['comp'] == 'ChampionsLeague' and m.get('xgh_ou') is not None and mk.get('tl') is not None
+        # --- UNDERS (W2 + ισοπαλιες ×scale) — UCL FotMob+FotMob ≥10% · 13/10: + CONFERENCE Β (μια χωρις FotMob) ≥14% ---
+        uecl_b = fm_one and m['comp'] == 'ConferenceLeague'
+        if (((fm_both and m['comp'] == 'ChampionsLeague') or uecl_b) and m.get('xgh_ou') is not None and mk.get('tl') is not None
                 and mk.get('tu') and 1.70 <= float(mk['tu']) <= 2.10):
             td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
             po, pu = p_over(td, float(mk['tl']))
             e_u = pu * (float(mk['tu']) - 1) * (1 - picks.MARGIN) - po
-            if e_u >= EDGE_UNDER_UCL:
+            if e_u >= (EDGE_UNDER_UECL_B if uecl_b else EDGE_UNDER_UCL):
                 picks_out.append(dict(
                     mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
@@ -323,7 +349,8 @@ def main():
                     proj_odds=round((1 - max(1 - po - pu, 0)) / pu, 3) if pu > 0 else None,
                     tag75=False,
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'), lim=mk.get('lim'),
-                    no_play=False, note=None))
+                    rule=('uecl_b_under' if uecl_b else None), src=(f"{m.get('src_h')}/{m.get('src_a')}" if uecl_b else None),
+                    no_play=False, note=('Conference Β — under' if uecl_b else None)))
     hf = {p['mid'] for p in picks_out if str(p.get('rule') or '').startswith('uel_home_fav')}
     picks_out = [p for p in picks_out if not (p['mid'] in hf and p['comp'] == 'EuropaLeague' and p['side'] == 1
                                               and p['role'] == 'fav' and not p.get('rule'))]
@@ -352,7 +379,7 @@ def main():
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
-                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_over_uecl=EDGE_OVER_UECL, edge_under_ucl=EDGE_UNDER_UCL, edge_dnb_ucl=EDGE_DNB_UCL, late2h_ucl_hours=LATE2H_UCL,
+                              edge_dog_ucl=EDGE_DOG_UCL, edge_over=EDGE_OVER, edge_over_uecl=EDGE_OVER_UECL, edge_under_ucl=EDGE_UNDER_UCL, edge_dog_uecl_b=EDGE_DOG_UECL_B, edge_under_uecl_b=EDGE_UNDER_UECL_B, edge_dnb_ucl=EDGE_DNB_UCL, late2h_ucl_hours=LATE2H_UCL,
                               zone=[1.70, 2.10],
                               no_play_comps=['EuropaLeague'],
                               uel_home_fav=dict(edge=UEL_HF_EDGE, hours=list(UEL_HF_WIN), blend_xg=0.8,

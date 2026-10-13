@@ -778,6 +778,8 @@ def test_e_zone_role_and_thresholds():
             if e < thr - EPS:
                 bad.append(f'{_elab(p)}: φαβορι edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
         elif role == 'dog':
+            if p.get('rule') == 'uecl_b_dog' and comp != 'ConferenceLeague':      # 13/10/2026: αουτσαιντερ χωρις FotMob, μονο Conference Β
+                bad.append(f'{_elab(p)}: uecl_b_dog εκτος Conference')
             if ln < 0.5 - EPS:
                 bad.append(f'{_elab(p)}: dog με line {ln} (περιμενα >= +0.5)')
             thr = 0.04 if ucl else 0.10
@@ -797,10 +799,13 @@ def test_e_zone_role_and_thresholds():
             if e < 0.04 - EPS:
                 bad.append(f'{_elab(p)}: DNB edge {e*100:.1f}% < 4%')
         elif role == 'under':                    # 10/10/2026: ΜΟΝΟ Champions League, edge ≥10%
-            if not ucl:
-                bad.append(f'{_elab(p)}: under εκτος Champions League')
-            if e < 0.10 - EPS:
-                bad.append(f'{_elab(p)}: under edge {e*100:.1f}% < 10%')
+            # 13/10/2026: + Conference κατηγορια Β (rule uecl_b_under) με κατωφλι 14%
+            uecl_b = comp == 'ConferenceLeague' and p.get('rule') == 'uecl_b_under'
+            if not (ucl or uecl_b):
+                bad.append(f'{_elab(p)}: under εκτος Champions League / Conference Β')
+            thr_u = 0.14 if uecl_b else 0.10
+            if e < thr_u - EPS:
+                bad.append(f'{_elab(p)}: under edge {e*100:.1f}% < {thr_u*100:.0f}%')
         else:
             bad.append(f'{_elab(p)}: αγνωστος ρολος {role!r}')
     assert not bad, 'ευρωπαικα picks εκτος κανονων:\n' + '\n'.join(bad)

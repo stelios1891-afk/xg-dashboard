@@ -135,10 +135,12 @@ def tg_msg(rows):
             out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
                        f"{r['home']} - {r['away']}, {'Over' if r['mkt'] == 'OVER' else 'Under'} {r['line']:g} @{r['odds']:.2f}" + NL +
                        f"edge {r['edge'] * 100:.0f}% · γκολ" + (f" · όριο Pinnacle {lim:,.0f}".replace(',', '.') if lim else '')
-                       + (NL + LATE2H_NOTE['TOT'] if _late2h(r) else ''))
+                       + (NL + LATE2H_NOTE['TOT'] if _late2h(r) else '')
+                       + (NL + 'Conference Β · ομάδα χωρίς FotMob' if r.get('rule') == 'uecl_b_under' else ''))   # 13/10
             continue
         team = r['home'] if r['side'] == 1 else r['away']
-        tag = (NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else ''
+        tag = ((NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else
+               (NL + 'Conference Β · αουτσάιντερ χωρίς FotMob') if r.get('rule') == 'uecl_b_dog' else '')   # 13/10
         out.append(NL + f"📅 {_DAYS[lk.weekday()]} {lk.strftime('%d/%m %H:%M')} · {COMP_LAB.get(r['comp'], r['comp'])}" + NL +
                    (f"{r['home']} - {r['away']}, {team} DNB (0) @{r['odds']:.2f}" if r.get('role') == 'dnb' else
                     f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}") + NL +
