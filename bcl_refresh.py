@@ -43,7 +43,7 @@ if KX > 0:
                     if _t and _n: _nm.setdefault(_t, set()).add(_n)
         _OR = json.load(open('bcl_outrights.json', encoding='utf-8')); _Z = {}
         for _k, _v in _OR.items():
-            if not _k.startswith(f'U{CUR}'): continue
+            if _k != f'U{CUR}': continue        # 13/10/2026 Στελιος «μη χρησιμοποιησεις 2ο βιβλιο, παρε απλα τις Novibet»: το 2ο (U2026_foxbet) ειχε ΜΟΝΟ τις 8 πρωτες → z μεσα στα 8 = λαθος ποινη στις 6η-8η
             _p = {n: 1 / o for n, o in _v['odds'].items() if o and o > 1}; _s = sum(_p.values())
             _lp = {n: math.log(x / _s) for n, x in _p.items()}; _mu = np.mean(list(_lp.values())); _sd = np.std(list(_lp.values())) or 1
             for n, x in _lp.items():
