@@ -117,7 +117,7 @@ for key, L in FG.items():
             if t and comp == 'BCL' and int(y) == CUR: bcl_now.add(t)
 # 7/10 (Στελιος «βαλε τη σημειωση, περιμενουμε 3-4 αγωνιστικες και μετα παιζουμε»): ομαδες BCL ΧΩΡΙΣ κανενα ματς στη μηχανη πριν τη φετινη σεζον
 # (σημερα Σλαβια, Παρντουμπιτσε) → {κωδικος: ματς BCL φετος}· τα picks τους = καταγραφη ως το LOWINFO_N-οστο ματς (bcl_picks)
-_hist = {t for r in rows if r[0] < CUR for t in (r[3], r[4])}
+_hist = {t for r in rows if r[0] < CUR and r[1] != 'PRE' for t in (r[3], r[4])}   # 13/10/2026 (Στελιος «περνα το»): ΜΟΝΟ επισημα ματς — τα φιλικα προηγουμενων ετων εκαναν τη Σλαβια «με ιστορικο» (Bilbao −14.5 edge 85% ως κανονικο)
 _nb = collections.Counter(t for r in rows if r[0] == CUR and r[1] == 'BCL' and r[5] is not None for t in (r[3], r[4]))
 lowinfo = {t: int(_nb.get(t, 0)) for t in bcl_now if t not in _hist}
 print('ομαδες χωρις ιστορικο:', {(names.get(t) and sorted(names[t])[0]) or t: n for t, n in lowinfo.items()})
