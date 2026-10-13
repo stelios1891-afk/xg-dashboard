@@ -55,6 +55,19 @@ def open_picks(now):
         if r.get('no_play') or r.get('pnl') is not None or ko is None or ko <= now:
             continue
         act.setdefault(str(r['mid']), []).append(r)
+    # 11/10/2026 (Στελιος «παιζω και νωριτερα αν εχω ορια»): ΚΑΙ τα κανονικα picks που ΗΔΗ φαινονται στα Value Picks
+    # (euro_value_latest) πριν μπουν στο ημερολογιο (εκεινο γραφει απο τις 72ω) — το Telegram των picks δεν αλλαζει.
+    for p in _load(F('euro_value_latest.json'), {}).get('picks', []):
+        ko = _dt(p.get('ko'))
+        if p.get('no_play') or ko is None or ko <= now:
+            continue
+        mkt = 'OVER' if p.get('role') == 'over' else ('UNDER' if p.get('role') == 'under' else 'AH')
+        have = act.get(str(p['mid']), [])
+        if any(r.get('mkt') == mkt and (mkt != 'AH' or r.get('side') == p.get('side')) for r in have):
+            continue
+        act.setdefault(str(p['mid']), []).append(dict(mid=str(p['mid']), comp=p.get('comp'), home=p.get('home'), away=p.get('away'),
+                                                      ko=p.get('ko'), mkt=mkt, role=p.get('role'), side=p.get('side'),
+                                                      line=float(p.get('line') or 0), odds=float(p.get('odds') or 0), early=True))
     return act
 
 
@@ -63,14 +76,14 @@ def pick_line(r, o):
     if r.get('mkt') in ('OVER', 'UNDER'):
         side = 'Over' if r['mkt'] == 'OVER' else 'Under'
         now_ = f"τώρα {side} {o['tl']:g} @{o['to' if side == 'Over' else 'tu']}" if o.get('tl') is not None else ''
-        return f"pick: {side} {r['line']:g} @{r['odds']:.2f}" + (f' ({now_})' if now_ else '')
+        return f"pick: {side} {r['line']:g} @{r['odds']:.2f}" + (f' ({now_})' if now_ else '') + (' · (Value Picks, πριν το Telegram)' if r.get('early') else '')
     team = r['home'] if r['side'] == 1 else r['away']
     ln = 'DNB (0)' if r.get('role') == 'dnb' else f"{'+' if r['line'] >= 0 else ''}{r['line']:g}"
     now_ = ''
     if o.get('line') is not None:
         L = o['line'] if r['side'] == 1 else -o['line']
         now_ = f"τώρα {'0' if abs(L) < 1e-9 else (('+' if L > 0 else '') + f'{L:g}')} @{o['oh'] if r['side'] == 1 else o['oa']}"
-    return f"pick: {team} {ln} @{r['odds']:.2f}" + (f' ({now_})' if now_ else '')
+    return f"pick: {team} {ln} @{r['odds']:.2f}" + (f' ({now_})' if now_ else '') + (' · (Value Picks, πριν το Telegram)' if r.get('early') else '')
 
 
 def main(notify_tg=True):

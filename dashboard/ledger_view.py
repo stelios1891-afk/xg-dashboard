@@ -191,7 +191,7 @@ def _euro_rows():
         ou = p.get('mkt') in ('OVER', 'UNDER')
         r = dict(lg=EURO_LG.get(p.get('comp'), p.get('comp')), home=p['home'], away=p['away'], hid=p.get('hid'), aid=p.get('aid'),
                  ko=p['ko'], euro=True, mkt=p.get('mkt'), side=(0 if ou else (1 if p.get('side') == 1 else -1)), hcap=float(p['line']),
-                 odds=float(p['odds']), edge=p.get('edge'), seen=p.get('seen'), no_play=bool(p.get('no_play')),
+                 odds=float(p['odds']), edge=p.get('edge'), seen=p.get('seen'), no_play=bool(p.get('no_play')), rule=p.get('rule'), role=p.get('role'),
                  bet_label=(f"{'Under' if p.get('mkt') == 'UNDER' else 'Over'} {float(p['line']):g}" if ou else None),
                  score=(p.get('score') or '').replace('-', ' - ') or None, pnl=p.get('pnl'),
                  xg_h=None, xg_a=None, xg_fair=None, xg_value=None)
@@ -529,3 +529,145 @@ def cum_fig(settled):
                       yaxis2=dict(overlaying='y', side='right', showgrid=False, title='CLV %'),
                       legend=dict(orientation='h', y=1.12, bgcolor='rgba(0,0,0,0)'))
     return fig
+
+
+# ================== 13/10/2026 (Στελιος «βελτιωση Pick History: φιλτρα, συνολα που ακολουθουν τα φιλτρα, αγορα…») ==================
+VP2LG = {'ChampionsLeague': 'UCL', 'EuropaLeague': 'UEL', 'ConferenceLeague': 'UECL'}     # Value Picks → ledger
+EDGE_BANDS = [(0, .06, '<6%'), (.06, .10, '6-10%'), (.10, .15, '10-15%'), (.15, .20, '15-20%'), (.20, 9, '20%+')]
+HRS_BANDS = [(0, 2, '<2ω'), (2, 6, '2-6ω'), (6, 12, '6-12ω'), (12, 24, '12-24ω'), (24, 72, '24-72ω'), (72, 99999, '>72ω')]
+
+
+def _dt(s):
+    try:
+        d = datetime.datetime.fromisoformat(str(s).replace(' ', 'T').replace('Z', '+00:00')[:25])
+        return d if d.tzinfo else d.replace(tzinfo=UTC)
+    except Exception:
+        return None
+
+
+def _dir(r):
+    lab = str(r.get('bet_label') or '')
+    if lab.startswith('Over') or r.get('mkt') == 'OVER':
+        return 'Over'
+    if lab.startswith('Under') or r.get('mkt') == 'UNDER':
+        return 'Under'
+    return str(r.get('side'))
+
+
+def played_index(played):
+    """played_picks.json {κλειδι Value Picks: ms} → σετ (λιγκα, γηπ, φιλ, κατευθυνση, μερα)."""
+    out = set()
+    for k in (played or {}):
+        a = str(k).split('|')
+        if len(a) < 6:
+            continue
+        out.add((VP2LG.get(a[0], a[0]), a[1], a[2], a[4], a[5][:10]))
+    return out
+
+
+def enrich(rows, played=None):
+    """Προσθετει σε καθε pick: _mkt (αγορα), _side (πλευρα), _status/_why (κανονικο/καταγραφη/σκια), _rule, _eband, _hrs/_hband,
+    _month, _date, _played, _pnl_close (αποτελεσμα αν το ΙΔΙΟ pick παιζοταν στην τιμη κλεισιματος)."""
+    P = played_index(played)
+    for r in rows:
+        tot = (r.get('mkt') in ('total', 'OVER', 'UNDER')) or str(r.get('bet_label') or '').startswith(('Over', 'Under'))
+        h = float(r.get('hcap') or 0)
+        r['_mkt'] = 'Σύνολα' if tot else ('DNB' if (r.get('euro') and abs(h) < 1e-9) else 'Χάντικαπ')
+        r['_side'] = _dir(r) if tot else ('Φαβορί' if h < 0 else ('Αουτσάιντερ' if h > 0 else 'Χωρίς γραμμή (0)'))
+        st_, why = 'Κανονικό', ''
+        if r.get('bk'):
+            if r.get('paper_note'):
+                st_, why = 'Καταγραφή', r['paper_note']
+            elif r.get('lg') == 'NBA':
+                st_, why = 'Καταγραφή', 'NBA σε καταγραφή'
+        elif r.get('euro'):
+            if r.get('no_play'):
+                st_, why = 'Σκιά', 'σκιά (δεν παίζεται)'
+        elif not r.get('intl'):                                   # εγχωρια ποδοσφαιρα
+            if r.get('rule') == 'fav714':
+                if r.get('side') != 1:
+                    st_, why = 'Καταγραφή', 'κοντό φαβορί 7-14 εκτός'
+            elif r.get('paper'):
+                st_, why = 'Καταγραφή', f"αγωνιστική {r.get('md')} (<15)"
+        r['_status'], r['_why'] = st_, why
+        if r.get('bk'):
+            rule = f"{r['lg']} · {r['_mkt'].lower()} · {r['_side'].lower()}"
+        elif r.get('euro'):
+            rule = 'UEL φαβορί εντός' if r.get('rule') == 'uel_home_fav' else f"{r['lg']} · {r['_side'].lower()}"
+        elif r.get('intl'):
+            rule = f"Εθνικές · {r['_mkt'].lower()}"
+        else:
+            w = r.get('window') or ''
+            if r.get('rule') == 'fav714':
+                rule = 'Κοντά φαβορί 7-14 ' + ('εντός' if r.get('side') == 1 else 'εκτός')
+            elif w == '15+':
+                rule = 'Φαβορί 15+' if r.get('role') == 'fav' else 'Dogs 15+'
+            else:
+                rule = (f"Dogs {w or '?'} (καταγραφή)" if (r.get('role') or 'dog') == 'dog' else f"Φαβορί {w} (καταγραφή)")
+        r['_rule'] = rule
+        e = r.get('edge')
+        r['_eband'] = next((lab for lo, hi, lab in EDGE_BANDS if e is not None and lo <= float(e) < hi), '—')
+        hb = r.get('hours_before')
+        if hb is None:
+            a, b = _dt(r.get('seen')), _dt(r.get('ko'))
+            hb = (b - a).total_seconds() / 3600 if (a and b) else None
+        r['_hrs'] = hb
+        r['_hband'] = next((lab for lo, hi, lab in HRS_BANDS if hb is not None and lo <= hb < hi), '—')
+        r['_month'] = str(r.get('ko') or '')[:7]
+        r['_date'] = str(r.get('ko') or '')[:10]
+        r['_played'] = (r.get('lg'), r.get('home'), r.get('away'), _dir(r), r['_date']) in P
+        pc = None
+        if r.get('pnl') is not None:
+            if r.get('pnl_close') is not None:
+                pc = r['pnl_close']
+            else:
+                oc = r.get('close_eq')
+                if oc is None and r.get('close_odds') is not None and r.get('close_line') is not None \
+                        and abs(float(r['close_line']) - h) < 1e-9:
+                    oc = r['close_odds']
+                if oc:
+                    o = float(r.get('odds') or 0)
+                    pc = r['pnl'] * (float(oc) - 1) / (o - 1) if (r['pnl'] > 0 and o > 1) else r['pnl']
+        r['_pnl_close'] = pc
+    return rows
+
+
+def summary2(settled):
+    """Συνολα για ΤΑ ΦΙΛΤΡΑΡΙΣΜΕΝΑ picks + ROI του ιδιου pick στην τιμη κλεισιματος."""
+    s = summary(settled)
+    pc = [r['_pnl_close'] for r in settled if r.get('_pnl_close') is not None]
+    s['roi_close'] = (sum(pc) / len(pc)) if pc else None
+    s['n_close'] = len(pc)
+    s['wins'] = sum(1 for r in settled if (r.get('pnl') or 0) > 0)
+    return s
+
+
+def breakdown(settled, key):
+    """Πινακας ανα ομαδα: picks, νικες, μοναδες, ROI, ROI στο κλεισιμο, CLV, νικες vs κλεισιμο."""
+    g = {}
+    for r in settled:
+        g.setdefault(r.get(key) or '—', []).append(r)
+    rows = []
+    for k, v in g.items():
+        s = summary2(v)
+        rows.append({'ομάδα': k, 'picks': s['n'], 'νίκες': s['wins'], 'μονάδες': round(s['units'], 2), 'ROI %': round(s['roi'] * 100, 1),
+                     'ROI στο κλείσιμο %': (round(s['roi_close'] * 100, 1) if s['roi_close'] is not None else None),
+                     'CLV %': (round(s['clv'] * 100, 1) if s['clv'] is not None else None),
+                     'νίκες vs κλείσιμο': (f"{s['beat']}/{s['nclv']}" if s['nclv'] else '—')})
+    rows.sort(key=lambda x: -x['picks'])
+    return rows
+
+
+def export_rows(rows):
+    """Για CSV/Excel: απλες στηλες."""
+    out = []
+    for r in rows:
+        clv = r.get('clv_pct') if r.get('clv_pct') is not None else r.get('clv_est_pct')
+        out.append({'ημερομηνία': r.get('_date'), 'πρωτάθλημα': r.get('lg'), 'γηπεδούχος': r.get('home'), 'φιλοξενούμενος': r.get('away'),
+                    'αγορά': r.get('_mkt'), 'πλευρά': r.get('_side'), 'γραμμή': r.get('hcap'), 'απόδοση': r.get('odds'), 'edge': r.get('edge'),
+                    'κανόνας': r.get('_rule'), 'κατάσταση': r.get('_status'), 'λόγος': r.get('_why'),
+                    'ώρες πριν': (round(r['_hrs'], 1) if r.get('_hrs') is not None else None), 'το έπαιξα': r.get('_played'),
+                    'σκορ': r.get('score'), 'μονάδες': r.get('pnl'),
+                    'μονάδες στο κλείσιμο': (round(r['_pnl_close'], 3) if r.get('_pnl_close') is not None else None),
+                    'απόδοση κλεισίματος': r.get('close_odds'), 'γραμμή κλεισίματος': r.get('close_line'), 'CLV': clv, 'xG value': r.get('xg_value')})
+    return out

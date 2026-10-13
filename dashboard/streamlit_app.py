@@ -636,23 +636,87 @@ def render_ledger(league):
         st.info("Δεν υπαρχουν ακομα καταγεγραμμενα picks — γεμιζει αυτοματα με τα alerts του scanner (απο 29/8/2026).")
         return
     import ledger_view as lv
-    s = lv.summary(settled)
-    m = st.columns(5)
-    m[0].metric("Settled picks", s['n'], help=f"+{len(pending)} εκκρεμη")
+    import copy, datetime as _dt
+    # 13/10/2026 (Στελιος): ΦΙΛΤΡΑ + τα συνολα ακολουθουν τα φιλτρα + «το έπαιξα» + πινακας ανα ομαδα + CSV
+    settled, pending = copy.deepcopy(settled), copy.deepcopy(pending)
+    _pl = st.session_state.get('vp_played')
+    if _pl is None:
+        try:
+            import played_store
+            _pl = played_store.load() if played_store.enabled() else {}
+        except Exception:
+            _pl = {}
+        st.session_state.vp_played = _pl or {}
+    lv.enrich(settled, _pl); lv.enrich(pending, _pl)
+    allr = settled + pending
+    _uniq = lambda k: sorted({r.get(k) for r in allr if r.get(k)})
+    with st.container(border=True):
+        c1, c2, c3 = st.columns(3)
+        f_lg = c1.multiselect("Πρωτάθλημα", _uniq('lg'), key='led_lg2', placeholder='Όλα')
+        f_mk = c2.multiselect("Αγορά", _uniq('_mkt'), key='led_mk', placeholder='Όλες')
+        f_sd = c3.multiselect("Πλευρά", _uniq('_side'), key='led_sd', placeholder='Όλες')
+        c4, c5, c6 = st.columns(3)
+        f_st = c4.radio("Κατάσταση", ['Μόνο κανονικά', 'Μόνο καταγραφές/σκιές', 'Όλα'], key='led_st', horizontal=False,
+                        help="Κανονικά = όσα παίζονται (Telegram / ✅ ΠΑΙΖΕΤΑΙ). Καταγραφές = αγωνιστική <15, τελευταίο 2ωρο, κανόνας κόντρα ≥1.5, σκιές UEL, NBA κ.λπ.")
+        f_ru = c5.multiselect("Κανόνας", _uniq('_rule'), key='led_ru', placeholder='Όλοι')
+        f_pe = c6.selectbox("Περίοδος", ['Όλη η σεζόν', 'Τελευταίες 7 μέρες', 'Τελευταίες 30 μέρες', 'Από–έως'], key='led_pe')
+        d_from = d_to = None
+        if f_pe == 'Από–έως':
+            dd = c6.date_input("Από – έως", value=(_dt.date.today() - _dt.timedelta(days=30), _dt.date.today()), key='led_dr')
+            if isinstance(dd, (list, tuple)) and len(dd) == 2:
+                d_from, d_to = dd
+        c7, c8, c9 = st.columns(3)
+        f_eb = c7.multiselect("Ζώνη edge", [b[2] for b in lv.EDGE_BANDS], key='led_eb', placeholder='Όλες')
+        f_hb = c8.multiselect("Ώρα εισόδου (πριν το ματς)", [b[2] for b in lv.HRS_BANDS], key='led_hb', placeholder='Όλες')
+        f_me = c9.checkbox("Μόνο όσα έπαιξα (✅ το έπαιξα)", key='led_me')
+    today = _dt.date.today()
+    def _keep(r):
+        if f_lg and r.get('lg') not in f_lg: return False
+        if f_mk and r.get('_mkt') not in f_mk: return False
+        if f_sd and r.get('_side') not in f_sd: return False
+        if f_ru and r.get('_rule') not in f_ru: return False
+        if f_eb and r.get('_eband') not in f_eb: return False
+        if f_hb and r.get('_hband') not in f_hb: return False
+        if f_me and not r.get('_played'): return False
+        if f_st == 'Μόνο κανονικά' and r.get('_status') != 'Κανονικό': return False
+        if f_st == 'Μόνο καταγραφές/σκιές' and r.get('_status') == 'Κανονικό': return False
+        try:
+            d = _dt.date.fromisoformat(r.get('_date') or '')
+        except Exception:
+            d = None
+        if f_pe == 'Τελευταίες 7 μέρες' and (d is None or d < today - _dt.timedelta(days=7)): return False
+        if f_pe == 'Τελευταίες 30 μέρες' and (d is None or d < today - _dt.timedelta(days=30)): return False
+        if f_pe == 'Από–έως' and d_from and (d is None or d < d_from or d > d_to): return False
+        return True
+    settled = [r for r in settled if _keep(r)]
+    pending = [r for r in pending if _keep(r)]
+    s = lv.summary2(settled)
+    m = st.columns(6)
+    m[0].metric("Settled picks", s['n'], help=f"+{len(pending)} εκκρεμη (με τα ιδια φιλτρα)")
     m[1].metric("Μοναδες", f"{s['units']:+.2f}", f"{s['roi']*100:+.1f}% ROI" if s['n'] else None)
-    m[2].metric("Μεσο CLV", f"{s['clv']*100:+.1f}%" if s['clv'] is not None else "—",
+    m[2].metric("ROI στο κλεισιμο", f"{s['roi_close']*100:+.1f}%" if s['roi_close'] is not None else "—",
+                help="Τα ΙΔΙΑ picks αν τα επαιζες στην τιμη κλεισιματος αντι για την τιμη του alert")
+    m[3].metric("Μεσο CLV", f"{s['clv']*100:+.1f}%" if s['clv'] is not None else "—",
                 help="+ = παιρνουμε καλυτερη τιμη απο το κλεισιμο (ιδια γραμμη)")
-    m[3].metric("Νικες vs κλεισιμο", f"{s['beat']}/{s['nclv']}" if s['nclv'] else "—")
-    m[4].metric("Μεσο xG value", f"{s['xgv']*100:+.1f}%" if s['xgv'] is not None else "—",
-                help="+ = οι τιμες μας ηταν καλυτερες απο το «δικαιο» των τελικων xG")
-    lgs = sorted({r['lg'] for r in settled} | {r['lg'] for r in pending})
-    sel = st.selectbox("Πρωταθλημα", ['Όλα'] + lgs, key='led_lg')
-    if sel != 'Όλα':
-        settled = [r for r in settled if r['lg'] == sel]
-        pending = [r for r in pending if r['lg'] == sel]
+    m[4].metric("Νικες vs κλεισιμο", f"{s['beat']}/{s['nclv']}" if s['nclv'] else "—")
+    m[5].metric("Μεσο xG value", f"{s['xgv']*100:+.1f}%" if s['xgv'] is not None else "—",
+                help="+ = οι τιμες μας ηταν καλυτερες απο το «δικαιο» των τελικων xG (μονο ποδοσφαιρο)")
     fig = lv.cum_fig(settled)
     if fig is not None and len(settled) >= 3:
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    if settled:
+        _dims = {'Πρωτάθλημα': 'lg', 'Αγορά': '_mkt', 'Πλευρά': '_side', 'Κανόνας': '_rule', 'Ζώνη edge': '_eband',
+                 'Ώρα εισόδου': '_hband', 'Μήνας': '_month', 'Κατάσταση': '_status'}
+        bc1, bc2 = st.columns([1, 3])
+        _dim = bc1.selectbox("Ανάλυση ανά", list(_dims), key='led_dim')
+        bc2.caption("Κάθε γραμμή = ομάδα picks με τα παραπάνω φίλτρα. «ROI στο κλείσιμο» = τα ίδια picks στην τιμή κλεισίματος.")
+        import pandas as _pd
+        st.dataframe(_pd.DataFrame(lv.breakdown(settled, _dims[_dim])), hide_index=True, use_container_width=True)
+    _ex = lv.export_rows(settled + pending)
+    if _ex:
+        import pandas as _pd
+        st.download_button("⬇ Λήψη (CSV για Excel)", _pd.DataFrame(_ex).to_csv(index=False).encode('utf-8-sig'),
+                           file_name=f"pick_history_{today.isoformat()}.csv", mime='text/csv', key='led_csv')
     st.components.v1.html(lv.table_html(settled, pending),
                           height=min((len(settled) + len(pending)) * 52 + 60, 5000), scrolling=True)
 
