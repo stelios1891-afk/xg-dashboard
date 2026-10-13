@@ -37,9 +37,14 @@ def predict(st, h, a):
     if h in m1.get('O', {}) and a in m1.get('O', {}):
         p1 = m1['pace'] * (m1['h'] + m1['O'][h] + m1['D'][a] - m1['O'][a] - m1['D'][h]) / 100
     if p1 is None and p2 is None: return None, None, None
-    if p1 is None: return p2, p1, p2
-    if p2 is None: return p1, p1, p2
-    return (1 - st['A']) * p1 + st['A'] * p2, p1, p2
+    mg = p2 if p1 is None else (p1 if p2 is None else (1 - st['A']) * p1 + st['A'] * p2)
+    # 13/10/2026: αποδοσεις νικητη ΕΚΤΟΣ μηχανης (bcl_refresh OR_KX/OR_K) — + κx·(z_γ − z_φ)·k/(k + r), r = μεσος ματς BCL κανονικης φετος
+    orr = st.get('outright') or {}
+    if orr.get('z'):
+        z, nb = orr['z'], orr.get('nbcl', {})
+        r_ = (nb.get(h, 0) + nb.get(a, 0)) / 2
+        mg += orr['kx'] * (z.get(h, 0.0) - z.get(a, 0.0)) * orr['k'] / (orr['k'] + r_)
+    return mg, p1, p2
 def main():
     now = datetime.datetime.now(datetime.timezone.utc)
     try: st = json.load(open(F('bcl_state.json'), encoding='utf-8'))
