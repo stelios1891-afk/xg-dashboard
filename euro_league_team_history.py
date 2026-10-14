@@ -47,7 +47,7 @@ for i in range(len(MIDS)):
     km = implied_margin(i, *s) if s else np.nan
     lx = level_xg(EUM[mid]) if mid in EUM else None
     for sg, t_own, lg_own, lg_opp in ((1, c['th'], lg[0], lg[1]), (-1, c['ta'], lg[1], lg[0])):
-        rows.append(dict(sea=SEA[i], comp=COMP[i], lg=lg_own, opp_lg=lg_opp, t=t_own, mdl=sg * (LH_N[i] - LA_N[i]), mk=sg * km, gd=sg * GD[i],
+        rows.append(dict(mid=mid, D=sg * c['D'], t_opp=(c['ta'] if sg == 1 else c['th']), sea=SEA[i], comp=COMP[i], lg=lg_own, opp_lg=lg_opp, t=t_own, mdl=sg * (LH_N[i] - LA_N[i]), mk=sg * km, gd=sg * GD[i],
                          lvl=(sg * (lx[0] - lx[1]) * 90 / lx[2]) if lx else np.nan, w=(lx[2] / 90) if lx else 0.0))
 X = pd.DataFrame(rows)
 X['r'] = X.gd - X.mdl; X['rk'] = X.gd - X.mk
