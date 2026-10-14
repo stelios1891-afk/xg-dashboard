@@ -149,6 +149,15 @@ def pick_card(p):
                      + ('ℹ ✓ και το παλιο' if p['old_agree'] else 'ℹ μονο με φιλικα (σημειωση)') + '</span>')
     if p.get('coach_notes') and not p.get('el'):   # 5/10: αλλαγη προπονητη στα εγχωρια (μονο πληροφορια· το φιλτρο κοβει ηδη τα «κακη και στα δυο»)
         tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 προπονητης</span>'
+    if p.get('rule') == 'uecl_b_under':   # 14/10: Conference Β under — η αγορα κατεβαζει τα συνολα 12→8ω πριν (uecl_under_path)
+        try:
+            import datetime as _d
+            _dl = _when_ath((_d.datetime.fromisoformat(str(p.get('when'))[:16]) - _d.timedelta(hours=12)).isoformat())
+            _dl = _d.datetime.strptime(_dl, '%Y-%m-%d %H:%M').strftime('%d/%m %H:%M')
+        except Exception:
+            _dl = None
+        tags += ('<span class="tag lc" title="Conference Β under: ιστορικα η αγορα κατεβαζει το συνολο 12-8 ωρες πριν τη σεντρα — μετα χανεται η αξια">'
+                 + (f'⏰ παιξε το αργοτερο ως {_dl} (12ω πριν)' if _dl else '⏰ παιξε το αργοτερο 12ω πριν τη σεντρα') + '</span>')
     if p.get('rule') == 'uel_home_fav':   # 9/10: UEL φαβορι εντος — ΚΑΝΟΝΙΚΟ (μιξη 80% xG, εισοδος 12-36ω)
         tags += '<span class="tag eu" title="UEL φαβορι εντος: μηχανη 80% xG, σωστα τεταρτα, edge ≥4%, εισοδος ~24ω πριν· backtest 49 picks +24%, 4/4 σεζον· μικρο stake">⭐ UEL φαβορι εντος</span>'
     elif p.get('rule') == 'uel_home_fav_wait':
