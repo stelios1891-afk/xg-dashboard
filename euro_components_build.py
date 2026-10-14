@@ -5,6 +5,9 @@ import sys, os, pickle
 _CB = sys.stdout
 exec(open('nonfm_rating_decomp.py', encoding='utf-8').read().split('# ---------- Poisson παλινδρομηση')[0])
 sys.stdout = _CB; sys.stdout.reconfigure(encoding='utf-8')
-OUT = {str(r.mid): dict(th=float(r.th), ta=float(r.ta), D=float(r.D), cat=r.cat, comp=r.comp) for r in R.itertuples()}
+def _f(v):
+    try: return float(v)
+    except (TypeError, ValueError): return float('nan')
+OUT = {str(r.mid): dict(th=float(r.th), ta=float(r.ta), D=float(r.D), cat=r.cat, comp=r.comp, elh=_f(r.elh), ela=_f(r.ela)) for r in R.itertuples()}
 pickle.dump(OUT, open('euro_components.pkl', 'wb'))
 print(len(OUT), 'ματς')
