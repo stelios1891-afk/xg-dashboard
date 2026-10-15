@@ -28,12 +28,13 @@ for i in range(len(MIDS)):
                 rows.append(dict(sea=SEA[i], bk=bk, pnl=picks.settle(GD[i], 1, L, oh), dis=dis))
                 break
 P = pd.DataFrame(rows)
+TAU = -0.25   # 15/10: και −0.5 (πρωτη εκδοχη)
 def cc(x):
     if len(x) == 0: return '—'
     m = x.groupby('bk').pnl.mean(); n = x.groupby('bk').size().mean(); ps = x.groupby('sea').pnl.mean()
     return f'{n:4.0f} picks {100 * m.mean():+6.1f}% ({m.mean() * n:+5.1f}μ) (' + ' '.join(f'{s[2:]} {100 * v:+.0f}' for s, v in ps.items()) + ')'
 print('LIVE κανονας «UEL φαβορι εντος» + φιλτρο αξιας Φ2')
 print(f'   ολα                       {cc(P)}')
-print(f'   ΚΟΒΟΝΤΑΙ (αξια ≥0.5 κατω)  {cc(P[P.dis <= -.5])}')
-print(f'   ΜΕΝΟΥΝ                    {cc(P[~(P.dis <= -.5)])}')
+print(f'   ΚΟΒΟΝΤΑΙ (αξια ≥|τ| κατω)  {cc(P[P.dis <= TAU])}')
+print(f'   ΜΕΝΟΥΝ                    {cc(P[~(P.dis <= TAU)])}')
 print(f'   (χωρις αξια: {P.dis.isna().sum()} picks ανα βιβλιο-συνολο)')
