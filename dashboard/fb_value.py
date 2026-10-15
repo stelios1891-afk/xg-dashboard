@@ -2,7 +2,8 @@
 ως τη σεντρα με «⚠ δεν ισχυει πια» + τωρινη γραμμη/τιμη (1/10/2026, Στελιος: «να παραμενουν, να μπορεις να αλλαξεις line & αποδοση»).
   • CORE7 (εγχωρια): clv_bets.jsonl (οχι paper) vs value_picks_latest · τωρα = τελευταια Pinnacle στο odds_history.jsonl ·
     κομπιουτερακι = calc_data.dom_calc (ιδιος τυπος με scanner, γραμμες ±0.25/±0.5 γυρω απο την ΤΩΡΙΝΗ γραμμη).
-  • Ευρωπαϊκα: euro_picks_ledger.jsonl vs euro_value_latest · τωρα = euro_odds_latest (κομπιουτερακι δεν υπαρχει για τα ευρωπαϊκα).
+  • Ευρωπαϊκα: euro_picks_ledger.jsonl vs euro_value_latest · τωρα = euro_odds_latest · κομπιουτερακι = calc_data.euro_calc (15/10)
+    με το ΤΡΕΧΟΝ ζευγος xG του ματς (euro_projections: xgh/xga χαντικαπ, xgh_ou/xga_ou συνολα, UEL φαβ εντος = 80% xG) στην ΤΩΡΙΝΗ γραμμη.
   • Εθνικες: intl_picks_ledger.jsonl (ΣΥΝΑΙΝΕΣΗ, οχι removed) vs τωρινη συναινεση · τωρα = αγορα του ματς · κομπιουτερακι = calc_data.intl_calc.
 Ιδιο κλειδι «ιδια αγορα & πλευρα»: αν ειναι ακομα pick σε αλλη γραμμη → ΔΕΝ θεωρειται χαμενο."""
 import os, json, datetime as dt
@@ -89,8 +90,20 @@ def core7_gone(active):
     return out
 
 
+def _euro_xg():
+    """{mid: ματς} απο euro_projections + {mid: (xgh, xga)} 80% xG (UEL φαβορι εντος) — ιδιες πηγες με τον euro_shadow_scan."""
+    P = {str(m['mid']): m for m in _load('euro_projections.json', {}).get('matches', []) if m.get('covered')}
+    L80 = {str(x['mid']): (x['xgh'], x['xga']) for x in _load('euro_projections_uel80.json', {}).get('matches', [])
+           if x.get('covered') and x.get('xgh') is not None}
+    return P, L80
+
+
 def euro_gone(active):
     now = dt.datetime.now(dt.timezone.utc)
+    try:
+        P, L80 = _euro_xg()
+    except Exception:
+        P, L80 = {}, {}
     act = {(p['lg'], p['home'], p['away'], 0 if str(p.get('bet') or '').startswith(('Over', 'Under')) else p['side']) for p in active}
     odds = _load('euro_odds_latest.json', {}).get('odds', {})
     out = []
@@ -117,6 +130,29 @@ def euro_gone(active):
                  when=str(b['ko'])[:16], eu=True, gone=True, gone_now=_now_tag(lab, od, None, 0.0))
         if over:
             q['bet'] = f"{'Under' if un else 'Over'} {float(b['line']):g}"
+        # 15/10/2026 (Στελιος «στο conference δεν μπορω να χρησιμοποιησω το κομπιουτερακι»): 🧮 και στα ευρωπαϊκα που «χαθηκαν» —
+        # ΤΡΕΧΟΝ μοντελο, γραμμες γυρω απο την ΤΩΡΙΝΗ γραμμη της αγορας (αν δεν υπαρχει: η γραμμη του pick)
+        m = P.get(str(b.get('mid')))
+        c = None
+        if m:
+            try:
+                import calc_data
+                if over:
+                    xh, xa = m.get('xgh_ou'), m.get('xga_ou')
+                    cen = r.get('tl') if r.get('tl') is not None else float(b['line'])
+                elif str(b.get('rule') or '').startswith('uel_home_fav') and str(b.get('mid')) in L80:
+                    xh, xa = L80[str(b.get('mid'))]
+                    cen = (r['line'] if side == 1 else -r['line']) if r.get('line') is not None else float(b['line'])
+                else:
+                    xh, xa = m.get('xgh'), m.get('xga')
+                    cen = (r['line'] if side == 1 else -r['line']) if r.get('line') is not None else float(b['line'])
+                c = calc_data.euro_calc(dict(role=b.get('role'), comp=b['comp'], xgh=xh, xga=xa, side=side, line=float(cen),
+                                             odds=(od if od else float(b['odds']))))
+            except Exception:
+                c = None
+        if c:
+            q['calc'] = c
+            q['gone_now'] = _now_tag(lab, od, c['lines'][c['def']]['c'][0], c['thr'])
         out.append(q)
     return out
 
