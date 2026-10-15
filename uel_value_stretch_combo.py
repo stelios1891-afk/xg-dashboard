@@ -12,6 +12,15 @@ import sys
 exec(open("euro_value_filter_check.py", encoding="utf-8").read().split("# πλευρα ΧΩΡΙΣ FotMob")[0])
 NL = chr(10)
 x = A[(A.comp == 'EuropaLeague') & A.hasv].reset_index(drop=True); seas = sorted(x.sea.unique())
+import os as _os, pickle as _pk
+XGB = _os.environ.get('XG_BASE')               # 15/10: βαση με αλλο μεριδιο xG (π.χ. 0.8 / 1.0) απο euro_blend_dump_* (ως λογος προς το 0.6)
+if XGB:
+    _d6 = _pk.load(open('euro_blend_dump_0.6.pkl', 'rb')); _dx = _pk.load(open(f'euro_blend_dump_{XGB}.pkl', 'rb'))
+    _i6 = {str(m): k for k, m in enumerate(_d6['MIDS'])}; _ix = {str(m): k for k, m in enumerate(_dx['MIDS'])}
+    _ms = [str(MIDS[int(i)]) for i in x.i]
+    x['lh'] = x.lh.values * np.array([_dx['LH'][_ix[m]] / _d6['LH'][_i6[m]] if m in _ix and m in _i6 and _d6['LH'][_i6[m]] > 0 else 1.0 for m in _ms])
+    x['la'] = x.la.values * np.array([_dx['LA'][_ix[m]] / _d6['LA'][_i6[m]] if m in _ix and m in _i6 and _d6['LA'][_i6[m]] > 0 else 1.0 for m in _ms])
+    print(f'ΒΑΣΗ: μοντελο με {int(float(XGB) * 100)}% xG')
 x['nh'] = (~x.lgh.isin(TOP5)).astype(float); x['na'] = (~x.lga.isin(TOP5)).astype(float)
 x['zt'] = (x.th * x.nh - x.ta * x.na) / 2
 x['vm'] = [VF[s][0] * lv + VF[s][1] for s, lv in zip(x.sea, x.lv_)]
@@ -100,7 +109,8 @@ P0 = PK[(0.0, 0.0)]; P1 = PK[bestc]
 k0 = set(zip(P0.i, P0.side, P0.bk)); k1 = set(zip(P1.i, P1.side, P1.bk))
 print(f'{NL}Γ) ΣΥΝΔΥΑΣΜΟΣ b {bestc[0]:+.2f} / w {bestc[1]:.2f} vs σημερινο — τι ΚΟΒΕΙ / τι ΠΡΟΣΘΕΤΕΙ')
 for c_ in ('A', 'B'):
-    for k in ('φαβ', 'dog'):
-        a = P0[(P0.cat == c_) & (P0.kind == k)]; bq = P1[(P1.cat == c_) & (P1.kind == k)]
+    for k in ('φαβ εντος', 'φαβ εκτος', 'dog'):
+        kk = k.split()[0]; vv = k.split()[1] if ' ' in k else None
+        a = P0[(P0.cat == c_) & (P0.kind == kk) & ((P0.ven == vv) if vv else True)]; bq = P1[(P1.cat == c_) & (P1.kind == kk) & ((P1.ven == vv) if vv else True)]
         cut = a[[t not in k1 for t in zip(a.i, a.side, a.bk)]]; add = bq[[t not in k0 for t in zip(bq.i, bq.side, bq.bk)]]
-        print(f'   {c_} {"φαβορι" if k == "φαβ" else "αουτσαιντερ":12s} σημερινο {cell(a):>18s} │ ΚΟΒΕΙ {cell(cut):>18s} │ ΠΡΟΣΘΕΤΕΙ {cell(add):>18s} │ νεο {cell(bq):>18s}')
+        print(f'   {c_} {k:12s} σημερινο {cell(a):>18s} │ ΚΟΒΕΙ {cell(cut):>18s} │ ΠΡΟΣΘΕΤΕΙ {cell(add):>18s} │ νεο {cell(bq):>18s}')
