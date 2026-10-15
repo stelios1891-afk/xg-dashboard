@@ -23,6 +23,8 @@ def lamC(y, b, w):
     return lh, la
 BS = (0.0, -0.25, -0.5, -0.75); WS = (0.0, 0.25, 0.5, 0.75)
 COMBOS = [(b, w) for b in BS for w in WS]
+import os
+if os.environ.get('COMBO_SPLIT'): COMBOS = [(0.0, 0.0), (0.0, 0.5), (-0.25, 0.75), (-0.75, 0.75)]
 # στιγμιοτυπα μια φορα
 HSP = [h for h in HS if h > 0]
 SN = {}
@@ -63,6 +65,12 @@ def u(y): return y.groupby('bk').pnl.sum().mean() if len(y) else 0.0
 def cell(y):
     if len(y) == 0: return '—'
     m = y.groupby('bk').pnl.mean(); n = y.groupby('bk').size().mean(); return f'{n:3.0f} {100 * m.mean():+5.0f}% {m.mean() * n:+5.1f}μ'
+if os.environ.get('COMBO_SPLIT'):
+    print('ΦΑΒΟΡΙ ΚΑΤΗΓΟΡΙΑΣ Α ΧΩΡΙΣΜΕΝΑ (εντος / εκτος) ανα συνδυασμο · κανονικο μοντελο, πρωτη εμφανιση ≤72ω')
+    for b, w in COMBOS:
+        P = PK[(b, w)]
+        print(f'   b {b:+.2f} / w {w:.2f} │ εντος {cell(P[(P.cat == "A") & (P.kind == "φαβ") & (P.ven == "εντος")])} │ εκτος {cell(P[(P.cat == "A") & (P.kind == "φαβ") & (P.ven == "εκτος")])}')
+    sys.exit()
 print('Α) ΚΑΘΕ ΣΥΝΔΥΑΣΜΟΣ (ολες οι σεζον) — picks ανα βιβλιο · ROI · μοναδες')
 print(f'   {"τεντωμα b / αξια w":20s} │ {"Α φαβορι":>18s} │ {"Α αουτσαιντερ":>18s} │ {"Β φαβορι":>18s} │ {"Β αουτσαιντερ":>18s} │ {"ΣΥΝΟΛΟ":>18s} │ πιθανοφανεια (vs σημερινο)')
 for b, w in COMBOS:
