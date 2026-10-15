@@ -1,0 +1,76 @@
+ΠΑΡΑΜΕΤΡΟΣ b (απο τις αλλες 3 σεζον): 2223: -0.25 · 2324: -0.20 · 2425: -0.05 · 2526: -0.15   (−0.50 = η εγχωρια κυριαρχια ομαδων εκτος top-5 μετραει στο μισο)
+ΑΚΡΙΒΕΙΑ (ολες οι κατηγοριες, 551 ματς): RPS σημερινο 0.2039 → στοχευμενη 0.2036 · Δlog-lik 23:-1.9 24:+0.0 25:+0.7 26:+0.8 · θετικες 3/4
+   κατηγορια A: RPS 0.2039 → 0.2042 (373 ματς)
+   κατηγορια B: RPS 0.2022 → 0.2005 (162 ματς)
+
+========================================================================================================================
+ΚΑΤΗΓΟΡΙΑ Α (FotMob και οι 2)
+   ΚΟΠΗΚΕ       18 picks · ROI  +11.9% · μοναδες  +2.1 · (φαβ 7 / dog 11)
+   κρατηθηκε   160 picks · ROI  -11.3% · μοναδες -18.0 · (φαβ 109 / dog 51)
+   ΠΡΟΣΤΕΘΗΚΕ   26 picks · ROI   +5.8% · μοναδες  +1.5 · (φαβ 16 / dog 10)
+   ΣΗΜΕΡΙΝΟ 178 picks · ROI   -8.9% · μοναδες -15.9   →   ΣΤΟΧΕΥΜΕΝΗ 186 picks · ROI   -8.9% · μοναδες -16.5
+      φαβ: σημερινο 116 picks   -1.3% → στοχευμενη 125 picks   -3.2%
+      dog: σημερινο 62 picks  -23.1% → στοχευμενη 61 picks  -20.5%
+
+   10 ΠΟΥ ΚΟΠΗΚΑΝ
+   σεζ  ματς                                   pick                            αγορα │ δικαιη ΠΡΙΝ  edge │ δικαιη ΜΕΤΑ  edge │ σκορ   αποτ │ ομαδα pick (λιγκα, κυριαρχια t) vs αντιπαλος
+   2223 Ajax - Union Berlin                    Ajax -0.50 φαβ εντος             1.95 │        1.83   +5% │        2.18  -12% │ 0-0   -1.00 │ Eredivisie +1.04 vs Bundesliga +0.17
+   2324 Toulouse - Benfica                     Benfica -0.50 φαβ εκτος          1.90 │        1.76   +7% │        1.99   -6% │ 0-0   -1.00 │ PrimeiraLiga +1.03 vs Ligue1 -0.20
+   2223 Sevilla - Fenerbahçe                   Fenerbahçe +0.50 dog εκτος       2.05 │        1.80  +12% │        2.02   -0% │ 2-0   -1.00 │ TurkishSuper +0.71 vs LaLiga -0.14
+   2223 Sporting CP - FC Midtjylland           Sporting CP -1.50 φαβ εντος      2.07 │        1.95   +5% │        2.18   -6% │ 1-1   -1.00 │ PrimeiraLiga +0.79 vs DanishSuperL +0.15
+   2526 Lyon - PAOK Thessaloniki               PAOK Thessalonik +0.75 dog εκτ   1.97 │        1.73  +12% │        1.90   +2% │ 4-2   -1.00 │ GreeceSL +1.05 vs Ligue1 +0.27
+   2223 Union Berlin - Malmö FF                Malmö FF +1.25 dog εκτος         2.08 │        1.78  +15% │        1.94   +6% │ 1-0   +0.54 │ Allsvenskan +0.57 vs Bundesliga +0.23
+   2223 Union Berlin - Union St.Gilloise       Union St.Gillois +0.75 dog εκτ   2.09 │        1.85  +11% │        2.01   +3% │ 3-3   +1.09 │ Belgium +0.53 vs Bundesliga +0.04
+   2526 Lille - PAOK Thessaloniki              PAOK Thessalonik +1.00 dog εκτ   1.98 │        1.64  +14% │        1.81   +6% │ 3-4   +0.98 │ GreeceSL +0.89 vs Ligue1 +0.36
+   2526 VfB Stuttgart - Celtic                 Celtic +1.25 dog εκτος           2.03 │        1.81  +11% │        1.96   +2% │ 0-1   +1.03 │ ScottishPrem +0.77 vs Bundesliga +0.27
+   2223 Union St.Gilloise - Bayer Leverkusen   Union St.Gillois +0.50 dog εντ   1.90 │        1.67  +12% │        1.80   +4% │ 1-4   -1.00 │ Belgium +0.51 vs Bundesliga +0.30
+
+   10 ΠΟΥ ΠΡΟΣΤΕΘΗΚΑΝ
+   σεζ  ματς                                   pick                            αγορα │ δικαιη ΠΡΙΝ  edge │ δικαιη ΜΕΤΑ  edge │ σκορ   αποτ │ ομαδα pick (λιγκα, κυριαρχια t) vs αντιπαλος
+   2223 Lazio - Feyenoord                      Lazio -0.50 φαβ εντος            2.03 │        2.16   -7% │        1.86   +7% │ 4-2   +1.03 │ SerieA +0.08 vs Eredivisie +0.88
+   2324 Roma - Feyenoord                       Roma -0.50 φαβ εντος             2.02 │        2.14   -7% │        1.85   +8% │ 1-1   -1.00 │ SerieA +0.31 vs Eredivisie +1.16
+   2324 Real Betis - Rangers                   Real Betis -0.50 φαβ εντος       1.98 │        2.11   -8% │        1.83   +7% │ 2-3   -1.00 │ LaLiga +0.12 vs ScottishPrem +1.23
+   2324 Benfica - Toulouse                     Toulouse +1.25 dog εκτος         2.05 │        1.91   +6% │        1.69  +20% │ 2-1   +0.52 │ Ligue1 -0.23 vs PrimeiraLiga +1.00
+   2324 Atalanta - Sporting CP                 Atalanta -0.50 φαβ εντος         1.99 │        2.11   -7% │        1.85   +6% │ 2-1   +0.99 │ SerieA +0.31 vs PrimeiraLiga +0.93
+   2223 Arsenal - Sporting CP                  Arsenal -1.25 φαβ εντος          1.83 │        1.85   -2% │        1.61  +11% │ 1-1   -1.00 │ EPL +0.69 vs PrimeiraLiga +0.89
+   2324 Feyenoord - Roma                       Roma +0.50 dog εκτος             1.83 │        1.73   +4% │        1.54  +17% │ 1-1   +0.83 │ SerieA +0.30 vs Eredivisie +1.14
+   2223 Juventus - Sporting CP                 Juventus -0.50 φαβ εντος         1.86 │        1.90   -3% │        1.68   +9% │ 1-0   +0.86 │ SerieA +0.42 vs PrimeiraLiga +0.87
+   2324 Benfica - Marseille                    Marseille +0.50 dog εκτος        2.07 │        2.07   -2% │        1.84  +10% │ 2-1   -1.00 │ Ligue1 +0.28 vs PrimeiraLiga +0.88
+   2324 Sporting CP - Atalanta                 Atalanta +0.50 dog εκτος         1.86 │        1.84   -0% │        1.65  +11% │ 1-1   +0.86 │ SerieA +0.35 vs PrimeiraLiga +0.91
+
+========================================================================================================================
+ΚΑΤΗΓΟΡΙΑ Β (η μια χωρις FotMob)
+   ΚΟΠΗΚΕ       16 picks · ROI   +4.3% · μοναδες  +0.7 · (φαβ 5 / dog 11)
+   κρατηθηκε    86 picks · ROI  +12.7% · μοναδες +10.9 · (φαβ 50 / dog 36)
+   ΠΡΟΣΤΕΘΗΚΕ   18 picks · ROI  +36.4% · μοναδες  +6.5 · (φαβ 16 / dog 2)
+   ΣΗΜΕΡΙΝΟ 102 picks · ROI  +11.4% · μοναδες +11.6   →   ΣΤΟΧΕΥΜΕΝΗ 104 picks · ROI  +16.8% · μοναδες +17.5
+      φαβ: σημερινο 55 picks  +18.3% → στοχευμενη 66 picks  +20.6%
+      dog: σημερινο 47 picks   +3.3% → στοχευμενη 38 picks  +10.2%
+
+   10 ΠΟΥ ΚΟΠΗΚΑΝ
+   σεζ  ματς                                   pick                            αγορα │ δικαιη ΠΡΙΝ  edge │ δικαιη ΜΕΤΑ  edge │ σκορ   αποτ │ ομαδα pick (λιγκα, κυριαρχια t) vs αντιπαλος
+   2223 Monaco - FK Crvena Zvezda              FK Crvena Zvezda +1.00 dog εκτ   2.00 │        1.63  +16% │        2.12   -5% │ 4-1   -1.00 │ SerbiaSuperL +1.35 vs Ligue1 +0.20
+   2223 FK Crvena Zvezda - Trabzonspor         FK Crvena Zvezda -0.50 φαβ εντ   2.05 │        1.88   +8% │        2.23  -10% │ 2-1   +1.05 │ SerbiaSuperL +1.34 vs TurkishSuper +0.30
+   2324 Qarabag FK - Bayer Leverkusen          Qarabag FK +1.25 dog εντος       2.04 │        1.83  +10% │        2.10   -4% │ 0-1   +0.52 │ AzerbaijanPr +1.04 vs Bundesliga +0.51
+   2324 Bayer Leverkusen - Qarabag FK          Qarabag FK +2.25 dog εκτος       1.86 │        1.63  +13% │        1.86   -1% │ 5-1   -1.00 │ AzerbaijanPr +1.07 vs Bundesliga +0.51
+   2223 Rennes - AEK Larnaca                   AEK Larnaca +2.25 dog εκτος      2.04 │        1.81  +11% │        2.01   -0% │ 1-1   +1.04 │ CyprusFirstD +0.59 vs Ligue1 +0.61
+   2324 Milan - Slavia Prague                  Slavia Prague +1.25 dog εκτος    1.81 │        1.61  +11% │        1.77   +1% │ 4-2   -1.00 │ CzechFirstLe +0.79 vs SerieA +0.28
+   2526 Aston Villa - Maccabi Tel Aviv         Maccabi Tel Aviv +2.00 dog εκτ   1.88 │        1.59  +12% │        1.75   +4% │ 2-0   +0.00 │ IsraelLigatH +0.93 vs EPL -0.11
+   2324 Rangers - Sparta Prague                Rangers -0.50 φαβ εντος          2.03 │        1.81  +11% │        1.94   +3% │ 2-1   +1.03 │ ScottishPrem +1.17 vs CzechFirstLe +0.58
+   2526 VfB Stuttgart - Maccabi Tel Aviv       Maccabi Tel Aviv +2.25 dog εκτ   2.02 │        1.77  +12% │        1.88   +6% │ 4-1   -1.00 │ IsraelLigatH +0.57 vs Bundesliga +0.11
+   2223 Trabzonspor - Ferencvaros              Ferencvaros +1.00 dog εκτος      1.95 │        1.63  +14% │        1.74   +8% │ 1-0   +0.00 │ HungaryNBI +0.69 vs TurkishSuper +0.30
+
+   10 ΠΟΥ ΠΡΟΣΤΕΘΗΚΑΝ
+   σεζ  ματς                                   pick                            αγορα │ δικαιη ΠΡΙΝ  edge │ δικαιη ΜΕΤΑ  edge │ σκορ   αποτ │ ομαδα pick (λιγκα, κυριαρχια t) vs αντιπαλος
+   2223 Monaco - FK Crvena Zvezda              Monaco -1.00 φαβ εντος           2.03 │        2.59  -17% │        1.89   +4% │ 4-1   +1.03 │ Ligue1 +0.20 vs SerbiaSuperL +1.35
+   2223 Rennes - Shakhtar Donetsk              Rennes -0.75 φαβ εντος           1.86 │        1.89   -2% │        1.56  +15% │ 2-1   +0.43 │ Ligue1 +0.40 vs UkrainePremi +1.24
+   2324 Bayer Leverkusen - Qarabag FK          Bayer Leverkusen -2.25 φαβ εντ   2.08 │        2.23   -7% │        1.85   +9% │ 3-2   -1.00 │ Bundesliga +0.83 vs AzerbaijanPr +1.19
+   2324 Qarabag FK - Bayer Leverkusen          Bayer Leverkusen -1.50 φαβ εκτ   2.05 │        2.12   -5% │        1.82  +11% │ 2-2   -1.00 │ Bundesliga +0.80 vs AzerbaijanPr +1.17
+   2324 Marseille - Shakhtar Donetsk           Marseille -0.75 φαβ εντος        1.94 │        1.86   +2% │        1.63  +15% │ 3-1   +0.94 │ Ligue1 +0.30 vs UkrainePremi +1.10
+   2526 Lille - FK Crvena Zvezda               Lille -0.75 φαβ εντος            1.85 │        1.87   -2% │        1.65   +9% │ 0-1   -1.00 │ Ligue1 +0.27 vs SerbiaSuperL +1.22
+   2223 Ferencvaros - Monaco                   Monaco -0.50 φαβ εκτος           1.95 │        2.03   -5% │        1.81   +6% │ 1-1   -1.00 │ Ligue1 +0.16 vs HungaryNBI +0.68
+   2324 Slavia Prague - Milan                  Milan -0.50 φαβ εκτος            2.09 │        2.19   -6% │        1.96   +5% │ 1-3   +1.09 │ SerieA +0.31 vs CzechFirstLe +0.78
+   2526 Braga - FK Crvena Zvezda               Braga -0.50 φαβ εντος            2.07 │        2.11   -3% │        1.91   +7% │ 2-0   +1.07 │ PrimeiraLiga +0.38 vs SerbiaSuperL +1.31
+   2324 Real Betis - Sparta Prague             Real Betis -0.75 φαβ εντος       2.05 │        2.03   -1% │        1.87   +7% │ 2-1   +0.52 │ LaLiga +0.00 vs CzechFirstLe +0.60
+
+ΕΛΕΓΧΟΣ top-5: μεγιστη αλλαγη στη διαφορα γκολ σε ματς top-5 vs top-5: 0.000 γκολ (πρεπει 0)
