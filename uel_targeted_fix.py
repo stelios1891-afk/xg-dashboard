@@ -73,8 +73,11 @@ for CAT, lab in (('A', 'ΚΑΤΗΓΟΡΙΑ Α (FotMob και οι 2)'), ('B', '�
     y0 = R[R.st != 'ΠΡΟΣΤΕΘΗΚΕ']; y1 = R[R.st != 'ΚΟΠΗΚΕ']
     print(f'   ΣΗΜΕΡΙΝΟ {len(y0)} picks · ROI {100 * y0.pnl.mean():+6.1f}% · μοναδες {y0.pnl.sum():+5.1f}   →   ΣΤΟΧΕΥΜΕΝΗ {len(y1)} picks · ROI {100 * y1.pnl.mean():+6.1f}% · μοναδες {y1.pnl.sum():+5.1f}')
     for kd in ('φαβ', 'dog'):
-        a_ = y0[y0.kind == kd]; b_ = y1[y1.kind == kd]
-        print(f'      {kd}: σημερινο {len(a_)} picks {100 * a_.pnl.mean():+6.1f}% → στοχευμενη {len(b_)} picks {100 * b_.pnl.mean():+6.1f}%')
+        for vn in (None, 'εντος', 'εκτος'):
+            a_ = y0[(y0.kind == kd) & ((y0.ven == vn) if vn else True)]; b_ = y1[(y1.kind == kd) & ((y1.ven == vn) if vn else True)]
+            print(f'      {kd} {vn or "ολα":6s}: σημερινο {len(a_):3d} picks {100 * a_.pnl.mean():+6.1f}% ({a_.pnl.sum():+5.1f}μ) → στοχευμενη {len(b_):3d} picks {100 * b_.pnl.mean():+6.1f}% ({b_.pnl.sum():+5.1f}μ)'
+                  + ' │ ανα σεζον ' + ' '.join(f'{q[2:]}:{100 * a_[a_.sea == q].pnl.mean():+.0f}→{100 * b_[b_.sea == q].pnl.mean():+.0f}' for q in seas))
+    R.to_csv(f'uel_targeted_fix_{CAT}.csv', index=False, encoding='utf-8-sig')
     for st in ('ΚΟΠΗΚΕ', 'ΠΡΟΣΤΕΘΗΚΕ'):
         y = R[R.st == st].copy()
         if len(y) == 0: continue

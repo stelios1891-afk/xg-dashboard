@@ -110,7 +110,81 @@ def summary(rows):
             out.append(f'Over Α (ημερολόγιο): {len(ov)} picks · {sum(r["pnl"] for r in ov):+.2f} μονάδες')
     except Exception:
         pass
+    try:
+        out.extend(dog_moves())
+    except Exception as e:
+        print('dog_moves:', e)
     return out
+
+
+def _gd_dist(lh, la):
+    P = collections.defaultdict(float)
+    for i in range(13):
+        pi = math.exp(-lh) * lh ** i / math.factorial(i)
+        for j in range(13):
+            P[i - j] += pi * math.exp(-la) * la ** j / math.factorial(j)
+    return P
+
+
+def _imp_margin(T, L, oh, oa):
+    """Διαφορα γκολ (σκοπια γηπεδουχου) που δικαιολογει η τιμη χαντικαπ (γραμμη L γηπεδουχου, αποδοσεις oh/oa)."""
+    q = (1 / oh) / (1 / oh + 1 / oa); lo, hi = -6.0, 6.0
+    parts = [L] if (L * 4) % 2 == 0 else [L - .25, L + .25]
+    for _ in range(36):
+        M = (lo + hi) / 2; D = _gd_dist(max((T + M) / 2, .05), max((T - M) / 2, .05)); pw = pp = 0.0
+        for x in parts:
+            for k, p in D.items():
+                v = k + x
+                if v > .01: pw += p / len(parts)
+                elif abs(v) <= .01: pp += p / len(parts)
+        if pw / max(1 - pp, 1e-9) < q: lo = M
+        else: hi = M
+    return (lo + hi) / 2
+
+
+def dog_moves():
+    """15/10/2026 (Στελιος: «αξιζει να το παρακολουθουμε φετος — πως κινουνται τα αουτσαιντερ»): για καθε pick ΑΟΥΤΣΑΙΝΤΕΡ του Conference στο
+    ημερολογιο, ποσο κινηθηκε η αγορα (Pinnacle, euro_odds_hist) απο την ΤΙΜΗ ΠΟΥ ΠΑΙΞΑΜΕ ως την τελευταια τιμη πριν τη σεντρα (γκολ διαφορας,
+    + = προς εμας). Ιστορικα (Β χωρις FotMob, 4 σεζον): +0.03 — δηλ. η αγορα δεν ερχοταν προς τα dogs."""
+    L = [json.loads(l) for l in open(F('euro_picks_ledger.jsonl'), encoding='utf-8') if l.strip()]
+    dg = [r for r in L if r.get('comp') == 'ConferenceLeague' and r.get('role') == 'dog' and not r.get('no_play')]
+    if not dg:
+        return []
+    ids = {str(r['mid']) for r in dg}
+    H = collections.defaultdict(list)
+    for ln in open(F('euro_odds_hist.jsonl'), encoding='utf-8'):
+        try:
+            z = json.loads(ln)
+        except Exception:
+            continue
+        if str(z.get('mid')) in ids and z.get('line') is not None and z.get('oh') and z.get('oa'):
+            H[str(z['mid'])].append(z)
+    T_ = {}
+    try:
+        for m in json.load(open(F('euro_projections.json'), encoding='utf-8')).get('matches', []):
+            T_[str(m['mid'])] = float(m.get('xgh', 1.3)) + float(m.get('xga', 1.3))
+    except Exception:
+        pass
+    mv = []
+    for r in dg:
+        mid = str(r['mid']); ko = _dt(r.get('ko')); seen = _dt(r.get('seen'))
+        hs = sorted((z for z in H.get(mid, []) if _dt(z['t']) and ko and _dt(z['t']).replace(tzinfo=dt.timezone.utc) <= ko), key=lambda z: z['t'])
+        if not hs or not seen or ko > dt.datetime.now(dt.timezone.utc):
+            continue                                      # μονο ματς που ξεκινησαν (η τελευταια τιμη = κλεισιμο)
+        T = T_.get(mid, 2.6); side = int(r['side']); last = hs[-1]
+        ent = [z for z in hs if _dt(z['t']).replace(tzinfo=dt.timezone.utc) <= seen] or hs[:1]
+        ze = ent[-1]
+        m_e = _imp_margin(T, float(ze['line']), float(ze['oh']), float(ze['oa']))
+        m_c = _imp_margin(T, float(last['line']), float(last['oh']), float(last['oa']))
+        mv.append(dict(mv=side * (m_c - m_e), pnl=r.get('pnl')))
+    if not mv:
+        return []
+    n = len(mv); avg = sum(x['mv'] for x in mv) / n; up = sum(x['mv'] >= .05 for x in mv); dn = sum(x['mv'] <= -.05 for x in mv)
+    pn = [x['pnl'] for x in mv if x['pnl'] is not None]
+    s = f'Αουτσάιντερ (κίνηση αγοράς από την τιμή μας ως το κλείσιμο): {n} picks · μέσος {avg:+.2f} γκολ (+ = προς εμάς) · προς εμάς {up} / κόντρα {dn} / ίδια {n - up - dn}'
+    if pn:
+        s += f' · αποτέλεσμα {sum(pn):+.2f} μονάδες ({len(pn)})'
+    return [s + ' (ιστορικά +0.03)']
 
 
 def main(notify_tg=True):
