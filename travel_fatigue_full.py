@@ -47,6 +47,15 @@ SEAS = ['2122', '2223', '2324', '2425', '2526']
 def zone(t):
     c = LOC.get(t)
     return bool(c and -10 <= c[1] <= 25 and 36 <= c[0] <= 62)
+def under_close(mid, ko, tou, tot, books):
+    v = []
+    for bk in books:
+        seq = [x for x in (tou.get((mid, bk)) or []) if x[0] < ko]
+        if not seq: continue
+        L, o, u = seq[-1][1:]
+        parts = [L] if (L * 4) % 2 == 0 else [L - .25, L + .25]
+        v.append(sum(((u - 1) if tot < x_ else (0 if tot == x_ else -1)) for x_ in parts) / len(parts))
+    return float(np.mean(v)) if v else np.nan
 def mk(mid, ko, ah, tou, gd, books):
     for bset in books:
         M = mkt(mid, ko, ah, tou, bset, None, gd)
@@ -69,7 +78,7 @@ for mid, x in G.items():
                 xg = XG.get(mid); tot = x['hs'] + x['as_']
                 RA.append(dict(mid=mid, sea=x['sea'], comp=x['lg'], trip=trip, rc=s * (gd - M['c']), rt=tot - M['tc'],
                                xf=(xg[1] - (M['tc'] - M['c']) / 2) if xg else np.nan, xa=(xg[0] - (M['tc'] + M['c']) / 2) if xg else np.nan,
-                               roi=M['pa'], roi_opp=M['ph']))
+                               roi=M['pa'], roi_opp=M['ph'], und=under_close(mid, ko, TOUE, tot, ('Crown', 'SBOBET'))))
         # (Β) επομενο ματς ≤6 μερες
         L = CAL.get(tid); j = POS.get(tid, {}).get(mid)
         if L is None or j is None or j + 1 >= len(L): continue
@@ -87,7 +96,8 @@ for mid, x in G.items():
                 rec.update(rc=s2 * (gd2 - M2['c']), rt=y['hs'] + y['as_'] - M2['tc'],
                            xf=((xg2[0] if s2 == 1 else xg2[1]) - (M2['tc'] + s2 * M2['c']) / 2) if xg2 else np.nan,
                            xa=((xg2[1] if s2 == 1 else xg2[0]) - (M2['tc'] - s2 * M2['c']) / 2) if xg2 else np.nan,
-                           roi=M2['ph'] if s2 == 1 else M2['pa'], roi_opp=M2['pa'] if s2 == 1 else M2['ph'])
+                           roi=M2['ph'] if s2 == 1 else M2['pa'], roi_opp=M2['pa'] if s2 == 1 else M2['ph'],
+                           und=under_close(nx[1], ko2, TOUD, y['hs'] + y['as_'], ('Crown', 'Bet365')))
         RB.append(rec)
 A = pd.DataFrame(RA); B = pd.DataFrame(RB)
 # 16/10: οπου λειπει χαντικαπ/συνολα → κλεισιμο 1Χ2 (Pinnacle/Bet365/Crown, nowgoal_1x2.jsonl) → αναμενομενα γκολ με αντιστροφη Poisson
@@ -111,9 +121,9 @@ def ms(v):
     return f'{v.mean():+.2f}±{v.std() / np.sqrt(max(len(v), 1)):.2f}' if len(v) > 2 else '   —'
 def line(lab, y):
     ss = [s for s in SEAS if (y.sea == s).sum() >= 4]
-    print(f'   {lab:36s} {len(y):5d} │ {ms(y.rc):>11s} │ {ms(y.sf):>11s} │ {ms(y.sa):>11s} │ {ms(y.rt):>11s} │ {ms(y.xf):>11s} {ms(y.xa):>11s} │ {100 * np.nanmean(y.roi):+6.1f}% │ {100 * np.nanmean(y.roi_opp) if 'roi_opp' in y and y.roi_opp.notna().any() else float('nan'):+6.1f}% │ ' +
+    print(f'   {lab:36s} {len(y):5d} │ {ms(y.rc):>11s} │ {ms(y.sf):>11s} │ {ms(y.sa):>11s} │ {ms(y.rt):>11s} │ {ms(y.xf):>11s} {ms(y.xa):>11s} │ {100 * np.nanmean(y.roi):+6.1f}% │ {100 * np.nanmean(y.roi_opp) if 'roi_opp' in y and y.roi_opp.notna().any() else float('nan'):+6.1f}% │ {100 * np.nanmean(y.und) if 'und' in y and y.und.notna().any() else float('nan'):+6.1f}% ({int(y.und.notna().sum()) if 'und' in y else 0:3d}) │ ' +
           ' '.join(f'{s[2:]}:{y[y.sea == s].rt.mean():+.2f}' for s in ss))
-HDR = (f'   {"":36s} {"n":>5s} │ {"διαφορα−αγ":>11s} │ {"βαζει−αγ":>11s} │ {"τρωει−αγ":>11s} │ {"συνολο−αγ":>11s} │ {"xG βαζει−αγ":>11s} {"xG τρωει−αγ":>11s} │ {"AH ταξ.":>7s} │ {"AH ΚΟΝΤΡΑ":>7s} │ ανα σεζον (συνολο−αγ)')
+HDR = (f'   {"":36s} {"n":>5s} │ {"διαφορα−αγ":>11s} │ {"βαζει−αγ":>11s} │ {"τρωει−αγ":>11s} │ {"συνολο−αγ":>11s} │ {"xG βαζει−αγ":>11s} {"xG τρωει−αγ":>11s} │ {"AH ταξ.":>7s} │ {"AH ΚΟΝΤΡΑ":>7s} │ {"UNDER κλεισ. (n)":>16s} │ ανα σεζον (συνολο−αγ)')
 BK = ((0, 1500, '<1.500 χλμ (≤2ω)'), (1500, 2500, '1.500-2.500 (2-3ω)'), (2500, 3500, '2.500-3.500 (3-4.5ω)'), (3500, 99999, '≥3.500 (4.5ω+)'))
 print('ΤΑΞΙΔΙ & ΚΟΥΡΑΣΗ — ομαδες Δυτικης/Κεντρικης Ευρωπης («ασυνηθιστες» στα μακρινα ταξιδια) · ευρωπαικα 2122-2526 (+προκριματικα)')
 print(f'δεδομενα: ημερολογιο {len(G):,} ματς (κυπελλα {sum(1 for v in G.values() if v["kind"] == "cup"):,}) · γηπεδα {len(LOC):,} ομαδες · '
