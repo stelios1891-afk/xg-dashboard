@@ -801,8 +801,12 @@ def test_e_zone_role_and_thresholds():
         elif role == 'under':                    # 10/10/2026: ΜΟΝΟ Champions League, edge ≥10%
             # 13/10/2026: + Conference κατηγορια Β (rule uecl_b_under) με κατωφλι 14%
             uecl_b = comp == 'ConferenceLeague' and p.get('rule') == 'uecl_b_under'
-            if not (ucl or uecl_b):
-                bad.append(f'{_elab(p)}: under εκτος Champions League / Conference Β')
+            # 16/10/2026: + Europa κατηγορια Α ως ΣΚΙΑ (rule uel_under_shadow, no_play=True), κατωφλι 10%
+            uel_u = comp == 'EuropaLeague' and p.get('rule') == 'uel_under_shadow'
+            if uel_u and p.get('no_play') is not True:
+                bad.append(f'{_elab(p)}: UEL under σκια χωρις no_play=True')
+            if not (ucl or uecl_b or uel_u):
+                bad.append(f'{_elab(p)}: under εκτος Champions League / Conference Β / Europa σκια')
             thr_u = 0.14 if uecl_b else 0.10
             if e < thr_u - EPS:
                 bad.append(f'{_elab(p)}: under edge {e*100:.1f}% < {thr_u*100:.0f}%')

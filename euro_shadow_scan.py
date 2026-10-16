@@ -181,6 +181,10 @@ def main():
     #  Over Β ΟΧΙ (−1.7%). Ματς Γ (καμια FotMob) εκτος.
     EDGE_DOG_UECL_B = 0.10
     EDGE_UNDER_UECL_B = 0.14
+    # UNDER EUROPA κατηγορια Α (16/10/2026, Στελιος «να τα βαλουμε και αυτα σκια»): ΣΚΙΑ μονο (no_play, οχι Telegram, rule uel_under_shadow).
+    # uel_totals_mechanisms / uel_late_under_test: under ≥10% ≤72ω 54 picks +20.5% (Crown +18 / SBOBET +23), θετικο 4/4 σεζον·
+    # ΑΛΛΑ αξια xG +2.6% (γκολ 2.49 vs xG 3.0) → κυριως φινιρισμα· με φετινα ευρωπαικα 0.5 (live) +15%.
+    EDGE_UNDER_UEL = 0.10
     EDGE_DNB_UCL = 0.04            # 10/10/2026: DNB (γραμμη 0) μονο UCL, FotMob και οι 2
     NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
     EDGE_FAV_UCL = 0.10
@@ -334,12 +338,13 @@ def main():
                           (None if fm_both else 'ομάδα χωρίς FotMob — μόνο over (10/10)'))))
         # --- UNDERS (W2 + ισοπαλιες ×scale) — UCL FotMob+FotMob ≥10% · 13/10: + CONFERENCE Β (μια χωρις FotMob) ≥14% ---
         uecl_b = fm_one and m['comp'] == 'ConferenceLeague'
-        if (((fm_both and m['comp'] == 'ChampionsLeague') or uecl_b) and m.get('xgh_ou') is not None and mk.get('tl') is not None
+        uel_u = fm_both and m['comp'] == 'EuropaLeague'                                          # 16/10: UEL Α = σκια
+        if (((fm_both and m['comp'] == 'ChampionsLeague') or uecl_b or uel_u) and m.get('xgh_ou') is not None and mk.get('tl') is not None
                 and mk.get('tu') and 1.70 <= float(mk['tu']) <= 2.10):
             td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
             po, pu = p_over(td, float(mk['tl']))
             e_u = pu * (float(mk['tu']) - 1) * (1 - picks.MARGIN) - po
-            if e_u >= (EDGE_UNDER_UECL_B if uecl_b else EDGE_UNDER_UCL):
+            if e_u >= (EDGE_UNDER_UECL_B if uecl_b else (EDGE_UNDER_UEL if uel_u else EDGE_UNDER_UCL)):
                 picks_out.append(dict(
                     mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
                     home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
@@ -349,8 +354,10 @@ def main():
                     proj_odds=round((1 - max(1 - po - pu, 0)) / pu, 3) if pu > 0 else None,
                     tag75=False,
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'), lim=mk.get('lim'),
-                    rule=('uecl_b_under' if uecl_b else None), src=(f"{m.get('src_h')}/{m.get('src_a')}" if uecl_b else None),
-                    no_play=False, note=('Conference Β — under' if uecl_b else None)))
+                    rule=('uecl_b_under' if uecl_b else ('uel_under_shadow' if uel_u else None)),
+                    src=(f"{m.get('src_h')}/{m.get('src_a')}" if uecl_b else None),
+                    no_play=uel_u,
+                    note=('Conference Β — under' if uecl_b else ('👁 ΣΚΙΑ — Europa under κατηγορίας Α (καταγραφή, δεν παίζεται)' if uel_u else None))))
     hf = {p['mid'] for p in picks_out if str(p.get('rule') or '').startswith('uel_home_fav')}
     picks_out = [p for p in picks_out if not (p['mid'] in hf and p['comp'] == 'EuropaLeague' and p['side'] == 1
                                               and p['role'] == 'fav' and not p.get('rule'))]
@@ -376,6 +383,75 @@ def main():
         if (prev is not None and prev.get('rule') == 'late2h') or (prev is None and 0 < hb < LATE2H_UCL):
             p.update(no_play=True, rule='late2h',
                      note='📝 βγήκε στο τελευταίο 2ωρο — καταγραφή, δεν παίζεται (ενδεκάδες· ιστορικά UCL χάντικαπ εδώ −13%)')
+    # 16/10/2026 (Στελιος «καντο ναι»): ΣΕΡΙ ΕΚΤΟΣ / ΚΟΥΡΑΣΗ — ΜΟΝΟ ΕΝΔΕΙΞΗ + ΣΚΙΑ, ΟΧΙ στο μοντελο (fatigue_flags.py).
+    # (α) καρτα/Telegram: «⚠ <φιλοξ.>: 3ο εκτος στη σειρα · ξεκουραση · χλμ» σε ΚΑΘΕ ευρωπαικο pick του ματς.
+    # (β) σκια UCL «A»: φιλοξ. με σερι ≥3 → υπεροχη +0.17 υπερ γηπεδουχου (ucl_away3_penalty_test)· γραφεται στο fatigue_shadow.jsonl
+    #     η πρωτη ≤72ω αποτιμηση καθε πλευρας (χωρις/με ποινη), ΙΔΙΟΙ κανονες με τα UCL picks (FotMob+FotMob). Δεν αλλαζει picks/Telegram.
+    try:
+        import fatigue_flags as FF
+        _fst = {}
+        for m in P.get('matches', []):
+            if m.get('covered') and not m.get('finished') and m.get('hid') and m.get('aid'):
+                _s = FF.away_state(m['aid'], m['hid'], m['utc'])
+                if _s:
+                    _fst[str(m['mid'])] = (_s, FF.note(m['away'], _s))
+        for p in picks_out:
+            _n = (_fst.get(str(p['mid'])) or (None, None))[1]
+            if _n:
+                p['fatigue'] = _n
+        _sh = []
+        for m in P.get('matches', []):
+            mid_ = str(m['mid']); fs_ = _fst.get(mid_)
+            if (m.get('comp') != 'ChampionsLeague' or not fs_ or fs_[0]['streak'] < FF.STREAK_MIN
+                    or m.get('src_h') != 'FotMob' or m.get('src_a') != 'FotMob'):
+                continue
+            mk = O.get(mid_) or {}
+            try:
+                ko = datetime.datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00'))
+            except Exception:
+                continue
+            hb = (ko - now).total_seconds() / 3600
+            if not (0 < hb <= FF.ENTRY_H) or mk.get('line') is None:
+                continue
+            ph, pa = FF.shift(m['xgh'], m['xga'], FF.D_UCL)
+            cands = []
+            for tag, (xh_, xa_) in (('base', (m['xgh'], m['xga'])), ('pen', (ph, pa))):
+                d_ = eu_dist(xh_, xa_, scale)
+                for side, ln, o in ((1, float(mk['line']), mk.get('oh')), (-1, -float(mk['line']), mk.get('oa'))):
+                    if not o or not (1.70 <= float(o) <= 2.10):
+                        continue
+                    role = 'fav' if ln <= -0.5 else ('dog' if ln >= 0.5 else ('dnb' if abs(ln) < 0.01 else None))
+                    if role is None:
+                        continue
+                    pw, pp = cover_q(d_, side, ln) if role in ('fav', 'dnb') else picks.p_cover(d_, side, ln)
+                    e_ = edge_of(pw, pp, float(o))
+                    thr = EDGE_FAV_UCL if role == 'fav' else (EDGE_DOG_UCL if role == 'dog' else EDGE_DNB_UCL)
+                    cands.append((tag, str(side), role, round(ln, 2), float(o), round(e_, 4), e_ >= thr))
+                if m.get('xgh_ou') is not None and mk.get('tl') is not None:
+                    oh_, oa_ = (FF.shift(m['xgh_ou'], m['xga_ou'], FF.D_UCL) if tag == 'pen' else (m['xgh_ou'], m['xga_ou']))
+                    po, pu = p_over(tot_dist(oh_, oa_, scale), float(mk['tl']))
+                    for side, o, thr in (('over', mk.get('to'), EDGE_OVER), ('under', mk.get('tu'), EDGE_UNDER_UCL)):
+                        if not o or not (1.70 <= float(o) <= 2.10):
+                            continue
+                        w_, l_ = (po, pu) if side == 'over' else (pu, po)
+                        e_ = w_ * (float(o) - 1) * (1 - picks.MARGIN) - l_
+                        cands.append((tag, side, side, float(mk['tl']), float(o), round(e_, 4), e_ >= thr))
+            for side in {c[1] for c in cands}:
+                b = next((c for c in cands if c[0] == 'base' and c[1] == side), None)
+                q = next((c for c in cands if c[0] == 'pen' and c[1] == side), None)
+                if not ((b and b[6]) or (q and q[6])):
+                    continue
+                _sh.append(dict(key=f"uclA|{mid_}|{side}", var='UCL A (σερι≥3, δ 0.17)', seen=now.isoformat(timespec='minutes'),
+                                hours_before=round(hb, 1), mid=mid_, comp=m['comp'], ko=str(m['utc'])[:16], home=m['home'], away=m['away'],
+                                streak=fs_[0]['streak'], rest=fs_[0]['rest'], km14=fs_[0]['km14'], side=side,
+                                role=(q or b)[2], line=(q or b)[3], odds=(q or b)[4],
+                                edge_base=(b[5] if b else None), pick_base=bool(b and b[6]),
+                                edge_pen=(q[5] if q else None), pick_pen=bool(q and q[6])))
+        _nsh = FF.shadow_write(_sh)
+        if _fst:
+            print(f"σερι εκτος: {sum(1 for v in _fst.values() if v[1])} ματς με φιλοξ. 3ο+ εκτος · σκια UCL A νεες εγγραφες {_nsh}")
+    except Exception as _e:
+        print(f'σερι εκτος/σκια ΣΦΑΛΜΑ (μη κρισιμο): {type(_e).__name__}: {_e}')
     picks_out.sort(key=lambda p: p['ko'])
     json.dump(dict(scanned_at=now.isoformat()[:16], picks=picks_out,
                    rules=dict(edge_dog=EDGE_DOG, edge_fav=EDGE_FAV, edge_fav_ucl=EDGE_FAV_UCL,
