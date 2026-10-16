@@ -23,6 +23,16 @@ LATEST_F = os.path.join(ROOT, 'euro_value_latest.json')
 HIST_F = os.path.join(ROOT, 'euro_odds_hist.jsonl')
 UTC = dt.timezone.utc
 ENTRY_H = 72
+# 16/10/2026 (Στελιος «την Πεμπτη, αφου παιχτουν οι 2 μερες του Champions, να ανοιγουν κανονικα τα picks»): Champions League φαβορι /
+# αουτσαιντερ / DNB / over (Α & Β) γραφονται & στελνονται απο τις 168ω πριν (οι γραμμες βγαινουν ~Πεμπτη). UNDER μενουν ≤72ω.
+# ucl_early_honest (+_totals, _B) & ucl_friday_cohort: με ΤΙΜΙΟ μοντελο (−4/−7 μερες) τα νωρις ειναι ισα ή καλυτερα (νεα μορφη, ιδια picks
+# Παρασκευης → κλεισιμο: φαβ +17.6→+14.2%, over Α +13.3→+10.9%, over Β +19.4→+16.4%, dogs +15.9→+13.2%)· under νωρις ≈0 (+1.6%).
+ENTRY_H_UCL_EARLY = 168
+UCL_EARLY_ROLES = ('fav', 'dog', 'dnb', 'over')
+
+
+def entry_h(p):
+    return ENTRY_H_UCL_EARLY if p.get('comp') == 'ChampionsLeague' and p.get('role') in UCL_EARLY_ROLES else ENTRY_H
 
 
 def _dt(s):
@@ -66,7 +76,7 @@ def entries(picks, t, have):
         k = _key(p)
         if p.get('role') in ('over', 'under') and f"{p['mid']}|{'under' if p['role'] == 'over' else 'over'}" in have:
             continue                                   # 10/10: ηδη pick στην αντιθετη πλευρα του συνολου → δεν γραφεται/στελνεται
-        if 0 < hb <= ENTRY_H and k not in have:
+        if 0 < hb <= entry_h(p) and k not in have:
             have.add(k)
             out.append(dict(key=k, seen=t.isoformat(timespec='minutes'), hours_before=round(hb, 1), mid=str(p['mid']), comp=p['comp'],
                             rnd=p.get('rnd'), ko=ko.strftime('%Y-%m-%dT%H:%M'), home=p['home'], away=p['away'], hid=p.get('hid'),
@@ -126,6 +136,14 @@ def _late2h(r):
         return False
 
 
+def _early_note(r):
+    try:
+        hb = float(r.get('hours_before'))
+    except (TypeError, ValueError):
+        return ''
+    return (chr(10) + f'🕐 νωρίς pick ({hb / 24:.1f} μέρες πριν) · όρια ακόμα χαμηλά') if hb > ENTRY_H else ''
+
+
 def tg_msg(rows):
     NL = chr(10)
     out = [f"🌍 {len(rows)} ΝΕΑ ευρωπαϊκά picks"]
@@ -140,7 +158,8 @@ def tg_msg(rows):
                        + (NL + 'Conference Β · ομάδα χωρίς FotMob' + NL + '⏰ παίξε το αργότερο ως ' +
                           (lambda d: f"{_DAYS[d.weekday()]} {d.strftime('%d/%m %H:%M')}")(_athens(_dt(r['ko']) - dt.timedelta(hours=12))) + ' (12ω πριν)'
                           if r.get('rule') == 'uecl_b_under' else '')
-                       + (NL + r['fatigue'] if r.get('fatigue') else ''))   # 13/10 · 14/10 προθεσμια · 16/10 σερι εκτος
+                       + (NL + r['fatigue'] if r.get('fatigue') else '')   # 13/10 · 14/10 προθεσμια · 16/10 σερι εκτος
+                       + _early_note(r))
             continue
         team = r['home'] if r['side'] == 1 else r['away']
         tag = ((NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else
@@ -150,7 +169,8 @@ def tg_msg(rows):
                     f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}") + NL +
                    f"edge {r['edge'] * 100:.0f}% · {'DNB' if r.get('role') == 'dnb' else ('φαβορί' if r['role'] == 'fav' else 'αουτσάιντερ')}"
                    + (f" · όριο Pinnacle {r['lim']['spreads']:,.0f}".replace(',', '.') if (r.get('lim') or {}).get('spreads') else '') + tag
-                   + (NL + r['fatigue'] if r.get('fatigue') else ''))   # 16/10: σερι εκτος (μονο ενδειξη)
+                   + (NL + r['fatigue'] if r.get('fatigue') else '')   # 16/10: σερι εκτος (μονο ενδειξη)
+                   + _early_note(r))
     return NL.join(out)
 
 

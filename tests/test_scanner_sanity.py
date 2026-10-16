@@ -211,7 +211,9 @@ def test_a_euro_ledger_once_within_72h():
     keys = [r['key'] for r in rows]
     assert len(keys) == len(set(keys)), 'euro_picks_ledger: διπλη εισοδος ιδιου ματς/πλευρας'
     for r in rows:
-        assert 0 < r['hours_before'] <= 72, f'euro_picks_ledger εκτος 72ω: {r["home"]}-{r["away"]} {r["hours_before"]}'
+        # 16/10/2026: Champions League φαβορι/αουτσαιντερ/DNB/over απο 168ω (euro_picks_ledger.ENTRY_H_UCL_EARLY)· ολα τα αλλα ≤72ω
+        lim_h = 168 if (r['comp'] == 'ChampionsLeague' and r.get('role') in ('fav', 'dog', 'dnb', 'over')) else 72
+        assert 0 < r['hours_before'] <= lim_h, f'euro_picks_ledger εκτος {lim_h}ω: {r["home"]}-{r["away"]} {r["hours_before"]}'
         if r['comp'] == 'EuropaLeague':
             if r.get('rule') == 'uel_home_fav':          # 9/10: κανονικο — μονο γηπεδουχος φαβορι
                 assert r['side'] == 1 and r['role'] == 'fav' and r['line'] <= -0.5 and r['key'].endswith('|uel_hf'),                     f'euro_picks_ledger: uel_home_fav εκτος κανονα ({r["home"]}-{r["away"]})'
