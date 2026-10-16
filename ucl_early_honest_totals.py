@@ -7,6 +7,14 @@ import sys, os, pickle
 _s = open('uel_full_review.py', encoding='utf-8').read().split("print('=' * 100 + NL + '1. ΣΥΝΟΛΑ")[0].replace("sys.stdout.reconfigure(encoding='utf-8')", 'pass', 1)
 _TO = sys.stdout; sys.stdout = open(os.devnull, 'w', encoding='utf-8'); exec(_s); sys.stdout = _TO
 sys.stdout.reconfigure(encoding='utf-8')
+# 16/10: ΧΩΡΙΣ τον κανονα «φρεσκια τιμη ≤24ω» του uel_full_review — το Nowgoal γραφει μονο ΑΛΛΑΓΕΣ γραμμης, αρα η τελευταια γνωστη
+# τιμη ΙΣΧΥΕ ακομα· με τον κανονα χανονταν τα ματς που δεν αλλαξαν τιμη για >24ω (120ω: 91 ματς, 96ω: 62, ενω υπαρχουν ~295) — ιδιο με τα χαντικαπ (snapT).
+def snap_ou(mid, bk, h):
+    ko = KO.get(mid); seq = TOU.get((mid, bk))
+    if not ko or not seq: return None
+    cut = ko - h * 3600 if h else ko + 900
+    prev = [x for x in seq if x[0] <= cut]
+    return prev[-1][1:] if prev else None
 I = np.array([i for i in np.where(COMP == 'ChampionsLeague')[0] if SRCC[i] == 'FF']); M = [str(MIDS[i]) for i in I]; S = SEA[I]; TOT = GH[I] + GA[I]
 OH0, OA0 = OH[I], OA[I]
 def rp(var, base):
