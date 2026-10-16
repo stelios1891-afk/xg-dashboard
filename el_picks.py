@@ -65,6 +65,22 @@ def drift_before(p, first_seen, sm, st, hours=DRIFT_H):
     if m0 is None or m1 is None: return None
     s_ = p['side'] if p['mkt'] == 'hcap' else (1 if str(p.get('bet', '')).startswith('Over') else -1)
     return round((m1 - m0) * s_, 1)
+# 17/10/2026 (Στελιος «βαλτο»): ΑΟΥΤΣΑΪΝΤΕΡ (χαντικαπ, παιρνουμε ποντους) που ΠΡΩΤΟΒΓΑΙΝΕΙ 2-6ω πριν το τζαμπολ = ΚΑΤΑΓΡΑΦΗ (paper='late6dog').
+# el_dog_late_test.py (Crown, E2021-25, live μοντελο, ΠΡΟ-ΔΗΛΩΜΕΝΟ): κομμενα 52 −6.8% / κλεισ. −9.1% (2/5) vs μενουν +8.6% (4/5)· χειροτερα 4/5 σεζον·
+# Χ=4 (−22.3%) & Χ=8 (−10.4%) ιδια φορα· μοναδες αουτσαιντερ +48.0 → +51.6 → ΠΕΡΝΑ 4/4. el_contra_birth: τα κακα = σταδιακη κοντρα 0.5-1.5π
+# με αλλαγη ΜΟΝΟ της αποδοσης (−14%, 0/5). ΦΑΒΟΡΙ ΟΧΙ (αργα +38.5%). Αν η αγορα ΜΟΛΙΣ ανοιξε (<6ω πριν) → τιμη ανοιγματος = κανονικο.
+LATE_DOG_H = 6.0
+OPEN_GRACE_MIN = 45     # αν η πρωτη τιμη του ματς στο ιστορικο ειναι νεοτερη απο τοσα λεπτα → «ανοιγμα»
+def market_just_opened(p, now):
+    drift_before(p, now, 11.5, 16.7, hours=0.01)        # φορτωνει το _HIST αν χρειαζεται
+    H = (_HIST or {}).get(int(p['code']), [])
+    if not H:
+        return True
+    try:
+        t0 = dt.datetime.fromisoformat(H[0]['t']).replace(tzinfo=dt.timezone.utc)
+        return (dt.datetime.fromisoformat(now) - t0).total_seconds() < OPEN_GRACE_MIN * 60
+    except Exception:
+        return False
 MOVE_LATE_H = 6.0     # 7/10/2026 (Στελιος «περνα το»): κοντρα ≥1.5 που ΞΕΠΕΡΑΣΤΗΚΕ <6ω πριν το τζαμπολ = κανονικο pick (el_totals_move_deep:
                       # <6ω +19.5% (44, 4/5) · 6-12ω −29.8% (41) · 12-24ω −32.9% (23) — οι νωρις κοντρα κινησεις ειναι «εξυπνα» λεφτα)
 def move_cross_hours(p, st):
@@ -259,6 +275,8 @@ def main(notify_tg=True):
             new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now, hcap=p['hcap'])
             hrs = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc) - dt.datetime.fromisoformat(now)).total_seconds() / 3600
             if p['mkt'] == 'hcap' and hrs < LATE_H: state[k]['paper'] = 'late2h'
+            elif p['mkt'] == 'hcap' and float(p['hcap']) > 0 and hrs < LATE_DOG_H and not market_just_opened(p, now):
+                state[k]['paper'] = 'late6dog'                    # 17/10: αουτσαιντερ 2-6ω = καταγραφη
             if p['mkt'] == 'total':
                 d_open = drift_before(p, now, sm_, st_, hours=1e4)       # απο την ΠΡΩΤΗ τιμη του ιστορικου ως τωρα (+ = προς εμας)
                 state[k]['move_open'] = d_open
@@ -292,7 +310,10 @@ def main(notify_tg=True):
                 st0['late_kind'] = 'αγνωστη' if d1 is None else ('ξαφνικη' if d1 <= -SUDDEN_PTS else 'σταδιακη/ακινητη')
                 if key(p) in state: state[key(p)]['late_kind'] = st0['late_kind']
             p['paper'], p['late_kind'] = st0['paper'], st0['late_kind']
-            if st0['paper'] == 'move15':
+            if st0['paper'] == 'late6dog':
+                p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: αουτσαιντερ που βγηκε 2-6ω πριν (ιστορικα −6.8%, 2/5 σεζον· «σταδιακη» κοντρα −14%)· κινηση αγορας: {p['late_kind']}"
+                                 + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
+            elif st0['paper'] == 'move15':
                 p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε αφου η αγορα κινηθηκε {st0.get('move_open') or 0:+.1f} π. κοντρα απο το ανοιγμα "
                                  f"(ιστορικα κοντρα ≥1.5 π. −10%, 1/5 σεζον)· κινηση: {p['late_kind']}")
             else:

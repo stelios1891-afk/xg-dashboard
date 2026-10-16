@@ -128,7 +128,7 @@ def report(days=7):
     if th: lines.append(th + ' — σεζον ως τωρα')
     ps = [r for r in paper if r['settled']]
     if ps: lines.append(f'📝 καταγραφες (δεν παιζονται): {len(ps)} · {sum(r["pnl"] for r in ps):+.2f} μον. αν παιζονταν'
-                        + (f' (χαντικαπ 2ωρου {sum(1 for r in ps if r.get("paper") == "late2h")} · συνολα κοντρα ≥1.5 {sum(1 for r in ps if r.get("paper") == "move15")})' if PRE == 'el'
+                        + (f' (χαντικαπ 2ωρου {sum(1 for r in ps if r.get("paper") == "late2h")} · αουτσαιντερ 2-6ω {sum(1 for r in ps if r.get("paper") == "late6dog")} · συνολα κοντρα ≥1.5 {sum(1 for r in ps if r.get("paper") == "move15")})' if PRE == 'el'
                          else f' (λιγα δεδομενα {sum(1 for r in ps if r.get("paper") == "lowinfo")})'))
     det = [r for r in week if r['settled']]
     if det:

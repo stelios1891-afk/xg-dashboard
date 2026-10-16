@@ -98,7 +98,8 @@ def play_status(p):
         return False, 'σκια'
     if p.get('paper_late'):
         n = p.get('mkt_note') or ''
-        return False, ('τελευταιο 2ωρο' if '2ωρο' in n else ('αγορα κοντρα ≥1.5 απο το ανοιγμα' if 'κοντρα' in n else
+        return False, ('αουτσαιντερ 2-6ω πριν' if 'αουτσαιντερ που βγηκε 2-6ω' in n else   # 17/10: late6dog
+                       'τελευταιο 2ωρο' if '2ωρο' in n else ('αγορα κοντρα ≥1.5 απο το ανοιγμα' if 'κοντρα' in n else
                        ('λιγα δεδομενα' if p.get('late_kind') == 'λιγα δεδομενα' else 'καταγραφη')))
     if p.get('rule') == 'fav714':
         return (p.get('side') == 1), 'κοντο φαβορι 7-14 εκτος'
