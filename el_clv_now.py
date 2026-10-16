@@ -64,7 +64,7 @@ for k, rs in grp.items():
         mar = gm['hs'] - gm['as_']; tot = gm['hs'] + gm['as_']
         x = ((mar if d == 1 else -mar) + L) if kind == 1 else ((tot - L) * d)
         res = 0.0 if abs(x) < 1e-9 else ((float(r['odds']) - 1) if x > 0 else -1.0)
-    recs.append(dict(code=code, dir=dir_of(r), ph=ph, kind=kindp, mkt=('ΧΑΝΤΙΚΑΠ' if kind == 1 else 'ΣΥΝΟΛΑ'), role=role, clv=d * (m_cl - m_at),
+    recs.append(dict(hb=(tip - ts(r['seen'])).total_seconds() / 3600, code=code, dir=dir_of(r), ph=ph, kind=kindp, mkt=('ΧΑΝΤΙΚΑΠ' if kind == 1 else 'ΣΥΝΟΛΑ'), role=role, clv=d * (m_cl - m_at),
                      ev=w * float(r['odds']) + p - 1, res=res, st=('παιχτηκε' if res is not None else ('σε εξελιξη' if started else 'ΑΝΟΙΧΤΟ (τωρινη τιμη)')),
                      lab=f"{tip:%d/%m} {r['home'][:18]}–{r['away'][:18]} · {('%+g' % L) if kind == 1 else r.get('bet')} @{r['odds']}",
                      now=f"{('%+g' % (cl[0] if d == 1 else -cl[0])) if kind == 1 else cl[0]} @{(cl[1] if d == 1 else cl[2]) if kind == 1 else (cl[1] if d == 1 else cl[2])}",
