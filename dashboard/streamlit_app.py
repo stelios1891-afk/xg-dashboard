@@ -416,6 +416,7 @@ def _euro_picks():
                  no_play=bool(p.get('no_play')) and p.get('rule') != 'late2h',
                  paper_late=(p.get('rule') == 'late2h'), mkt_note=(p.get('note') if p.get('rule') == 'late2h' else None),
                  rule=p.get('rule'), eu_note=p.get('note'),       # 9/10: rule uel_home_fav(_wait) = UEL φαβορι εντος
+                 fatigue=p.get('fatigue'),                         # 16/10: σερι εκτος φιλοξενουμενου (μονο ενδειξη)
                  lim=p.get('lim'), lim_mkt=('totals' if p.get('role') in ('over', 'under') else 'spreads'))   # 11/10: οριο Pinnacle στην καρτα
         if p.get('role') in ('over', 'under'):
             q['bet'] = p['team']          # π.χ. "Over 3.00" / "Under 3.25" (10/10: under UCL)

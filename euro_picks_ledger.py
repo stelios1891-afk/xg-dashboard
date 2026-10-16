@@ -73,6 +73,7 @@ def entries(picks, t, have):
                             aid=p.get('aid'), mkt={'over': 'OVER', 'under': 'UNDER'}.get(p.get('role'), 'AH'), role=p.get('role'), side=p['side'],
                             line=p['line'], odds=p['odds'], edge=p['edge'], band=p.get('band'), rule=p.get('rule'),
                             lim=p.get('lim'),   # 10/10: ορια Pinnacle τη στιγμη της εισοδου
+                            **({'fatigue': p['fatigue']} if p.get('fatigue') else {}),   # 16/10: σερι εκτος φιλοξ. (fatigue_flags — μονο ενδειξη)
                             # UEL κλειστο 11/9 (σκια) — ΕΞΑΙΡΕΣΗ 9/10/2026: UEL φαβορι εντος (rule uel_home_fav) = κανονικο
                             no_play=(bool(p.get('no_play')) if p.get('rule') == 'uel_home_fav'
                                      else bool(p.get('no_play')) or p['comp'] == 'EuropaLeague')))
@@ -138,7 +139,8 @@ def tg_msg(rows):
                        + (NL + LATE2H_NOTE['TOT'] if _late2h(r) else '')
                        + (NL + 'Conference Β · ομάδα χωρίς FotMob' + NL + '⏰ παίξε το αργότερο ως ' +
                           (lambda d: f"{_DAYS[d.weekday()]} {d.strftime('%d/%m %H:%M')}")(_athens(_dt(r['ko']) - dt.timedelta(hours=12))) + ' (12ω πριν)'
-                          if r.get('rule') == 'uecl_b_under' else ''))   # 13/10 · 14/10 προθεσμια
+                          if r.get('rule') == 'uecl_b_under' else '')
+                       + (NL + r['fatigue'] if r.get('fatigue') else ''))   # 13/10 · 14/10 προθεσμια · 16/10 σερι εκτος
             continue
         team = r['home'] if r['side'] == 1 else r['away']
         tag = ((NL + '⭐ UEL φαβορί εντός · μικρό stake') if r.get('rule') == 'uel_home_fav' else
@@ -147,7 +149,8 @@ def tg_msg(rows):
                    (f"{r['home']} - {r['away']}, {team} DNB (0) @{r['odds']:.2f}" if r.get('role') == 'dnb' else
                     f"{r['home']} - {r['away']}, {team} {'+' if r['line'] >= 0 else ''}{r['line']:g} @{r['odds']:.2f}") + NL +
                    f"edge {r['edge'] * 100:.0f}% · {'DNB' if r.get('role') == 'dnb' else ('φαβορί' if r['role'] == 'fav' else 'αουτσάιντερ')}"
-                   + (f" · όριο Pinnacle {r['lim']['spreads']:,.0f}".replace(',', '.') if (r.get('lim') or {}).get('spreads') else '') + tag)
+                   + (f" · όριο Pinnacle {r['lim']['spreads']:,.0f}".replace(',', '.') if (r.get('lim') or {}).get('spreads') else '') + tag
+                   + (NL + r['fatigue'] if r.get('fatigue') else ''))   # 16/10: σερι εκτος (μονο ενδειξη)
     return NL.join(out)
 
 

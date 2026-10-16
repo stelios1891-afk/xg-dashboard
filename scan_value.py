@@ -58,7 +58,8 @@ def _pick_line(p, prev_odds=None):
     return (f"{p['lg']} {tm}\n"
             f"{p['home']} - {p['away']}, {team} {sign}{p['hcap']:g} @{p['odds']:.2f}{ch} bet {p['stake_final']*100:.1f}%\n"
             f"Fair odds {p['proj_odds']:.2f}, edge {p['edge']*100:.0f}%"
-            + ("\n⭐ κοντό φαβορί 7-14 — καλύτερη τιμή συνήθως κοντά στη σέντρα" if p.get('rule') == 'fav714' else ""))
+            + ("\n⭐ κοντό φαβορί 7-14 — καλύτερη τιμή συνήθως κοντά στη σέντρα" if p.get('rule') == 'fav714' else "")
+            + ("\n" + p['fatigue'] if p.get('fatigue') else ""))   # 16/10: σερι εκτος φιλοξενουμενου (fatigue_flags — μονο ενδειξη)
 
 def _build_msg(new_alerts, changed_alerts):
     out = []

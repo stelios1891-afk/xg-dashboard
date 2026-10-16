@@ -147,6 +147,9 @@ def pick_card(p):
         if p.get('old_agree') is not None:   # 1/10: συνολα αγων 1-10 — συμφωνει και το μοντελο χωρις προετοιμασια; (μονο ενδειξη)
             tags += (f'<span class="tag eu" title="Συνολο χωρις την ταση ποντων των φιλικων: {p.get("total_base")}">'
                      + ('ℹ ✓ και το παλιο' if p['old_agree'] else 'ℹ μονο με φιλικα (σημειωση)') + '</span>')
+    if p.get('fatigue'):                  # 16/10 (Στελιος «καντο ναι»): φιλοξενουμενος με 3ο+ συνεχομενο εκτος — ΜΟΝΟ ενδειξη, οχι στο μοντελο
+        tags += (f'<span class="tag lc" title="{_h.escape(p["fatigue"])} — δεν μπαινει στο μοντελο (τεστ: ιστορικα δεν ξεχωριζει απο την τυχη)· '
+                 f'καταγραφεται ως σκια">{_h.escape(p["fatigue"])}</span>')
     if p.get('coach_notes') and not p.get('el'):   # 5/10: αλλαγη προπονητη στα εγχωρια (μονο πληροφορια· το φιλτρο κοβει ηδη τα «κακη και στα δυο»)
         tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 προπονητης</span>'
     if p.get('rule') == 'uecl_b_under':   # 14/10: Conference Β under — η αγορα κατεβαζει τα συνολα 12→8ω πριν (uecl_under_path)

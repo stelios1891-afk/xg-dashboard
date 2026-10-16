@@ -235,6 +235,7 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
             xr_h, xr_a = xg_h, xg_a        # ωμα (χωρις αγκυρα) — τα φαβορι παιρνουν δικη τους αγκυρα .7
             xg_h, xg_a, anc = core7_anchor.apply(lg, H, A, xg_h, xg_a, f['line'], md)
             _cn = coach_flags.notes(H) + coach_flags.notes(A)          # 5/10: αλλαγη προπονητη (πληροφορια καρτας)
+            _np0 = len(all_picks)                                      # 16/10: για την ενδειξη σερι εκτος (fatigue_flags)
             for b in engine.evaluate_bet(xg_h, xg_a, f['line'], f['home_odds'], f['away_odds']):
                 _why = coach_flags.filter_reason(H if b['side'] == 1 else A, md)   # 5/10 (manager_picks_test): κοψιμο dog 15+ υπερ «κακης και στα δυο» με νεο προπονητη (1-8 ματς)
                 if _why:
@@ -269,6 +270,40 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                                           when=f['startTime'], md=md, **({'coach_notes': _cn} if _cn else {}),
                                           mxh=round(fx_h, 3), mxa=round(fx_a, 3),
                                           **b, hnote=hnote, anote=anote, **({'anchor': fanc} if fanc else {})))
+            # 16/10/2026 (Στελιος «καντο ναι»): ΣΕΡΙ ΕΚΤΟΣ — ενδειξη στα picks του ματς + ΣΚΙΑ «B» (φιλοξ. 3ο+ εκτος ΚΑΙ ξεκουραση ≤3.5μ,
+            # υπεροχη +0.18 υπερ γηπ., ucl_away3_penalty_test: εγχωρια B 46 ματς, RMSE 4/4) → fatigue_shadow.jsonl. ΟΧΙ στο μοντελο.
+            try:
+                import fatigue_flags as FF
+                _fs = FF.away_state(A, H, f['startTime'])
+                _fn = FF.note(afot, _fs)
+                if _fn:
+                    for _p in all_picks[_np0:]:
+                        _p['fatigue'] = _fn
+                _ko = datetime.datetime.fromisoformat(str(f['startTime']).replace('Z', '+00:00'))
+                _ko = _ko if _ko.tzinfo else _ko.replace(tzinfo=datetime.timezone.utc)
+                _hb = (_ko - datetime.datetime.now(datetime.timezone.utc)).total_seconds() / 3600
+                if _fs and _fs['streak'] >= FF.STREAK_MIN and _fs['rest'] <= FF.REST_MAX_DOM and 0 < _hb <= FF.ENTRY_H:
+                    _sx = FF.shift(xg_h, xg_a, FF.D_DOM)
+                    _rows = {}
+                    for _tag, (_xh, _xa) in (('base', (xg_h, xg_a)), ('pen', _sx)):
+                        for _b in engine.evaluate_bet(_xh, _xa, f['line'], f['home_odds'], f['away_odds']):
+                            _rows.setdefault((_b['side'], 'dog'), {})[_tag] = _b
+                    if md >= engine.FAV_MIN_MD:
+                        _fx = core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)
+                        for _tag, (_xh, _xa) in (('base', _fx[:2]), ('pen', FF.shift(_fx[0], _fx[1], FF.D_DOM))):
+                            for _b in engine.evaluate_fav(_xh, _xa, f['line'], f['home_odds'], f['away_odds']):
+                                _rows.setdefault((_b['side'], 'fav'), {})[_tag] = _b
+                    FF.shadow_write([dict(key=f"domB|{H}_{A}_{str(f['startTime'])[:16]}|{_sd}|{_rl}", var='εγχωρια B (σερι≥3 & ξεκ.≤3.5μ, δ 0.18)',
+                                          seen=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='minutes'), hours_before=round(_hb, 1),
+                                          lg=lg, home=hfot, away=afot, hid=H, aid=A, ko=str(f['startTime'])[:16], md=md,
+                                          streak=_fs['streak'], rest=_fs['rest'], km14=_fs['km14'], side=_sd, role=_rl,
+                                          line=f['line'], odds_h=f['home_odds'], odds_a=f['away_odds'],
+                                          pick_base=('base' in _v), edge_base=(round(_v['base']['edge'], 4) if 'base' in _v else None),
+                                          pick_pen=('pen' in _v), edge_pen=(round(_v['pen']['edge'], 4) if 'pen' in _v else None),
+                                          hcap=(_v.get('pen') or _v.get('base'))['hcap'], odds=(_v.get('pen') or _v.get('base'))['odds'])
+                                     for (_sd, _rl), _v in _rows.items()])
+            except Exception as _ex:
+                print(f'  σερι εκτος σφαλμα (μη κρισιμο): {type(_ex).__name__}: {_ex}')
     KELLY_FRAC = 0.125; CAP = 0.20
     for p in all_picks:
         p['stake'] = KELLY_FRAC * p['edge'] / (p['odds'] - 1)
