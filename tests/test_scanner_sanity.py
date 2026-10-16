@@ -1134,3 +1134,19 @@ def test_coach_filter():
     assert 'coach_flags.filter_reason' in src and 'coach_flags.log_cut' in src, 'toa_live χωρις φιλτρο προπονητη'
     assert os.path.exists(os.path.join(ROOT, 'coach_flags.json')), 'λειπει coach_flags.json'
 
+
+
+def test_e_ucl_freshness_flag():
+    """16/10/2026: καθε pick Champions League φερει eu_ok (ελεγχος φρεσκαδας: ολα τα προηγουμενα ευρωπαικα των ομαδων στο rating)·
+    οσα εχουν eu_ok=False ΔΕΝ υπαρχουν στο euro_picks_ledger (αναμονη μεχρι να ανανεωθουν τα δεδομενα)."""
+    if not os.path.exists(_p('euro_value_latest.json')):
+        pytest.skip('euro_value_latest.json δεν υπαρχει')
+    d = _json('euro_value_latest.json')
+    ucl = [p for p in d.get('picks', []) if p.get('comp') == 'ChampionsLeague']
+    if not ucl or 'eu_ok' not in ucl[0]:
+        pytest.skip('σαρωση πριν τον ελεγχο φρεσκαδας (16/10)')
+    assert all(isinstance(p.get('eu_ok'), bool) for p in ucl), 'UCL pick χωρις eu_ok'
+    bad = {(str(p['mid'])) for p in ucl if p.get('eu_ok') is False}
+    if bad and os.path.exists(_p('euro_picks_ledger.jsonl')):
+        led = [r for r in _jsonl('euro_picks_ledger.jsonl') if str(r.get('mid')) in bad and str(r.get('seen', '')) >= str(d.get('scanned_at', ''))[:16]]
+        assert not led, f'euro_picks_ledger: γραφτηκε UCL pick με eu_ok=False ({led[0]["home"]}-{led[0]["away"]})'

@@ -71,6 +71,8 @@ def entries(picks, t, have):
         if ko is None:
             continue
         hb = (ko - t).total_seconds() / 3600
+        if p.get('comp') == 'ChampionsLeague' and p.get('eu_ok') is False:   # 16/10: λειπουν πρoσφατα ευρωπαικα απο το rating → αναμονη
+            continue
         if p.get('rule') == 'uel_home_fav_wait':   # 9/10: UEL φαβορι εντος εκτος παραθυρου 12-36ω = μονο ενδειξη, δεν γραφεται
             continue
         k = _key(p)

@@ -383,6 +383,33 @@ def main():
         if (prev is not None and prev.get('rule') == 'late2h') or (prev is None and 0 < hb < LATE2H_UCL):
             p.update(no_play=True, rule='late2h',
                      note='📝 βγήκε στο τελευταίο 2ωρο — καταγραφή, δεν παίζεται (ενδεκάδες· ιστορικά UCL χάντικαπ εδώ −13%)')
+    # 16/10/2026 (Στελιος «βασικη προυποθεση να εχουν ανανεωθει σωστα τα τελευταια αποτελεσματα του Champions»): ΕΛΕΓΧΟΣ ΦΡΕΣΚΑΔΑΣ.
+    # Για καθε ματς Champions League: καθε ομαδα πρεπει να εχει μεσα στο rating (eu_in_h/eu_in_a του euro_projections) ΟΛΑ τα ματς της
+    # διοργανωσης που ξεκινησαν πριν απο 4ω+. Αν λειπει εστω ενα (π.χ. δεν τρεξε ακομα το euro-refresh / δεν ηρθαν xG) → eu_ok=False:
+    # το pick φαινεται στο dashboard αλλα το ημερολογιο/Telegram ΔΕΝ το γραφει μεχρι να διορθωθει (euro_picks_ledger.entries).
+    def _T(x_):
+        return datetime.datetime.fromisoformat(str(x_).replace('Z', '+00:00'))
+    _ms = P.get('matches', [])
+    _eu_bad = {}
+    for m in _ms:
+        if m.get('comp') != 'ChampionsLeague' or m.get('finished') or not m.get('covered'):
+            continue
+        miss = []
+        for tid, got, nm in ((m.get('hid'), m.get('eu_in_h'), m.get('home')), (m.get('aid'), m.get('eu_in_a'), m.get('away'))):
+            exp = sum(1 for x_ in _ms if x_.get('comp') == m['comp'] and tid in (x_.get('hid'), x_.get('aid')) and x_['mid'] != m['mid']
+                      and _T(x_['utc']) < now - datetime.timedelta(hours=4))
+            if got is None or int(got) < exp:
+                miss.append(f'{nm} {got}/{exp}')
+        if miss:
+            _eu_bad[str(m['mid'])] = ', '.join(miss)
+    for p in picks_out:
+        if p['comp'] == 'ChampionsLeague':
+            p['eu_ok'] = str(p['mid']) not in _eu_bad
+            if not p['eu_ok']:
+                p['eu_missing'] = _eu_bad[str(p['mid'])]
+    if _eu_bad:
+        print(f'⚠ ΦΡΕΣΚΑΔΑ Champions: {len(_eu_bad)} ματς με ομαδα που ΔΕΝ εχει ολα τα προηγουμενα ευρωπαικα στο rating → picks ΔΕΝ γραφονται: '
+              + '; '.join(f'{k}: {v}' for k, v in list(_eu_bad.items())[:5]))
     # 16/10/2026 (Στελιος «καντο ναι»): ΣΕΡΙ ΕΚΤΟΣ / ΚΟΥΡΑΣΗ — ΜΟΝΟ ΕΝΔΕΙΞΗ + ΣΚΙΑ, ΟΧΙ στο μοντελο (fatigue_flags.py).
     # (α) καρτα/Telegram: «⚠ <φιλοξ.>: 3ο εκτος στη σειρα · ξεκουραση · χλμ» σε ΚΑΘΕ ευρωπαικο pick του ματς.
     # (β) σκια UCL «A»: φιλοξ. με σερι ≥3 → υπεροχη +0.17 υπερ γηπεδουχου (ucl_away3_penalty_test)· γραφεται στο fatigue_shadow.jsonl
