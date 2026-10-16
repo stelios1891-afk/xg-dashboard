@@ -396,8 +396,10 @@ def main():
             continue
         miss = []
         for tid, got, nm in ((m.get('hid'), m.get('eu_in_h'), m.get('home')), (m.get('aid'), m.get('eu_in_a'), m.get('away'))):
+            # μονο ματς που ΜΠΟΡΟΥΝ να μπουν στο rating (covered: και οι 2 ομαδες με rating — αντιπαλος χωρις κανενα rating, π.χ.
+            # Lincoln Red Imps, δεν μπαινει ποτε, γιατι η διορθωση χρειαζεται τη δυναμη του αντιπαλου)
             exp = sum(1 for x_ in _ms if x_.get('comp') == m['comp'] and tid in (x_.get('hid'), x_.get('aid')) and x_['mid'] != m['mid']
-                      and _T(x_['utc']) < now - datetime.timedelta(hours=4))
+                      and x_.get('covered') and _T(x_['utc']) < now - datetime.timedelta(hours=4))
             if got is None or int(got) < exp:
                 miss.append(f'{nm} {got}/{exp}')
         if miss:
