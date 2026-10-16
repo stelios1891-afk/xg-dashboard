@@ -52,12 +52,19 @@ for k, rs in grp.items():
         w, p = probs(m_cl * d, -L, sig)
     else:
         w, p = probs(m_cl, L, sig) if d == 1 else probs(-m_cl, -L, sig)
+    # ιδιο μετρο με το Pick History: η ΤΙΜΗ μας / τιμη κλεισιματος (με το περιθωριο) της ιδιας πλευρας, μεταφρασμενη στη γραμμη μας
+    if kind == 1:
+        cL, co = (cl[0], cl[1]) if d == 1 else (-cl[0], cl[2]); wc, pc = probs(m_cl * d, -cL, sig)
+    else:
+        cL, co = cl[0], (cl[1] if d == 1 else cl[2]); wc, pc = probs(m_cl, cL, sig) if d == 1 else probs(-m_cl, -cL, sig)
+    eq = co * ((1 - p) / w) / ((1 - pc) / wc) if w > 0 and wc > 0 else float('nan')
+    ph = float(r['odds']) / eq - 1
     res = None
     if gm and gm.get('hs') is not None and gm.get('as_') is not None:
         mar = gm['hs'] - gm['as_']; tot = gm['hs'] + gm['as_']
         x = ((mar if d == 1 else -mar) + L) if kind == 1 else ((tot - L) * d)
         res = 0.0 if abs(x) < 1e-9 else ((float(r['odds']) - 1) if x > 0 else -1.0)
-    recs.append(dict(kind=kindp, mkt=('ΧΑΝΤΙΚΑΠ' if kind == 1 else 'ΣΥΝΟΛΑ'), role=role, clv=d * (m_cl - m_at),
+    recs.append(dict(ph=ph, kind=kindp, mkt=('ΧΑΝΤΙΚΑΠ' if kind == 1 else 'ΣΥΝΟΛΑ'), role=role, clv=d * (m_cl - m_at),
                      ev=w * float(r['odds']) + p - 1, res=res, st=('παιχτηκε' if res is not None else ('σε εξελιξη' if started else 'ΑΝΟΙΧΤΟ (τωρινη τιμη)')),
                      lab=f"{tip:%d/%m} {r['home'][:18]}–{r['away'][:18]} · {('%+g' % L) if kind == 1 else r.get('bet')} @{r['odds']}",
                      now=f"{('%+g' % (cl[0] if d == 1 else -cl[0])) if kind == 1 else cl[0]} @{(cl[1] if d == 1 else cl[2]) if kind == 1 else (cl[1] if d == 1 else cl[2])}",
@@ -69,7 +76,7 @@ def line(lab, R):
     pos = sum(1 for x in c if x > 0.05); neg = sum(1 for x in c if x < -0.05)
     se = st.pstdev(c) / math.sqrt(len(c)) if len(c) > 1 else float('nan')
     P(f"  {lab:22s} picks {len(R):3d} · CLV {st.mean(c):+.2f} π. (±{se:.2f}) · προς εμας {pos} / κοντρα {neg} / ιδιο {len(c)-pos-neg} · "
-      f"CLV % {100*st.mean(e):+5.1f}% · ROI παιγμενων {('%+.1f%% (%d)' % (100*st.mean(rr), len(rr))) if rr else '—'}")
+      f"CLV % {100*st.mean(e):+5.1f}% (οπως Pick History {100*st.mean([x['ph'] for x in R]):+5.1f}%) · ROI παιγμενων {('%+.1f%% (%d)' % (100*st.mean(rr), len(rr))) if rr else '—'}")
 P(f"EUROLEAGUE · CLV ως τωρα ({NOW + dt.timedelta(hours=3):%d/%m %H:%M} ωρα Ελλαδας) · κλεισιμο Pinnacle, τα ανοιχτα με την ΤΩΡΙΝΗ τιμη")
 P('CLV π. = ποντοι που κινηθηκε η δικαιη αγορα προς εμας απο τη στιγμη του pick · CLV % = αξια του εισιτηριου μας στην τιμη κλεισιματος/τωρα')
 OF = [x for x in recs if x['kind'] == 'pick']
@@ -85,5 +92,5 @@ P(''); P('=== ΚΑΤΑΓΡΑΦΕΣ (δεν παιζονται: τελευται�
 line('ολες', [x for x in recs if x['kind'] == 'paper'])
 P(''); P('=== ΑΝΟΙΧΤΑ / ΣΗΜΕΡΙΝΑ (τωρινη τιμη) ===')
 for x in [x for x in OF if x['res'] is None]:
-    P(f"  {x['lab']:62s} → τωρα {x['now']:14s} · CLV {x['clv']:+.1f} π. · {100*x['ev']:+.1f}% · {x['role']} · {x['st']}")
+    P(f"  {x['lab']:62s} → τωρα {x['now']:14s} · CLV {x['clv']:+.1f} π. · {100*x['ev']:+.1f}% (PH {100*x['ph']:+.1f}%) · {x['role']} · {x['st']}")
 open('el_clv_now_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
