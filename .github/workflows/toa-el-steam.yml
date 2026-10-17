@@ -1,0 +1,40 @@
+name: toa-el-steam
+
+# 17/10: τιμες Pinnacle (TOA historical) γυρω απο τις κινησεις «steam» της Ευρωλιγκας (el_steam_events.json). Resumable.
+# Πυροδοτηση: push του el_steam_trigger.txt (ή χειροκινητα).
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'el_steam_trigger.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - name: Pull Pinnacle around steam moves
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+          TOA_FLOOR: '30000'
+        run: python toa_el_steam_fetch.py
+      - name: Commit result
+        if: always()
+        run: |
+          git config user.name "toa-el-bot"
+          git config user.email "actions@github.com"
+          for f in toa_el_steam.jsonl toa_el_steam_state.json; do [ -e "$f" ] && git add -f "$f"; done
+          if git diff --cached --quiet; then echo "τιποτα"; else
+            git commit -m "EL steam Pinnacle snapshots [skip ci]"
+            for i in 1 2 3 4 5; do git pull --rebase && git push && break; sleep 7; done
+          fi
