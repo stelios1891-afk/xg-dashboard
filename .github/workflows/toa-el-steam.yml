@@ -26,7 +26,7 @@ jobs:
         env:
           TOA_KEY: ${{ secrets.TOA_KEY }}
           PYTHONIOENCODING: utf-8
-          TOA_FLOOR: '30000'
+          TOA_FLOOR: '10000'
         run: python toa_el_steam_fetch.py
       - name: Commit result
         if: always()
