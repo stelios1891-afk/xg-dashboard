@@ -77,6 +77,8 @@ for e in EV:
         rec['mvpin_' + lab] = (sd * (q['F'] - b['F']) / abs(e['dF'])) if (q and b) else np.nan
     rec['clv_pin'] = sd * (P['κλεισιμο']['F'] - P['+5′']['F']) if (P['κλεισιμο'] and P['+5′']) else np.nan
     rec['has_before'] = b is not None
+    q5 = P['+5′']
+    rec['age5'] = ((e['ts'] + 300 - ts_(q5['upd'])) / 60) if (q5 and q5.get('upd')) else np.nan   # ποσα λεπτα «παλια» η τιμη Pinnacle στο +5′
     R.append(rec)
 D = pd.DataFrame(R)
 print(f'γεγονοτα με Pinnacle: {len(D)} απο {len(EV)} · με «πριν» {int(D.has_before.sum())} · με +5′ {int(D["pin_+5′"].notna().sum())} · '
@@ -105,6 +107,8 @@ for mk, nm in (('spreads', 'ΧΑΝΤΙΚΑΠ'), ('totals', 'ΣΥΝΟΛΑ')):
     nf = y0[y0['mvpin_+5′'] < 0.25]; row('  ολα', nf)
     for lab, lo, hi in (('  1.5-2 π.', 1.5, 2), ('  ≥2 π.', 2, 99)): row(lab, nf[(nf.mv >= lo) & (nf.mv < hi)])
     for bk in BKN.values(): row(f'  κινηθηκε {bk}', nf[nf.bk == bk])
+    print('   — ποσο «φρεσκια» ηταν η τιμη Pinnacle στο +5′ (λεπτα απο την τελευταια ενημερωση της αγορας) —')
+    for lab, lo, hi in (('  ενημερωση ≤10′ πριν', -1e9, 10), ('  10-60′ πριν', 10, 60), ('  >60′ πριν', 60, 1e9)): row(lab, y0[(y0.age5 >= lo) & (y0.age5 < hi)])
     print('   — η Pinnacle ειχε ΗΔΗ κινηθει (στο +5′ ≥ ¾) —')
     row('  ολα', y0[y0['mvpin_+5′'] >= 0.75])
 D.to_pickle('el_steam_pinnacle.pkl')
