@@ -9,7 +9,9 @@ sys.stdout.reconfigure(encoding='utf-8')
 import x12_implied as X12
 B = pd.read_pickle('travel_fatigue_B.pkl')
 B = B[(B.kind == 'dom')].copy()
-B = B[(B.eu_after > 7) | B.eu_after.isna()]
+import os
+PAT = os.environ.get('PAT', '1')
+B = B[(B.eu_after > 7) | B.eu_after.isna()] if PAT == '1' else B[B.eu_after <= 5]
 X = {}
 for l in open('nowgoal_1x2.jsonl', encoding='utf-8'):
     r = json.loads(l)
@@ -32,7 +34,7 @@ def pc(v):
     return f'{100 * v.mean():+6.1f}%' if len(v) >= 5 else '   —  '
 TR = (('ευρωπαικο ΕΝΤΟΣ [ελεγχος]', lambda y: y.prev_home), ('εκτος <1.500 χλμ', lambda y: ~y.prev_home & (y.trip < 1500)),
       ('εκτος 1.500-2.500', lambda y: ~y.prev_home & (y.trip >= 1500) & (y.trip < 2500)), ('εκτος ≥2.500', lambda y: ~y.prev_home & (y.trip >= 2500)))
-print('ΜΟΤΙΒΟ 1 — ΠΟΡΕΙΑ ΤΙΜΩΝ στο ματς πρωταθληματος μετα απο ευρωπαικο (γκολ αγορας · − συνολο = προς under · − υπεροχη = κοντρα στην ομαδα της Ευρωπης)')
+print(('ΜΟΤΙΒΟ 1 — ' if PAT == '1' else 'ΜΟΤΙΒΟ 2 (Ευρωπη → πρωταθλημα → Ευρωπη ≤5μ) — ') + 'ΠΟΡΕΙΑ ΤΙΜΩΝ στο ματς πρωταθληματος μετα απο ευρωπαικο (γκολ αγορας · − συνολο = προς under · − υπεροχη = κοντρα στην ομαδα της Ευρωπης)')
 for where, m in (('ΠΡΩΤΑΘΛΗΜΑ ΕΝΤΟΣ', True), ('ΠΡΩΤΑΘΛΗΜΑ ΕΚΤΟΣ', False)):
     y0 = B[B.nhome == m]
     print(f'\n  — {where} — (Crown/Bet365 με γραμμες)')
