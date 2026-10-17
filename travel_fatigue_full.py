@@ -87,7 +87,12 @@ for mid, x in G.items():
         y = G[nx[1]]
         if y['hs'] is None: continue
         s2 = 1 if y['h'] == tid else -1; gd2 = y['hs'] - y['as_']; ko2 = int(y['t'].tz_localize('UTC').timestamp())
-        rec = dict(mid=nx[1], sea=x['sea'], comp=x['lg'], kind=y['kind'], lg=y['lg'], prev_home=(s == 1), trip=trip, gap=gap, nhome=(s2 == 1),
+        # 17/10: ποτε ειναι το ΕΠΟΜΕΝΟ ευρωπαικο μετα απο αυτο το ματς (για τα μοτιβα Ε→Π και Ε→Π→Ε)
+        eu_after = np.nan
+        for e in L[j + 2:]:
+            if e[4] == 'eu':
+                eu_after = (e[0] - nx[0]).total_seconds() / 86400; break
+        rec = dict(mid=nx[1], sea=x['sea'], comp=x['lg'], kind=y['kind'], lg=y['lg'], prev_home=(s == 1), trip=trip, gap=gap, nhome=(s2 == 1), eu_after=eu_after,
                    gf=y['hs'] if s2 == 1 else y['as_'], ga=y['as_'] if s2 == 1 else y['hs'], s2=s2, gd2=gd2, tot2=y['hs'] + y['as_'], src='AH/OU')
         if y['kind'] == 'dom':
             M2 = mk(nx[1], ko2, AHD, TOUD, gd2, (('Crown',), ('Bet365',)))
