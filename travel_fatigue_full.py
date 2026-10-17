@@ -103,6 +103,21 @@ for mid, x in G.items():
                            xa=((xg2[1] if s2 == 1 else xg2[0]) - (M2['tc'] - s2 * M2['c']) / 2) if xg2 else np.nan,
                            roi=M2['ph'] if s2 == 1 else M2['pa'], roi_opp=M2['pa'] if s2 == 1 else M2['ph'],
                            und=under_close(nx[1], ko2, TOUD, y['hs'] + y['as_'], ('Crown', 'Bet365')))
+            # 17/10: ΠΟΡΕΙΑ ΤΙΜΩΝ — ανοιγμα → ληξη ευρωπαικου (+2ω) → κλεισιμο (Crown, αλλιως Bet365), απο τη ματια της ομαδας της Ευρωπης
+            t_eu = ko + 2 * 3600
+            for bk in ('Crown', 'Bet365'):
+                sa_ = [r_ for r_ in (AHD.get((nx[1], bk)) or []) if r_[0] < ko2]; so_ = [r_ for r_ in (TOUD.get((nx[1], bk)) or []) if r_[0] < ko2]
+                if not sa_ or not so_: continue
+                def _at(seq, t):
+                    pr = [r_ for r_ in seq if r_[0] <= t]; return pr[-1] if pr else None
+                o_a, o_o = sa_[0], so_[0]; m_a, m_o = _at(sa_, t_eu), _at(so_, t_eu); c_a, c_o = sa_[-1], so_[-1]
+                T0, T1, T2 = mtot(*o_o[1:]), (mtot(*m_o[1:]) if m_o else np.nan), mtot(*c_o[1:])
+                c0 = msup(o_a[1], o_a[2], o_a[3], T0); c1 = msup(m_a[1], m_a[2], m_a[3], T1) if m_a and m_o else np.nan; c2 = msup(c_a[1], c_a[2], c_a[3], T2)
+                rec.update(mvT_all=T2 - T0, mvT_pre=T1 - T0, mvT_post=T2 - T1, mvM_all=s2 * (c2 - c0), mvM_pre=s2 * (c1 - c0), mvM_post=s2 * (c2 - c1),
+                           open_before_eu=bool(o_a[0] < ko), mv_book=bk,
+                           und_open=(lambda L_, u_, tg_: sum(((u_ - 1) if tg_ < x_ else (0 if tg_ == x_ else -1)) for x_ in ([L_] if (L_ * 4) % 2 == 0 else [L_ - .25, L_ + .25])) / (1 if (L_ * 4) % 2 == 0 else 2))(o_o[1], o_o[3], y['hs'] + y['as_']),
+                           opp_open=picks.settle(gd2, -s2, (-o_a[1] if s2 == 1 else o_a[1]), (o_a[3] if s2 == 1 else o_a[2])))
+                break
         RB.append(rec)
 A = pd.DataFrame(RA); B = pd.DataFrame(RB)
 # 16/10: οπου λειπει χαντικαπ/συνολα → κλεισιμο 1Χ2 (Pinnacle/Bet365/Crown, nowgoal_1x2.jsonl) → αναμενομενα γκολ με αντιστροφη Poisson
