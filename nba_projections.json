@@ -1,12 +1,38 @@
 {
- "generated": "2026-10-18T18:58+00:00",
+ "generated": "2026-10-18T19:10+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
  "sigma_margin": 13.5,
  "sigma_total": 18.0,
  "res_t": 0.0,
- "games": [],
+ "games": [
+  {
+   "code": "pin1633801637",
+   "round": 1,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-10-20T19:00:00Z",
+   "home": "Detroit Pistons",
+   "away": "Boston Celtics",
+   "hcode": "DET",
+   "acode": "BOS",
+   "margin": -0.2,
+   "total": 222.2,
+   "total_src": "μοντελο",
+   "pts_h": 111.0,
+   "pts_a": 111.2,
+   "p_home": 0.494,
+   "played": false,
+   "version": "nba1",
+   "venue": "",
+   "b2b_h": 0,
+   "b2b_a": 0,
+   "gno": 0,
+   "gp_h": 0,
+   "gp_a": 0
+  }
+ ],
  "ratings": [
   {
    "code": "ATL",
