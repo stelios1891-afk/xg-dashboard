@@ -15,7 +15,7 @@ u = {'__name__': 'ut'}
 with contextlib.redirect_stdout(io.StringIO()): exec(t, u)
 picks, KO = u['picks'], u['KO']
 MIDS, COMP, FM, SEA = u['MIDS'], np.asarray(u['COMP']), u['FM'], np.asarray(u['SEA'])
-os.environ['W2_IN'] = 'euro_v6w2_preds_pen76.pkl'
+os.environ.setdefault('W2_IN', 'euro_v6w2_preds_pen76.pkl')   # 19/10: W2_IN απ' εξω = αλλο αρχειο (τεστ πηγης Ben → γκολ+Elo)
 b = open('uel_battery.py', encoding='utf-8').read(); b = b[:b.index('P0 = make_picks')].replace("sys.stdout.reconfigure(encoding='utf-8')", 'pass', 1)
 w = {'__name__': 'w2'}
 with contextlib.redirect_stdout(io.StringIO()): exec(b, w)
