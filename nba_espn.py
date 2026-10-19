@@ -84,12 +84,8 @@ def main():
     for g in GM.values(): c[g['stype']] = c.get(g['stype'], 0) + 1
     print(f'ESPN: {new} νεα ματς · συνολο {len(GM)} (προετοιμασια {c.get(1, 0)} · κανονικη {c.get(2, 0)} · πλει-οφ {c.get(3, 0)})')
     try:
-        inj = get(f'{B}/injuries'); T = {}
-        for t in inj.get('injuries', []):
-            nm = t.get('displayName', '')
-            T[nm] = dict(code=TEAMNAME.get(nm), players=[[x['athlete']['displayName'], x.get('status'), (x.get('type') or {}).get('description')] for x in t.get('injuries', [])])
-        json.dump(dict(fetched=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), teams=T), open(F_I, 'w', encoding='utf-8'), ensure_ascii=False)
-        print(f'τραυματιες: {sum(len(v["players"]) for v in T.values())} παικτες σε {len(T)} ομαδες')
+        import nba_absence                     # 19/10: ενας μονο γραφεας της λιστας → καθε αλλαγη γραφεται και στο ιστορικο (nba_injuries_hist.jsonl)
+        print(f'τραυματιες: {nba_absence.refresh_injuries()} παικτες')
     except Exception as e:
         print('injuries σφαλμα', e)
 

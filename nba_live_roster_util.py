@@ -20,7 +20,7 @@ def absence_minutes(teams, min_player=20.0, statuses=('out', 'doubtful')):
                     if mn > 0: hist[k].append(mn)
     out = {}
     for t in teams:
-        inj = [nk(n) for v in INJ['teams'].values() if v.get('code') == t for n, stt, _ in v['players'] if str(stt or '').lower() in statuses]
+        inj = [nk(n) for v in INJ['teams'].values() if v.get('code') == t for n, stt, *_ in v['players'] if str(stt or '').lower() in statuses]
         last3 = tg.get(t, [])[-3:]
         tot = 0.0
         for k in inj:

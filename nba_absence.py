@@ -20,14 +20,37 @@ def nk(s):
     s = unicodedata.normalize('NFD', str(s)); s = ''.join(c for c in s if unicodedata.category(c) != 'Mn').lower()
     s = re.sub(r'\b(jr|sr|ii|iii|iv)\b', '', s); return ' '.join(re.findall(r'[a-z]+', s))
 
+INJ_HIST = 'nba_injuries_hist.jsonl'      # 19/10 (Στελιος «κανε το 3»): ΙΣΤΟΡΙΚΟ λιστας ESPN — μονο ΑΛΛΑΓΕΣ (νεος/αλλη κατασταση/νεα ενημερωση/εφυγε)
+
 def refresh_injuries():
-    """Φρεσκια λιστα ESPN (σε καθε scan NBA)· σε σφαλμα μενει η παλια."""
+    """Φρεσκια λιστα ESPN (σε καθε scan NBA)· σε σφαλμα μενει η παλια. Καθε αλλαγη σε σχεση με την προηγουμενη λιστα → INJ_HIST
+    (για μελλοντικο τεστ αμφιβολων: ποτε εγινε Day-To-Day / Out, αν τελικα επαιξε). players = [ονομα, κατασταση, τυπος, ημερομηνια ESPN]."""
     from nba_espn import get, B, TEAMNAME
-    inj = get(f'{B}/injuries'); T = {}
+    inj = get(f'{B}/injuries'); T = {}; info = {}
     for t in inj.get('injuries', []):
-        nm = t.get('displayName', '')
-        T[nm] = dict(code=TEAMNAME.get(nm), players=[[x['athlete']['displayName'], x.get('status'), (x.get('type') or {}).get('description')] for x in t.get('injuries', [])])
-    json.dump(dict(fetched=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), teams=T), open(F('nba_injuries.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+        nm = t.get('displayName', ''); code = TEAMNAME.get(nm); pl = []
+        for x in t.get('injuries', []):
+            p = x['athlete']['displayName']; pl.append([p, x.get('status'), (x.get('type') or {}).get('description'), x.get('date')])
+            info[(code, p)] = (x.get('status'), x.get('date'), (x.get('type') or {}).get('description'), (x.get('shortComment') or '')[:400])
+        T[nm] = dict(code=code, players=pl)
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
+    try:
+        old = {}
+        for v in json.load(open(F('nba_injuries.json'), encoding='utf-8')).get('teams', {}).values():
+            for x in v.get('players', []): old[(v.get('code'), x[0])] = (x[1], x[3] if len(x) > 3 else None)
+        ch = []
+        for k, (stt, dte, typ, com) in info.items():
+            o = old.get(k)
+            if o is None or o[0] != stt or (o[1] is not None and o[1] != dte):
+                ch.append(dict(t=now, team=k[0], player=k[1], status=stt, prev=o[0] if o else None, espn_date=dte, type=typ, comment=com))
+        for k, o in old.items():
+            if k not in info: ch.append(dict(t=now, team=k[0], player=k[1], status=None, prev=o[0]))   # βγηκε απο τη λιστα (επεστρεψε)
+        if ch:
+            with open(F(INJ_HIST), 'a', encoding='utf-8') as fh:
+                for r in ch: fh.write(json.dumps(r, ensure_ascii=False) + '\n')
+    except Exception as e:
+        print('ιστορικο τραυματιων σφαλμα —', e)
+    json.dump(dict(fetched=now, teams=T), open(F('nba_injuries.json'), 'w', encoding='utf-8'), ensure_ascii=False)
     return sum(len(v['players']) for v in T.values())
 
 class Absences:
@@ -45,7 +68,8 @@ class Absences:
                 self.last[t] = {k for k, mn in pl.items() if mn > 0}
         self.out = collections.defaultdict(list)
         for v in INJ.get('teams', {}).values():
-            for n, stt, _ in v.get('players', []):
+            for x in v.get('players', []):
+                n, stt = x[0], x[1]
                 if str(stt or '').strip().lower() == 'out' and v.get('code'): self.out[v['code']].append(n)
 
     def team(self, t):
