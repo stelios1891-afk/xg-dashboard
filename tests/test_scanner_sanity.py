@@ -343,10 +343,10 @@ def test_b_euro_locked_constants():
     bad = [f'{k}={_src_const("euro_live_projections.py", k)!r} (περιμενα {v})' for k, v in exp_proj.items()
            if not _approx(_src_const('euro_live_projections.py', k), v)]
     assert not bad, 'euro_live_projections.py: αλλαξαν σταθερες (γ ξεφουσκωμα / κ UCL / X-scale / w prior): ' + ', '.join(bad)
-    exp_scan = dict(EDGE_DOG=0.10, EDGE_FAV=0.04, EDGE_OVER=0.04, EDGE_FAV_UCL=0.10, EDGE_DOG_UCL=0.04, EDGE_OVER_UECL=-0.02)
+    exp_scan = dict(EDGE_DOG=0.10, EDGE_FAV=0.04, EDGE_OVER=0.04, EDGE_FAV_UCL=0.04, EDGE_DOG_UCL=0.04, EDGE_OVER_UECL=-0.02)
     bad = [f'{k}={_src_const("euro_shadow_scan.py", k)!r} (περιμενα {v})' for k, v in exp_scan.items()
            if not _approx(_src_const('euro_shadow_scan.py', k), v)]
-    assert not bad, 'euro_shadow_scan.py: αλλαξαν κατωφλια (UCL favs @10 / UCL dogs @4 / dogs @10 / favs @4): ' + ', '.join(bad)
+    assert not bad, 'euro_shadow_scan.py: αλλαξαν κατωφλια (UCL favs @4 απο 19/10 / UCL dogs @4 / dogs @10 / favs @4): ' + ', '.join(bad)
     exp_eng = dict(GAMMA_PLAYER=1.09, KN_NORM=20.0, MIN_NOPRIOR_N=6)
     bad = [f'{k}={_src_const("euro_engine.py", k)!r} (περιμενα {v})' for k, v in exp_eng.items()
            if not _approx(_src_const('euro_engine.py', k), v)]
@@ -722,12 +722,12 @@ def _elab(p):
 def test_e_rules_block_matches_live():
     d, _ = _euro()
     r = d.get('rules', {})
-    exp = dict(edge_dog=0.10, edge_fav=0.04, edge_fav_ucl=0.10, edge_dog_ucl=0.04)
+    exp = dict(edge_dog=0.10, edge_fav=0.04, edge_fav_ucl=0.04, edge_dog_ucl=0.04)
     bad = [f'{k}={r.get(k)!r} (περιμενα {v})' for k, v in exp.items() if not _approx(r.get(k), v)]
     z = r.get('zone')
     if not (isinstance(z, list) and len(z) == 2 and _approx(z[0], 1.70) and _approx(z[1], 2.10)):
         bad.append(f'zone={z!r} (περιμενα [1.70, 2.10])')
-    assert not bad, 'euro_value_latest.rules ≠ live κανονες (UCL favs @10, UCL dogs @4, dogs @10, favs @4): ' + ', '.join(bad)
+    assert not bad, 'euro_value_latest.rules ≠ live κανονες (UCL favs @4 απο 19/10, UCL dogs @4, dogs @10, favs @4): ' + ', '.join(bad)
 
 
 def test_e_uel_only_as_shadow():
@@ -776,7 +776,7 @@ def test_e_zone_role_and_thresholds():
         if role == 'fav':
             if ln > -0.5 + EPS:
                 bad.append(f'{_elab(p)}: φαβορι με line {ln} (περιμενα <= −0.5)')
-            thr = 0.10 if ucl else 0.04
+            thr = 0.10 if (ucl and p.get('rule') == 'nonfm_fav_shadow') else 0.04      # 19/10/2026: UCL φαβορι @4 (σκια Β @10)
             if e < thr - EPS:
                 bad.append(f'{_elab(p)}: φαβορι edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
         elif role == 'dog':

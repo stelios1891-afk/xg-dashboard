@@ -187,7 +187,11 @@ def main():
     EDGE_UNDER_UEL = 0.10
     EDGE_DNB_UCL = 0.04            # 10/10/2026: DNB (γραμμη 0) μονο UCL, FotMob και οι 2
     NO_PLAY_NOTE = 'ΣΚΙΑ — δεν παιζεται (UEL κλειστο 11/9: b=0.02 στο κλεισιμο)'
-    EDGE_FAV_UCL = 0.10
+    # 19/10/2026 (Στελιος «παμε φαβορι στο 4%»): UCL φαβορι ≥4% (ηταν @10 απο 11/9). ucl_newformat_all (ΜΟΝΟ νεα μορφη 2024-26, πρωτη εμφανιση
+    # ≤168ω, τιμιος χρονος): ≥4% 131 picks +15.9% (+15/+17) vs ≥10% 96 +15.8%· LOSO διαλεγει 4% και τις 2 φορες (+20.9μ vs +15.2μ)·
+    # ζωνη 4-10% +21.5% CLV t 3.2 (4 σεζον +18.5% 4/4)· αξια xG −4.6% (φαβορι UCL σκοραρουν πανω απο xG, βλ. κ 1.16).
+    EDGE_FAV_UCL = 0.04
+    EDGE_FAV_UCL_B = 0.10          # σκια κατηγοριας Β (nonfm_fav_shadow) μενει @10
     LATE2H_UCL = 2.0               # 13/10/2026: UCL χαντικαπ που πρωτοβγαινει <2ω πριν = καταγραφη (rule late2h)
     EDGE_DOG_UCL = 0.04
     EDGE_DOG_UCL_LIVE = 0.10       # 19/10/2026: κανονικα UCL αουτσαιντερ μονο ≥10% · 4-10% = σκια (rule ucl_dog_band_shadow, no_play)
@@ -269,7 +273,7 @@ def main():
             if o and 1.70 <= float(o) <= 2.10 and ln <= -0.5:
                 pw, pp = cover_q(dist, big, ln)
                 e_b = edge_of(pw, pp, float(o))
-                if e_b >= EDGE_FAV_UCL:
+                if e_b >= EDGE_FAV_UCL_B:
                     picks_out.append(dict(
                         mid=str(m['mid']), comp=m['comp'], rnd=m.get('round'), ko=m['utc'],
                         home=m['home'], away=m['away'], hid=m['hid'], aid=m['aid'],
