@@ -339,6 +339,9 @@ def main():
         # --- UNDERS (W2 + ισοπαλιες ×scale) — UCL FotMob+FotMob ≥10% · 13/10: + CONFERENCE Β (μια χωρις FotMob) ≥14% ---
         uecl_b = fm_one and m['comp'] == 'ConferenceLeague'
         uel_u = fm_both and m['comp'] == 'EuropaLeague'                                          # 16/10: UEL Α = σκια
+        # 19/10/2026 (Στελιος «περνα το»): UCL under → ΣΚΙΑ (ucl_under_variants: καμια παραλλαγη ≥10/14/18% ή γραμμη <3 δεν περνα — 2425 −9%,
+        # 2526 +14%, φετος 1-3· η αγορα ανεβασε τα συνολα 3.22 → 3.57 αλλα τα γκολ 4.30). Καταγραφη, οχι Telegram/ledger μετρηση.
+        ucl_u = fm_both and m['comp'] == 'ChampionsLeague'
         if (((fm_both and m['comp'] == 'ChampionsLeague') or uecl_b or uel_u) and m.get('xgh_ou') is not None and mk.get('tl') is not None
                 and mk.get('tu') and 1.70 <= float(mk['tu']) <= 2.10):
             td = tot_dist(m['xgh_ou'], m['xga_ou'], scale)
@@ -354,10 +357,11 @@ def main():
                     proj_odds=round((1 - max(1 - po - pu, 0)) / pu, 3) if pu > 0 else None,
                     tag75=False,
                     xgh=m['xgh_ou'], xga=m['xga_ou'], when=mk.get('when'), lim=mk.get('lim'),
-                    rule=('uecl_b_under' if uecl_b else ('uel_under_shadow' if uel_u else None)),
+                    rule=('uecl_b_under' if uecl_b else ('uel_under_shadow' if uel_u else ('ucl_under_shadow' if ucl_u else None))),
                     src=(f"{m.get('src_h')}/{m.get('src_a')}" if uecl_b else None),
-                    no_play=uel_u,
-                    note=('Conference Β — under' if uecl_b else ('👁 ΣΚΙΑ — Europa under κατηγορίας Α (καταγραφή, δεν παίζεται)' if uel_u else None))))
+                    no_play=uel_u or ucl_u,
+                    note=('Conference Β — under' if uecl_b else ('👁 ΣΚΙΑ — Europa under κατηγορίας Α (καταγραφή, δεν παίζεται)' if uel_u else
+                          ('👁 ΣΚΙΑ — Champions League under (19/10: κλειστό, καταγραφή)' if ucl_u else None)))))
     hf = {p['mid'] for p in picks_out if str(p.get('rule') or '').startswith('uel_home_fav')}
     picks_out = [p for p in picks_out if not (p['mid'] in hf and p['comp'] == 'EuropaLeague' and p['side'] == 1
                                               and p['role'] == 'fav' and not p.get('rule'))]

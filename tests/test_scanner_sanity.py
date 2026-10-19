@@ -756,7 +756,7 @@ def test_e_uel_only_as_shadow():
             if p.get('rule') == 'late2h':
                 if c != 'ChampionsLeague' or p.get('role') not in ('fav', 'dog') or p.get('no_play') is not True:
                     bad.append(f'{_elab(p)}: late2h εκτος κανονα (μονο UCL φαβορι/αουτσαιντερ, no_play=True)')
-            elif p.get('no_play') and not (c == 'ChampionsLeague' and p.get('rule') == 'nonfm_fav_shadow'):
+            elif p.get('no_play') and not (c == 'ChampionsLeague' and p.get('rule') in ('nonfm_fav_shadow', 'ucl_under_shadow')):   # 19/10: + UCL under σκια
                 bad.append(f'{_elab(p)}: no_play σε {c} (μονο το UEL ειναι σκια)')
         else:
             bad.append(f'{_elab(p)}: αγνωστη διοργανωση {c!r}')
@@ -807,6 +807,9 @@ def test_e_zone_role_and_thresholds():
             uel_u = comp == 'EuropaLeague' and p.get('rule') == 'uel_under_shadow'
             if uel_u and p.get('no_play') is not True:
                 bad.append(f'{_elab(p)}: UEL under σκια χωρις no_play=True')
+            # 19/10/2026: UCL under = ΣΚΙΑ (rule ucl_under_shadow, no_play=True)
+            if ucl and (p.get('rule') != 'ucl_under_shadow' or p.get('no_play') is not True):
+                bad.append(f'{_elab(p)}: UCL under πρεπει να ειναι σκια (rule ucl_under_shadow, no_play=True)')
             if not (ucl or uecl_b or uel_u):
                 bad.append(f'{_elab(p)}: under εκτος Champions League / Conference Β / Europa σκια')
             thr_u = 0.14 if uecl_b else 0.10
