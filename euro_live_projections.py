@@ -115,7 +115,38 @@ def load_griffis(pen_f=0.25):
             rows.append(dict(date=dt, team=tid, gf=float(gf),
                              xg_model=float(npxg + pen_f * n_pen),
                              ns_eff=float(max(shots, 1.0))))
+    # 19/10/2026 (Στελιος: «μεχρι Δευτερα πρωι τα αποτελεσματα των ομαδων της Ευρωπης ΠΡΕΠΕΙ να εχουν περασει»): ο Ben σταματησε τις 9 λιγκες
+    # στις 21/9 → ματς της ΦΕΤΙΝΗΣ σεζον που λειπουν απο τον Ben (ιδιο ζευγαρι ±2 μερες) μπαινουν απο FotMob με ΓΚΟΛ: xg_model = γκολ × (xG/γκολ
+    # του Ben στη λιγκα-σεζον), ns_eff = μεσος ορος σουτ της λιγκας-σεζον (να μη χαλασει ο «χαρακας» της λιγκας). EURO_BEN_FALLBACK=0 → οπως πριν.
+    if os.environ.get('EURO_BEN_FALLBACK', '1') != '0':
+        for (lg, sea), rows in out.items():
+            if sea not in ('2627', '2026'):
+                continue
+            p = f'data_{lg}_{sea}.json'
+            if not os.path.exists(p) or not rows:
+                continue
+            gsum = sum(r['gf'] for r in rows); xsum = sum(r['xg_model'] for r in rows)
+            scale = xsum / gsum if gsum > 0 else 1.0
+            ns_m = float(np.mean([r['ns_eff'] for r in rows]))
+            have = [(rows[i]['team'], rows[i + 1]['team'], rows[i]['date']) for i in range(0, len(rows) - 1, 2)]
+            add = 0
+            for m in json.load(open(p, encoding='utf-8')).values():
+                if m.get('hs') is None or m.get('as') is None:
+                    continue
+                d0 = kodt(m['date'])
+                if d0 is None:
+                    continue
+                d0 = datetime(d0.year, d0.month, d0.day)
+                hid, aid = int(m['home']['id']), int(m['away']['id'])
+                if any(h == hid and a == aid and abs((dd - d0).days) <= 2 for h, a, dd in have):
+                    continue
+                for tid, gf in ((hid, m['hs']), (aid, m['as'])):
+                    rows.append(dict(date=d0, team=tid, gf=float(gf), xg_model=float(gf) * scale, ns_eff=ns_m))
+                add += 1
+            if add:
+                BEN_FALLBACK[(lg, sea)] = add
     return {k: pd.DataFrame(v) for k, v in out.items()}
+BEN_FALLBACK = {}   # (λιγκα, σεζον) -> ποσα ματς μπηκαν απο FotMob (για log/ελεγχο)
 
 # ---------------- GEngine (πιστη αντιγραφη euro_expand_test / euro_roi_test) ----------------
 # Live διαφορες: (α) skip_sea=set() (μπαινουν και 2627/2026 εγχωρια δεδομενα),
@@ -303,6 +334,9 @@ print('EURO V4 — LIVE PROJECTIONS League Phase 2627 (ολα τα fits σε Ο�
 print('=' * 100)
 
 G = load_griffis()
+print('BEN συμπληρωμα απο FotMob (ματς): ' + (', '.join(f'{k[0]} {v}' for k, v in sorted(BEN_FALLBACK.items())) or 'κανενα'))
+if PROJ_OUT == 'euro_projections.json':
+    json.dump({f'{k[0]}_{k[1]}': v for k, v in sorted(BEN_FALLBACK.items())}, open('euro_ben_fallback.json', 'w', encoding='utf-8'), ensure_ascii=False)
 print('[build] GEngine LIVE (+Griffis, ΜΕ φετινες εγχωριες σεζον)...', flush=True)
 eng = GEngine(griffis=G, skip_sea=set(), verbose=False)
 GKEYS = set(G.keys())

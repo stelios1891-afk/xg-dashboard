@@ -4,8 +4,11 @@ name: data-refresh
 # Τρεχει στους servers του GitHub (χωρις PC/μηνυμα). Commit ΜΟΝΟ αν αλλαξαν raw data (νεα ματς / Opta revisions).
 on:
   schedule:
-    - cron: '0 5 * * *'      # 05:00 UTC καθε μερα (~7-8πμ Ελλαδας)· το GitHub μπορει να αργησει λιγο
+    - cron: '0 5 * * *'      # 05:00 UTC καθε μερα (~8πμ Ελλαδας)· το GitHub αργει 4-7ω → 19/10 ο scanner το ζηταει στην ωρα του (euro_refresh_due.py)
   workflow_dispatch: {}       # + χειροκινητο "Run workflow" (για τεστ)
+  push:
+    paths:
+      - 'data_refresh_trigger.txt'   # 19/10: χειροκινητη πυροδοτηση με push (οπως euro_refresh_trigger.txt)
 
 permissions:
   contents: write
@@ -15,7 +18,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # 19/10/2026: ο scanner ζηταει το data-refresh στην ωρα του (euro_refresh_due.py) γιατι το cron του GitHub αργει 4-7 ωρες.
+  # Οταν φτασει αργοτερα και το προγραμματισμενο run, ο guard το παραλειπει (η ιδια «ωρα» εχει ηδη καλυφθει).
+  guard:
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: g
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 euro_refresh_due.py --guard --wf data-refresh.yml
+
   refresh:
+    needs: guard
+    if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
