@@ -100,6 +100,13 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python europe_2627_shots_fetch.py
 
+      # 19/10/2026: δικλιδα — ματς με παραταση/πεναλτι σε ολα τα data_*.json → σκορ/σουτ 90′ (περιοδος FotMob). Συνηθως 0 ματς.
+      - name: Κανονικος χρονος 90′ (παραταση/πεναλτι)
+        continue-on-error: true
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python euro_regulation.py
+
       - name: Fresh euro projections
         env:
           PYTHONIOENCODING: utf-8

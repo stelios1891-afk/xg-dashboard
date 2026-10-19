@@ -150,10 +150,13 @@ def fm_parse(mid):
     for e in c.get('matchFacts', {}).get('events', {}).get('events', []) or []:
         if e.get('type') == 'Card' and e.get('card') in ('Red', 'RedYellow'):
             reds.append({'home': bool(e.get('isHome')), 'min': e.get('time')})
-    return {'mid': mid, 'date': gen.get('matchTimeUTC') or gen.get('matchTimeUTCDate'),
-            'home': {'name': gen['homeTeam']['name'], 'id': hid},
-            'away': {'name': gen['awayTeam']['name'], 'id': aid},
-            'hs': hs, 'as': as_, 'shots': shots, 'reds': reds}
+    rec = {'mid': mid, 'date': gen.get('matchTimeUTC') or gen.get('matchTimeUTCDate'),
+           'home': {'name': gen['homeTeam']['name'], 'id': hid},
+           'away': {'name': gen['awayTeam']['name'], 'id': aid},
+           'hs': hs, 'as': as_, 'shots': shots, 'reds': reds}
+    import euro_regulation                      # 19/10/2026: παραταση/πεναλτι → 90′ (πλει-οφ λιγκων)
+    euro_regulation.apply_md(rec, d)
+    return rec
 
 
 def fm_match_date(s):

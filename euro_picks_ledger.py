@@ -222,10 +222,15 @@ def _result(mid):
         return None
     teams = (d.get('header') or {}).get('teams') or []
     hs, as_ = teams[0].get('score'), teams[1].get('score')
+    # 19/10/2026: τα στοιχηματα κλεινουν στο 90′ — σε παραταση/πεναλτι σκορ απο το γεγονος «FT», xG μονο κανονικος χρονος
+    ft = next((e for e in (((d.get('content') or {}).get('matchFacts') or {}).get('events') or {}).get('events', []) or []
+               if e.get('type') == 'Half' and e.get('halfStrShort') == 'FT'), None)
+    if ft is not None and ft.get('homeScore') is not None:
+        hs, as_ = ft['homeScore'], ft['awayScore']
     hid = d['general']['homeTeam']['id']
     xh = xa = 0.0; has = False
     for s in ((d.get('content') or {}).get('shotmap') or {}).get('shots', []) or []:
-        if s.get('isOwnGoal') or s.get('expectedGoals') is None:
+        if s.get('isOwnGoal') or s.get('expectedGoals') is None or (s.get('period') or 'SecondHalf') not in ('FirstHalf', 'SecondHalf'):
             continue
         has = True
         if s.get('teamId') == hid:

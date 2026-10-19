@@ -337,6 +337,24 @@ def test_b_scan_value_and_toa_constants():
     assert _approx(cap, STAKE_CAP), f'toa_live CAP={cap} (περιμενα 0.20 συνολικη εκθεση)'
 
 
+def test_b_regulation_time_90():
+    """19/10/2026 (Στελιος «τεραστιο λαθος»): ματς με παραταση/πεναλτι → σκορ/σουτ 90′ (euro_regulation / dl.parse)·
+    στα ευρωπαικα & εθνικες κανενα ματς με σουτ μετα το 90′ χωρις ελεγχο περιοδου (p90)."""
+    import glob as _g
+    bad = []
+    for f in sorted(_g.glob(os.path.join(ROOT, 'data_Europe_*.json')) + _g.glob(os.path.join(ROOT, 'data_WorldCup_*.json'))
+                    + _g.glob(os.path.join(ROOT, 'data_EURO_*.json')) + _g.glob(os.path.join(ROOT, 'data_NationsLeague*_*.json'))):
+        d = json.load(open(f, encoding='utf-8'))
+        for r in (d.values() if isinstance(d, dict) else []):
+            if not isinstance(r, dict):
+                continue
+            if any((s.get('min') or 0) > 90 for s in (r.get('shots') or [])) and not r.get('p90'):
+                bad.append(f"{os.path.basename(f)} {r.get('mid')}: σουτ μετα το 90′ χωρις p90")
+            if r.get('reg90') and (r.get('hs_ft') is None or 'shots_et' not in r):
+                bad.append(f"{os.path.basename(f)} {r.get('mid')}: reg90 χωρις hs_ft/shots_et")
+    assert not bad, 'παραταση/πεναλτι ΔΕΝ εχουν γυρισει σε 90′ (τρεξε python euro_regulation.py): ' + '; '.join(bad[:10])
+
+
 def test_b_euro_locked_constants():
     """Ευρωπαικο stack (μεσω AST — το euro_live_projections.py τρεχει βαρια δουλεια στο import)."""
     exp_proj = dict(GAMMA_LG_DEFLATE=-0.470, UCL_FAV_SCALE=1.16, EU_DRAW_SCALE=0.85, W_EU=2.0)

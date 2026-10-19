@@ -110,6 +110,17 @@ def fetch_results(comps):
                 st = mm.get('status', {})
                 if st.get('finished') and not st.get('cancelled') and st.get('scoreStr'):
                     h, a = [int(x) for x in st['scoreStr'].replace(' ', '').split('-')[:2]]
+                    # 19/10/2026: παραταση/πεναλτι → σκορ 90′ (γεγονος «FT» του matchDetails) — εκει κλεινουν τα στοιχηματα
+                    if ((st.get('reason') or {}).get('short') or '').upper() in ('AET', 'PEN', 'AP') and mm.get('id'):
+                        try:
+                            import intl_fetch
+                            md = json.loads(intl_fetch.get(f"https://www.fotmob.com/api/data/matchDetails?matchId={mm['id']}"))
+                            ev = (((md.get('content') or {}).get('matchFacts') or {}).get('events') or {}).get('events', []) or []
+                            ft = next((e for e in ev if e.get('type') == 'Half' and e.get('halfStrShort') == 'FT'), None)
+                            if ft is not None and ft.get('homeScore') is not None:
+                                h, a = int(ft['homeScore']), int(ft['awayScore'])
+                        except Exception as e:
+                            print(f'  90′ σκορ {mm.get("id")}: σφαλμα {str(e)[:60]}', flush=True)
                     res[(comp, mm['home']['name'], mm['away']['name'])] = (h, a)
         except Exception as e:
             print(f'  αποτελεσματα {comp}: σφαλμα {str(e)[:60]}', flush=True)

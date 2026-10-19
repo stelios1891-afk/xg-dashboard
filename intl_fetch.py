@@ -109,6 +109,8 @@ def parse(mid, comp):
            'round': gen.get('leagueRoundName') or gen.get('matchRound'),
            'stadium': (stad.get('name') if isinstance(stad, dict) else stad), 'country': gen.get('countryCode'),
            'has_xg': any(s['xg'] is not None for s in shots)}
+    import euro_regulation                      # 19/10/2026: νοκ-αουτ εθνικων — παραταση/πεναλτι → σκορ/σουτ 90′ (εκει κλεινουν τα στοιχηματα)
+    euro_regulation.apply_md(rec, d)
     lu = c.get('lineup') or {}; mins = minutes_map(d); sq = {}
     for side, k in (('homeTeam', 'h'), ('awayTeam', 'a')):
         t = lu.get(side) or {}; ids = []
