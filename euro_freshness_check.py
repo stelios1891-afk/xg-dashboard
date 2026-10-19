@@ -71,11 +71,26 @@ for lg in sorted(teams):
                       missing_euro_teams=[f'{f[1]:%d/%m} {f[2]}-{f[3]}' for f in euro_miss], last_finished=f'{last:%d/%m %H:%M}' if last else '-')
     for f in euro_miss: missing_all.append(f'{lg}: {f[1]:%d/%m} {f[2]} - {f[3]}')
     time.sleep(0.4)
+# 19/10: ομαδες με ευρωπαικο σε 7 μερες που παιρνουν Elo (γκολ-λιγκες) — βρισκει το ClubElo το ονομα τους; (ιδια αντιστοιχιση με το live)
+no_elo = []
+try:
+    import re as _re, unicodedata as _ud, pandas as _pd
+    _src = open('euro_live_projections.py', encoding='utf-8').read()
+    _ns = {'re': _re, 'unicodedata': _ud, 'cel': _pd.read_csv('clubelo_current.csv')}
+    exec(_re.search(r"LG_COUNTRY\s*=\s*\{.*?\n\}", _src, _re.S).group(0), _ns)
+    exec(_src[_src.index('_TR = str.maketrans'):_src.index('# ================================================================ ΠΕΡΣΙΝΑ ΕΥΡΩΠΑΪΚΑ')], _ns)
+    for m in up:
+        for side, nm in (('h', m['home']), ('a', m['away'])):
+            lg = m.get(f'lg_{side}')
+            if m.get(f'src_{side}') == 'γκολ+Elo' and lg and _ns['team_elo'](nm, lg)[0] is None:
+                no_elo.append(f'{nm} ({lg})'); missing_all.append(f'ΧΩΡΙΣ Elo: {nm} ({lg}) — προσθεσε ψευδωνυμο στο ELO_ALIAS')
+except Exception as e:
+    print(f'ελεγχος Elo απετυχε: {type(e).__name__}: {e}')
 ben = {}
 if os.path.exists('euro_ben_fallback.json'):
     try: ben = json.load(open('euro_ben_fallback.json', encoding='utf-8'))
     except Exception: ben = {}
-out = dict(checked=now.isoformat(timespec='minutes'), upcoming_matches=len(up), leagues=report, ben_fallback=ben, missing=missing_all)
+out = dict(checked=now.isoformat(timespec='minutes'), upcoming_matches=len(up), leagues=report, ben_fallback=ben, no_elo=no_elo, missing=missing_all)
 json.dump(out, open('euro_freshness.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 for lg, r in report.items():
     print(f'{lg:28s} {r["status"]:8s} ' + (f'τελειωμενα {r["finished"]:3d} · στο αρχειο {r["in_file"]:3d} · τελευταιο {r["last_finished"]}' if 'finished' in r else ''))
