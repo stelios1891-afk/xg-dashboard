@@ -30,6 +30,13 @@ if SH:
     _o4 = "        _SS[key] = eng2.side_state(tid, d)"
     assert src.count(_o4) == 1
     src = src.replace(_o4, "        _SS[key] = eng2.side_state(tid, d) or eng2.side_state(tid, d + __import__('datetime').timedelta(days=" + str(SH) + "))", 1)
+BEN = kv.get('BEN')   # 19/10: εναλλακτικη πηγη για τις 9 λιγκες του Ben — elo (γκολ+Elo) · goals (γκολ χωρις Elo) · fs (FootyStats)
+if BEN:
+    _o = "G = load_griffis()" + chr(10)
+    assert src.count(_o) == 1
+    _r = {'elo': "G = {}", 'goals': "G = __import__('ben_alt').goals_dict(load_griffis())",
+          'fs': "G = __import__('ben_alt').fs_dict(load_griffis())"}[BEN] + chr(10)
+    src = src.replace(_o, _r, 1)
 out_pkl = f'euro_v6w2_preds_{tag}.pkl'
 os.environ['RED_MODE'] = 'emps'; os.environ['NO_SANITY'] = '1'; os.environ['W2_OUT'] = out_pkl
 g = {'__name__': '__main__'}
@@ -46,4 +53,4 @@ import numpy as np
 pickle.dump(dict(LH=np.asarray(g2['LH_N']), LA=np.asarray(g2['LA_N']), GH=np.asarray(g2['GH']), GA=np.asarray(g2['GA']), GD=np.asarray(g2['GD']),
                  SEA=np.asarray(g2['SEA']), COMP=np.asarray(g2['COMP']), MIDS=list(g2['MIDS']), FM=np.asarray(g2['FM'])),
             open(f'euro_blend_dump_{tag}.pkl', 'wb'))
-print('OK', tag, f'K={K} W={W} BLEND={B} SHIFT={SH}')
+print('OK', tag, f'K={K} W={W} BLEND={B} SHIFT={SH} BEN={BEN}')
