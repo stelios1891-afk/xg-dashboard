@@ -74,9 +74,9 @@ for r in rows:
         up.append(dict(r, T=T, Tp=Tp, s=s, seq=seq))
 print(f'ΑΓΚΥΡΑ: ματς που μετρησαν (αγωνιστικη ≥7, με κλεισιμο Pinnacle): ' + ' · '.join(f'{lg} {n}' for lg, n in sorted(used.items())))
 print(f'\nΕΠΕΡΧΟΜΕΝΑ (σεντρα ≥120ω μπροστα = ≥ {(NOW + dt.timedelta(hours=120)) + dt.timedelta(hours=3):%a %d/%m %H:%M} ωρα Ελλαδας) — edge ≥10%, 1.70-2.10, τωρινη γραμμη Pinnacle')
-WEND = dt.datetime(2026, 10, 20, 6, 0, tzinfo=dt.timezone.utc)     # επομενη αγωνιστικη = ματς ως τη Δευτερα 19/10
+WEND = NOW + dt.timedelta(days=10)     # 19/10: ολα τα ματς των επομενων 10 ημερων (ηταν σταθερο 20/10)
 up = [r for r in up if r['ko'] < WEND]
-print('ΕΠΟΜΕΝΗ ΑΓΩΝΙΣΤΙΚΗ (ματς ως 19/10): ' + ' · '.join(f'{lg} {n}' for lg, n in sorted(collections.Counter(r['lg'] for r in up).items())))
+print(f'ΕΠΟΜΕΝΑ ΜΑΤΣ (ως {WEND + dt.timedelta(hours=3):%d/%m}): ' + ' · '.join(f'{lg} {n}' for lg, n in sorted(collections.Counter(r['lg'] for r in up).items())))
 out = []; allm = []
 for r in up:
     hrs = (r['ko'] - NOW).total_seconds() / 3600
@@ -96,5 +96,5 @@ for r, hrs, L, (e, side, od), lim, Tk in sorted(out, key=lambda x: x[0]['ko']):
 if not out: print('   κανενα')
 near = [x for x in allm if x[1] >= 120 and x[7][0] >= 0.05 and not (x[7][0] >= .10 and 1.70 <= x[7][2] <= 2.10)]
 print(f'\n(ματς ≥5 μερες με τιμη: {sum(1 for x in allm if x[1] >= 120)} · με edge 5-10% ή εκτος τιμης: {len(near)})')
-for r, hrs, L, o, u, lim, Tk, (e, side, od) in sorted(near, key=lambda x: -x[7][0])[:8]:
+for r, hrs, L, o, u, lim, Tk, (e, side, od) in sorted(near, key=lambda x: -x[7][0])[:15]:
     print(f"      {r['lg']:12s} {r['home'][:18]:18s} - {r['away'][:18]:18s} {side} {L:g} @{od:.2f} edge {100 * e:.0f}% · οριο {lim}")
