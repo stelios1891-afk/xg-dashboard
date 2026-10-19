@@ -259,7 +259,7 @@ def main():
                     # 19/10/2026 (Στελιος «παμε με το 10%»): UCL αουτσαιντερ 4-10% = ΣΚΙΑ (ucl_dog_band_test: ζωνη +4% αλλα θετικη 1/4 σεζον,
                     # CLV 0· LOSO ποτε 4% — διαλεγει 10/14%, εκτος δειγματος 10% +12.7μ vs 4% +10.5μ). Κανονικα μονο ≥10%.
                     rule=('ucl_dog_band_shadow' if (role == 'dog' and m['comp'] == 'ChampionsLeague' and edge < EDGE_DOG_UCL_LIVE) else None),
-                    no_play=(m['comp'] == 'EuropaLeague') or (role == 'dog' and m['comp'] == 'ChampionsLeague' and edge < EDGE_DOG_UCL_LIVE),
+                    no_play=bool((m['comp'] == 'EuropaLeague') or (role == 'dog' and m['comp'] == 'ChampionsLeague' and edge < EDGE_DOG_UCL_LIVE)),   # bool(): numpy bool σπαει το json (19/10)
                     note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else
                           ('👁 ΣΚΙΑ — αουτσάιντερ UCL ζώνης 4-10% (19/10: κανονικά μόνο ≥10%)'
                            if (role == 'dog' and m['comp'] == 'ChampionsLeague' and edge < EDGE_DOG_UCL_LIVE) else None))))
