@@ -24,7 +24,8 @@ def apply_md(rec, md):
     c = md.get('content') or {}
     raw = [s for s in ((c.get('shotmap') or {}).get('shots') or []) if not s.get('isOwnGoal')]
     ev = ((c.get('matchFacts') or {}).get('events') or {}).get('events', []) or []
-    extra = any(s.get('period') not in REG_PERIODS for s in raw if s.get('period')) or \
+    reason = ((((md.get('header') or {}).get('status') or {}).get('reason') or {}).get('short') or '').upper()   # AET / Pen (και ματς χωρις σουτ)
+    extra = any(s.get('period') not in REG_PERIODS for s in raw if s.get('period')) or reason in ('AET', 'PEN', 'AP') or \
         any(e.get('type') == 'Half' and e.get('halfStrShort') in ('AET', 'PEN', 'Pen', 'AP') for e in ev)
     # αναιρεση παλιας λαθος διορθωσης (λεπτο>90) αν τελικα δεν ηταν παραταση
     if rec.get('reg90') and rec.get('hs_ft') is not None:
