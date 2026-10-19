@@ -6,6 +6,8 @@
 19/10/2026 (Στελιος «περνα το live»): οι απουσιες (ESPN Out) μπαινουν πλεον ΣΤΗΝ ΠΡΟΒΛΕΨΗ (nba_absence.py, nba_odds_scan) → το παλιο φιλτρο
 «χωρις pick αν η πλευρα μας εχει νεα απουσια ≥30′» ΑΦΑΙΡΕΘΗΚΕ (το τεστ του ηταν look-ahead· η ESPN δινει μονο Out/Day-To-Day, οχι Doubtful).
 ΣΚΙΩΔΗΣ κανονας συνολων (μονο καταγραφη → nba_shadow_def.jsonl): ≤45′ πριν το τζαμπολ, ξαφνικες απουσιες με υπολοιπο ≥3 → «Over» στη γραμμη της στιγμης.
+STEAM (19/10, ΔΟΚΙΜΑΣΤΙΚΟ live ¼ μοναδας + καταγραφη → nba_steam_log.jsonl): δικαιη τιμη χαντικαπ Pinnacle κινηθηκε ≥3 π. σε 60′ → πλευρα
+της κινησης + φωτογραφια απουσιων · Telegram «🧪 STEAM» · ΕΚΤΟΣ ημερολογιου χαντικαπ (nba_clv_bets).
 Κανονας και σ: απο nba_engine_test (βλ. HC_MIN και sigma_margin στο nba_projections.json)."""
 import os, sys, json, datetime as dt
 sys.stdout.reconfigure(encoding='utf-8')
@@ -62,6 +64,45 @@ def shadow_def(g, pin, ko, now):
     except Exception as e:
         print('σκιωδης κανονας σφαλμα —', e)
 
+STEAM_X, STEAM_W = 3.0, 3600           # 19/10 (Στελιος «ναι»): ΣΚΙΩΔΗΣ καταγραφη κινησεων ≥3 π. σε 60′ (steam_why.py: ≥3 π. +5.9% στο +5′,
+STEAM_LOG, STEAM_STATE = 'nba_steam_log.jsonl', 'nba_steam_state.json'   # ανεξηγητες απο απουσιες +27% n77 post-hoc)
+STEAM_LIVE, STEAM_STAKE = True, 0.25     # 19/10 (Στελιος «βαλτο λαιβ και σαν καταγραφη»): ΔΟΚΙΜΑΣΤΙΚΟ live, ¼ μοναδας, Telegram «🧪 STEAM» — εκτος ημερολογιου χαντικαπ
+STEAM_NEW = []
+def steam_watch(g, pin, o, ko, now, sm, ST):
+    """Δικαιη τιμη Pinnacle (αναμενομενη διαφορα γηπ) ανα scan στο ST· αν κινηθηκε ≥STEAM_X απο την τιμη που ισχυε 60′ πριν → μια
+    εγγραφη ανα ματς στο STEAM_LOG, με «φωτογραφια» απουσιων (διορθωση μας τωρα vs 60′ πριν + πληρης λιστα ESPN) για να ξεχωριζουμε
+    κινησεις-ειδησεις απο κινησεις-χρημα χωρις εκ των υστερων γνωση."""
+    try:
+        from statistics import NormalDist
+        L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa'])
+        ph = (1 / oh) / (1 / oh + 1 / oa); fair = -L + sm * NormalDist().inv_cdf(min(max(ph, 1e-4), 1 - 1e-4))
+        ts = dt.datetime.fromisoformat(str(o.get('when') or now.isoformat(timespec='minutes'))).replace(tzinfo=dt.timezone.utc)
+        H = ST.setdefault(str(g['code']), dict(h=[], done=False))
+        if H['h'] and H['h'][-1][0] >= ts.isoformat(timespec='minutes'): return       # ιδιο scan Pinnacle — τιποτα νεο
+        dm = float(g.get('abs_dm') or 0)
+        H['h'].append([ts.isoformat(timespec='minutes'), round(fair, 3), round(dm, 3), L, oh, oa])
+        H['h'] = [x for x in H['h'] if dt.datetime.fromisoformat(x[0]).replace(tzinfo=dt.timezone.utc) >= ts - dt.timedelta(seconds=3 * STEAM_W)]
+        if H['done']: return
+        ref = [x for x in H['h'] if dt.datetime.fromisoformat(x[0]).replace(tzinfo=dt.timezone.utc) <= ts - dt.timedelta(seconds=STEAM_W)]
+        if not ref: return
+        ref = ref[-1]; dF = fair - ref[1]
+        if abs(dF) < STEAM_X: return
+        sd = 1 if dF > 0 else -1; H['done'] = True
+        inj = _load(F('nba_injuries.json'), {}); IT = {v.get('code'): v.get('players', []) for v in inj.get('teams', {}).values()}
+        team, hc, od = (g['home'], L, oh) if sd == 1 else (g['away'], -L, oa)
+        rec = dict(seen=now.isoformat(timespec='minutes'), scan_t=ts.isoformat(timespec='minutes'), code=g['code'], home=g['home'], away=g['away'],
+                   when=ko.strftime('%Y-%m-%dT%H:%M'), hrs_before=round((ko - ts).total_seconds() / 3600, 2),
+                   ref_t=ref[0], ref_age_min=round((ts - dt.datetime.fromisoformat(ref[0]).replace(tzinfo=dt.timezone.utc)).total_seconds() / 60),
+                   move=round(dF, 2), side=sd, bet=f'{team} {hc:+g}', line=hc, odds=od, fair=round(fair, 2), fair_ref=ref[1], line_ref=ref[3],
+                   abs_dm=round(dm, 2), abs_dm_ref=ref[2], news=round(sd * (dm - ref[2]), 2),      # news>0: η αλλαγη στις απουσιες ΕΞΗΓΕΙ την κινηση
+                   abs_h=g.get('abs_h'), abs_a=g.get('abs_a'), inj_h=IT.get(g.get('hcode')), inj_a=IT.get(g.get('acode')), inj_fetched=inj.get('fetched'),
+                   model_margin=g.get('margin'), paper=not STEAM_LIVE, stake=STEAM_STAKE if STEAM_LIVE else 0)
+        with open(F(STEAM_LOG), 'a', encoding='utf-8') as fh: fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
+        STEAM_NEW.append(rec)
+        print(f"ΣΚΙΩΔΕΣ STEAM: {g['home']} - {g['away']} · κινηση {dF:+.1f} π. σε {rec['ref_age_min']}′ → {rec['bet']} @{od:.2f} · ειδηση {rec['news']:+.1f}")
+    except Exception as e:
+        print('steam watch σφαλμα —', e)
+
 def compute():
     proj = _load(F('nba_projections.json'), {}); odds = _load(F('nba_odds_latest.json'), {}).get('odds', {})
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
@@ -69,6 +110,7 @@ def compute():
     now = dt.datetime.now(dt.timezone.utc); picks = []
     global FIRST
     FIRST = _load(F('nba_first_lines.json'), {})
+    ST = {k: v for k, v in _load(F(STEAM_STATE), {}).items() if k in odds}
     for code, o in odds.items():
         g = games.get(str(code)); pin = o.get('pin') or {}
         if not g or g.get('played'): continue
@@ -80,6 +122,7 @@ def compute():
         L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa']); m = float(g['margin'])
         f0 = FIRST.setdefault(str(code), dict(line=L, oh=oh, oa=oa, tl=pin.get('tl'), to=pin.get('to'), tu=pin.get('tu'), seen=now.isoformat(timespec='minutes')))
         shadow_def(g, pin, ko, now)
+        steam_watch(g, pin, o, ko, now, sm, ST)
         pw, pp = cover(m, L, sm); pl = 1 - pw - pp
         pw0, pp0 = cover(m, float(f0['line']), sm); pl0 = 1 - pw0 - pp0
         for side, p_, od, hc in ((1, pw, oh, L), (-1, pl, oa, -L)):
@@ -103,6 +146,7 @@ def compute():
                                       proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(float(g['total']), 1),
                                       mix_total=round(mu, 1), mkt_total=round(mk, 1), mkt_line=T, gno=g.get('gno')))
     json.dump(FIRST, open(F('nba_first_lines.json'), 'w', encoding='utf-8'))
+    json.dump(ST, open(F(STEAM_STATE), 'w', encoding='utf-8'), ensure_ascii=False)
     return picks
 
 def migrate():
@@ -158,9 +202,29 @@ def line(p, prev=None):
     return (f"🏀 NBA · {tm}\n{p['home']} - {p['away']}\n"
             f"{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})")
 
+def steam_line(r):
+    t = dt.datetime.fromisoformat(r['when']).replace(tzinfo=dt.timezone.utc)
+    try:
+        from zoneinfo import ZoneInfo; t = t.astimezone(ZoneInfo('Europe/Athens'))
+    except Exception:
+        t = t + dt.timedelta(hours=3)
+    tm = f"{['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'][t.weekday()]} {t:%d/%m %H:%M}"
+    why = (f"εξηγειται απο απουσιες (+{r['news']:.1f} π.)" if r['news'] >= 0.5 else
+           'ΑΝΤΙΘΕΤΑ απο τις απουσιες' if r['news'] <= -0.5 else 'χωρις νεα απουσια (καθαρο χρημα)')
+    return (f"🧪 STEAM NBA (δοκιμαστικο · {STEAM_STAKE:g} μοναδας) · {tm}\n{r['home']} - {r['away']}\n"
+            f"{r['bet']} @{r['odds']:.2f} · ηταν {r['side'] * r['line_ref']:+g} πριν {r['ref_age_min']}′\n"
+            f"(κινηση {abs(r['move']):.1f} π. · {r['hrs_before']:.1f}ω πριν · {why})")
+
 def main(notify_tg=True):
     migrate()
     picks = compute()
+    if STEAM_NEW:
+        for r in STEAM_NEW: print(steam_line(r).replace('\n', ' | '))
+        if notify_tg and STEAM_LIVE:
+            try:
+                import notify; notify.send((chr(10) * 2).join(steam_line(r) for r in STEAM_NEW))
+            except Exception as e:
+                print('Telegram σφαλμα (steam):', e)
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
     tots = [p for p in picks if p['mkt'] == 'total']; picks = [p for p in picks if p['mkt'] != 'total']   # 19/10: συνολα ΚΡΥΦΑ
     n_tot_new = log_totals(tots, now)
