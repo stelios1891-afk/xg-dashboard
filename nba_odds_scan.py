@@ -4,6 +4,8 @@
   διαφορα = κατοχες × (επιθ_γηπ + αμυνα_φιλ + εδρα/2 − επιθ_φιλ − αμυνα_γηπ − εδρα/2)/100 + 3 × (B2B φιλ − B2B γηπ)
   συνολο  = κατοχες × (2μ + επιθ + αμυνες)/100 + Φ3 (επιπεδο τελευταιων 150 ματς)
 Back-to-back: η ομαδα επαιξε την προηγουμενη μερα (ESPN) ή εχει ματς Pinnacle την προηγουμενη μερα.
+ΑΠΟΥΣΙΕΣ (19/10/2026, nba_absence.py): ESPN «Out» παικτες ρολου → διαφορα += 0.75·Σ(αξια+1)·λεπτα/48 (αντιπαλου − δικοι) ·
+  συνολο += −0.5·επιθεση + 1.0·αμυνα που χανεται. Φρεσκια λιστα τραυματιων σε καθε scan. margin_base/total_base = χωρις απουσιες.
 Εξοδος (ιδια μορφη με EuroCup/BCL): nba_projections.json · nba_odds_latest.json · nba_odds_hist.jsonl. --results: μονο σκορ (ESPN)."""
 import os, sys, json, math, datetime
 try: sys.stdout.reconfigure(encoding='utf-8')
@@ -67,6 +69,13 @@ def main():
     try: P = json.load(open(F('nba_projections.json'), encoding='utf-8'))
     except Exception: P = {}
     games = {str(g['code']): g for g in P.get('games', [])}
+    AB = None                                        # 19/10: απουσιες (ESPN Out) στην προβλεψη
+    try:
+        import nba_absence
+        try: print(f'NBA τραυματιες: {nba_absence.refresh_injuries()} (φρεσκο ESPN)')
+        except Exception as e: print('NBA τραυματιες: κραταω την παλια λιστα —', e)
+        AB = nba_absence.Absences()
+    except Exception as e: print('ΠΡΟΣΟΧΗ: απουσιες απενεργες —', e)
     # ημερες ματς καθε ομαδας (ESPN παιγμενα + Pinnacle προγραμμα) για το back-to-back
     days = {}
     for t, d in st.get('last', {}).items(): days.setdefault(t, set()).add(d)
@@ -88,11 +97,16 @@ def main():
         b2h, b2a = int(yd in days.get(h, ())), int(yd in days.get(a, ()))
         pr = predict(st, h, a, b2h, b2a)
         if pr is None: nomatch.append(f"{g['home_team']} - {g['away_team']} (χωρις rating)"); continue
-        m, T = pr
+        m, T = pr; m0, T0 = m, T; dm = dtot = shadow = 0.0; LH = LA = []
+        if AB is not None:
+            try: dm, dtot, shadow, LH, LA = AB.adjust(h, a); m += dm; T += dtot
+            except Exception as e: print('απουσιες σφαλμα', h, a, e)
         games[code] = dict(code=code, round=None, phase='RS', group=None, utc=ko.isoformat().replace('+00:00', 'Z'), home=g['home_team'], away=g['away_team'], hcode=h, acode=a,
                            margin=round(m, 2), total=round(T, 1), total_src='μοντελο', pts_h=round((T + m) / 2, 1), pts_a=round((T - m) / 2, 1),
                            p_home=round(Phi(m / st['sig_m']), 3), played=False, version='nba1', venue='', b2b_h=b2h, b2b_a=b2a,
-                           gno=max(st['gp'].get(h, 0), st['gp'].get(a, 0)), gp_h=st['gp'].get(h, 0), gp_a=st['gp'].get(a, 0))
+                           gno=max(st['gp'].get(h, 0), st['gp'].get(a, 0)), gp_h=st['gp'].get(h, 0), gp_a=st['gp'].get(a, 0),
+                           margin_base=round(m0, 2), total_base=round(T0, 1), abs_dm=round(dm, 2), abs_dt=round(dtot, 2), abs_shadow=round(shadow, 2),
+                           abs_h=[[p['name'], p['min'], int(p['fresh'])] for p in LH], abs_a=[[p['name'], p['min'], int(p['fresh'])] for p in LA])
     finish(games, st, now)
     up = [dict(code=g['code'], round=None, utc=E._pdt(g['utc']), hcode=g['hcode'], acode=g['acode'], home=g['home'], away=g['away']) for g in games.values() if not g['played']]
     odds, hist_rows, unmatched, nmatch = E.build_records(list(data), up, now, old.get('odds', {}))

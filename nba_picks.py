@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """nba_picks.py — VALUE PICKS NBA (6/10/2026, Στελιος «φτιαξε τη μηχανη»). Αντιγραφο του nba_picks (ιδιο ημερολογιο/κατασταση/μηνυματα) με αρχεια nba_*.
-ΚΑΝΟΝΕΣ (nba_more_tests, καθαρο τεστ 2021-26): edge ≥8% · ΧΩΡΙΣ pick αν η ΔΙΚΗ ΜΑΣ πλευρα εχει νεα απουσια ≥30′ (ESPN τραυματιες Out/Doubtful,
-παικτες ≥20′ που επαιξαν σε 1 απο τα 3 τελευταια ματς) · ΜΟΝΟ αν ηταν pick ΚΑΙ στην πρωτη γραμμη που ειδαμε (τα «αργα» picks: συνολα −15.8% 0/5)
-· χαντικαπ ΟΧΙ απο τον 71ο αγωνα (−7.8% 0/5). PAPER μεχρι αποφαση Στελιου.
+ΚΑΝΟΝΕΣ (nba_more_tests, καθαρο τεστ 2021-26): edge ≥8% · ΜΟΝΟ αν ηταν pick ΚΑΙ στην πρωτη γραμμη που ειδαμε (τα «αργα» picks: συνολα −15.8% 0/5)
+· χαντικαπ ΟΧΙ απο τον 71ο αγωνα (−7.8% 0/5). 19/10/2026: ΧΑΝΤΙΚΑΠ LIVE (Telegram) · ΣΥΝΟΛΑ μενουν PAPER (PAPER_HCAP / PAPER_TOT).
+19/10/2026 (Στελιος «περνα το live»): οι απουσιες (ESPN Out) μπαινουν πλεον ΣΤΗΝ ΠΡΟΒΛΕΨΗ (nba_absence.py, nba_odds_scan) → το παλιο φιλτρο
+«χωρις pick αν η πλευρα μας εχει νεα απουσια ≥30′» ΑΦΑΙΡΕΘΗΚΕ (το τεστ του ηταν look-ahead· η ESPN δινει μονο Out/Day-To-Day, οχι Doubtful).
+ΣΚΙΩΔΗΣ κανονας συνολων (μονο καταγραφη → nba_shadow_def.jsonl): ≤45′ πριν το τζαμπολ, ξαφνικες απουσιες με υπολοιπο ≥3 → «Over» στη γραμμη της στιγμης.
 Κανονας και σ: απο nba_engine_test (βλ. HC_MIN και sigma_margin στο nba_projections.json)."""
 import os, sys, json, datetime as dt
 sys.stdout.reconfigure(encoding='utf-8')
@@ -10,8 +12,12 @@ from el_picks import cover
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 HC_MIN, ODDS_DELTA = 0.08, 0.05
-PAPER = True        # 6/10: ΚΑΤΑΓΡΑΦΗ μεχρι αποφαση Στελιου («τα υπολοιπα θα τα βρουμε»)
-ABS_MIN, ABS_PLAYER, LATE_GP = 30.0, 20.0, 70
+PAPER_HCAP = False  # 19/10: ΧΑΝΤΙΚΑΠ LIVE (Στελιος «τα χαντικαπς τα θελουμε live») — ανοιγμα +7.1% Οκτ-Δεκ (B2B+απουσιες), αγων 1-10 το δυνατοτερο
+PAPER_TOT = True    # ΣΥΝΟΛΑ μενουν ΚΑΤΑΓΡΑΦΗ (totals_test 19/10: κερδος μονο 2021-22, τελευταιες 2 σεζον αρνητικα)
+def _is_tot_msg(t):                 # μηνυματα κατασταστασης (bk_pick_status.track) που αφορουν συνολα → οχι Telegram
+    ls = t.split('\n'); return len(ls) > 1 and ls[1].replace('μπηκε: ', '').startswith(('Over ', 'Under '))
+LATE_GP = 70
+SHADOW_MIN = 45                     # 19/10: σκιωδης κανονας συνολων — λεπτα πριν το τζαμπολ
 TOT_MIN, TOT_W = 0.08, 1.0          # NBA συνολα: μοντελο (με Φ3) μονο του, edge ≥8% — nba_fix_test: Οκτ-Δεκ +3.2% (3/5), ολη +1.9% (3/5), Κ2 ≈0
 TOT_MIN_LATE, TOT_W_LATE = 0.08, 1.0
 TOT_EARLY_GNO = 5
@@ -34,13 +40,25 @@ def _load(p, d):
     try: return json.load(open(p, encoding='utf-8'))
     except Exception: return d
 
-def absences(g):
-    """Λεπτα «νεων απουσιων» ανα ομαδα: ESPN Out/Doubtful, παικτες ≥20′ (μεσος 10 τελευταιων φετος· αλλιως περσινος) που επαιξαν σε 1 απο τα 3
-    τελευταια ματς της ομαδας (προετοιμασια μετραει· με <3 ματς: ολοι)."""
-    from nba_live_roster_util import absence_minutes
-    try: return absence_minutes([g['hcode'], g['acode']], ABS_PLAYER)
+def shadow_def(g, pin, ko, now):
+    """19/10: ΣΚΙΩΔΗΣ κανονας (news_rule.py): αμυντικος που λειπει ξαφνικα → η αγορα υποτιμα το συνολο. ΜΟΝΟ καταγραφη, μια φορα ανα ματς."""
+    try:
+        from nba_absence import SH_THR
+        if not (0 < (ko - now).total_seconds() <= SHADOW_MIN * 60) or float(g.get('abs_shadow') or 0) < SH_THR: return
+        if pin.get('tl') is None or not pin.get('to'): return
+        fn = F('nba_shadow_def.jsonl'); done = set()
+        if os.path.exists(fn):
+            for ln in open(fn, encoding='utf-8'):
+                try: done.add(str(json.loads(ln)['code']))
+                except Exception: pass
+        if str(g['code']) in done: return
+        rec = dict(seen=now.isoformat(timespec='minutes'), code=g['code'], home=g['home'], away=g['away'], when=ko.strftime('%Y-%m-%dT%H:%M'),
+                   bet=f"Over {float(pin['tl']):g}", line=float(pin['tl']), odds=float(pin['to']), shadow=g.get('abs_shadow'),
+                   fresh=[p[0] for p in (g.get('abs_h') or []) + (g.get('abs_a') or []) if p[2]], model_total=g.get('total'), paper=True)
+        with open(fn, 'a', encoding='utf-8') as fh: fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
+        print(f"ΣΚΙΩΔΕΣ (αμυνα λειπει): {g['home']} - {g['away']} · Over {float(pin['tl']):g} @{float(pin['to']):.2f} · υπολοιπο {g.get('abs_shadow')}")
     except Exception as e:
-        print('ΠΡΟΣΟΧΗ: φιλτρο απουσιων απενεργο —', e); return {}
+        print('σκιωδης κανονας σφαλμα —', e)
 
 def compute():
     proj = _load(F('nba_projections.json'), {}); odds = _load(F('nba_odds_latest.json'), {}).get('odds', {})
@@ -55,17 +73,17 @@ def compute():
         ko = dt.datetime.fromisoformat(o['commence'].replace('Z', '+00:00'))
         if ko <= now: continue
         if pin.get('line') is None or not pin.get('oh') or not pin.get('oa'): continue
-        base = dict(lg='NBA', paper=PAPER, home=g['home'], away=g['away'], hcode=g['hcode'], acode=g['acode'], code=g['code'], round=g['round'], group=g.get('group'),
+        base = dict(lg='NBA', paper=PAPER_HCAP, home=g['home'], away=g['away'], hcode=g['hcode'], acode=g['acode'], code=g['code'], round=g['round'], group=g.get('group'),
                     when=ko.strftime('%Y-%m-%dT%H:%M'), nba=True, model=proj.get('model', '')[:60])
         L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa']); m = float(g['margin'])
         f0 = FIRST.setdefault(str(code), dict(line=L, oh=oh, oa=oa, tl=pin.get('tl'), to=pin.get('to'), tu=pin.get('tu'), seen=now.isoformat(timespec='minutes')))
-        ab = absences(g)
+        shadow_def(g, pin, ko, now)
         pw, pp = cover(m, L, sm); pl = 1 - pw - pp
         pw0, pp0 = cover(m, float(f0['line']), sm); pl0 = 1 - pw0 - pp0
         for side, p_, od, hc in ((1, pw, oh, L), (-1, pl, oa, -L)):
             e = p_ * od + pp - 1
             e0 = (pw0 * f0['oh'] + pp0 - 1) if side == 1 else (pl0 * f0['oa'] + pp0 - 1)
-            if e >= HC_MIN and e0 >= HC_MIN and int(g.get('gno') or 0) < LATE_GP and ab.get(g['hcode'] if side == 1 else g['acode'], 0) < ABS_MIN:
+            if e >= HC_MIN and e0 >= HC_MIN and int(g.get('gno') or 0) < LATE_GP:
                 picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4),
                                   proj_odds=round((p_ + (1 - p_ - pp)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L))
         # ---- συνολο (6/10): μοντελο μονο του ≥8% ----
@@ -79,7 +97,7 @@ def compute():
             for nm, p_, od in (('Over', po, float(pin['to'])), ('Under', pu, float(pin['tu']))):
                 e = p_ * od + pq - 1
                 if e >= tot_rule(g)[1] and ok0[nm]:
-                    picks.append(dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
+                    picks.append(dict(base, mkt='total', paper=PAPER_TOT, side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
                                       proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(float(g['total']), 1),
                                       mix_total=round(mu, 1), mkt_total=round(mk, 1), mkt_line=T, gno=g.get('gno')))
     json.dump(FIRST, open(F('nba_first_lines.json'), 'w', encoding='utf-8'))
@@ -140,28 +158,30 @@ def main(notify_tg=True):
         with open(F('nba_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
-                                         bet=p.get('bet'), paper=PAPER, model_line=p.get('model_line'), model_total=p.get('model_total'), mix_total=p.get('mix_total'),
+                                         bet=p.get('bet'), paper=p.get('paper', True), model_line=p.get('model_line'), model_total=p.get('model_total'), mix_total=p.get('mix_total'),
                                          mkt_total=p.get('mkt_total'), mkt_line=p.get('mkt_line'), model=p.get('model')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('nba_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, tot_w=TOT_W, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('nba_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    if notify_tg and not PAPER and (new or changed):
+    new_l = [p for p in new if not p.get('paper', True)]; chg_l = [(p, pr) for p, pr in changed if not p.get('paper', True)]   # 19/10: μονο τα live (χαντικαπ)
+    if notify_tg and (new_l or chg_l):
         msg = []
-        if new: msg += [f'🏀 {len(new)} ΝΕΑ value picks NBA', ''] + [line(p) + '\n' for p in sorted(new, key=lambda x: x['when'])]
-        if changed: msg += [f'🔄 {len(changed)} ΑΛΛΑΞΑΝ odds (NBA)'] + [line(p, pr) for p, pr in changed]
+        if new_l: msg += [f'🏀 {len(new_l)} ΝΕΑ value picks NBA', ''] + [line(p) + '\n' for p in sorted(new_l, key=lambda x: x['when'])]
+        if chg_l: msg += [f'🔄 {len(chg_l)} ΑΛΛΑΞΑΝ odds (NBA)'] + [line(p, pr) for p, pr in chg_l]
         try:
             import notify; notify.send('\n'.join(msg))
         except Exception as e:
             print('Telegram σφαλμα:', e)
     for t in backs + drops: print(t.replace(chr(10), ' | '))
-    if notify_tg and not PAPER and (backs or drops):
+    backs = [t for t in backs if not (PAPER_TOT and _is_tot_msg(t))]; drops = [t for t in drops if not (PAPER_TOT and _is_tot_msg(t))]
+    if notify_tg and (backs or drops):
         try:
             import notify
             if backs: notify.send((chr(10) * 2).join(backs))
             if drops: notify.send('🏀 NBA · pick που ΔΕΝ ισχυει πια (αλλαξε γραμμη/τιμη)' + chr(10) * 2 + (chr(10) * 2).join(drops), silent=True)
         except Exception as e:
             print('Telegram σφαλμα (κατασταση):', e)
-    print(f'[BCL picks] {len(picks)} picks · {len(new)} νεα · {len(changed)} αλλαγες')
+    print(f'[NBA picks] {len(picks)} picks ({sum(1 for p in picks if not p.get("paper", True))} live χαντικαπ) · {len(new)} νεα · {len(changed)} αλλαγες')
     for p in picks: print('  ' + line(p).replace('\n', ' | '))
     return picks
 
