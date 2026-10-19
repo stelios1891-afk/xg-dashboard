@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-19T07:22+00:00",
+ "generated": "2026-10-19T09:44+00:00",
  "season": 2026,
  "comp": "BCL",
  "model": "BCL: (1−0.75)·μονο BCL (περσι 1.4, λ 8, HL 9999, τυχη 0.5) + 0.75·κοινη κλιμακα (ολα τα ματς, περσι 1.3, λ 1.5, φιλικα 0.5, εγχωρια ×1.5) + αποδοσεις νικητη 2.5·z·4/(4+ματς BCL)",
@@ -555,15 +555,56 @@
    "venue": "",
    "hs": 84,
    "as_": 66
+  },
+  {
+   "code": "pin1638324006",
+   "round": 3,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-10-20T17:00:00Z",
+   "home": "Galatasaray",
+   "away": "SIG Strasbourg",
+   "hcode": "QR2OmUw1",
+   "acode": "Srews2dH",
+   "margin": 7.67,
+   "m_bcl": 9.89,
+   "m_common": 1.81,
+   "played": false,
+   "total": 162.2,
+   "total_src": "μοντελο",
+   "mkt_tl": 167.5,
+   "pts_h": 84.9,
+   "pts_a": 77.3,
+   "p_home": 0.739,
+   "version": "bcl1",
+   "venue": ""
   }
  ],
  "ratings": [
   {
-   "code": "QR2OmUw1",
-   "name": "Galatasaray",
-   "net": 3.25,
-   "O": 9.18,
-   "D": -4.9,
+   "code": "8CRfmy39",
+   "name": "Brose Bamberg",
+   "net": 0.88,
+   "O": -2.42,
+   "D": -1.39,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
+   "code": "GWZ15Sne",
+   "name": "Bilbao Basket",
+   "net": 6.52,
+   "O": 1.51,
+   "D": -0.16,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
+   "code": "Srews2dH",
+   "name": "SIG Strasbourg",
+   "net": 4.28,
+   "O": 2.58,
+   "D": -1.94,
    "pace": 0.0,
    "games": 1
   },
@@ -586,15 +627,6 @@
    "games": 2
   },
   {
-   "code": "UylfCwh5",
-   "name": "BC Juventus Utena",
-   "net": -3.45,
-   "O": 3.55,
-   "D": 0.53,
-   "pace": 0.0,
-   "games": 1
-  },
-  {
    "code": "vaT6tQCQ",
    "name": "BK Sabah Baku",
    "net": -7.9,
@@ -604,38 +636,20 @@
    "games": 2
   },
   {
-   "code": "GQjgX5W0",
-   "name": "Trabzonspor",
-   "net": 5.38,
-   "O": 2.04,
-   "D": 0.95,
+   "code": "bH3GbrA3",
+   "name": "Igokea",
+   "net": -6.26,
+   "O": -3.8,
+   "D": 4.35,
    "pace": 0.0,
    "games": 2
   },
   {
-   "code": "vy2cTqpo",
-   "name": "Rasta Vechta",
-   "net": -4.28,
-   "O": 0.23,
-   "D": -1.11,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "SA51NIt1",
-   "name": "Nanterre",
-   "net": 4.27,
-   "O": 3.6,
-   "D": -1.65,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "8CRfmy39",
-   "name": "Brose Bamberg",
-   "net": 0.88,
-   "O": -2.42,
-   "D": -1.39,
+   "code": "6TSpW3Cb",
+   "name": "Cholet Basket",
+   "net": 3.6,
+   "O": 7.2,
+   "D": -3.02,
    "pace": 0.0,
    "games": 2
   },
@@ -647,33 +661,6 @@
    "D": -1.86,
    "pace": 0.0,
    "games": 2
-  },
-  {
-   "code": "K6HkdCoR",
-   "name": "Unicaja Malaga",
-   "net": 14.57,
-   "O": 19.43,
-   "D": -15.84,
-   "pace": 0.0,
-   "games": 1
-  },
-  {
-   "code": "f3MFiPKg",
-   "name": "Spartak Subotica",
-   "net": 2.57,
-   "O": 2.08,
-   "D": -1.5,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "Sn9ppE18",
-   "name": "Club Joventut Badalona",
-   "net": 12.67,
-   "O": 9.85,
-   "D": -6.95,
-   "pace": 0.0,
-   "games": 1
   },
   {
    "code": "drJ5oMza",
@@ -694,29 +681,20 @@
    "games": 1
   },
   {
-   "code": "zkhjVsDQ",
-   "name": "Legia Warszawa",
-   "net": -7.86,
-   "O": -3.32,
-   "D": -0.94,
+   "code": "f3MFiPKg",
+   "name": "Spartak Subotica",
+   "net": 2.57,
+   "O": 2.08,
+   "D": -1.5,
    "pace": 0.0,
-   "games": 1
+   "games": 2
   },
   {
-   "code": "ncLyc03K",
-   "name": "Alba Berlin",
-   "net": -1.05,
-   "O": 6.63,
-   "D": -5.23,
-   "pace": 0.0,
-   "games": 1
-  },
-  {
-   "code": "d2OmwT1J",
-   "name": "Rytas Vilnius",
-   "net": 3.34,
-   "O": 13.37,
-   "D": -1.12,
+   "code": "vy2cTqpo",
+   "name": "Rasta Vechta",
+   "net": -4.28,
+   "O": 0.23,
+   "D": -1.11,
    "pace": 0.0,
    "games": 2
   },
@@ -730,65 +708,20 @@
    "games": 1
   },
   {
-   "code": "bH3GbrA3",
-   "name": "Igokea",
-   "net": -6.26,
-   "O": -3.8,
-   "D": 4.35,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "Cjh1xKbk",
-   "name": "SK Slavia Prague ERA NBK",
-   "net": -16.78,
-   "O": 0,
-   "D": 0,
+   "code": "QR2OmUw1",
+   "name": "Galatasaray",
+   "net": 3.25,
+   "O": 9.18,
+   "D": -4.9,
    "pace": 0.0,
    "games": 1
   },
   {
-   "code": "pYaI8xaK",
-   "name": "KK Cibona",
-   "net": -3.42,
-   "O": 1.88,
-   "D": -1.18,
-   "pace": 0.0,
-   "games": 1
-  },
-  {
-   "code": "6TSpW3Cb",
-   "name": "Cholet Basket",
-   "net": 3.6,
-   "O": 7.2,
-   "D": -3.02,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "86MXctlE",
-   "name": "Baskets Bonn",
-   "net": 1.34,
-   "O": -1.07,
-   "D": -0.73,
-   "pace": 0.0,
-   "games": 1
-  },
-  {
-   "code": "GWZ15Sne",
-   "name": "Bilbao Basket",
-   "net": 6.52,
-   "O": 1.51,
-   "D": -0.16,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "UJluM9H6",
-   "name": "Falco KC Szombathely",
-   "net": -3.05,
-   "O": 1.8,
-   "D": 9.03,
+   "code": "UylfCwh5",
+   "name": "BC Juventus Utena",
+   "net": -3.45,
+   "O": 3.55,
+   "D": 0.53,
    "pace": 0.0,
    "games": 1
   },
@@ -797,6 +730,24 @@
    "name": "Salon Vilpas Vikings",
    "net": -5.17,
    "O": 2.37,
+   "D": -0.96,
+   "pace": 0.0,
+   "games": 1
+  },
+  {
+   "code": "d2OmwT1J",
+   "name": "Rytas Vilnius",
+   "net": 3.34,
+   "O": 13.37,
+   "D": -1.12,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
+   "code": "E9uuQfaG",
+   "name": "Antwerp Giants",
+   "net": -3.52,
+   "O": -2.66,
    "D": -0.96,
    "pace": 0.0,
    "games": 1
@@ -811,20 +762,92 @@
    "games": 2
   },
   {
-   "code": "E9uuQfaG",
-   "name": "Antwerp Giants",
-   "net": -3.52,
-   "O": -2.66,
-   "D": -0.96,
+   "code": "86MXctlE",
+   "name": "Baskets Bonn",
+   "net": 1.34,
+   "O": -1.07,
+   "D": -0.73,
    "pace": 0.0,
    "games": 1
   },
   {
-   "code": "Srews2dH",
-   "name": "SIG Strasbourg",
-   "net": 4.28,
-   "O": 2.58,
-   "D": -1.94,
+   "code": "SA51NIt1",
+   "name": "Nanterre",
+   "net": 4.27,
+   "O": 3.6,
+   "D": -1.65,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
+   "code": "K6HkdCoR",
+   "name": "Unicaja Malaga",
+   "net": 14.57,
+   "O": 19.43,
+   "D": -15.84,
+   "pace": 0.0,
+   "games": 1
+  },
+  {
+   "code": "ncLyc03K",
+   "name": "Alba Berlin",
+   "net": -1.05,
+   "O": 6.63,
+   "D": -5.23,
+   "pace": 0.0,
+   "games": 1
+  },
+  {
+   "code": "UJluM9H6",
+   "name": "Falco KC Szombathely",
+   "net": -3.05,
+   "O": 1.8,
+   "D": 9.03,
+   "pace": 0.0,
+   "games": 1
+  },
+  {
+   "code": "zkhjVsDQ",
+   "name": "Legia Warszawa",
+   "net": -7.86,
+   "O": -3.32,
+   "D": -0.94,
+   "pace": 0.0,
+   "games": 1
+  },
+  {
+   "code": "GQjgX5W0",
+   "name": "Trabzonspor",
+   "net": 5.38,
+   "O": 2.04,
+   "D": 0.95,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
+   "code": "pYaI8xaK",
+   "name": "KK Cibona",
+   "net": -3.42,
+   "O": 1.88,
+   "D": -1.18,
+   "pace": 0.0,
+   "games": 1
+  },
+  {
+   "code": "Sn9ppE18",
+   "name": "Club Joventut Badalona",
+   "net": 12.67,
+   "O": 9.85,
+   "D": -6.95,
+   "pace": 0.0,
+   "games": 1
+  },
+  {
+   "code": "Cjh1xKbk",
+   "name": "SK Slavia Prague ERA NBK",
+   "net": -16.78,
+   "O": 0,
+   "D": 0,
    "pace": 0.0,
    "games": 1
   }
