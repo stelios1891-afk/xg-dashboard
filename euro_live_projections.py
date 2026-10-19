@@ -333,10 +333,16 @@ print('=' * 100)
 print('EURO V4 — LIVE PROJECTIONS League Phase 2627 (ολα τα fits σε ΟΛΟ το ιστορικο δειγμα, οχι LOSO)')
 print('=' * 100)
 
-G = load_griffis()
-print('BEN συμπληρωμα απο FotMob (ματς): ' + (', '.join(f'{k[0]} {v}' for k, v in sorted(BEN_FALLBACK.items())) or 'κανενα'))
+# 19/10/2026 (Στελιος «βαλε γκολ + Elo»): ο Ben σταματησε τις 9 λιγκες 21/9 → οι 9 λιγκες ΟΛΟΚΛΗΡΕΣ ως γκολ + Elo (οπως Κυπρος/Βουλγαρια).
+# ben_alt_eval (σημερινη αλυσιδα, 205 ευρωπαικα 2024-26): RPS γκολ+Elo 0.2014 = Ben 0.2011, λαθος συνολου 1.330 < 1.356· ΔΕΝ γινεται μειγμα
+# (το Elo αντικαθιστα το επιπεδο ομαδας, οχι ανα ματς). EURO_BEN_SOURCE=ben → πισω στον Ben (+ συμπληρωμα γκολ απο FotMob).
+BEN_SOURCE = os.environ.get('EURO_BEN_SOURCE', 'elo')
+G = load_griffis() if BEN_SOURCE == 'ben' else {}
+print(f'ΠΗΓΗ 9 λιγκων Ben: {"Ben (Opta xG)" if BEN_SOURCE == "ben" else "γκολ + Elo"}' +
+      (' · συμπληρωμα απο FotMob: ' + (', '.join(f'{k[0]} {v}' for k, v in sorted(BEN_FALLBACK.items())) or 'κανενα') if BEN_SOURCE == 'ben' else ''))
 if PROJ_OUT == 'euro_projections.json':
-    json.dump({f'{k[0]}_{k[1]}': v for k, v in sorted(BEN_FALLBACK.items())}, open('euro_ben_fallback.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(dict(mode=BEN_SOURCE, fallback={f'{k[0]}_{k[1]}': v for k, v in sorted(BEN_FALLBACK.items())}),
+              open('euro_ben_fallback.json', 'w', encoding='utf-8'), ensure_ascii=False)
 print('[build] GEngine LIVE (+Griffis, ΜΕ φετινες εγχωριες σεζον)...', flush=True)
 eng = GEngine(griffis=G, skip_sea=set(), verbose=False)
 GKEYS = set(G.keys())
@@ -737,7 +743,7 @@ else:
 # στα ratings — τιποτα αλλο (euro_ou_comp: κλεινει το μισο χασμα βαθμονομησης γκολ, 1Χ2
 # ανεπηρεαστο). ΜΕ prior-EU enrichment και εδω (ιδιο stack, μονο το πεναλτι αλλαζει).
 print('[build] GEngine OU (πεναλτι 0.76 — μονο fair γκολ)...', flush=True)
-ENG_OU = GEngine(griffis=load_griffis(pen_f=0.76), skip_sea=set(), verbose=False, pen_f=0.76)
+ENG_OU = GEngine(griffis=(load_griffis(pen_f=0.76) if BEN_SOURCE == 'ben' else {}), skip_sea=set(), verbose=False, pen_f=0.76)
 apply_prior_eu(ENG_OU)
 
 # ================================================================ 2627 fixtures -> projections
