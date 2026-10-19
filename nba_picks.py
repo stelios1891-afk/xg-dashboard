@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """nba_picks.py — VALUE PICKS NBA (6/10/2026, Στελιος «φτιαξε τη μηχανη»). Αντιγραφο του nba_picks (ιδιο ημερολογιο/κατασταση/μηνυματα) με αρχεια nba_*.
 ΚΑΝΟΝΕΣ (nba_more_tests, καθαρο τεστ 2021-26): edge ≥8% · ΜΟΝΟ αν ηταν pick ΚΑΙ στην πρωτη γραμμη που ειδαμε (τα «αργα» picks: συνολα −15.8% 0/5)
-· χαντικαπ ΟΧΙ απο τον 71ο αγωνα (−7.8% 0/5). 19/10/2026: ΧΑΝΤΙΚΑΠ LIVE (Telegram) · ΣΥΝΟΛΑ μενουν PAPER (PAPER_HCAP / PAPER_TOT).
+· χαντικαπ ΟΧΙ απο τον 71ο αγωνα (−7.8% 0/5). 19/10/2026: ΧΑΝΤΙΚΑΠ LIVE (Telegram) · ΣΥΝΟΛΑ ΚΡΥΦΑ: υπολογιζονται και γραφονται ΜΟΝΟ
+στο nba_totals_log.jsonl για αναλυση — οχι ημερολογιο, οχι dashboard, οχι Telegram.
 19/10/2026 (Στελιος «περνα το live»): οι απουσιες (ESPN Out) μπαινουν πλεον ΣΤΗΝ ΠΡΟΒΛΕΨΗ (nba_absence.py, nba_odds_scan) → το παλιο φιλτρο
 «χωρις pick αν η πλευρα μας εχει νεα απουσια ≥30′» ΑΦΑΙΡΕΘΗΚΕ (το τεστ του ηταν look-ahead· η ESPN δινει μονο Out/Day-To-Day, οχι Doubtful).
 ΣΚΙΩΔΗΣ κανονας συνολων (μονο καταγραφη → nba_shadow_def.jsonl): ≤45′ πριν το τζαμπολ, ξαφνικες απουσιες με υπολοιπο ≥3 → «Over» στη γραμμη της στιγμης.
@@ -14,6 +15,7 @@ F = lambda n: os.path.join(ROOT, n)
 HC_MIN, ODDS_DELTA = 0.08, 0.05
 PAPER_HCAP = False  # 19/10: ΧΑΝΤΙΚΑΠ LIVE (Στελιος «τα χαντικαπς τα θελουμε live») — ανοιγμα +7.1% Οκτ-Δεκ (B2B+απουσιες), αγων 1-10 το δυνατοτερο
 PAPER_TOT = True    # ΣΥΝΟΛΑ μενουν ΚΑΤΑΓΡΑΦΗ (totals_test 19/10: κερδος μονο 2021-22, τελευταιες 2 σεζον αρνητικα)
+TOT_LOG = 'nba_totals_log.jsonl'    # 19/10 (Στελιος «τα συνολα τα κραταμε, τα αναλυουμε, χωρις να εμφανιζονται»): ΚΡΥΦΟ αρχειο, εκτος ημερολογιου/οθονης/Telegram
 def _is_tot_msg(t):                 # μηνυματα κατασταστασης (bk_pick_status.track) που αφορουν συνολα → οχι Telegram
     ls = t.split('\n'); return len(ls) > 1 and ls[1].replace('μπηκε: ', '').startswith(('Over ', 'Under '))
 LATE_GP = 70
@@ -103,6 +105,41 @@ def compute():
     json.dump(FIRST, open(F('nba_first_lines.json'), 'w', encoding='utf-8'))
     return picks
 
+def migrate():
+    """19/10 (Στελιος): ΜΙΑ ΦΟΡΑ (idempotent) — τα χαντικαπ του ημερολογιου ΕΚΤΟΣ καταγραφης (live) · τα συνολα ΕΞΩ απο το ημερολογιο → TOT_LOG.
+    Γινεται απο τον scanner (οχι χειροκινητα), ωστε να μη συγκρουεται με τα δικα του commits."""
+    fn = F('nba_clv_bets.jsonl')
+    if not os.path.exists(fn): return
+    keep, moved, changed = [], [], False
+    for ln in open(fn, encoding='utf-8'):
+        if not ln.strip(): continue
+        try: b = json.loads(ln)
+        except Exception: keep.append(ln.rstrip('\n')); continue
+        if b.get('mkt') == 'total': moved.append(b); changed = True; continue
+        if b.get('mkt') == 'hcap' and b.get('paper'): b['paper'] = False; changed = True
+        keep.append(json.dumps(b, ensure_ascii=False))
+    if not changed: return
+    if moved:
+        with open(F(TOT_LOG), 'a', encoding='utf-8') as fh:
+            for b in moved: fh.write(json.dumps(dict(b, migrated=True), ensure_ascii=False) + '\n')
+    open(fn, 'w', encoding='utf-8').write('\n'.join(keep) + ('\n' if keep else ''))
+    print(f'NBA ημερολογιο: {len(moved)} συνολα → {TOT_LOG} (κρυφα) · χαντικαπ εκτος καταγραφης')
+
+def log_totals(tots, now):
+    """Συνολα: ΜΟΝΟ στο κρυφο TOT_LOG (πρωτη εμφανιση καθε ματς & πλευρας), για αναλυση."""
+    fn = F(TOT_LOG); done = set()
+    if os.path.exists(fn):
+        for ln in open(fn, encoding='utf-8'):
+            try: b = json.loads(ln); done.add(f"{b['code']}|{str(b.get('bet', '')).split()[0]}")
+            except Exception: pass
+    new = [p for p in tots if f"{p['code']}|{p['bet'].split()[0]}" not in done]
+    if new:
+        with open(fn, 'a', encoding='utf-8') as fh:
+            for p in new:
+                fh.write(json.dumps(dict(seen=now, **{k: p.get(k) for k in ('lg', 'code', 'home', 'away', 'when', 'bet', 'hcap', 'odds', 'edge',
+                                                                           'model_total', 'mkt_total', 'gno')}, paper=True), ensure_ascii=False) + '\n')
+    return len(new)
+
 def key(p):                                   # 7/10: ΕΝΑ pick ανα ματς & πλευρα (η γραμμη εκτος κλειδιου)
     import bk_pick_status as _b; return _b.side_key('NBA', p)
 def line(p, prev=None):
@@ -122,8 +159,11 @@ def line(p, prev=None):
             f"{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})")
 
 def main(notify_tg=True):
+    migrate()
     picks = compute()
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
+    tots = [p for p in picks if p['mkt'] == 'total']; picks = [p for p in picks if p['mkt'] != 'total']   # 19/10: συνολα ΚΡΥΦΑ
+    n_tot_new = log_totals(tots, now)
     state = _load(F('nba_value_state.json'), {})
     import bk_pick_status as _b; _b.migrate_keys(state, 'NBA')
     new, changed, cur = [], [], set()
@@ -181,7 +221,7 @@ def main(notify_tg=True):
             if drops: notify.send('🏀 NBA · pick που ΔΕΝ ισχυει πια (αλλαξε γραμμη/τιμη)' + chr(10) * 2 + (chr(10) * 2).join(drops), silent=True)
         except Exception as e:
             print('Telegram σφαλμα (κατασταση):', e)
-    print(f'[NBA picks] {len(picks)} picks ({sum(1 for p in picks if not p.get("paper", True))} live χαντικαπ) · {len(new)} νεα · {len(changed)} αλλαγες')
+    print(f'[NBA picks] {len(picks)} χαντικαπ (live) · {len(new)} νεα · {len(changed)} αλλαγες · συνολα (κρυφα): {len(tots)} ({n_tot_new} νεα στο {TOT_LOG})')
     for p in picks: print('  ' + line(p).replace('\n', ' | '))
     return picks
 

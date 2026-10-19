@@ -1077,7 +1077,7 @@ def render_nba(league):
     import euroleague_view as elv
     data = _el_data(elv.files_mtime('NBA'), 'NBA')
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#f5a623">🏀 NBA</div>'
-                '<div class="co">NBA 2026/27 · ΜΟΝΤΕΛΟ nba1 · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ (PINNACLE) · ΧΑΝΤΙΚΑΠ LIVE · ΣΥΝΟΛΑ ΣΕ ΚΑΤΑΓΡΑΦΗ</div></div></div>',
+                '<div class="co">NBA 2026/27 · ΜΟΝΤΕΛΟ nba1 · ΠΡΟΒΛΕΨΕΙΣ vs ΑΓΟΡΑ (PINNACLE) · PICKS ΧΑΝΤΙΚΑΠ (LIVE)</div></div></div>',
                 unsafe_allow_html=True)
     if not data:
         st.info('Δεν υπαρχουν ακομα προβλεψεις — ο scanner τις γραφει 48ω πριν το τζαμπολ (η σεζον ξεκινα 20/10).')
@@ -1085,7 +1085,7 @@ def render_nba(league):
     proj = data['proj']; scan = data.get('scanned_at')
     st.caption("Ratings επιθεσης/αμυνας/ρυθμου ανα ομαδα (box score, τυχη, φθορα 60 μερες) · αφετηρια: 80% περσινο + αλλαγη ροστερ + αποδοσεις νικων/τιτλου & rankings + φιλικα · "
                "back-to-back 3 π. · απουσιες (ESPN Out, παικτες ρολου) μεσα στην προβλεψη · συνολα: δικη μηχανη + διορθωση επιπεδου (τελευταια 150 ματς). "
-               "Picks: edge ≥8%, μονο αν υπηρχαν στην πρωτη γραμμη, χαντικαπ οχι απο τον 71ο αγωνα · χαντικαπ LIVE, συνολα καταγραφη. "
+               "Picks (μονο χαντικαπ): edge ≥8%, μονο αν υπηρχαν στην πρωτη γραμμη, οχι απο τον 71ο αγωνα. "
                f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
                + (f" · αγορα: **{str(scan)[:16].replace('T', ' ')} UTC**" if scan else ''))
     vis = dict(proj, games=list(proj.get('games', [])))
