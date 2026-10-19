@@ -190,6 +190,7 @@ def main():
     EDGE_FAV_UCL = 0.10
     LATE2H_UCL = 2.0               # 13/10/2026: UCL χαντικαπ που πρωτοβγαινει <2ω πριν = καταγραφη (rule late2h)
     EDGE_DOG_UCL = 0.04
+    EDGE_DOG_UCL_LIVE = 0.10       # 19/10/2026: κανονικα UCL αουτσαιντερ μονο ≥10% · 4-10% = σκια (rule ucl_dog_band_shadow, no_play)
     # OVERS στα picks (εντολη Στελιου 10/9): συνθεση W2 (πεναλτι 0.76, ζευγος xgh_ou/xga_ou),
     # ΜΟΝΟ FotMob ματς, καθαρο quarter pricing στη γραμμη της αγορας, κατωφλι 4%.
     picks_out = []
@@ -251,8 +252,13 @@ def main():
                     proj_odds=round((1 - pp) / pw, 3) if pw > 0 else None,
                     tag75=bool(role == 'fav' and abs(ln + 0.75) < 0.01),
                     xgh=m['xgh'], xga=m['xga'], when=mk.get('when'), lim=mk.get('lim'),
-                    no_play=(m['comp'] == 'EuropaLeague'),
-                    note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else None)))
+                    # 19/10/2026 (Στελιος «παμε με το 10%»): UCL αουτσαιντερ 4-10% = ΣΚΙΑ (ucl_dog_band_test: ζωνη +4% αλλα θετικη 1/4 σεζον,
+                    # CLV 0· LOSO ποτε 4% — διαλεγει 10/14%, εκτος δειγματος 10% +12.7μ vs 4% +10.5μ). Κανονικα μονο ≥10%.
+                    rule=('ucl_dog_band_shadow' if (role == 'dog' and m['comp'] == 'ChampionsLeague' and edge < EDGE_DOG_UCL_LIVE) else None),
+                    no_play=(m['comp'] == 'EuropaLeague') or (role == 'dog' and m['comp'] == 'ChampionsLeague' and edge < EDGE_DOG_UCL_LIVE),
+                    note=(NO_PLAY_NOTE if m['comp'] == 'EuropaLeague' else
+                          ('👁 ΣΚΙΑ — αουτσάιντερ UCL ζώνης 4-10% (19/10: κανονικά μόνο ≥10%)'
+                           if (role == 'dog' and m['comp'] == 'ChampionsLeague' and edge < EDGE_DOG_UCL_LIVE) else None))))
         # --- ΣΚΙΑ (10/10/2026, Στελιος «το 3»): κατηγορια Β (UCL, μια ομαδα χωρις FotMob) — χαντικαπ ΥΠΕΡ της ομαδας FotMob («μεγαλη»)
         # οταν ειναι φαβορι (≤−0.5), σωστα τεταρτα, edge ≥10%, 1.70-2.10, ΧΩΡΙΣ διορθωση (ucl_nonfm_fix_test: 27 picks +6.1%, λιγα).
         # ΚΑΤΑΓΡΑΦΗ μονο (no_play): οχι Telegram, δεν μετραει.

@@ -756,7 +756,7 @@ def test_e_uel_only_as_shadow():
             if p.get('rule') == 'late2h':
                 if c != 'ChampionsLeague' or p.get('role') not in ('fav', 'dog') or p.get('no_play') is not True:
                     bad.append(f'{_elab(p)}: late2h εκτος κανονα (μονο UCL φαβορι/αουτσαιντερ, no_play=True)')
-            elif p.get('no_play') and not (c == 'ChampionsLeague' and p.get('rule') in ('nonfm_fav_shadow', 'ucl_under_shadow')):   # 19/10: + UCL under σκια
+            elif p.get('no_play') and not (c == 'ChampionsLeague' and p.get('rule') in ('nonfm_fav_shadow', 'ucl_under_shadow', 'ucl_dog_band_shadow')):   # 19/10: + UCL under σκια
                 bad.append(f'{_elab(p)}: no_play σε {c} (μονο το UEL ειναι σκια)')
         else:
             bad.append(f'{_elab(p)}: αγνωστη διοργανωση {c!r}')
@@ -789,6 +789,9 @@ def test_e_zone_role_and_thresholds():
                 bad.append(f'{_elab(p)}: dog edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
             if ucl and e < 0.10 and p.get('band') != '4-10':
                 bad.append(f'{_elab(p)}: UCL dog στη ζωνη 4-10% χωρις band="4-10"')
+            # 19/10/2026: UCL dog 4-10% = ΣΚΙΑ (rule ucl_dog_band_shadow, no_play=True)· ≥10% κανονικο
+            if ucl and e < 0.10 and (p.get('rule') != 'ucl_dog_band_shadow' or p.get('no_play') is not True):
+                bad.append(f'{_elab(p)}: UCL dog 4-10% πρεπει να ειναι σκια (rule ucl_dog_band_shadow, no_play=True)')
         elif role == 'over':                     # 12/10/2026: Conference (κατηγορια Α) over ≥ −2% (EDGE_OVER_UECL), αλλου ≥4%
             thr = -0.02 if comp == 'ConferenceLeague' else 0.04
             if e < thr - EPS:
