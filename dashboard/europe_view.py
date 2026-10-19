@@ -190,7 +190,8 @@ def _vig(fair, S):
     return [o / S for o in fair]
 
 
-def _ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=None):
+def _ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=None, probs_fn=None):
+    import lines_common as _lc
     body = ''
     for ln, mo in rows:
         fp = fair_fn(ln)
@@ -203,19 +204,29 @@ def _ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=Non
         ln_s = f'{ln:+.2f}' if signed else f'{ln:.2f}'
         fp_s = f'{fp[0]:.2f}/{fp[1]:.2f}' if fp else '—'
         mo_s = f'{mo[0]:.2f}/{mo[1]:.2f}' if mo else '—'
+        e1, e2 = _lc.side_edges(probs_fn(ln), mo) if probs_fn else (None, None)   # 19/10: edges οπως στο μπασκετ
         body += (f'<div style="display:flex;gap:7px;align-items:baseline">'
                  f'<span style="{_LT_CELL}width:10px;color:{tagc};font-size:8px">{tag}</span>'
                  f'<span style="{_LT_CELL}width:42px;color:{lnc};font-weight:700">{ln_s}</span>'
                  f'<span style="{_LT_CELL}width:76px;color:#7ea2ff">{fp_s}</span>'
-                 f'<span style="{_LT_CELL}width:76px;color:#8fa3c8">{mo_s}</span></div>')
+                 f'<span style="{_LT_CELL}width:76px;color:#8fa3c8">{mo_s}</span>'
+                 + (f'<span style="{_LT_CELL}width:70px">{_lc.edge_cell(e1)} / {_lc.edge_cell(e2)}</span>' if probs_fn else '') + '</div>')
     head = (f'<div style="display:flex;gap:7px">'
             f'<span style="{_LT_CELL}width:10px"></span>'
             f'<span style="{_LT_CELL}width:42px;font-size:8px;color:#5a6b8c">ΓΡΑΜΜΗ</span>'
             f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΜΟΝΤ</span>'
-            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span></div>')
+            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span>'
+            + (f'<span style="{_LT_CELL}width:70px;font-size:8px;color:#5a6b8c">EDGE</span>' if probs_fn else '') + '</div>')
     return (f'<div style="display:flex;flex-direction:column;gap:4px">'
             f'<div style="font-size:9px;color:#6b7fa3;letter-spacing:1.5px;text-align:center">{title}</div>'
             f'{head}{body}</div>')
+
+
+def _ou_probs(tot, line):
+    """((p over, push), (p under, push)) για τη στηλη EDGE (19/10)."""
+    po, pu = _p_over(tot, line)
+    push = max(1.0 - po - pu, 0.0)
+    return (po, push), (pu, push)
 
 
 def _odds_pane(m, mk, draw_scale):
@@ -234,16 +245,16 @@ def _odds_pane(m, mk, draw_scale):
     s_ah = _overround((mk.get('oh'), mk.get('oa'))) if mk.get('oh') else None
     s_ou = _overround((mk.get('to'), mk.get('tu'))) if mk.get('to') else None
     t1 = _ladder_html('ΑΣΙΑΤΙΚΟ (γηπ/φιλοξ)', rows_ah, lambda ln: _fair_pair(dist, ln),
-                      main_ah, ml_ah, True, s_ah)
+                      main_ah, ml_ah, True, s_ah, probs_fn=lambda ln: (_cover_q(dist, 1, ln), _cover_q(dist, -1, -ln)))
     t2 = _ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: _fair_ou(tot, ln),
-                      main_ou, ml_ou, False, s_ou)
+                      main_ou, ml_ou, False, s_ou, probs_fn=lambda ln: _ou_probs(tot, ln))
     # BTTS (17/9 Στελιος): ιδιο ζευγος xg με τα γκολ (W2), αγορα by/bn απο euro_odds_scan
     import lines_common
     t3 = lines_common.btts_html(m.get('xgh_ou') or m['xgh'], m.get('xga_ou') or m['xga'], mk, dom=False)   # Ευρωπη: οχι Dixon-Coles (28/9)
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
-           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη) · '
+           'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη) · edge = μοντελο vs τιμη αγορας (γηπ/φιλ · over/under) · '
            'γκολ: συνθεση πληρους πεναλτι (W2)</div>')
     return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
             f'padding:9px 0 4px">{t1}{t2}{t3}</div>{leg}')

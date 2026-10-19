@@ -71,6 +71,18 @@ def fair_pair(dist, line):
     return out
 
 
+def ah_probs(dist, line):
+    """((pw, pp) γηπεδουχου, (pw, pp) φιλοξενουμενου) στη γραμμη του γηπεδουχου — σωστα τεταρτα (cover_q)."""
+    return cover_q(dist, 1, line), cover_q(dist, -1, -line)
+
+
+def ou_probs(tot, line):
+    """((p over, push), (p under, push)) — σωστα τεταρτα."""
+    po, pu = p_over(tot, line)
+    push = max(1.0 - po - pu, 0.0)
+    return (po, push), (pu, push)
+
+
 def p_over(tot, line):
     parts = [line] if (line * 4) % 2 == 0 else [line - 0.25, line + 0.25]
     po = pu = 0.0
@@ -172,7 +184,27 @@ def pick_rows(ladder, center, extra, span=1.01, cap=7):
     return [(ln, have.get(ln)) for ln in sorted(keep)]
 
 
-def ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=None):
+def edge_cell(e):
+    """19/10/2026 (Στελιος «βαλε τα edges διπλα στις τιμες, οπως στο μπασκετ»): ≥10% πρασινο εντονο, >0 ανοιχτο, ≤0 γκρι."""
+    if e is None:
+        return '<span style="color:#5a6b8c">—</span>'
+    c = '#35d07f' if e >= 0.10 else ('#b8c4dc' if e > 0 else '#5a6b8c')
+    w = '700' if e >= 0.10 else '400'
+    return f'<span style="color:{c};font-weight:{w}">{e * 100:+.0f}%</span>'
+
+
+def side_edges(probs, mo):
+    """probs = ((pw, pp) πλευρα 1, (pw, pp) πλευρα 2) · mo = τιμες αγορας → (edge1, edge2), ιδιος τυπος με τον scanner."""
+    if not probs or not mo:
+        return None, None
+    try:
+        # ιδιος τυπος με τον scanner (euro_shadow_scan.edge_of): κερδη × (1 − MARGIN) — ιδια νουμερα με το Value Picks
+        return tuple(pw * (o - 1.0) * (1.0 - picks.MARGIN) - (1.0 - pw - pp) for (pw, pp), o in zip(probs, mo))
+    except (TypeError, ValueError):
+        return None, None
+
+
+def ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=None, probs_fn=None):
     body = ''
     for ln, mo in rows:
         fp = vig(fair_fn(ln), overround(mo) or s_fallback or 1.025)
@@ -183,16 +215,19 @@ def ladder_html(title, rows, fair_fn, main_ln, model_ln, signed, s_fallback=None
         ln_s = f'{ln:+.2f}' if signed else f'{ln:.2f}'
         fp_s = f'{fp[0]:.2f}/{fp[1]:.2f}' if fp else '—'
         mo_s = f'{mo[0]:.2f}/{mo[1]:.2f}' if mo else '—'
+        e1, e2 = side_edges(probs_fn(ln), mo) if probs_fn else (None, None)
         body += (f'<div style="display:flex;gap:7px;align-items:baseline">'
                  f'<span style="{_LT_CELL}width:10px;color:{tagc};font-size:8px">{tag}</span>'
                  f'<span style="{_LT_CELL}width:42px;color:{lnc};font-weight:700">{ln_s}</span>'
                  f'<span style="{_LT_CELL}width:76px;color:#7ea2ff">{fp_s}</span>'
-                 f'<span style="{_LT_CELL}width:76px;color:#8fa3c8">{mo_s}</span></div>')
+                 f'<span style="{_LT_CELL}width:76px;color:#8fa3c8">{mo_s}</span>'
+                 + (f'<span style="{_LT_CELL}width:70px">{edge_cell(e1)} / {edge_cell(e2)}</span>' if probs_fn else '') + '</div>')
     head = (f'<div style="display:flex;gap:7px">'
             f'<span style="{_LT_CELL}width:10px"></span>'
             f'<span style="{_LT_CELL}width:42px;font-size:8px;color:#5a6b8c">ΓΡΑΜΜΗ</span>'
             f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΜΟΝΤ</span>'
-            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span></div>')
+            f'<span style="{_LT_CELL}width:76px;font-size:8px;color:#5a6b8c">ΑΓΟΡ</span>'
+            + (f'<span style="{_LT_CELL}width:70px;font-size:8px;color:#5a6b8c">EDGE</span>' if probs_fn else '') + '</div>')
     return (f'<div style="display:flex;flex-direction:column;gap:4px">'
             f'<div style="font-size:9px;color:#6b7fa3;letter-spacing:1.5px;text-align:center">{title}</div>'
             f'{head}{body}</div>')
@@ -215,16 +250,16 @@ def odds_pane(xgh, xga, mk, draw_scale=1.0, ou_pair=None):
     s_ah = overround((mk.get('oh'), mk.get('oa'))) if mk.get('oh') else None
     s_ou = overround((mk.get('to'), mk.get('tu'))) if mk.get('to') else None
     t1 = ladder_html('ΑΣΙΑΤΙΚΟ (γηπ/φιλοξ)', rows_ah, lambda ln: fair_pair(dist, ln),
-                     main_ah, ml_ah, True, s_ah)
+                     main_ah, ml_ah, True, s_ah, probs_fn=lambda ln: ah_probs(dist, ln))
     t2 = ladder_html('ΓΚΟΛ (over/under)', rows_ou, lambda ln: fair_ou(tot, ln),
-                     main_ou, ml_ou, False, s_ou)
+                     main_ou, ml_ou, False, s_ou, probs_fn=lambda ln: ou_probs(tot, ln))
     # BTTS (17/9): ιδιο ζευγος xg με τα γκολ (αποσυμπιεση οπου ισχυει), αγορα by/bn
     t3 = btts_html(*(ou_pair or (xgh, xga)), mk)
     ou_note = ' &nbsp;·&nbsp; γκολ: συνθεση αποσυμπιεσης (φαβορι)' if ou_pair else ''
     leg = ('<div style="font-size:8px;color:#5a6b8c;text-align:center;padding-top:5px">'
            '<span style="color:#f5b731">●</span> κυρια γραμμη αγορας &nbsp; '
            '<span style="color:#7ea2ff">◆</span> γραμμη μοντελου (ισορροπια) &nbsp;·&nbsp; '
-           f'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη){ou_note}</div>')
+           f'μοντ = τιμη μοντελου ΜΕ τη γκανιοτα της αγορας (αμεσα συγκρισιμη) · edge = μοντελο vs τιμη αγορας (γηπ/φιλ · over/under){ou_note}</div>')
     return (f'<div style="display:flex;gap:34px;justify-content:center;flex-wrap:wrap;'
             f'padding:9px 0 4px">{t1}{t2}{t3}</div>{leg}')
 
