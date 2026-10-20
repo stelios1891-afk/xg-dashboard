@@ -203,4 +203,88 @@ for lab, M in (('ολα τα επηρεασμενα ματς', M_ANY), ('αλλ�
         n_, r_, u_, ps_, _ = roi_od(v, msk=M)
         bet = sum(rm(v, [Y], M) < rm(BASE, [Y], M) - 1e-6 for Y in EV)
         P(f'     {vl:26s} λαθος {rm(v, EV, M):6.3f} (καλυτερο σε {bet}/5 σεζον) · picks ≥8% {r_:+6.1f}% ({n_:4d}, {u_:+6.1f}μ, {sum(ps_[Y] > 0 for Y in EV)}/5)')
+# ---------- (Ζ) 20/10 Στελιος: «την αλλαγη ΟΛΩΝ των picks, απο ποια αγωνιστικη ως ποια, ποσο βελτιωθηκαν» ----------
+cover_, SIG_ = ns['cover'], ns['SIG']
+GNUM = {}                                                   # (i, team) → αριθμος αγωνα της ομαδας
+for (s_, t), lst in TG.items():
+    for k_, i in enumerate(lst): GNUM[(i, t)] = k_ + 1
+def pick(v, i):
+    L, mk, o1, o2 = MKH[i]['o']; pw, pp, pl = cover_(v[i], L, SIG_)
+    e1, e2 = pw * o1 + pp - 1, pl * o2 + pp - 1; s_, e, od_ = (1, e1, o1) if e1 >= e2 else (-1, e2, o2)
+    if e < .08: return None
+    x = (ACT[i] + L) * s_; return s_, ((od_ - 1) if x > 0 else (0.0 if x == 0 else -1.0))
+V1 = BASE + X1
+first_g = []
+for e in EVTS:
+    s_, t, tau, p, sgn, mm = e
+    gs = [GNUM[(i, t)] for i in TG.get((s_, t), []) if dD[i] >= tau]
+    if gs: first_g.append(gs[0])
+fg = np.array(first_g)
+P(''); P('=== (Ζ) ΟΛΑ ΤΑ PICKS ΣΤΑ ΜΑΤΣ ΜΕΤΑ ΑΠΟ ΜΕΤΑΓΡΑΦΗ: σημερα vs με διορθωση (φορμουλα ×0.75, χωρις σβησιμο) ===')
+P(f'  η διορθωση αρχιζει στον αγωνα της ομαδας: διαμεσος {np.median(fg):.0f}ος (10%: {np.percentile(fg, 10):.0f}ος · 90%: {np.percentile(fg, 90):.0f}ος) και μενει ως το τελος της κανονικης περιοδου (82ος)')
+grp = collections.defaultdict(list)
+for i in GIDX:
+    if SEAS_G[i] not in EV or i not in MKH or not np.isfinite(BASE[i]): continue
+    a, b = pick(BASE, i), pick(V1, i)
+    if a is None and b is None: continue
+    big = abs(X1[i]) >= 1.5
+    if a and b and a[0] == b[0]: g = 'ιδιο pick (μενει)'
+    elif a and b: g = 'ΑΝΤΙΘΕΤΗ πλευρα'
+    elif a: g = 'ΚΟΒΕΤΑΙ (υπηρχε, φευγει)'
+    else: g = 'ΠΡΟΣΤΙΘΕΤΑΙ (νεο)'
+    grp[g].append((SEAS_G[i], a[1] if a else None, b[1] if b else None, big))
+def roi(v):
+    v = [x for x in v if x is not None]; return (100 * np.mean(v), len(v), sum(v)) if v else (0, 0, 0)
+P(f'  {"ομαδα":28s} {"picks":>5s} | {"με τη σημερινη πλευρα":>26s} | {"με τη διορθωμενη πλευρα":>26s}')
+for g in ('ιδιο pick (μενει)', 'ΚΟΒΕΤΑΙ (υπηρχε, φευγει)', 'ΠΡΟΣΤΙΘΕΤΑΙ (νεο)', 'ΑΝΤΙΘΕΤΗ πλευρα'):
+    L_ = grp.get(g, [])
+    if not L_: continue
+    ra = roi([x[1] for x in L_]); rb = roi([x[2] for x in L_])
+    P(f'  {g:28s} {len(L_):5d} | ' + (f'{ra[0]:+6.1f}% ({ra[2]:+6.1f}μ)' if ra[1] else '        —       ').rjust(26) + ' | ' + (f'{rb[0]:+6.1f}% ({rb[2]:+6.1f}μ)' if rb[1] else '        —       ').rjust(26))
+allA = [x[1] for L_ in grp.values() for x in L_]; allB = [x[2] for L_ in grp.values() for x in L_]
+ra, rb = roi(allA), roi(allB)
+P(f'  ΣΥΝΟΛΟ σε αυτα τα ματς: σημερα {ra[0]:+.1f}% ({ra[1]} picks, {ra[2]:+.1f}μ) → με διορθωση {rb[0]:+.1f}% ({rb[1]} picks, {rb[2]:+.1f}μ) · διαφορα {rb[2] - ra[2]:+.1f} μοναδες')
+for Y in EV:
+    a_ = roi([x[1] for L_ in grp.values() for x in L_ if x[0] == Y]); b_ = roi([x[2] for L_ in grp.values() for x in L_ if x[0] == Y])
+    P(f'    {Y}: {a_[2]:+6.1f}μ ({a_[1]}) → {b_[2]:+6.1f}μ ({b_[1]})')
+# ---------- (Η) 20/10 Στελιος: «αυτα που κοπηκαν γιατι κοπηκαν;» ----------
+def pick_e(v, i):
+    L, mk, o1, o2 = MKH[i]['o']; pw, pp, pl = cover_(v[i], L, SIG_)
+    e1, e2 = pw * o1 + pp - 1, pl * o2 + pp - 1; return (1, e1, o1) if e1 >= e2 else (-1, e2, o2)
+MKC = {i: d['c'][1] for i, d in MKH.items()}
+recs = []
+for i in GIDX:
+    if SEAS_G[i] not in EV or i not in MKH or not np.isfinite(BASE[i]): continue
+    a, b = pick(BASE, i), pick(V1, i)
+    if (a is None) == (b is None): continue
+    kind = 'ΚΟΒΕΤΑΙ' if a else 'ΠΡΟΣΤΙΘΕΤΑΙ'
+    sd = a[0] if a else b[0]; res = a[1] if a else b[1]
+    e0 = pick_e(BASE, i)[1]; e1 = pick_e(V1, i)[1]
+    eff = sd * X1[i]                                        # + = η διορθωση ΒΟΗΘΑ την πλευρα του pick, − = την ΑΔΥΝΑΤΙΖΕΙ
+    t_pick = G.home.values[i] if sd == 1 else G.away.values[i]
+    who = set()
+    for side, sgn, v, mm, n in GIDX[i]:
+        team_side = side * sd                               # +1 = ομαδα του pick
+        who.add(('η ΔΙΚΗ ΜΑΣ ομαδα ' if team_side > 0 else 'ο ΑΝΤΙΠΑΛΟΣ ') + ('ΠΗΡΕ παικτη' if sgn > 0 else 'ΕΔΩΣΕ παικτη'))
+    mv = sd * (MKC[i] - MKH[i]['o'][1])                     # + = η αγορα πηγε ΠΡΟΣ το pick ως το κλεισιμο
+    recs.append(dict(kind=kind, res=res, eff=eff, e0=e0, e1=e1, mon=int(MON[i]), who=' & '.join(sorted(who)), mv=mv, sea=SEAS_G[i]))
+import pandas as pd
+R = pd.DataFrame(recs)
+def cl(d):
+    return f'{len(d):4d} picks · ROI {100 * d.res.mean():+6.1f}% ({d.res.sum():+6.1f}μ, {sum(d.groupby("sea").res.sum() > 0)}/{d.sea.nunique()}) · αγορα μετα {d.mv.mean():+5.2f}π'
+P(''); P('=== (Η) ΓΙΑΤΙ ΚΟΒΟΝΤΑΙ / ΠΡΟΣΤΙΘΕΝΤΑΙ picks με τη διορθωση μεταγραφων ===')
+for kind in ('ΚΟΒΕΤΑΙ', 'ΠΡΟΣΤΙΘΕΤΑΙ'):
+    D_ = R[R.kind == kind]
+    P(f'  ---- {kind}: {cl(D_)} · edge σημερα {100 * D_.e0.mean():.1f}% → με διορθωση {100 * D_.e1.mean():.1f}% · μεση μετακινηση μοντελου {D_.eff.mean():+.2f}π ----')
+    P('   ποιος αλλαξε ρόστερ (σε σχεση με το pick):')
+    for w, d in sorted(D_.groupby('who'), key=lambda kv: -len(kv[1])):
+        if len(d) >= 8: P(f'     {w:62s} {cl(d)}')
+    P('   ποσο μετακινηθηκε το μοντελο:')
+    for lo, hi, lab in ((0, .5, '<0.5 π.'), (.5, 1.5, '0.5-1.5 π.'), (1.5, 99, '≥1.5 π.')):
+        d = D_[(D_.eff.abs() >= lo) & (D_.eff.abs() < hi)]
+        if len(d): P(f'     {lab:12s} {cl(d)}')
+    P('   ποιον μηνα:')
+    for m in (11, 12, 1, 2, 3, 4):
+        d = D_[D_.mon == m]
+        if len(d): P(f'     μηνας {m:2d}    {cl(d)}')
 open(os.path.join(SC, 't15_trades_out.txt'), 'w', encoding='utf-8').write('\n'.join(out))
