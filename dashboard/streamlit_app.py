@@ -76,7 +76,7 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο (χαντικαπ v1 + συνολο v2) vs αγορα (TOA)
          ('eurocup', 'EuroCup', '🏀'),         # 1/10/2026: EuroCup — μοντελο ec1 vs Pinnacle (ιδια σελιδα με την Ευρωλιγκα)
          ('bcl', 'Champions League (FIBA)', '🏀'),   # 6/10/2026: Basketball Champions League — μοντελο bcl1 vs Pinnacle
-         ('nba', 'NBA', '🏀'),                 # 6/10/2026: NBA — μοντελο nba1 vs Pinnacle (picks σε καταγραφη)
+         ('nba', 'NBA', '🏀'),                 # 6/10/2026: NBA — μοντελο nba1 vs Pinnacle (χαντικαπ LIVE απο 19/10)
          ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
@@ -479,7 +479,7 @@ def render_value(league):
     el_picks, el_scan = _el_picks()
     ec_picks, ec_scan = _ec_picks()          # 1/10: EuroCup
     bcl_picks, bcl_scan = _bcl_picks()       # 6/10: Basketball Champions League
-    nba_picks, nba_scan = _nba_picks()       # 6/10: NBA (καταγραφη)
+    nba_picks, nba_scan = _nba_picks()       # 6/10: NBA (χαντικαπ live απο 19/10)
     # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
     # ως pick, ακομα κι αν το αρχειο του scan ειναι παλιοτερο απο τη σεντρα.
     import datetime as _dt

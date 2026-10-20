@@ -46,6 +46,10 @@ def finish(games, st, now):
             d0 = us_date(g['utc'])
             for d, hs, as_ in res.get((g['hcode'], g['acode']), []):
                 if abs((datetime.date.fromisoformat(d) - datetime.date.fromisoformat(d0)).days) <= 1: g['hs'], g['as_'] = hs, as_
+    from nba_espn import AB as _ESPN                    # 20/10 (Στελιος): logos ομαδων ESPN στο NBA Projections (hcrest/acrest οπως EL)
+    _inv = {v: k for k, v in _ESPN.items()}
+    crest = lambda c: f'https://a.espncdn.com/i/teamlogos/nba/500/{_inv.get(c, c).lower()}.png' if c else None
+    for g in games.values(): g['hcrest'], g['acrest'] = crest(g.get('hcode')), crest(g.get('acode'))
     wk = sorted({E._pdt(g['utc']).date().isocalendar()[:2] for g in games.values()})
     for g in games.values(): g['round'] = wk.index(E._pdt(g['utc']).date().isocalendar()[:2]) + 1
     E1 = st['h_eng']; nm = {v: k for k, v in TEAMNAME.items()}

@@ -250,6 +250,7 @@ def _el_rows(comp='EL'):
                              (f"καταγραφη (αουτσαιντερ 2-6ω πριν · {b.get('late_kind') or ''})" if b.get('paper') == 'late6dog' else   # 17/10
                              (f"καταγραφη (κοντρα {b.get('move_open') or 0:+.1f} π. απο το ανοιγμα · {b.get('late_kind') or ''})" if b.get('paper') == 'move15' else
                               ('καταγραφη (λιγα δεδομενα: ομαδα χωρις ιστορικο, ως το 4ο ματς)' if b.get('paper') == 'lowinfo' else None)))),
+                 bk_paper=(b.get('paper') is True),
                  later=[(x['hcap'], x['odds']) for x in v if x['seen'] > b['seen']],
                  score=None, pnl=None, xg_h=None, xg_a=None, xg_fair=None, xg_value=None, close_odds=None, clv=None)
         if not (g.get('played') and g.get('hs') is not None):
@@ -579,7 +580,7 @@ def enrich(rows, played=None):
         if r.get('bk'):
             if r.get('paper_note'):
                 st_, why = 'Καταγραφή', r['paper_note']
-            elif r.get('lg') == 'NBA':
+            elif r.get('lg') == 'NBA' and r.get('bk_paper'):     # 20/10: μονο οσα ΠΡΑΓΜΑΤΙ μπηκαν ως καταγραφη (πριν το live 19/10)
                 st_, why = 'Καταγραφή', 'NBA σε καταγραφή'
         elif r.get('euro'):
             if r.get('rule') == 'late2h':                         # 13/10: UCL χαντικαπ που πρωτοβγηκε <2ω πριν

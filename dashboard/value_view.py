@@ -103,8 +103,7 @@ def play_status(p):
                        ('λιγα δεδομενα' if p.get('late_kind') == 'λιγα δεδομενα' else 'καταγραφη')))
     if p.get('rule') == 'fav714':
         return (p.get('side') == 1), 'κοντο φαβορι 7-14 εκτος'
-    if p.get('lg') == 'NBA':
-        return False, 'NBA σε καταγραφη'
+    # 20/10: το παλιο «NBA σε καταγραφη» ΑΦΑΙΡΕΘΗΚΕ — απο 19/10 τα χαντικαπ NBA ειναι live (paper=False)· αν ποτε ξαναγινουν paper τα πιανει το paper_late
     if not (p.get('eu') or p.get('intl') or p.get('el')) and p.get('md') is not None and p.get('md') < 15:
         return False, f"αγωνιστικη {p.get('md')} (<15)"
     return True, ''
