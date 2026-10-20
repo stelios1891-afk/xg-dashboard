@@ -2,6 +2,7 @@
 """nba_refresh.py — NBA LIVE ΜΗΧΑΝΗ: καθημερινη ενημερωση (6/10/2026, Στελιος «φτιαξε τη μηχανη»).
 Ρυθμισεις απο το καθαρο τεστ (nba_full_clean_test + nba_fix_test + nba_more_tests):
   ΧΑΝΤΙΚΑΠ  περσι .8 · K 8 · HL 60 · τυχη .75 · μ_w 5 · ροστερ ×1 · ειδικοι/αποδοσεις κx .75 · φιλικα κp .25 · εδρα 2 · + back-to-back 3 π.
+  20/10: ρόστερ «1ο ματς» στο cloud (+ χωρις «Out» πριν, + επιστροφες) · φιλικα με βαρος βασικων (W2) · Απριλης ×0.5 στην αφετηρια.
   ΣΥΝΟΛΑ    περσι .7 · K 8 · HL 60 · τυχη .5 · μ_w 5 · (χωρις ροστερ/ειδικους/φιλικα) · + Φ3 επιπεδο: μεσο (πραγματικο − μοντελο) των τελευταιων 150 ματς
 1. ESPN (nba_espn.py): ματς/box/λεπτα/τραυματιες · ρόστερ (nba_live_roster.py)
 2. Τρεχουσα σεζον → nba_gamelogs.csv (ιδια μορφη με Basketball-Reference, ωστε η ιδια μηχανη να τα διαβαζει)
@@ -20,7 +21,7 @@ CFG_T = (0.7, 8, 60, .5, 5.0, 0.0, 0.0, 0.0)
 B2B_K, H_ADV = 3.0, 2.0
 SIG_M, SIG_T = 13.5, 18.0                                 # sd (πραγματικο − κλεισιμο) 2021-26
 if '--no-fetch' not in sys.argv:
-    for cmd in (['python', 'nba_espn.py'],) + ((['python', 'nba_live_roster.py'],) if os.path.exists('nba_player_games.csv') else ()):   # ρόστερ: τοπικα (θελει nba_player_games.csv)· στο GitHub διαβαζεται το nba_roster_live.json
+    for cmd in (['python', 'nba_espn.py'], ['python', 'nba_live_roster.py']):   # 20/10: ρόστερ ΚΑΙ στο cloud (βαση: nba_roster_base.json) → «1ο ματς» μονο του
         r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', env=dict(os.environ, PYTHONIOENCODING='utf-8'))
         print(f'{cmd[1]}: exit {r.returncode} · ' + ((r.stdout.strip().splitlines() or [''])[-1])[:160])
 GM = json.load(open('nba_espn_games.json', encoding='utf-8'))
@@ -64,16 +65,24 @@ print(f'ειδικοι/αποδοσεις {LAB}: νικες {len(zw)} · τιτ�
 Lp = pd.read_csv('nba_gamelogs.csv', low_memory=False); Lp = Lp[(Lp.table == 'team_game_log_reg') & (Lp.season_end == CUR - 1)]
 Rp = {t: float(np.mean(g.team_game_score - g.opp_team_game_score)) for t, g in Lp.groupby('team')}
 res = collections.defaultdict(list)
+# 20/10 (friendly_test, «W2»): καθε φιλικο μετραει με βαρος = min(μεριδιο λεπτων των 5 βασικων, των 2 ομαδων) — ξεκουραστοι βασικοι
+#   (NYK/OKC −50 με τον παγκο) δεν «ριχνουν» την ομαδα. Βασικοι = core του nba_roster_live.json· χωρις core → βαρος 1 (οπως πριν).
+from nba_absence import nk as _nk
+_CORE = {t: {_nk(n) for n in v} for t, v in json.load(open('nba_roster_live.json', encoding='utf-8')).get('core', {}).items()}
+def _share(g, t):
+    if t not in _CORE: return 1.0
+    return min(1.0, sum(mn for _, n, mn in g['players'].get(t, []) if _nk(n) in _CORE[t]) / 150.0)
 for g in GM.values():
     if g['stype'] != 1: continue
     for me, op, m in ((g['home'], g['away'], g['hs'] - g['as_']), (g['away'], g['home'], g['as_'] - g['hs'])):
-        if me in Rp and op in Rp: res[me].append(float(np.clip(m, -30, 30)) - (Rp[me] - Rp[op]))
-for t, v in res.items(): Z['P'][f'{CUR}|{t}'] = sum(v) / (len(v) + 4)
+        if me in Rp and op in Rp: res[me].append((float(np.clip(m, -30, 30)) - (Rp[me] - Rp[op]), min(_share(g, me), _share(g, op))))
+for t, v in res.items(): Z['P'][f'{CUR}|{t}'] = sum(r * w for r, w in v) / (sum(w for _, w in v) + 4)
 json.dump(Z, open('nba_full_z.json', 'w', encoding='utf-8'))
 print(f'φιλικα {LAB}: {sum(len(v) for v in res.values()) // 2} ματς · {len(res)} ομαδες')
 # ---- 4. μηχανη ----
 import nba_full_clean_test as F
 F._init(); C = F._W['C']; F._W['Z'] = Z
+F.END_APR, F.END_APR_BEFORE = 0.5, CUR                 # 20/10: Απριλης ×0.5 στην αφετηρια (μονο σε ολοκληρωμενες σεζον)
 RL = json.load(open('nba_roster_live.json', encoding='utf-8'))
 R2 = C._radj2()['V0|W1']
 for t, v in RL.get('delta', {}).items(): R2[f'{CUR}|{t}'] = v

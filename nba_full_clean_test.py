@@ -22,6 +22,10 @@ from multiprocessing import Pool
 GRID = list(itertools.product((.7, .8, .9, 1.0), (8, 12), (60, 9999), (.5, .75), (5.0, 50.0), (0.0, 1.0), (0.0, .5, .75), (0.0, .1, .25)))
 CACHE = 'nba_full_grid.npz'
 _W = {}
+# 20/10/2026 (endseason_test, Στελιος «ο,τι αλλαγη ειναι κανε την»): στο ζυγισμα ΤΕΛΟΥΣ σεζον (= αφετηρια της επομενης) τα ματς του
+# Απριλη με βαρος END_APR (ξεκουραση φαβορι / tanking). ×0.5: RMSE αγων 1-15 12.981→12.974, καλυτερο 4/5 σεζον. 1.0 = παλια συμπεριφορα
+# (ολα τα παλια τεστ)· το nba_refresh βαζει 0.5 και END_APR_BEFORE = τρεχουσα σεζον (η ζωντανη σεζον δεν πειραζεται).
+END_APR, END_APR_BEFORE = 1.0, None
 def _init():
     import nba_base_core as C
     _W['C'] = C; _W['Z'] = json.load(open('nba_full_z.json', encoding='utf-8'))
@@ -63,6 +67,8 @@ def run_all(cfg):
             hh, aa = hi[cur], ai[cur]; e_h = mu + O[hh] + Dd[aa] + hb[cur]; e_a = mu + O[aa] + Dd[hh] - hb[cur]; poss = pm + Pc[hh] + Pc[aa]
             mg[sidx[cur]] = poss * (e_h - e_a) / 100; tt[sidx[cur]] = poss * (e_h + e_a) / 100
         w = 0.5 ** ((dn.max() - dn) / HL)
+        if END_APR != 1.0 and (END_APR_BEFORE is None or s < END_APR_BEFORE):
+            w = w * np.where(G.date.dt.month.values[sidx] == 4, END_APR, 1.0)
         mu, O, Dd = fit_mu(hi, ai, eh, ea, hb, w, n, o0, d0, lam, mu0, muw)
         pm, Pc = C.fit_pace(hi, ai, pc, w, n, p0, lam, pm0)
         fin[int(s)] = dict(mu=float(mu), pm=float(pm), O={t: float(O[i]) for t, i in ix.items()}, D={t: float(Dd[i]) for t, i in ix.items()}, P={t: float(Pc[i]) for t, i in ix.items()})

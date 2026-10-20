@@ -5,6 +5,7 @@
 στο nba_totals_log.jsonl για αναλυση — οχι ημερολογιο, οχι dashboard, οχι Telegram.
 19/10/2026 (Στελιος «περνα το live»): οι απουσιες (ESPN Out) μπαινουν πλεον ΣΤΗΝ ΠΡΟΒΛΕΨΗ (nba_absence.py, nba_odds_scan) → το παλιο φιλτρο
 «χωρις pick αν η πλευρα μας εχει νεα απουσια ≥30′» ΑΦΑΙΡΕΘΗΚΕ (το τεστ του ηταν look-ahead· η ESPN δινει μονο Out/Day-To-Day, οχι Doubtful).
+ΣΚΙΩΔΗΣ «κοντρα στις ομαδες των πλει-οφ» (20/10, μονο καταγραφη → nba_shadow_po.jsonl): ομαδα με ≥8 νικες πλει-οφ περσι, αγων ≤15 → η αλλη πλευρα στην πρωτη γραμμη.
 ΣΚΙΩΔΗΣ κανονας συνολων (μονο καταγραφη → nba_shadow_def.jsonl): ≤45′ πριν το τζαμπολ, ξαφνικες απουσιες με υπολοιπο ≥3 → «Over» στη γραμμη της στιγμης.
 STEAM (19/10, ΔΟΚΙΜΑΣΤΙΚΟ live ¼ μοναδας + καταγραφη → nba_steam_log.jsonl): δικαιη τιμη χαντικαπ Pinnacle κινηθηκε ≥3 π. σε 60′ → πλευρα
 της κινησης + φωτογραφια απουσιων · Telegram «🧪 STEAM» · ΕΚΤΟΣ ημερολογιου χαντικαπ (nba_clv_bets).
@@ -103,6 +104,32 @@ def steam_watch(g, pin, o, ko, now, sm, ST):
     except Exception as e:
         print('steam watch σφαλμα —', e)
 
+PO_WINS_MIN, PO_GW, PO_LOG = 8, 15, 'nba_shadow_po.jsonl'   # 20/10: ΣΚΙΩΔΗΣ «κοντρα στις ομαδες των πλει-οφ» (μονο καταγραφη)
+# (endseason_test 20/10: ομαδες με ≥8 νικες πλει-οφ περσι, αγων ≤15: καλυψαν 42.5% στο ανοιγμα, ποντος κοντρα +10.7% (308, 4/5)· post-hoc)
+def _po_wins(season):
+    try:
+        import pandas as pd
+        L = pd.read_csv(F('nba_gamelogs.csv'), usecols=['table', 'season_end', 'team', 'team_game_score', 'opp_team_game_score'], low_memory=False)
+        L = L[(L.table == 'team_game_log_post') & (L.season_end == season - 1)]
+        return {t: int(v) for t, v in (pd.to_numeric(L.team_game_score) > pd.to_numeric(L.opp_team_game_score)).groupby(L.team).sum().items()}
+    except Exception as e:
+        print('πλει-οφ νικες σφαλμα —', e); return {}
+def shadow_po(g, f0, pin, ko, now, POW, done):
+    """Μια εγγραφη ανα (ματς, ομαδα πλει-οφ): ποντος ΚΟΝΤΡΑ στην ομαδα στην ΠΡΩΤΗ γραμμη (ιδιο με το τεστ: ανοιγμα)."""
+    try:
+        for side, t, gp in ((1, g['hcode'], g.get('gp_h')), (-1, g['acode'], g.get('gp_a'))):
+            if POW.get(t, 0) < PO_WINS_MIN or int(gp or 0) + 1 > PO_GW or f"{g['code']}|{t}" in done: continue
+            L0 = float(f0['line']); bet_side = -side
+            rec = dict(seen=now.isoformat(timespec='minutes'), code=g['code'], home=g['home'], away=g['away'], when=ko.strftime('%Y-%m-%dT%H:%M'),
+                       po_team=t, po_wins=POW[t], gno=int(gp or 0) + 1, side=bet_side, bet=f"{g['away'] if bet_side == -1 else g['home']} {(-L0 if bet_side == -1 else L0):+g}",
+                       line=(-L0 if bet_side == -1 else L0), odds=float(f0['oa'] if bet_side == -1 else f0['oh']), line_now=float(pin['line']),
+                       model_margin=g.get('margin'), paper=True)
+            with open(F(PO_LOG), 'a', encoding='utf-8') as fh: fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
+            done.add(f"{g['code']}|{t}")
+            print(f"ΣΚΙΩΔΕΣ (κοντρα σε ομαδα πλει-οφ {t} {POW[t]} νικες): {rec['bet']} @{rec['odds']:.2f}")
+    except Exception as e:
+        print('σκιωδης πλει-οφ σφαλμα —', e)
+
 def compute():
     proj = _load(F('nba_projections.json'), {}); odds = _load(F('nba_odds_latest.json'), {}).get('odds', {})
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
@@ -111,6 +138,11 @@ def compute():
     global FIRST
     FIRST = _load(F('nba_first_lines.json'), {})
     ST = {k: v for k, v in _load(F(STEAM_STATE), {}).items() if k in odds}
+    POW = _po_wins(int(proj.get('season') or 0)); PO_DONE = set()
+    if os.path.exists(F(PO_LOG)):
+        for ln in open(F(PO_LOG), encoding='utf-8'):
+            try: r_ = json.loads(ln); PO_DONE.add(f"{r_['code']}|{r_['po_team']}")
+            except Exception: pass
     for code, o in odds.items():
         g = games.get(str(code)); pin = o.get('pin') or {}
         if not g or g.get('played'): continue
@@ -123,6 +155,7 @@ def compute():
         f0 = FIRST.setdefault(str(code), dict(line=L, oh=oh, oa=oa, tl=pin.get('tl'), to=pin.get('to'), tu=pin.get('tu'), seen=now.isoformat(timespec='minutes')))
         shadow_def(g, pin, ko, now)
         steam_watch(g, pin, o, ko, now, sm, ST)
+        shadow_po(g, f0, pin, ko, now, POW, PO_DONE)
         pw, pp = cover(m, L, sm); pl = 1 - pw - pp
         pw0, pp0 = cover(m, float(f0['line']), sm); pl0 = 1 - pw0 - pp0
         for side, p_, od, hc in ((1, pw, oh, L), (-1, pl, oa, -L)):
