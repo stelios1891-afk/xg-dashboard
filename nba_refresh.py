@@ -24,6 +24,10 @@ if '--no-fetch' not in sys.argv:
     for cmd in (['python', 'nba_espn.py'], ['python', 'nba_live_roster.py']):   # 20/10: ρόστερ ΚΑΙ στο cloud (βαση: nba_roster_base.json) → «1ο ματς» μονο του
         r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', env=dict(os.environ, PYTHONIOENCODING='utf-8'))
         print(f'{cmd[1]}: exit {r.returncode} · ' + ((r.stdout.strip().splitlines() or [''])[-1])[:160])
+try:                                                       # 20/10 (Στελιος «περνα το»): μεταγραφες μεσα στη σεζον → nba_trades.json (το διαβαζει ο scanner)
+    import nba_trades; _mv = nba_trades.build(); print(f'μεταγραφες φετος: {len(_mv)}')
+except Exception as _e:
+    print('ΠΡΟΣΟΧΗ: μεταγραφες —', _e)
 GM = json.load(open('nba_espn_games.json', encoding='utf-8'))
 # ---- 2. τρεχουσα σεζον → nba_gamelogs.csv ----
 L = pd.read_csv('nba_gamelogs.csv', low_memory=False)
