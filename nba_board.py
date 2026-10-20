@@ -54,6 +54,17 @@ def players():
         for x in v.get('players', []):
             if v.get('code'): inj[(v['code'], nk(x[0]))] = (x[0], x[1], x[2] if len(x) > 2 else None, x[3] if len(x) > 3 else None)
     teams = set(ROST) | {t for t, _ in hist} | {t for t, _ in inj}
+    # 20/10 (Στελιος «να δειχνει αυτο που μετραει πραγματικα το μοντελο»): οσοι ΔΕΝ εχουν παιξει φετος μετρανε μεσω ΑΦΕΤΗΡΙΑΣ (ροστερ),
+    # οχι με τη φορμουλα απουσιας: διαφορα αξιας ροστερ με/χωρις αυτον (nba_live_roster: βαρη λεπτα/ματς, αγνωστοι −1 με 15′),
+    # × βαρος αφετηριας που μενει ≈ 8/(8 + φετινα ματς ομαδας). Συνολα: η αφετηρια δεν αγγιζει τα συνολα → 0.
+    gpt = collections.Counter()
+    for g in GM.values():
+        if g.get('stype') == 2 and g.get('hs') is not None: gpt[g['home']] += 1; gpt[g['away']] += 1
+    def tv(ns_):
+        vals = [BASE.get(nk(x), [-1.0, 15.0, 0.0])[:2] for x in ns_]
+        if not vals: return 0.0
+        w = [x[1] or 15.0 for x in vals]; tot = sum(w)
+        return sum(5 * wi / tot * x[0] for wi, x in zip(w, vals))
     out = {}
     for t in teams:
         cand = {}
@@ -72,10 +83,19 @@ def players():
             im, it = impact(v, o, d, mn)
             ij = inj.get((t, k)); stt = ij[1] if ij else None
             played = bool(hist.get((t, k)))
-            in_model = bool(ij) and str(stt).lower() == 'out' and ((played and mn >= MIN_ROLE) or (not played and n not in ROST.get(t, [])))
+            R = ROST.get(t, [])
+            if played:
+                how = 'απουσια' if mn >= MIN_ROLE else 'κατω απο 20′'
+                if mn < MIN_ROLE: im, it = 0.0, 0.0                       # το live δεν μετρα απουσιες παικτων <20′
+            else:
+                how = 'αφετηρια'
+                inR = n in R
+                d_ = (tv(R) - tv([x for x in R if x != n])) if inR else (tv(R + [n]) - tv(R))
+                im, it = max(d_, 0.0) * 8 / (8 + gpt.get(t, 0)), 0.0
+            in_model = bool(ij) and str(stt).lower() == 'out' and ((played and mn >= MIN_ROLE) or (not played and n not in R))
             if mn < MIN_SHOW and not ij: continue
             rows.append(dict(name=n, min=round(mn, 1), msrc=src, gp=len(hist.get((t, k), [])), v=round(v, 2), o=round(o, 2), d=round(d, 2),
-                             imp_m=round(im, 2), imp_t=round(it, 2), status=stt, itype=ij[2] if ij else None, idate=ij[3] if ij else None, in_model=in_model))
+                             imp_m=round(im, 2), imp_t=round(it, 2), how=how, status=stt, itype=ij[2] if ij else None, idate=ij[3] if ij else None, in_model=in_model))
         out[t] = sorted(rows, key=lambda r: -r['imp_m'])
     return out
 
@@ -108,7 +128,7 @@ def inj_text(hcode, acode, home, away, P=None):
         if not rs: L.append(f"{nm}: καμια απουσια στη λιστα"); continue
         L.append(f"{nm}:")
         for r in rs:
-            L.append(f"  • {r['name']} — {gr_status(r['status'])} · {r['min']:.0f}′ ({r['msrc']}) · χαντικαπ {-r['imp_m']:+.1f} π., συνολο {r['imp_t']:+.1f}"
+            L.append(f"  • {r['name']} — {gr_status(r['status'])} · {r['min']:.0f}′ ({r['msrc']}) · χαντικαπ {-r['imp_m']:+.1f} π.{' (αφετηρια)' if r.get('how') == 'αφετηρια' else ''}, συνολο {r['imp_t']:+.1f}"
                      + (' · ✓ ηδη στο μοντελο' if r['in_model'] else ''))
     return '\n'.join(L)
 
