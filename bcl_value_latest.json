@@ -1,5 +1,5 @@
 {
- "scanned_at": "2026-10-20T10:01+00:00",
+ "scanned_at": "2026-10-20T10:07+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
@@ -8,7 +8,7 @@
  "picks": [
   {
    "lg": "BCL",
-   "paper": false,
+   "paper": "lowinfo",
    "home": "BK Pardubice",
    "away": "Unicaja Malaga",
    "hcode": "A9r0pkx2",
@@ -19,6 +19,8 @@
    "when": "2026-10-20T16:00",
    "bcl": true,
    "model": "BCL: (1−0.75)·μονο BCL (περσι 1.4, λ 8, HL 9999, τυχη 0.5) +",
+   "late_kind": "λιγα δεδομενα",
+   "mkt_note": "⚠ λίγα δεδομένα: BK Pardubice χωρίς ιστορικό στη μηχανή, 1 ματς BCL φέτος — καταγραφή ως το 4ο ματς",
    "mkt": "hcap",
    "side": -1,
    "hcap": -20.0,
@@ -95,8 +97,8 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": -5.0,
-   "odds": 1.901,
-   "edge": 0.4566,
+   "odds": 1.877,
+   "edge": 0.4386,
    "proj_odds": 1.29,
    "model_line": -13.7,
    "mkt_line": -5.0,
