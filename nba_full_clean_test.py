@@ -26,6 +26,10 @@ _W = {}
 # Απριλη με βαρος END_APR (ξεκουραση φαβορι / tanking). ×0.5: RMSE αγων 1-15 12.981→12.974, καλυτερο 4/5 σεζον. 1.0 = παλια συμπεριφορα
 # (ολα τα παλια τεστ)· το nba_refresh βαζει 0.5 και END_APR_BEFORE = τρεχουσα σεζον (η ζωντανη σεζον δεν πειραζεται).
 END_APR, END_APR_BEFORE = 1.0, None
+# 20/10/2026 (Στελιος «το 4 ... μπορουμε να το περασουμε» — nba_tests/t4_carry_roster: RMSE αγων 1-15 4/5, ROI Οκτ-Δεκ ιδιο):
+# ΑΦΕΤΗΡΙΑ ΑΝΑ ΟΜΑΔΑ — carry = 1.0·√(μεριδιο περσινων λεπτων που εμειναν). CARRY_MAP = {'σεζον|ομαδα': carry} (nba_carry_share.json)·
+# None = σταθερο carry του cfg (ολα τα παλια τεστ). Το nba_refresh το βαζει ΜΟΝΟ για το χαντικαπ.
+CARRY_MAP = None
 def _init():
     import nba_base_core as C
     _W['C'] = C; _W['Z'] = json.load(open('nba_full_z.json', encoding='utf-8'))
@@ -51,9 +55,10 @@ def run_all(cfg):
         sidx = np.where(G.season.values == s)[0]
         teams = sorted(set(G.home.values[sidx]) | set(G.away.values[sidx])); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
         adj = np.array([beta * R2.get(f'{s}|{t}', 0.0) + kx * Z['C'].get(f'{s}|{t}', 0.0) + kp * Z['P'].get(f'{s}|{t}', 0.0) for t in teams])
-        o0 = np.array([carry * prior.get(t, (0, 0, 0))[0] for t in teams]) + adj / 2
-        d0 = np.array([carry * prior.get(t, (0, 0, 0))[1] for t in teams]) - adj / 2
-        p0 = np.array([carry * prior.get(t, (0, 0, 0))[2] for t in teams])
+        car = np.array([CARRY_MAP.get(f'{s}|{t}', carry) if CARRY_MAP is not None else carry for t in teams])
+        o0 = car * np.array([prior.get(t, (0, 0, 0))[0] for t in teams]) + adj / 2
+        d0 = car * np.array([prior.get(t, (0, 0, 0))[1] for t in teams]) - adj / 2
+        p0 = car * np.array([prior.get(t, (0, 0, 0))[2] for t in teams])
         hi = np.array([ix[t] for t in G.home.values[sidx]]); ai = np.array([ix[t] for t in G.away.values[sidx]])
         nt = (~G.neutral.values[sidx]).astype(float); hb = nt * h / 2; dn = C.dnum[sidx]; eh = EH[sidx]; ea = EA[sidx]; pc = G.pace.values[sidx]
         for d in np.unique(dn):

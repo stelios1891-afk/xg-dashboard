@@ -87,8 +87,33 @@ RL = json.load(open('nba_roster_live.json', encoding='utf-8'))
 R2 = C._radj2()['V0|W1']
 for t, v in RL.get('delta', {}).items(): R2[f'{CUR}|{t}'] = v
 G = C.G
+# 20/10/2026 (Στελιος «το 4 ... μπορουμε να το περασουμε»): ΑΦΕΤΗΡΙΑ ΑΝΑ ΟΜΑΔΑ ΣΤΟ ΧΑΝΤΙΚΑΠ — carry = 1.0·√(μεριδιο περσινων λεπτων που
+# εμειναν στην ομαδα) αντι για 0.8 σε ολες (nba_tests/t4_carry_roster: RMSE αγων 1-15 καλυτερο 4/5, ROI Οκτ-Δεκ ιδιο +7.1%).
+# Ιστορικες σεζον απο nba_carry_share.json (nba_carry_share_build.py, ιδιο με το τεστ)· ΦΕΤΙΝΗ: ρόστερ 1ου ματς (ESPN box) ή, πριν
+# παιξει, το αναμενομενο ρόστερ (nba_roster_live.json)· περσινα λεπτα ανα παικτη = prev_min. Συνολα: ΚΑΜΙΑ αλλαγη.
+CMAP, CSHARE = None, {}
+try:
+    _CS = json.load(open('nba_carry_share.json', encoding='utf-8'))
+    _c0, _pw = float(_CS.get('c0', 1.0)), float(_CS.get('pow', 0.5))
+    CMAP = {k: _c0 * max(v, 0.0) ** _pw for k, v in _CS['share'].items()}
+    _pm = _CS.get('prev_min', {}).get(str(CUR), {})
+    _first = {}
+    for g in sorted(GM.values(), key=lambda g: g['utc']):
+        if g['stype'] != 2: continue
+        for t in (g['home'], g['away']):
+            if t not in _first: _first[t] = [n for _, n, mn in g['players'].get(t, []) if (mn or 0) > 0]
+    for t, mins in _pm.items():
+        ros = _first.get(t) or RL.get('roster', {}).get(t) or []
+        tot = sum(mins.values())
+        if tot > 0 and ros:
+            CSHARE[t] = (sum(mins.get(_nk(n), 0.0) for n in set(ros)) / tot, 'ρόστερ 1ου ματς' if t in _first else 'αναμενομενο ρόστερ')
+            CMAP[f'{CUR}|{t}'] = _c0 * CSHARE[t][0] ** _pw
+    print('αφετηρια ανα ομαδα (χαντικαπ) ' + str(CUR) + ': ' + ' · '.join(f'{t} {v[0]:.2f}→{_c0 * v[0] ** _pw:.2f}' for t, v in sorted(CSHARE.items(), key=lambda x: x[1][0])))
+except Exception as _e:
+    CMAP = None; print('ΠΡΟΣΟΧΗ: αφετηρια ανα ομαδα απενεργη (σταθερο carry) —', _e)
 out = {}
 for nm, cfg in (('h', CFG_H), ('t', CFG_T)):
+    F.CARRY_MAP = CMAP if nm == 'h' else None
     _, mg, tt, fin = F.run_all(cfg)
     carry, beta, kx, kp = cfg[0], cfg[5], cfg[6], cfg[7]
     if CUR in fin:
@@ -97,8 +122,9 @@ for nm, cfg in (('h', CFG_H), ('t', CFG_T)):
         p = fin[CUR - 1]; f = dict(mu=p['mu'], pm=p['pm'], O={}, D={}, P={})
         for t in p['O']:
             adj = beta * R2.get(f'{CUR}|{t}', 0.0) + kx * Z['C'].get(f'{CUR}|{t}', 0.0) + kp * Z['P'].get(f'{CUR}|{t}', 0.0)
-            f['O'][t] = carry * p['O'][t] + adj / 2; f['D'][t] = carry * p['D'][t] - adj / 2; f['P'][t] = carry * p['P'][t]
-        src = f'αφετηρια {CUR} (περσι × {carry} + ροστερ/ειδικοι/φιλικα)'
+            car = (F.CARRY_MAP or {}).get(f'{CUR}|{t}', carry)          # 20/10: αφετηρια ανα ομαδα (μονο χαντικαπ)
+            f['O'][t] = car * p['O'][t] + adj / 2; f['D'][t] = car * p['D'][t] - adj / 2; f['P'][t] = car * p['P'][t]
+        src = f'αφετηρια {CUR} (περσι × {"carry ανα ομαδα 1.0·√μεριδιου" if (nm == "h" and F.CARRY_MAP) else carry} + ροστερ/ειδικοι/φιλικα)'
     out[nm] = dict(f, src=src); out[nm + '_pred'] = (mg, tt)
 # Φ3: επιπεδο συνολων απο τα τελευταια 150 ματς της σεζον (μονο οσα εχουν παιχτει)
 mg_t, tt_t = out['t_pred']; m = (G.season.values == CUR) & np.isfinite(tt_t)
