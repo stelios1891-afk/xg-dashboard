@@ -16,7 +16,7 @@ with contextlib.redirect_stdout(_B()):
     exec(src, ns)
 sys.stdout.reconfigure(encoding='utf-8')
 np = ns['np']; G = ns['G']; SEAS_G = ns['SEAS_G']; dD = ns['dD']; EV = ns['EV']; ACT = ns['ACT']; BASE = ns['BASE']
-EVTS, TG, A2, value, MKH, rm, roi_od, ALL, FA = (ns[k] for k in ('EVTS', 'TG', 'A2', 'value', 'MKH', 'rm', 'roi_od', 'ALL', 'FA'))
+EVTS, TG, A2, value, MKH, rm, roi_od, ALL, FA, PLAYED = (ns[k] for k in ('EVTS', 'TG', 'A2', 'value', 'MKH', 'rm', 'roi_od', 'ALL', 'FA', 'PLAYED'))
 inner = ns['ns']; cover_, SIG_ = inner['cover'], inner['SIG']
 out = []
 def P(s=''): print(s, flush=True); out.append(str(s))
@@ -73,6 +73,7 @@ for e in EVTS:
     for i in TG.get((s_, t), []):
         if dD[i] < tau: continue
         n += 1; side = 1 if G.home.values[i] == t else -1
+        if sgn > 0 and (p, t, dD[i]) not in PLAYED: continue      # 20/10: ιδιο με το διορθωμενο t15 (εισερχομενος μονο οταν παιζει)
         GLIST[i].append((side, sgn, value(p, s_ - 1), mm, (r.new if (r is not None and r.new == r.new) else mm), (r.hat if (r is not None and r.hat == r.hat) else mm)))
 def adj(kind):
     X = np.zeros(len(G))

@@ -67,7 +67,10 @@ def rosters(kind):
             early = set(tg[tg.GAME_ID.isin(gids[:nwin])].pid.unique())
             lastyr = set(prev[prev.team == t].pid.unique()) if kind != 'F10' else set()
             # περσινοι που ΔΕΝ ανταλλαχτηκαν: πρωτη φετινη εμφανιση εδω (ή καμια ακομα αλλα και καμια αλλου)
-            keep_ly = {p for p in lastyr if not any(tt != t for dd, tt in appear[p] if dd > np.datetime64(f'{s - 1}-07-01'))}
+            # 20/10 ΔΙΟΡΘΩΣΗ (ελεγχος μετα το bug του t15): περσινος παικτης μενει στο ροστερ ΜΟΝΟ αν παιζει για την ομαδα καποια στιγμη ΦΕΤΟΣ
+            # (πριν: εμεναν και οσοι αποσυρθηκαν / εμειναν ελευθεροι / πηγαν εξωτερικο → χρεωνονταν «απουσα» σε ΚΑΘΕ ματς → αδικο για την εκδοχη S)
+            here = set(tg.pid.unique())
+            keep_ly = {p for p in lastyr if p in here and not any(tt != t for dd, tt in appear[p] if dd > np.datetime64(f'{s - 1}-07-01'))}
             pids = [p for p in (early | keep_ly) if (p, s - 1) in MPT or drafted(p, s)]
             if kind == 'Ftop12': pids = sorted(pids, key=lambda p: -(mpg1(p, s) or 15.0))[:12]
             out[(s, t)] = pids
