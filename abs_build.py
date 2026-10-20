@@ -158,7 +158,12 @@ for k in ORDER:
                         fid = best[1] if best[0] >= 2 else None
                     if not fid: n_unm += 1; continue
                     (miss if e[2] == 'missing' else doubt).add(fid)
+            last2 = collections.Counter()
+            for _, pmn in hist[-2:]:
+                for pid, mn in pmn.items(): last2[pid] += mn
+            fresh = {p for p in miss if last2[p] >= 45}            # ΝΕΑ απουσια: επαιξε ≥45′ στα 2 τελευταια ματς (η φορμα της ομαδας ΔΕΝ την εχει)
             full = xi(set()); avail = xi(miss); avail_d = xi(miss | doubt); act = [str(x) for x in side['st']]
+            fullr = xi({p for p in miss if p not in fresh}); availf = xi(miss)          # «πληρης» = χωρις τις ΠΑΛΙΕΣ απουσιες
             def A(x): return float(np.mean([ability(p) for p in x])) if x else np.nan
             def V(x):
                 vs = [value_at(p, m['date']) for p in x]; vs = [v for v in vs if v]
@@ -171,6 +176,7 @@ for k in ORDER:
                      miss_min_share=sum(mins[p] for p in miss) / max(90 * len(hist) * 11, 1),
                      A_full=A(full), A_avail=A(avail), A_avail_d=A(avail_d), A_act=A(act),
                      V_full=V(full), V_avail=V(avail), V_avail_d=V(avail_d), V_act=V(act),
+                     n_fresh=len(fresh), A_fullr=A(fullr), V_fullr=V(fullr),
                      out_in_xi=len(set(full) - set(avail)), act_vs_full=len(set(full) - set(act)), act_vs_avail=len(set(avail) - set(act)))
             for pos, nm in ((0, 'gk'), (1, 'def'), (2, 'mid'), (3, 'att')):
                 r[f'dA_{nm}'] = byp(avail, pos) - byp(full, pos)
