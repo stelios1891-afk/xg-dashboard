@@ -12,13 +12,22 @@
 (Α) ΠΕΡΙΓΡΑΦΙΚΟ: υπολοιπο της ΒΑΣΗΣ και της αγορας ανοιγματος απο την πλευρα της ομαδας που ΕΝΙΣΧΥΘΗΚΕ, ανα ματς μετα τη μεταγραφη.
 (Β) ΠΡΟ-ΔΗΛΩΜΕΝΟ ΚΡΙΤΗΡΙΟ (πριν το τρεξιμο, ιδιο με t11 + Φεβ-Απρ): LOSO επιλογη με RMSE στις αλλες 4 → περνα αν RMSE καλυτερο απο τη
   ΒΑΣΗ σε ≥4/5 σεζον ΚΑΙ ROI ανοιγματος ≥8% ολης οχι χειροτερο (> −1.5pp) ΚΑΙ Φεβ-Απρ οχι χειροτερο (> −1.5pp). Εξοδος: t15_trades_out.txt"""
-import os, sys, io, contextlib, collections, itertools
+import os, sys, io, contextlib, collections, itertools, json
 SC = os.path.dirname(os.path.abspath(__file__))
 class _B(io.StringIO):
     def reconfigure(self, **k): pass
 ns = {'__file__': os.path.join(SC, 'absence_test.py'), '__name__': 'x'}
 with contextlib.redirect_stdout(_B()):
-    exec(open(os.path.join(SC, 'absence_test.py'), encoding='utf-8').read().split('ev_m = np.isin(SEAS_G, EV)')[0], ns)
+    _src = open(os.path.join(SC, 'absence_test.py'), encoding='utf-8').read().split('ev_m = np.isin(SEAS_G, EV)')[0]
+    # 21/10 (Στελιος «γιατι οχι ιδια με το live;»): ΑΝΤΙΓΡΑΦΟ LIVE — αφετηρια ανα ομαδα 1.0·√(μεριδιο λεπτων) (nba_carry_share.json)
+    REPLICA = os.environ.get('NBA_REPLICA', '1') == '1'
+    if REPLICA:
+        _cs = json.load(open(os.path.join(os.path.dirname(SC), 'nba_carry_share.json'), encoding='utf-8'))
+        ns['_CMAP'] = {k: _cs['c0'] * v ** _cs['pow'] for k, v in _cs['share'].items()}
+        _old = '_, MG, _, _ = F.run_all((0.8, 8, 60, .75, 5.0, 1.0, .75, .25))'
+        assert _src.count(_old) == 1
+        _src = _src.replace(_old, 'F.CARRY_MAP = _CMAP; ' + _old + '; F.CARRY_MAP = None')
+    exec(_src, ns)
 sys.stdout.reconfigure(encoding='utf-8')
 np = ns['np']; G = ns['G']; SEAS_G = ns['SEAS_G']; dD = ns['dD']; EV = ns['EV']; MG = ns['MG']; A = ns['A']; ACT = ns['ACT']
 rm, roi_od, ALL, value, MKH = ns['rm'], ns['roi_od'], ns['ALL'], ns['value'], ns['MKH']
@@ -34,7 +43,24 @@ for i in np.argsort(dD, kind='stable'):
     s, h_, a_, d = SEAS_G[i], G.home.values[i], G.away.values[i], dD[i]
     B2H[i] = float(last.get((s, h_)) == d - np.timedelta64(1, 'D')); B2A[i] = float(last.get((s, a_)) == d - np.timedelta64(1, 'D'))
     last[(s, h_)] = d; last[(s, a_)] = d
-BASE = MG + 3.0 * (B2A - B2H) + 0.75 * (LH - LA)
+# 21/10 ΑΝΤΙΓΡΑΦΟ LIVE: αλλαγη ζωνης ωρας −0.68 π./ωρα αν το προηγουμενο ματς της ομαδας ηταν ≤2 μερες πριν (ιδιο με nba_odds_scan.tz_feat)
+_TZ = {**{t: -5 for t in 'ATL BOS BRK CHO CLE DET IND MIA NYK ORL PHI TOR WAS'.split()}, **{t: -6 for t in 'CHI DAL HOU MEM MIL MIN NOP OKC SAS'.split()},
+       **{t: -7 for t in 'DEN UTA PHO'.split()}, **{t: -8 for t in 'GSW LAC LAL POR SAC'.split()}}
+import datetime as _dt
+def _tzone(t, d):
+    dd = _dt.date.fromisoformat(str(d)[:10]); y = dd.year
+    m8 = _dt.date(y, 3, 8); a0 = m8 + _dt.timedelta(days=(6 - m8.weekday()) % 7); n1 = _dt.date(y, 11, 1); a1 = n1 + _dt.timedelta(days=(6 - n1.weekday()) % 7)
+    return _TZ[t] + (1 if (a0 <= dd < a1) and t != 'PHO' else 0)
+TZH = np.zeros(len(G)); TZA = np.zeros(len(G)); lastv = {}
+if REPLICA:
+    for i in np.argsort(dD, kind='stable'):
+        s, h_, a_, d = SEAS_G[i], G.home.values[i], G.away.values[i], dD[i]
+        for t, arr in ((h_, TZH), (a_, TZA)):
+            pv = lastv.get((s, t))
+            if pv and int((d - pv[0]).astype(int)) <= 2 and h_ in _TZ and pv[1] in _TZ:
+                arr[i] = abs(_tzone(h_, d) - _tzone(pv[1], d))
+        lastv[(s, h_)] = (d, h_); lastv[(s, a_)] = (d, h_)
+BASE = MG + 3.0 * (B2A - B2H) + 0.75 * (LH - LA) - 0.68 * (TZH - TZA)
 MON = G.date.dt.month.values; FA = np.isin(MON, [2, 3, 4])
 # ---------- γεγονοτα μεταγραφης ----------
 A2 = A[A.MIN > 0][['pid', 'team', 's', 'd', 'MIN']].sort_values('d')
