@@ -47,8 +47,8 @@ def _status(r):
     s = str(r.get('status') or '').strip().lower()
     if not s:
         return ''
-    lab = {'out': '🔴 Εκτος', 'doubtful': '🔴 Μαλλον εκτος', 'day-to-day': '🟠 Αμφιβολος (DTD)',
-           'questionable': '🟠 Αμφιβολος (Q)', 'probable': '🟢 Πιθανον παιζει'}.get(s, s)
+    lab = {'out': '🔴 Εκτος', 'doubtful': '🟠 Μαλλον εκτος (D)', 'day-to-day': '🟡 Αμφιβολος (DTD)',
+           'questionable': '🟡 Αμφιβολος (Q)', 'probable': '🟢 Πιθανον παιζει'}.get(s, s)
     return lab + (' · στο μοντελο' if r.get('in_model') else '')
 
 
@@ -89,6 +89,10 @@ td.lab{font-family:'DM Sans',sans-serif;font-weight:600}
 @media (max-width:640px){.kpis{grid-template-columns:1fr}.tn{font-size:18px}.tm img{width:32px;height:32px}th:nth-child(5),td:nth-child(5){display:none}}
 </style>"""
 
+
+def _md(t):
+    import re
+    return re.sub(r'\*\*(.+?)\*\*', lambda m: '<b style="color:#e8edf8">' + m.group(1) + '</b>', _h.escape(t))
 
 def _fo(p):
     return f"{1 / p:.2f}" if p and p > 0.005 else '—'
@@ -163,7 +167,7 @@ def card(g, pin, b, a, offs, backs):
 # ------------------------------ πινακες παικτων ------------------------------
 def _df(rows, with_box):
     import pandas as pd
-    ic = lambda r: {'out': '🔴 ', 'doubtful': '🔴 ', 'day-to-day': '🟠 ', 'questionable': '🟠 ', 'probable': '🟢 '}.get(str(r.get('status') or '').strip().lower(), '')
+    ic = lambda r: {'out': '🔴 ', 'doubtful': '🟠 ', 'day-to-day': '🟡 ', 'questionable': '🟡 ', 'probable': '🟢 '}.get(str(r.get('status') or '').strip().lower(), '')
     d = pd.DataFrame([{'Εκτος': bool(r['in_model']), 'Παικτης': ic(r) + r['name'], 'Κατασταση': _status(r),
                        'Χαντικαπ': -r['imp_m'], 'Κοστος': r['imp_m'], 'Συνολο': r['imp_t'],
                        'Λεπτα': r['min'], 'Πηγη λεπτων': 'φετος' if r['msrc'] == 'φετος' else ('περσι' if r['msrc'] == 'περσι' else '—'),
@@ -191,6 +195,12 @@ def _team_head(name, crest, sub):
                 + (f'<img src="{_h.escape(crest)}" style="width:30px;height:30px;object-fit:contain">' if crest else '')
                 + f'<div><div style="font-family:Bebas Neue,sans-serif;font-size:21px;letter-spacing:.8px;line-height:1">{_h.escape(name)}</div>'
                   f'<div style="font-size:10px;color:#6b7fa3;letter-spacing:1.3px">{_h.escape(sub)}</div></div></div>', unsafe_allow_html=True)
+
+
+LEGEND = ('**Χρωματα (λιστα τραυματιων ESPN):** 🔴 **Εκτος** (Out) — δεν παιζει · 🟠 **Μαλλον εκτος** (Doubtful) · '
+          '🟡 **Αμφιβολος** (Questionable / Day-To-Day) — αποφαση την ημερα του αγωνα · 🟢 **Πιθανον παιζει** (Probable) · χωρις σημα = δεν ειναι στη λιστα. '
+          '«στο μοντελο» = Εκτος που η προβλεψη ΗΔΗ αφαιρει (παικτης ρολου ≥20′ που επαιξε φετος, ή εκτος απο την αρχη της σεζον). '
+          'Ολοι οι υπολοιποι (και οι 🟠/🟡) ΔΕΝ μετρανε μεχρι να τους τσεκαρεις «Εκτος».')
 
 
 def render(league=None):
@@ -231,8 +241,9 @@ def render(league=None):
                     ed = st.data_editor(_df(rows, True)[['Εκτος', 'Παικτης', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα', 'Κατασταση']] if rows else _df(rows, True),
                                         column_config=_colcfg(mx), disabled=['Παικτης', 'Κατασταση', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα'],
                                         hide_index=True, use_container_width=True, key=f"nbp_ed_{k}_{g['code']}", height=min(36 * len(rows) + 40, 560))
-                    off[k] = {n.split(' ', 1)[1] if n[:1] in '🔴🟠🟢' else n for n in ed.loc[ed['Εκτος'], 'Παικτης']} if len(ed) else set()
+                    off[k] = {n.split(' ', 1)[1] if n[:1] in '🔴🟠🟡🟢' else n for n in ed.loc[ed['Εκτος'], 'Παικτης']} if len(ed) else set()
                     sel[k] = rows
+            st.markdown(f'<div style="font-size:12px;color:#8fa3c8;line-height:1.6;margin-top:4px">{_md(LEGEND)}</div>', unsafe_allow_html=True)
             b, a = nba_board.whatif(g, pin, off['h'], off['a'], P, sm, stt)
             offs, backs = [], []
             for k, sg in (('h', 1), ('a', 1)):
@@ -254,5 +265,6 @@ def render(league=None):
         nout = sum(1 for r in rows if r['status'])
         _team_head(names.get(tc, tc), crest.get(tc), f"{len(rows)} ΠΑΙΚΤΕΣ · {nout} ΣΤΗ ΛΙΣΤΑ ESPN")
         st.dataframe(_df(rows, False)[['Παικτης', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα', 'Πηγη λεπτων', 'Αξια', 'Κατασταση']] if rows else _df(rows, False), column_config=_colcfg(mx), hide_index=True, use_container_width=True, height=min(36 * len(rows) + 40, 760))
+        st.markdown(f'<div style="font-size:12px;color:#8fa3c8;line-height:1.6;margin-top:4px">{_md(LEGEND)}</div>', unsafe_allow_html=True)
         st.caption('Χαντ. αν λειψει = 0.75 × (αξια + 1) × λεπτα / 48 (ιδιο με τις live απουσιες) · Συνολο: χαμενη επιθεση −0.5, χαμενη αμυνα +1.0 · '
                    'Λεπτα = μεσος στα ≤10 τελευταια φετινα ματς, αλλιως περσινα.')
