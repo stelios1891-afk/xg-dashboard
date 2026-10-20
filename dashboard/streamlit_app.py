@@ -77,12 +77,13 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('eurocup', 'EuroCup', '🏀'),         # 1/10/2026: EuroCup — μοντελο ec1 vs Pinnacle (ιδια σελιδα με την Ευρωλιγκα)
          ('bcl', 'Champions League (FIBA)', '🏀'),   # 6/10/2026: Basketball Champions League — μοντελο bcl1 vs Pinnacle
          ('nba', 'NBA', '🏀'),                 # 6/10/2026: NBA — μοντελο nba1 vs Pinnacle (χαντικαπ LIVE απο 19/10)
+         ('nba_players', 'NBA Players', '🩹'),   # 20/10/2026: βαση παικτων + «τι γινεται αν λειψει» (dashboard/nba_players_view.py)
          ('intl', 'International', '🌐'),      # 25/9/2026: εθνικες (NL + AFCONQ), 3 εκδοχες μοντελου vs αγορα — ΣΚΙΑ
          ('projections', 'Match Projections', '🗓️'),
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup', 'bcl', 'nba'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup', 'bcl', 'nba', 'nba_players'}
 
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
 def load_matches():
@@ -1099,11 +1100,6 @@ def render_nba(league):
     with st.expander('Ratings ομαδων'):
         st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
         st.caption('Net = επιθεση − αμυνα (ποντοι/100 κατοχες) · Ρυθμος = κατοχες ±.')
-    try:                                     # 20/10 (Στελιος): βαση παικτων + «τι γινεται αν λειψει» (αμφιβολοι)
-        import nba_players_view
-        nba_players_view.render(proj)
-    except Exception as e:
-        st.warning(f'Παικτες & απουσιες: σφαλμα ({e})')
 
 
 def render_euroleague(league):
@@ -1282,7 +1278,8 @@ RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': ren
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
           'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl,
-          'euroleague': render_euroleague, 'eurocup': render_eurocup, 'bcl': render_bcl, 'nba': render_nba}
+          'euroleague': render_euroleague, 'eurocup': render_eurocup, 'bcl': render_bcl, 'nba': render_nba,
+          'nba_players': lambda lg: __import__('nba_players_view').render(lg)}
 if page in RENDER:
     RENDER[page](league)
 else:

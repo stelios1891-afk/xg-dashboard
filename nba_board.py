@@ -113,20 +113,29 @@ def inj_text(hcode, acode, home, away, P=None):
     return '\n'.join(L)
 
 
-def whatif(g, pin, out_h, out_a, P, sm, st):
-    """Νεα προβλεψη αν λειψουν επιπλεον οι out_h / out_a (ονοματα, οσοι ΔΕΝ ειναι ηδη στο μοντελο) + edge στην τωρινη γραμμη Pinnacle."""
-    H = {r['name']: r for r in P.get(g['hcode'], [])}; A = {r['name']: r for r in P.get(g['acode'], [])}
-    xh = [H[n] for n in out_h if n in H and not H[n]['in_model']]; xa = [A[n] for n in out_a if n in A and not A[n]['in_model']]
-    dm = -sum(r['imp_m'] for r in xh) + sum(r['imp_m'] for r in xa); dt_ = sum(r['imp_t'] for r in xh + xa)
-    m = float(g['margin']) + dm; tot = float(g['total']) + dt_
-    res = dict(margin=round(m, 2), total=round(tot, 1), dm=round(dm, 2), dt=round(dt_, 2))
-    if pin.get('line') is not None and pin.get('oh') and pin.get('oa'):
-        L = float(pin['line']); pw, pp = _cover(m, L, sm)
-        res.update(line=L, e_h=pw * float(pin['oh']) + pp - 1, e_a=(1 - pw - pp) * float(pin['oa']) + pp - 1)
-    if pin.get('tl') is not None and pin.get('to') and pin.get('tu'):
-        tl = float(pin['tl']); po, pp = _cover(tot, -tl, st)
-        res.update(tl=tl, e_o=po * float(pin['to']) + pp - 1, e_u=(1 - po - pp) * float(pin['tu']) + pp - 1)
-    return res
+def _probs(m, tot, pin, sm, st):
+    """Πιθανοτητες & δικαιες αποδοσεις μοντελου σε ΟΛΕΣ τις αγορες της τωρινης γραμμης Pinnacle (νικη, χαντικαπ, συνολο)."""
+    N = NormalDist()
+    ph = N.cdf(m / sm); r = dict(margin=m, total=tot, p_h=ph, p_a=1 - ph)
+    if pin.get('line') is not None:
+        L = float(pin['line']); pw, pp = _cover(m, L, sm); r.update(line=L, c_h=pw, c_a=1 - pw - pp, c_p=pp)
+    if pin.get('tl') is not None:
+        tl = float(pin['tl']); po, pp = _cover(tot, -tl, st); r.update(tl=tl, o=po, u=1 - po - pp, t_p=pp)
+    return r
+
+
+def whatif(g, pin, off_h, off_a, P, sm, st):
+    """off_h / off_a = ονοματα που ΔΕΝ παιζουν (μαζι με οσους ειναι ηδη Out στο μοντελο). Παικτης που αφαιρεθηκε απο το Out
+    → ξαναμπαινει (επιστροφη). → (πριν, μετα) με πιθανοτητες ολων των αγορων + dm/dt."""
+    dm = dt_ = 0.0
+    for code, off, sg in ((g['hcode'], set(off_h), -1), (g['acode'], set(off_a), 1)):
+        for r in P.get(code, []):
+            if r['name'] in off and not r['in_model']:
+                dm += sg * r['imp_m']; dt_ += r['imp_t']
+            elif r['name'] not in off and r['in_model']:
+                dm -= sg * r['imp_m']; dt_ -= r['imp_t']
+    m0, t0 = float(g['margin']), float(g['total'])
+    return _probs(m0, t0, pin, sm, st), dict(_probs(m0 + dm, t0 + dt_, pin, sm, st), dm=dm, dt=dt_)
 
 
 if __name__ == '__main__':
