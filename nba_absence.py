@@ -12,7 +12,10 @@
 import os, json, re, unicodedata, collections, datetime as dt
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
-ABS_K, REP, REPO, REPD, MIN_ROLE = 0.75, -1.0, -0.5, -0.5, 20.0
+ABS_K, REP, REPO, REPD, MIN_ROLE = 0.75, -2.0, -0.5, -0.5, 20.0
+# 20/10/2026 (Στελιος «περνα το»): ΑΝΤΙΚΑΤΑΣΤΑΤΗΣ −1 → −2 (nba_tests/t10 + t11: LOSO 5/5, RMSE 13.795→13.765, ανοιγμα ≥8% Οκτ-Δεκ +7.1→+7.4%,
+# ολη +1.5→+3.1%) — καθε απων ρολου κοστιζει ~+0.5 π. (30′). Αγνωστος παικτης = αξια V_UNK −1 (οπως στα τεστ), ΟΧΙ ο αντικαταστατης.
+V_UNK = -1.0
 C_O, C_D = -0.5, 1.0                       # συνολα: επιθεση / αμυνα που χανεται
 SH_O, SH_D, SH_THR = 0.18, 1.28, 3.0       # σκιωδης κανονας (ξαφνικες απουσιες, κλεισιμο)
 
@@ -80,7 +83,7 @@ class Absences:
             if not rec: continue                                   # δεν εχει παιξει φετος για την ομαδα → το εχει το roster prior
             mn = sum(rec) / len(rec)
             if mn < MIN_ROLE: continue
-            v, o, d = self.V.get(k, [REP, REPO, REPD])
+            v, o, d = self.V.get(k, [V_UNK, REPO, REPD])
             res.append(dict(name=n, min=round(mn, 1), v=v, o=o, d=d, fresh=k in self.last.get(t, set())))
         return res
 

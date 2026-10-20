@@ -266,5 +266,5 @@ def render(league=None):
         _team_head(names.get(tc, tc), crest.get(tc), f"{len(rows)} ΠΑΙΚΤΕΣ · {nout} ΣΤΗ ΛΙΣΤΑ ESPN")
         st.dataframe(_df(rows, False)[['Παικτης', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα', 'Πηγη λεπτων', 'Αξια', 'Κατασταση']] if rows else _df(rows, False), column_config=_colcfg(mx), hide_index=True, use_container_width=True, height=min(36 * len(rows) + 40, 760))
         st.markdown(f'<div style="font-size:12px;color:#8fa3c8;line-height:1.6;margin-top:4px">{_md(LEGEND)}</div>', unsafe_allow_html=True)
-        st.caption('Χαντ. αν λειψει = 0.75 × (αξια + 1) × λεπτα / 48 (ιδιο με τις live απουσιες) · Συνολο: χαμενη επιθεση −0.5, χαμενη αμυνα +1.0 · '
+        st.caption('Χαντ. αν λειψει = 0.75 × (αξια + 2) × λεπτα / 48 (ιδιο με τις live απουσιες· αντικαταστατης −2 απο 20/10) · Συνολο: χαμενη επιθεση −0.5, χαμενη αμυνα +1.0 · '
                    'Λεπτα = μεσος στα ≤10 τελευταια φετινα ματς, αλλιως περσινα.')

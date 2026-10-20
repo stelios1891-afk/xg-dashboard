@@ -3,13 +3,13 @@
 «βαση δεδομενων παικτων ανα ομαδα … σε αμφιβολους/questionable να εχω πριν βγει η ειδηση την εικονα» ·
 «οταν προκυπτει νεο pick να εμφανιζεται η κινηση της αγορας και η λιστα των παικτων»).
 ΜΟΝΟ ΕΝΔΕΙΞΗ — δεν αλλαζει ουτε το μοντελο ουτε τα picks. Ιδιοι αριθμοι με το live (nba_absence):
-  χαντικαπ: ο παικτης κοστιζει στην ομαδα 0.75 × (αξια − (−1)) × λεπτα/48 ποντους
+  χαντικαπ: ο παικτης κοστιζει στην ομαδα 0.75 × (αξια − (−2)) × λεπτα/48 ποντους (αντικαταστατης −2 απο 20/10· ηταν −1)
   συνολο:   −0.5 × (επιθ. αξια + 0.5) × λεπτα/48 + 1.0 × (αμυντ. αξια + 0.5) × λεπτα/48
 Λεπτα = μεσος στους ≤10 τελευταιους φετινους αγωνες κανονικης για την ομαδα· αν δεν εχει παιξει φετος → περσινα λεπτα/αγωνα.
 «Ηδη στο μοντελο» = Out που μετρα ηδη η προβλεψη (παικτης ρολου ≥20′ που επαιξε φετος, ή εκτος αφετηριας ροστερ)."""
 import os, json, collections, datetime as dt
 from statistics import NormalDist
-from nba_absence import nk, ABS_K, REP, REPO, REPD, MIN_ROLE, C_O, C_D
+from nba_absence import nk, ABS_K, REP, REPO, REPD, MIN_ROLE, C_O, C_D, V_UNK
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 MOVE_INJ = 1.5            # κινηση δικαιης γραμμης (ποντοι) απο το ανοιγμα → στο pick μπαινει και η λιστα απουσιων
@@ -68,7 +68,7 @@ def players():
             if rec: mn, src = sum(rec) / len(rec), 'φετος'
             else:
                 b = BASE.get(k); mn, src = (float(b[1]), 'περσι') if b and b[1] else (0.0, '—')
-            v, o, d = V.get(k, [REP, REPO, REPD])
+            v, o, d = V.get(k, [V_UNK, REPO, REPD])
             im, it = impact(v, o, d, mn)
             ij = inj.get((t, k)); stt = ij[1] if ij else None
             played = bool(hist.get((t, k)))
