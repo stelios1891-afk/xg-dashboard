@@ -147,4 +147,13 @@ for m in ('fav', 'dog', 'over', 'under', 'hc'):
     for lab, f in BK:
         d = D_[f(D_.mv)]
         P(f'  {lab:15s} {cell(d)} {cell(d, "pc")} {d.mv_after.mean() if len(d) else 0:+9.2f} {100 * (d.mv_after <= -.25).mean() if len(d) else 0:17.0f}%')
+# ---- 20/10 (Στελιος, Τελεκομ–Σιαουλιαι +19, 33′ πριν): αργα picks × ΚΟΝΤΡΑ πριν την εισοδο ----
+P(''); P('################ 4. (20/10) ΠΟΤΕ ΒΓΗΚΕ × ΚΟΝΤΡΑ πριν την εισοδο (οχι στο ανοιγμα) ################')
+for m in ('fav', 'dog', 'hc', 'over', 'under'):
+    D_ = sub(m); D_ = D_[~D_.at_open]
+    P(f'=== {NAME[m]} ==='); P(f'  {"":26s} {"ROI alert":>22s} {"ROI κλεισιμο":>22s} {"κιν. πριν":>9s} {"κιν. μετα":>9s}')
+    for hl, hlo, hhi in (('<2ω', 0, 2), ('2-6ω', 2, 6), ('≥6ω', 6, 999)):
+        H = D_[(D_.hrs >= hlo) & (D_.hrs < hhi)]
+        for cl, d in (('κοντρα <2', H[H.mv > -2 + 1e-9]), ('κοντρα ≥2', H[H.mv <= -2 + 1e-9])):
+            P(f'  {hl + " · " + cl:26s} {cell(d)} {cell(d, "pc")} {d.mv.mean() if len(d) else 0:+9.2f} {d.mv_after.mean() if len(d) else 0:+9.2f}')
 open('ec_last2h_test_out.txt', 'w', encoding='utf-8').write('\n'.join(out))
