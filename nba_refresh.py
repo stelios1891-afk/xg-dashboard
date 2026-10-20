@@ -139,7 +139,7 @@ state = dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'
              cfg_h=list(CFG_H), cfg_t=list(CFG_T), res_t=RES, n_res=int(len(resid)),
              h_eng={k: v for k, v in out['h'].items()}, t_eng={k: v for k, v in out['t'].items()}, gp=dict(gp), last=last,
              roster=RL.get('delta', {}), z=dict(C={k.split('|')[1]: v for k, v in Z['C'].items() if k.startswith(f'{CUR}|')}, P={k.split('|')[1]: v for k, v in Z['P'].items() if k.startswith(f'{CUR}|')}),
-             model=f'NBA: χαντικαπ {CFG_H} + B2B {B2B_K} · συνολα {CFG_T} + Φ3')
+             model=f'NBA: χαντικαπ {CFG_H} + B2B {B2B_K} + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα {CFG_T} + Φ3')
 json.dump(state, open('nba_state.json', 'w', encoding='utf-8'), ensure_ascii=False)
 h = out['h']; net = {t: (h['O'][t] - h['D'][t]) for t in h['O']}
 print(f"nba_state.json: {h['src']} · Φ3 {RES:+.2f} ({len(resid)} ματς) · κορυφη: " + ' · '.join(f'{t} {v:+.1f}' for t, v in sorted(net.items(), key=lambda kv: -kv[1])[:5])

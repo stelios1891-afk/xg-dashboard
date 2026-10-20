@@ -2,6 +2,7 @@
 """nba_odds_scan.py — NBA: τιμες Pinnacle (league 487, 0 credits) + ΠΡΟΒΛΕΨΗ για καθε ματς (6/10/2026, Στελιος «φτιαξε τη μηχανη»).
 Τρεχει στον scanner (το πολυ 1 / 10'). Προβλεψη απο nba_state.json (nba_refresh.py):
   διαφορα = κατοχες × (επιθ_γηπ + αμυνα_φιλ + εδρα/2 − επιθ_φιλ − αμυνα_γηπ − εδρα/2)/100 + 3 × (B2B φιλ − B2B γηπ)
+            − 0.68 × (|ωρες ζωνης| γηπ − |ωρες ζωνης| φιλ)  [μονο οταν το προηγουμενο ματς ηταν ≤2 μερες πριν· 20/10]
   συνολο  = κατοχες × (2μ + επιθ + αμυνες)/100 + Φ3 (επιπεδο τελευταιων 150 ματς)
 Back-to-back: η ομαδα επαιξε την προηγουμενη μερα (ESPN) ή εχει ματς Pinnacle την προηγουμενη μερα.
 ΑΠΟΥΣΙΕΣ (19/10/2026, nba_absence.py): ESPN «Out» παικτες ρολου → διαφορα += 0.75·Σ(αξια+1)·λεπτα/48 (αντιπαλου − δικοι) ·
@@ -23,6 +24,27 @@ def code_of(name):
     for k, v in TEAMNAME.items():
         if k.split()[-1].lower() in low: return v
     return None
+# 20/10/2026 (Στελιος «περνα το δ»): ΑΛΛΑΓΗ ΩΡΑΣ ΜΕ ΛΙΓΗ ΞΕΚΟΥΡΑΣΗ — καθε ομαδα (γηπ. ΚΑΙ φιλ.) που επαιξε το προηγουμενο ματς ≤2 μερες πριν
+# σε αλλη ζωνη ωρας χανει TZ_K πονους ανα ωρα διαφορας (ανατολη ή δυση, ιδιο βαρος) — nba_tests/t3b_travel_tz εκδοχη δγ: RMSE 5/5,
+# ROI ολη σεζον +1.0 → +1.6%, Οκτ-Δεκ +7.1 → +6.8% (θορυβος)· ανατολη −0.79 / δυση −0.55 ανα ωρα ξεχωριστα (ιδια ταξη, ενα νουμερο).
+TZ_K, TZ_GAP = 0.68, 2
+_TZ = {**{t: -5 for t in 'ATL BOS BRK CHO CLE DET IND MIA NYK ORL PHI TOR WAS'.split()},
+       **{t: -6 for t in 'CHI DAL HOU MEM MIL MIN NOP OKC SAS'.split()},
+       **{t: -7 for t in 'DEN UTA PHO'.split()}, **{t: -8 for t in 'GSW LAC LAL POR SAC'.split()}}
+def tzone(t, d):
+    """ζωνη ωρας γηπεδου t την ημερα d (YYYY-MM-DD)· θερινη ωρα 2η Κυρ. Μαρτιου → 1η Κυρ. Νοεμβριου, οχι στο Phoenix (ιδιο με το τεστ)."""
+    dd = datetime.date.fromisoformat(d); y = dd.year
+    m8 = datetime.date(y, 3, 8); dst0 = m8 + datetime.timedelta(days=(6 - m8.weekday()) % 7)
+    n1 = datetime.date(y, 11, 1); dst1 = n1 + datetime.timedelta(days=(6 - n1.weekday()) % 7)
+    return _TZ[t] + (1 if (dst0 <= dd < dst1) and t != 'PHO' else 0)
+def tz_feat(t, venue, d, sched):
+    """|ωρες| αλλαγης ζωνης για την ομαδα t (ματς στο γηπεδο venue την d) αν το προηγουμενο ματς της ηταν ≤TZ_GAP μερες πριν· αλλιως 0."""
+    prev = [x for x in sched.get(t, ()) if x[0] < d]
+    if not prev or venue not in _TZ: return 0.0
+    pd_, ploc = max(prev)
+    gap = (datetime.date.fromisoformat(d) - datetime.date.fromisoformat(pd_)).days
+    if gap > TZ_GAP or not ploc or ploc not in _TZ: return 0.0
+    return float(abs(tzone(venue, d) - tzone(ploc, d)))
 def predict(st, h, a, b2h, b2a):
     E1, E2 = st['h_eng'], st['t_eng']
     if h not in E1['O'] or a not in E1['O']: return None
@@ -89,6 +111,20 @@ def main():
         for nmx in (g['home_team'], g['away_team']):
             c = code_of(nmx)
             if c: days.setdefault(c, set()).add(d)
+    # 20/10: προγραμμα ανα ομαδα (ημερα, γηπεδο) για την αλλαγη ζωνης ωρας — ESPN κανονικη περιοδος + Pinnacle (ουδετερο → χωρις γηπεδο)
+    sched = {}
+    try:
+        for g in json.load(open(F('nba_espn_games.json'), encoding='utf-8')).values():
+            if g.get('stype') != 2: continue
+            loc = None if g.get('neutral') else g['home']
+            for t in (g['home'], g['away']): sched.setdefault(t, set()).add((g['date'], loc))
+    except Exception as e: print('ζωνες ωρας: χωρις ESPN προγραμμα —', e)
+    for g in data:
+        try: d = us_date(g['commence_time'])
+        except Exception: continue
+        hh_, aa_ = code_of(g['home_team']), code_of(g['away_team'])
+        if hh_ and aa_:
+            for t in (hh_, aa_): sched.setdefault(t, set()).add((d, hh_))
     nomatch = []
     for g in data:
         try: ko = E._pdt(g['commence_time'])
@@ -101,13 +137,16 @@ def main():
         b2h, b2a = int(yd in days.get(h, ())), int(yd in days.get(a, ()))
         pr = predict(st, h, a, b2h, b2a)
         if pr is None: nomatch.append(f"{g['home_team']} - {g['away_team']} (χωρις rating)"); continue
-        m, T = pr; m0, T0 = m, T; dm = dtot = shadow = 0.0; LH = LA = []
+        m, T = pr
+        tzh, tza = tz_feat(h, h, d, sched), tz_feat(a, h, d, sched)        # 20/10: αλλαγη ζωνης ωρας με ≤2 μερες απο το προηγουμενο ματς
+        m += -TZ_K * (tzh - tza)
+        m0, T0 = m, T; dm = dtot = shadow = 0.0; LH = LA = []
         if AB is not None:
             try: dm, dtot, shadow, LH, LA = AB.adjust(h, a); m += dm; T += dtot
             except Exception as e: print('απουσιες σφαλμα', h, a, e)
         games[code] = dict(code=code, round=None, phase='RS', group=None, utc=ko.isoformat().replace('+00:00', 'Z'), home=g['home_team'], away=g['away_team'], hcode=h, acode=a,
                            margin=round(m, 2), total=round(T, 1), total_src='μοντελο', pts_h=round((T + m) / 2, 1), pts_a=round((T - m) / 2, 1),
-                           p_home=round(Phi(m / st['sig_m']), 3), played=False, version='nba1', venue='', b2b_h=b2h, b2b_a=b2a,
+                           p_home=round(Phi(m / st['sig_m']), 3), played=False, version='nba1', venue='', b2b_h=b2h, b2b_a=b2a, tz_h=tzh, tz_a=tza,
                            gno=max(st['gp'].get(h, 0), st['gp'].get(a, 0)), gp_h=st['gp'].get(h, 0), gp_a=st['gp'].get(a, 0),
                            margin_base=round(m0, 2), total_base=round(T0, 1), abs_dm=round(dm, 2), abs_dt=round(dtot, 2), abs_shadow=round(shadow, 2),
                            abs_h=[[p['name'], p['min'], int(p['fresh'])] for p in LH], abs_a=[[p['name'], p['min'], int(p['fresh'])] for p in LA])
