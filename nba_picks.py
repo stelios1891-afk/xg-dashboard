@@ -22,6 +22,7 @@ TOT_LOG = 'nba_totals_log.jsonl'    # 19/10 (Στελιος «τα συνολα 
 def _is_tot_msg(t):                 # μηνυματα κατασταστασης (bk_pick_status.track) που αφορουν συνολα → οχι Telegram
     ls = t.split('\n'); return len(ls) > 1 and ls[1].replace('μπηκε: ', '').startswith(('Over ', 'Under '))
 LATE_GP = 70
+MOVE_INJ = 1.5                      # 20/10: κινηση (δικαιη γραμμη, ποντοι) απο το ανοιγμα → στο νεο pick και η λιστα απουσιων
 SHADOW_MIN = 45                     # 19/10: σκιωδης κανονας συνολων — λεπτα πριν το τζαμπολ
 TOT_MIN, TOT_W = 0.08, 1.0          # NBA συνολα: μοντελο (με Φ3) μονο του, edge ≥8% — nba_fix_test: Οκτ-Δεκ +3.2% (3/5), ολη +1.9% (3/5), Κ2 ≈0
 TOT_MIN_LATE, TOT_W_LATE = 0.08, 1.0
@@ -162,8 +163,14 @@ def compute():
             e = p_ * od + pp - 1
             e0 = (pw0 * f0['oh'] + pp0 - 1) if side == 1 else (pl0 * f0['oa'] + pp0 - 1)
             if e >= HC_MIN and e0 >= HC_MIN and int(g.get('gno') or 0) < LATE_GP:
-                picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4),
-                                  proj_odds=round((p_ + (1 - p_ - pp)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L))
+                pk = dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4),
+                          proj_odds=round((p_ + (1 - p_ - pp)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L,
+                          first=dict(line=f0['line'], oh=f0['oh'], oa=f0['oa'], seen=f0.get('seen')))
+                try:                                   # 20/10 (Στελιος): κινηση αγορας απο το ανοιγμα (μονο ενδειξη)
+                    import nba_board; pk['move_note'], pk['move_pts'] = nba_board.move_note(pk, f0, pin, sm)
+                except Exception as e_:
+                    print('κινηση αγορας σφαλμα —', e_)
+                picks.append(pk)
         # ---- συνολο (6/10): μοντελο μονο του ≥8% ----
         tm = tot_mix(g, pin, st)
         tm0 = tot_mix(g, dict(tl=f0.get('tl'), to=f0.get('to'), tu=f0.get('tu')), st) if f0.get('tl') is not None else None
@@ -233,7 +240,17 @@ def line(p, prev=None):
         bet = f"{team} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"; why = f"μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f}"
     ch = f" (ηταν {prev:.2f})" if prev else ''
     return (f"🏀 NBA · {tm}\n{p['home']} - {p['away']}\n"
-            f"{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})")
+            f"{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})"
+            + (f"\n📈 {p['move_note']}" if p.get('move_note') and prev is None else ''))     # 20/10: κινηση αγορας απο το ανοιγμα
+
+def inj_block(p, P=None):
+    """20/10 (Στελιος): pick σε ματς με κινηση ≥1.5 π. απο το ανοιγμα → και η λιστα απουσιων των 2 ομαδων (εξηγει την κινηση;)."""
+    if p.get('mkt') != 'hcap' or p.get('move_pts') is None or abs(p['move_pts']) < MOVE_INJ: return ''
+    try:
+        import nba_board
+        return '\n🩹 Λιστα ESPN (κοστος αν λειψει · ✓ = ηδη στην προβλεψη):\n' + nba_board.inj_text(p['hcode'], p['acode'], p['home'], p['away'], P)
+    except Exception as e:
+        print('λιστα απουσιων σφαλμα —', e); return ''
 
 def steam_line(r):
     t = dt.datetime.fromisoformat(r['when']).replace(tzinfo=dt.timezone.utc)
@@ -303,7 +320,12 @@ def main(notify_tg=True):
     new_l = [p for p in new if not p.get('paper', True)]; chg_l = [(p, pr) for p, pr in changed if not p.get('paper', True)]   # 19/10: μονο τα live (χαντικαπ)
     if notify_tg and (new_l or chg_l):
         msg = []
-        if new_l: msg += [f'🏀 {len(new_l)} ΝΕΑ value picks NBA', ''] + [line(p) + '\n' for p in sorted(new_l, key=lambda x: x['when'])]
+        if new_l:
+            try:
+                import nba_board; P_ = nba_board.players()
+            except Exception:
+                P_ = None
+            msg += [f'🏀 {len(new_l)} ΝΕΑ value picks NBA', ''] + [line(p) + inj_block(p, P_) + '\n' for p in sorted(new_l, key=lambda x: x['when'])]
         if chg_l: msg += [f'🔄 {len(chg_l)} ΑΛΛΑΞΑΝ odds (NBA)'] + [line(p, pr) for p, pr in chg_l]
         try:
             import notify; notify.send('\n'.join(msg))

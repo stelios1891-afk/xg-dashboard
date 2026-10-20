@@ -209,6 +209,9 @@ def pick_card(p):
     pk = _h.escape(f"{p['lg']}|{p['home']}|{p['away']}|{p.get('mkt') or ''}|{str(p.get('bet') or side).split(' ')[0]}|{(p.get('when') or '')[:10]}", quote=True)   # 7/10: χωρις γραμμη (ιδια πλευρα = ιδιο pick)
     if p.get('first_note'):
         tags += f'<span class="tag" title="η γραμμη αλλαξε απο τοτε — ιδιο pick">{_h.escape(p["first_note"])}</span>'
+    if p.get('move_note'):                   # 20/10 (Στελιος): NBA — κινηση αγορας ανοιγμα → τωρα
+        _mp = p.get('move_pts') or 0
+        tags += f'<span class="tag{" lc" if abs(_mp) >= 1.5 else ""}" title="κινηση της αγορας (Pinnacle) απο την πρωτη γραμμη ως τωρα">📈 {_h.escape(p["move_note"])}</span>'
     _ok, _why = play_status(p)          # 12/10: ΞΕΚΑΘΑΡΟ σημα πρωτο στην καρτα
     badge = ('<span style="background:#123d27;color:#4ee28f;border:1px solid #2f9d5e;border-radius:6px;padding:1px 7px;'
              'font-weight:700;font-size:11px;margin-right:6px">✅ ΠΑΙΖΕΤΑΙ</span>') if _ok else             (f'<span style="background:#4a1518;color:#ff7b82;border:1px solid #b23a42;border-radius:6px;padding:1px 7px;'

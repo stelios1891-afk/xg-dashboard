@@ -1099,6 +1099,11 @@ def render_nba(league):
     with st.expander('Ratings ομαδων'):
         st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
         st.caption('Net = επιθεση − αμυνα (ποντοι/100 κατοχες) · Ρυθμος = κατοχες ±.')
+    try:                                     # 20/10 (Στελιος): βαση παικτων + «τι γινεται αν λειψει» (αμφιβολοι)
+        import nba_players_view
+        nba_players_view.render(proj)
+    except Exception as e:
+        st.warning(f'Παικτες & απουσιες: σφαλμα ({e})')
 
 
 def render_euroleague(league):
