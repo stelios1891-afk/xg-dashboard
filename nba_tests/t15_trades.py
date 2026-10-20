@@ -49,18 +49,25 @@ for (p, s), g in A2.groupby(['pid', 's']):
         old = [(dd, mm) for dd, mm, tt in zip(ds[:j], mins[:j], teams[:j]) if tt == t0]
         mm = float(np.mean([x[1] for x in old[-10:]])) if len(old) >= 5 else (prev_mpg.get((p, s - 1)) or 15.0)
         tau = max(np.datetime64(ds[j], 'D') - np.timedelta64(2, 'D'), np.datetime64(ds[j - 1], 'D') + np.timedelta64(1, 'D'))
-        EVTS.append((s, t0, tau, p, -1, min(mm, 36.0))); EVTS.append((s, t1, tau, p, +1, min(mm, 36.0)))
+        d_new = np.datetime64(ds[j], 'D')
+        # 20/10 ΔΙΟΡΘΩΣΗ (ελεγχος Dončić/Butler): οπως το live → ο παικτης που ΦΕΥΓΕΙ αφαιρειται απο το ντεμπουτο του στη νεα ομαδα
+        # (ως τοτε, αν λειπει, τον καλυπτει ηδη το συστημα απουσιων)· ο παικτης που ΕΡΧΕΤΑΙ πιστωνεται ΜΟΝΟ στα ματς που παιζει με τη νεα ομαδα
+        # (τραυματιας = «Out» στη λιστα, δεν μετρα). Πριν: και τα δυο απο τ = ντεμπουτο − 2 μερες → πιστωση τραυματιων/πριν το ντεμπουτο.
+        EVTS.append((s, t0, d_new, p, -1, min(mm, 36.0))); EVTS.append((s, t1, d_new, p, +1, min(mm, 36.0)))
 EVTS = [e for e in EVTS if e[0] in EV]
 # αριθμος ματς της ομαδας απο τ
 TG = collections.defaultdict(list)
 for i in np.argsort(dD, kind='stable'):
     TG[(SEAS_G[i], G.home.values[i])].append(i); TG[(SEAS_G[i], G.away.values[i])].append(i)
+PLAYED = set(zip(A2.pid, A2.team, A2.d.values.astype('datetime64[D]')))
 GIDX = collections.defaultdict(list)                        # i → [(sg, evt, n)]
 for e in EVTS:
     s, t, tau, p, sgn, mm = e; n = 0
     for i in TG.get((s, t), []):
         if dD[i] < tau: continue
-        n += 1; side = 1 if G.home.values[i] == t else -1
+        n += 1
+        if sgn > 0 and (p, t, dD[i]) not in PLAYED: continue      # εισερχομενος που δεν επαιξε (τραυματιας/πριν ερθει) → καμια πιστωση
+        side = 1 if G.home.values[i] == t else -1
         GIDX[i].append((side, sgn, value(p, s - 1), mm, n))
 def adj(alpha, rep, k):
     X = np.zeros(len(G))
