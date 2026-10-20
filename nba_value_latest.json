@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-10-19T23:54+00:00",
+ "scanned_at": "2026-10-20T00:00+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 2,
  "n_changed": 0,
  "picks": [
   {
@@ -28,6 +28,52 @@
    "model_line": 0.9,
    "mkt_line": -5.0,
    "hrs_birth": 47.9
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "New Orleans Pelicans",
+   "away": "Indiana Pacers",
+   "hcode": "NOP",
+   "acode": "IND",
+   "code": "pin1637443877",
+   "round": 1,
+   "group": null,
+   "when": "2026-10-22T00:00",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": 3.5,
+   "odds": 1.971,
+   "edge": 0.2406,
+   "proj_odds": 1.59,
+   "model_line": -1.0,
+   "mkt_line": 3.5,
+   "hrs_birth": 48.0
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Memphis Grizzlies",
+   "away": "Utah Jazz",
+   "hcode": "MEM",
+   "acode": "UTA",
+   "code": "pin1637443983",
+   "round": 1,
+   "group": null,
+   "when": "2026-10-22T00:00",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": -1,
+   "hcap": 1.0,
+   "odds": 1.952,
+   "edge": 0.1684,
+   "proj_odds": 1.66,
+   "model_line": 2.4,
+   "mkt_line": -1.0,
+   "hrs_birth": 48.0
   }
  ]
 }
