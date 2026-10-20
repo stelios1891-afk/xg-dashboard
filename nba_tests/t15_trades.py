@@ -137,4 +137,70 @@ for lab, lo, hi, thr in (('ματς 1-5, ενισχυση ≥0.5', 1, 5, .5), ('
     if not len(res): continue
     pos = sum(1 for Y in set(sea) if res[sea == Y].sum() > 0)
     P(f'  {lab:30s} n {len(res):4d} · καλυψη {100 * (res > 0).sum() / max((res != 0).sum(), 1):4.1f}% · ROI {100 * res.mean():+5.1f}% ({pos}/{len(set(sea))})')
+# ---------- (Δ) 20/10 Στελιος: «να ξαναμετραμε τη δυναμη οπως στην αφετηρια: φετινα δεδομενα + οποιος ηρθε − οποιος εφυγε» ----------
+# Αξια ροστερ (ιδια με nba_live_roster): Σ 5·λεπτα_i/Σλεπτα · αξια_i. Πριν = οσοι επαιξαν στα 10 τελευταια ματς της ομαδας πριν το τ (φετινα λεπτα,
+# αξια περσινη, αγνωστοι −1)· Μετα = Πριν − οσοι εφυγαν + οσοι ηρθαν (με τα λεπτα της παλιας τους ομαδας). Δ = Μετα − Πριν → στη δυναμη απο το τ.
+TEAMG = collections.defaultdict(list)                       # (s, team) → [(d, {pid: min})]
+for (t, s_, d), x in A2.groupby(['team', 's', 'd']): TEAMG[(int(s_), t)].append((np.datetime64(d, 'D'), dict(zip(x.pid, x.MIN))))
+for k in TEAMG: TEAMG[k].sort(key=lambda z: z[0])
+EVB = collections.defaultdict(lambda: {'in': {}, 'out': set()})   # (s, team, tau) → παικτες
+for s_, t, tau, p, sgn, mm in EVTS:
+    if sgn > 0: EVB[(s_, t, tau)]['in'][p] = mm
+    else: EVB[(s_, t, tau)]['out'].add(p)
+def tvw(d):
+    if not d: return 0.0
+    tot = sum(d.values()); return sum(5 * m / tot * value(p, SS) for p, m in d.items())
+DELTA = []                                                  # (s, team, tau, Δ)
+for (s_, t, tau), e in EVB.items():
+    prev = [z for z in TEAMG.get((s_, t), []) if z[0] < tau][-10:]
+    if not prev: continue
+    mins = collections.defaultdict(list)
+    for _, dct in prev:
+        for p, m in dct.items(): mins[p].append(m)
+    before = {p: float(np.sum(v)) / len(prev) for p, v in mins.items()}       # μεσα λεπτα/ματς στα 10 (0 οταν δεν επαιξε)
+    after = {p: m for p, m in before.items() if p not in e['out']}
+    for p, m in e['in'].items(): after[p] = m
+    SS = s_
+    DELTA.append((s_, t, tau, tvw(after) - tvw(before)))
+GI2 = collections.defaultdict(list)
+for s_, t, tau, dlt in DELTA:
+    n = 0
+    for i in TG.get((s_, t), []):
+        if dD[i] < tau: continue
+        n += 1; GI2[i].append((1 if G.home.values[i] == t else -1, dlt, n))
+def adj2(alpha, k):
+    X = np.zeros(len(G))
+    for i, lst in GI2.items():
+        for side, dlt, n in lst:
+            X[i] += side * alpha * dlt * (1.0 if k is None else k / (k + n - 1))
+    return X
+dl = np.array([abs(x[3]) for x in DELTA])
+P(''); P(f'=== (Δ) ΞΑΝΑΜΕΤΡΗΜΑ ΡΟΣΤΕΡ στη μεταγραφη (οπως η αφετηρια) · {len(DELTA)} αλλαγες ομαδας · μεσο |Δ| {dl.mean():.2f} π. (90%: {np.percentile(dl, 90):.2f}) ===')
+P(f'{"εκδοχη":26s} | RMSE ολα | καλ. | RMSE επηρ. (n) | ROI ολη ≥8%             | ROI Φεβ-Απρ ≥8%          | ROI Οκτ-Δεκ')
+line('ΒΑΣΗ (live, καμια)', BASE)
+GRID2 = list(itertools.product((0.5, 1.0, 1.5), (None, 32, 16)))
+VV2 = {}
+for a, k in GRID2:
+    VV2[(a, k)] = BASE + adj2(a, k); line(f'ροστερ β {a:<4g} k {k if k else "∞"}', VV2[(a, k)])
+pk2 = {Y: min(GRID2, key=lambda g: rm(VV2[g], [x for x in EV if x != Y])) for Y in EV}
+vL2 = BASE.copy()
+for Y in EV: m = SEAS_G == Y; vL2[m] = VV2[pk2[Y]][m]
+P(f'LOSO επιλογες: {pk2}')
+r2b, r3b = line('LOSO ροστερ', vL2)
+c1 = sum(rm(vL2, [Y]) < base_s[Y] - 1e-6 for Y in EV) >= 4; c2 = r2b - rb_all > -1.5; c3 = r3b - rb_fa > -1.5
+P(f'ΚΡΙΤΗΡΙΑ (ιδια): (1) RMSE ≥4/5 {"✓" if c1 else "✗"} · (2) ολη {r2b - rb_all:+.1f}pp {"✓" if c2 else "✗"} · (3) Φεβ-Απρ {r3b - rb_fa:+.1f}pp {"✓" if c3 else "✗"} '
+  f'→ {"ΠΕΡΝΑΕΙ" if c1 and c2 and c3 else "ΔΕΝ ΠΕΡΝΑΕΙ"}')
+P('  ανα σεζον RMSE ΒΑΣΗ/LOSO ροστερ: ' + ' · '.join(f'{Y}: {base_s[Y]:.4f}/{rm(vL2, [Y]):.4f}' for Y in EV))
+# ---------- (Ε) 20/10 Στελιος: «δειξε μονο απο οταν μετρανε οι αλλαγες και μετα» — ΜΟΝΟ ματς μετα απο μεταγραφη ----------
+X1 = adj(0.75, -2.0, None); X2 = adj2(0.5, 16)
+M_ANY = np.zeros(len(G), bool); M_ANY[list(GIDX)] = True
+P(''); P('=== (Ε) ΜΟΝΟ ΤΑ ΜΑΤΣ ΜΕΤΑ ΑΠΟ ΜΕΤΑΓΡΑΦΗ (απο τη μερα που μετραει η αλλαγη) ===')
+for lab, M in (('ολα τα επηρεασμενα ματς', M_ANY), ('αλλαγη ≥0.5 π. (φορμουλα)', M_ANY & (np.abs(X1) >= .5)), ('αλλαγη ≥1.5 π. (φορμουλα)', M_ANY & (np.abs(X1) >= 1.5)),
+               ('ματς 1-15 μετα, αλλαγη ≥0.5', M_ANY & (np.abs(X1) >= .5) & np.array([bool(GIDX.get(i)) and min(x[4] for x in GIDX[i]) <= 15 for i in range(len(G))]))):
+    ne = int((M & np.isin(SEAS_G, EV)).sum())
+    P(f'  -- {lab} ({ne} ματς) --')
+    for vl, v in (('σημερα (καμια διορθωση)', BASE), ('φορμουλα απουσιας ×0.75', BASE + X1), ('ξαναμετρημα ροστερ ×0.5', BASE + X2)):
+        n_, r_, u_, ps_, _ = roi_od(v, msk=M)
+        bet = sum(rm(v, [Y], M) < rm(BASE, [Y], M) - 1e-6 for Y in EV)
+        P(f'     {vl:26s} λαθος {rm(v, EV, M):6.3f} (καλυτερο σε {bet}/5 σεζον) · picks ≥8% {r_:+6.1f}% ({n_:4d}, {u_:+6.1f}μ, {sum(ps_[Y] > 0 for Y in EV)}/5)')
 open(os.path.join(SC, 't15_trades_out.txt'), 'w', encoding='utf-8').write('\n'.join(out))
