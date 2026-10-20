@@ -19,10 +19,14 @@ for lg in LG:
             FM[str(k)] = dict(lg=lg, sea=sea, date=d, hid=v['home']['id'], aid=v['away']['id'])
 SQ = json.load(open('core7_squads.json', encoding='utf-8'))
 PM = json.load(open('player_matches.json', encoding='utf-8'))
-VAL = {}
-for f in ('core7_player_values.json', 'euro_player_values.json'):
+VAL, AGE = {}, {}
+for f, ref in (('core7_player_values.json', dt.datetime(2026, 9, 20)), ('euro_player_values.json', dt.datetime(2026, 10, 10))):
     for k, v in json.load(open(f, encoding='utf-8')).items():
         if v.get('hist') and str(k) not in VAL: VAL[str(k)] = [(h[0], h[1]) for h in v['hist'] if h[1]]
+        if v.get('age') and str(k) not in AGE: AGE[str(k)] = (float(v['age']), ref)      # ηλικια την ημερα του κατεβασματος
+def age_at(pid, d):
+    a = AGE.get(pid)
+    return a[0] - (a[1] - d).days / 365.25 if a else None
 ORDER = sorted([k for k in FM if k in SQ and SQ[k].get('h') and SQ[k].get('a')], key=lambda k: FM[k]['date'])
 PL_POS = {}
 for k in ORDER:
@@ -60,6 +64,10 @@ for k in ORDER:
         known = [x for x in lv if x is not None]; med = float(np.median(known)) if known else np.nan
         lv = [x if x is not None else med for x in lv]
         feats['Vlog'] = lv
+        ag = [age_at(p, m['date']) for p in st]; kn = [x for x in ag if x is not None]; amu = float(np.mean(kn)) if kn else np.nan
+        ag = [x if x is not None else amu for x in ag]
+        feats['Age'] = ag                                                   # 21/10: ηλικια (για διορθωση της αξιας)
+        feats['Age2'] = [(x - 27.0) ** 2 if np.isfinite(x) else np.nan for x in ag]
         sv = SQUAD_VAL[(tid, m['sea'])]; smu = float(np.mean(list(sv.values()))) if len(sv) >= 11 else np.nan
         feats['Vrel'] = [x - smu if np.isfinite(smu) else np.nan for x in lv]
         for me, xs in feats.items():
