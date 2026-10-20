@@ -177,6 +177,7 @@ for k in ORDER:
                      A_full=A(full), A_avail=A(avail), A_avail_d=A(avail_d), A_act=A(act),
                      V_full=V(full), V_avail=V(avail), V_avail_d=V(avail_d), V_act=V(act),
                      n_fresh=len(fresh), A_fullr=A(fullr), V_fullr=V(fullr),
+                     full_ids='|'.join(full), avail_ids='|'.join(avail), availd_ids='|'.join(avail_d),   # 21/10: λιστες για τη φορμουλα πριν το ματς
                      out_in_xi=len(set(full) - set(avail)), act_vs_full=len(set(full) - set(act)), act_vs_avail=len(set(avail) - set(act)))
             for pos, nm in ((0, 'gk'), (1, 'def'), (2, 'mid'), (3, 'att')):
                 r[f'dA_{nm}'] = byp(avail, pos) - byp(full, pos)
