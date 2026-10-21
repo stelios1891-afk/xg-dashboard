@@ -16,6 +16,15 @@ from el_picks import cover
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 HC_MIN, ODDS_DELTA = 0.08, 0.05
+HC_MIN_JF = 0.12                    # 21/10/2026 (Στελιος «περνα το 1, κρατα 8% για ολη τη σεζον»): ΙΑΝ-ΦΕΒ κατωφλι χαντικαπ 12% (t30 Τ9: LOSO Α +25.5μ 4/5,
+                                    #   Β +16.3μ 5/5· Ιαν-Φεβ +0.6 → +6.1% στο ανοιγμα· ζωνη 8-10% αρνητικη, Φεβ −20%)· οι αλλοι μηνες 8%
+def hc_min(g):
+    """κατωφλι χαντικαπ για το ματς: 12% Ιανουαριο-Φεβρουαριο (ημερομηνια ΗΠΑ), αλλιως 8%"""
+    try:
+        u = str((g or {}).get('utc') or (g or {}).get('when') or '')
+        mon = (dt.datetime.fromisoformat(u.replace('Z', '+00:00')[:19]) - dt.timedelta(hours=5)).month if u else 0
+    except Exception: mon = 0
+    return HC_MIN_JF if mon in (1, 2) else HC_MIN
 PAPER_HCAP = False  # 19/10: ΧΑΝΤΙΚΑΠ LIVE (Στελιος «τα χαντικαπς τα θελουμε live») — ανοιγμα +7.1% Οκτ-Δεκ (B2B+απουσιες), αγων 1-10 το δυνατοτερο
 PAPER_TOT = True    # ΣΥΝΟΛΑ μενουν ΚΑΤΑΓΡΑΦΗ (totals_test 19/10: κερδος μονο 2021-22, τελευταιες 2 σεζον αρνητικα)
 TOT_LOG = 'nba_totals_log.jsonl'    # 19/10 (Στελιος «τα συνολα τα κραταμε, τα αναλυουμε, χωρις να εμφανιζονται»): ΚΡΥΦΟ αρχειο, εκτος ημερολογιου/οθονης/Telegram
@@ -219,7 +228,7 @@ def compute():
         for side, p_, od, hc in ((1, pw, oh, L), (-1, pl, oa, -L)):
             e = p_ * od + pp - 1
             e0 = (pw0 * f0['oh'] + pp0 - 1) if side == 1 else (pl0 * f0['oa'] + pp0 - 1)
-            if e >= HC_MIN and e0 >= HC_MIN and gnum(g) <= LATE_GP:
+            if e >= hc_min(g) and e0 >= hc_min(g) and gnum(g) <= LATE_GP:
                 if gnum(g) >= MOTIV_FROM:
                     if MG is None: MG = motiv_groups()
                     if motiv_skip(g, side, MG, now): continue
@@ -366,7 +375,7 @@ def main(notify_tg=True):
         tm_ = tot_mix(g_, (odds_.get(c_) or {}).get('pin') or {}, st_)
         if tm_: games_[c_] = dict(g_, total=tm_[0])
     drops, backs = bps.track(state, picks, F('nba_clv_bets.jsonl'), games_, odds_,
-                             lambda m: sm_ if m == 'hcap' else st_, lambda m, g=None: HC_MIN if m == 'hcap' else tot_rule(g)[1], cover, 'NBA', now)
+                             lambda m: sm_ if m == 'hcap' else st_, lambda m, g=None: hc_min(g) if m == 'hcap' else tot_rule(g)[1], cover, 'NBA', now)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
     if new:
         with open(F('nba_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:
