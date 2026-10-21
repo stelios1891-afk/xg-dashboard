@@ -324,12 +324,16 @@ def fetch_official_xi(fid):
     # 11αδα-placeholder) ΜΕΡΕΣ πριν το ματς, και 'predicted' προβλεψεις. ΜΟΝΟ επιβεβαιωμενη.
     if (lu.get('lineupType') or '').lower() in ('laststarting11', 'predicted'):
         return None
-    out = {}
+    out, names = {}, {}
     for side, k in (('homeTeam', 'home'), ('awayTeam', 'away')):
         t = lu.get(side) or {}
         ids = [int(p['id']) for p in (t.get('starters') or []) if p.get('id')]
         if len(ids) == 11:
             out[k] = ids
+        for grp in ('starters', 'subs'):
+            for p in (t.get(grp) or []):
+                if p.get('id'): names[str(p['id'])] = p.get('name')
+    if out: out['names'] = names          # 21/10: ονοματα για παικτες εκτος βασης (νεο layout)
     return out or None
 
 
@@ -439,3 +443,88 @@ def scenarios_html(home, away, rows, line, oh, oa, ou, when=''):
     return (css + '<h5>Σεναρια ενδεκαδας → edges στις τιμες της αγορας</h5><table>' + head + body + '</table>'
             f'<div class="note">edge = ιδιος τυπος με τον scanner (κρατηση 3%) · αγορα Pinnacle {_h.escape(when)} · πρασινο εντονο ≥10% · '
             'Δ = 11αδα vs τη ΣΥΝΗΘΙΣΜΕΝΗ (λεπτα 10 τελευταιων ματς) · χαντικαπ: αξια + εμπιστοσυνη προπονητη · συνολα: εμπιστοσυνη επιθ./αμυνας + xGI.</div>')
+
+
+# ======================================================================================================================
+# 21/10/2026 — ΝΕΟ LAYOUT (Στελιος «περνα το νεο layout»): ΛΙΣΤΑ αντι για γηπεδακι · σαφης ετικετα ποια 11αδα βλεπεις
+# ======================================================================================================================
+POS_TXT = {0: 'ΤΕΡ', 1: 'ΑΜΥ', 2: 'ΜΕΣ', 3: 'ΕΠΙ'}
+
+
+def gr_time(utc):
+    """«Τρι 21/10 22:00» σε ωρα Ελλαδας (Europe/Athens)."""
+    import datetime as _dt
+    if not utc: return ''
+    try:
+        d = _dt.datetime.fromisoformat(str(utc).replace('Z', '+00:00').replace(' ', 'T')[:19])
+        if d.tzinfo is None: d = d.replace(tzinfo=_dt.timezone.utc)
+        try:
+            from zoneinfo import ZoneInfo
+            d = d.astimezone(ZoneInfo('Europe/Athens'))
+        except Exception:
+            d = d + _dt.timedelta(hours=3)
+        return ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'][d.weekday()] + d.strftime(' %d/%m %H:%M').replace(' 0', ' ')
+    except Exception:
+        return str(utc)[:16]
+
+
+def squad(F, lab_team, tid, extra_names=None):
+    """{pid(str): dict(nm, pos, trust, val €εκ., xgi)} — ροστερ Lineup Lab + οσοι εχουν δεδομενα φορμουλας."""
+    import math
+    P = ((F or {}).get('teams', {}).get(str(tid)) or {}).get('players', {})
+    out = {}
+    for p in (lab_team or {}).get('players', []):
+        out[str(p['id'])] = dict(nm=p.get('nm'), pos=p.get('pos', 2))
+    for pid in P:
+        out.setdefault(pid, dict(nm=None, pos=None))
+    for pid, d in out.items():
+        r = P.get(pid)
+        if r:
+            d['pos'] = r[0] if d['pos'] is None else d['pos']
+            d['trust'] = r[1]; d['val'] = math.exp(r[2]) / 1e6 if r[2] else None; d['xgi'] = r[3]
+        else:
+            d.setdefault('trust', None); d.setdefault('val', None); d.setdefault('xgi', None)
+        if not d['nm']: d['nm'] = (extra_names or {}).get(pid) or f'#{pid}'
+        if d['pos'] is None: d['pos'] = 2
+    for pid, nm in (extra_names or {}).items():
+        if pid not in out: out[pid] = dict(nm=nm, pos=2, trust=None, val=None, xgi=None)
+    return out
+
+
+def banner_html(kind, title, detail):
+    col = dict(usual='#8fa3c8', pred='#b17af3', off='#34d17a', mine='#f5b942', edit='#f5b942').get(kind, '#8fa3c8')
+    return (f'<div style="border:2px solid {col};border-radius:10px;padding:8px 14px;margin:6px 0 10px;background:#0d1426;'
+            f'font-family:DM Sans,sans-serif"><span style="color:#6b7fa3;font-size:11px;letter-spacing:1px">ΒΛΕΠΕΙΣ ΤΩΡΑ</span><br>'
+            f'<span style="color:{col};font-size:17px;font-weight:700">{_h.escape(title)}</span>'
+            f'<span style="color:#c9d4ea;font-size:12px"> · {_h.escape(detail)}</span></div>')
+
+
+def xi_list_html(team_name, ids, SQ, usual, d):
+    """Λιστα 11 (θεση · ονομα · εμπιστοσυνη · αξια · xGI) με ● βασικος της συνηθισμενης / ▲ αλλαγη + ποιοι λειπουν + Δ ομαδας."""
+    U = set(str(u) for u in usual)
+    ids = sorted([str(i) for i in ids], key=lambda p: (SQ.get(p, {}).get('pos', 2), -(SQ.get(p, {}).get('trust') or 0)))
+    def f(v, fmt, dflt='—'): return fmt.format(v) if v is not None else dflt
+    rows = ''
+    for p in ids:
+        q = SQ.get(p, dict(nm=f'#{p}', pos=2, trust=None, val=None, xgi=None)); new = p not in U
+        mk = '<span style="color:#f5b942">▲</span>' if new else '<span style="color:#34d17a">●</span>'
+        rows += (f'<tr style="{"background:#2a2410" if new else ""}"><td>{mk}</td><td style="color:#6b7fa3">{POS_TXT.get(q["pos"], "")}</td>'
+                 f'<td style="color:#e6edf8">{_h.escape(str(q["nm"]))}</td><td class=n>{f(q.get("trust") and 100 * q["trust"], "{:.0f}%")}</td>'
+                 f'<td class=n>{f(q.get("val"), "€{:.0f}εκ")}</td><td class=n>{f(q.get("xgi"), "{:.2f}")}</td></tr>')
+    miss = [str(u) for u in usual if str(u) not in set(ids)]
+    mtxt = ''
+    if miss:
+        mtxt = ('<div style="color:#e05563;font-size:12px;margin-top:6px">✖ ΛΕΙΠΟΥΝ απο τη συνηθισμενη: ' +
+                ', '.join(f'{_h.escape(str(SQ.get(u, {}).get("nm") or u))} ({f(SQ.get(u, {}).get("trust") and 100 * SQ[u]["trust"], "{:.0f}%")})' for u in miss) + '</div>')
+    else:
+        mtxt = '<div style="color:#34d17a;font-size:12px;margin-top:6px">✔ ιδια με τη συνηθισμενη 11αδα</div>'
+    gd = (d or {}).get('gd_part', 0.0)
+    col = '#34d17a' if gd > 0.015 else ('#e05563' if gd < -0.015 else '#8fa3c8')
+    return ('<div style="font-family:DM Sans,sans-serif;background:#111827;border:1px solid #1e2d47;border-radius:10px;padding:10px 12px">'
+            f'<div style="display:flex;justify-content:space-between"><span style="color:#e6edf8;font-weight:700">{_h.escape(team_name)}</span>'
+            f'<span style="color:{col};font-family:JetBrains Mono,monospace;font-weight:700">Δ {gd:+.3f} γκολ</span></div>'
+            '<style>.xl td{padding:2px 6px;font-size:13px;border-bottom:1px solid #1a2540}.xl .n{text-align:right;font-family:JetBrains Mono,monospace;color:#c9d4ea}'
+            '.xl th{font-size:10px;color:#6b7fa3;text-align:right;padding:2px 6px}</style>'
+            '<table class=xl style="width:100%;border-collapse:collapse;margin-top:4px"><tr><th></th><th style="text-align:left">θεση</th>'
+            '<th style="text-align:left">παικτης</th><th title="ποσα λεπτα του δινει ο προπονητης οταν ειναι διαθεσιμος (10 ματς)">εμπιστ.</th>'
+            '<th>αξια</th><th title="xG+xA ανα 90′">xGI</th></tr>' + rows + '</table>' + mtxt + '</div>')

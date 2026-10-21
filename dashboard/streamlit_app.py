@@ -854,104 +854,190 @@ def render_lineup(league):
     saved = lv.load_scenarios().get(base_key) or {}
     sv_h, sv_a = saved.get('home'), saved.get('away')
     keep = st.session_state.pop(f'll_keep_{base_key}', {})
-    flist = list(lv.FORMATIONS)
-    fc = st.columns(2)
-    with fc[0]:
-        f_h = st.selectbox(f"Συστημα — {m['home']}", flist,
-                           index=flist.index(sv_h['f']) if sv_h and sv_h.get('f') in flist else 0,
-                           key=f"llf_h_{m['home_id']}")
-    with fc[1]:
-        f_a = st.selectbox(f"Συστημα — {m['away']}", flist,
-                           index=flist.index(sv_a['f']) if sv_a and sv_a.get('f') in flist else 0,
-                           key=f"llf_a_{m['away_id']}")
-    if 'home' in keep:
-        xi_h = keep['home']
-    elif sv_h and sv_h.get('f') == f_h:
-        xi_h = sv_h['xi']
-    elif F and lv.FORMATIONS[f_h] is None and (F['teams'].get(str(m['home_id'])) or {}).get('usual'):
-        xi_h = lv.fill_xi(th, [int(p) for p in F['teams'][str(m['home_id'])]['usual']])[0]      # 21/10: αρχη = η ΣΥΝΗΘΙΣΜΕΝΗ 11αδα
-    else:
-        xi_h = lv.default_xi(th, lv.FORMATIONS[f_h])
-    if 'away' in keep:
-        xi_a = keep['away']
-    elif sv_a and sv_a.get('f') == f_a:
-        xi_a = sv_a['xi']
-    elif F and lv.FORMATIONS[f_a] is None and (F['teams'].get(str(m['away_id'])) or {}).get('usual'):
-        xi_a = lv.fill_xi(ta, [int(p) for p in F['teams'][str(m['away_id'])]['usual']])[0]
-    else:
-        xi_a = lv.default_xi(ta, lv.FORMATIONS[f_a])
-    nonce = st.session_state.get(f'll_nonce_{base_key}', 0)
-    mkey = f"{base_key}_{f_h}_{f_a}_{nonce}"
     prj = lv.load_projected(m['home_id'], m['away_id'])
-    pc = st.columns([2.4, 4.6])
-    if pc[0].button('📋 Load projected XI', key=f'll_prj_{base_key}', disabled=prj is None,
-                    help='Οι προβλεπομενες 11αδες δημοσιογραφων (predicted11) — κατεβαινουν αυτοματα καθε πρωι'):
-        xh, okh = lv.fill_xi(th, prj.get('home') or [])
-        xa, oka = lv.fill_xi(ta, prj.get('away') or [])
-        lv.save_side(base_key, 'home', xh, f_h)
-        lv.save_side(base_key, 'away', xa, f_a)
-        st.session_state[f'll_nonce_{base_key}'] = nonce + 1
-        st.toast(f'Projected 11αδες: ταιριασαν {okh}/11 + {oka}/11'
-                 + ('' if okh == 11 and oka == 11 else ' (οι υπολοιποι απο την αναμενομενη)'))
-        st.rerun()
-    if prj is None:
-        pc[1].caption('projected: δεν υπαρχει αποθηκευμενη προβλεψη γι αυτο το ματς '
-                      '(καλυπτονται LaLiga + EPL + SerieA + Ligue1 · ανανεωση καθε πρωι ~08:00, Παρασκευη ανα 2ωρο)')
+    if F and F['teams'].get(str(m['home_id'])) and F['teams'].get(str(m['away_id'])):
+        # ---- 21/10/2026 ΝΕΟ LAYOUT: λιστα + ετικετα «ΒΛΕΠΕΙΣ ΤΩΡΑ» + κουμπια ενος κλικ (Στελιος «περνα το νεο layout») ----
+        U_h = [int(p) for p in F['teams'][str(m['home_id'])]['usual']]; U_a = [int(p) for p in F['teams'][str(m['away_id'])]['usual']]
+        try:
+            _ko = datetime.datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00'))
+            if _ko.tzinfo is None: _ko = _ko.replace(tzinfo=datetime.timezone.utc)
+            _kom = (_ko - datetime.datetime.now(datetime.timezone.utc)).total_seconds() / 60
+        except Exception:
+            _kom = 9999
+        off = _official(m['fid']) if (m.get('fid') and -120 <= _kom <= 150) else None
+        if off and not (off.get('home') and off.get('away')): off = None
+        kx, ks = f'll_xi_{base_key}', f'll_src_{base_key}'
+        def _set(kind, h, a_, title, detail):
+            st.session_state[kx] = {'home': [int(i) for i in h], 'away': [int(i) for i in a_]}
+            st.session_state[ks] = dict(kind=kind, title=title, detail=detail, base=title, n=0)
+        def _usual_args():
+            return ('usual', U_h, U_a, 'ΣΥΝΗΘΙΣΜΕΝΗ 11αδα',
+                    'οι 11 με τα περισσοτερα λεπτα στα 10 τελευταια ματς πρωταθληματος (= το μοντελο χωρις διορθωση)')
+        def _pred_args():
+            return ('pred', prj['home'], prj['away'], 'ΠΡΟΒΛΕΠΟΜΕΝΗ των ειδικων',
+                    f"{prj.get('src') or 'predicted11'} · ενημερωση {lv.gr_time(prj.get('ts'))} ωρα Ελλαδας")
+        def _off_args():
+            return ('off', off['home'], off['away'], 'ΕΠΙΣΗΜΗ 11αδα', 'ανακοινωθηκε (FotMob) — αυτη θα παιξει')
+        def _mine_args():
+            return ('mine', sv_h['xi'] if sv_h else U_h, sv_a['xi'] if sv_a else U_a, 'ΤΟ ΔΙΚΟ ΣΟΥ σεναριο',
+                    f"αποθηκευμενο {lv.gr_time((sv_h or sv_a or {}).get('saved'))}")
+        if kx not in st.session_state:          # αρχη: ΕΠΙΣΗΜΗ αν βγηκε · αλλιως το δικο σου (αν υπαρχει) · αλλιως η συνηθισμενη
+            if off: _set(*_off_args())
+            elif sv_h or sv_a: _set(*_mine_args())
+            else: _set(*_usual_args())
+        bc = st.columns(4)
+        if bc[0].button('📊 Συνηθισμενη', key=f'llb_u_{base_key}', use_container_width=True):
+            _set(*_usual_args()); st.rerun()
+        if bc[1].button('🔮 Προβλεπομενη', key=f'llb_p_{base_key}', use_container_width=True,
+                        disabled=not (prj and prj.get('home') and prj.get('away')),
+                        help='Οι προβλεπομενες 11αδες των ειδικων (predicted11 / ligainsider / fantasy-coach) — κατεβαινουν καθε πρωι'):
+            _set(*_pred_args()); st.rerun()
+        if bc[2].button('⚡ Επισημη', key=f'llb_o_{base_key}', use_container_width=True, disabled=off is None,
+                        help='Βγαινει ~60′ πριν τη σεντρα (FotMob)'):
+            _set(*_off_args()); st.rerun()
+        if bc[3].button('💾 Το δικο μου', key=f'llb_m_{base_key}', use_container_width=True, disabled=not (sv_h or sv_a)):
+            _set(*_mine_args()); st.rerun()
+        av = ['📊 συνηθισμενη: παντα']
+        av.append(f"🔮 προβλεπομενη: {lv.gr_time(prj.get('ts'))}" if prj and prj.get('home')
+                  else '🔮 προβλεπομενη: δεν υπαρχει ακομα (EPL/LaLiga/SerieA/Ligue1, καθε πρωι)')
+        av.append('⚡ επισημη: ΒΓΗΚΕ' if off else f"⚡ επισημη: οχι ακομα (βγαινει ~60′ πριν τη σεντρα, {lv.gr_time(m['utc'])})")
+        st.caption(' · '.join(av) + (f" · [FotMob](https://www.fotmob.com/match/{m['fid']})" if m.get('fid') else ''))
+        cur = st.session_state[kx]; src = st.session_state[ks]
+        SQh = lv.squad(F, th, m['home_id'], (off or {}).get('names')); SQa = lv.squad(F, ta, m['away_id'], (off or {}).get('names'))
+        if src.get('n'):
+            st.markdown(lv.banner_html('edit', f"{src['base']} + {src['n']} δικ{'ες σου αλλαγες' if src['n'] > 1 else 'η σου αλλαγη'}",
+                                       'πατα «💾 Αποθηκευσε» για να την κρατησεις'), unsafe_allow_html=True)
+        else:
+            st.markdown(lv.banner_html(src['kind'], src['title'], src['detail']), unsafe_allow_html=True)
+        sel_h, sel_a = cur['home'], cur['away']
+        dh_ = lv.f_delta(F, m['home_id'], sel_h); da_ = lv.f_delta(F, m['away_id'], sel_a)
+        cc = st.columns(2)
+        for col, side, nm, SQ, U, d_ in ((cc[0], 'home', m['home'], SQh, U_h, dh_), (cc[1], 'away', m['away'], SQa, U_a, da_)):
+            with col:
+                st.markdown(lv.xi_list_html(nm, cur[side], SQ, U, d_), unsafe_allow_html=True)
+                _ord = lambda p, SQ=SQ: ((SQ.get(p) or {}).get('pos', 2), -((SQ.get(p) or {}).get('trust') or 0))
+                ins = sorted([str(i) for i in cur[side]], key=_ord)
+                def _plab(p, SQ=SQ):
+                    q = SQ.get(p) or dict(nm=p, pos=2)
+                    return f"{lv.POS_TXT.get(q['pos'], '')} · {q['nm']}" + (f" · {100 * q['trust']:.0f}%" if q.get('trust') else '')
+                s1, s2 = st.columns(2)
+                o_ = s1.selectbox('Βγαινει', ins, format_func=_plab, key=f'llo_{side}_{base_key}_{abs(hash(tuple(ins))) % 10 ** 8}')
+                _po = (SQ.get(o_) or {}).get('pos', 2)                      # πρωτα οι παικτες της ΙΔΙΑΣ θεσης
+                outs = sorted([p for p in SQ if p not in ins], key=lambda p, SQ=SQ: (SQ[p]['pos'] != _po,) + _ord(p))
+                i_ = s2.selectbox('Μπαινει', outs, format_func=_plab, key=f'lli_{side}_{base_key}_{o_}_{abs(hash(tuple(ins))) % 10 ** 8}')
+                if st.button('🔁 Κανε την αλλαγη', key=f'llsw_{side}_{base_key}', use_container_width=True) and o_ in ins and i_ and i_ not in ins:
+                    cur[side] = [int(i_) if str(x) == o_ else int(x) for x in cur[side]]
+                    st.session_state[kx] = cur; src['n'] = src.get('n', 0) + 1; st.session_state[ks] = src
+                    st.rerun()
+        sc_ = st.columns([1, 1, 3])
+        if sc_[0].button('💾 Αποθηκευσε', key=f'llsave_{base_key}', use_container_width=True,
+                         help='Κραταει αυτη την 11αδα ως «Το δικο μου» (14 μερες)'):
+            lv.save_side(base_key, 'home', sel_h, 'λιστα'); lv.save_side(base_key, 'away', sel_a, 'λιστα')
+            st.session_state[ks] = dict(kind='mine', title='ΤΟ ΔΙΚΟ ΣΟΥ σεναριο', detail='μολις αποθηκευτηκε', base='ΤΟ ΔΙΚΟ ΣΟΥ σεναριο', n=0)
+            st.toast('Αποθηκευτηκε ως «Το δικο μου».'); st.rerun()
+        if (sv_h or sv_a) and sc_[1].button('🗑 Σβησε το δικο μου', key=f'lldel_{base_key}', use_container_width=True):
+            lv.delete_side(base_key, 'home'); lv.delete_side(base_key, 'away'); st.toast('Σβηστηκε.'); st.rerun()
+        sc_[2].caption('● βασικος της συνηθισμενης · ▲ αλλαγη (δεν ειναι στη συνηθισμενη) · ✖ λειπει · εμπιστ. = ποσα λεπτα του δινει ο '
+                       'προπονητης οταν ειναι διαθεσιμος · Δ = γκολ υπεροχης που κερδιζει (+) ή χανει (−) η ομαδα με αυτη την 11αδα.')
     else:
-        pc[1].caption(f"projected snapshot: {str(prj.get('ts'))[:16].replace('T', ' ')} UTC · πηγη {prj.get('src') or 'predicted11'} "
-                      f"· πατωντας το αντικαθισταται τυχον αποθηκευμενο σεναριο")
-    if SHOW_OFFICIAL_XI_BTN and m.get('fid'):
-        oc = st.columns([2.4, 4.6])
-        if oc[0].button('⚡ Φορτωσε ΑΝΑΚΟΙΝΩΜΕΝΕΣ ενδεκαδες', key=f'll_off_{base_key}',
-                        help='Τραβαει τις επισημες 11αδες (βγαινουν ~60-75 λεπτα πριν τη σεντρα)'):
-            off = lv.fetch_official_xi(m['fid'])
-            if off:
-                known_h = {p['id'] for p in th['players']}; known_a = {p['id'] for p in ta['players']}
-                if 'home' in off:
-                    lv.save_side(base_key, 'home', off['home'], f_h)
-                if 'away' in off:
-                    lv.save_side(base_key, 'away', off['away'], f_a)
-                miss = len([i for i in off.get('home', []) if i not in known_h]) + \
-                       len([i for i in off.get('away', []) if i not in known_a])
-                st.session_state[f'll_nonce_{base_key}'] = nonce + 1
-                msg = 'Φορτωθηκαν οι επισημες ενδεκαδες' + ('' if len(off) == 2 else ' (μονο της μιας ομαδας)')
-                if miss:
-                    msg += f' · {miss} παικτες εκτος βασης (αγνοουνται στο Δ)'
-                st.toast(msg)
-                st.rerun()
-            else:
-                st.toast('Δεν εχουν ανακοινωθει ακομα — βγαινουν ~60-75 λεπτα πριν τη σεντρα.')
-        oc[1].caption(f"οπτικος ελεγχος: [το ματς στο FotMob](https://www.fotmob.com/match/{m['fid']})")
-    st.caption("🖐 Σερνεις παικτη απο τον παγκο πανω σε παικτη του γηπεδου για να τον αντικαταστησει. "
-               "Αλλαγη συστηματος ξαναστηνει την προτεινομενη 11αδα (χανονται οι χειροκινητες αλλαγες). "
-               "Γηπεδουχος αριστερα · φιλοξενουμενη δεξια · στηλες GK → DEF → MID → ATT. ● = χωρις ιστορικο.")
-    val = _lineup_pitch(matchKey=mkey,
-                        home=dict(name=m['home'], players=th['players'], xi=xi_h),
-                        away=dict(name=m['away'], players=ta['players'], xi=xi_a),
-                        default={'home': xi_h, 'away': xi_a}, key=f'pitch_{mkey}')
-    sel_h = (val or {}).get('home') or xi_h
-    sel_a = (val or {}).get('away') or xi_a
-    bc = st.columns([0.7, 0.7, 2.3, 2.3, 0.7, 0.7])
-    if bc[0].button('Save', key=f'll_sv_h_{base_key}', help=f"Αποθηκευση 11αδας — {m['home']}"):
-        lv.save_side(base_key, 'home', sel_h, f_h)
-        st.toast(f"Σεναριο {m['home']} αποθηκευτηκε.")
-    if bc[1].button('Reset', key=f'll_rs_h_{base_key}', help=f"Επαναφορα αρχικης — {m['home']}"):
-        lv.delete_side(base_key, 'home')
-        st.session_state[f'll_keep_{base_key}'] = {'away': sel_a}
-        st.session_state[f'll_nonce_{base_key}'] = nonce + 1
-        st.rerun()
-    if sv_h:
-        bc[2].caption(f"💾 {m['home']}: {sv_h.get('saved','')}")
-    if sv_a:
-        bc[3].caption(f"💾 {m['away']}: {sv_a.get('saved','')}")
-    if bc[4].button('Save ', key=f'll_sv_a_{base_key}', help=f"Αποθηκευση 11αδας — {m['away']}"):
-        lv.save_side(base_key, 'away', sel_a, f_a)
-        st.toast(f"Σεναριο {m['away']} αποθηκευτηκε.")
-    if bc[5].button('Reset ', key=f'll_rs_a_{base_key}', help=f"Επαναφορα αρχικης — {m['away']}"):
-        lv.delete_side(base_key, 'away')
-        st.session_state[f'll_keep_{base_key}'] = {'home': sel_h}
-        st.session_state[f'll_nonce_{base_key}'] = nonce + 1
-        st.rerun()
+        flist = list(lv.FORMATIONS)
+        fc = st.columns(2)
+        with fc[0]:
+            f_h = st.selectbox(f"Συστημα — {m['home']}", flist,
+                               index=flist.index(sv_h['f']) if sv_h and sv_h.get('f') in flist else 0,
+                               key=f"llf_h_{m['home_id']}")
+        with fc[1]:
+            f_a = st.selectbox(f"Συστημα — {m['away']}", flist,
+                               index=flist.index(sv_a['f']) if sv_a and sv_a.get('f') in flist else 0,
+                               key=f"llf_a_{m['away_id']}")
+        if 'home' in keep:
+            xi_h = keep['home']
+        elif sv_h and sv_h.get('f') == f_h:
+            xi_h = sv_h['xi']
+        elif F and lv.FORMATIONS[f_h] is None and (F['teams'].get(str(m['home_id'])) or {}).get('usual'):
+            xi_h = lv.fill_xi(th, [int(p) for p in F['teams'][str(m['home_id'])]['usual']])[0]      # 21/10: αρχη = η ΣΥΝΗΘΙΣΜΕΝΗ 11αδα
+        else:
+            xi_h = lv.default_xi(th, lv.FORMATIONS[f_h])
+        if 'away' in keep:
+            xi_a = keep['away']
+        elif sv_a and sv_a.get('f') == f_a:
+            xi_a = sv_a['xi']
+        elif F and lv.FORMATIONS[f_a] is None and (F['teams'].get(str(m['away_id'])) or {}).get('usual'):
+            xi_a = lv.fill_xi(ta, [int(p) for p in F['teams'][str(m['away_id'])]['usual']])[0]
+        else:
+            xi_a = lv.default_xi(ta, lv.FORMATIONS[f_a])
+        nonce = st.session_state.get(f'll_nonce_{base_key}', 0)
+        mkey = f"{base_key}_{f_h}_{f_a}_{nonce}"
+        prj = lv.load_projected(m['home_id'], m['away_id'])
+        pc = st.columns([2.4, 4.6])
+        if pc[0].button('📋 Load projected XI', key=f'll_prj_{base_key}', disabled=prj is None,
+                        help='Οι προβλεπομενες 11αδες δημοσιογραφων (predicted11) — κατεβαινουν αυτοματα καθε πρωι'):
+            xh, okh = lv.fill_xi(th, prj.get('home') or [])
+            xa, oka = lv.fill_xi(ta, prj.get('away') or [])
+            lv.save_side(base_key, 'home', xh, f_h)
+            lv.save_side(base_key, 'away', xa, f_a)
+            st.session_state[f'll_nonce_{base_key}'] = nonce + 1
+            st.toast(f'Projected 11αδες: ταιριασαν {okh}/11 + {oka}/11'
+                     + ('' if okh == 11 and oka == 11 else ' (οι υπολοιποι απο την αναμενομενη)'))
+            st.rerun()
+        if prj is None:
+            pc[1].caption('projected: δεν υπαρχει αποθηκευμενη προβλεψη γι αυτο το ματς '
+                          '(καλυπτονται LaLiga + EPL + SerieA + Ligue1 · ανανεωση καθε πρωι ~08:00, Παρασκευη ανα 2ωρο)')
+        else:
+            pc[1].caption(f"projected snapshot: {str(prj.get('ts'))[:16].replace('T', ' ')} UTC · πηγη {prj.get('src') or 'predicted11'} "
+                          f"· πατωντας το αντικαθισταται τυχον αποθηκευμενο σεναριο")
+        if SHOW_OFFICIAL_XI_BTN and m.get('fid'):
+            oc = st.columns([2.4, 4.6])
+            if oc[0].button('⚡ Φορτωσε ΑΝΑΚΟΙΝΩΜΕΝΕΣ ενδεκαδες', key=f'll_off_{base_key}',
+                            help='Τραβαει τις επισημες 11αδες (βγαινουν ~60-75 λεπτα πριν τη σεντρα)'):
+                off = lv.fetch_official_xi(m['fid'])
+                if off:
+                    known_h = {p['id'] for p in th['players']}; known_a = {p['id'] for p in ta['players']}
+                    if 'home' in off:
+                        lv.save_side(base_key, 'home', off['home'], f_h)
+                    if 'away' in off:
+                        lv.save_side(base_key, 'away', off['away'], f_a)
+                    miss = len([i for i in off.get('home', []) if i not in known_h]) + \
+                           len([i for i in off.get('away', []) if i not in known_a])
+                    st.session_state[f'll_nonce_{base_key}'] = nonce + 1
+                    msg = 'Φορτωθηκαν οι επισημες ενδεκαδες' + ('' if len(off) == 2 else ' (μονο της μιας ομαδας)')
+                    if miss:
+                        msg += f' · {miss} παικτες εκτος βασης (αγνοουνται στο Δ)'
+                    st.toast(msg)
+                    st.rerun()
+                else:
+                    st.toast('Δεν εχουν ανακοινωθει ακομα — βγαινουν ~60-75 λεπτα πριν τη σεντρα.')
+            oc[1].caption(f"οπτικος ελεγχος: [το ματς στο FotMob](https://www.fotmob.com/match/{m['fid']})")
+        st.caption("🖐 Σερνεις παικτη απο τον παγκο πανω σε παικτη του γηπεδου για να τον αντικαταστησει. "
+                   "Αλλαγη συστηματος ξαναστηνει την προτεινομενη 11αδα (χανονται οι χειροκινητες αλλαγες). "
+                   "Γηπεδουχος αριστερα · φιλοξενουμενη δεξια · στηλες GK → DEF → MID → ATT. ● = χωρις ιστορικο.")
+        val = _lineup_pitch(matchKey=mkey,
+                            home=dict(name=m['home'], players=th['players'], xi=xi_h),
+                            away=dict(name=m['away'], players=ta['players'], xi=xi_a),
+                            default={'home': xi_h, 'away': xi_a}, key=f'pitch_{mkey}')
+        sel_h = (val or {}).get('home') or xi_h
+        sel_a = (val or {}).get('away') or xi_a
+        bc = st.columns([0.7, 0.7, 2.3, 2.3, 0.7, 0.7])
+        if bc[0].button('Save', key=f'll_sv_h_{base_key}', help=f"Αποθηκευση 11αδας — {m['home']}"):
+            lv.save_side(base_key, 'home', sel_h, f_h)
+            st.toast(f"Σεναριο {m['home']} αποθηκευτηκε.")
+        if bc[1].button('Reset', key=f'll_rs_h_{base_key}', help=f"Επαναφορα αρχικης — {m['home']}"):
+            lv.delete_side(base_key, 'home')
+            st.session_state[f'll_keep_{base_key}'] = {'away': sel_a}
+            st.session_state[f'll_nonce_{base_key}'] = nonce + 1
+            st.rerun()
+        if sv_h:
+            bc[2].caption(f"💾 {m['home']}: {sv_h.get('saved','')}")
+        if sv_a:
+            bc[3].caption(f"💾 {m['away']}: {sv_a.get('saved','')}")
+        if bc[4].button('Save ', key=f'll_sv_a_{base_key}', help=f"Αποθηκευση 11αδας — {m['away']}"):
+            lv.save_side(base_key, 'away', sel_a, f_a)
+            st.toast(f"Σεναριο {m['away']} αποθηκευτηκε.")
+        if bc[5].button('Reset ', key=f'll_rs_a_{base_key}', help=f"Επαναφορα αρχικης — {m['away']}"):
+            lv.delete_side(base_key, 'away')
+            st.session_state[f'll_keep_{base_key}'] = {'home': sel_h}
+            st.session_state[f'll_nonce_{base_key}'] = nonce + 1
+            st.rerun()
     xh0, xa0 = m['home_adj_xg'], m['away_adj_xg']
     mk = lv.latest_market(m['home_id'], m['away_id'])
     if F and F['teams'].get(str(m['home_id'])) and F['teams'].get(str(m['away_id'])):
@@ -959,8 +1045,7 @@ def render_lineup(league):
         dh = lv.f_delta(F, m['home_id'], sel_h); da = lv.f_delta(F, m['away_id'], sel_a)
         gd_u, tot_u = lv.f_adjust(F, dh, da)
         xh, xa = lv.f_apply(xh0, xa0, gd_u, tot_u)
-        st.markdown(lv.strength_bar_html(m['home'], (dh or {}).get('gd_part', 0.0), m['away'], (da or {}).get('gd_part', 0.0)), unsafe_allow_html=True)
-        st.caption('Δ ενδεκαδας = γκολ υπεροχης που χανει (−) ή κερδιζει (+) η ομαδα με αυτη την 11αδα, σε σχεση με τη συνηθισμενη της.')
+        st.markdown('#### Τι αλλαζει στις τιμες')
         line = float(mk['line']) if mk and mk.get('line') is not None else None
         oh = float(mk['oh']) if mk and mk.get('oh') else None; oa = float(mk['oa']) if mk and mk.get('oa') else None
         ou = mk.get('ou') if mk else None
@@ -972,7 +1057,7 @@ def render_lineup(league):
             rows.append((lab_, note, g_, t_, (d1 or {}).get('n'), (d2 or {}).get('n'), x1, x2, lv.scen_edges(x1, x2, line, oh, oa, ou)))
         _row('Συνηθισμενη 11αδα', 'το μοντελο οπως ειναι', F['teams'][str(m['home_id'])]['usual'], F['teams'][str(m['away_id'])]['usual'])
         if prj and prj.get('home') and prj.get('away'):
-            _row('Προβλεπομενη (ειδικοι)', f"{prj.get('src') or 'predicted11'} · {str(prj.get('ts'))[:16].replace('T', ' ')} UTC", prj['home'], prj['away'])
+            _row('Προβλεπομενη (ειδικοι)', f"{prj.get('src') or 'predicted11'} · {lv.gr_time(prj.get('ts'))}", prj['home'], prj['away'])
         try:
             _ko = datetime.datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00'))
             if _ko.tzinfo is None: _ko = _ko.replace(tzinfo=datetime.timezone.utc)
@@ -983,8 +1068,9 @@ def render_lineup(league):
             off_ = _official(m['fid'])
             if off_ and off_.get('home') and off_.get('away'):
                 _row('ΕΠΙΣΗΜΗ 11αδα', 'FotMob (ανακοινωνεται ~60′ πριν)', off_['home'], off_['away'])
-        _row('Το σεναριο σου', 'οπως ειναι τωρα στο γηπεδο πανω', sel_h, sel_a)
-        st.components.v1.html(lv.scenarios_html(m['home'], m['away'], rows, line, oh, oa, ou, str((mk or {}).get('t', ''))[:16]),
+        _src = st.session_state.get(f'll_src_{base_key}') or {}
+        _row('Αυτη που βλεπεις πανω', (_src.get('base') or 'οπως ειναι τωρα') + (f" + {_src['n']} αλλαγες" if _src.get('n') else ''), sel_h, sel_a)
+        st.components.v1.html(lv.scenarios_html(m['home'], m['away'], rows, line, oh, oa, ou, lv.gr_time((mk or {}).get('t')) + ' ωρα Ελλαδας'),
                               height=150 + 66 * len(rows), scrolling=True)
     else:
         d_h = (lv.xi_strength(th, sel_h) or th['base']) - th['base']
