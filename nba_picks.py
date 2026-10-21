@@ -131,6 +131,39 @@ def shadow_def(g, pin, ko, now):
     except Exception as e:
         print('σκιωδης κανονας σφαλμα —', e)
 
+M2D_LOG = 'nba_totals_m2d_log.jsonl'  # 21/10/2026 (Στελιος «τρεξτο οκ»): ΣΚΙΩΔΗΣ μηχανη συνολων Μ2δ — ΜΟΝΟ καταγραφη (οχι Telegram/ημερολογιο)
+def shadow_m2d(g, pin, ko, now):
+    """Μ2δ (nba_tests/t36-t39, nba_totals_m2d.json): δικαιο συνολο Pinnacle + 0.30·(μοντελο − αγορα) − 0.32·LO + 0.68·LD + αμφιβολοι + περιοδος (Οκτ-Δεκ/Μαρ-Απρ/Απρ)
+    + γραμμη + αγων ≤10. Pick αν edge ≥6% (σ 18). Γραφεται η ΠΡΩΤΗ φορα ανα ματς/πλευρα (+ ολα τα πεδια για αξιολογηση)."""
+    try:
+        if pin.get('tl') is None or not pin.get('to') or not pin.get('tu') or g.get('total') is None: return
+        J = _load(F('nba_totals_m2d.json'), {}); C = J.get('coef') or {}
+        if not C: return
+        from statistics import NormalDist
+        T, oo, ou = float(pin['tl']), float(pin['to']), float(pin['tu']); sg = float(J.get('sigma', 18.0))
+        po = (1 / oo) / (1 / oo + 1 / ou); fair = T + sg * NormalDist().inv_cdf(min(max(po, 1e-4), 1 - 1e-4))
+        mon = (ko - dt.timedelta(hours=5)).month
+        x = dict(mu_minus_mkt=float(g['total']) - fair, LO=float(g.get('abs_lo') or 0), LD=float(g.get('abs_ld') or 0),
+                 LOp_minus_LO=float(g.get('abs_lop') or 0) - float(g.get('abs_lo') or 0), LDp_minus_LD=float(g.get('abs_ldp') or 0) - float(g.get('abs_ld') or 0),
+                 oct_dec=float(mon in (10, 11, 12)), mar_apr=float(mon in (3, 4)), line_minus_225=T - 225, gn_le_10=float(gnum(g) <= 10), apr=float(mon == 4))
+        m2 = fair + C.get('σταθερα', 0.0) + sum(C.get(k, 0.0) * v for k, v in x.items())
+        po2, pq = cover(m2, -T, sg); pu2 = 1 - po2 - pq
+        fn = F(M2D_LOG); done = set()
+        if os.path.exists(fn):
+            for ln in open(fn, encoding='utf-8'):
+                try: r_ = json.loads(ln); done.add(f"{r_['code']}|{r_['side']}")
+                except Exception: pass
+        for nm, p_, od in (('Over', po2, oo), ('Under', pu2, ou)):
+            e = p_ * od + pq - 1
+            if e < float(J.get('thr', 0.06)) or f"{g['code']}|{nm}" in done: continue
+            rec = dict(seen=now.isoformat(timespec='minutes'), code=g['code'], home=g['home'], away=g['away'], when=ko.strftime('%Y-%m-%dT%H:%M'),
+                       side=nm, line=T, odds=od, edge=round(e, 4), m2d=round(m2, 1), fair=round(fair, 1), model_total=round(float(g['total']), 1),
+                       hrs=round((ko - now).total_seconds() / 3600, 1), x={k: round(v, 3) for k, v in x.items()}, inj_src=g.get('inj_src'), paper=True)
+            with open(fn, 'a', encoding='utf-8') as fh: fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
+            print(f"ΣΚΙΑ Μ2δ (συνολα): {g['home']} - {g['away']} · {nm} {T:g} @{od:.2f} · edge {e * 100:.0f}% · Μ2δ {m2:.1f} vs αγορα {fair:.1f}")
+    except Exception as e:
+        print('σκια Μ2δ σφαλμα —', e)
+
 STEAM_X, STEAM_W = 3.0, 3600           # 19/10 (Στελιος «ναι»): ΣΚΙΩΔΗΣ καταγραφη κινησεων ≥3 π. σε 60′ (steam_why.py: ≥3 π. +5.9% στο +5′,
 STEAM_LOG, STEAM_STATE = 'nba_steam_log.jsonl', 'nba_steam_state.json'   # ανεξηγητες απο απουσιες +27% n77 post-hoc)
 STEAM_LIVE, STEAM_STAKE = True, 0.25     # 19/10 (Στελιος «βαλτο λαιβ και σαν καταγραφη»): ΔΟΚΙΜΑΣΤΙΚΟ live, ¼ μοναδας, Telegram «🧪 STEAM» — εκτος ημερολογιου χαντικαπ
@@ -221,6 +254,7 @@ def compute():
         L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa']); m = float(g['margin'])
         f0 = FIRST.setdefault(str(code), dict(line=L, oh=oh, oa=oa, tl=pin.get('tl'), to=pin.get('to'), tu=pin.get('tu'), seen=now.isoformat(timespec='minutes')))
         shadow_def(g, pin, ko, now)
+        shadow_m2d(g, pin, ko, now)
         steam_watch(g, pin, o, ko, now, sm, ST)
         shadow_po(g, f0, pin, ko, now, POW, PO_DONE)
         pw, pp = cover(m, L, sm); pl = 1 - pw - pp

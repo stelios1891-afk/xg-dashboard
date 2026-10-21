@@ -167,9 +167,9 @@ def main():
         m, T = pr
         tzh, tza = tz_feat(h, h, d, sched), tz_feat(a, h, d, sched)        # 20/10: αλλαγη ζωνης ωρας με ≤2 μερες απο το προηγουμενο ματς
         m += -TZ_K * (tzh - tza)
-        m0, T0 = m, T; dm = dtot = shadow = 0.0; LH = LA = []
+        m0, T0 = m, T; dm = dtot = shadow = 0.0; LH = LA = []; odl = (0, 0, 0, 0)
         if AB is not None:
-            try: dm, dtot, shadow, LH, LA = AB.adjust(h, a, d); m += dm; T += dtot
+            try: dm, dtot, shadow, LH, LA = AB.adjust(h, a, d); m += dm; T += dtot; odl = getattr(AB, 'last_od', (0, 0, 0, 0))
             except Exception as e: print('απουσιες σφαλμα', h, a, e)
         tdm, tdet = 0.0, []
         if TRM:
@@ -186,6 +186,7 @@ def main():
                            margin_base=round(m0, 2), total_base=round(T0, 1), abs_dm=round(dm, 2), abs_dt=round(dtot, 2), abs_shadow=round(shadow, 2),
                            abs_h=[[p['name'], p['min'], int(p['fresh']), p.get('status', 'Out'), p.get('w', 1.0)] for p in LH], abs_a=[[p['name'], p['min'], int(p['fresh']), p.get('status', 'Out'), p.get('w', 1.0)] for p in LA],
                            inj_src='official' if (OFF is not None and OFF.covers(h, d)) else 'espn',
+                           abs_lo=round(odl[0], 3), abs_ld=round(odl[1], 3), abs_lop=round(odl[2], 3), abs_ldp=round(odl[3], 3),
                            trade_dm=round(tdm, 2), trades=tdet, roster_dm=round(rdm, 2), roster_now=rdet)
     finish(games, st, now)
     up = [dict(code=g['code'], round=None, utc=E._pdt(g['utc']), hcode=g['hcode'], acode=g['acode'], home=g['home'], away=g['away']) for g in games.values() if not g['played']]

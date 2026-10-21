@@ -113,4 +113,6 @@ class Absences:
         LO = sum(p['w'] * (p['o'] - REPO) * p['min'] / 48 for p in H + A_); LD = sum(p['w'] * (p['d'] - REPD) * p['min'] / 48 for p in H + A_)
         fr = [p for p in H + A_ if p['fresh']]
         shadow = SH_O * sum(p['w'] * (p['o'] - REPO) * p['min'] / 48 for p in fr) + SH_D * sum(p['w'] * (p['d'] - REPD) * p['min'] / 48 for p in fr)
+        ob = [p for p in H + A_ if p['w'] >= 1.0]                     # 21/10 (συνολα Μ2δ): χαμενη επιθ./αμυνα μονο «Out» και με πιθανοτητες
+        self.last_od = (sum((p['o'] - REPO) * p['min'] / 48 for p in ob), sum((p['d'] - REPD) * p['min'] / 48 for p in ob), LO, LD)
         return dm, C_O * LO + C_D * LD, shadow, H, A_
