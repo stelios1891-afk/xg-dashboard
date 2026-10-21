@@ -355,13 +355,8 @@ def main(notify_tg=True):
             if drops: notify.send('🏀 pick που ΔΕΝ ισχυει πια (αλλαξε γραμμη/τιμη)' + chr(10) * 2 + (chr(10) * 2).join(drops), silent=True)
         except Exception as e:
             print('Telegram σφαλμα (κατασταση):', e)
-    if close_msgs:
+    if close_msgs:                                 # 21/10 Στελιος: ΟΧΙ Telegram πια (φαινεται στο Pick History) — μονο log
         print('\n'.join(close_msgs))
-        if notify_tg:
-            try:
-                import notify; notify.send('\n\n'.join(close_msgs), channel='info')
-            except Exception as e:
-                print('Telegram σφαλμα (κλεισιμο):', e)
     print(f'[EL picks] {len(picks)} picks · {len(new)} νεα · {len(changed)} αλλαγες · ελεγχοι κλεισιματος {len(close_msgs)}')
     for p in picks: print('  ' + line(p).replace('\n', ' | '))
     return picks
