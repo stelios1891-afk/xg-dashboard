@@ -1,5 +1,3 @@
-C:\Users\steli\My Drive\Betting Model\abs_build.py:74: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
-  d = dt.datetime.utcfromtimestamp(r['ts']).date()
 Sofascore ματς 12582 · ταιριαξαν με FotMob 12145 (96.5%) · παικτες Sofascore→FotMob 6689
 πλευρες 24414 · με Sofascore 97.2% · με λιστα απουσων 74.5% · μη αντιστοιχισμενοι απουσες ανα πλευρα 0.19
    Bundesliga  2122: πλευρες  558 · λιστα  97% · λειπουν 2.6 (βασικοι 0.63) · μη αντιστ. 0.32 · Δικαν. πριν -0.006 (sd 0.024) · πραγμ. -0.018 · Δαξια πριν -0.020 · συσχ. πριν↔πραγμ 0.52
@@ -44,3 +42,4 @@ Sofascore ματς 12582 · ταιριαξαν με FotMob 12145 (96.5%) · πα
    SerieA      2425: πλευρες  754 · λιστα  95% · λειπουν 2.9 (βασικοι 0.66) · μη αντιστ. 0.20 · Δικαν. πριν -0.004 (sd 0.017) · πραγμ. -0.009 · Δαξια πριν -0.016 · συσχ. πριν↔πραγμ 0.34
    SerieA      2526: πλευρες  757 · λιστα  99% · λειπουν 2.9 (βασικοι 0.72) · μη αντιστ. 0.25 · Δικαν. πριν -0.005 (sd 0.018) · πραγμ. -0.011 · Δαξια πριν -0.013 · συσχ. πριν↔πραγμ 0.34
    SerieA      2627: πλευρες  140 · λιστα  91% · λειπουν 1.9 (βασικοι 0.47) · μη αντιστ. 0.34 · Δικαν. πριν -0.004 (sd 0.019) · πραγμ. -0.008 · Δαξια πριν -0.019 · συσχ. πριν↔πραγμ 0.51
+rc=0
