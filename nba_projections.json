@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-21T23:33+00:00",
+ "generated": "2026-10-21T23:44+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -231,7 +231,7 @@
    "pts_h": 119.6,
    "pts_a": 110.2,
    "p_home": 0.758,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 0,
@@ -282,7 +282,7 @@
    "pts_h": 106.8,
    "pts_a": 108.7,
    "p_home": 0.446,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 0,
@@ -327,7 +327,7 @@
    "pts_h": 116.3,
    "pts_a": 114.3,
    "p_home": 0.557,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 0,
@@ -411,12 +411,12 @@
    "away": "Utah Jazz",
    "hcode": "MEM",
    "acode": "UTA",
-   "margin": 0.72,
+   "margin": 0.79,
    "total": 238.1,
    "total_src": "μοντελο",
    "pts_h": 119.4,
-   "pts_a": 118.7,
-   "p_home": 0.521,
+   "pts_a": 118.6,
+   "p_home": 0.523,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -427,7 +427,7 @@
    "gno": 0,
    "gp_h": 0,
    "gp_a": 0,
-   "margin_base": 0.7,
+   "margin_base": 0.79,
    "total_base": 238.1,
    "abs_dm": 0.0,
    "abs_dt": 0.0,
@@ -441,19 +441,8 @@
    "abs_ldp": 0,
    "trade_dm": 0.0,
    "trades": [],
-   "roster_dm": 0.03,
-   "roster_now": [
-    [
-     "MEM",
-     "Isaiah Stewart",
-     "Out"
-    ],
-    [
-     "UTA",
-     "Blake Hinson",
-     "επιστροφη"
-    ]
-   ],
+   "roster_dm": 0.0,
+   "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/mem.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/utah.png"
   },
@@ -467,7 +456,7 @@
    "away": "Dallas Mavericks",
    "hcode": "HOU",
    "acode": "DAL",
-   "margin": 8.07,
+   "margin": 8.06,
    "total": 224.9,
    "total_src": "μοντελο",
    "pts_h": 116.5,
@@ -483,7 +472,7 @@
    "gno": 0,
    "gp_h": 0,
    "gp_a": 0,
-   "margin_base": 8.31,
+   "margin_base": 8.06,
    "total_base": 224.9,
    "abs_dm": 0.0,
    "abs_dt": 0.0,
@@ -497,14 +486,8 @@
    "abs_ldp": 0,
    "trade_dm": 0.0,
    "trades": [],
-   "roster_dm": -0.24,
-   "roster_now": [
-    [
-     "DAL",
-     "Jett Howard",
-     "Out"
-    ]
-   ],
+   "roster_dm": -0.0,
+   "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/hou.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/dal.png"
   },
@@ -563,7 +546,7 @@
    "away": "Golden State Warriors",
    "hcode": "LAL",
    "acode": "GSW",
-   "margin": 3.24,
+   "margin": 3.25,
    "total": 225.5,
    "total_src": "μοντελο",
    "pts_h": 114.4,
@@ -579,7 +562,7 @@
    "gno": 0,
    "gp_h": 0,
    "gp_a": 0,
-   "margin_base": 2.95,
+   "margin_base": 3.25,
    "total_base": 225.5,
    "abs_dm": 0.0,
    "abs_dt": 0.0,
@@ -593,19 +576,8 @@
    "abs_ldp": 0,
    "trade_dm": 0.0,
    "trades": [],
-   "roster_dm": 0.3,
-   "roster_now": [
-    [
-     "LAL",
-     "Collin Sexton",
-     "Out"
-    ],
-    [
-     "GSW",
-     "Charles Bassey",
-     "Out"
-    ]
-   ],
+   "roster_dm": -0.0,
+   "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/gs.png"
   },
@@ -821,9 +793,9 @@
   {
    "code": "CHI",
    "name": "Chicago Bulls",
-   "net": -2.18,
-   "O": -1.11,
-   "D": 1.06,
+   "net": -1.53,
+   "O": -0.79,
+   "D": 0.74,
    "pace": 2.7,
    "games": 0
   },
@@ -848,9 +820,9 @@
   {
    "code": "DAL",
    "name": "Dallas Mavericks",
-   "net": -1.04,
-   "O": -0.78,
-   "D": 0.26,
+   "net": -0.8,
+   "O": -0.66,
+   "D": 0.14,
    "pace": 1.52,
    "games": 0
   },
@@ -868,7 +840,7 @@
    "name": "Golden State Warriors",
    "net": 1.05,
    "O": 0.28,
-   "D": -0.77,
+   "D": -0.76,
    "pace": -0.27,
    "games": 0
   },
@@ -902,18 +874,18 @@
   {
    "code": "LAL",
    "name": "Los Angeles Lakers",
-   "net": 1.94,
-   "O": 1.87,
-   "D": -0.07,
+   "net": 2.23,
+   "O": 2.02,
+   "D": -0.21,
    "pace": -0.72,
    "games": 0
   },
   {
    "code": "MEM",
    "name": "Memphis Grizzlies",
-   "net": -2.66,
-   "O": -0.88,
-   "D": 1.79,
+   "net": -2.61,
+   "O": -0.85,
+   "D": 1.76,
    "pace": 1.68,
    "games": 0
   },
@@ -929,10 +901,10 @@
   {
    "code": "MIL",
    "name": "Milwaukee Bucks",
-   "net": -5.99,
-   "O": -2.75,
-   "D": 3.24,
-   "pace": -1.44,
+   "net": -6.18,
+   "O": -2.84,
+   "D": 3.34,
+   "pace": -1.48,
    "games": 0
   },
   {
@@ -1001,10 +973,10 @@
   {
    "code": "UTA",
    "name": "Utah Jazz",
-   "net": -1.31,
-   "O": 0.84,
-   "D": 2.16,
-   "pace": 2.17,
+   "net": -1.34,
+   "O": 0.85,
+   "D": 2.19,
+   "pace": 2.19,
    "games": 0
   },
   {
