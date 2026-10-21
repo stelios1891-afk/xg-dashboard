@@ -7,6 +7,7 @@
   3. Λεπτα = μεσος ορος των 10 τελευταιων ματς Ευρωλιγκας που επαιξε (φετος + περσι/παλιοτερα, el_player_min_prev.json)· ≥10′.
   4. k = ποσα συνεχομενα ματς της ομαδας λειπει (μαζι με το σημερινο): k 1-3 → πληρες· 4-10 → μισο· >10 → 0 (το μοντελο το εχει «μαθει» απο τα αποτελεσματα).
   5. ΚΟΣΤΟΣ = 0.922 × λεπτα/40 × (1 / 0.5 / 0) ποντοι.  Προβλεψη γηπ. = μοντελο + κοστος φιλοξ − κοστος γηπ.
+     22/10/2026: ΑΝΤΙΚΑΤΑΣΤΑΘΗΚΕ απο (0.56 + 1.06·z_PIR) × λεπτα/40 × (1 / 0.5 / 0) — βλ. V_B0/V_B1 πιο κατω (σταρ ×2-3, αδυναμοι ρολιστες ≈0).
 Δεδομενα φετινα: el_box.json (ph/pa = [id, ονομα, λεπτα] ανα ματς — backfill() τα συμπληρωνει απο το επισημο API).
 ΣΥΝΟΛΑ (9/10/2026, Στελιος «ας περασουμε το αμυνα και επιθεση»): ΔΙΑΦΟΡΕΤΙΚΟΣ μηχανισμος — ON/OFF του αποντα (3StepsBasket, ΠΕΡΣΙΝΗ σεζον,
   el_onoff_prev.json απο el_onoff_build.py). Για τους ιδιους μετρουμενους αποντες (βαρος w = λεπτα/40 × 1/0.5):
@@ -71,11 +72,13 @@ def _log_changes(games):
     except Exception as e: print('RotoWire ιστορικο σφαλμα —', e)
 
 def backfill(B, season, J, sched):
-    """Συμπληρωνει ph/pa (λεπτα παικτων) στα φετινα ματς του el_box.json που δεν τα εχουν. J = συναρτηση GET json."""
+    """Συμπληρωνει ph/pa (λεπτα + PIR παικτων) στα φετινα ματς του el_box.json που δεν τα εχουν. J = συναρτηση GET json.
+    22/10/2026: καθε παικτης = [id, ονομα, λεπτα, PIR]· ματς που ειχαν μονο λεπτα (παλια μορφη) ξανα-κατεβαινουν μια φορα."""
     n = 0
     for x in sched:
         k = f"{season}_{x['code']}"
-        if not x.get('played') or k not in B or 'err' in B[k] or 'ph' in B[k]: continue
+        if not x.get('played') or k not in B or 'err' in B[k]: continue
+        if 'ph' in B[k] and all(len(p) >= 4 for p in B[k]['ph'] + B[k].get('pa', [])): continue
         b = J(f"https://live.euroleague.net/api/Boxscore?gamecode={x['code']}&seasoncode={season}")
         if not b or not b.get('Stats'): continue
         for side, t in (('ph', b['Stats'][0]), ('pa', b['Stats'][1])):
@@ -83,7 +86,7 @@ def backfill(B, season, J, sched):
             for p in (t.get('PlayersStats') or []):
                 try: mm, ss = str(p.get('Minutes')).split(':'); mn = int(mm) + int(ss) / 60
                 except Exception: mn = 0.0
-                if mn > 0: L.append([str(p.get('Player_ID', '')).strip(), p.get('Player'), round(mn, 1)])
+                if mn > 0: L.append([str(p.get('Player_ID', '')).strip(), p.get('Player'), round(mn, 1), int(p.get('Valuation') or 0)])
             B[k][side] = L
         n += 1
     return n
@@ -92,6 +95,30 @@ def _team_games(B, season, code):
     g = [v for k, v in B.items() if k.startswith(season + '_') and 'ph' in v and code in (v.get('hcode'), v.get('acode'))]
     g.sort(key=lambda v: v['utc'])
     return [(v['utc'], {p[0]: p[2] for p in (v['ph'] if v['hcode'] == code else v['pa'])}, {p[0]: p[1] for p in (v['ph'] if v['hcode'] == code else v['pa'])}) for v in g]
+
+# 22/10/2026 (Στελιος «περνα το»): ΑΞΙΑ ΑΠΟΥΣΙΑΣ = λεπτα + PIR (el_absence_v2_test V1, el_absence_return_test R0, LOSO E2021-25):
+#   κοστος = (V_B0 + V_B1·z) × λεπτα/40 × g(k),  z = (PIR/40 − 12.1) / 5.6,  PIR/40 = Σ PIR / (Σ λεπτα + 200) × 40 στα τελευταια 60 ματς
+#   (περσινα+ απο el_player_pir_prev.json + φετινα απο el_box). picks ≥8% +9.4% → +10.5% (+55.5 → +65.8μ, 5/5)· RMSE 3/5 (ενα κριτηριο ✗,
+#   αποφαση Στελιου). Επιστροφες: ΚΑΜΙΑ διορθωση (el_absence_return_test: καμια εκδοχη δεν περασε με λογικη).
+V_B0, V_B1, PIR_MU, PIR_SD, PIR_PRIOR = 0.56, 1.06, 12.1, 5.6, 200.0
+_PIR_PREV = None
+def _pir_prev():
+    global _PIR_PREV
+    if _PIR_PREV is None:
+        try: _PIR_PREV = json.load(open(F('el_player_pir_prev.json'), encoding='utf-8'))['players']
+        except Exception: _PIR_PREV = {}
+    return _PIR_PREV
+
+def pir40(B, season, pid, before_utc):
+    """PIR ανα 40′ (μαζεμενο προς 0 με +200′) απο τα τελευταια 60 ματς (περσινα + φετινα πριν το ματς)· None αν δεν υπαρχει PIR."""
+    h = [tuple(x) for x in (_pir_prev().get(pid) or {}).get('g', [])]
+    for k, v in sorted(B.items(), key=lambda kv: kv[1].get('utc', '')):
+        if not k.startswith(season + '_') or 'ph' not in v or v.get('utc', '') >= before_utc: continue
+        for p in v['ph'] + v.get('pa', []):
+            if p[0] == pid and len(p) >= 4 and p[2] > 0: h.append((p[2], p[3]))
+    h = h[-60:]
+    if not h: return None
+    return sum(x[1] for x in h) / (sum(x[0] for x in h) + PIR_PRIOR) * 40
 
 def _match(name, roster):
     """RotoWire «Mike James» → id στο ρόστερ {id: «JAMES, MIKE»}"""
@@ -149,11 +176,13 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None):
             if mn.get(pid, 0) > 0: break
             k += 1
         g = 1.0 if k <= 3 else (G_LONG if k <= 10 else 0.0)
-        c = COEF * avg / 40 * g; cost += c
+        pv = pir40(B, season, pid, before_utc)
+        z = 0.0 if pv is None else (pv - PIR_MU) / PIR_SD
+        c = (V_B0 + V_B1 * z) * avg / 40 * g; cost += c
         oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
         if oo and OO:
             so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
-        det.append(f'{name} {avg:.0f}′ ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 else ''))
+        det.append(f'{name} {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + f' ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 else ''))
     return round(cost, 2), det, so, sd_
 
 def adjustments(games, B=None):
