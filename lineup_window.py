@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """lineup_window.py — 21/10/2026 (Στελιος: «ξεκινα με το 1-2»). ΜΟΝΟ ΚΑΤΑΓΡΑΦΗ / ΣΚΙΑ — κανενα pick, κανενα Telegram.
-(1) ΠΑΡΑΘΥΡΟ ΣΕΝΤΡΑΣ: για καθε ματς CORE7 + Champions/Europa/Conference με σεντρα απο −80′ εως +5′, σε ΚΑΘΕ περασμα του scanner (~5′):
+(1) ΠΑΡΑΘΥΡΟ ΣΕΝΤΡΑΣ: για καθε ματς CORE7 + Champions/Europa/Conference με σεντρα απο −80′ εως +5′, σε ΚΑΘΕ περασμα του scanner (~5′)
+    ΚΑΙ ΚΑΘΕ 1′ αναμεσα στα περασματα (--watch, απο 21/10 βραδυ):
     ειδος ενδεκαδας FotMob (προσωρινη / προβλεπομενη / ΕΠΙΣΗΜΗ + βασικοι) και τιμες Pinnacle (κυριο χαντικαπ, κυριο συνολο).
     Γραφει στο lineup_window.jsonl μονο οταν κατι αλλαξε (με χρονοσφραγιδα) → ποτε βγηκε η ενδεκαδα, ποσο/ποτε κουνηθηκε η τιμη.
 (2) ΣΚΙΑ «ΕΝΔΕΚΑΔΑ ΠΑΝΩ ΣΤΟ ΜΟΝΤΕΛΟ»: τη ΣΤΙΓΜΗ που εμφανιζεται η επισημη ενδεκαδα → διορθωση (xi_formula: αξια + εμπιστοσυνη, xGI για συνολα)
@@ -136,11 +137,13 @@ def shadow(m, fm, od, now):
     return rec
 
 
-def main():
+def main(fast=False):
+    """fast=True (σκοπια ανα 1′): για ματς που ΗΔΗ εχουν επισημη ενδεκαδα δεν ξαναρωταμε το FotMob — μονο τιμη Pinnacle."""
     now = dt.datetime.now(UTC)
     W = window_matches(now)
     if not W:
-        print('lineup_window: κανενα ματς στο παραθυρο σεντρας'); return
+        if not fast: print('lineup_window: κανενα ματς στο παραθυρο σεντρας')
+        return 0
     try: st = json.load(open(ST, encoding='utf-8'))
     except Exception: st = {}
     import pin_api
@@ -152,13 +155,16 @@ def main():
     n_snap = n_sh = 0
     with open(OUT, 'a', encoding='utf-8') as out, open(SHADOW, 'a', encoding='utf-8') as sh:
         for m in W:
-            try: fm = fotmob(m['mid'])
-            except Exception as e: fm = dict(type=None, err=str(e)[:60])
+            prev = st.get(m['mid'], {})
+            if fast and prev.get('shadow') and prev.get('sig'):
+                fm = {k: v for k, v in json.loads(prev['sig']).items() if k in ('type', 'h_xi', 'a_xi')}
+            else:
+                try: fm = fotmob(m['mid'])
+                except Exception as e: fm = dict(type=None, err=str(e)[:60])
             od = pin_odds(EV.get(PIN_EU.get(m['comp']) or PIN_DOM.get(m['comp']), []), m)
             snap = dict(type=fm.get('type'), h_xi=fm.get('h_xi'), a_xi=fm.get('a_xi'),          # προβλεπομενη ΚΑΙ επισημη (το type λεει ποια)
                         ah=od and od.get('ah'), ou=od and od.get('ou'))
             sig = json.dumps(snap, sort_keys=True)
-            prev = st.get(m['mid'], {})
             if prev.get('sig') != sig:
                 out.write(json.dumps(dict(t=now.isoformat()[:16], mid=m['mid'], comp=m['comp'], ko=m['ko'].isoformat()[:16], home=m['home'], away=m['away'],
                                           mins_to_ko=round((m['ko'] - now).total_seconds() / 60), lim=od and od.get('lim'), **snap), ensure_ascii=False) + '\n'); n_snap += 1
@@ -171,9 +177,23 @@ def main():
             time.sleep(0.25)
     st = {k: v for k, v in st.items() if _t(v['ko'] + ':00+00:00') > now - dt.timedelta(days=2)}
     json.dump(st, open(ST, 'w', encoding='utf-8'), ensure_ascii=False)
-    print(f'lineup_window: ματς στο παραθυρο {len(W)} · νεες εγγραφες {n_snap} · σκιες {n_sh}')
+    if not fast or n_snap or n_sh:
+        print(f'lineup_window{" (1′)" if fast else ""} {now.strftime("%H:%M")}: ματς στο παραθυρο {len(W)} · νεες εγγραφες {n_snap} · σκιες {n_sh}')
+    return len(W)
+
+
+def watch(end_epoch):
+    """21/10 (Στελιος: «απο το −80 μεχρι να βγει η ενδεκαδα να τραβαει καθε 1 λεπτο»): τρεχει στο κενο αναμεσα στα τικ του scanner
+    (αντι για σκετο sleep 300) — καθε 60″ ξανακοιταει το παραθυρο −80′..+5′. Χωρις ματς στο παραθυρο = μονο αναγνωση αρχειων.
+    Ματς χωρις επισημη ενδεκαδα: FotMob + Pinnacle καθε λεπτο · ματς με επισημη: μονο Pinnacle (κινηση τιμης ανα λεπτο ως τη σεντρα)."""
+    while end_epoch - time.time() > 55:
+        t0 = time.time()
+        try: main(fast=True)
+        except Exception as e: print(f'lineup_window watch σφαλμα {str(e)[:80]}')
+        time.sleep(max(1.0, min(60 - (time.time() - t0), end_epoch - time.time() - 55)))
 
 
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
-    main()
+    if len(sys.argv) > 2 and sys.argv[1] == '--watch': watch(float(sys.argv[2]))
+    else: main()

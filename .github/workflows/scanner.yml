@@ -80,7 +80,11 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.chain == 'yes'
         run: |
           for i in $(seq 1 10); do
-            sleep 300
+            # 21/10: αντι για σκετο sleep 300 → σκοπια ενδεκαδων ανα 1′ (lineup_window --watch, ματς −80′..+5′)· το τικ μενει ανα 5′
+            END=$(( $(date +%s) + 300 ))
+            timeout 330 python lineup_window.py --watch "$END" || echo "lineup watch failed (μη κρισιμο)"
+            R=$(( END - $(date +%s) ))
+            if [ "$R" -gt 0 ]; then sleep "$R"; fi
             echo "=== loop tick $i/10 ($(date -u +%H:%M)) ==="
             git rebase --abort 2>/dev/null || true          # 1/10: αν εμεινε μισο rebase απο το προηγουμενο τικ
             git pull --rebase --autostash -X theirs || { git rebase --abort 2>/dev/null || true; }
