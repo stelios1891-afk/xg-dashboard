@@ -37,7 +37,7 @@ jobs:
           git config user.name "nba-pin-open-bot"
           git config user.email "actions@github.com"
           for i in 1 2 3; do
-            git add -f nba_pin_open_hist.jsonl nba_pin_open_state.json || true
+            for f in nba_pin_open_hist.jsonl nba_pin_open_state.json; do [ -e "$f" ] && git add -f "$f"; done   # ενα-ενα (αρχειο που λειπει ακυρωνε ολο το add)
             if git diff --cached --quiet; then echo "τιποτα"; break; fi
             git commit -m "nba pin open hist [skip ci]" && git pull --rebase -X theirs && git push && break
             sleep 10
