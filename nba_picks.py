@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """nba_picks.py — VALUE PICKS NBA (6/10/2026, Στελιος «φτιαξε τη μηχανη»). Αντιγραφο του nba_picks (ιδιο ημερολογιο/κατασταση/μηνυματα) με αρχεια nba_*.
 ΚΑΝΟΝΕΣ (nba_more_tests, καθαρο τεστ 2021-26): edge ≥8% · ΜΟΝΟ αν ηταν pick ΚΑΙ στην πρωτη γραμμη που ειδαμε (τα «αργα» picks: συνολα −15.8% 0/5)
-· χαντικαπ ΟΧΙ απο τον 71ο αγωνα (−7.8% 0/5). 19/10/2026: ΧΑΝΤΙΚΑΠ LIVE (Telegram) · ΣΥΝΟΛΑ ΚΡΥΦΑ: υπολογιζονται και γραφονται ΜΟΝΟ
+· χαντικαπ ΟΧΙ απο τον 76ο αγωνα (21/10: ηταν 71· t27 LOSO) και στους 71-75 οχι pick υπερ ομαδας χωρις κινητρο κοντρα σε ομαδα με κινητρο. 19/10/2026: ΧΑΝΤΙΚΑΠ LIVE (Telegram) · ΣΥΝΟΛΑ ΚΡΥΦΑ: υπολογιζονται και γραφονται ΜΟΝΟ
 στο nba_totals_log.jsonl για αναλυση — οχι ημερολογιο, οχι dashboard, οχι Telegram.
 19/10/2026 (Στελιος «περνα το live»): οι απουσιες (ESPN Out) μπαινουν πλεον ΣΤΗΝ ΠΡΟΒΛΕΨΗ (nba_absence.py, nba_odds_scan) → το παλιο φιλτρο
 «χωρις pick αν η πλευρα μας εχει νεα απουσια ≥30′» ΑΦΑΙΡΕΘΗΚΕ (το τεστ του ηταν look-ahead· η ESPN δινει μονο Out/Day-To-Day, οχι Doubtful).
@@ -21,7 +21,63 @@ PAPER_TOT = True    # ΣΥΝΟΛΑ μενουν ΚΑΤΑΓΡΑΦΗ (totals_test 
 TOT_LOG = 'nba_totals_log.jsonl'    # 19/10 (Στελιος «τα συνολα τα κραταμε, τα αναλυουμε, χωρις να εμφανιζονται»): ΚΡΥΦΟ αρχειο, εκτος ημερολογιου/οθονης/Telegram
 def _is_tot_msg(t):                 # μηνυματα κατασταστασης (bk_pick_status.track) που αφορουν συνολα → οχι Telegram
     ls = t.split('\n'); return len(ls) > 1 and ls[1].replace('μπηκε: ', '').startswith(('Over ', 'Under '))
-LATE_GP = 70
+LATE_GP = 75                        # 21/10/2026 (Στελιος «περνα τα πικς μεχρι και τον 75ο»): t27 Τ1 LOSO οριου → 76 (+28/+31/+36μ vs 71)· αγωνας = μικροτερος των 2 ομαδων (+1)
+MOTIV_FROM = 71                     # 21/10/2026 (Στελιος «κοψε τα μπετς υπερ ομαδων χωρις κινητρο»): αγωνες 71-75 → οχι pick ΥΠΕΡ ομαδας χωρις κινητρο
+MOTIV_LOG = 'nba_motiv_skip.jsonl'  #   (κλειδωμενη / μαθ. εκτος play-in / 5 χειροτερες / πρακτικα εκτος) ΚΟΝΤΡΑ σε ομαδα με κινητρο (μαχη θεσης 1-6 ή play-in)· t24c/t27 Τ4
+EAST = set('ATL BOS BRK CHO CHI CLE DET IND MIA MIL NYK ORL PHI TOR WAS'.split())
+NOMOT, MOT = ('ΚΛΕΙΔΩΜΕΝΗ', 'ΑΔΙΑΦΟΡΗ', 'TANKING', 'ΠΡΑΚΤΙΚΑ ΕΚΤΟΣ'), ('ΜΑΧΗ ΘΕΣΗΣ 1-6', 'ΜΑΧΗ PLAY-IN')
+
+def gnum(g):
+    """αριθμος αγωνα οπως στα τεστ: μικροτερος των δυο ομαδων + 1"""
+    return min(int(g.get('gp_h') or 0), int(g.get('gp_a') or 0)) + 1
+
+def motiv_groups():
+    """{ομαδα: γκρουπ κινητρου} απο τη βαθμολογια της κανονικης περιοδου ΤΩΡΑ (ιδιοι κανονες με t24/t27).
+    TANKING = 5 χειροτερες λιγκας · ΑΔΙΑΦΟΡΗ = μαθ. εκτος 10ης · ΚΛΕΙΔΩΜΕΝΗ = ουτε πανω ουτε κατω · ΜΑΧΗ ΘΕΣΗΣ = 1-6 · ΜΑΧΗ PLAY-IN = 7-12 ·
+    ΠΡΑΚΤΙΚΑ ΕΚΤΟΣ = θεση ≥11, ≥60 ματς, ≥5 νικες πισω απο τη 10η (οχι ακομα μαθ. εκτος). Μονο για ομαδες με ≥50 ματς."""
+    import collections
+    GM = _load(F('nba_espn_games.json'), {})
+    W, Lc = collections.Counter(), collections.Counter()
+    for g in GM.values():
+        if g.get('stype') != 2 or g.get('hs') is None or g.get('as_') is None: continue
+        hw = g['hs'] > g['as_']
+        W[g['home'] if hw else g['away']] += 1; Lc[g['away'] if hw else g['home']] += 1
+    teams = set(W) | set(Lc)
+    if len(teams) < 30: return {}
+    pct = {t: (W[t] + .5) / (W[t] + Lc[t] + 1) for t in teams}
+    worst5 = set(sorted(teams, key=lambda t: pct[t])[:5]); out = {}
+    for conf in (EAST, teams - EAST):
+        ct = sorted([t for t in teams if t in conf], key=lambda t: -pct[t])
+        if len(ct) < 15: continue
+        Wn = [W[t] for t in ct]; Rn = [82 - W[t] - Lc[t] for t in ct]
+        for r, t in enumerate(ct):
+            gp = W[t] + Lc[t]; w, R = W[t], 82 - gp
+            if gp < 50: continue
+            up_ok = r > 0 and w + R >= Wn[r - 1]; down_ok = r < len(ct) - 1 and Wn[r + 1] + Rn[r + 1] >= w
+            if t in worst5: g = 'TANKING'
+            elif w + R < Wn[9]: g = 'ΑΔΙΑΦΟΡΗ'
+            elif not up_ok and not down_ok: g = 'ΚΛΕΙΔΩΜΕΝΗ'
+            elif r < 6: g = 'ΜΑΧΗ ΘΕΣΗΣ 1-6'
+            elif r < 12: g = 'ΜΑΧΗ PLAY-IN'
+            else: g = 'αλλη'
+            if g in ('ΜΑΧΗ PLAY-IN', 'αλλη') and r >= 10 and gp >= 60 and Wn[9] - w >= 5: g = 'ΠΡΑΚΤΙΚΑ ΕΚΤΟΣ'
+            out[t] = g
+    return out
+
+def motiv_skip(g, side, MG, now):
+    """True → κοβεται (pick υπερ ομαδας χωρις κινητρο κοντρα σε ομαδα με κινητρο)· καταγραφη μια φορα ανα ματς/πλευρα στο MOTIV_LOG."""
+    us, them = (g['hcode'], g['acode']) if side == 1 else (g['acode'], g['hcode'])
+    gu, gt = MG.get(us), MG.get(them)
+    if gu not in NOMOT or gt not in MOT: return False
+    fn = F(MOTIV_LOG); key = f"{g['code']}|{side}"
+    try: done = {json.loads(l).get('key') for l in open(fn, encoding='utf-8')} if os.path.exists(fn) else set()
+    except Exception: done = set()
+    if key not in done:
+        with open(fn, 'a', encoding='utf-8') as fh:
+            fh.write(json.dumps(dict(key=key, seen=now.isoformat(timespec='minutes'), code=g['code'], home=g['home'], away=g['away'], side=side,
+                                     team=us, team_grp=gu, opp=them, opp_grp=gt, gnum=gnum(g)), ensure_ascii=False) + chr(10))
+    print(f'NBA κινητρο: κοπηκε pick υπερ {us} ({gu}) κοντρα σε {them} ({gt}) · αγωνας {gnum(g)}')
+    return True
 MOVE_INJ = 1.5                      # 20/10: κινηση (δικαιη γραμμη, ποντοι) απο το ανοιγμα → στο νεο pick και η λιστα απουσιων
 SHADOW_MIN = 45                     # 19/10: σκιωδης κανονας συνολων — λεπτα πριν το τζαμπολ
 TOT_MIN, TOT_W = 0.08, 1.0          # NBA συνολα: μοντελο (με Φ3) μονο του, edge ≥8% — nba_fix_test: Οκτ-Δεκ +3.2% (3/5), ολη +1.9% (3/5), Κ2 ≈0
@@ -144,6 +200,7 @@ def compute():
         for ln in open(F(PO_LOG), encoding='utf-8'):
             try: r_ = json.loads(ln); PO_DONE.add(f"{r_['code']}|{r_['po_team']}")
             except Exception: pass
+    MG = None                                   # γκρουπ κινητρου (υπολογιζονται μονο αν χρειαστουν: αγωνας ≥71)
     for code, o in odds.items():
         g = games.get(str(code)); pin = o.get('pin') or {}
         if not g or g.get('played'): continue
@@ -162,7 +219,10 @@ def compute():
         for side, p_, od, hc in ((1, pw, oh, L), (-1, pl, oa, -L)):
             e = p_ * od + pp - 1
             e0 = (pw0 * f0['oh'] + pp0 - 1) if side == 1 else (pl0 * f0['oa'] + pp0 - 1)
-            if e >= HC_MIN and e0 >= HC_MIN and int(g.get('gno') or 0) < LATE_GP:
+            if e >= HC_MIN and e0 >= HC_MIN and gnum(g) <= LATE_GP:
+                if gnum(g) >= MOTIV_FROM:
+                    if MG is None: MG = motiv_groups()
+                    if motiv_skip(g, side, MG, now): continue
                 pk = dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4),
                           proj_odds=round((p_ + (1 - p_ - pp)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L,
                           first=dict(line=f0['line'], oh=f0['oh'], oa=f0['oa'], seen=f0.get('seen')))
