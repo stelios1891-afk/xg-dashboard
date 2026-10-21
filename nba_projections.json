@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-21T06:10+00:00",
+ "generated": "2026-10-21T06:23+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -549,18 +549,54 @@
    "code": "BOS",
    "name": "Boston Celtics",
    "net": 8.64,
-   "O": 4.59,
-   "D": -4.05,
-   "pace": -3.31,
+   "O": 4.95,
+   "D": -3.69,
+   "pace": -3.4,
    "games": 1
   },
   {
    "code": "DET",
    "name": "Detroit Pistons",
    "net": 9.44,
-   "O": 3.64,
-   "D": -5.8,
-   "pace": 0.41,
+   "O": 4.01,
+   "D": -5.43,
+   "pace": 0.32,
+   "games": 1
+  },
+  {
+   "code": "NYK",
+   "name": "New York Knicks",
+   "net": 4.13,
+   "O": 1.16,
+   "D": -2.97,
+   "pace": -2.08,
+   "games": 1
+  },
+  {
+   "code": "OKC",
+   "name": "Oklahoma City Thunder",
+   "net": 10.37,
+   "O": 2.96,
+   "D": -7.42,
+   "pace": 0.29,
+   "games": 1
+  },
+  {
+   "code": "PHI",
+   "name": "Philadelphia 76ers",
+   "net": 6.46,
+   "O": 2.13,
+   "D": -4.33,
+   "pace": 0.73,
+   "games": 1
+  },
+  {
+   "code": "SAS",
+   "name": "San Antonio Spurs",
+   "net": 7.58,
+   "O": 3.53,
+   "D": -4.05,
+   "pace": 1.09,
    "games": 1
   }
  ]
