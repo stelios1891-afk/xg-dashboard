@@ -13,6 +13,8 @@ except Exception:
 ROOT = os.path.dirname(os.path.abspath(__file__)); F = lambda n: os.path.join(ROOT, n)
 COMP_LAB = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League', 'ConferenceLeague': 'Conference League'}
 MK = (('spreads', 'χάντικαπ'), ('totals', 'γκολ'))
+# 21/10 Στελιος: «οριο ↑» μονο οσο τα ορια ειναι ακομα μικρα — αυξηση που φτανει πανω απο το ταβανι = κανενα μηνυμα (None = παντα)
+LIM_CAP = {'ChampionsLeague': 3000, 'EuropaLeague': 2000, 'ConferenceLeague': None}
 
 
 def _load(p, d):
@@ -99,7 +101,8 @@ def main(notify_tg=True):
         prev = state.get(mid)
         if prev is not None and mid in act:
             ups = [f'{nm} {prev.get(k) or 0:g} → {lim.get(k):g}' for k, nm in MK
-                   if lim.get(k) and (prev.get(k) or 0) > 0 and lim.get(k) > (prev.get(k) or 0)]
+                   if lim.get(k) and (prev.get(k) or 0) > 0 and lim.get(k) > (prev.get(k) or 0)
+                   and (LIM_CAP.get(act[mid][0]['comp']) is None or lim.get(k) <= LIM_CAP[act[mid][0]['comp']])]
             if ups:
                 r0 = act[mid][0]; ko = _dt(o.get('ko') or r0.get('ko'))
                 hrs = (ko - now).total_seconds() / 3600 if ko else float('nan')
