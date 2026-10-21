@@ -44,7 +44,7 @@ def snap(ts, cache):
             remaining = int(r.headers.get('x-requests-remaining') or 0); spent += int(r.headers.get('x-requests-last') or 10)
             break
         except Exception as e:
-            print('σφαλμα', k, str(e)[:120], flush=True); time.sleep(5 + 10 * a)
+            print('σφαλμα', k, str(e)[:120], flush=True); snap.err = f'{k}: {str(e)[:150]}'; time.sleep(5 + 10 * a)
     else: return None
     ev = []
     for e in d.get('data', []):
@@ -60,9 +60,10 @@ def present(g, sv):
         if abs((ct - g['tip']).total_seconds()) <= 5400 and last(e['h']) == last(g['home']) and last(e['a']) == last(g['away']): return e
     return None
 def main():
-    if not KEY: raise SystemExit('TOA_KEY λειπει')
     try: st = json.load(open(STATE, encoding='utf-8'))
     except Exception: st = {}
+    if not KEY:
+        json.dump(dict(st, last_error='TOA_KEY λειπει'), open(STATE, 'w', encoding='utf-8')); print('TOA_KEY λειπει'); return
     cache = st.get('cache', {}); done = set(st.get('done', []))
     try:
         for g in targets():
@@ -82,9 +83,13 @@ def main():
                 e = present(g, snap(hi, cache))
                 rec.update(first=hi.isoformat(), hours=round((g['tip'] - hi).total_seconds() / 3600, 2), first_line=e['line'] if e else None)
             with open(OUT, 'a', encoding='utf-8') as fh: fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
+            if getattr(snap, 'err', None): st['last_error'] = 'τελευταιο σφαλμα αιτηματος: ' + snap.err
             done.add(key); print(f"{g['us']} {g['home']} – {g['away']}: πρωτη Pinnacle {rec.get('hours')}ω πριν · ξοδευτηκαν {spent} · μενουν {remaining}", flush=True)
+    except BaseException as e:                                         # 21/10: το μηνυμα γραφεται στο state (τα logs του GitHub δεν φαινονται απο εδω)
+        st['last_error'] = f'{type(e).__name__}: {e}'[:400]; print('ΣΤΑΣΗ:', st['last_error'], flush=True)
     finally:
-        json.dump(dict(cache={k: v for k, v in list(cache.items())[-400:]}, done=sorted(done)), open(STATE, 'w', encoding='utf-8'))
+        json.dump(dict(cache={k: v for k, v in list(cache.items())[-400:]}, done=sorted(done), spent=spent, remaining=remaining,
+                       last_error=st.get('last_error'), t=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')), open(STATE, 'w', encoding='utf-8'))
         print(f'ΤΕΛΟΣ · credits {spent} · μενουν {remaining}', flush=True)
 if __name__ == '__main__':
     main()
