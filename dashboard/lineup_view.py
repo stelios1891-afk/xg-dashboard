@@ -343,3 +343,99 @@ def strength_bar_html(nm_h, d_h, nm_a, d_a):
                 f'<span style="font-family:JetBrains Mono,monospace;font-size:20px;font-weight:700;color:{col}">'
                 f'{d:+.3f}</span> <span style="color:{col};font-size:11px">{word}</span></div>')
     return ('<div style="display:flex;gap:10px;background:#0a0f1e">' + cell(nm_h, d_h) + cell(nm_a, d_a) + '</div>')
+
+
+# ======================================================================================================================
+# 21/10/2026 — ΝΕΑ ΦΟΡΜΟΥΛΑ ΕΝΔΕΚΑΔΑΣ (ερευνα απουσιων): αξια + εμπιστοσυνη προπονητη (χαντικαπ) · εμπιστοσυνη επιθ./αμυνας + xGI (συνολα)
+# Δεδομενα: xi_formula_lab.json (χτιζεται καθε πρωι, xi_formula_lab_build.py). Δ = 11αδα − ΣΥΝΗΘΙΣΜΕΝΗ της ομαδας.
+# ======================================================================================================================
+def load_formula():
+    p = os.path.join(ROOT, 'xi_formula_lab.json')
+    return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else None
+
+
+def f_delta(F, tid, ids):
+    """Δ της 11αδας ids (FotMob ids) vs τη συνηθισμενη της ομαδας — ιδιο με xi_formula.team_delta."""
+    t = (F or {}).get('teams', {}).get(str(tid))
+    if not t or not ids: return None
+    P = t['players']; ids = [str(i) for i in ids]
+    def g(p, k, d):
+        r = P.get(p); return (r[k] if r and r[k] is not None else d)
+    def mean(xs):
+        xs = [x for x in xs if x is not None]; return sum(xs) / len(xs) if xs else None
+    def feats(x):
+        o = [p for p in x if g(p, 0, 2) in (2, 3)]; d = [p for p in x if g(p, 0, 2) in (0, 1)]
+        return dict(V=mean([g(p, 2, None) for p in x]), T=mean([g(p, 1, 0.3) for p in x]), XGI=sum(g(p, 3, 0.25) for p in x),
+                    TO=mean([g(p, 1, 0.3) for p in o]), TD=mean([g(p, 1, 0.3) for p in d]),
+                    VO=mean([g(p, 2, None) for p in o]), VD=mean([g(p, 2, None) for p in d]))
+    A, U = feats(ids), feats(t['usual'])
+    out = {k: (A[k] - U[k]) if (A[k] is not None and U[k] is not None) else 0.0 for k in A}
+    out['out'] = [p for p in t['usual'] if p not in ids]; out['n'] = len(out['out'])
+    out['gd_part'] = F['G_V'] * out['V'] + F['G_T'] * out['T']           # συνεισφορα της ομαδας στη διορθωση υπεροχης
+    return out
+
+
+def f_adjust(F, dh, da):
+    if dh is None or da is None: return 0.0, 0.0
+    gd = dh['gd_part'] - da['gd_part']
+    tot = sum(F['B'][k] * (dh[k] + da[k]) for k in F['B'])
+    return gd, tot
+
+
+def f_apply(xh0, xa0, gd, tot):
+    """Νεα xG: υπεροχη +gd (μοιρασμενη), συνολο +tot (αναλογικα)."""
+    xh, xa = xh0 + gd / 2, xa0 - gd / 2
+    T0 = max(xh + xa, 0.1); f = max(T0 + tot, 0.3) / T0
+    return max(xh * f, 0.05), max(xa * f, 0.05)
+
+
+def market_ou(hid, aid):
+    mk = latest_market(hid, aid)
+    return (mk or {}).get('ou') if mk else None
+
+
+def scen_edges(xh, xa, line, oh, oa, ou):
+    """edge (τυπος scanner, κρατηση 3%) ανα πλευρα χαντικαπ και over/under στη γραμμη της αγορας.
+    αουτσαιντερ: p_cover · φαβορι: σωστα τεταρτα · συνολα: Dixon-Coles εγχωριων."""
+    import picks as engine, euro_shadow_scan as ES
+    def ed(pw, pp, o): return pw * (o - 1) * (1 - engine.MARGIN) - (1 - pw - pp)
+    out = {}
+    if line is not None and oh and oa:
+        d = engine.gd_dist_dom(max(xh, .05), max(xa, .05))
+        for k, side, ln, o in (('h', 1, line, oh), ('a', -1, -line, oa)):
+            pw, pp = engine.p_cover(d, side, ln) if ln > 0 else ES.cover_q(d, side, ln)
+            out[k] = ed(pw, pp, float(o))
+    if ou:
+        L, oo, uu = float(ou[0]), float(ou[1]), float(ou[2])
+        M = engine.score_matrix_dom(max(xh, .05), max(xa, .05)); idx = np.add.outer(np.arange(13), np.arange(13))
+        tt = np.bincount(idx.ravel(), weights=np.asarray(M).ravel(), minlength=25); ks = np.arange(25)
+        parts = [L] if (L * 4) % 2 == 0 else [L - .25, L + .25]; po = pu = 0
+        for x in parts: po += tt[ks > x + .01].sum() / len(parts); pu += tt[ks < x - .01].sum() / len(parts)
+        out['o'] = po * (oo - 1) * (1 - engine.MARGIN) - pu; out['u'] = pu * (uu - 1) * (1 - engine.MARGIN) - po
+    return out
+
+
+def scenarios_html(home, away, rows, line, oh, oa, ou, when=''):
+    """rows: [(ετικετα, σημειωση, gd, tot, n_h, n_a, xh, xa, edges)] → πινακας σεναριων με edges στις τιμες της αγορας."""
+    def e(v):
+        if v is None: return '<td class="mut">—</td>'
+        col = '#34d17a' if v >= 0.10 else ('#b8c4dc' if v > 0 else '#5a6b8c'); w = '700' if v >= 0.10 else '400'
+        return f'<td style="color:{col};font-weight:{w}">{v * 100:+.1f}%</td>'
+    css = """<style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf8;padding:2px;}
+    h5{font-size:14px;margin:2px 0 8px;} table{border-collapse:collapse;width:100%;background:#111827;border:1px solid #1e2d47;border-radius:12px;overflow:hidden;}
+    th{font-size:9.5px;color:#6b7fa3;text-transform:uppercase;letter-spacing:.8px;padding:8px 8px;border-bottom:1px solid #1e2d47;text-align:center;}
+    td{padding:8px 8px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:13.5px;border-bottom:1px solid #121b30;}
+    td.lbl{text-align:left;font-family:'DM Sans',sans-serif;font-size:12.5px;color:#e8edf8;font-weight:600;} .sub{color:#6b7fa3;font-size:10px;font-weight:400;display:block;}
+    .mut{color:#5a6b8c;} .note{color:#5a6b8c;font-size:10.5px;margin-top:7px;}</style>"""
+    lh = f'{line:+g}' if line is not None else '—'; la = f'{-line:+g}' if line is not None else '—'
+    head = (f'<tr><th></th><th>αλλαγες<br>γηπ / φιλ</th><th>Δ υπεροχης<br>γηπεδουχου</th><th>Δ συνολου<br>γκολ</th><th>σκορ</th>'
+            f'<th>{_h.escape(home)[:12]} {lh}<br>{oh if oh else "—"}</th><th>{_h.escape(away)[:12]} {la}<br>{oa if oa else "—"}</th>'
+            f'<th>over {ou[0] if ou else "—"}<br>{ou[1] if ou else "—"}</th><th>under {ou[0] if ou else "—"}<br>{ou[2] if ou else "—"}</th></tr>')
+    body = ''
+    for lab, note, gd, tot, nh, na, xh, xa, ed_ in rows:
+        body += (f'<tr><td class="lbl">{_h.escape(lab)}<span class="sub">{_h.escape(note)}</span></td>'
+                 f'<td>{nh if nh is not None else "—"} / {na if na is not None else "—"}</td><td>{gd:+.2f}</td><td>{tot:+.2f}</td><td>{xh:.2f}–{xa:.2f}</td>'
+                 + e(ed_.get('h')) + e(ed_.get('a')) + e(ed_.get('o')) + e(ed_.get('u')) + '</tr>')
+    return (css + '<h5>Σεναρια ενδεκαδας → edges στις τιμες της αγορας</h5><table>' + head + body + '</table>'
+            f'<div class="note">edge = ιδιος τυπος με τον scanner (κρατηση 3%) · αγορα Pinnacle {_h.escape(when)} · πρασινο εντονο ≥10% · '
+            'Δ = 11αδα vs τη ΣΥΝΗΘΙΣΜΕΝΗ (λεπτα 10 τελευταιων ματς) · χαντικαπ: αξια + εμπιστοσυνη προπονητη · συνολα: εμπιστοσυνη επιθ./αμυνας + xGI.</div>')

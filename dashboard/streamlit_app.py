@@ -56,7 +56,7 @@ st.set_page_config(page_title="xG Model — Live", page_icon="⚽", layout="wide
 
 # Κουμπι ανακοινωμενων 11αδων: ΠΑΡΚΑΡΙΣΜΕΝΟ (αποφαση Στελιου) μεχρι το πειραμα
 # χρονομετρησης (ποσο γρηγορα ανεβαινουν στο FotMob vs Twitter). ΜΗΝ ανοιξει χωρις εντολη.
-SHOW_OFFICIAL_XI_BTN = False
+SHOW_OFFICIAL_XI_BTN = True          # 21/10/2026: ξανανοιξε — η επισημη 11αδα μπαινει στη νεα φορμουλα (σεναρια)
 
 LEAGUE_LABELS = {'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
                  'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
@@ -807,6 +807,16 @@ def _lab():
     import lineup_view
     return lineup_view.load_lab()
 
+@st.cache_data(ttl=6 * 3600)
+def _formula():
+    import lineup_view
+    return lineup_view.load_formula()
+
+@st.cache_data(ttl=300)
+def _official(fid):
+    import lineup_view
+    return lineup_view.fetch_official_xi(fid)
+
 import streamlit.components.v1 as _components
 _lineup_pitch = _components.declare_component(
     "lineup_pitch", path=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pitch_component'))
@@ -817,14 +827,18 @@ def render_lineup(league):
     st.markdown('<div class="lg-title"><div><div class="nm" style="color:#b17af3">🧪 LINEUP LAB</div>'
                 '<div class="co">PROJECTED LINEUPS → ΔΙΟΡΘΩΜΕΝΑ PROJECTIONS · ΠΡΙΝ ΤΟ ΔΕΙ Η ΑΓΟΡΑ</div></div></div>',
                 unsafe_allow_html=True)
-    st.caption("Διαλεξε ματς → πειραξε τις 11αδες (πχ οταν πηγη σου λεει ποιος λειπει) → το projection "
-               "ανανεωνεται ζωντανα με τη μετρημενη ζυγαρια (0.9 γκολ διαφορας ανα +1.0 Δ ενδεκαδας). "
-               "Ρειτινγκ = 2σεζονο ιστορικο + ξενες λιγκες με συντελεστη επιπεδου (validated).")
+    st.caption("Διαλεξε ματς → η σελιδα ξεκινα απο τη ΣΥΝΗΘΙΣΜΕΝΗ 11αδα · φορτωσε την ΠΡΟΒΛΕΠΟΜΕΝΗ (ειδικοι) ή την ΕΠΙΣΗΜΗ, ή πειραξε μονος σου. "
+               "ΝΕΑ ΦΟΡΜΟΥΛΑ (21/10, ερευνα 9.5k ματς, LOSO 4/4): χαντικαπ = αξια + εμπιστοσυνη προπονητη (ποσα λεπτα παιζει οταν ειναι διαθεσιμος) · "
+               "συνολα = εμπιστοσυνη επιθεσης/αμυνας + xGI. Οι αλλαγες μπαινουν κατευθειαν στις τιμες (πινακας σεναριων).")
     try:
         lab = _lab()
     except Exception as e:
         st.error(f"Δεν φορτωθηκε η βαση παικτων: {e}")
         return
+    try:
+        F = _formula()
+    except Exception:
+        F = None
     fx = [m for m in proj if m['league'] == league and m.get('projectable')]
     if not fx:
         st.info("Δεν υπαρχουν επερχομενα ματς με projection εδω.")
@@ -854,12 +868,16 @@ def render_lineup(league):
         xi_h = keep['home']
     elif sv_h and sv_h.get('f') == f_h:
         xi_h = sv_h['xi']
+    elif F and lv.FORMATIONS[f_h] is None and (F['teams'].get(str(m['home_id'])) or {}).get('usual'):
+        xi_h = lv.fill_xi(th, [int(p) for p in F['teams'][str(m['home_id'])]['usual']])[0]      # 21/10: αρχη = η ΣΥΝΗΘΙΣΜΕΝΗ 11αδα
     else:
         xi_h = lv.default_xi(th, lv.FORMATIONS[f_h])
     if 'away' in keep:
         xi_a = keep['away']
     elif sv_a and sv_a.get('f') == f_a:
         xi_a = sv_a['xi']
+    elif F and lv.FORMATIONS[f_a] is None and (F['teams'].get(str(m['away_id'])) or {}).get('usual'):
+        xi_a = lv.fill_xi(ta, [int(p) for p in F['teams'][str(m['away_id'])]['usual']])[0]
     else:
         xi_a = lv.default_xi(ta, lv.FORMATIONS[f_a])
     nonce = st.session_state.get(f'll_nonce_{base_key}', 0)
@@ -935,15 +953,48 @@ def render_lineup(league):
         st.session_state[f'll_nonce_{base_key}'] = nonce + 1
         st.rerun()
     xh0, xa0 = m['home_adj_xg'], m['away_adj_xg']
-    d_h = (lv.xi_strength(th, sel_h) or th['base']) - th['base']
-    d_a = (lv.xi_strength(ta, sel_a) or ta['base']) - ta['base']
-    xh, xa = lv.adjust_xg(xh0, xa0, d_h, d_a, lab.get('slope_gd', 0.9))
-    st.markdown(lv.strength_bar_html(m['home'], d_h, m['away'], d_a), unsafe_allow_html=True)
+    mk = lv.latest_market(m['home_id'], m['away_id'])
+    if F and F['teams'].get(str(m['home_id'])) and F['teams'].get(str(m['away_id'])):
+        # 21/10/2026: ΝΕΑ ΦΟΡΜΟΥΛΑ — Δ vs τη συνηθισμενη, διορθωση υπεροχης & συνολου
+        dh = lv.f_delta(F, m['home_id'], sel_h); da = lv.f_delta(F, m['away_id'], sel_a)
+        gd_u, tot_u = lv.f_adjust(F, dh, da)
+        xh, xa = lv.f_apply(xh0, xa0, gd_u, tot_u)
+        st.markdown(lv.strength_bar_html(m['home'], (dh or {}).get('gd_part', 0.0), m['away'], (da or {}).get('gd_part', 0.0)), unsafe_allow_html=True)
+        st.caption('Δ ενδεκαδας = γκολ υπεροχης που χανει (−) ή κερδιζει (+) η ομαδα με αυτη την 11αδα, σε σχεση με τη συνηθισμενη της.')
+        line = float(mk['line']) if mk and mk.get('line') is not None else None
+        oh = float(mk['oh']) if mk and mk.get('oh') else None; oa = float(mk['oa']) if mk and mk.get('oa') else None
+        ou = mk.get('ou') if mk else None
+        rows = []
+        def _row(lab_, note, ih, ia):
+            d1 = lv.f_delta(F, m['home_id'], ih) if ih else None; d2 = lv.f_delta(F, m['away_id'], ia) if ia else None
+            g_, t_ = lv.f_adjust(F, d1, d2) if (d1 and d2) else (0.0, 0.0)
+            x1, x2 = lv.f_apply(xh0, xa0, g_, t_)
+            rows.append((lab_, note, g_, t_, (d1 or {}).get('n'), (d2 or {}).get('n'), x1, x2, lv.scen_edges(x1, x2, line, oh, oa, ou)))
+        _row('Συνηθισμενη 11αδα', 'το μοντελο οπως ειναι', F['teams'][str(m['home_id'])]['usual'], F['teams'][str(m['away_id'])]['usual'])
+        if prj and prj.get('home') and prj.get('away'):
+            _row('Προβλεπομενη (ειδικοι)', f"{prj.get('src') or 'predicted11'} · {str(prj.get('ts'))[:16].replace('T', ' ')} UTC", prj['home'], prj['away'])
+        try:
+            _ko = datetime.datetime.fromisoformat(str(m['utc']).replace('Z', '+00:00'))
+            if _ko.tzinfo is None: _ko = _ko.replace(tzinfo=datetime.timezone.utc)
+            ko_m = (_ko - datetime.datetime.now(datetime.timezone.utc)).total_seconds() / 60
+        except Exception:
+            ko_m = 9999
+        if m.get('fid') and -120 <= ko_m <= 150:
+            off_ = _official(m['fid'])
+            if off_ and off_.get('home') and off_.get('away'):
+                _row('ΕΠΙΣΗΜΗ 11αδα', 'FotMob (ανακοινωνεται ~60′ πριν)', off_['home'], off_['away'])
+        _row('Το σεναριο σου', 'οπως ειναι τωρα στο γηπεδο πανω', sel_h, sel_a)
+        st.components.v1.html(lv.scenarios_html(m['home'], m['away'], rows, line, oh, oa, ou, str((mk or {}).get('t', ''))[:16]),
+                              height=150 + 66 * len(rows), scrolling=True)
+    else:
+        d_h = (lv.xi_strength(th, sel_h) or th['base']) - th['base']
+        d_a = (lv.xi_strength(ta, sel_a) or ta['base']) - ta['base']
+        xh, xa = lv.adjust_xg(xh0, xa0, d_h, d_a, lab.get('slope_gd', 0.9))
+        st.markdown(lv.strength_bar_html(m['home'], d_h, m['away'], d_a), unsafe_allow_html=True)
     if m.get('promoted'):
         st.caption("⚠ Ματς με νεοφωτιστη: εδω η αβεβαιοτητα ειναι στην ΟΜΑΔΑ, οχι στην 11αδα — "
                    "το Δ προβλεπει λιγοτερα (μετρημενο).")
     p0 = bd.one_x_two(xh0, xa0); p1 = bd.one_x_two(xh, xa)
-    mk = lv.latest_market(m['home_id'], m['away_id'])
     mkt_1x2 = None
     if mk and mk.get('h2h'):
         mkt_1x2 = tuple(mk['h2h'])
