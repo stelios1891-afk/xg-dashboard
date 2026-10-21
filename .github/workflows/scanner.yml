@@ -62,7 +62,7 @@ jobs:
             scanner-state-
 
       - name: Install deps
-        run: pip install -r requirements.txt pytest
+        run: pip install -r requirements.txt pytest pdfplumber   # 21/10: pdfplumber = επισημη αναφορα τραυματιων NBA (nba_injrep_live)
 
       # πρωτο περασμα αμεσως (χειροκινητο = force, χωρις gating)
       - name: Scanner pass

@@ -28,6 +28,17 @@ def code_of(name):
 # σε αλλη ζωνη ωρας χανει TZ_K πονους ανα ωρα διαφορας (ανατολη ή δυση, ιδιο βαρος) — nba_tests/t3b_travel_tz εκδοχη δγ: RMSE 5/5,
 # ROI ολη σεζον +1.0 → +1.6%, Οκτ-Δεκ +7.1 → +6.8% (θορυβος)· ανατολη −0.79 / δυση −0.55 ανα ωρα ξεχωριστα (ιδια ταξη, ενα νουμερο).
 TZ_K, TZ_GAP = 0.68, 2
+def _stale_alert(IL, now):
+    """21/10: διακοπτης «official» αλλα η αναφορα ειναι παλια (>3ω) → ESPN + ενα μηνυμα στο info bot ανα 6ω."""
+    fn = F('nba_injrep_alert.json')
+    try: last = json.load(open(fn, encoding='utf-8')).get('t')
+    except Exception: last = None
+    if last and (now - datetime.datetime.fromisoformat(last)).total_seconds() < 6 * 3600: return
+    try:
+        import notify; a_ = IL.age_min(now)
+        notify.send(f"⚠️ NBA: η επισημη αναφορα τραυματιων ειναι παλια ({'—' if a_ is None else f'{a_ / 60:.1f}ω'}) → απουσιες απο ESPN", channel='info')
+    except Exception as e: print('ειδοποιηση σφαλμα', e)
+    json.dump(dict(t=now.isoformat()), open(fn, 'w', encoding='utf-8'))
 _TZ = {**{t: -5 for t in 'ATL BOS BRK CHO CLE DET IND MIA NYK ORL PHI TOR WAS'.split()},
        **{t: -6 for t in 'CHI DAL HOU MEM MIL MIN NOP OKC SAS'.split()},
        **{t: -7 for t in 'DEN UTA PHO'.split()}, **{t: -8 for t in 'GSW LAC LAL POR SAC'.split()}}
@@ -95,6 +106,14 @@ def main():
     try: P = json.load(open(F('nba_projections.json'), encoding='utf-8'))
     except Exception: P = {}
     games = {str(g['code']): g for g in P.get('games', [])}
+    OFF = None                                       # 21/10: επισημη αναφορα NBA — κατεβαινει ΠΑΝΤΑ (καταγραφη)· χρησιμοποιειται ΜΟΝΟ με διακοπτη «official»
+    try:
+        import nba_injrep_live as IL
+        print(f'NBA επισημη αναφορα: {IL.refresh(now)}')
+        if IL.enabled():
+            OFF = IL.Official(now)
+            if not OFF.ok: _stale_alert(IL, now)
+    except Exception as e: print('NBA επισημη αναφορα σφαλμα —', e)
     AB = None                                        # 19/10: απουσιες (ESPN Out) στην προβλεψη
     try:
         import nba_absence
@@ -108,7 +127,7 @@ def main():
     except Exception as e: print('ΠΡΟΣΟΧΗ: μεταγραφες απενεργες —', e)
     RN = None                                        # 21/10: ρόστερ «1ου ματς» με τα ΤΩΡΙΝΑ «Out» (ομαδες χωρις φετινο ματς)
     try:
-        import nba_roster_now; RN = nba_roster_now.RosterNow(st, TRO if TRO is not None else nba_trades._out_set())
+        import nba_roster_now; RN = nba_roster_now.RosterNow(st, TRO if TRO is not None else nba_trades._out_set(), OFF)
     except Exception as e: print('ΠΡΟΣΟΧΗ: ρόστερ τωρα απενεργο —', e)
     # ημερες ματς καθε ομαδας (ESPN παιγμενα + Pinnacle προγραμμα) για το back-to-back
     days = {}
@@ -150,7 +169,7 @@ def main():
         m += -TZ_K * (tzh - tza)
         m0, T0 = m, T; dm = dtot = shadow = 0.0; LH = LA = []
         if AB is not None:
-            try: dm, dtot, shadow, LH, LA = AB.adjust(h, a); m += dm; T += dtot
+            try: dm, dtot, shadow, LH, LA = AB.adjust(h, a, d); m += dm; T += dtot
             except Exception as e: print('απουσιες σφαλμα', h, a, e)
         tdm, tdet = 0.0, []
         if TRM:
@@ -158,14 +177,15 @@ def main():
             except Exception as e: print('μεταγραφες σφαλμα', h, a, e)
         rdm, rdet = 0.0, []
         if RN is not None:
-            try: rdm, rdet = RN.adjust(h, a); m += rdm
+            try: rdm, rdet = RN.adjust(h, a, d); m += rdm
             except Exception as e: print('ρόστερ τωρα σφαλμα', h, a, e)
         games[code] = dict(code=code, round=None, phase='RS', group=None, utc=ko.isoformat().replace('+00:00', 'Z'), home=g['home_team'], away=g['away_team'], hcode=h, acode=a,
                            margin=round(m, 2), total=round(T, 1), total_src='μοντελο', pts_h=round((T + m) / 2, 1), pts_a=round((T - m) / 2, 1),
                            p_home=round(Phi(m / st['sig_m']), 3), played=False, version='nba1', venue='', b2b_h=b2h, b2b_a=b2a, tz_h=tzh, tz_a=tza,
                            gno=max(st['gp'].get(h, 0), st['gp'].get(a, 0)), gp_h=st['gp'].get(h, 0), gp_a=st['gp'].get(a, 0),
                            margin_base=round(m0, 2), total_base=round(T0, 1), abs_dm=round(dm, 2), abs_dt=round(dtot, 2), abs_shadow=round(shadow, 2),
-                           abs_h=[[p['name'], p['min'], int(p['fresh'])] for p in LH], abs_a=[[p['name'], p['min'], int(p['fresh'])] for p in LA],
+                           abs_h=[[p['name'], p['min'], int(p['fresh']), p.get('status', 'Out'), p.get('w', 1.0)] for p in LH], abs_a=[[p['name'], p['min'], int(p['fresh']), p.get('status', 'Out'), p.get('w', 1.0)] for p in LA],
+                           inj_src='official' if (OFF is not None and OFF.covers(h, d)) else 'espn',
                            trade_dm=round(tdm, 2), trades=tdet, roster_dm=round(rdm, 2), roster_now=rdet)
     finish(games, st, now)
     up = [dict(code=g['code'], round=None, utc=E._pdt(g['utc']), hcode=g['hcode'], acode=g['acode'], home=g['home'], away=g['away']) for g in games.values() if not g['played']]

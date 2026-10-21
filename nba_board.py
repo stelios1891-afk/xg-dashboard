@@ -53,6 +53,17 @@ def players():
     for v in INJ.get('teams', {}).values():
         for x in v.get('players', []):
             if v.get('code'): inj[(v['code'], nk(x[0]))] = (x[0], x[1], x[2] if len(x) > 2 else None, x[3] if len(x) > 3 else None)
+    # 21/10: με διακοπτη «official» → καταστασεις απο την επισημη αναφορα NBA (πλησιεστερο ματς καθε ομαδας) + πιθανοτητα απουσιας
+    OFFK, IL = {}, None
+    try:
+        import nba_injrep_live as IL
+        if IL.enabled():
+            O = IL.Official()
+            if O.ok:
+                for (t_, gd), d_ in sorted(O.by.items(), key=lambda kv: kv[0][1], reverse=True):
+                    for k_, (st_, why, raw) in d_.items(): OFFK[(t_, k_)] = (st_, why)
+        else: IL = None
+    except Exception: IL = None
     teams = set(ROST) | {t for t, _ in hist} | {t for t, _ in inj}
     # 20/10 (Στελιος «να δειχνει αυτο που μετραει πραγματικα το μοντελο»): οσοι ΔΕΝ εχουν παιξει φετος μετρανε μεσω ΑΦΕΤΗΡΙΑΣ (ροστερ),
     # οχι με τη φορμουλα απουσιας: διαφορα αξιας ροστερ με/χωρις αυτον (nba_live_roster: βαρη λεπτα/ματς, αγνωστοι −1 με 15′),
@@ -82,6 +93,12 @@ def players():
             v, o, d = V.get(k, [V_UNK, REPO, REPD])
             im, it = impact(v, o, d, mn)
             ij = inj.get((t, k)); stt = ij[1] if ij else None
+            pr = None
+            if IL is not None:
+                o_ = OFFK.get((t, IL.ckey(n)))
+                if o_: ij = (n, o_[0], o_[1], None); stt = o_[0]
+                elif ij: ij, stt = None, None                       # οχι στην επισημη αναφορα → διαθεσιμος
+                pr = IL.prob(stt, mn) if stt else 0.0
             played = bool(hist.get((t, k)))
             R = ROST.get(t, [])
             if played:
@@ -94,6 +111,9 @@ def players():
                 im, it = max(d_, 0.0) * 8 / (8 + gpt.get(t, 0)), 0.0
             # 21/10 (nba_roster_now): πριν το 1ο ματς ο scanner αφαιρει ΚΑΘΕ τωρινο «Out» (οχι μονο οσους ελειπαν στο πρωινο ρόστερ)
             in_model = bool(ij) and str(stt).lower() == 'out' and ((played and mn >= MIN_ROLE) or (not played and (n not in R or gpt.get(t, 0) == 0)))
+            if pr is not None:                                      # επισημη αναφορα: μετραει με πιθανοτητα pr
+                in_model = pr > 0 and ((played and mn >= MIN_ROLE) or (not played and gpt.get(t, 0) == 0))
+                if pr > 0: how = f'{how} · {int(round(pr * 100))}%'
             if mn < MIN_SHOW and not ij: continue
             rows.append(dict(name=n, min=round(mn, 1), msrc=src, gp=len(hist.get((t, k), [])), v=round(v, 2), o=round(o, 2), d=round(d, 2),
                              imp_m=round(im, 2), imp_t=round(it, 2), how=how, status=stt, itype=ij[2] if ij else None, idate=ij[3] if ij else None, in_model=in_model))

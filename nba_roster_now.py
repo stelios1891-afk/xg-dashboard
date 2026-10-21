@@ -19,8 +19,8 @@ def _load(n, d):
 
 
 class RosterNow:
-    def __init__(self, st, out_set):
-        self.st = st or {}; self.out = out_set or set()
+    def __init__(self, st, out_set, off=None):
+        self.st = st or {}; self.out = out_set or set(); self.off = off          # off: nba_injrep_live.Official (μονο με διακοπτη «official»)
         RL = _load('nba_roster_live.json', {}); self.ALL, self.OLD, self.ROS = RL.get('all', {}), RL.get('old', {}), RL.get('roster', {})
         self.PL = _load('nba_roster_base.json', {}).get('players', {})
 
@@ -30,17 +30,31 @@ class RosterNow:
         w = [x[1] for x in vals]; tot = sum(w)
         return sum(5 * wi / tot * x[0] for wi, x in zip(w, vals)) if tot else None
 
-    def team(self, t):
+    def team(self, t, gdate=None):
         """(διορθωση για την ομαδα, νεα Out, επιστροφες) — 0 αν εχει ηδη παιξει ή λειπουν δεδομενα."""
         if int((self.st.get('gp') or {}).get(t, 0)) > 0 or t not in self.ALL or t not in self.OLD: return 0.0, [], []
-        now = [n for n in self.ALL[t] if (t, nk(n)) not in self.out]
-        v = self.team_value(now)
-        if v is None: return 0.0, [], []
+        if self.off is not None and gdate and self.off.covers(t, gdate):
+            # 21/10: επισημη αναφορα — Out (p=1) εξω· Doubtful/Questionable/Probable: p × (αξια χωρις αυτον − αξια)· ρολος απο περσινα λεπτα/ματς
+            import nba_injrep_live as IL
+            stt = self.off.status(t, gdate)
+            P_ = {n: IL.prob(stt[IL.ckey(n)][0], self.PL.get(nk(n), [0, 15.0])[1]) for n in self.ALL[t] if IL.ckey(n) in stt}
+            now = [n for n in self.ALL[t] if P_.get(n, 0.0) < 1.0]
+            v0 = v = self.team_value(now)
+            if v is None: return 0.0, [], []
+            for n in now:
+                p = P_.get(n, 0.0)
+                if 0 < p < 1:
+                    v2 = self.team_value([x for x in now if x != n])
+                    if v2 is not None: v += p * (v2 - v0)
+        else:
+            now = [n for n in self.ALL[t] if (t, nk(n)) not in self.out]
+            v = self.team_value(now)
+            if v is None: return 0.0, [], []
         d_state = float((self.st.get('roster') or {}).get(t, 0.0))
         snap = set(self.ROS.get(t, [])); cur = set(now)
         return v - float(self.OLD[t]) - d_state, sorted(snap - cur), sorted(cur - snap)
 
-    def adjust(self, h, a):
-        dh, oh, rh = self.team(h); da, oa, ra = self.team(a)
+    def adjust(self, h, a, gdate=None):
+        dh, oh, rh = self.team(h, gdate); da, oa, ra = self.team(a, gdate)
         det = [[h, n, 'Out'] for n in oh] + [[h, n, 'επιστροφη'] for n in rh] + [[a, n, 'Out'] for n in oa] + [[a, n, 'επιστροφη'] for n in ra]
         return dh - da, det

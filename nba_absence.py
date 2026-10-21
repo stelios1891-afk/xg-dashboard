@@ -69,30 +69,48 @@ class Absences:
                 for k, mn in pl.items():
                     if mn > 0: self.hist[(t, k)].append(mn)
                 self.last[t] = {k for k, mn in pl.items() if mn > 0}
+        self.off = None                                                   # 21/10: επισημη αναφορα NBA (nba_injrep_live) — μονο με διακοπτη «official»
+        try:
+            import nba_injrep_live as IL
+            if IL.enabled(): self.off = IL.Official(); self._prob = IL.prob; self._ck = IL.ckey
+        except Exception as e: print('επισημη αναφορα: απενεργη —', e)
         self.out = collections.defaultdict(list)
         for v in INJ.get('teams', {}).values():
             for x in v.get('players', []):
                 n, stt = x[0], x[1]
                 if str(stt or '').strip().lower() == 'out' and v.get('code'): self.out[v['code']].append(n)
 
-    def team(self, t):
-        """Απoντες ρολου της ομαδας: [dict(name, min, v, o, d, fresh)]."""
+    def team(self, t, gdate=None):
+        """Απoντες ρολου της ομαδας: [dict(name, min, v, o, d, fresh, w, status)] (w = πιθανοτητα απουσιας· ESPN «Out» = 1)."""
         res = []
+        if self.off is not None and gdate and self.off.covers(t, gdate):       # 21/10: επισημη αναφορα → καθε κατασταση με την πιθανοτητα της
+            names = {self._ck(k_): k_ for (tt, k_) in self.hist if tt == t}
+            for key, (stt, why, raw) in self.off.status(t, gdate).items():
+                k = names.get(key)
+                if k is None: continue                                   # δεν εχει παιξει φετος για την ομαδα → το εχει το ρόστερ (nba_roster_now)
+                rec = self.hist.get((t, k), [])[-10:]
+                mn = sum(rec) / len(rec)
+                if mn < MIN_ROLE: continue
+                w = self._prob(stt, mn)
+                if w <= 0: continue
+                v, o, d = self.V.get(k, [V_UNK, REPO, REPD])
+                res.append(dict(name=raw, min=round(mn, 1), v=v, o=o, d=d, fresh=k in self.last.get(t, set()), w=w, status=stt))
+            return res
         for n in self.out.get(t, []):
             k = nk(n); rec = self.hist.get((t, k), [])[-10:]
             if not rec: continue                                   # δεν εχει παιξει φετος για την ομαδα → το εχει το roster prior
             mn = sum(rec) / len(rec)
             if mn < MIN_ROLE: continue
             v, o, d = self.V.get(k, [V_UNK, REPO, REPD])
-            res.append(dict(name=n, min=round(mn, 1), v=v, o=o, d=d, fresh=k in self.last.get(t, set())))
+            res.append(dict(name=n, min=round(mn, 1), v=v, o=o, d=d, fresh=k in self.last.get(t, set()), w=1.0, status='Out'))
         return res
 
-    def adjust(self, h, a):
-        """(διορθωση περιθωριου γηπ, διορθωση συνολου, σκιωδες υπολοιπο, λιστες) για το ματς."""
-        H, A_ = self.team(h), self.team(a)
-        cost = lambda L: sum((p['v'] - REP) * p['min'] / 48 for p in L)
+    def adjust(self, h, a, gdate=None):
+        """(διορθωση περιθωριου γηπ, διορθωση συνολου, σκιωδες υπολοιπο, λιστες) για το ματς (gdate = ημερα ΗΠΑ, για την επισημη αναφορα)."""
+        H, A_ = self.team(h, gdate), self.team(a, gdate)
+        cost = lambda L: sum(p['w'] * (p['v'] - REP) * p['min'] / 48 for p in L)
         dm = ABS_K * (cost(A_) - cost(H))
-        LO = sum((p['o'] - REPO) * p['min'] / 48 for p in H + A_); LD = sum((p['d'] - REPD) * p['min'] / 48 for p in H + A_)
+        LO = sum(p['w'] * (p['o'] - REPO) * p['min'] / 48 for p in H + A_); LD = sum(p['w'] * (p['d'] - REPD) * p['min'] / 48 for p in H + A_)
         fr = [p for p in H + A_ if p['fresh']]
-        shadow = SH_O * sum((p['o'] - REPO) * p['min'] / 48 for p in fr) + SH_D * sum((p['d'] - REPD) * p['min'] / 48 for p in fr)
+        shadow = SH_O * sum(p['w'] * (p['o'] - REPO) * p['min'] / 48 for p in fr) + SH_D * sum(p['w'] * (p['d'] - REPD) * p['min'] / 48 for p in fr)
         return dm, C_O * LO + C_D * LD, shadow, H, A_

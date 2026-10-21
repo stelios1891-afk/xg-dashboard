@@ -82,8 +82,21 @@ def build(save=True):
     return moves
 
 
+def _ck(n):
+    import re as _re, unicodedata as _u
+    s = _u.normalize('NFD', str(n)); s = ''.join(c for c in s if _u.category(c) != 'Mn').lower()
+    return _re.sub(r'[^a-z]', '', _re.sub(r'\b(jr|sr|ii|iii|iv)\b\.?', '', s))
+
+
 def _out_set():
     S = set()
+    try:                                                     # 21/10: + «Out» της επισημης αναφορας NBA (μονο με διακοπτη «official»)
+        import nba_injrep_live as IL
+        if IL.enabled():
+            O = IL.Official()
+            for (t, _), d in O.by.items():
+                if O.ok: S |= {(t, 'ck:' + k) for k, (st, _w, _r) in d.items() if st == 'Out'}
+    except Exception: pass
     for v in _load('nba_injuries.json', {}).get('teams', {}).values():
         for x in v.get('players', []):
             if v.get('code') and str(x[1] or '').strip().lower() == 'out': S.add((v['code'], nk(x[0])))
@@ -102,7 +115,7 @@ def adjust(h, a, moves=None, out=None):
     for m in moves:
         c = cost(m)
         for team, sg in ((h, 1), (a, -1)):
-            if m['to'] == team and m.get('since') and m.get('on_roster', True) and (team, nk(m['name'])) not in out:   # 21/10: μονο αφου επαιξε
+            if m['to'] == team and m.get('since') and m.get('on_roster', True) and (team, nk(m['name'])) not in out and (team, 'ck:' + _ck(m['name'])) not in out:   # 21/10: μονο αφου επαιξε · ck = επισημη αναφορα
                 dm += sg * c; det.append([team, m['name'], round(c, 2)])
             if m['frm'] == team:
                 dm -= sg * c; det.append([team, m['name'], round(-c, 2)])
