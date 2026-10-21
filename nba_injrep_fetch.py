@@ -20,12 +20,16 @@ TEAMS = dict(AtlantaHawks='ATL', BostonCeltics='BOS', BrooklynNets='BRK', Charlo
              LAClippers='LAC', LosAngelesLakers='LAL', MemphisGrizzlies='MEM', MiamiHeat='MIA', MilwaukeeBucks='MIL', MinnesotaTimberwolves='MIN',
              NewOrleansPelicans='NOP', NewYorkKnicks='NYK', OklahomaCityThunder='OKC', OrlandoMagic='ORL', Philadelphia76ers='PHI', PhoenixSuns='PHO',
              PortlandTrailBlazers='POR', SacramentoKings='SAC', SanAntonioSpurs='SAS', TorontoRaptors='TOR', UtahJazz='UTA', WashingtonWizards='WAS')
-TEAM_RE = re.compile('(' + '|'.join(sorted(TEAMS, key=len, reverse=True)) + ')')
+def _spaced(k):                 # 21/10: οι παλιες σεζον (≤2022-23) γραφουν «Detroit Pistons», οι νεες «DetroitPistons» → κενα προαιρετικα
+    k = re.sub(r'(?<=[a-z0-9])(?=[A-Z0-9])', '§', k); k = re.sub(r'(?<=[A-Z])(?=[A-Z][a-z])', '§', k)
+    return k.replace('§', r'\s*')
+TEAM_RE = re.compile('(' + '|'.join(_spaced(k) for k in sorted(TEAMS, key=len, reverse=True)) + ')')
+TEAM_KEY = lambda m: re.sub(r'\s+', '', m)
 ST = r'(Out|Questionable|Doubtful|Probable|Available)'
-PL_RE = re.compile(r"([A-Za-zÀ-ž.'\-]+,[A-Za-zÀ-ž.'\-]+)\s+" + ST + r'\b\s*(.*)$')
+PL_RE = re.compile(r"^([A-Za-zÀ-ž.'\-]+(?:\s[A-Za-zÀ-ž.'\-]+)*),\s*([A-Za-zÀ-ž.'\-]+(?:\s[A-Za-zÀ-ž.'\-]+)?)\s+" + ST + r'\b\s*(.*)$')
 GM_RE = re.compile(r'(\d\d/\d\d/\d{4})?\s*(\d\d:\d\d\s*\(ET\))?\s*([A-Z]{2,3}@[A-Z]{2,3})\s*(.*)$')   # 20/10: ωρα προαιρετικη (ματς στην ιδια ωρα)
 HDR_RE = re.compile(r'Injury Report:\s*(\d\d/\d\d/\d\d)\s+(\d\d:\d\d\s*[AP]M)')
-SUF = re.compile(r'(Jr\.?|Sr\.?|III|II|IV)$')
+SUF = re.compile(r'\s*(Jr\.?|Sr\.?|III|II|IV)$')
 
 def key(raw):
     last, first = raw.split(',', 1)
@@ -48,10 +52,11 @@ def parse(path):
                     if m.group(2): gt = m.group(2).replace(' ', '')
                     mu, ln, tm = m.group(3), m.group(4), None
                 m = TEAM_RE.match(ln)
-                if m: tm = TEAMS[m.group(1)]; ln = ln[m.end():].strip()
-                m = PL_RE.search(ln)
+                if m: tm = TEAMS[TEAM_KEY(m.group(1))]; ln = ln[m.end():].strip()
+                m = PL_RE.match(ln)
                 if m and tm:
-                    rows.append([rep, gd, gt, mu, tm, m.group(1), key(m.group(1)), m.group(2), m.group(3)[:60]])
+                    raw = m.group(1).replace(' ', '') + ',' + m.group(2).replace(' ', '')
+                    rows.append([rep, gd, gt, mu, tm, raw, key(m.group(1) + ',' + m.group(2)), m.group(3), m.group(4)[:60]])
     return rows
 
 CANARY = 'https://ak-static.cms.nba.com/referee/injury/Injury-Report_2024-01-15_05PM.pdf'
