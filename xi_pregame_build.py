@@ -29,6 +29,7 @@ AB = pd.read_csv('abs_sides.csv', dtype={'mid': str})
 AB = AB[AB.sofa_list.astype(bool)]
 LIST = {(r.mid, r.side): (str(r.full_ids).split('|'), str(r.avail_ids).split('|'), str(r.availd_ids).split('|'), r.n_miss, r.n_miss_reg)
         for r in AB.itertuples() if isinstance(r.full_ids, str)}
+PRED = {k: [str(x) for x in v] for k, v in json.load(open('pred_pids_2526.json', encoding='utf-8')).items()}   # 21/10: ΠΡΟΒΛΕΠΟΜΕΝΕΣ 11αδες predicted11 (2526, ~25ω πριν)
 ORDER = sorted([k for k in FM if k in SQ and SQ[k].get('h') and SQ[k].get('a')], key=lambda k: FM[k]['date'])
 POS = {}
 for k in ORDER:
@@ -74,8 +75,13 @@ for k in ORDER:
             VD = float(np.mean([x for p, x in zip(xi, vs) if x is not None and POS.get(p, 2) in (0, 1)] or [np.nan]))
             return dict(V=V, T=T, TO=TO, TD=TD, VO=VO, VD=VD, XGI=sum(xgi(p) for p in xi))
         F, A, Ad = feats(full), feats(avail), feats(availd)
+        ACT = feats([str(p) for p in SQ[k][fs]['st']])                                   # ΠΡΑΓΜΑΤΙΚΗ 11αδα, ιδιος ορισμος (vs συνηθισμενη)
+        PR = PRED.get(f'{k}_{fs}'); PRf = feats(PR) if PR and len(PR) >= 9 else None      # ΠΡΟΒΛΕΠΟΜΕΝΗ (predicted11)
         for key in F:
             rec[f'p{key}_{fs}'] = A[key] - F[key]; rec[f'pd{key}_{fs}'] = Ad[key] - F[key]
+            rec[f'a{key}_{fs}'] = ACT[key] - F[key]
+            rec[f'r{key}_{fs}'] = (PRf[key] - F[key]) if PRf else np.nan
+        rec[f'r_ok_{fs}'] = bool(PRf)
         rec[f'nmiss_{fs}'] = nm; rec[f'nreg_{fs}'] = nr
     OUT.append(rec)
     for fs, tid in (('h', m['hid']), ('a', m['aid'])):
