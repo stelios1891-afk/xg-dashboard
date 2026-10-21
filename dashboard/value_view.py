@@ -219,7 +219,7 @@ def pick_card(p):
     if not _ok and stake_v not in ('— (καταγραφη)', '— (σκια)', '— (αναμονη ανανεωσης)', '— (δες 🧮)', '— (αναμονη 12-36ω)'):
         stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
     return f"""
-<div class="pc {hi} {'np' if not _ok else ''}" data-k="{pk}">
+<div class="pc {hi} {'np' if not _ok else ''}" data-k="{pk}" data-day="{_when_ath(p.get('when'))[:10]}">
   <div class="top">
     <div class="lg">{badge}{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
     <div class="when">{_h.escape(_when_ath(p.get('when')))}<button class="played" onclick="tgPlayed(this)" title="Σημειωσε οτι το επαιξες (αποθηκευεται σε αυτη τη συσκευη)">☐ το έπαιξα</button></div>
@@ -308,7 +308,8 @@ def picks_html(picks):
     picks = sorted(picks, key=lambda p: (p.get('when') or '9999'))   # χρονολογικα: νωριτερο πανω, πιο μετα κατω
     return (CSS + PLAYED_CSS + '<div class="wrap"><div class="pbar2"><span id="pcnt">✅ παιγμένα 0</span>'
             '<button class="pf on" data-f="all" onclick="pfSet(this)">Όλα</button><button class="pf" data-f="todo" onclick="pfSet(this)">Μη παιγμένα</button>'
-            '<button class="pf" data-f="done" onclick="pfSet(this)">Παιγμένα</button></div>'
+            '<button class="pf" data-f="done" onclick="pfSet(this)">Παιγμένα</button>'
+            '<span class="pfsep">+</span><button class="pf pt" onclick="ptSet(this)" title="Μονο ματς με σεντρα σημερα (ωρα Ελλαδας)· συνδυαζεται με τα αλλα φιλτρα">Σημερινά</button></div>'
             + ''.join(pick_card(p) for p in picks) + '</div>' + CALC_JS + PLAYED_JS)
 
 # 7/10/2026 (Στελιος «ενδειξη τικ — να την πατω και να αποθηκευεται»): «✅ το επαιξα» ανα pick, στη μνημη του browser (localStorage)·
@@ -322,10 +323,11 @@ PLAYED_CSS = """<style>
 .pbar2 #pcnt{margin-right:8px}
 .pf{background:none;border:1px solid #2a3a5c;color:#8fa3c8;border-radius:12px;padding:2px 10px;font-size:10px;cursor:pointer;font-family:inherit}
 .pf.on{background:#16203a;color:#e8edf8;border-color:#4a6390}
+.pfsep{color:#4a6390;margin:0 2px}
 </style>"""
 PLAYED_JS = """<script>
 (function(){
-  var KEY='vp_played_v1', mem={}, ok=true, filt='all';
+  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false;   // 21/10: «Σημερινά» = ξεχωριστο κουμπι, ΚΑΙ με τα αλλα φιλτρα
   var S = !!(window.VP_SYNC && window.VP_SYNC.on);     // 12/10: κοινο σε ολες τις συσκευες (played_store → GitHub)· αλλιως μνημη browser
   if(S){ mem = window.VP_SYNC.played || {}; }
   else { try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; } }
@@ -339,7 +341,7 @@ PLAYED_JS = """<script>
       var d=!!mem[c.getAttribute('data-k')]; if(d) n++;
       c.classList.toggle('done', d);
       var b=c.querySelector('.played'); if(b) b.textContent = d ? '✅ το έπαιξα' : '☐ το έπαιξα';
-      c.style.display = (filt==='all' || (filt==='done')===d) ? '' : 'none';
+      c.style.display = ((filt==='all' || (filt==='done')===d) && (!today || c.getAttribute('data-day')===athToday())) ? '' : 'none';
     });
     var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (S?' · 🔄 κοινό σε όλες τις συσκευές':(ok?' · μόνο σε αυτή τη συσκευή':' (ο browser δεν επιτρέπει αποθήκευση)'));
   }
@@ -350,7 +352,9 @@ PLAYED_JS = """<script>
     if(window.VP_SYNC && window.VP_SYNC.on){ S=true; var srv=window.VP_SYNC.played||{}; mem={}; for(var k in srv) mem[k]=srv[k];
       var now=Date.now(); for(var k in pend){ var p=pend[k]; if(now-p.t>20000 || (!!srv[k])===p.on){ delete pend[k]; continue; } if(p.on) mem[k]=p.t; else delete mem[k]; } }
     paint(); };
-  window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); document.querySelectorAll('.pf').forEach(function(x){x.classList.toggle('on', x===btn);}); paint(); };
+  function athToday(){ try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Athens',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
+  window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); document.querySelectorAll('.pf[data-f]').forEach(function(x){x.classList.toggle('on', x===btn);}); paint(); };
+  window.ptSet=function(btn){ today=!today; btn.classList.toggle('on', today); paint(); };
   paint();
 })();
 </script>"""
