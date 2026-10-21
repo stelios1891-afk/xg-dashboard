@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """dog15_xi_test.py — 21/10/2026 (Στελιος: «επειδη το μοντελο ειναι μετριο, ας επικεντρωθουμε για αρχη ΜΟΝΟ στα αουτσαιντερ 15+ — να δουμε πως
 βελτιωνουν οι ΠΡΟΒΛΕΠΟΜΕΝΕΣ ενδεκαδες (παρασκευη πρωι π.χ.) και οι LIVE (επισημες) ενδεκαδες»).
-ΚΑΝΟΝΑΣ = ο live: αουτσαιντερ (γραμμη ≥ +0.5), αποδοση 1.70-2.10, edge ≥ 10% (p_cover, κρατηση 3%), αγωνιστικη 15+, CORE7. Μοντελο = core7_mech_preds_bl_0.6.
+ΚΑΝΟΝΑΣ = ο live: αουτσαιντερ (γραμμη ≥ +0.5), αποδοση 1.70-2.10, edge ≥ 10% (p_cover, κρατηση 3%), αγωνιστικη 15+, CORE7. Μοντελο = ΣΗΜΕΡΙΝΗ live μηχανη (core7_live_replay: κοκκινες εμπειρικες + αγκυρα κοντων 15+).
 ΜΕ ενδεκαδα: λ_γηπ = xg_h + Δ/2, λ_φιλ = xg_a − Δ/2 (Δ = διορθωση υπεροχης γηπεδουχου απο τη φορμουλα αξια + εμπιστοσυνη) — ιδιο με το Lineup Lab.
 ΣΤΙΓΜΕΣ (τιμη ΤΗΣ ΙΔΙΑΣ στιγμης, Crown & Bet365 χωριστα):
   Α. ΠΡΟΗΓΟΥΜΕΝΗ ΜΕΡΑ (24ω πριν): ΠΡΟΒΛΕΠΟΜΕΝΗ 11αδα (predicted11, κλειδωνει ~25ω πριν) — μονο 2025-26, EPL/LaLiga/SerieA.
@@ -18,7 +18,13 @@ sys.stdout.reconfigure(encoding='utf-8')
 import picks
 NL = chr(10)
 M = pd.read_csv('xi_market_timing_rows.csv', dtype={'mid': str, 'season': str})
-P = pd.read_csv('core7_mech_preds_bl_0.6.csv', dtype={'mid': str})[['mid', 'xg_h', 'xg_a', 'md']]
+# 21/10 (Στελιος «ιδια ακριβως μηχανη με το live;»): ΣΗΜΕΡΙΝΗ live μηχανη = cur_0.75_6_13~emps + αγκυρα κοντων γραμμων 15+ (core7_live_replay)
+P = pd.read_csv('core7_live_replay.csv', dtype={'mid': str})[['mid', 'xg_h', 'xg_a', 'md', 'off_s']]
+def anchored(xg_h, xg_a, off, md, line_abs):
+    if md >= 15 and round(line_abs, 2) in (0.5, 0.75):
+        T = xg_h + xg_a; s = (xg_h - xg_a) + off
+        return max((T + s) / 2, .05), max((T - s) / 2, .05)
+    return xg_h, xg_a
 M = M.merge(P, on='mid')
 M = M[(M.md >= 15) & M.gd.notna()]
 # ---- διορθωση ΠΡΟΒΛΕΠΟΜΕΝΗΣ (2526): συντελεστες απο 2223-2425, ιδια με xi_predicted_eval ----
@@ -45,16 +51,17 @@ def dog_edge(xh, xa, L_home, oh, oa):
     lnh = -L_home
     for side, ln, o in ((1, lnh, oh), (-1, -lnh, oa)):
         if ln >= 0.5 and 1.70 <= o <= 2.10:
-            d = picks.gd_dist(max(xh, .05), max(xa, .05)); pw, pp = picks.p_cover(d, side, ln); return side, ln, o, ed(pw, pp, o)
+            d = picks.gd_dist_dom(max(xh, .05), max(xa, .05)); pw, pp = picks.p_cover(d, side, ln); return side, ln, o, ed(pw, pp, o)
     return None
 rows = []
 for r in M.to_dict('records'):
     for case, tp, dcol in (('Α', '24ω', 'p_gd'), ('Β', '24ω', 'f_gd'), ('Γ', '55′', 'f_gd')):
         L, oh, oa, dl = r.get(f'L_{tp}'), r.get(f'oh_{tp}'), r.get(f'oa_{tp}'), r.get(dcol)
         if L is None or L != L or dl is None or dl != dl: continue
-        a = dog_edge(r['xg_h'], r['xg_a'], L, oh, oa)
+        xh, xa = anchored(r['xg_h'], r['xg_a'], r['off_s'], r['md'], abs(L))
+        a = dog_edge(xh, xa, L, oh, oa)
         if not a: continue
-        b = dog_edge(r['xg_h'] + dl / 2, r['xg_a'] - dl / 2, L, oh, oa)
+        b = dog_edge(xh + dl / 2, xa - dl / 2, L, oh, oa)
         side, ln, o, e0 = a; e1 = b[3]
         pnl = picks.settle(r['gd'], side, ln, o)
         rows.append(dict(case=case, bk=r['bk'], season=r['season'], league=r['league'], e0=e0, e1=e1, pnl=pnl,

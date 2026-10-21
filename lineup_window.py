@@ -32,7 +32,7 @@ def window_matches(now):
             except Exception: continue
             if -POST_MIN * 60 <= (ko - now).total_seconds() <= PRE_MIN * 60:
                 out.append(dict(mid=str(fid), comp=m.get('league'), ko=ko, home=m.get('home'), away=m.get('away'), hid=m.get('home_id'), aid=m.get('away_id'),
-                                xh=m.get('home_adj_xg'), xa=m.get('away_adj_xg'), xh_ou=None, xa_ou=None, euro=False))
+                                xh=m.get('home_adj_xg'), xa=m.get('away_adj_xg'), xh_ou=None, xa_ou=None, euro=False, md=m.get('gw')))
     except Exception as e:
         print(f'lineup_window: εγχωριο προγραμμα σφαλμα {str(e)[:60]}')
     try:
@@ -112,8 +112,16 @@ def shadow(m, fm, od, now):
         for side, ln, o in ((1, lh, oh), (-1, -lh, oa)):
             if abs(ln) < 0.5 or not (1.70 <= o <= 2.10): continue
             role = 'dog' if ln > 0 else 'fav'; e = []
+            bx, ba = m['xh'], m['xa']
+            if not m['euro']:            # 21/10: ιδια xG με το live — αγκυρα κοντων γραμμων 15+ (dogs) / αγκυρα .7 (φαβορι 15+)
+                try:
+                    import core7_anchor
+                    if role == 'dog': bx, ba, _ = core7_anchor.apply(m['comp'], m['hid'], m['aid'], bx, ba, lh, m.get('md'))
+                    elif (m.get('md') or 0) >= picks.FAV_MIN_MD: bx, ba, _ = core7_anchor.apply_fav(m['comp'], m['hid'], m['aid'], bx, ba, m.get('md'))
+                except Exception as _e:
+                    print(f'lineup_window: αγκυρα σφαλμα {str(_e)[:60]}')
             for sh in (0.0, gd_adj):
-                d = dist(m['xh'] + sh / 2, m['xa'] - sh / 2)
+                d = dist(bx + sh / 2, ba - sh / 2)
                 pw, pp = picks.p_cover(d, side, ln) if role == 'dog' else ES.cover_q(d, side, ln); e.append(round(ed(pw, pp, o), 4))
             rec['sides'].append(dict(mkt='AH', side=side, line=ln, odds=o, role=role, e0=e[0], e1=e[1], pick=bool(e[1] >= TH[role])))
     if od.get('ou') and tot_adj is not None:
