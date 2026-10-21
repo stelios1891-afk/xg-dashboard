@@ -43,7 +43,32 @@ def fetch_rotowire():
             for title, status in re.findall(r'<a title="([^"]+)"[^>]*>[^<]*</a>\s*<span class="lineup__inj">([^<]+)</span>', seg):
                 inj[side].append((html.unescape(title), status.strip()))
         if 'visit' in nm and 'home' in nm: games.append(dict(visit=nm['visit'], home=nm['home'], inj=inj))
+    if games: _log_changes(games)
     return games
+
+RW_STATE, RW_HIST = 'el_rotowire_state.json', 'el_rotowire_hist.jsonl'
+def _log_changes(games):
+    """21/10/2026 (Στελιος «την ιδια διαδικασια με το NBA»): ΙΣΤΟΡΙΚΟ RotoWire — καθε αλλαγη (νεος / αλλη κατασταση / βγηκε) με ωρα UTC.
+    Για μελλοντικα τεστ: ποσοι GTD τελικα δεν παιζουν, ποτε βγαινει η ειδηση σε σχεση με τη γραμμη. Μονο καταγραφη."""
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')
+    cur = {}
+    for g in games:
+        for side, team in (('home', g['home']), ('visit', g['visit'])):
+            for n, st in g['inj'][side]: cur[f"{g['home']}|{g['visit']}|{side}|{n}"] = st
+    try: old = json.load(open(F(RW_STATE), encoding='utf-8')).get('cur', {})
+    except Exception: old = {}
+    ch = []
+    for k, st in cur.items():
+        if old.get(k) != st: ch.append(dict(t=now, key=k, status=st, prev=old.get(k)))
+    games_now = {'|'.join(k.split('|')[:2]) for k in cur} | {f"{g['home']}|{g['visit']}" for g in games}
+    for k, st in old.items():
+        if k not in cur and '|'.join(k.split('|')[:2]) in games_now: ch.append(dict(t=now, key=k, status=None, prev=st))   # βγηκε απο τη λιστα
+    try:
+        if ch:
+            with open(F(RW_HIST), 'a', encoding='utf-8') as fh:
+                for r in ch: fh.write(json.dumps(r, ensure_ascii=False) + chr(10))
+        json.dump(dict(t=now, cur=cur, games=[f"{g['home']}|{g['visit']}" for g in games]), open(F(RW_STATE), 'w', encoding='utf-8'), ensure_ascii=False)
+    except Exception as e: print('RotoWire ιστορικο σφαλμα —', e)
 
 def backfill(B, season, J, sched):
     """Συμπληρωνει ph/pa (λεπτα παικτων) στα φετινα ματς του el_box.json που δεν τα εχουν. J = συναρτηση GET json."""
