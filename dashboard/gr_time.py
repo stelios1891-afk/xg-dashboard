@@ -10,7 +10,7 @@ def _parse(v):
     if isinstance(v, _dt.datetime):
         d = v
     else:
-        s = str(v).strip().replace('Z', '+00:00').replace(' ', 'T')
+        s = str(v).strip().removesuffix(' UTC').replace('Z', '+00:00').replace(' ', 'T')
         d = _dt.datetime.fromisoformat(s[:25] if '+' in s[10:] or s[19:20] == '-' else s[:19])
     return d.replace(tzinfo=_dt.timezone.utc) if d.tzinfo is None else d
 

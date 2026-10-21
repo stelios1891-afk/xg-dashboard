@@ -86,8 +86,14 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
 ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup', 'bcl', 'nba', 'nba_players'}
 
+def _mt(*names):
+    """21/10: κλειδι cache = ωρα αλλαγης αρχειων (glob) → νεα δεδομενα φαινονται αμεσως, οχι μετα απο 6 ωρες."""
+    import glob
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return tuple(round(os.path.getmtime(f)) for n in names for f in sorted(glob.glob(os.path.join(root, n))))
+
 @st.cache_data(ttl=6 * 3600, show_spinner="Υπολογισμος προβλεψεων...")
-def load_matches():
+def load_matches(data_key=None):
     # v2 (10/10): αλλαγη κωδικα = νεα cache (το παλιο αποθηκευμενο δεν ειχε mkt_key → οι τιμες αγορας εμεναν παλιες)
     return build_data.build_matches()
 
@@ -131,7 +137,7 @@ h1,h2,h3{color:#e8edf8;font-family:'DM Sans',sans-serif;}
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 """, unsafe_allow_html=True)
 
-matches, stats = load_matches()
+matches, stats = load_matches(_mt('data_*_2627.json', 'teamgame_inputs.csv'))
 
 # 10/10/2026 (Στελιος «οι τιμες στα projections δεν ανανεωνονται»): οι τιμες αγορας ερχονταν ΜΕΣΑ στο load_matches (cache 6 ωρες) →
 # η σελιδα εδειχνε τιμες εως 6 ωρες πισω. Τωρα ξαναδιαβαζονται χωριστα καθε φορα που αλλαζει το market_1x2_latest.json (scanner).
@@ -207,6 +213,7 @@ def render_projections(league):
         cur = sum(ws) / len(ws) * 100
         st.caption(f"⚖ Warm-start (K=8): **{cur:.0f}% φετινη 26/27** · **{100-cur:.0f}% περσινη 25/26** "
                    "— το βαρος της φετινης ανεβαινει οσο παιζονται ματς (n/(n+8)).")
+    _until_note(league, '2627')
     dom_odds = {}
     try:
         with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -231,11 +238,28 @@ def _season_pick(key):
     return st.selectbox("Σεζον", SEASON_OPTS, format_func=lambda s_: SEASON_LABEL[s_], key=key)
 
 @st.cache_data(ttl=6 * 3600)
-def _goal_rows(league, filt, season):
+def _data_until(league, season, key=None):
+    """21/10: ημερομηνια (Ελλαδας) του τελευταιου παιγμενου ματς στο data_{lg}_{season}.json."""
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), f'data_{league}_{season}.json'), encoding='utf-8') as fh:
+            d = json.load(fh)
+        ds = [datetime.datetime.strptime(m['date'], '%a, %b %d, %Y, %H:%M UTC').replace(tzinfo=datetime.timezone.utc)
+              for m in (d.values() if isinstance(d, dict) else d) if m.get('hs') is not None and m.get('date')]
+        return gr_time.stamp(max(ds)) if ds else ''
+    except Exception:
+        return ''
+
+def _until_note(league, season):
+    u = _data_until(league, season, _mt(f'data_{league}_{season}.json'))
+    if u:
+        st.caption(f"📅 Δεδομενα εως: **{u}** (τελευταιο παιγμενο ματς)")
+
+@st.cache_data(ttl=6 * 3600)
+def _goal_rows(league, filt, season, key=None):
     return goal_stats.team_stats(league, season, filt=filt)
 
 @st.cache_data(ttl=6 * 3600)
-def _goal_timing(league, filt, season):
+def _goal_timing(league, filt, season, key=None):
     return goal_stats.team_timing(league, season, filt=filt)
 
 def render_goals(league):
@@ -246,21 +270,22 @@ def render_goals(league):
         _lg_header(league, f"MATCH GOALS STATS · σεζον {SEASON_LABEL[seas]}")
     st.caption(f"Υπολογισμενο απο ολα τα αποτελεσματα {SEASON_LABEL[seas]} ως σημερα"
                + (" — λιγες αγωνιστικες ακομα, δειγμα μικρο." if seas == '2627' else "."))
-    n = len(_goal_rows(league, 'total', seas))
+    _until_note(league, seas)
+    n = len(_goal_rows(league, 'total', seas, _mt(f'data_{league}_{seas}.json')))
     h = n * 40 + 130
     tabs = st.tabs(["Total", "Home", "Away", "Last 8", "Timing (15′)"])
     for tab, filt in zip(tabs[:4], ['total', 'home', 'away', 'last8']):
         with tab:
-            st.components.v1.html(goal_view.table_html(_goal_rows(league, filt, seas), filt), height=h, scrolling=True)
+            st.components.v1.html(goal_view.table_html(_goal_rows(league, filt, seas, _mt(f'data_{league}_{seas}.json')), filt), height=h, scrolling=True)
     with tabs[4]:
         st.caption("Κατανομη γκολ ανα 15λεπτο — ΥΠΕΡ (αριστερα) & ΚΑΤΑ (δεξια). Χρωμα = ενταση.")
         sub = st.tabs(["Συνολο", "Εντος", "Εκτος"])
         for stab, filt in zip(sub, ['total', 'home', 'away']):
             with stab:
-                st.components.v1.html(goal_view.timing_html(_goal_timing(league, filt, seas)), height=h, scrolling=True)
+                st.components.v1.html(goal_view.timing_html(_goal_timing(league, filt, seas, _mt(f'data_{league}_{seas}.json'))), height=h, scrolling=True)
 
 @st.cache_data(ttl=6 * 3600)
-def _trend_teams(league, season):
+def _trend_teams(league, season, key=None):
     return trendline.team_matches(league, season)
 
 def render_trend(league):
@@ -270,7 +295,8 @@ def render_trend(league):
     with c1t:
         _lg_header(league, "ROLLING TRENDLINE · σεζον " + SEASON_LABEL[seas])
     st.caption("Rolling average xGF/xGA με linear trend · raw npxG (non-penalty, ασυμπιεστο).")
-    data = _trend_teams(league, seas)
+    _until_note(league, seas)
+    data = _trend_teams(league, seas, _mt(f'data_{league}_{seas}.json', 'teamgame_inputs.csv'))
     names = sorted(data.keys())
     c1, c2, c3 = st.columns([2, 2, 1.2])
     with c1:
@@ -297,7 +323,8 @@ def render_scatter(league):
     with c1s:
         _lg_header(league, "SCATTER · npxG For vs Against · σεζον " + SEASON_LABEL[seas])
     st.caption("Μεσο npxG υπερ (x) vs κατα (y). **Πανω-δεξια = καλυτερο** (πολλα υπερ, λιγα κατα).")
-    data = _trend_teams(league, seas)
+    _until_note(league, seas)
+    data = _trend_teams(league, seas, _mt(f'data_{league}_{seas}.json', 'teamgame_inputs.csv'))
     maxg = scatter_view.max_games(data)
     c1, _ = st.columns([2, 3])
     with c1:
@@ -310,7 +337,7 @@ def render_scatter(league):
                     use_container_width=True, config={'displayModeBar': False})
 
 @st.cache_data(ttl=6 * 3600)
-def _xgstats(league, season):
+def _xgstats(league, season, key=None):
     return xgstats.compute(league, season)
 
 def render_xgstats(league):
@@ -319,7 +346,8 @@ def render_xgstats(league):
         seas = _season_pick(f"xg_sea_{league}")
     with c1x:
         _lg_header(league, "XG STATS · σεζον " + SEASON_LABEL[seas] + " · all averages per game")
-    data = _xgstats(league, seas)
+    _until_note(league, seas)
+    data = _xgstats(league, seas, _mt('teamgame_inputs.csv'))
     VLABEL = [('total', 'Overall'), ('home', 'Home'), ('away', 'Away')]
     view = st.tabs(["xG Rankings", "xGD Table"])
     with view[0]:
@@ -471,6 +499,9 @@ def render_value(league):
                 '<div class="co">LIVE · THE ODDS API · PINNACLE/MATCHBOOK AH</div></div></div>', unsafe_allow_html=True)
     st.caption("Μοντελο +handicap value bets · edge ≥10% · odds 1.70–2.10 · staking ⅛ Kelly + cap 20% · "
                "auto-scan (Task Scheduler) → Telegram για νεα/αλλαγες · το dashboard δειχνει το τελευταιο scan.")
+    _age_note('scanner', _newest(('el_value_latest.json', 'scanned_at'), ('ec_value_latest.json', 'scanned_at'), ('bcl_value_latest.json', 'scanned_at'),
+                                 ('nba_value_latest.json', 'scanned_at'), ('euro_odds_latest.json', 'scanned_at'), ('value_picks_latest.json', 'scanned_at')),
+              90, "ο scanner (GitHub Actions) μαλλον σταματησε")
     res = {}
     if os.path.exists(_LATEST_F):
         with open(_LATEST_F, encoding='utf-8') as fh:
@@ -601,6 +632,43 @@ def render_value(league):
                    'μπαινει με την πρωτη εμφανιση μεσα στις 72 ωρες· αν εμφανιστει στις 2 τελευταιες ωρες φαινεται η σημειωση · stake ~¼ μοναδας · '
                    f'υπολογισμος {gr_time.stamp(in_scan) or "—"}')
 
+def _age_note(label, ts, warn_min, hint=''):
+    """21/10/2026 (Στελιος, ομαδα Β): «🕒 label: Τετ 21/10 13:32 (πριν 12′)» σε καθε σελιδα· ⚠ κιτρινο αν ειναι παλιο."""
+    if not ts:
+        return
+    try:
+        mins = (datetime.datetime.now(datetime.timezone.utc) - gr_time.athens(ts)).total_seconds() / 60
+    except Exception:
+        return
+    ago = f"{max(mins, 0):.0f}′" if mins < 90 else (f"{mins / 60:.1f} ωρες" if mins < 48 * 60 else f"{mins / 1440:.0f} μερες")
+    txt = f"🕒 {label}: **{gr_time.stamp(ts)}** (πριν {ago})"
+    if mins > warn_min:
+        st.warning(txt + " — ⚠ παλια δεδομενα" + (f" · {hint}" if hint else ''))
+    else:
+        st.caption(txt)
+
+
+def _newest(*pairs):
+    """Πιο προσφατη χρονοσφραγιδα απο (αρχειο, πεδιο) — json: το πεδιο στη ριζα· jsonl: η τελευταια γραμμη."""
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    best = None
+    for f, k in pairs:
+        try:
+            fp = os.path.join(root, f)
+            if f.endswith('.jsonl'):
+                with open(fp, 'rb') as fh:
+                    fh.seek(max(0, os.path.getsize(fp) - 8000))
+                    v = json.loads(fh.read().decode('utf-8', 'ignore').strip().splitlines()[-1]).get(k)
+            else:
+                with open(fp, encoding='utf-8') as fh:
+                    v = json.load(fh).get(k)
+            if v and (best is None or gr_time.athens(v) > gr_time.athens(best)):
+                best = v
+        except Exception:
+            pass
+    return best
+
+
 def _stamp(*files):
     """26/9/2026: κλειδι cache = ωρα τελευταιας αλλαγης των αρχειων (και του κωδικα) → νεα picks/κωδικας φαινονται ΑΜΕΣΩΣ, οχι μετα απο 15′."""
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -631,6 +699,7 @@ def render_ledger(league):
                "**🇪🇺 Ευρωπαϊκα** (UCL/UEL/UECL) με τον ιδιο κανονα· το UEL ειναι σκια (δεν παιζεται). "
                "**🏀 Ευρωλιγκα**: picks του μοντελου v4 (Pinnacle) — χωρις xG· αλλες γραμμες του ιδιου pick (π.χ. +8.5 → +9.5) φαινονται μονο ως «μετα». "
                "Σε ολα: ενα pick ανα ματς & πλευρα, η πρωτη φορα που ηταν ενεργο ≤72ω πριν τη σεντρα.")
+    _age_note('τελευταιο νεο pick', _newest(('clv_bets.jsonl', 'seen'), ('euro_picks_ledger.jsonl', 'seen'), ('intl_picks_ledger.jsonl', 'seen')), 10 ** 9)
     try:
         settled, pending = _ledger_data(_stamp('clv_ledger.jsonl', 'clv_bets.jsonl', 'intl_picks_ledger.jsonl', 'intl_closing.jsonl',
                                                'euro_picks_ledger.jsonl', 'el_clv_bets.jsonl', 'el_projections.json', 'el_odds_hist.jsonl', 'ec_clv_bets.jsonl', 'ec_projections.json', 'ec_odds_hist.jsonl', 'bcl_clv_bets.jsonl', 'bcl_projections.json', 'bcl_odds_hist.jsonl', 'nba_clv_bets.jsonl', 'nba_projections.json', 'nba_odds_hist.jsonl',
@@ -740,6 +809,8 @@ def render_moves(league):
                "↓ = η αποδοση επεσε (πηρε χρημα). Το βαθος ιστοριας μεγαλωνει μερα με τη μερα — η συλλογη ξεκινησε 28/8/2026. "
                "**Εθνικες (NL A-D)** εμφανιζονται οσο υπαρχει διεθνες παραθυρο — Odds API: Pinnacle, αλλιως Bovada (γκανιοτα «σαν Pinnacle»), 1Χ2 Betfair οπου λειπει. "
                "**Ευρωπαϊκα (Champions / Europa / Conference League)** απο 10/10 — Pinnacle, απο τον ευρωπαϊκο scanner.")
+    _age_note('τελευταια καταγραφη τιμων', _newest(('odds_history.jsonl', 't'), ('euro_odds_hist.jsonl', 't')), 6 * 60,
+              "χωρις ματς τις επομενες μερες ειναι φυσιολογικο· αλλιως ο scanner μαλλον σταματησε")
     H = _moves_hist(_stamp('odds_history.jsonl', 'intl_odds_hist.jsonl', 'euro_odds_hist.jsonl', 'euro_projections.json', 'dashboard/moves_view.py'))
     if not H:
         st.info("Δεν υπαρχουν καταγραφες ακομα.")
@@ -1114,6 +1185,7 @@ def render_europe(league):
     if not data:
         st.info('Δεν υπαρχουν ακομα projections — τρεξε τοπικα `python euro_live_projections.py` και κανε push.')
         return
+    _age_note('υπολογισμος', data.get('generated'), 36 * 60, 'το euro-refresh (06:00 UTC) μαλλον δεν ετρεξε')
     st.caption(f"Εγχωρια ratings (warm-start K=8) + διορθωση δυναμικοτητας λιγκας (player-bridges → ClubElo) + "
                f"HFA Ευρωπης. Πηγη rating ανα ομαδα στο badge: xG πληρες (FotMob) / xG Opta (Ben Griffis) / "
                f"γκολ+Elo / μονο γκολ. Υπολογισμος: **{gr_time.stamp(data.get('generated'))}** "
@@ -1165,6 +1237,7 @@ def render_eurocup(league):
                f"αποδοσεις νικητη) + φιλικα · φετινα εγχωρια απο τον 1ο αγωνα. Picks ΜΟΝΟ χαντικαπ (τα συνολα δεν εχουν τεσταριστει). "
                f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
                + (f" · αγορα: **{gr_time.stamp(scan)}**" if scan else ' · αγορα: ο scanner πιανει γραμμες Pinnacle 48h πριν το τζαμπολ'))
+    _age_note('αγορα (scanner)', scan, 90, "ο scanner (GitHub Actions) μαλλον σταματησε")
     vis = dict(proj, games=elv.visible_games(proj))
     keys = elv.rounds(vis)
     if not keys:
@@ -1198,6 +1271,7 @@ def render_bcl(league):
                "διορθωση τυχης 3P/FT, φιλικα ×1, περσινο 20%). Picks χαντικαπ ΚΑΙ συνολων: μοντελο ≥8%. "
                f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
                + (f" · αγορα: **{gr_time.stamp(scan)}**" if scan else ''))
+    _age_note('αγορα (scanner)', scan, 90, "ο scanner (GitHub Actions) μαλλον σταματησε")
     vis = dict(proj, games=list(proj.get('games', [])))
     keys = elv.rounds(vis)
     if not keys:
@@ -1227,6 +1301,7 @@ def render_nba(league):
                "Picks (μονο χαντικαπ): edge ≥8%, μονο αν υπηρχαν στην πρωτη γραμμη, οχι απο τον 71ο αγωνα. "
                f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
                + (f" · αγορα: **{gr_time.stamp(scan)}**" if scan else ''))
+    _age_note('αγορα (scanner)', scan, 90, "ο scanner (GitHub Actions) μαλλον σταματησε")
     vis = dict(proj, games=list(proj.get('games', [])))
     keys = elv.rounds(vis)
     if not keys:
@@ -1258,6 +1333,7 @@ def render_euroleague(league):
                + (f" · αγορα (scanner): **{gr_time.stamp(scan)}**" if scan
                   else ' · αγορα: ο scanner πιανει γραμμες 48h πριν το τζαμπολ')
                + ". Η 1η αγωνιστικη μενει ορατη με την προβλεψη που θα εβγαζε το τρεχον μοντελο.")
+    _age_note('αγορα (scanner)', scan, 90, "ο scanner (GitHub Actions) μαλλον σταματησε")
     vis = dict(proj, games=elv.visible_games(proj))
     keys = elv.rounds(vis)
     if not keys:
@@ -1369,7 +1445,8 @@ def render_season(league):
                f"(warm-start K=8) → Poisson σκορ (draw boost {data.get('draw_boost')}) → κριτηρια ισοβαθμιας λιγκας. "
                f"Μεθοδος **{data.get('method')}**: αβεβαιοτητα ratings (s0={data.get('s0')}) + ελαφρυ regression προς τον μεσο "
                f"(ρ={data.get('rho')}) — η μεθοδος που περασε την επικυρωση 5 σεζον.{extra} "
-               f"Παιγμενα {L.get('played_matches')} · υπολοιπα {L.get('remaining')} · υπολογισμος **{data.get('generated')}**.")
+               f"Παιγμενα {L.get('played_matches')} · υπολοιπα {L.get('remaining')} · υπολογισμος **{gr_time.stamp(data.get('generated'))}**.")
+    _age_note('υπολογισμος', data.get('generated'), 36 * 60, 'το season_sim μαλλον δεν ετρεξε')
     st.components.v1.html(sv.table_html(league, L), height=min(len(L['teams']) * 33 + 90, 900), scrolling=True)
     st.caption('Rating: Total = xG υπερ − xG κατα ανα ματς vs μεσο λιγκας · Att/Def = αναμενομενα xG υπερ/κατα ανα ματς. '
                'Pts = μεσος τελικων βαθμων, 80% = 10ο–90ο εκατοστημοριο. Γραμμες: μπλε = UCL, κιτρινη = Ευρωπη, κοκκινη = υποβιβασμος.')
@@ -1391,6 +1468,7 @@ def render_intl(league):
     if not data:
         st.info('Δεν υπαρχουν ακομα προβολες εθνικων — τρεξε τοπικα `python intl_dashboard_build.py` και κανε push.')
         return
+    _age_note('υπολογισμος', data.get('generated'), 36 * 60, 'το intl-refresh μαλλον δεν ετρεξε')
     st.caption(f"Καρτες οπως στα Europe / Match Projections: καθετα **Μοντελο 1 = H + αξια** / **Μοντελο 2 = Αγκυρα** / **Μοντελο 3 = Αγκυρα + αξια** και απο κατω η ιδια αγορα "
                f"(Odds API Pinnacle/Matchbook απο τον scanner· αλλιως Nowgoal Crown/SBOBET). "
                f"Υπολογισμος **{gr_time.stamp(data.get('generated'))}**"
@@ -1418,8 +1496,14 @@ RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': ren
           'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl,
           'euroleague': render_euroleague, 'eurocup': render_eurocup, 'bcl': render_bcl, 'nba': render_nba,
           'nba_players': lambda lg: __import__('nba_players_view').render(lg)}
+# 21/10/2026 (Στελιος, ομαδα Β-3): Value Picks + μπασκετ ξαναδιαβαζουν τα δεδομενα μονα τους καθε 5′ (fragment: τρεχει ΜΟΝΟ η σελιδα,
+# οχι ολο το app). Αν δεν αλλαξε τιποτα, το HTML ειναι ιδιο → τιποτα δεν ξαναζωγραφιζεται (φιλτρα / ανοιχτο 🧮 μενουν).
+AUTO_REFRESH = {'value', 'euroleague', 'eurocup', 'bcl', 'nba'}
 if page in RENDER:
-    RENDER[page](league)
+    if page in AUTO_REFRESH:
+        st.fragment(run_every=300)(RENDER[page])(league)
+    else:
+        RENDER[page](league)
 else:
     st.markdown(f"### {PAGE_LABEL.get(page, page)}")
     st.info("🚧 Υπο κατασκευη — θα το φτιαξουμε στη συνεχεια.")
