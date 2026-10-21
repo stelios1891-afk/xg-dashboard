@@ -305,6 +305,7 @@ function vpCalc(i){
 
 
 def picks_html(picks):
+    _CID[0] = 0   # 21/10: ιδια ids σε καθε rerun → ιδιο HTML → το component ΔΕΝ ξαναζωγραφιζει (φιλτρα/🧮 μενουν μετα το «το επαιξα»)
     picks = sorted(picks, key=lambda p: (p.get('when') or '9999'))   # χρονολογικα: νωριτερο πανω, πιο μετα κατω
     return (CSS + PLAYED_CSS + '<div class="wrap"><div class="pbar2"><span id="pcnt">✅ παιγμένα 0</span>'
             '<button class="pf on" data-f="all" onclick="pfSet(this)">Όλα</button><button class="pf" data-f="todo" onclick="pfSet(this)">Μη παιγμένα</button>'
@@ -327,7 +328,12 @@ PLAYED_CSS = """<style>
 </style>"""
 PLAYED_JS = """<script>
 (function(){
-  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false;   // 21/10: «Σημερινά» = ξεχωριστο κουμπι, ΚΑΙ με τα αλλα φιλτρα
+  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false;
+  var FKEY='vp_filters_v1';   // 21/10: τα φιλτρα θυμουνται σε αυτη τη συσκευη
+  try{ var fs=JSON.parse(localStorage.getItem(FKEY)||'{}'); if(['all','todo','done'].indexOf(fs.f)>=0) filt=fs.f; today=!!fs.t; }catch(e){}
+  function saveF(){ try{ localStorage.setItem(FKEY, JSON.stringify({f:filt, t:today})); }catch(e){} }
+  function showF(){ document.querySelectorAll('.pf[data-f]').forEach(function(x){x.classList.toggle('on', x.getAttribute('data-f')===filt);});
+    var t=document.querySelector('.pf.pt'); if(t) t.classList.toggle('on', today); }   // 21/10: «Σημερινά» = ξεχωριστο κουμπι, ΚΑΙ με τα αλλα φιλτρα
   var S = !!(window.VP_SYNC && window.VP_SYNC.on);     // 12/10: κοινο σε ολες τις συσκευες (played_store → GitHub)· αλλιως μνημη browser
   if(S){ mem = window.VP_SYNC.played || {}; }
   else { try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; } }
@@ -353,8 +359,8 @@ PLAYED_JS = """<script>
       var now=Date.now(); for(var k in pend){ var p=pend[k]; if(now-p.t>20000 || (!!srv[k])===p.on){ delete pend[k]; continue; } if(p.on) mem[k]=p.t; else delete mem[k]; } }
     paint(); };
   function athToday(){ try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Athens',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
-  window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); document.querySelectorAll('.pf[data-f]').forEach(function(x){x.classList.toggle('on', x===btn);}); paint(); };
-  window.ptSet=function(btn){ today=!today; btn.classList.toggle('on', today); paint(); };
-  paint();
+  window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); saveF(); showF(); paint(); };
+  window.ptSet=function(btn){ today=!today; saveF(); showF(); paint(); };
+  showF(); paint();
 })();
 </script>"""

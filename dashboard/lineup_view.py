@@ -25,9 +25,9 @@ def save_side(mkey, side, ids, formation):
     sc = load_scenarios()
     ent = sc.get(mkey) or {}
     ent[side] = dict(xi=list(ids), f=formation,
-                     saved=datetime.datetime.now().isoformat(timespec='minutes'))
+                     saved=datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None).isoformat(timespec='minutes'))   # 21/10: UTC (το gr_time το δειχνει σε ωρα Ελλαδας)
     sc[mkey] = ent
-    cutoff = (datetime.datetime.now() - datetime.timedelta(days=14)).isoformat()
+    cutoff = (datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) - datetime.timedelta(days=14)).isoformat()
     sc = {k: v for k, v in sc.items()
           if max((v.get(s, {}).get('saved', '') for s in ('home', 'away')), default='') >= cutoff}
     json.dump(sc, open(SCEN_F, 'w', encoding='utf-8'), ensure_ascii=False)

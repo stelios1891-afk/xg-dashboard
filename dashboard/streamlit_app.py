@@ -39,6 +39,7 @@ def _reload_changed_modules():
 
 _reload_changed_modules()
 import build_data
+import gr_time  # 21/10: ΜΙΑ ωρα Ελλαδας για ολες τις σελιδες
 import cards
 import goal_stats
 import goal_view
@@ -515,7 +516,7 @@ def render_value(league):
             return
     elif os.environ.get('TOA_KEY'):   # τοπικα μονο· στο cloud σκαναρει το GitHub Actions
         top = st.columns([3, 1])
-        top[0].caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')}")
+        top[0].caption(f"🕒 Τελευταιο scan: **{gr_time.stamp(res.get('scanned_at')) or '—'}**  ·  ratings σεζον {res.get('ratings_season', '')}")
         if top[1].button("🔄 Scan τωρα"):
             try:
                 import scan_value
@@ -524,7 +525,7 @@ def render_value(league):
             except Exception as e:
                 st.error(f"Σφαλμα scan: {e}")
     elif res:
-        st.caption(f"🕒 Τελευταιο scan: **{res.get('scanned_at', '—')}**  ·  ratings σεζον {res.get('ratings_season', '')} "
+        st.caption(f"🕒 Τελευταιο scan: **{gr_time.stamp(res.get('scanned_at')) or '—'}**  ·  ratings σεζον {res.get('ratings_season', '')} "
                    "· auto-scan καθε 30' (GitHub Actions)")
     if not picks and not eu_picks and not gone_fb:
         st.info("Καμια value pick στο τελευταιο scan (αναμενομενο προεποχικα / χαμηλη ρευστοτητα Betfair).")
@@ -598,7 +599,7 @@ def render_value(league):
         st.caption('🌐 **ΕΘΝ.** = εθνικες (Nations League) · κανονικο pick οταν συμφωνουν **≥2 απο τα 3 μοντελα** (Μ1 H+αξια / Μ2 Αγκυρα / Μ3 Αγκυρα+αξια) '
                    'σε handicap ή over (over μονο σε κοντινα ματς / νοκ-αουτ) · edge = το μικροτερο απο τα μοντελα που συμφωνουν · '
                    'μπαινει με την πρωτη εμφανιση μεσα στις 72 ωρες· αν εμφανιστει στις 2 τελευταιες ωρες φαινεται η σημειωση · stake ~¼ μοναδας · '
-                   f'υπολογισμος {in_scan or "—"} UTC')
+                   f'υπολογισμος {gr_time.stamp(in_scan) or "—"}')
 
 def _stamp(*files):
     """26/9/2026: κλειδι cache = ωρα τελευταιας αλλαγης των αρχειων (και του κωδικα) → νεα picks/κωδικας φαινονται ΑΜΕΣΩΣ, οχι μετα απο 15′."""
@@ -667,14 +668,14 @@ def render_ledger(league):
         f_pe = c6.selectbox("Περίοδος", ['Όλη η σεζόν', 'Τελευταίες 7 μέρες', 'Τελευταίες 30 μέρες', 'Από–έως'], key='led_pe')
         d_from = d_to = None
         if f_pe == 'Από–έως':
-            dd = c6.date_input("Από – έως", value=(_dt.date.today() - _dt.timedelta(days=30), _dt.date.today()), key='led_dr')
+            dd = c6.date_input("Από – έως", value=(gr_time.today() - _dt.timedelta(days=30), gr_time.today()), key='led_dr')
             if isinstance(dd, (list, tuple)) and len(dd) == 2:
                 d_from, d_to = dd
         c7, c8, c9 = st.columns(3)
         f_eb = c7.multiselect("Ζώνη edge", [b[2] for b in lv.EDGE_BANDS], key='led_eb', placeholder='Όλες')
         f_hb = c8.multiselect("Ώρα εισόδου (πριν το ματς)", [b[2] for b in lv.HRS_BANDS], key='led_hb', placeholder='Όλες')
         f_me = c9.checkbox("Μόνο όσα έπαιξα (✅ το έπαιξα)", key='led_me')
-    today = _dt.date.today()
+    today = gr_time.today()   # 21/10: σημερα = ημερα Ελλαδας
     def _keep(r):
         if f_lg and r.get('lg') not in f_lg: return False
         if f_mk and r.get('_mkt') not in f_mk: return False
@@ -843,7 +844,7 @@ def render_lineup(league):
     if not fx:
         st.info("Δεν υπαρχουν επερχομενα ματς με projection εδω.")
         return
-    names = {i: f"{m['home']} – {m['away']} (GW{m['gw']} · {str(m['utc'])[:16]})" for i, m in enumerate(fx)}
+    names = {i: f"{m['home']} – {m['away']} (GW{m['gw']} · {gr_time.stamp(m['utc'])})" for i, m in enumerate(fx)}
     sel = st.selectbox("Ματς", list(names), format_func=lambda i: names[i], key=f'll_m_{league}')
     m = fx[sel]
     th = lv.team_of(lab, m['home_id']); ta = lv.team_of(lab, m['away_id'])
@@ -984,7 +985,7 @@ def render_lineup(league):
             pc[1].caption('projected: δεν υπαρχει αποθηκευμενη προβλεψη γι αυτο το ματς '
                           '(καλυπτονται LaLiga + EPL + SerieA + Ligue1 · ανανεωση καθε πρωι ~08:00, Παρασκευη ανα 2ωρο)')
         else:
-            pc[1].caption(f"projected snapshot: {str(prj.get('ts'))[:16].replace('T', ' ')} UTC · πηγη {prj.get('src') or 'predicted11'} "
+            pc[1].caption(f"projected snapshot: {gr_time.stamp(prj.get('ts'))} · πηγη {prj.get('src') or 'predicted11'} "
                           f"· πατωντας το αντικαθισταται τυχον αποθηκευμενο σεναριο")
         if SHOW_OFFICIAL_XI_BTN and m.get('fid'):
             oc = st.columns([2.4, 4.6])
@@ -1115,7 +1116,7 @@ def render_europe(league):
         return
     st.caption(f"Εγχωρια ratings (warm-start K=8) + διορθωση δυναμικοτητας λιγκας (player-bridges → ClubElo) + "
                f"HFA Ευρωπης. Πηγη rating ανα ομαδα στο badge: xG πληρες (FotMob) / xG Opta (Ben Griffis) / "
-               f"γκολ+Elo / μονο γκολ. Υπολογισμος: **{str(data.get('generated', ''))[:16].replace('T', ' ')} UTC** "
+               f"γκολ+Elo / μονο γκολ. Υπολογισμος: **{gr_time.stamp(data.get('generated'))}** "
                "— στατικο snapshot, ανανεωνεται με το επομενο push.")
     st.caption("⚠ Ενημερωτικο: στο backtest 2223-2526 το μοντελο ειναι ~0.05 γκολ ΠΙΣΩ απο την αγορα στην ακρη, "
                "και στις ομαδες χωρις πληρες xG υπερεκτιμα συστηματικα (+0.3 γκολ) — τα cards με κοκκινα/κιτρινα "
@@ -1162,8 +1163,8 @@ def render_eurocup(league):
     proj = data['proj']; scan = data.get('scanned_at')
     st.caption(f"Ιδια μηχανη με την Ευρωλιγκα (κατοχες × ποντοι/κατοχη). Αφετηρια: 20% περσινο EuroCup + ειδικοι (Eurohoops, Taking The Charge, "
                f"αποδοσεις νικητη) + φιλικα · φετινα εγχωρια απο τον 1ο αγωνα. Picks ΜΟΝΟ χαντικαπ (τα συνολα δεν εχουν τεσταριστει). "
-               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
-               + (f" · αγορα: **{str(scan)[:16].replace('T', ' ')} UTC**" if scan else ' · αγορα: ο scanner πιανει γραμμες Pinnacle 48h πριν το τζαμπολ'))
+               f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
+               + (f" · αγορα: **{gr_time.stamp(scan)}**" if scan else ' · αγορα: ο scanner πιανει γραμμες Pinnacle 48h πριν το τζαμπολ'))
     vis = dict(proj, games=elv.visible_games(proj))
     keys = elv.rounds(vis)
     if not keys:
@@ -1195,8 +1196,8 @@ def render_bcl(league):
     st.caption("Χαντικαπ: 25% μονο ματς BCL + 75% «κοινη κλιμακα» (rating απο ΟΛΑ τα ματς: εγχωρια ×1.5, Ευρωπη, BCL, φιλικα ×0.5) · "
                "αφετηρια: 1.3 × περσινο + αποδοσεις νικητη (Novibet). **Συνολο:** κοινη κλιμακα συνολων (επιπεδο διοργανωσης + ταση ομαδων απο ολα τα ματς, "
                "διορθωση τυχης 3P/FT, φιλικα ×1, περσινο 20%). Picks χαντικαπ ΚΑΙ συνολων: μοντελο ≥8%. "
-               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
-               + (f" · αγορα: **{str(scan)[:16].replace('T', ' ')} UTC**" if scan else ''))
+               f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
+               + (f" · αγορα: **{gr_time.stamp(scan)}**" if scan else ''))
     vis = dict(proj, games=list(proj.get('games', [])))
     keys = elv.rounds(vis)
     if not keys:
@@ -1224,8 +1225,8 @@ def render_nba(league):
     st.caption("Ratings επιθεσης/αμυνας/ρυθμου ανα ομαδα (box score, τυχη, φθορα 60 μερες) · αφετηρια: 80% περσινο + αλλαγη ροστερ + αποδοσεις νικων/τιτλου & rankings + φιλικα · "
                "back-to-back 3 π. · απουσιες (ESPN Out, παικτες ρολου) μεσα στην προβλεψη · συνολα: δικη μηχανη + διορθωση επιπεδου (τελευταια 150 ματς). "
                "Picks (μονο χαντικαπ): edge ≥8%, μονο αν υπηρχαν στην πρωτη γραμμη, οχι απο τον 71ο αγωνα. "
-               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
-               + (f" · αγορα: **{str(scan)[:16].replace('T', ' ')} UTC**" if scan else ''))
+               f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
+               + (f" · αγορα: **{gr_time.stamp(scan)}**" if scan else ''))
     vis = dict(proj, games=list(proj.get('games', [])))
     keys = elv.rounds(vis)
     if not keys:
@@ -1253,8 +1254,8 @@ def render_euroleague(league):
     proj = data['proj']
     scan = data.get('scanned_at')
     st.caption(f"Ratings επιθεσης/αμυνας/ρυθμου ανα ομαδα (box scores, διορθωση αντιπαλου, εδρα) → κατοχες × ποντοι/κατοχη. "
-               f"Υπολογισμος: **{str(proj.get('generated', ''))[:16].replace('T', ' ')} UTC**"
-               + (f" · αγορα (scanner): **{str(scan)[:16].replace('T', ' ')} UTC**" if scan
+               f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
+               + (f" · αγορα (scanner): **{gr_time.stamp(scan)}**" if scan
                   else ' · αγορα: ο scanner πιανει γραμμες 48h πριν το τζαμπολ')
                + ". Η 1η αγωνιστικη μενει ορατη με την προβλεψη που θα εβγαζε το τρεχον μοντελο.")
     vis = dict(proj, games=elv.visible_games(proj))
@@ -1315,7 +1316,7 @@ def render_results(league):
                 'style="display:inline-block;color:#8fa3c8;text-decoration:none;font-size:13px;'
                 'background:#111827;border:1px solid #1e2d47;border-radius:9px;padding:6px 14px;">'
                 f'‹ Πισω στα αποτελεσματα (GW {back_gw})</a>', unsafe_allow_html=True)
-    st.caption(f"GW {selm['gw']} · {str(selm['utc'])[:10]}")
+    st.caption(f"GW {selm['gw']} · {gr_time.stamp(selm['utc'])}")
     try:
         det = _match_detail(sel)
     except Exception as e:
@@ -1392,10 +1393,10 @@ def render_intl(league):
         return
     st.caption(f"Καρτες οπως στα Europe / Match Projections: καθετα **Μοντελο 1 = H + αξια** / **Μοντελο 2 = Αγκυρα** / **Μοντελο 3 = Αγκυρα + αξια** και απο κατω η ιδια αγορα "
                f"(Odds API Pinnacle/Matchbook απο τον scanner· αλλιως Nowgoal Crown/SBOBET). "
-               f"Υπολογισμος **{data.get('generated')} UTC**"
-               + (f" · TOA scan **{data.get('toa_scanned')} UTC** ({data.get('toa_matches')} ματς)" if data.get('toa_scanned') else ' · TOA: καμια γραμμη ακομα (παυση scanner / εκτος παραθυρου)')
-               + (f" · snapshot Nowgoal **{data.get('ng_snapshot')} UTC**" if data.get('ng_snapshot') else '')
-               + (f" (AFCONQ {data.get('ng_snapshot_afconq')} UTC)" if data.get('ng_snapshot_afconq') else '')
+               f"Υπολογισμος **{gr_time.stamp(data.get('generated'))}**"
+               + (f" · TOA scan **{gr_time.stamp(data.get('toa_scanned'))}** ({data.get('toa_matches')} ματς)" if data.get('toa_scanned') else ' · TOA: καμια γραμμη ακομα (παυση scanner / εκτος παραθυρου)')
+               + (f" · snapshot Nowgoal **{gr_time.stamp(data.get('ng_snapshot'))}**" if data.get('ng_snapshot') else '')
+               + (f" (AFCONQ {gr_time.stamp(data.get('ng_snapshot_afconq'))})" if data.get('ng_snapshot_afconq') else '')
                + " · **Δεν παιζεται live — χαρτινο ledger.**")
     comps = [c for c in iv.COMPS if iv.comp_matches(data, c)]
     if not comps:

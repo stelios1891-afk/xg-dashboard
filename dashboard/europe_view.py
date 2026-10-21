@@ -6,6 +6,7 @@
 """
 import os, json, html, math, datetime
 
+import gr_time
 import cards  # CSS/FONTS/LOGO απο τα κοινα match cards
 import picks  # gd_dist / p_cover για fair τιμες στις γραμμες αγορας
 
@@ -51,12 +52,7 @@ def _src_badge(src):
 
 
 def _ko_fmt(utc):
-    try:
-        d = datetime.datetime.fromisoformat(str(utc).replace('Z', '+00:00'))
-        d = d + datetime.timedelta(hours=3)  # ωρα Ελλαδας (καλοκαιρι UTC+3)
-        return d.strftime('%a %d/%m %H:%M')
-    except Exception:
-        return str(utc)[:16]
+    return gr_time.stamp(utc)   # 21/10: ηταν σταθερο +3 → λαθος 1 ωρα απο 25/10 (χειμερινη)· τωρα Europe/Athens + ελληνικες μερες
 
 
 def _eu_dist(xgh, xga, draw_scale):

@@ -20,6 +20,7 @@
 """
 import os, json, math, datetime, email.utils
 
+import gr_time
 import cards  # CARD_CSS / FONTS / esc / _mkt_span — τα κοινα match cards
 import lines_common as lc  # TABS_CSS (κουμπια καρτας + tg())
 
@@ -255,11 +256,11 @@ def market_for(g, data, now=None):
             continue
         w = str(mk.get('when') or '')[:16].replace('T', ' ')
         if kind == 'mor':
-            mk.update(kind='morning', label=f'πρωινη γραμμη {data.get("morning_when") or ""} UTC, οχι closing')
+            mk.update(kind='morning', label=f'πρωινη γραμμη {gr_time.stamp(data.get("morning_when"))}, οχι closing')
         elif tipped:
-            mk.update(kind='closing', label=f'κλεισιμο (τελευταια καταγραφη πριν το τζαμπολ, {w} UTC)')
+            mk.update(kind='closing', label=f'κλεισιμο (τελευταια καταγραφη πριν το τζαμπολ, {gr_time.stamp(w)})')
         else:
-            mk.update(kind='live', label=f'τρεχουσα γραμμη (scan {w} UTC)')
+            mk.update(kind='live', label=f'τρεχουσα γραμμη (scan {gr_time.stamp(w)})')
         return mk
     return None
 

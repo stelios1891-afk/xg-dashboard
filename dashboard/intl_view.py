@@ -10,6 +10,7 @@ badge πηγης + ωρα snapshot· αλλιως Nowgoal Crown/SBOBET (fallback
 """
 import os, json, re, datetime
 
+import gr_time
 import cards  # CARD_CSS / FONTS / _logo / esc — τα κοινα match cards
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -91,7 +92,7 @@ def _x12_tip(m, lab):
         return ''
     b = mk.get(lab) or {}
     pm = mk.get('pin_margin')
-    return (f'Betfair Exchange 1Χ2 (Odds API, {mk.get("x12_ts") or ""} UTC)· ωμες back {b.get("raw_h", "?")}/{b.get("raw_d", "?")}/{b.get("raw_a", "?")} '
+    return (f'Betfair Exchange 1Χ2 (Odds API, {gr_time.stamp(mk.get("x12_ts"))})· ωμες back {b.get("raw_h", "?")}/{b.get("raw_d", "?")}/{b.get("raw_a", "?")} '
             f'+ μεση γκανιοτα 1Χ2 Pinnacle {pm if pm is not None else "4.4"}%')
 
 
@@ -329,7 +330,7 @@ def _src_badge(m):
     ts = mk.get('ts') or ''
     if not src:
         return '<span class="src none" title="χωρις γραμμη">—</span>'
-    tip = f'{SRC_LABEL[src]} · snapshot {ts} UTC' if ts else SRC_LABEL[src]
+    tip = f'{SRC_LABEL[src]} · snapshot {gr_time.stamp(ts)}' if ts else SRC_LABEL[src]
     tip += ' · Odds API (scanner)' if src in ('pinnacle', 'matchbook', 'bovada') else ' · Nowgoal (laptop)'
     if src == 'bovada':
         tip += ' · ' + _bov_tip(m)
@@ -567,7 +568,7 @@ def _btts_mkt(RB, pm):
     if RB:
         pr = (1 / RB['yes']) / (1 / RB['yes'] + 1 / RB['no'])
         oth = ' · '.join(f"{SRC_LABEL.get(k, k)} {y:.2f}/{n:.2f}" for k, (y, n) in (RB.get('books') or {}).items())
-        return (f'<span title="{esc(oth)} · {esc(str(RB.get("when") or ""))} UTC">Yes {RB["yes"]:.2f} / No {RB["no"]:.2f}'
+        return (f'<span title="{esc(oth)} · {esc(gr_time.stamp(RB.get("when")))}">Yes {RB["yes"]:.2f} / No {RB["no"]:.2f}'
                 f'<span class="sec">{SRC_LABEL.get(RB["book"], RB["book"])} · {pr * 100:.0f}%'
                 + (f' (εκτιμ. {pm * 100:.0f}%)' if pm else '') + '</span></span>')
     return (f"{pm * 100:.0f}% <span class=sec>εκτιμηση απο AH+O/U</span>") if pm else "—"

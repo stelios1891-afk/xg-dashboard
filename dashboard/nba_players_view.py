@@ -6,6 +6,7 @@
 Ιδιοι αριθμοι με το live (nba_board / nba_absence). ΜΟΝΟ ΕΡΓΑΛΕΙΟ — δεν αλλαζει τα picks."""
 import os, json, html as _h, datetime as dt
 import streamlit as st
+import gr_time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HC_MIN = 0.08
@@ -262,7 +263,7 @@ def render(league=None):
                 st.components.v1.html(card(g, pin, b, a, offs, backs), height=(250 + 34 * nr + 64) if nr else 300, scrolling=False)
             st.caption('Δικαιη αποδοση = 1 / πιθανοτητα μοντελου (στο χαντικαπ/συνολο χωρις το push). Κινηση τιμης ▼ πρασινο = η πλευρα γινεται πιο πιθανη. '
                        f'Πρασινο πλαισιο στο edge χαντικαπ = περνα το 8%. Τα συνολα NBA ειναι σε καταγραφη και εδω ειναι του μοντελου μονο του (χωρις μιξη 50/50). '
-                       f"Η γραμμη της αγορας μετα την ειδηση θα κινηθει — συγκρινε με την τιμη της στιγμης. Λιστα ESPN: {str(inj.get('fetched', ''))[:16].replace('T', ' ')} UTC")
+                       f"Η γραμμη της αγορας μετα την ειδηση θα κινηθει — συγκρινε με την τιμη της στιγμης. Λιστα ESPN: {gr_time.stamp(inj.get('fetched'))}")
     else:
         teams = sorted(P, key=lambda c: names.get(c, c))
         tc = st.selectbox('Ομαδα', teams, key='nbp_team', format_func=lambda c: names.get(c, c), label_visibility='collapsed')

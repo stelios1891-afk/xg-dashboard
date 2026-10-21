@@ -4,6 +4,7 @@
 το πως πραγματικα παιχτηκε το ματς, οχι μονο το σκορ)."""
 import os, json, datetime
 import html as _h
+import gr_time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
@@ -618,9 +619,10 @@ def enrich(rows, played=None):
             hb = (b - a).total_seconds() / 3600 if (a and b) else None
         r['_hrs'] = hb
         r['_hband'] = next((lab for lo, hi, lab in HRS_BANDS if hb is not None and lo <= hb < hi), '—')
-        r['_month'] = str(r.get('ko') or '')[:7]
-        r['_date'] = str(r.get('ko') or '')[:10]
-        r['_played'] = (r.get('lg'), r.get('home'), r.get('away'), _dir(r), r['_date']) in P
+        _ko = r.get('ko') or ''                       # 21/10: μερα/μηνας σε ωρα Ελλαδας (NBA 02:30 = σωστη μερα)
+        r['_date'] = gr_time.date_str(_ko) if _ko else ''
+        r['_month'] = r['_date'][:7]
+        r['_played'] = (r.get('lg'), r.get('home'), r.get('away'), _dir(r), str(_ko)[:10]) in P   # κλειδι «το επαιξα» = UTC μερα (ιδιο με Value Picks)
         pc = None
         if r.get('pnl') is not None:
             if r.get('pnl_close') is not None:

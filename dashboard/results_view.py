@@ -4,6 +4,19 @@
 import html as _h
 
 import build_data
+import gr_time
+
+def _hm(utc):
+    """21/10: ωρα σεντρας σε ωρα Ελλαδας (ηταν UTC)."""
+    try: return gr_time.athens(utc).strftime('%H:%M')
+    except Exception: return str(utc)[11:16]
+
+
+def _dm(utc):
+    """21/10: ημερομηνια σε ωρα Ελλαδας «21/10» (ηταν UTC «10-21»)."""
+    try: return gr_time.athens(utc).strftime('%d/%m')
+    except Exception: return str(utc)[5:10]
+
 
 
 def season_matches(league):
@@ -124,9 +137,9 @@ def xg_fig(det):
 def round_table_html(matches):
     rows = []
     for m in sorted(matches, key=lambda x: x['utc']):
-        sc = '%d – %d' % (m['hs'], m['aw']) if m['hs'] is not None else str(m['utc'])[11:16]
+        sc = '%d – %d' % (m['hs'], m['aw']) if m['hs'] is not None else _hm(m['utc'])
         rows.append(
-            f'<tr><td class="d">{str(m["utc"])[5:10]}</td>'
+            f'<tr><td class="d">{_dm(m["utc"])}</td>'
             f'<td class="t r">{_h.escape(m["home"] or "")}</td>'
             f'<td class="s">{sc}</td>'
             f'<td class="t">{_h.escape(m["away"] or "")}</td></tr>')
@@ -148,9 +161,9 @@ def round_list_html(matches, league, gw, sel_fid=None):
     rows = []
     for m in sorted(matches, key=lambda x: x['utc']):
         fin = m['finished'] and m['hs'] is not None
-        sc = '%d – %d' % (m['hs'], m['aw']) if m['hs'] is not None else str(m['utc'])[11:16]
+        sc = '%d – %d' % (m['hs'], m['aw']) if m['hs'] is not None else _hm(m['utc'])
         on = ' rl-on' if (sel_fid and m['fid'] == sel_fid) else ''
-        inner = (f'<span class="rl-d">{str(m["utc"])[5:10]}</span>'
+        inner = (f'<span class="rl-d">{_dm(m["utc"])}</span>'
                  f'<span class="rl-t rl-r">{_h.escape(m["home"] or "")}</span>'
                  f'<span class="rl-s">{sc}</span>'
                  f'<span class="rl-t">{_h.escape(m["away"] or "")}</span>'
