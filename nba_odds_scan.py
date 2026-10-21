@@ -152,6 +152,16 @@ def main():
         hh_, aa_ = code_of(g['home_team']), code_of(g['away_team'])
         if hh_ and aa_:
             for t in (hh_, aa_): sched.setdefault(t, set()).add((d, hh_))
+    # 21/10/2026 (Στελιος «ποτε ανοιγει η pinnacle;»): ΠΡΩΤΗ ΕΜΦΑΝΙΣΗ καθε ματς στην Pinnacle (ολα τα ματς, ανεξαρτητα απο μοντελο/παραθυρο)
+    try:
+        _pf = F('nba_pin_first_seen.json'); _PF = json.load(open(_pf, encoding='utf-8')) if os.path.exists(_pf) else {}
+        _new = 0
+        for g in data:
+            k_ = str(g.get('id'))
+            if k_ not in _PF:
+                _PF[k_] = dict(first=now.isoformat(timespec='minutes'), commence=g.get('commence_time'), home=g.get('home_team'), away=g.get('away_team')); _new += 1
+        if _new: json.dump(_PF, open(_pf, 'w', encoding='utf-8'), ensure_ascii=False)
+    except Exception as e: print('πρωτη εμφανιση Pinnacle σφαλμα —', e)
     nomatch = []
     for g in data:
         try: ko = E._pdt(g['commence_time'])
