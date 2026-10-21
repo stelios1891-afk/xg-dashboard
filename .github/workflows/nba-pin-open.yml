@@ -1,0 +1,44 @@
+name: nba-pin-open
+
+# ΕΦΑΠΑΞ (21/10/2026, Στελιος «τραβα περισσοτερα ματς …»): ποτε ανοιγε η Pinnacle στο NBA 2025-26 (The Odds API historical).
+# Κοστος ≤ 9000 credits (CREDIT_BUDGET), σταματα αν μεινουν < 30000. Πυροδοτηση: push αυτου του αρχειου ή του script, ή χειροκινητα.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '.github/workflows/nba-pin-open.yml'
+      - 'nba_pin_open_hist.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-pin-open
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python nba_pin_open_hist.py
+      - name: Commit result
+        if: always()
+        run: |
+          git config user.name "nba-pin-open-bot"
+          git config user.email "actions@github.com"
+          for i in 1 2 3; do
+            git add -f nba_pin_open_hist.jsonl nba_pin_open_state.json || true
+            if git diff --cached --quiet; then echo "τιποτα"; break; fi
+            git commit -m "nba pin open hist [skip ci]" && git pull --rebase -X theirs && git push && break
+            sleep 10
+          done
