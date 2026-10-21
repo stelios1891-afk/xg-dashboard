@@ -161,8 +161,44 @@ def shadow_m2d(g, pin, ko, now):
                        hrs=round((ko - now).total_seconds() / 3600, 1), x={k: round(v, 3) for k, v in x.items()}, inj_src=g.get('inj_src'), paper=True)
             with open(fn, 'a', encoding='utf-8') as fh: fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
             print(f"ΣΚΙΑ Μ2δ (συνολα): {g['home']} - {g['away']} · {nm} {T:g} @{od:.2f} · edge {e * 100:.0f}% · Μ2δ {m2:.1f} vs αγορα {fair:.1f}")
+        shadow_m2d_extra(g, T, oo, ou, sg, fair, m2, float(J.get('thr', 0.06)), ko, now)
     except Exception as e:
         print('σκια Μ2δ σφαλμα —', e)
+
+M2D_X_LOG = 'nba_totals_shadow2_log.jsonl'   # 21/10/2026 (Στελιος «υψομετρο ντενβερ γιουτα περνα το σε σκια και τους διαιτητες σε σκια»)
+def shadow_m2d_extra(g, T, oo, ou, sg, fair, m2, thr, ko, now):
+    """2 ΣΚΙΕΣ πανω στη Μ2δ (nba_totals_extra_shadow.json, t47): ΥΨΟΜΕΤΡΟ = Μ2δ + β·[εντος DEN/UTA] (t41: πραγμ − αγορα +3.3±0.95, 405 ματς)·
+    ΔΙΑΙΤΗΤΕΣ = Μ2δ + γ·δεικτης τριαδας (t42, official.nba.com ~9πμ ET τη μερα του ματς → nba_refs_live). Πρωτη φορα ανα ματς/πλευρα/σκια."""
+    try:
+        J = _load(F('nba_totals_extra_shadow.json'), {})
+        if not J: return
+        V = []
+        if g.get('hcode') in (J.get('alt_teams') or []): V.append(('υψομετρο', m2 + float(J.get('alt_coef', 0)), None, None))
+        try:
+            import nba_refs_live
+            cv, names = nba_refs_live.crew(g['home'], g['away'], now)
+            if cv is not None: V.append(('διαιτητες', m2 + float(J.get('ref_coef', 0)) * cv, cv, names))
+        except Exception as e:
+            print('διαιτητες NBA σφαλμα —', e)
+        if not V: return
+        fn = F(M2D_X_LOG); done = set()
+        if os.path.exists(fn):
+            for ln in open(fn, encoding='utf-8'):
+                try: r_ = json.loads(ln); done.add(f"{r_['code']}|{r_['side']}|{r_['variant']}")
+                except Exception: pass
+        pb, pqb = cover(m2, -T, sg)
+        for var, mv, cv, names in V:
+            po, pq = cover(mv, -T, sg); pu = 1 - po - pq
+            for nm, p_, od, pbase in (('Over', po, oo, pb), ('Under', pu, ou, 1 - pb - pqb)):
+                e = p_ * od + pq - 1
+                if e < thr or f"{g['code']}|{nm}|{var}" in done: continue
+                rec = dict(seen=now.isoformat(timespec='minutes'), variant=var, code=g['code'], home=g['home'], away=g['away'], when=ko.strftime('%Y-%m-%dT%H:%M'),
+                           side=nm, line=T, odds=od, edge=round(e, 4), edge_m2d=round(pbase * od + pqb - 1, 4), pred=round(mv, 1), m2d=round(m2, 1), fair=round(fair, 1),
+                           crew=cv, refs=names, hrs=round((ko - now).total_seconds() / 3600, 1), paper=True)
+                with open(fn, 'a', encoding='utf-8') as fh: fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
+                print(f"ΣΚΙΑ Μ2δ+{var}: {g['home']} - {g['away']} · {nm} {T:g} @{od:.2f} · edge {e * 100:.0f}% (Μ2δ μονη {(pbase * od + pqb - 1) * 100:.0f}%)")
+    except Exception as e:
+        print('σκια Μ2δ+ σφαλμα —', e)
 
 STEAM_X, STEAM_W = 3.0, 3600           # 19/10 (Στελιος «ναι»): ΣΚΙΩΔΗΣ καταγραφη κινησεων ≥3 π. σε 60′ (steam_why.py: ≥3 π. +5.9% στο +5′,
 STEAM_LOG, STEAM_STATE = 'nba_steam_log.jsonl', 'nba_steam_state.json'   # ανεξηγητες απο απουσιες +27% n77 post-hoc)

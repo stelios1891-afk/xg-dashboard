@@ -229,16 +229,39 @@ jobs:
           else
             git commit -m "euro refresh [skip ci]"
             # 20/10/2026 (Στελιος «καντο ναι»): το 20/10 το refresh ετρεξε αλλα ΔΕΝ ανεβηκε (σιωπηλη αποτυχια του pull/push — ο scanner
-            # κανει commit καθε λιγα λεπτα). Τωρα: 6 προσπαθειες· αν ο rebase κολλησει → abort και ξανα με «κρατα τα δικα μας» (-X theirs
-            # στο rebase = τα αρχεια ΑΥΤΟΥ του refresh κερδιζουν, ειναι παραγομενα)· στο τελος σημαια saved για την ειδοποιηση.
+            # κανει commit καθε λιγα λεπτα). Τωρα: 6 προσπαθειες· στο τελος σημαια saved για την ειδοποιηση.
+            # 21/10/2026 (Στελιος «δες και το 12»): ξανα 6/6 αποτυχιες με pull --rebase (πιθανοτατα συγκρουση autostash σε αρχειο που
+            # αλλαζει και ο scanner, π.χ. intl_projections_dashboard.json → μενει «unmerged» και χαλαει ολες τις επομενες προσπαθειες).
+            # ΤΩΡΑ χωρις rebase: φρεσκο origin/main (checkout -f = πεταει τα τοπικα), ξαναγραφει ΜΟΝΟ τα αρχεια του δικου μας commit
+            # (παραγομενα → η δικη μας εκδοχη κερδιζει, οπως το -X theirs) και push. Εξοδος git → /tmp/push.log για την ειδοποιηση.
+            # *.jsonl = ημερολογια (π.χ. nba_injuries_hist): κραταμε ΚΑΙ τις γραμμες που προσθεσε ο scanner στο μεταξυ (ενωση).
+            MY=$(git rev-parse HEAD)
+            FILES=$(git diff-tree --no-commit-id --name-only -r "$MY")
+            replay() {
+              for f in $FILES; do
+                case "$f" in
+                  *.jsonl) if git cat-file -e "origin/main:$f" 2>/dev/null; then
+                             git show "$MY:$f" | grep -vxF -f <(git show "origin/main:$f") >> "$f" || true
+                           else git checkout "$MY" -- "$f"; fi ;;
+                  *) git checkout "$MY" -- "$f" ;;
+                esac
+              done
+            }
             ok=no
             for i in 1 2 3 4 5 6; do
-              if git pull --rebase --autostash -X theirs origin main && git push; then ok=yes; break; fi
-              git rebase --abort 2>/dev/null || true
+              {
+                git fetch -q origin main &&
+                git checkout -q -f -B upload origin/main &&
+                replay &&
+                git add -f $FILES &&
+                { git diff --cached --quiet || git commit -q -m "euro refresh [skip ci]"; } &&
+                git push origin HEAD:main
+              } >> /tmp/push.log 2>&1 && { ok=yes; break; }
+              echo "--- προσπαθεια $i απετυχε" >> /tmp/push.log
               sleep $((i * 10))
             done
             echo "saved=$ok" >> "$GITHUB_OUTPUT"
-            echo "push: $ok"
+            echo "push: $ok"; tail -30 /tmp/push.log
           fi
 
       # 20/10/2026: ΕΙΔΟΠΟΙΗΣΗ αν τα αποτελεσματα/προβλεψεις ΔΕΝ αποθηκευτηκαν (αποτυχια push ή tests → οχι commit)
@@ -252,4 +275,4 @@ jobs:
           TELEGRAM_INFO_CHAT_ID: ${{ secrets.TELEGRAM_INFO_CHAT_ID }}
           SANITY: ${{ steps.sanity.outcome }}
         run: |
-          python -c "import os, notify; notify.send('⚠️ euro-refresh: τα νεα αποτελεσματα/προβλεψεις ΔΕΝ αποθηκευτηκαν (' + ('αποτυχια tests' if os.environ.get('SANITY') != 'success' else 'αποτυχια push') + ') — τα picks τρεχουν με τα προηγουμενα δεδομενα. Θα ξαναδοκιμασει στο επομενο refresh.', channel='info')"
+          python -c "import os, notify; L = open('/tmp/push.log', encoding='utf-8', errors='ignore').read().strip().splitlines()[-8:] if os.path.exists('/tmp/push.log') else []; notify.send('⚠️ euro-refresh: τα νεα αποτελεσματα/προβλεψεις ΔΕΝ αποθηκευτηκαν (' + ('αποτυχια tests' if os.environ.get('SANITY') != 'success' else 'αποτυχια push') + ') — τα picks τρεχουν με τα προηγουμενα δεδομενα. Θα ξαναδοκιμασει στο επομενο refresh.' + (chr(10) + 'git: ' + chr(10).join(x[:160] for x in L) if L else ''), channel='info')"
