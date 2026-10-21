@@ -74,7 +74,7 @@ def prepare(current_season):
             except Exception:
                 pass
     settled, pending = _first_alert(settled), _first_alert(pending)
-    for fn in (_intl_rows, _euro_rows, _el_rows, lambda: _el_rows('EC'), lambda: _el_rows('BCL'), lambda: _el_rows('NBA')):     # 1/10: + EuroCup
+    for fn in (_intl_rows, _euro_rows, _el_rows, lambda: _el_rows('BCL'), lambda: _el_rows('NBA')):     # 1/10: + EuroCup
         try:
             s_i, p_i = fn()
             settled += s_i; pending += p_i

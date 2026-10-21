@@ -8,7 +8,7 @@ import os, sys, json, subprocess, datetime as dt
 ROOT = os.path.dirname(os.path.abspath(__file__))
 ST_F = os.path.join(ROOT, 'bk_results_due_state.json')
 GAP_MIN, AFTER_H, GIVEUP_H = 30, 2.5, 18
-JOBS = (('el', 'el_projections.json', 'el_refresh.py'), ('ec', 'ec_projections.json', 'ec_refresh.py'),
+JOBS = (('el', 'el_projections.json', 'el_refresh.py'),   # 21/10/2026: EuroCup ΣΤΑΜΑΤΗΣΕ (Στελιος) — βγηκε το ('ec', 'ec_projections.json', 'ec_refresh.py')
         ('bcl', 'bcl_projections.json', 'flashscore_bcl_stats.py+bcl_odds_scan.py --results'),
         ('nba', 'nba_projections.json', 'nba_espn.py --days 2+nba_odds_scan.py --results'))   # 6/10: NBA — σκορ ESPN   # 6/10: BCL — σκορ Flashscore → bcl_projections
 

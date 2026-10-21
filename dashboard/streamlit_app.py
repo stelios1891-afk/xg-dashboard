@@ -75,7 +75,7 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('ledger', 'Pick History', '📒'), ('moves', 'Market Watch', '📡'),
          ('lineup', 'Lineup Lab', '🧪'), ('europe', 'Europe', '🌍'),
          ('euroleague', 'Euroleague', '🏀'),   # 25/9/2026: Ευρωλιγκα — μοντελο (χαντικαπ v1 + συνολο v2) vs αγορα (TOA)
-         ('eurocup', 'EuroCup', '🏀'),         # 1/10/2026: EuroCup — μοντελο ec1 vs Pinnacle (ιδια σελιδα με την Ευρωλιγκα)
+        # 21/10/2026: EuroCup ΣΤΑΜΑΤΗΣΕ (Στελιος «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — ('eurocup', 'EuroCup', '🏀'),         # 1/10/2026: EuroCup — μοντελο ec1 vs Pinnacle (ιδια σελιδα με την Ευρωλιγκα)
          ('bcl', 'Champions League (FIBA)', '🏀'),   # 6/10/2026: Basketball Champions League — μοντελο bcl1 vs Pinnacle
          ('nba', 'NBA', '🏀'),                 # 6/10/2026: NBA — μοντελο nba1 vs Pinnacle (χαντικαπ LIVE απο 19/10)
          ('nba_players', 'NBA Players', '🩹'),   # 20/10/2026: βαση παικτων + «τι γινεται αν λειψει» (dashboard/nba_players_view.py)
@@ -84,7 +84,7 @@ PAGES = [('guide', 'Model Guide', '📖'),           # 22/9/2026: πως δου�
          ('goals', 'Goal Stats', '⚽'), ('xgstats', 'XG Stats', '📶'),
          ('season', 'Season Projections', '🏆'), ('perf', 'Model Performance', '📐')]
 PAGE_LABEL = {p[0]: p[1] for p in PAGES}
-ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'eurocup', 'bcl', 'nba', 'nba_players'}
+ACTIVE_PAGES = {'projections', 'goals', 'trend', 'scatter', 'xgstats', 'value', 'ledger', 'moves', 'lineup', 'results', 'europe', 'guide', 'season', 'intl', 'euroleague', 'bcl', 'nba', 'nba_players'}
 
 def _mt(*names):
     """21/10: κλειδι cache = ωρα αλλαγης αρχειων (glob) → νεα δεδομενα φαινονται αμεσως, οχι μετα απο 6 ωρες."""
@@ -499,7 +499,7 @@ def render_value(league):
                 '<div class="co">LIVE · THE ODDS API · PINNACLE/MATCHBOOK AH</div></div></div>', unsafe_allow_html=True)
     st.caption("Μοντελο +handicap value bets · edge ≥10% · odds 1.70–2.10 · staking ⅛ Kelly + cap 20% · "
                "auto-scan (Task Scheduler) → Telegram για νεα/αλλαγες · το dashboard δειχνει το τελευταιο scan.")
-    _age_note('scanner', _newest(('el_value_latest.json', 'scanned_at'), ('ec_value_latest.json', 'scanned_at'), ('bcl_value_latest.json', 'scanned_at'),
+    _age_note('scanner', _newest(('el_value_latest.json', 'scanned_at'), ('bcl_value_latest.json', 'scanned_at'),
                                  ('nba_value_latest.json', 'scanned_at'), ('euro_odds_latest.json', 'scanned_at'), ('value_picks_latest.json', 'scanned_at')),
               90, "ο scanner (GitHub Actions) μαλλον σταματησε")
     res = {}
@@ -510,7 +510,7 @@ def render_value(league):
     eu_picks, eu_scan = _euro_picks()
     in_picks, in_scan = _intl_picks()
     el_picks, el_scan = _el_picks()
-    ec_picks, ec_scan = _ec_picks()          # 1/10: EuroCup
+    ec_picks, ec_scan = [], None             # 21/10: EuroCup ΣΤΑΜΑΤΗΣΕ (ηταν _ec_picks())
     bcl_picks, bcl_scan = _bcl_picks()       # 6/10: Basketball Champions League
     nba_picks, nba_scan = _nba_picks()       # 6/10: NBA (χαντικαπ live απο 19/10)
     # ΦΙΛΤΡΟ ΣΕΝΤΡΑΣ στην εμφανιση (12/9/2026): ματς που εχει αρχισει δεν δειχνεται ΠΟΤΕ
@@ -1494,11 +1494,11 @@ RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': ren
           'scatter': render_scatter, 'xgstats': render_xgstats, 'value': render_value,
           'ledger': render_ledger, 'moves': render_moves, 'lineup': render_lineup, 'results': render_results,
           'europe': render_europe, 'guide': render_guide, 'season': render_season, 'intl': render_intl,
-          'euroleague': render_euroleague, 'eurocup': render_eurocup, 'bcl': render_bcl, 'nba': render_nba,
+          'euroleague': render_euroleague, 'bcl': render_bcl, 'nba': render_nba,
           'nba_players': lambda lg: __import__('nba_players_view').render(lg)}
 # 21/10/2026 (Στελιος, ομαδα Β-3): Value Picks + μπασκετ ξαναδιαβαζουν τα δεδομενα μονα τους καθε 5′ (fragment: τρεχει ΜΟΝΟ η σελιδα,
 # οχι ολο το app). Αν δεν αλλαξε τιποτα, το HTML ειναι ιδιο → τιποτα δεν ξαναζωγραφιζεται (φιλτρα / ανοιχτο 🧮 μενουν).
-AUTO_REFRESH = {'value', 'euroleague', 'eurocup', 'bcl', 'nba'}
+AUTO_REFRESH = {'value', 'euroleague', 'bcl', 'nba'}
 if page in RENDER:
     if page in AUTO_REFRESH:
         st.fragment(run_every=300)(RENDER[page])(league)

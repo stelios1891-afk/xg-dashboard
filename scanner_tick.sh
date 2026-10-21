@@ -45,8 +45,8 @@ python el_pin_watch.py || echo "el pinnacle watch failed (μη κρισιμο)"
 python el_report.py weekly || echo "el report failed (μη κρισιμο)"
 python el_report.py weekly BCL || echo "bcl report failed (μη κρισιμο)"   # 8/10: θερμομετρο BCL (Δευτερα)   # 26/9: εβδομαδιαια αναφορα EL (Δευτερα) → Telegram
 # 1/10: 🏀 EuroCup — Pinnacle (league 377, 0 credits, ≤48ω πριν, καθε 10') + value picks χαντικαπ ≥8% → Telegram (picks bot)
-python ec_odds_scan.py || echo "ec odds failed (μη κρισιμο)"
-python ec_picks.py || echo "ec picks failed (μη κρισιμο)"
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python ec_odds_scan.py || echo "ec odds failed (μη κρισιμο)"
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python ec_picks.py || echo "ec picks failed (μη κρισιμο)"
 python bcl_odds_scan.py || echo "bcl odds failed (μη κρισιμο)"   # 6/10: Basketball Champions League (Pinnacle 197844)
 python bcl_picks.py || echo "bcl picks failed (μη κρισιμο)"
 python nba_odds_scan.py || echo "nba odds failed (μη κρισιμο)"   # 6/10: NBA (Pinnacle 487)
@@ -54,8 +54,8 @@ python nba_picks.py || echo "nba picks failed (μη κρισιμο)"
 # 7/10: τα alerts ορίων ΜΕΤΑ τα scans (πολλα αιτηματα Pinnacle πριν τα scans → BCL/NBA σταματησαν 6/10 13:35 UTC)
 python el_pin_watch.py BCL || echo "bcl pinnacle watch failed (μη κρισιμο)"
 python el_pin_watch.py NBA || echo "nba pinnacle watch failed (μη κρισιμο)"   # 6/10: alerts ανοιγματος/οριων BCL
-python el_pin_watch.py EC || echo "ec pinnacle watch failed (μη κρισιμο)"   # 5/10: ιδια alerts ανοιγματος/οριων για το EuroCup   # 1/10: ανοιγμα Pinnacle & ορια → info bot + ιστορικο (0 credits)
-python ec_playable_log.py || echo "ec playable log failed (μη κρισιμο)"   # 13/10: EuroCup — ηταν ακομα pick στο οριο 500 / 2ω / 1ω / 30′ πριν; (καταγραφη μονο)
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python el_pin_watch.py EC || echo "ec pinnacle watch failed (μη κρισιμο)"   # 5/10: ιδια alerts ανοιγματος/οριων για το EuroCup   # 1/10: ανοιγμα Pinnacle & ορια → info bot + ιστορικο (0 credits)
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python ec_playable_log.py || echo "ec playable log failed (μη κρισιμο)"   # 13/10: EuroCup — ηταν ακομα pick στο οριο 500 / 2ω / 1ω / 30′ πριν; (καταγραφη μονο)
 python absence_log.py || echo "absence log failed (μη κρισιμο)"   # 20/10: ΣΥΛΛΟΓΗ απουσιων FotMob (CORE7+Ευρωπη, ≤7 μερες· ολα καθε 3ω, ≤4ω πριν καθε 15′) — δεν αλλαζει picks
 python lineup_window.py || echo "lineup window failed (μη κρισιμο)"   # 21/10: παραθυρο σεντρας (−80′..+5′): ενδεκαδα + τιμη Pinnacle καθε περασμα + ΣΚΙΑ «ενδεκαδα πανω στο μοντελο» — κανενα pick
 

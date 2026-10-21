@@ -179,6 +179,7 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python el_refresh.py
 
+      # 21/10/2026: το EuroCup ΣΤΑΜΑΤΗΣΕ (Στελιος) — το βημα αυτο ΜΕΝΕΙ γιατι το fs_bk_extra.json το χρησιμοποιει και το BCL (bcl_common/bcl_refresh)
       # 1/10: 🏀 EuroCup — φετινα εγχωρια 6 επιπλεον πρωταθληματων (Flashscore: Πολωνια, Ρουμανια, Αγγλια, BNXT, Λετονια-Εσθονια, Ουκρανια)
       # + προγραμμα/box (επισημο API, competition U) + μοντελο → ec_projections.json. Μη κρισιμα.
       - name: EuroCup extra domestic leagues (current season)
@@ -190,7 +191,7 @@ jobs:
         run: python flashscore_bk_extra.py
 
       - name: EuroCup refresh (ec_refresh.py)
-        if: always()
+        if: false   # 21/10/2026: EuroCup ΣΤΑΜΑΤΗΣΕ (Στελιος «βγαλε το EuroCup ... τα παντα»)
         continue-on-error: true
         env:
           PYTHONIOENCODING: utf-8
