@@ -50,7 +50,7 @@ for r in M.to_dict('records'):
                     e = []
                     for sv in (r['S'], r['S'] + dg):
                         dist = picks.gd_dist_dom(max((r['Tf'] + sv) / 2, .05), max((r['Tf'] - sv) / 2, .05)); e.append(ev_ok(dist, side, ud, o))
-                    rows.append(dict(kind='fav', tp=tp, bk=r['bk'], season=r['season'], md=r['md_f'], e0=e[0], e1=e[1], pnl=picks.settle(r['gd'], side, ud, o)))
+                    rows.append(dict(mid=r['mid'], kind='fav', tp=tp, bk=r['bk'], season=r['season'], md=r['md_f'], e0=e[0], e1=e[1], pnl=picks.settle(r['gd'], side, ud, o)))
         # ---- συνολα ----
         L, oo, uu = r.get(f'OL_{tp}'), r.get(f'oo_{tp}'), r.get(f'ou_{tp}'); dt_ = r.get(a_t)
         if r.get('Ta') == r.get('Ta') and r.get('md_t') == r.get('md_t') and r['md_t'] >= 6 and L == L and dt_ == dt_ and r['tg'] == r['tg']:
@@ -60,7 +60,7 @@ for r in M.to_dict('records'):
                 ee = []
                 for Tv in (r['Ta'], r['Ta'] + dt_):
                     d = tdist((Tv + s_) / 2, (Tv - s_) / 2); ee.append(ou_eval(d, L, over, o, int(r['tg'])))
-                rows.append(dict(kind='over' if over else 'under', tp=tp, bk=r['bk'], season=r['season'], md=r['md_t'], e0=ee[0][0], e1=ee[1][0], pnl=ee[0][1]))
+                rows.append(dict(mid=r['mid'], kind='over' if over else 'under', tp=tp, bk=r['bk'], season=r['season'], md=r['md_t'], e0=ee[0][0], e1=ee[1][0], pnl=ee[0][1]))
 R = pd.DataFrame(rows)
 def summ(q):
     if not len(q): return '—'

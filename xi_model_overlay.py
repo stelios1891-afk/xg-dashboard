@@ -43,7 +43,7 @@ for r in M.to_dict('records'):
         for b, n in zip(base, new):
             if b is None: continue
             side, ln, o, role, e0 = b; e1 = n[4]
-            rows.append(dict(tp=tp, bk=r['bk'], season=r['season'], md=r['md'], role=role, e0=e0, e1=e1, d=dlt * side, pnl=picks.settle(r['gd'], side, ln, o)))
+            rows.append(dict(mid=r['mid'], tp=tp, bk=r['bk'], season=r['season'], md=r['md'], role=role, e0=e0, e1=e1, d=dlt * side, pnl=picks.settle(r['gd'], side, ln, o)))
 R = pd.DataFrame(rows)
 print(f'πλευρες-τιμες: {len(R)} · μεση |αλλαγη edge| απο ενδεκαδα: 55′ {100 * (R[R.tp == "55′"].e1 - R[R.tp == "55′"].e0).abs().mean():.1f}% · 6ω {100 * (R[R.tp == "6ω"].e1 - R[R.tp == "6ω"].e0).abs().mean():.1f}%')
 def summ(q):
