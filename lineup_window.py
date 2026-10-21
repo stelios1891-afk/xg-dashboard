@@ -155,7 +155,7 @@ def main():
             try: fm = fotmob(m['mid'])
             except Exception as e: fm = dict(type=None, err=str(e)[:60])
             od = pin_odds(EV.get(PIN_EU.get(m['comp']) or PIN_DOM.get(m['comp']), []), m)
-            snap = dict(type=fm.get('type'), h_xi=fm.get('h_xi') if fm.get('type') == 'standard' else None, a_xi=fm.get('a_xi') if fm.get('type') == 'standard' else None,
+            snap = dict(type=fm.get('type'), h_xi=fm.get('h_xi'), a_xi=fm.get('a_xi'),          # προβλεπομενη ΚΑΙ επισημη (το type λεει ποια)
                         ah=od and od.get('ah'), ou=od and od.get('ou'))
             sig = json.dumps(snap, sort_keys=True)
             prev = st.get(m['mid'], {})
