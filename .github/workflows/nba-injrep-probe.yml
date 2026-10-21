@@ -1,0 +1,47 @@
+name: nba-injrep-probe
+
+# ΔΟΚΙΜΗ 21-23/10/2026 (Στελιος «οκ ξεκινα το»): κατεβαινει η επισημη αναφορα τραυματιων NBA (PDF) απο το GitHub;
+# Καθε τρεξιμο μενει ζωντανο ~5ω40′ και ελεγχει καθε 15′ (nba_injrep_ci_probe.py) → nba_injrep_probe.jsonl.
+# Σταματα μονο του μετα τις 23/10 12:00 UTC (το script δεν κανει τιποτα μετα) — μετα σβηνεται.
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '7 */6 * * *'
+  push:
+    paths:
+      - '.github/workflows/nba-injrep-probe.yml'
+      - 'nba_injrep_ci_probe.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-injrep-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pdfplumber
+      - name: Probe
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python nba_injrep_ci_probe.py
+      - name: Commit result
+        if: always()
+        run: |
+          git config user.name "nba-injrep-probe-bot"
+          git config user.email "actions@github.com"
+          for i in 1 2 3; do
+            git add -f nba_injrep_probe.jsonl || true
+            if git diff --cached --quiet; then echo "τιποτα"; break; fi
+            git commit -m "nba injrep probe [skip ci]" && git pull --rebase -X theirs && git push && break
+            sleep 10
+          done
