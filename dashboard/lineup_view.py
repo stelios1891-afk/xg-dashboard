@@ -238,9 +238,35 @@ def ah_table_html(home, away, line, oh, oa, f0h, f1h, f0a, f1a, when=''):
 PROJ_F = os.path.join(ROOT, 'projected_lineups.jsonl')
 
 
-def load_projected(home_id, away_id):
+def _iso(x):
+    import datetime as _dt
+    return _dt.datetime.fromisoformat(str(x).replace(' ', 'T')[:19]).replace(tzinfo=_dt.timezone.utc)      # ολα τα αρχεια ειναι UTC
+
+
+def _prev_match(tid, ko):
+    """Σεντρα του ΠΡΟΗΓΟΥΜΕΝΟΥ ματς πρωταθληματος της ομαδας (match_projections_archive) — None αν αγνωστη."""
+    import datetime as _dt
+    try:
+        A = json.load(open(os.path.join(ROOT, 'match_projections_archive.json'), encoding='utf-8'))
+    except Exception:
+        return None
+    best = None
+    for m in A.values():
+        if str(m.get('home_id')) != str(tid) and str(m.get('away_id')) != str(tid): continue
+        try: u = _iso(m.get('utc'))
+        except Exception: continue
+        if u < ko - _dt.timedelta(hours=12) and (best is None or u > best): best = u
+    return best
+
+
+def load_projected(home_id, away_id, ko=None):
     """Τελευταιο snapshot προβλεπομενων 11αδων για το ζευγαρι (projected_lineups.jsonl,
-    μαζευεται καθημερινα απο predicted11 στο data-refresh). {'home':[pids],'away':[...],'ts',...}"""
+    μαζευεται καθημερινα απο predicted11 στο data-refresh). {'home':[pids],'away':[...],'ts',...}
+    21/10: με ko → ΜΟΝΟ snapshot για ΑΥΤΟ το ματς (σεντρα ±2 μερες) — οχι παλια προβλεψη αλλου ματς του ιδιου ζευγαριου."""
+    import datetime as _dt
+    if ko is not None and not isinstance(ko, _dt.datetime):
+        try: ko = _iso(ko)
+        except Exception: ko = None
     best = None
     try:
         with open(PROJ_F, encoding='utf-8') as fh:
@@ -250,12 +276,17 @@ def load_projected(home_id, away_id):
                 except ValueError:
                     continue
                 if r.get('home_tid') == str(home_id) and r.get('away_tid') == str(away_id):
+                    if ko is not None:
+                        try:
+                            if abs((_iso(r.get('ko')) - ko).total_seconds()) > 2 * 86400: continue
+                        except Exception:
+                            continue
                     if best is None or (r.get('ts') or '') >= (best.get('ts') or ''):
                         best = r
     except FileNotFoundError:
         return None
     if not best:
-        return _load_projected_fc(home_id, away_id)
+        return _load_projected_fc(home_id, away_id, ko)
     out = {'ts': best.get('ts'), 'ko': best.get('ko'), 'src': best.get('src')}
     for side, key in (('xi_home', 'home'), ('xi_away', 'away')):
         pids = []
@@ -269,8 +300,13 @@ def load_projected(home_id, away_id):
 PROJ_FC_F = os.path.join(ROOT, 'projected_fc.jsonl')
 
 
-def _load_projected_fc(home_id, away_id):
-    """Εφεδρικη πηγη fantasy-coach (Ligue 1): per-ΟΜΑΔΑ snapshots -> ζευγαρωμα εδω."""
+def _load_projected_fc(home_id, away_id, ko=None):
+    """Εφεδρικη πηγη fantasy-coach (Ligue 1) / ligainsider (Bundesliga): per-ΟΜΑΔΑ snapshots -> ζευγαρωμα εδω.
+    21/10: με ko → μετραει ΜΟΝΟ snapshot τραβηγμενο ΜΕΤΑ το προηγουμενο ματς της ομαδας (αλλιως ειναι η προβλεψη του ΠΑΛΙΟΥ ματς)."""
+    since = {}
+    if ko is not None:
+        for t in (home_id, away_id):
+            since[str(t)] = _prev_match(t, ko)
     latest = {}
     try:
         with open(PROJ_FC_F, encoding='utf-8') as fh:
@@ -280,6 +316,11 @@ def _load_projected_fc(home_id, away_id):
                 except ValueError:
                     continue
                 t = r.get('tid')
+                if t and since.get(t):
+                    try:
+                        if _iso(r.get('ts')) <= since[t]: continue
+                    except Exception:
+                        continue
                 if t and (t not in latest or (r.get('ts') or '') >= (latest[t].get('ts') or '')):
                     latest[t] = r
     except FileNotFoundError:

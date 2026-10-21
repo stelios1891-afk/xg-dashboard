@@ -854,7 +854,7 @@ def render_lineup(league):
     saved = lv.load_scenarios().get(base_key) or {}
     sv_h, sv_a = saved.get('home'), saved.get('away')
     keep = st.session_state.pop(f'll_keep_{base_key}', {})
-    prj = lv.load_projected(m['home_id'], m['away_id'])
+    prj = lv.load_projected(m['home_id'], m['away_id'], m.get('utc'))
     if F and F['teams'].get(str(m['home_id'])) and F['teams'].get(str(m['away_id'])):
         # ---- 21/10/2026 ΝΕΟ LAYOUT: λιστα + ετικετα «ΒΛΕΠΕΙΣ ΤΩΡΑ» + κουμπια ενος κλικ (Στελιος «περνα το νεο layout») ----
         U_h = [int(p) for p in F['teams'][str(m['home_id'])]['usual']]; U_a = [int(p) for p in F['teams'][str(m['away_id'])]['usual']]
@@ -968,7 +968,7 @@ def render_lineup(league):
             xi_a = lv.default_xi(ta, lv.FORMATIONS[f_a])
         nonce = st.session_state.get(f'll_nonce_{base_key}', 0)
         mkey = f"{base_key}_{f_h}_{f_a}_{nonce}"
-        prj = lv.load_projected(m['home_id'], m['away_id'])
+        prj = lv.load_projected(m['home_id'], m['away_id'], m.get('utc'))
         pc = st.columns([2.4, 4.6])
         if pc[0].button('📋 Load projected XI', key=f'll_prj_{base_key}', disabled=prj is None,
                         help='Οι προβλεπομενες 11αδες δημοσιογραφων (predicted11) — κατεβαινουν αυτοματα καθε πρωι'):
