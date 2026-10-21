@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-21T18:04+00:00",
+ "generated": "2026-10-21T18:15+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -225,12 +225,12 @@
    "away": "Chicago Bulls",
    "hcode": "TOR",
    "acode": "CHI",
-   "margin": 10.08,
+   "margin": 9.44,
    "total": 229.8,
    "total_src": "μοντελο",
-   "pts_h": 119.9,
-   "pts_a": 109.8,
-   "p_home": 0.772,
+   "pts_h": 119.6,
+   "pts_a": 110.2,
+   "p_home": 0.758,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -255,8 +255,14 @@
    "abs_ldp": 0,
    "trade_dm": 0.0,
    "trades": [],
-   "roster_dm": 0.0,
-   "roster_now": [],
+   "roster_dm": -0.64,
+   "roster_now": [
+    [
+     "CHI",
+     "Jordan Hawkins",
+     "Out"
+    ]
+   ],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/tor.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/chi.png"
   },
