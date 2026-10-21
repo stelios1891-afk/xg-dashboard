@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-21T15:28+00:00",
+ "generated": "2026-10-21T15:40+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -405,12 +405,12 @@
    "away": "Utah Jazz",
    "hcode": "MEM",
    "acode": "UTA",
-   "margin": 0.7,
+   "margin": 0.67,
    "total": 238.1,
    "total_src": "μοντελο",
    "pts_h": 119.4,
    "pts_a": 118.7,
-   "p_home": 0.521,
+   "p_home": 0.52,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -435,8 +435,14 @@
    "abs_ldp": 0,
    "trade_dm": 0.0,
    "trades": [],
-   "roster_dm": -0.0,
-   "roster_now": [],
+   "roster_dm": -0.03,
+   "roster_now": [
+    [
+     "UTA",
+     "Blake Hinson",
+     "επιστροφη"
+    ]
+   ],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/mem.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/utah.png"
   },
