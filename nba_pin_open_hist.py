@@ -9,7 +9,7 @@
 import os, sys, json, time, datetime as dt, urllib.request, urllib.parse
 sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.abspath(__file__)); F = lambda n: os.path.join(ROOT, n)
-KEY = os.environ.get('TOA_KEY'); CREDIT_BUDGET, STOP_REMAINING = 9000, 30000
+KEY = os.environ.get('TOA_KEY'); CREDIT_BUDGET, STOP_REMAINING = 6000, 2500   # 21/10: Στελιος «παρε το δειγμα απο το odds api» — μενουν ~9.5k ως 1/11 → αφηνουμε ≥2.5k για τον scanner
 OUT, STATE = F('nba_pin_open_hist.jsonl'), F('nba_pin_open_state.json')
 DAYS_ALL = ['2025-10-21', '2025-10-22', '2025-10-23', '2025-10-24', '2025-10-25', '2025-10-26']
 DAYS_4 = ['2025-11-10', '2025-12-01', '2025-12-22', '2026-01-12', '2026-02-02', '2026-02-24', '2026-03-16', '2026-04-06']
