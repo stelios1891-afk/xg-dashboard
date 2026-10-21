@@ -92,7 +92,8 @@ def players():
                 inR = n in R
                 d_ = (tv(R) - tv([x for x in R if x != n])) if inR else (tv(R + [n]) - tv(R))
                 im, it = max(d_, 0.0) * 8 / (8 + gpt.get(t, 0)), 0.0
-            in_model = bool(ij) and str(stt).lower() == 'out' and ((played and mn >= MIN_ROLE) or (not played and n not in R))
+            # 21/10 (nba_roster_now): πριν το 1ο ματς ο scanner αφαιρει ΚΑΘΕ τωρινο «Out» (οχι μονο οσους ελειπαν στο πρωινο ρόστερ)
+            in_model = bool(ij) and str(stt).lower() == 'out' and ((played and mn >= MIN_ROLE) or (not played and (n not in R or gpt.get(t, 0) == 0)))
             if mn < MIN_SHOW and not ij: continue
             rows.append(dict(name=n, min=round(mn, 1), msrc=src, gp=len(hist.get((t, k), [])), v=round(v, 2), o=round(o, 2), d=round(d, 2),
                              imp_m=round(im, 2), imp_t=round(it, 2), how=how, status=stt, itype=ij[2] if ij else None, idate=ij[3] if ij else None, in_model=in_model))

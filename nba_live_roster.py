@@ -43,8 +43,10 @@ except Exception as e:
 try: PREV = json.load(open('nba_roster_live.json', encoding='utf-8'))
 except Exception: PREV = {}
 OUT, ROS, SRC, CORE = {}, {}, {}, {}
+ALLR = {}                                   # 21/10: ολο το ρόστερ ESPN (με αξια) + παλια αξια → ο scanner ξαναϋπολογιζει με τα ΤΩΡΙΝΑ «Out» (nba_roster_now)
 for t in sorted(OLD):
     avail = [n for n in ESPN_ROSTER.get(t, []) if nk(n) in PL and (t, nk(n)) not in OUTL]
+    ALLR[t] = [n for n in ESPN_ROSTER.get(t, []) if nk(n) in PL]
     reg = [g for g in by_team.get(t, []) if g['stype'] == 2]
     if reg:
         names = [n for _, n, mn in reg[0]['players'].get(t, []) if mn > 0]; SRC[t] = '1ο ματς'
@@ -56,7 +58,7 @@ for t in sorted(OLD):
         if t in PREV.get('delta', {}): OUT[t], ROS[t], SRC[t] = PREV['delta'][t], PREV['roster'].get(t, []), PREV.get('src', {}).get(t, 'προηγουμενο')
         continue
     OUT[t] = round(team_value(names) - OLD[t], 3); ROS[t] = names
-json.dump(dict(season=CUR, src=SRC, delta=OUT, roster=ROS, core=CORE), open('nba_roster_live.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+json.dump(dict(season=CUR, src=SRC, delta=OUT, roster=ROS, core=CORE, all=ALLR, old={t: round(OLD[t], 4) for t in OLD}), open('nba_roster_live.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 n1 = sum(1 for v in SRC.values() if v == '1ο ματς')
 print(f'ροστερ {CUR}: {len(OUT)} ομαδες ({n1} απο 1ο ματς) · ' + ' · '.join(f'{t} {v:+.1f}' for t, v in sorted(OUT.items(), key=lambda kv: -kv[1])[:6]) + ' … ' +
       ' · '.join(f'{t} {v:+.1f}' for t, v in sorted(OUT.items(), key=lambda kv: kv[1])[:4]) + f' · χωρις δεδομενα: {sorted(set(OLD) - set(OUT))}')
