@@ -121,7 +121,17 @@ for nm, cfg in (('h', CFG_H), ('t', CFG_T)):
     _, mg, tt, fin = F.run_all(cfg)
     carry, beta, kx, kp = cfg[0], cfg[5], cfg[6], cfg[7]
     if CUR in fin:
-        f = fin[CUR]; src = f'{CUR}: {int((G.season.values == CUR).sum())} ματς'
+        f = {k: (dict(v) if isinstance(v, dict) else v) for k, v in fin[CUR].items()}; src = f'{CUR}: {int((G.season.values == CUR).sum())} ματς'
+        # 21/10/2026 ΔΙΟΡΘΩΣΗ: η μηχανη δινει ratings ΜΟΝΟ για ομαδες που επαιξαν ηδη φετος → οσες δεν εχουν παιξει ακομα εμεναν ΕΚΤΟΣ state
+        # (scanner: «χωρις rating», κρατουσε τις παλιες προβλεψεις). Τωρα: αφετηρια (ιδια φορμουλα με «πριν το 1ο ματς») για οσες λειπουν.
+        p = fin.get(CUR - 1)
+        if p:
+            miss = [t for t in p['O'] if t not in f['O']]
+            for t in miss:
+                adj = beta * R2.get(f'{CUR}|{t}', 0.0) + kx * Z['C'].get(f'{CUR}|{t}', 0.0) + kp * Z['P'].get(f'{CUR}|{t}', 0.0)
+                car = (F.CARRY_MAP or {}).get(f'{CUR}|{t}', carry)
+                f['O'][t] = car * p['O'][t] + adj / 2; f['D'][t] = car * p['D'][t] - adj / 2; f['P'][t] = car * p['P'][t]
+            if miss: src += f' + αφετηρια για {len(miss)} ομαδες χωρις φετινο ματς'
     else:                                                   # πριν το 1ο ματς: αφετηρια = περσι × carry + ροστερ/ειδικοι/φιλικα (ιδια με run_all)
         p = fin[CUR - 1]; f = dict(mu=p['mu'], pm=p['pm'], O={}, D={}, P={})
         for t in p['O']:
