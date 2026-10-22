@@ -9,7 +9,7 @@
 «Ηδη στο μοντελο» = Out που μετρα ηδη η προβλεψη (παικτης ρολου ≥20′ που επαιξε φετος, ή εκτος αφετηριας ροστερ)."""
 import os, json, collections, datetime as dt
 from statistics import NormalDist
-from nba_absence import nk, ABS_K, REP, REPO, REPD, MIN_ROLE, C_O, C_D, V_UNK
+from nba_absence import nk, ABS_K, REP, REPO, REPD, MIN_ROLE, C_O, C_D, V_UNK, BoxValue
 ROOT = os.path.dirname(os.path.abspath(__file__))
 F = lambda n: os.path.join(ROOT, n)
 MOVE_INJ = 1.5            # κινηση δικαιης γραμμης (ποντοι) απο το ανοιγμα → στο pick μπαινει και η λιστα απουσιων
@@ -64,6 +64,7 @@ def players():
                     for k_, (st_, why, raw) in d_.items(): OFFK[(t_, k_)] = (st_, why)
         else: IL = None
     except Exception: IL = None
+    BV = BoxValue(GM)
     teams = set(ROST) | {t for t, _ in hist} | {t for t, _ in inj}
     # 20/10 (Στελιος «να δειχνει αυτο που μετραει πραγματικα το μοντελο»): οσοι ΔΕΝ εχουν παιξει φετος μετρανε μεσω ΑΦΕΤΗΡΙΑΣ (ροστερ),
     # οχι με τη φορμουλα απουσιας: διαφορα αξιας ροστερ με/χωρις αυτον (nba_live_roster: βαρη λεπτα/ματς, αγνωστοι −1 με 15′),
@@ -91,6 +92,7 @@ def players():
             else:
                 b = BASE.get(k); mn, src = (float(b[1]), 'περσι') if b and b[1] else (0.0, '—')
             v, o, d = V.get(k, [V_UNK, REPO, REPD])
+            if rec: v = BV.mix(k, v)[0]                                # 22/10: φετινη αξια (μιξη) οπως το live, για οσους επαιξαν φετος
             im, it = impact(v, o, d, mn)
             ij = inj.get((t, k)); stt = ij[1] if ij else None
             pr = None

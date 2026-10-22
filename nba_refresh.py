@@ -158,3 +158,8 @@ json.dump(state, open('nba_state.json', 'w', encoding='utf-8'), ensure_ascii=Fal
 h = out['h']; net = {t: (h['O'][t] - h['D'][t]) for t in h['O']}
 print(f"nba_state.json: {h['src']} · Φ3 {RES:+.2f} ({len(resid)} ματς) · κορυφη: " + ' · '.join(f'{t} {v:+.1f}' for t, v in sorted(net.items(), key=lambda kv: -kv[1])[:5])
       + ' · τελος: ' + ' · '.join(f'{t} {v:+.1f}' for t, v in sorted(net.items(), key=lambda kv: kv[1])[:3]))
+# 22/10/2026 (Στελιος «αποθηκευε απο σημερα»): ημερησια στιγμιοτυπα φετινων DARKO/LEBRON (nba_snap/) — ποτε δεν σταματα το refresh
+try:
+    import nba_snapshots; print('στιγμιοτυπα δεικτων:', nba_snapshots.run())
+except Exception as e:
+    print('στιγμιοτυπα σφαλμα', e)

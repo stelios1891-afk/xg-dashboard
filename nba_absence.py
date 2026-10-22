@@ -56,11 +56,65 @@ def refresh_injuries():
     json.dump(dict(fetched=now, teams=T), open(F('nba_injuries.json'), 'w', encoding='utf-8'), ensure_ascii=False)
     return sum(len(v['players']) for v in T.values())
 
+# 22/10/2026 (Στελιος «περνα τη μιξη στο live»): ΦΕΤΙΝΗ ΑΞΙΑ απο box score (nba_tests/t59 ΠΕΡΑΣΕ: LOSO M=500 5/5, RMSE 5/5· t61: η μιξη
+# ειναι η πιο ακριβης σε καθε σημειο της σεζον). αξια = (φετινα λεπτα·box + 500·περσινη)/(φετινα λεπτα + 500) — ΜΟΝΟ στο χαντικαπ (v)·
+# επιθεση/αμυνα (o/d, συνολα) μενουν περσινες. box = 14 ρυθμοι ανα λεπτο, φθορα 180 μερες, μαζεμα 300′ (nba_box_value_map.json).
+BOXMAP = 'nba_box_value_map.json'
+def _bx_vec(st):
+    def pair(k):
+        try: a, b = str(st.get(k) or '0-0').split('-'); return float(a), float(b)
+        except Exception: return 0.0, 0.0
+    def num(k):
+        try: return float(str(st.get(k) or 0).replace('+', ''))
+        except Exception: return 0.0
+    fgm, fga = pair('fieldGoalsMade-fieldGoalsAttempted'); m3, a3 = pair('threePointFieldGoalsMade-threePointFieldGoalsAttempted')
+    ftm, fta = pair('freeThrowsMade-freeThrowsAttempted')
+    return [fgm - m3, (fga - a3) - (fgm - m3), m3, a3 - m3, ftm, fta - ftm, num('offensiveRebounds'), num('defensiveRebounds'), num('assists'),
+            num('steals'), num('blocks'), num('turnovers'), num('fouls'), num('plusMinus')]
+
+class BoxValue:
+    """Φετινη αξια παικτη απο τα box score κανονικης περιοδου του nba_espn_games (μονο ματς ΠΡΙΝ την ημερα του ματς)."""
+    def __init__(self, GM):
+        try: self.M = json.load(open(F(BOXMAP), encoding='utf-8'))
+        except Exception as e: self.M = None; print('φετινη αξια: απενεργη —', e)
+        self.g = collections.defaultdict(list)                           # κλειδι ονοματος → [(μερα, 14 στατιστικα, λεπτα)]
+        for g in GM.values():
+            if g.get('stype') != 2 or g.get('hs') is None or 'pstats' not in g: continue
+            day = dt.date.fromisoformat(g['date']).toordinal(); keys = g.get('pkeys') or []
+            for L in g['pstats'].values():
+                for _, n, vals in L:
+                    st = dict(zip(keys, vals))
+                    try: mn = float(st.get('minutes') or 0)
+                    except Exception: mn = 0.0
+                    if mn > 0: self.g[nk(n)].append((day, _bx_vec(st), mn))
+
+    def value(self, k, gdate=None):
+        """(φετινη αξια σε κλιμακα nba_player_values, φετινα λεπτα) ή (None, 0)."""
+        if not self.M: return None, 0.0
+        d = (dt.date.fromisoformat(gdate) if gdate else dt.datetime.now(dt.timezone.utc).date()).toordinal()
+        L = [x for x in self.g.get(k, []) if x[0] < d]
+        if not L: return None, 0.0
+        mu, cf, H, M0 = self.M['mu'], self.M['coef'], self.M['half_life_days'], self.M['prior_min']
+        ss = [0.0] * len(mu); ms = 0.0; raw = 0.0
+        for day, vec, mn in L:
+            w = 2.0 ** (-(d - day) / H)
+            for i, x in enumerate(vec): ss[i] += w * x
+            ms += w * mn; raw += mn
+        return cf[0] + sum(c * ((ss[i] + M0 * mu[i]) / (ms + M0) - mu[i]) for i, c in enumerate(cf[1:])), raw
+
+    def mix(self, k, v0, gdate=None):
+        """μιξη περσινης (v0) με φετινη: (αξια, φετινη ή None, φετινα λεπτα)."""
+        vb, raw = self.value(k, gdate)
+        if vb is None or raw <= 0: return v0, None, 0.0
+        Mx = float(self.M.get('mix_M', 500.0))
+        return (raw * vb + Mx * v0) / (raw + Mx), vb, raw
+
 class Absences:
     def __init__(self):
         self.V = json.load(open(F('nba_player_values.json'), encoding='utf-8'))['values']
         GM = json.load(open(F('nba_espn_games.json'), encoding='utf-8'))
         INJ = json.load(open(F('nba_injuries.json'), encoding='utf-8'))
+        self.BV = BoxValue(GM)
         self.hist = collections.defaultdict(list); self.last = {}        # (ομαδα, παικτης) → λεπτα φετος · ομαδα → παικτες τελευταιου αγωνα
         for g in sorted(GM.values(), key=lambda g: g['utc']):
             if g.get('stype') != 2 or g.get('hs') is None: continue
@@ -93,16 +147,16 @@ class Absences:
                 if mn < MIN_ROLE: continue
                 w = self._prob(stt, mn)
                 if w <= 0: continue
-                v, o, d = self.V.get(k, [V_UNK, REPO, REPD])
-                res.append(dict(name=raw, min=round(mn, 1), v=v, o=o, d=d, fresh=k in self.last.get(t, set()), w=w, status=stt))
+                v0, o, d = self.V.get(k, [V_UNK, REPO, REPD]); v, vb, mnow = self.BV.mix(k, v0, gdate)
+                res.append(dict(name=raw, min=round(mn, 1), v=v, v0=v0, vbox=vb, min_now=mnow, o=o, d=d, fresh=k in self.last.get(t, set()), w=w, status=stt))
             return res
         for n in self.out.get(t, []):
             k = nk(n); rec = self.hist.get((t, k), [])[-10:]
             if not rec: continue                                   # δεν εχει παιξει φετος για την ομαδα → το εχει το roster prior
             mn = sum(rec) / len(rec)
             if mn < MIN_ROLE: continue
-            v, o, d = self.V.get(k, [V_UNK, REPO, REPD])
-            res.append(dict(name=n, min=round(mn, 1), v=v, o=o, d=d, fresh=k in self.last.get(t, set()), w=1.0, status='Out'))
+            v0, o, d = self.V.get(k, [V_UNK, REPO, REPD]); v, vb, mnow = self.BV.mix(k, v0, gdate)
+            res.append(dict(name=n, min=round(mn, 1), v=v, v0=v0, vbox=vb, min_now=mnow, o=o, d=d, fresh=k in self.last.get(t, set()), w=1.0, status='Out'))
         return res
 
     def adjust(self, h, a, gdate=None):

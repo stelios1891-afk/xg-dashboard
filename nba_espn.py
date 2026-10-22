@@ -56,7 +56,25 @@ def parse(ev, s):
                     except Exception: mn = 0
                 L.append([a['athlete']['id'], a['athlete']['displayName'], mn])
         rec['players'][t] = L
+        # 22/10/2026 (Στελιος «περνα τη μιξη στο live»): ΠΛΗΡΗ στατιστικα καθε παικτη (για τη φετινη αξια, nba_absence.box_value)
+        # συμπαγες: τα ονοματα στηλων μια φορα ανα ματς (pkeys), τιμες ως λιστα
+        for blk in pl.get('statistics', []):
+            if blk.get('keys'): rec['pkeys'] = blk['keys']
+        rec.setdefault('pstats', {})[t] = [[a['athlete']['id'], a['athlete']['displayName'], a.get('stats') or []]
+                                           for blk in pl.get('statistics', []) for a in blk.get('athletes', []) if a.get('stats') and not a.get('didNotPlay')]
     return rec if st.get('completed') else None
+
+PBP_DIR = 'nba_pbp_full'                      # 22/10/2026: φετινο play-by-play ανα μερα (για μελλοντικο δικο μας δεικτη τυπου DARKO/LEBRON)
+def save_pbp(s, ev_id, date):
+    try:
+        import os, nba_pbp_full_fetch as PF
+        c = PF.compact(s, ev_id)
+        if not c: return
+        d = os.path.join(PBP_DIR, str(SEASON_START.year + 1)); os.makedirs(d, exist_ok=True); fn = os.path.join(d, f'{date}.jsonl')
+        if os.path.exists(fn) and any(json.loads(l).get('id') == ev_id for l in open(fn, encoding='utf-8') if l.strip()): return
+        with open(fn, 'a', encoding='utf-8') as fh: fh.write(json.dumps(c, ensure_ascii=False) + '\n')
+    except Exception as e:
+        print('pbp σφαλμα', ev_id, e)
 
 def main():
     days = int(sys.argv[sys.argv.index('--days') + 1]) if '--days' in sys.argv else None
@@ -68,15 +86,19 @@ def main():
         d0 = max(SEASON_START, dt.date.fromisoformat(max(g['date'] for g in GM.values())) - dt.timedelta(days=2))
     elif days is not None:
         d0 = max(SEASON_START, today - dt.timedelta(days=days))
+    old = [g for g in GM.values() if 'pstats' not in g]                # 22/10: ματς χωρις πληρη στατιστικα παικτων → ξανα (μια φορα)
+    if old: d0 = min(d0, max(SEASON_START, min(dt.date.fromisoformat(g['date']) for g in old) - dt.timedelta(days=1)))
     new = 0; d = d0
     while d <= today:
         try: sb = get(f'{B}/scoreboard?dates={d:%Y%m%d}&limit=50')
         except Exception as e: print('scoreboard σφαλμα', d, e); d += dt.timedelta(days=1); continue
         for ev in sb.get('events', []):
-            if ev['id'] in GM or not ev['competitions'][0]['status']['type'].get('completed'): continue
+            if (ev['id'] in GM and 'pstats' in GM[ev['id']]) or not ev['competitions'][0]['status']['type'].get('completed'): continue
             try:
-                r = parse(ev, get(f'{B}/summary?event={ev["id"]}'))
-                if r: GM[ev['id']] = r; new += 1
+                s = get(f'{B}/summary?event={ev["id"]}'); r = parse(ev, s)
+                if r:
+                    GM[ev['id']] = r; new += 1
+                    if r['stype'] == 2: save_pbp(s, ev['id'], r['date'])
             except Exception as e: print('summary σφαλμα', ev['id'], e)
         d += dt.timedelta(days=1)
     json.dump(GM, open(F_G, 'w', encoding='utf-8'), ensure_ascii=False)
