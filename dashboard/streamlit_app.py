@@ -1302,13 +1302,27 @@ def render_nba(league):
                f"Υπολογισμος: **{gr_time.stamp(proj.get('generated'))}**"
                + (f" · αγορα: **{gr_time.stamp(scan)}**" if scan else ''))
     _age_note('αγορα (scanner)', scan, 90, "ο scanner (GitHub Actions) μαλλον σταματησε")
-    vis = dict(proj, games=list(proj.get('games', [])))
-    keys = elv.rounds(vis)
-    if not keys:
+    # 22/10/2026 (Στελιος «βαλτο ανα ημερα ή οσα τελειωσαν να φευγουν»): ομαδοποιηση ανα ΒΡΑΔΙΑ αγωνων (ημερομηνια ΗΠΑ) αντι για εβδομαδα·
+    # προεπιλογη μονο βραδιες με ματς που δεν εχουν παιχτει — οι παιγμενες με το κουτακι.
+    from zoneinfo import ZoneInfo
+    _ET = ZoneInfo('America/New_York')
+    import datetime as _dt
+    def _night(g): return _dt.datetime.fromisoformat(str(g['utc']).replace('Z', '+00:00')).astimezone(_ET).date()
+    allg = list(proj.get('games', []))
+    if not allg:
         st.info('Δεν βρεθηκαν ματς.'); return
-    dflt = elv.default_round(vis, keys)
-    key = st.selectbox('Εβδομαδα', keys, index=keys.index(dflt), format_func=lambda k: f'Εβδομαδα {k[1]}', key='nba_round')
-    games = elv.round_games(vis, key)
+    show_old = st.checkbox('Δειξε και βραδιες που εχουν τελειωσει', value=False, key='nba_old')
+    nights = sorted({_night(g) for g in allg if show_old or not g.get('played')})
+    if not nights:
+        st.info('Δεν υπαρχουν επερχομενα ματς — τσεκαρε το κουτακι για τα παιγμενα.'); return
+    _gd = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
+    def _lab(d):
+        gs = [g for g in allg if _night(g) == d]; npl = sum(1 for g in gs if g.get('played'))
+        st_ = 'τελειωσαν' if npl == len(gs) else (f'{npl}/{len(gs)} παιχτηκαν' if npl else f'{len(gs)} ματς')
+        return f'{_gd[d.weekday()]} {d:%d/%m} (βραδια ΗΠΑ) · {st_}'
+    dflt = next((d for d in nights if any(not g.get('played') for g in allg if _night(g) == d)), nights[-1])
+    night = st.selectbox('Βραδια αγωνων', nights, index=nights.index(dflt), format_func=_lab, key='nba_night')
+    games = sorted([g for g in allg if _night(g) == night], key=lambda g: (str(g['utc']), str(g.get('code'))))
     st.components.v1.html(elv.cards_block(games, data), height=elv.block_height(games), scrolling=True)
     with st.expander('Ratings ομαδων'):
         st.components.v1.html(elv.ratings_html(proj), height=elv.ratings_height(proj), scrolling=False)
