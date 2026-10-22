@@ -48,6 +48,7 @@ def load_history():
                                h2h=r.get('h2h')))
     _load_intl(H)
     _load_euro(H)
+    _load_nba(H)
     for d in H.values():
         d['snaps'].sort(key=lambda s: s['t'])
     return H
@@ -127,6 +128,48 @@ def _load_euro(H):
                                tl=r.get('tl'), to=r.get('to'), tu=r.get('tu')))      # 10/10: + συνολα γκολ (ευρωπαϊκα)
 
 
+NBA_F = os.path.join(ROOT, 'nba_odds_hist.jsonl')
+
+
+def _load_nba(H):
+    """22/10/2026 (Στελιος «προσθεσε το nba στο market watch»): απο το nba_odds_hist.jsonl (nba_odds_scan: Pinnacle, μια γραμμη ανα
+    αλλαγη — νικητης (χωρις ισοπαλια), χαντικαπ γηπεδουχου, συνολο ποντων). Ονοματα/λογοτυπα απο το nba_projections.json (κλειδι code)."""
+    if not os.path.exists(NBA_F):
+        return
+    names = {}
+    try:
+        for g in json.load(open(os.path.join(ROOT, 'nba_projections.json'), encoding='utf-8')).get('games', []):
+            names[str(g['code'])] = (g['home'], g['away'], g.get('hcode'), g.get('acode'), g.get('hcrest'), g.get('acrest'))
+    except Exception:
+        pass
+    for line in open(NBA_F, encoding='utf-8'):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        t = _dt(r.get('t')); code = str(r.get('code') or '')
+        nm = names.get(code)
+        if t is None or not nm:
+            continue
+        d = H.setdefault('nba_' + code, dict(meta=dict(lg='NBA', home=nm[0], away=nm[1], hid=nm[2], aid=nm[3], logo=nm[4], ko=r.get('commence'),
+                                                        nba=True), snaps=[]))
+        if r.get('commence'):
+            d['meta']['ko'] = r['commence']
+        h2h = [r.get('mh'), None, r.get('ma')] if (r.get('mh') and r.get('ma')) else None
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book='Pinnacle',
+                               tl=r.get('tl'), to=r.get('to'), tu=r.get('tu')))
+
+
+def _logo(m):
+    """λογοτυπο: ESPN για NBA (meta logo), αλλιως FotMob απο το id"""
+    return m.get('logo') or TLOGO.format(m.get('hid'))
+
+
+def ou_label(d=None, lg=None):
+    """«Ποντοι» για NBA, «Γκολ» για ποδοσφαιρο"""
+    return 'Ποντοι' if (lg == 'NBA' or (d and d.get('meta', {}).get('nba'))) else 'Γκολ'
+
+
 def upcoming(H, horizon_days=8):
     now = datetime.datetime.now(UTC)
     out = []
@@ -170,7 +213,7 @@ def movers_rows(H, hours=48, top=12, min_move=0.01):
         spark = [s['h2h'][i] for s in snaps if s.get('h2h') and s['h2h'][i]]
         m = d['meta']
         backed = m['home'] if side == 'H' else (m['away'] if side == 'A' else 'Ισοπαλια')
-        rows.append(dict(key=key, lg=m['lg'], home=m['home'], away=m['away'], hid=m['hid'],
+        rows.append(dict(key=key, lg=m['lg'], home=m['home'], away=m['away'], hid=m['hid'], logo=m.get('logo'),
                          ko=ko, side=side, backed=backed, move=mv, before=b, now=c, spark=spark))
     rows.sort(key=lambda r: r['move'])
     return rows[:top]
@@ -183,6 +226,8 @@ def line_change_rows(H, horizon_days=8):
     now = _dtm.datetime.now(_dtm.timezone.utc)
     out = []
     for _key, d, _ko in upcoming(H, horizon_days):
+        if d['meta'].get('nba'):          # 22/10: η ενοτητα ειναι για το ασιατικο του ποδοσφαιρου (σκαλια μισου γκολ) — NBA στη λιστα/διαγραμμα
+            continue
         sn = [x for x in d['snaps'] if x.get('line') is not None]
         if len(sn) < 2:
             continue
@@ -289,7 +334,7 @@ def movers_html(rows):
     sparkc = {'H': C_HOME, 'D': C_DRAW, 'A': C_AWAY}
     for r in rows:
         H.append(
-            f'<tr><td><span class="mt"><img src="{TLOGO.format(r["hid"])}">'
+            f'<tr><td><span class="mt"><img src="{_logo(r)}">'
             f'{_h.escape(r["home"])} – {_h.escape(r["away"])}</span>'
             f'<div class="dim">{r["lg"]} · {_kofmt(r["ko"])}</div></td>'
             f'<td><span class="{tagcls[r["side"]]}">{r["side"]}</span>{_h.escape(str(r["backed"]))}</td>'
@@ -314,6 +359,8 @@ def league_html(H, lg):
             b, c = snaps[0], snaps[-1]
             for i, col in ((0, C_HOME), (1, C_DRAW), (2, C_AWAY)):
                 bb, cc = b['h2h'][i], c['h2h'][i]
+                if not cc:
+                    cells += '<td class="c dim">—</td>'; continue
                 mv = (cc - bb) / bb * 100 if bb and cc else 0
                 arrow = ('<span style="color:#e05563">↑</span>' if mv > 0.5 else
                          ('<span style="color:#34d17a">↓</span>' if mv < -0.5 else
@@ -321,7 +368,7 @@ def league_html(H, lg):
                 cells += f'<td class="c odb">{cc:.2f} <span class="dim">{arrow}{abs(mv):.1f}%</span></td>'
         elif snaps:
             c = snaps[-1]
-            cells = ''.join(f'<td class="c odb">{c["h2h"][i]:.2f}</td>' for i in range(3))
+            cells = ''.join((f'<td class="c odb">{c["h2h"][i]:.2f}</td>' if c['h2h'][i] else '<td class="c dim">—</td>') for i in range(3))
         else:
             cells = '<td class="c dim" colspan="3">—</td>'
         last = d['snaps'][-1]
@@ -331,14 +378,14 @@ def league_html(H, lg):
             ah += '</td><td class="c od">' + (f'{last["tl"]:g} <span class="dim">({last["to"]:.2f}/{last["tu"]:.2f})</span>'
                                               if (last.get('tl') is not None and last.get('to') and last.get('tu')) else '—')
         m = d['meta']
-        rows.append(f'<tr><td><span class="mt"><img src="{TLOGO.format(m["hid"])}">'
+        rows.append(f'<tr><td><span class="mt"><img src="{_logo(m)}">'
                     f'{_h.escape(m["home"])} – {_h.escape(m["away"])}</span>'
                     f'<div class="dim">{_kofmt(ko)} · {len(d["snaps"])} καταγραφες</div></td>'
                     f'{cells}<td class="c od">{ah}</td></tr>')
     if not rows:
         return CSS + '<div class="dim" style="padding:14px">Δεν υπαρχουν καταγραφες για επερχομενα ματς εδω ακομα.</div>'
     return (CSS + '<table><tr><th>Ματς</th><th class="c">1</th><th class="c">Χ</th>'
-                  '<th class="c">2</th><th class="c">Γραμμη AH</th>' + ('<th class="c">Γκολ (O/U)</th>' if any_ou else '') + '</tr>' + ''.join(rows) + '</table>')
+                  '<th class="c">2</th><th class="c">Γραμμη AH</th>' + (f'<th class="c">{ou_label(lg=lg)} (O/U)</th>' if any_ou else '') + '</tr>' + ''.join(rows) + '</table>')
 
 
 # ---------- σελιδα ματς: καρτες, line-moves, ιστορικο ----------
@@ -354,7 +401,7 @@ def outcome_cards_html(d):
     if not snaps:
         return CSS + '<div class="dim" style="padding:10px">Χωρις 1Χ2 καταγραφες.</div>'
     o, c = snaps[0]['h2h'], snaps[-1]['h2h']
-    imp = _implied(c)
+    _iv = [v for v in c if v]; _ip = _implied(_iv); imp = [(_ip[_iv.index(v)] if v else None) for v in c]   # 22/10: NBA χωρις ισοπαλια
     m = d['meta']
     names = [('HOME', m['home'], C_HOME), ('DRAW', 'Ισοπαλια', C_DRAW), ('AWAY', m['away'], C_AWAY)]
     cards = ''
@@ -511,7 +558,7 @@ def history_html(d):
     rows.reverse()
     return (CSS + f'<div class="dim" style="padding:4px 0 8px">{len(snaps)} αλλαγες καταγεγραμμενες</div>'
             '<table><tr><th>Χρονος</th><th class="c">1</th><th class="c">Χ</th><th class="c">2</th>'
-            '<th class="c">AH</th>' + ('<th class="c">Γκολ (O/U)</th>' if with_ou else '') + '</tr>' + ''.join(rows) + '</table>')
+            '<th class="c">AH</th>' + (f'<th class="c">{ou_label(d)} (O/U)</th>' if with_ou else '') + '</tr>' + ''.join(rows) + '</table>')
 
 
 # ---------- διαγραμμα ματς ----------
@@ -572,10 +619,10 @@ def match_fig(d, market='1x2', mode='ΑΠΟΔΟΣΕΙΣ', hours=None):
         for nm, col, ys in transform(raw):
             fig.add_trace(go.Scatter(x=xs, y=ys, name=nm, mode='lines',
                                      line=dict(color=col, width=2, shape='hv'), connectgaps=True))
-        fig.add_trace(go.Scatter(x=xs, y=[s.get('tl') for s in snaps], name='Γραμμη γκολ',
+        fig.add_trace(go.Scatter(x=xs, y=[s.get('tl') for s in snaps], name=f'Γραμμη {ou_label(d).lower()}',
                                  mode='lines', line=dict(color='#7ea2ff', width=1.5, dash='dot', shape='hv'),
                                  yaxis='y2'))
-        lay['yaxis2'] = dict(overlaying='y', side='right', showgrid=False, title='γραμμη γκολ',
+        lay['yaxis2'] = dict(overlaying='y', side='right', showgrid=False, title=f'γραμμη {ou_label(d).lower()}',
                              zerolinecolor='#26324e')
     else:
         m = d['meta']

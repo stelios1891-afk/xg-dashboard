@@ -808,10 +808,11 @@ def render_moves(league):
     st.caption("Απο τις καταγραφες του scanner (καθε 30′ σε μερα αγωνων, 2h τις τελευταιες 3 μερες, 1×/μερα νωριτερα). "
                "↓ = η αποδοση επεσε (πηρε χρημα). Το βαθος ιστοριας μεγαλωνει μερα με τη μερα — η συλλογη ξεκινησε 28/8/2026. "
                "**Εθνικες (NL A-D)** εμφανιζονται οσο υπαρχει διεθνες παραθυρο — Odds API: Pinnacle, αλλιως Bovada (γκανιοτα «σαν Pinnacle»), 1Χ2 Betfair οπου λειπει. "
-               "**Ευρωπαϊκα (Champions / Europa / Conference League)** απο 10/10 — Pinnacle, απο τον ευρωπαϊκο scanner.")
-    _age_note('τελευταια καταγραφη τιμων', _newest(('odds_history.jsonl', 't'), ('euro_odds_hist.jsonl', 't')), 6 * 60,
+               "**Ευρωπαϊκα (Champions / Europa / Conference League)** απο 10/10 — Pinnacle, απο τον ευρωπαϊκο scanner. "
+               "**NBA** απο 22/10 — Pinnacle (νικητης, χαντικαπ, συνολο ποντων), καθε κυκλο του scanner.")
+    _age_note('τελευταια καταγραφη τιμων', _newest(('odds_history.jsonl', 't'), ('euro_odds_hist.jsonl', 't'), ('nba_odds_hist.jsonl', 't')), 6 * 60,
               "χωρις ματς τις επομενες μερες ειναι φυσιολογικο· αλλιως ο scanner μαλλον σταματησε")
-    H = _moves_hist(_stamp('odds_history.jsonl', 'intl_odds_hist.jsonl', 'euro_odds_hist.jsonl', 'euro_projections.json', 'dashboard/moves_view.py'))
+    H = _moves_hist(_stamp('odds_history.jsonl', 'intl_odds_hist.jsonl', 'euro_odds_hist.jsonl', 'euro_projections.json', 'nba_odds_hist.jsonl', 'nba_projections.json', 'dashboard/moves_view.py'))
     if not H:
         st.info("Δεν υπαρχουν καταγραφες ακομα.")
         return
@@ -832,8 +833,8 @@ def render_moves(league):
     # ---- 2. Ανα πρωταθλημα ----
     st.markdown("#### Ολα τα επερχομενα ανα πρωταθλημα")
     _up = {d['meta']['lg'] for _, d, _ in mv.upcoming(H)}
-    _EU_ORD = {'Champions League': 80, 'Europa League': 81, 'Conference League': 82}
-    lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg') and (not (d['meta'].get('intl') or d['meta'].get('euro')) or d['meta']['lg'] in _up)},
+    _EU_ORD = {'Champions League': 80, 'Europa League': 81, 'Conference League': 82, 'NBA': 85}
+    lgs = sorted({d['meta']['lg'] for d in H.values() if d['meta'].get('lg') and (not (d['meta'].get('intl') or d['meta'].get('euro') or d['meta'].get('nba')) or d['meta']['lg'] in _up)},
                  key=lambda x: (list(build_data.LEAGUE_FOTMOB).index(x) if x in build_data.LEAGUE_FOTMOB else
                                 _EU_ORD.get(x, 90 if str(x).startswith('NL') else 99), str(x)))
     # 26/9: προεπιλογη = λιγκα που εχει επερχομενα ματς με κινηση (στη διακοπη π.χ. οι εθνικες), αλλιως το διαγραμμα «εξαφανιζοταν»
@@ -861,7 +862,8 @@ def render_moves(league):
         rng = st.radio("Παραθυρο", ['6H', '12H', '24H', '48H', 'ΟΛΑ'], index=4, horizontal=True, key='mw_rng')
     hrs = {'6H': 6, '12H': 12, '24H': 24, '48H': 48, 'ΟΛΑ': None}[rng]
     _ou = mv.has_ou(D)                       # 10/10: συνολα γκολ (ευρωπαϊκα)
-    tabs = st.tabs(["1Χ2", "Ασιατικο χαντικαπ"] + (["Γκολ (συνολα)"] if _ou else []) + ["Ιστορικο αλλαγων"])
+    _nba = bool(D['meta'].get('nba'))           # 22/10: NBA — νικητης χωρις ισοπαλια, συνολο ποντων
+    tabs = st.tabs(["Νικητης" if _nba else "1Χ2", "Χαντικαπ" if _nba else "Ασιατικο χαντικαπ"] + ([f"{mv.ou_label(D)} (συνολα)"] if _ou else []) + ["Ιστορικο αλλαγων"])
     with tabs[0]:
         st.plotly_chart(mv.match_fig(D, '1x2', mode, hrs), use_container_width=True, config={'displayModeBar': False})
     with tabs[1]:
