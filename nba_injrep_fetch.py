@@ -8,7 +8,7 @@
 Χρηση: python -I nba_injrep_fetch.py [σεζον...]   (σεζον = ετος ληξης, π.χ. 2022 = 2021-22)"""
 import os, re, sys, csv, time, datetime as dt, urllib.request, concurrent.futures as cf
 import pdfplumber
-sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stdout, 'reconfigure'): sys.stdout.reconfigure(encoding='utf-8')   # 22/10: στο scanner η εξοδος ειναι StringIO (χωρις reconfigure) → εσπαγε το live
 ROOT = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(ROOT, 'nba_injrep'); TMP = os.path.join(OUT, 'pdf_tmp')
 os.makedirs(TMP, exist_ok=True)
 URL = 'https://ak-static.cms.nba.com/referee/injury/Injury-Report_{d}_{h}.pdf'
