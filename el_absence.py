@@ -137,19 +137,24 @@ def _otok(s):
     s = unicodedata.normalize('NFKD', str(s or '')).encode('ascii', 'ignore').decode().lower()
     return [w for w in re.split(r'[^a-z]+', s) if w]
 
-def load_onoff():
-    """→ (profiles {(sur, first): (onO, onD)}, κατα επωνυμο, coef, sd) ή None"""
+def load_onoff(base_only=False):
+    """→ (profiles {(sur, first): (onO, onD)}, κατα επωνυμο, coef, sd, alias {ονομα box: κλειδι προφιλ}) ή None"""
     try: d = json.load(open(F('el_onoff_prev.json'), encoding='utf-8'))
     except Exception: return None
     P_, S_ = {}, {}
     for x in d.get('players', []):
         k = (tuple(x['sur']), x['first']); P_[k] = (x['onO'], x['onD']); S_.setdefault(k[0], []).append(k)
-    return P_, S_, d['coef'], d['sd']
+    AL = {}                                                     # 23/10/2026: ονοματα που δεν ταιριαζουν (el_onoff_alias_build.py — ομαδα+φανελα)
+    if not base_only:
+        try: AL = {n: (tuple(v[0]), v[1]) for n, v in json.load(open(F('el_onoff_alias.json'), encoding='utf-8'))['alias'].items()}
+        except Exception: AL = {}
+    return P_, S_, d['coef'], d['sd'], AL
 
 def onoff_of(name, OO):
     """ονομα ρόστερ «SURNAME, FIRST» → (onO, onD) περσινα ή None (ιδια αντιστοιχιση με το τεστ)"""
     if not OO: return None
     P_, S_ = OO[0], OO[1]
+    if len(OO) > 4 and str(name) in OO[4] and OO[4][str(name)] in P_: return P_[OO[4][str(name)]]
     sur, fst = (str(name).split(',', 1) + [''])[:2] if ',' in str(name) else (str(name), '')
     k = (tuple(_otok(sur)), (_otok(fst) or [''])[0])
     if k in P_: return P_[k]
