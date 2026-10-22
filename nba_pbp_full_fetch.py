@@ -35,7 +35,9 @@ def compact(d, ev_id):
         for st in tb.get('statistics', []):
             keys = st.get('keys') or st.get('names') or []
             for a in st.get('athletes', []):
-                box[a['athlete']['id']] = [t, a['athlete']['displayName'], bool(a.get('starter')), bool(a.get('didNotPlay')),
+                ath = a.get('athlete') or {}
+                if not ath.get('id'): continue
+                box[ath['id']] = [t, ath.get('displayName') or ath.get('shortName') or '', bool(a.get('starter')), bool(a.get('didNotPlay')),
                                            dict(zip(keys, a.get('stats') or []))]
     plays = []
     for p in d.get('plays', []):
