@@ -59,21 +59,31 @@ def refresh(now=None):
     """Ψαχνει νεα αναφορα (μονο τα 15λεπτα μετα την τελευταια)· αν βρει, την κατεβαζει/διαβαζει/αποθηκευει. → κειμενο κατασταστασης."""
     now = now or dt.datetime.now(dt.timezone.utc); now_et = now.astimezone(ET)
     S = _load(STATE, {})
+    # 22/10/2026 ΔΙΑΓΝΩΣΗ: στο cloud το αρχειο δεν γραφοταν ποτε → γραφεται ΑΜΕΣΩΣ + κωδικοι απαντησης/διαρκεια/σφαλμα (για να φαινεται τι γινεται)
+    S['start'] = now.isoformat(timespec='minutes'); S.pop('error', None)
+    json.dump(S, open(F(STATE), 'w', encoding='utf-8'), ensure_ascii=False)
+    import time as _t; t0 = _t.time()
     last = dt.datetime.fromisoformat(S['slot']) if S.get('slot') else None
     s = now_et.replace(minute=(now_et.minute // 15) * 15, second=0, microsecond=0)
     lo = (last + dt.timedelta(minutes=15)) if last and (s - last) < dt.timedelta(hours=6) else s - dt.timedelta(hours=3)
-    found = None
+    found = None; codes = []
     while s >= lo:
-        if _head(_url(s)) == 200: found = s; break
+        c = _head(_url(s)); codes.append(c)
+        if c == 200: found = s; break
         s -= dt.timedelta(minutes=15)
-    S['checked'] = now.isoformat(timespec='minutes')
+    S['checked'] = now.isoformat(timespec='minutes'); S['codes'] = codes[-12:]; S['secs'] = round(_t.time() - t0, 1)
     if not found:
         json.dump(S, open(F(STATE), 'w', encoding='utf-8'), ensure_ascii=False)
-        return f"καμια νεα (τελευταια {S.get('file', '—')})"
-    import nba_injrep_fetch as N
-    p = os.path.join(tempfile.gettempdir(), 'nba_injrep_live.pdf')
-    open(p, 'wb').write(urllib.request.urlopen(urllib.request.Request(_url(found), headers=_H), timeout=40).read())
-    rows = N.parse(p)
+        return f"καμια νεα (τελευταια {S.get('file', '—')}) · απαντησεις {codes[-6:]} · {S['secs']}″"
+    try:
+        import nba_injrep_fetch as N
+        p = os.path.join(tempfile.gettempdir(), 'nba_injrep_live.pdf')
+        open(p, 'wb').write(urllib.request.urlopen(urllib.request.Request(_url(found), headers=_H), timeout=40).read())
+        rows = N.parse(p)
+    except Exception as e:
+        S['error'] = f'{type(e).__name__}: {str(e)[:200]}'
+        json.dump(S, open(F(STATE), 'w', encoding='utf-8'), ensure_ascii=False)
+        return f"σφαλμα: {S['error']}"
     if not rows:
         json.dump(S, open(F(STATE), 'w', encoding='utf-8'), ensure_ascii=False)
         return f'{os.path.basename(_url(found))}: 0 γραμμες (κραταω την προηγουμενη)'
