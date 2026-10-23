@@ -320,3 +320,10 @@ json.dump(dict(generated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='mi
 print(f'el_projections.json: {len(games)} ματς ({sum(g["played"] for g in games)} παιγμενα, με προβλεψη «πριν το ματς») · ratings {len(ratings)} ομαδων')
 for gm in games[:10]:
     print(f"  {gm['utc'][:16]} {gm['home'][:22]:22s} - {gm['away'][:22]:22s} {gm['pts_h']:5.1f}-{gm['pts_a']:5.1f} · γραμμη γηπ {-gm['margin']:+5.1f} · συνολο {gm['total']:5.1f}{' [ουδετερο]' if gm['neutral'] else ''}")
+# 23/10/2026 (Στελιος «ναι»): ΣΚΙΑ «δικο box score» χαντικαπ — box + play-by-play των τελειωμενων ματς (el_box_shadow_stats.json). Μη κρισιμο.
+try:
+    import el_box_shadow
+    _n, _t = el_box_shadow.update()
+    print(f'el_box_shadow_stats.json: +{_n} ματς · συνολο {_t}')
+except Exception as e:
+    print('el_box_shadow σφαλμα (μη κρισιμο):', e)

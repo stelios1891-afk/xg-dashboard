@@ -166,8 +166,16 @@ def onoff_of(name, OO):
 #   δεν επαιξε στο προηγουμενο ματς της ομαδας: βασικος (≥20′) .70 · ρολιστας .60 — αλλιως (νεος τραυματισμος / αμφιβολος): .40 · .50
 GTD_P = {('missed', True): 0.70, ('missed', False): 0.60, ('new', True): 0.40, ('new', False): 0.50}
 
-def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=()):
-    """→ (κοστος χαντικαπ, [λεπτομερειες], Σ w·onO/sd, Σ w·onD/sd) · gtd_names: μονο στο χαντικαπ, × GTD_P"""
+def _box_shadow_cost(pid, before_utc, avg, g):
+    """23/10/2026 ΣΚΙΑ (Στελιος «ναι»): κοστος με τον «δικο box» δεικτη (el_box_shadow.py)· None αν λειπουν τα αρχεια — δεν αγγιζει το live."""
+    try:
+        import el_box_shadow; return el_box_shadow.cost(pid, before_utc, avg, g)
+    except Exception:
+        return None
+
+def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(), shadow=None):
+    """→ (κοστος χαντικαπ, [λεπτομερειες], Σ w·onO/sd, Σ w·onD/sd) · gtd_names: μονο στο χαντικαπ, × GTD_P
+    shadow: dict → shadow['box'] += κοστος σκιας «δικο box» (ιδιοι αποντες/βαρη, μονο καταγραφη)"""
     tg = [x for x in _team_games(B, season, code) if x[0] < before_utc]
     if not tg: return 0.0, [], 0.0, 0.0
     roster = {}
@@ -189,12 +197,16 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
         pv = pir40(B, season, pid, before_utc)
         z = 0.0 if pv is None else (pv - PIR_MU) / PIR_SD
         c = (V_B0 + V_B1 * z) * avg / 40 * g
+        cb = _box_shadow_cost(pid, before_utc, avg, g) if shadow is not None else None
+        if cb is None and shadow is not None: shadow['ok'] = False
         if is_gtd:
             pw = GTD_P[('missed' if tg[-1][1].get(pid, 0) <= 0 else 'new', avg >= 20)]
             c *= pw; cost += c
+            if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb * pw
             det.append(f'{name} GTD {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + f' ×{g:g} ×πιθ. απουσιας {pw:.2f} → {c:.2f} (μονο χαντικαπ)')
             continue
         cost += c
+        if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb
         oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
         if oo and OO:
             so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
@@ -224,8 +236,9 @@ def adjustments(games, B=None):
         out_h = [n for n, s in best['inj']['home'] if s.upper() == 'OUT']; out_a = [n for n, s in best['inj']['visit'] if s.upper() == 'OUT']
         gtd_h = [n for n, s in best['inj']['home'] if s.upper() != 'OUT']; gtd_a = [n for n, s in best['inj']['visit'] if s.upper() != 'OUT']
         gtd = gtd_h + gtd_a
-        ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO, gtd_h)
-        ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO, gtd_a)
+        shh, sha = {'box': 0.0, 'ok': True}, {'box': 0.0, 'ok': True}
+        ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO, gtd_h, shadow=shh)
+        ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO, gtd_a, shadow=sha)
         tot = 0.0
         if OO:                                                     # ΣΥΝΟΛΑ: ποντοι γηπ += bO·δικα επιθ + bD·αμυνα φιλοξ (και αντιστροφα)
             bO, bD = OO[2]['bO'], OO[2]['bD']
@@ -235,6 +248,8 @@ def adjustments(games, B=None):
         if da: parts.append(f"{g['away']}: " + ', '.join(da))
         if gtd: parts.append('αμφιβολοι (GTD): στο χαντικαπ με πιθανοτητα, στα συνολα δεν μετρανε')
         res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, note=' · '.join(parts))
+        if shh['ok'] and sha['ok']:                                # 23/10 ΣΚΙΑ «δικο box» (el_box_shadow) — μονο καταγραφη στο el_picks
+            res[str(g['code'])].update(adj_box=round(sha['box'] - shh['box'], 2), cost_box_h=round(shh['box'], 2), cost_box_a=round(sha['box'], 2))
         if tot: parts.append(f'συνολο {tot:+.1f} (on/off αμυνα & επιθεση)'); res[str(g['code'])]['note'] = ' · '.join(parts)
     return res
 
