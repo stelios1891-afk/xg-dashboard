@@ -107,13 +107,14 @@ class Official:
     """Καταστασεις της τελευταιας αναφορας: ανα (ομαδα, ημερα ματς ΗΠΑ) → {κλειδι: (κατασταση, λογος, ονομα)}."""
     def __init__(self, now=None):
         self.S = _load(STATE, {}); self.ok = bool(self.S.get('rows')) and (age_min(now) or 1e9) <= STALE_MIN
-        self.by = {}
+        self.by = {}; self.teams_dates = set()
         for x in self.S.get('rows', []):
-            if 'gleague' in str(x.get('reason') or '').replace(' ', '').lower(): continue
             try: gd = dt.datetime.strptime(x['gd'], '%m/%d/%Y').date().isoformat()
             except Exception: continue
+            # 24/10/2026: ομαδα με ΜΟΝΟ G-League γραμμες ειναι ΚΑΛΥΜΜΕΝΗ (ως τωρα επεφτε στη λιστα ESPN, π.χ. NOP 23/10)
+            self.teams_dates.add((x['team'], gd))
+            if 'gleague' in str(x.get('reason') or '').replace(' ', '').lower(): continue
             self.by.setdefault((x['team'], gd), {})[x['key']] = (x['status'], x.get('reason'), x['raw'])
-        self.teams_dates = set(self.by)
 
     def covers(self, team, gdate):
         return self.ok and (team, gdate) in self.teams_dates
