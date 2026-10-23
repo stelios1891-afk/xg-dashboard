@@ -161,15 +161,20 @@ def onoff_of(name, OO):
     c = [x for x in S_.get(k[0], []) if x[1][:1] == k[1][:1]]
     return P_[c[0]] if len(c) == 1 else None
 
-def team_cost(B, season, code, out_names, before_utc, prev, OO=None):
-    """→ (κοστος χαντικαπ, [λεπτομερειες], Σ w·onO/sd, Σ w·onD/sd)"""
+# 23/10/2026 (Στελιος «περνα το»): GTD της σελιδας lineups μετραει στο ΧΑΝΤΙΚΑΠ με πιθανοτητα απουσιας (el_gtd_model_test G_page:
+# χαντικαπ +40.1 → +62.3μ, RMSE 4/5, 5/5 θετικες· συνολα ✗ → στα ΣΥΝΟΛΑ ο GTD μενει «παιζει»). p = 1 − ποσοστο που επαιξε (el_gtd_model_test):
+#   δεν επαιξε στο προηγουμενο ματς της ομαδας: βασικος (≥20′) .70 · ρολιστας .60 — αλλιως (νεος τραυματισμος / αμφιβολος): .40 · .50
+GTD_P = {('missed', True): 0.70, ('missed', False): 0.60, ('new', True): 0.40, ('new', False): 0.50}
+
+def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=()):
+    """→ (κοστος χαντικαπ, [λεπτομερειες], Σ w·onO/sd, Σ w·onD/sd) · gtd_names: μονο στο χαντικαπ, × GTD_P"""
     tg = [x for x in _team_games(B, season, code) if x[0] < before_utc]
     if not tg: return 0.0, [], 0.0, 0.0
     roster = {}
     for _, _, nm in tg: roster.update(nm)
     last10 = tg[-10:]; played = {pid: sum(1 for _, mn, _ in last10 if mn.get(pid, 0) > 0) for pid in roster}
     cost, det, so, sd_ = 0.0, [], 0.0, 0.0
-    for name in out_names:
+    for name, is_gtd in [(n, False) for n in out_names] + [(n, True) for n in gtd_names]:
         pid = _match(name, roster)
         if not pid: det.append(f'{name}: δεν επαιξε φετος'); continue
         if played.get(pid, 0) < 3: det.append(f'{name}: οχι τακτικος ({played.get(pid, 0)}/10)'); continue
@@ -183,7 +188,13 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None):
         g = 1.0 if k <= 3 else (G_LONG if k <= 10 else 0.0)
         pv = pir40(B, season, pid, before_utc)
         z = 0.0 if pv is None else (pv - PIR_MU) / PIR_SD
-        c = (V_B0 + V_B1 * z) * avg / 40 * g; cost += c
+        c = (V_B0 + V_B1 * z) * avg / 40 * g
+        if is_gtd:
+            pw = GTD_P[('missed' if tg[-1][1].get(pid, 0) <= 0 else 'new', avg >= 20)]
+            c *= pw; cost += c
+            det.append(f'{name} GTD {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + f' ×{g:g} ×πιθ. απουσιας {pw:.2f} → {c:.2f} (μονο χαντικαπ)')
+            continue
+        cost += c
         oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
         if oo and OO:
             so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
@@ -211,9 +222,10 @@ def adjustments(games, B=None):
             if set(_tok(r['home'])) & set(_tok(g['home'])) and set(_tok(r['visit'])) & set(_tok(g['away'])): best = r; break
         if not best: continue
         out_h = [n for n, s in best['inj']['home'] if s.upper() == 'OUT']; out_a = [n for n, s in best['inj']['visit'] if s.upper() == 'OUT']
-        gtd = [n for side in ('home', 'visit') for n, s in best['inj'][side] if s.upper() != 'OUT']
-        ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO)
-        ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO)
+        gtd_h = [n for n, s in best['inj']['home'] if s.upper() != 'OUT']; gtd_a = [n for n, s in best['inj']['visit'] if s.upper() != 'OUT']
+        gtd = gtd_h + gtd_a
+        ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO, gtd_h)
+        ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO, gtd_a)
         tot = 0.0
         if OO:                                                     # ΣΥΝΟΛΑ: ποντοι γηπ += bO·δικα επιθ + bD·αμυνα φιλοξ (και αντιστροφα)
             bO, bD = OO[2]['bO'], OO[2]['bD']
@@ -221,7 +233,7 @@ def adjustments(games, B=None):
         parts = []
         if dh: parts.append(f"{g['home']}: " + ', '.join(dh))
         if da: parts.append(f"{g['away']}: " + ', '.join(da))
-        if gtd: parts.append('αμφιβολοι (δεν μετρανε): ' + ', '.join(gtd))
+        if gtd: parts.append('αμφιβολοι (GTD): στο χαντικαπ με πιθανοτητα, στα συνολα δεν μετρανε')
         res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, note=' · '.join(parts))
         if tot: parts.append(f'συνολο {tot:+.1f} (on/off αμυνα & επιθεση)'); res[str(g['code'])]['note'] = ' · '.join(parts)
     return res
