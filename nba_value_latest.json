@@ -1,10 +1,10 @@
 {
- "scanned_at": "2026-10-23T09:59+00:00",
+ "scanned_at": "2026-10-23T10:05+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
  "n_new": 0,
- "n_changed": 0,
+ "n_changed": 1,
  "picks": [
   {
    "lg": "NBA",
@@ -53,8 +53,8 @@
    "mkt": "hcap",
    "side": -1,
    "hcap": -8.5,
-   "odds": 2.0,
-   "edge": 0.2307,
+   "odds": 1.917,
+   "edge": 0.1797,
    "proj_odds": 1.63,
    "model_line": 12.5,
    "mkt_line": 8.5,
@@ -64,8 +64,8 @@
     "oa": 1.943,
     "seen": "2026-10-22T06:58+00:00"
    },
-   "move_note": "ανοιγμα Portland Trail Blazers -7 @1.94 → τωρα -8.5 @2.00 · αγορα 1.0 π. ΥΠΕΡ μας",
-   "move_pts": 1.0,
+   "move_note": "ανοιγμα Portland Trail Blazers -7 @1.94 → τωρα -8.5 @1.92 · αγορα 1.7 π. ΥΠΕΡ μας",
+   "move_pts": 1.7,
    "hrs_birth": 43.2
   },
   {
@@ -114,20 +114,20 @@
    "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
    "mkt": "hcap",
    "side": 1,
-   "hcap": -2.0,
-   "odds": 1.893,
-   "edge": 0.186,
-   "proj_odds": 1.59,
+   "hcap": -2.5,
+   "odds": 1.917,
+   "edge": 0.1726,
+   "proj_odds": 1.63,
    "model_line": -6.3,
-   "mkt_line": -2.0,
+   "mkt_line": -2.5,
    "first": {
     "line": -2.5,
     "oh": 1.926,
     "oa": 1.962,
     "seen": "2026-10-22T06:58+00:00"
    },
-   "move_note": "ανοιγμα Boston Celtics -2.5 @1.93 → τωρα -2 @1.89 · ουσιαστικα ιδια",
-   "move_pts": -0.2,
+   "move_note": "ανοιγμα Boston Celtics -2.5 @1.93 → τωρα -2.5 @1.92 · ουσιαστικα ιδια",
+   "move_pts": 0.1,
    "hrs_birth": 40.2
   },
   {
@@ -146,8 +146,8 @@
    "mkt": "hcap",
    "side": -1,
    "hcap": -1.0,
-   "odds": 2.0,
-   "edge": 0.4039,
+   "odds": 1.99,
+   "edge": 0.397,
    "proj_odds": 1.41,
    "model_line": 8.2,
    "mkt_line": 1.0,
@@ -157,7 +157,7 @@
     "oa": 1.962,
     "seen": "2026-10-22T06:58+00:00"
    },
-   "move_note": "ανοιγμα Detroit Pistons +2.5 @1.96 → τωρα -1 @2.00 · αγορα 3.2 π. ΥΠΕΡ μας",
+   "move_note": "ανοιγμα Detroit Pistons +2.5 @1.96 → τωρα -1 @1.99 · αγορα 3.2 π. ΥΠΕΡ μας",
    "move_pts": 3.2,
    "hrs_birth": 41.2
   }
