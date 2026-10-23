@@ -78,11 +78,16 @@ class BoxValue:
         try: self.M = json.load(open(F(BOXMAP), encoding='utf-8'))
         except Exception as e: self.M = None; print('φετινη αξια: απενεργη —', e)
         self.g = collections.defaultdict(list)                           # κλειδι ονοματος → [(μερα, 14 στατιστικα, λεπτα)]
+        self.ids = {}                                                    # 24/10: κλειδι ονοματος → ESPN id (για το «Β», nba_boxB)
+        try:
+            import nba_boxB; self.B = nba_boxB.BoxB()
+        except Exception as e: self.B = None; print('φετινη αξια Β: απενεργη —', e)
         for g in GM.values():
             if g.get('stype') != 2 or g.get('hs') is None or 'pstats' not in g: continue
             day = dt.date.fromisoformat(g['date']).toordinal(); keys = g.get('pkeys') or []
             for L in g['pstats'].values():
                 for _, n, vals in L:
+                    self.ids[nk(n)] = str(_)
                     st = dict(zip(keys, vals))
                     try: mn = float(st.get('minutes') or 0)
                     except Exception: mn = 0.0
@@ -106,6 +111,16 @@ class BoxValue:
         """μιξη περσινης (v0) με φετινη: (αξια, φετινη ή None, φετινα λεπτα)."""
         vb, raw = self.value(k, gdate)
         if vb is None or raw <= 0: return v0, None, 0.0
+        # 24/10/2026 (Στελιος «φετινο με το Β · περνα το»): φετινο κομματι = «δικο μας box» (nba_boxB, t65/t66) με M 250·
+        # αν λειπει (π.χ. χωρις play-by-play/παραμετρους) → η παλια φετινη box (t59) με M 500.
+        if self.B is not None and k in self.ids:
+            try:
+                vB = self.B.value(self.ids[k], gdate or dt.datetime.now(dt.timezone.utc).date().isoformat())
+            except Exception:
+                vB = None
+            if vB is not None:
+                MB = float(self.B.P.get('M', 250.0))
+                return (raw * vB + MB * v0) / (raw + MB), vB, raw
         Mx = float(self.M.get('mix_M', 500.0))
         return (raw * vb + Mx * v0) / (raw + Mx), vb, raw
 
