@@ -1,13 +1,13 @@
 {
- "scanned_at": "2026-10-23T08:11",
+ "scanned_at": "2026-10-23T08:28",
  "ratings_season": "2526",
- "gross": 0.6175342168811091,
- "scale": 0.3238686934792231,
+ "gross": 0.6128830665313474,
+ "scale": 0.32632652282581953,
  "cap": 0.2,
  "credits_remaining": null,
  "credits_cost": 0,
  "n_new": 0,
- "n_changed": 0,
+ "n_changed": 1,
  "picks": [
   {
    "lg": "EPL",
@@ -30,7 +30,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.012901551425890558,
-   "stake_final": 0.0041784086041581825
+   "stake_final": 0.0042101184158693595
   },
   {
    "lg": "EPL",
@@ -53,7 +53,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.017979943124523234,
-   "stake_final": 0.0058231406885700795
+   "stake_final": 0.005867332320431668
   },
   {
    "lg": "EPL",
@@ -76,7 +76,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.020605213420352965,
-   "stake_final": 0.006673383549310268
+   "stake_final": 0.006724027647547695
   },
   {
    "lg": "LaLiga",
@@ -99,7 +99,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.013866326563028882,
-   "stake_final": 0.00449086906732441
+   "stake_final": 0.004524950131680513
   },
   {
    "lg": "LaLiga",
@@ -122,7 +122,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01761161659408143,
-   "stake_final": 0.005703851256382158
+   "stake_final": 0.005747137604488096
   },
   {
    "lg": "LaLiga",
@@ -146,56 +146,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.009106446741549673,
-   "stake_final": 0.002949293008423821
-  },
-  {
-   "lg": "SerieA",
-   "home": "Lecce",
-   "away": "Juventus",
-   "home_id": 9888,
-   "away_id": 9885,
-   "when": "2026-10-25T17:00",
-   "md": 8,
-   "role": "dog",
-   "coach_notes": [
-    "Juventus: νεος προπονητης Marco Domenichini απο 2026-10-18 — 2ο ματς · πριν: ατυχη (αποτελεσματα χειροτερα απο τα data)"
-   ],
-   "mxh": 0.692,
-   "mxa": 1.549,
-   "side": 1,
-   "hcap": 1.25,
-   "odds": 1.826,
-   "pw": 0.6907804576525423,
-   "pp": 0.0,
-   "edge": 0.24424757593291224,
-   "proj_odds": 1.447637941869793,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.03696240555885476,
-   "stake_final": 0.011970965996195463
-  },
-  {
-   "lg": "SerieA",
-   "home": "Como",
-   "away": "Sassuolo",
-   "home_id": 10171,
-   "away_id": 7943,
-   "when": "2026-10-24T13:00",
-   "md": 8,
-   "role": "dog",
-   "mxh": 2.031,
-   "mxa": 0.997,
-   "side": -1,
-   "hcap": 1.25,
-   "odds": 1.87,
-   "pw": 0.6248211718388135,
-   "pp": 0.0,
-   "edge": 0.15210775875358828,
-   "proj_odds": 1.6004579311182052,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.021854563039308657,
-   "stake_final": 0.007078008778100214
+   "stake_final": 0.002971675100468419
   },
   {
    "lg": "SerieA",
@@ -221,7 +172,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.049120120268453124,
-   "stake_final": 0.015908469174886218
+   "stake_final": 0.01602919804799037
   },
   {
    "lg": "SerieA",
@@ -247,7 +198,56 @@
    "hnote": "",
    "anote": "",
    "stake": 0.021769094897229016,
-   "stake_final": 0.007050328322590784
+   "stake_final": 0.007103833042878036
+  },
+  {
+   "lg": "SerieA",
+   "home": "Como",
+   "away": "Sassuolo",
+   "home_id": 10171,
+   "away_id": 7943,
+   "when": "2026-10-24T13:00",
+   "md": 8,
+   "role": "dog",
+   "mxh": 2.031,
+   "mxa": 0.997,
+   "side": -1,
+   "hcap": 1.25,
+   "odds": 1.87,
+   "pw": 0.6248211718388135,
+   "pp": 0.0,
+   "edge": 0.15210775875358828,
+   "proj_odds": 1.6004579311182052,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.021854563039308657,
+   "stake_final": 0.007131723564495269
+  },
+  {
+   "lg": "SerieA",
+   "home": "Lecce",
+   "away": "Juventus",
+   "home_id": 9888,
+   "away_id": 9885,
+   "when": "2026-10-25T17:00",
+   "md": 8,
+   "role": "dog",
+   "coach_notes": [
+    "Juventus: νεος προπονητης Marco Domenichini απο 2026-10-18 — 2ο ματς · πριν: ατυχη (αποτελεσματα χειροτερα απο τα data)"
+   ],
+   "mxh": 0.692,
+   "mxa": 1.549,
+   "side": 1,
+   "hcap": 1.25,
+   "odds": 1.826,
+   "pw": 0.6907804576525423,
+   "pp": 0.0,
+   "edge": 0.24424757593291224,
+   "proj_odds": 1.447637941869793,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.03696240555885476,
+   "stake_final": 0.012061813281298815
   },
   {
    "lg": "Bundesliga",
@@ -265,15 +265,61 @@
    "mxa": 1.157,
    "side": -1,
    "hcap": 1.5,
-   "odds": 2.06,
+   "odds": 2.05,
    "pw": 0.5570268784858521,
    "pp": 0.0,
-   "edge": 0.12976191494500522,
+   "edge": 0.12435875422369236,
    "proj_odds": 1.795245505420254,
    "hnote": "",
    "anote": "",
-   "stake": 0.015302112611439295,
-   "stake_final": 0.004955875218938787
+   "stake": 0.014804613598058616,
+   "stake_final": 0.004831138077234313
+  },
+  {
+   "lg": "Bundesliga",
+   "home": "Bayern München",
+   "away": "Borussia Dortmund",
+   "home_id": 9823,
+   "away_id": 9789,
+   "when": "2026-10-31T17:30",
+   "md": 7,
+   "role": "dog",
+   "mxh": 2.155,
+   "mxa": 0.997,
+   "side": -1,
+   "hcap": 1.5,
+   "odds": 2.07,
+   "pw": 0.5955816586397177,
+   "pp": 0.0,
+   "edge": 0.21373586214188056,
+   "proj_odds": 1.6790308860147842,
+   "hnote": "low-confidence",
+   "anote": "",
+   "stake": 0.024969142773584183,
+   "stake_final": 0.008148093539245166
+  },
+  {
+   "lg": "Bundesliga",
+   "home": "Freiburg",
+   "away": "Bayern München",
+   "home_id": 8358,
+   "away_id": 9823,
+   "when": "2026-10-25T16:30",
+   "md": 7,
+   "role": "dog",
+   "mxh": 1.156,
+   "mxa": 1.946,
+   "side": 1,
+   "hcap": 1.5,
+   "odds": 1.98,
+   "pw": 0.6731101106096264,
+   "pp": 0.0,
+   "edge": 0.3129685817551373,
+   "proj_odds": 1.4856410329274565,
+   "hnote": "",
+   "anote": "low-confidence",
+   "stake": 0.03991946195856343,
+   "stake_final": 0.013026779214015585
   },
   {
    "lg": "Bundesliga",
@@ -297,53 +343,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.007718501246783756,
-   "stake_final": 0.0024997809144136096
-  },
-  {
-   "lg": "Bundesliga",
-   "home": "Freiburg",
-   "away": "Bayern München",
-   "home_id": 8358,
-   "away_id": 9823,
-   "when": "2026-10-25T16:30",
-   "md": 7,
-   "role": "dog",
-   "mxh": 1.156,
-   "mxa": 1.946,
-   "side": 1,
-   "hcap": 1.5,
-   "odds": 1.98,
-   "pw": 0.6731101106096264,
-   "pp": 0.0,
-   "edge": 0.3129685817551373,
-   "proj_odds": 1.4856410329274565,
-   "hnote": "",
-   "anote": "low-confidence",
-   "stake": 0.03991946195856343,
-   "stake_final": 0.012928663988913488
-  },
-  {
-   "lg": "Bundesliga",
-   "home": "Bayern München",
-   "away": "Borussia Dortmund",
-   "home_id": 9823,
-   "away_id": 9789,
-   "when": "2026-10-31T17:30",
-   "md": 7,
-   "role": "dog",
-   "mxh": 2.155,
-   "mxa": 0.997,
-   "side": -1,
-   "hcap": 1.5,
-   "odds": 2.07,
-   "pw": 0.5955816586397177,
-   "pp": 0.0,
-   "edge": 0.21373586214188056,
-   "proj_odds": 1.6790308860147842,
-   "hnote": "low-confidence",
-   "anote": "",
-   "stake": 0.024969142773584183,
-   "stake_final": 0.008086723647376894
+   "stake_final": 0.0025187516732896958
   },
   {
    "lg": "Ligue1",
@@ -366,7 +366,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.022019668649739803,
-   "stake_final": 0.0071314813164366385
+   "stake_final": 0.007185601904246298
   },
   {
    "lg": "Ligue1",
@@ -389,7 +389,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.05337957445839588,
-   "stake_final": 0.017287973038317583
+   "stake_final": 0.017419170922930258
   },
   {
    "lg": "Ligue1",
@@ -412,7 +412,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03534965906636635,
-   "stake_final": 0.011448647896760042
+   "stake_final": 0.011535531326205536
   },
   {
    "lg": "Ligue1",
@@ -435,7 +435,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.013791940985739727,
-   "stake_final": 0.004466777907594074
+   "stake_final": 0.004500676144895351
   },
   {
    "lg": "Ligue1",
@@ -458,7 +458,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.015576526341637153,
-   "stake_final": 0.005044749235210727
+   "stake_final": 0.005083033678771235
   },
   {
    "lg": "PrimeiraLiga",
@@ -481,30 +481,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.05441014124784626,
-   "stake_final": 0.017621741357959953
-  },
-  {
-   "lg": "PrimeiraLiga",
-   "home": "Gil Vicente",
-   "away": "FC Porto",
-   "home_id": 9764,
-   "away_id": 9773,
-   "when": "2026-10-24T19:30",
-   "md": 9,
-   "role": "dog",
-   "mxh": 0.827,
-   "mxa": 1.371,
-   "side": 1,
-   "hcap": 1.25,
-   "odds": 1.794,
-   "pw": 0.7600550617959889,
-   "pp": 0.0,
-   "edge": 0.34543426929002374,
-   "proj_odds": 1.3156941519960776,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.054381969346666205,
-   "stake_final": 0.017612617361131944
+   "stake_final": 0.017755472199871367
   },
   {
    "lg": "PrimeiraLiga",
@@ -528,7 +505,30 @@
    "hnote": "",
    "anote": "",
    "stake": 0.0055176597370261175,
-   "stake_final": 0.0017869972500935624
+   "stake_final": 0.0018005587161197588
+  },
+  {
+   "lg": "PrimeiraLiga",
+   "home": "Gil Vicente",
+   "away": "FC Porto",
+   "home_id": 9764,
+   "away_id": 9773,
+   "when": "2026-10-24T19:30",
+   "md": 9,
+   "role": "dog",
+   "mxh": 0.827,
+   "mxa": 1.371,
+   "side": 1,
+   "hcap": 1.25,
+   "odds": 1.794,
+   "pw": 0.7600550617959889,
+   "pp": 0.0,
+   "edge": 0.34543426929002374,
+   "proj_odds": 1.3156941519960776,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.054381969346666205,
+   "stake_final": 0.017746278961317887
   },
   {
    "lg": "Eredivisie",
@@ -543,15 +543,15 @@
    "mxa": 1.497,
    "side": -1,
    "hcap": 1.0,
-   "odds": 2.06,
+   "odds": 1.943,
    "pw": 0.5091823782259104,
    "pp": 0.2069265583334166,
-   "edge": 0.23965025785120803,
+   "edge": 0.18186314974634954,
    "proj_odds": 1.5575429857368674,
    "hnote": "",
    "anote": "",
-   "stake": 0.028260643614529245,
-   "stake_final": 0.009152737724319536
+   "stake": 0.024106992278148134,
+   "stake_final": 0.007866750965916961
   },
   {
    "lg": "Eredivisie",
@@ -574,7 +574,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.025159933209519526,
-   "stake_final": 0.008148514696591605
+   "stake_final": 0.008210353518792369
   }
  ]
 }
