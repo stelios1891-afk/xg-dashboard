@@ -54,12 +54,13 @@ def players():
         for x in v.get('players', []):
             if v.get('code'): inj[(v['code'], nk(x[0]))] = (x[0], x[1], x[2] if len(x) > 2 else None, x[3] if len(x) > 3 else None)
     # 21/10: με διακοπτη «official» → καταστασεις απο την επισημη αναφορα NBA (πλησιεστερο ματς καθε ομαδας) + πιθανοτητα απουσιας
-    OFFK, IL = {}, None
+    OFFK, IL, COV = {}, None, set()
     try:
         import nba_injrep_live as IL
         if IL.enabled():
             O = IL.Official()
             if O.ok:
+                COV = {t_ for (t_, gd) in O.teams_dates}             # 24/10: ομαδες που ΕΧΟΥΝ δηλωσει· οι αλλες → ESPN, οπως το live (nba_absence)
                 for (t_, gd), d_ in sorted(O.by.items(), key=lambda kv: kv[0][1], reverse=True):
                     for k_, (st_, why, raw) in d_.items(): OFFK[(t_, k_)] = (st_, why)
         else: IL = None
@@ -96,7 +97,7 @@ def players():
             im, it = impact(v, o, d, mn)
             ij = inj.get((t, k)); stt = ij[1] if ij else None
             pr = None
-            if IL is not None:
+            if IL is not None and t in COV:                         # 24/10: ως τωρα ομαδα χωρις δηλωση εβγαινε «ολοι διαθεσιμοι» (Flagg)
                 o_ = OFFK.get((t, IL.ckey(n)))
                 if o_: ij = (n, o_[0], o_[1], None); stt = o_[0]
                 elif ij: ij, stt = None, None                       # οχι στην επισημη αναφορα → διαθεσιμος
