@@ -119,7 +119,8 @@ def players():
                 if pr > 0: how = f'{how} · {int(round(pr * 100))}%'
             if mn < MIN_SHOW and not ij: continue
             rows.append(dict(name=n, min=round(mn, 1), msrc=src, gp=len(hist.get((t, k), [])), v=round(v, 2), o=round(o, 2), d=round(d, 2),
-                             imp_m=round(im, 2), imp_t=round(it, 2), how=how, status=stt, itype=ij[2] if ij else None, idate=ij[3] if ij else None, in_model=in_model))
+                             imp_m=round(im, 2), imp_t=round(it, 2), how=how, status=stt, itype=ij[2] if ij else None, idate=ij[3] if ij else None, in_model=in_model,
+                             pr=pr if (pr is not None and in_model) else None))
         out[t] = sorted(rows, key=lambda r: -r['imp_m'])
     return out
 
@@ -190,16 +191,23 @@ def _probs(m, tot, pin, sm, st):
     return r
 
 
-def whatif(g, pin, off_h, off_a, P, sm, st):
+def counted(r):
+    """Ποσο απο την αξια του παικτη αφαιρει ΤΩΡΑ το μοντελο: 0 = παιζει, 1 = σιγουρα εκτος, ενδιαμεσα = πιθανοτητα επισημης αναφορας
+    (24/10: ως τωρα το what-if θεωρουσε καθε «σημαδεμενο» 100% εκτος — λαθος για Questionable π.χ. LeBron 42%)."""
+    if not r.get('in_model'): return 0.0
+    return float(r['pr']) if r.get('pr') is not None else 1.0
+
+
+def whatif(g, pin, off_h, off_a, P, sm, st, asis=()):
     """off_h / off_a = ονοματα που ΔΕΝ παιζουν (μαζι με οσους ειναι ηδη Out στο μοντελο). Παικτης που αφαιρεθηκε απο το Out
     → ξαναμπαινει (επιστροφη). → (πριν, μετα) με πιθανοτητες ολων των αγορων + dm/dt."""
     dm = dt_ = 0.0
     for code, off, sg in ((g['hcode'], set(off_h), -1), (g['acode'], set(off_a), 1)):
         for r in P.get(code, []):
-            if r['name'] in off and not r['in_model']:
-                dm += sg * r['imp_m']; dt_ += r['imp_t']
-            elif r['name'] not in off and r['in_model']:
-                dm -= sg * r['imp_m']; dt_ -= r['imp_t']
+            w = counted(r)                                          # 24/10: ποσο τον αφαιρει ηδη το μοντελο (0-1, πιθανοτητα επισημης αναφορας)
+            if r['name'] in asis: continue                          # «οπως το μοντελο» → καμια αλλαγη (π.χ. Questionable με την πιθανοτητα του)
+            x = (1.0 - w) if r['name'] in off else -w               # εκτος → το υπολοιπο · παιζει → επιστρεφει οσο αφαιρεθηκε
+            dm += sg * x * r['imp_m']; dt_ += x * r['imp_t']
     m0, t0 = float(g['margin']), float(g['total'])
     return _probs(m0, t0, pin, sm, st), dict(_probs(m0 + dm, t0 + dt_, pin, sm, st), dm=dm, dt=dt_)
 

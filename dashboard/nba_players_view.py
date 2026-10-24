@@ -1,7 +1,7 @@
 """nba_players_view.py — 🏀 NBA PLAYERS: δικη σελιδα (20/10/2026, Στελιος «βγαλε τη βαση παικτων απο το NBA, νεο tab, πιο ομορφο,
 πανω τα projections του ματς με νικη & χαντικαπ, ποσο κινειται η τιμη ολων»).
   • Ματς: καρτα προβλεψης (νικη / χαντικαπ / συνολο) ΠΡΙΝ → ΜΕΤΑ τις απουσιες που επιλεγεις, με δικαιες αποδοσεις, Pinnacle & edge.
-  • Πινακες ομαδων με κουτακι «Εκτος»: τσεκαρεις αμφιβολο → μετραει · ξετσεκαρεις Out που ηδη μετρα → «επιστρεφει».
+  • Πινακες ομαδων με στηλη «Παιζει;» (παιζει / εκτος / οπως το μοντελο, 24/10): «εκτος» σε αμφιβολο → μετραει · «παιζει» σε Out που ηδη μετρα → «επιστρεφει».
   • Ροστερ: ολη η βαση ανα ομαδα.
 Ιδιοι αριθμοι με το live (nba_board / nba_absence). ΜΟΝΟ ΕΡΓΑΛΕΙΟ — δεν αλλαζει τα picks."""
 import os, json, html as _h, datetime as dt
@@ -155,8 +155,8 @@ def card(g, pin, b, a, offs, backs):
     chips = ''.join(f'<span class="chip">✕ {_h.escape(n)} {v:+.1f}</span>' for n, v in offs)
     chips += ''.join(f'<span class="chip ret">↩ {_h.escape(n)} {v:+.1f}</span>' for n, v in backs)
     chg = (f'<div class="chg">Επιλογες: {chips}</div>' if chips else
-           '<div class="chg">Τσεκαρε «Εκτος» στους πινακες απο κατω (π.χ. αμφιβολους) για να δεις πως αλλαζουν ολες οι τιμες. '
-           'Ξετσεκαρε εναν «στο μοντελο» για να δεις τι γινεται αν επιστρεψει.</div>')
+           '<div class="chg">Βαλε «εκτος» / «παιζει» στους πινακες απο κατω (π.χ. αμφιβολους) για να δεις πως αλλαζουν ολες οι τιμες. '
+           'Βαλε «παιζει» σε εναν «στο μοντελο» για να δεις τι γινεται αν επιστρεψει.</div>')
     logo = lambda u: f'<img src="{_h.escape(u)}">' if u else ''
     return (CSS + '<div class="card"><div class="top">'
             f'<div class="tm">{logo(g.get("hcrest"))}<div><div class="tn">{_h.escape(g["home"])}</div><div class="ts">Γηπεδουχος</div></div></div>'
@@ -166,10 +166,20 @@ def card(g, pin, b, a, offs, backs):
 
 
 # ------------------------------ πινακες παικτων ------------------------------
+OPT_PLAY, OPT_OUT, OPT_ASIS = 'παιζει', 'εκτος', 'οπως το μοντελο'
+
+
+def _state0(r):
+    """24/10: αρχικη επιλογη — σιγουρα εκτος στο μοντελο → εκτος · μερικως (πιθανοτητα επισημης αναφορας) → οπως το μοντελο · αλλιως παιζει."""
+    import nba_board
+    w = nba_board.counted(r)
+    return OPT_OUT if w >= 1 else (OPT_ASIS if w > 0 else OPT_PLAY)
+
+
 def _df(rows, with_box):
     import pandas as pd
     ic = lambda r: {'out': '🔴 ', 'doubtful': '🟠 ', 'day-to-day': '🟡 ', 'questionable': '🟡 ', 'probable': '🟢 '}.get(str(r.get('status') or '').strip().lower(), '')
-    d = pd.DataFrame([{'Εκτος': bool(r['in_model']), 'Παικτης': ic(r) + r['name'], 'Κατασταση': _status(r),
+    d = pd.DataFrame([{'Εκτος': _state0(r), 'Παικτης': ic(r) + r['name'], 'Κατασταση': _status(r),
                        'Χαντικαπ': -r['imp_m'], 'Κοστος': r['imp_m'], 'Συνολο': r['imp_t'],
                        'Πως μετραει': {'απουσια': 'απουσια (φορμουλα)', 'αφετηρια': 'αφετηρια ομαδας', 'κατω απο 20′': 'δεν μετραει (<20′)'}.get(r.get('how'), ''),
                        'Λεπτα': r['min'], 'Πηγη λεπτων': 'φετος' if r['msrc'] == 'φετος' else ('περσι' if r['msrc'] == 'περσι' else '—'),
@@ -181,7 +191,8 @@ def _df(rows, with_box):
 
 def _colcfg(mx):
     cc = st.column_config
-    return {'Εκτος': cc.CheckboxColumn('Εκτος', help='Τσεκαρισμενο = δεν παιζει', width='small'),
+    return {'Εκτος': cc.SelectboxColumn('Παιζει;', options=[OPT_PLAY, OPT_OUT, OPT_ASIS], required=True, width='small',
+                                        help='παιζει / εκτος = σιγουρα · οπως το μοντελο = με την πιθανοτητα της επισημης αναφορας (π.χ. Questionable 42%)'),
             'Παικτης': cc.TextColumn('Παικτης', width='medium'),
             'Κατασταση': cc.TextColumn('Κατασταση ESPN', width='medium'),
             'Χαντικαπ': cc.NumberColumn('Χαντ. αν λειψει', format='%+.1f', help='Ποσους ποντους χανει η ομαδα στο χαντικαπ αν δεν παιξει'),
@@ -203,7 +214,7 @@ def _team_head(name, crest, sub):
 LEGEND = ('**Χρωματα (λιστα τραυματιων ESPN):** 🔴 **Εκτος** (Out) — δεν παιζει · 🟠 **Μαλλον εκτος** (Doubtful) · '
           '🟡 **Αμφιβολος** (Questionable / Day-To-Day) — αποφαση την ημερα του αγωνα · 🟢 **Πιθανον παιζει** (Probable) · χωρις σημα = δεν ειναι στη λιστα. '
           '«στο μοντελο» = Εκτος που η προβλεψη ΗΔΗ αφαιρει (παικτης ρολου ≥20′ που επαιξε φετος, ή εκτος απο την αρχη της σεζον). '
-          'Ολοι οι υπολοιποι (και οι 🟠/🟡) ΔΕΝ μετρανε μεχρι να τους τσεκαρεις «Εκτος». '
+          'Ολοι οι υπολοιποι (και οι 🟠/🟡) ΔΕΝ μετρανε μεχρι να τους βαλεις «εκτος» — εκτος αν ειναι στην επισημη αναφορα NBA: τοτε μετρανε με την πιθανοτητα τους («οπως το μοντελο»). '
           '**Ποσο μετραει (οπως ακριβως το μοντελο):** οποιος **επαιξε φετος** (≥20′) → **απουσια** 0.75·(αξια+2)·λεπτα/48 σε καθε ματς που λειπει · '
           'οποιος **δεν εχει παιξει φετος** → μετρα μονο στην **αφετηρια** της ομαδας (η θεση του συγκρινεται με τον μεσο συμπαικτη, οχι με αδυναμο αντικαταστατη), '
           'γι αυτο βγαινει μικροτερο, και σβηνει οσο η ομαδα παιζει (≈ 8/(8+ματς)) · στα συνολα η αφετηρια δεν μετρα. Παικτες <20′ που επαιξαν φετος: δεν μετρανε.')
@@ -236,10 +247,11 @@ def render(league=None):
                               format_func=lambda i: f"{_gr_time(up[i]['utc'])}   ·   {up[i]['home']}  –  {up[i]['away']}")
             g = up[gi]; pin = (odds.get(str(g['code'])) or {}).get('pin') or {}
             slot = st.container()
-            st.caption('Τσεκαρε **Εκτος** σε οποιον δεν παιζει — η καρτα πανω ενημερωνεται αμεσως. Οσοι λενε «στο μοντελο» ειναι ηδη μεσα στην προβλεψη '
-                       '(ξετσεκαρε τους αν επιστρεφουν). Αμφιβολοι (DTD / Q / D) ΔΕΝ μετρανε μεχρι να τους τσεκαρεις.')
+            st.caption('Στη στηλη **Παιζει;** διαλεξε «εκτος» σε οποιον δεν παιζει — η καρτα πανω ενημερωνεται αμεσως. Οσοι λενε «στο μοντελο» ειναι ηδη μεσα στην προβλεψη '
+                       '(βαλε «παιζει» αν επιστρεφουν). Αμφιβολοι του ESPN (DTD) ΔΕΝ μετρανε μεχρι να τους βαλεις «εκτος». '
+                       'Αμφιβολοι της επισημης αναφορας ξεκινουν «οπως το μοντελο» (μετρανε με την πιθανοτητα τους) — βαλε «παιζει» ή «εκτος» για σιγουρο σεναριο.')
             c1, c2 = st.columns(2, gap='medium')
-            off, sel = {}, {}
+            off, asis, sel = {}, {}, {}
             for col, code, nm, k, sub in ((c1, g['hcode'], g['home'], 'h', 'ΓΗΠΕΔΟΥΧΟΣ'), (c2, g['acode'], g['away'], 'a', 'ΦΙΛΟΞΕΝΟΥΜΕΝΟΣ')):
                 rows = P.get(code, [])
                 with col:
@@ -247,17 +259,21 @@ def render(league=None):
                     ed = st.data_editor(_df(rows, True)[['Εκτος', 'Παικτης', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Πως μετραει', 'Λεπτα', 'Κατασταση']] if rows else _df(rows, True),
                                         column_config=_colcfg(mx), disabled=['Παικτης', 'Κατασταση', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα'],
                                         hide_index=True, use_container_width=True, key=f"nbp_ed_{k}_{g['code']}", height=min(36 * len(rows) + 40, 560))
-                    off[k] = {n.split(' ', 1)[1] if n[:1] in '🔴🟠🟡🟢' else n for n in ed.loc[ed['Εκτος'], 'Παικτης']} if len(ed) else set()
+                    nm_ = lambda n: n.split(' ', 1)[1] if n[:1] in '🔴🟠🟡🟢' else n
+                    off[k] = {nm_(n) for n in ed.loc[ed['Εκτος'] == OPT_OUT, 'Παικτης']} if len(ed) else set()
+                    asis[k] = {nm_(n) for n in ed.loc[ed['Εκτος'] == OPT_ASIS, 'Παικτης']} if len(ed) else set()
                     sel[k] = rows
             st.markdown(f'<div style="font-size:12px;color:#8fa3c8;line-height:1.6;margin-top:4px">{_md(LEGEND)}</div>', unsafe_allow_html=True)
-            b, a = nba_board.whatif(g, pin, off['h'], off['a'], P, sm, stt)
+            b, a = nba_board.whatif(g, pin, off['h'], off['a'], P, sm, stt, asis=asis['h'] | asis['a'])
             offs, backs = [], []
             for k, sg in (('h', 1), ('a', 1)):
                 for r in sel[k]:
-                    if r['name'] in off[k] and not r['in_model']:
-                        offs.append((r['name'], -r['imp_m']))
-                    elif r['name'] not in off[k] and r['in_model']:
-                        backs.append((r['name'], r['imp_m']))
+                    w = nba_board.counted(r)                        # 24/10: μερικη απουσια (πιθανοτητα) → μονο το υπολοιπο / οσο αφαιρεθηκε
+                    if r['name'] in asis[k]: continue
+                    if r['name'] in off[k] and w < 1:
+                        offs.append((r['name'], -round((1 - w) * r['imp_m'], 2)))
+                    elif r['name'] not in off[k] and w > 0:
+                        backs.append((r['name'], round(w * r['imp_m'], 2)))
             with slot:
                 nr = 2 * (('line' in a) + ('tl' in a) + bool(pin.get('mh') and pin.get('ma')))
                 st.components.v1.html(card(g, pin, b, a, offs, backs), height=(250 + 34 * nr + 64) if nr else 300, scrolling=False)
