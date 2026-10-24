@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-24T21:42+00:00",
+ "generated": "2026-10-24T21:54+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -1536,12 +1536,12 @@
    "away": "San Antonio Spurs",
    "hcode": "DAL",
    "acode": "SAS",
-   "margin": -8.14,
-   "total": 233.5,
+   "margin": -8.58,
+   "total": 232.9,
    "total_src": "μοντελο",
-   "pts_h": 112.7,
+   "pts_h": 112.2,
    "pts_a": 120.8,
-   "p_home": 0.273,
+   "p_home": 0.262,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -1554,9 +1554,9 @@
    "gp_a": 2,
    "margin_base": -6.34,
    "total_base": 233.7,
-   "abs_dm": -1.79,
-   "abs_dt": -0.24,
-   "abs_shadow": 0.34,
+   "abs_dm": -2.24,
+   "abs_dt": -0.79,
+   "abs_shadow": 0.29,
    "abs_h": [
     [
      "Christie,Max",
@@ -1576,23 +1576,23 @@
      "Irving,Kyrie",
      24.5,
      1,
-     "Questionable",
-     0.46
+     "Doubtful",
+     0.963
     ],
     [
      "Risacher,Zaccharie",
      29.5,
      1,
-     "Questionable",
-     0.46
+     "Probable",
+     0.07
     ]
    ],
    "abs_a": [],
    "inj_src": "official",
    "abs_lo": 0.34,
    "abs_ld": 0.119,
-   "abs_lop": 0.792,
-   "abs_ldp": 0.153,
+   "abs_lop": 1.584,
+   "abs_ldp": 0.001,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
