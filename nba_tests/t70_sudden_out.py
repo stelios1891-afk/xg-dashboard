@@ -32,7 +32,7 @@ for r in D.itertuples(index=False):
     dirn = -1.0 if r.home else 1.0                       # + = κοντρα στην ομαδα του παικτη (υπερ αντιπαλου), σε ορους γηπεδουχου
     base = F0['fair']; mv = lambda x: dirn * (x['fair'] - base)
     hh = dt.datetime.fromtimestamp(r.t0, ATH).hour
-    rec = dict(S=r.S, st0=r.st0, val=abs(r.hc), tweet=r.src != 'NBC', hrs=r.hrs, gr=hh, close=mv(c), real=dirn * (ACT[r.i] - base))
+    rec = dict(t0=float(r.t0), tip=float(r.tip), lost=r.team, hc_=G_['G'].home.values[r.i], ac_=G_['G'].away.values[r.i], S=r.S, st0=r.st0, val=abs(r.hc), tweet=r.src != 'NBC', hrs=r.hrs, gr=hh, close=mv(c), real=dirn * (ACT[r.i] - base))
     for k in KS:
         if r.t0 + k * 60 > r.tip: continue
         x = at_h(r.i, r.t0 + k * 60)
@@ -70,3 +70,10 @@ ok = len(x) >= 200 and x.r5.mean() > 0 and x.c5.mean() > 0 and (ps > 0).sum() >=
 P(f'\nΚΡΙΤΗΡΙΟ (+5′): n {len(x)} (≥200) · ROI {100 * x.r5.mean():+.1f}% (>0) · CLV {x.c5.mean():+.2f} (>0) · θετικες σεζον {int((ps > 0).sum())}/5 (≥4) · '
   f'ROI με tweet {100 * xt.r5.mean():+.1f}% (>0) → {"ΠΕΡΝΑΕΙ" if ok else "ΔΕΝ ΠΕΡΝΑΕΙ"}')
 open(os.path.join(SC, 't70_sudden_out_out.txt'), 'w', encoding='utf-8').write('\n'.join(out))
+# 24/10 (Στελιος «τα συγκεκριμενα ματς, 4-5 στιγμες μετα την ειδηση»): λιστα στοχων για το nba_sudden_pin_pull.py (Pinnacle, The Odds API)
+import json
+T = [dict(S=int(x.S), t0=dt.datetime.fromtimestamp(x.t0, dt.timezone.utc).isoformat(timespec='seconds'),
+          tip=dt.datetime.fromtimestamp(x.tip, dt.timezone.utc).isoformat(timespec='seconds'), home=x.hc_, away=x.ac_, lost=x.lost,
+          bet='home' if x.lost == x.ac_ else 'away', st0=x.st0, val=round(float(x.val), 2), tweet=bool(x.tweet), gr_hour=int(x.gr),
+          crown_r5=(None if pd.isna(x.r5) else float(x.r5))) for x in E.itertuples(index=False)]
+json.dump(T, open(os.path.join(os.path.dirname(SC), 'nba_sudden_targets.json'), 'w', encoding='utf-8'), ensure_ascii=False)
