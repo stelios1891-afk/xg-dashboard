@@ -1,5 +1,5 @@
 {
- "scanned_at": "2026-10-24T06:32+00:00",
+ "scanned_at": "2026-10-24T06:38+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
@@ -35,6 +35,8 @@
    },
    "move_note": "ανοιγμα Chicago Bulls +1.5 @1.94 → τωρα +1.5 @1.94 · ουσιαστικα ιδια",
    "move_pts": 0.0,
+   "fat_note": "😴 Bulls: back-to-back −3 · Wizards: back-to-back −3 + αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΥΠΕΡ μας",
+   "fat_pts": 0.68,
    "hrs_birth": 22.3
   },
   {
@@ -66,6 +68,8 @@
    },
    "move_note": "ανοιγμα Philadelphia 76ers -12.5 @1.94 → τωρα -12.5 @1.94 · ουσιαστικα ιδια",
    "move_pts": 0.0,
+   "fat_note": "😴 Bucks: back-to-back −3 + αλλαγη ωρας 1ω −0.7 · καθαρο 3.7 π. ΥΠΕΡ μας",
+   "fat_pts": 3.68,
    "hrs_birth": 20.8
   },
   {
@@ -84,8 +88,8 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": 3.5,
-   "odds": 1.926,
-   "edge": 0.1184,
+   "odds": 1.901,
+   "edge": 0.1039,
    "proj_odds": 1.72,
    "model_line": 0.8,
    "mkt_line": 3.5,
@@ -95,8 +99,10 @@
     "oa": 1.943,
     "seen": "2026-10-24T03:30+00:00"
    },
-   "move_note": "ανοιγμα Charlotte Hornets +3.5 @1.94 → τωρα +3.5 @1.93 · ουσιαστικα ιδια",
-   "move_pts": 0.2,
+   "move_note": "ανοιγμα Charlotte Hornets +3.5 @1.94 → τωρα +3.5 @1.90 · αγορα 0.3 π. ΥΠΕΡ μας",
+   "move_pts": 0.3,
+   "fat_note": "😴 Hornets: back-to-back −3 · Heat: back-to-back −3 · αλληλοαναιρουνται",
+   "fat_pts": 0.0,
    "hrs_birth": 18.7
   },
   {
@@ -114,20 +120,22 @@
    "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
    "mkt": "hcap",
    "side": 1,
-   "hcap": 12.0,
-   "odds": 1.98,
-   "edge": 0.269,
-   "proj_odds": 1.55,
+   "hcap": 12.5,
+   "odds": 1.952,
+   "edge": 0.2778,
+   "proj_odds": 1.53,
    "model_line": 7.1,
-   "mkt_line": 12.0,
+   "mkt_line": 12.5,
    "first": {
     "line": 11.5,
     "oh": 1.952,
     "oa": 1.935,
     "seen": "2026-10-24T05:39+00:00"
    },
-   "move_note": "ανοιγμα Dallas Mavericks +11.5 @1.95 → τωρα +12 @1.98 · αγορα 0.7 π. ΚΟΝΤΡΑ μας",
-   "move_pts": -0.7,
+   "move_note": "ανοιγμα Dallas Mavericks +11.5 @1.95 → τωρα +12.5 @1.95 · αγορα 1.0 π. ΚΟΝΤΡΑ μας",
+   "move_pts": -1.0,
+   "fat_note": "😴 Mavericks: back-to-back −3 + αλλαγη ωρας 1ω −0.7 · Spurs: back-to-back −3 · καθαρο 0.7 π. ΚΟΝΤΡΑ μας",
+   "fat_pts": -0.68,
    "hrs_birth": 18.5
   },
   {
@@ -146,8 +154,8 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": -1.5,
-   "odds": 1.971,
-   "edge": 0.1514,
+   "odds": 1.943,
+   "edge": 0.1351,
    "proj_odds": 1.71,
    "model_line": -4.4,
    "mkt_line": -1.5,
@@ -157,8 +165,10 @@
     "oa": 1.893,
     "seen": "2026-10-24T05:39+00:00"
    },
-   "move_note": "ανοιγμα Atlanta Hawks -1.5 @1.99 → τωρα -1.5 @1.97 · ουσιαστικα ιδια",
-   "move_pts": 0.2,
+   "move_note": "ανοιγμα Atlanta Hawks -1.5 @1.99 → τωρα -1.5 @1.94 · αγορα 0.4 π. ΥΠΕΡ μας",
+   "move_pts": 0.4,
+   "fat_note": "😴 Hawks: back-to-back −3 · Rockets: back-to-back −3 + αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΥΠΕΡ μας",
+   "fat_pts": 0.68,
    "hrs_birth": 18.2
   },
   {
@@ -190,6 +200,8 @@
    },
    "move_note": "ανοιγμα Golden State Warriors +10 @1.88 → τωρα +9.5 @1.93 · ουσιαστικα ιδια",
    "move_pts": 0.1,
+   "fat_note": "😴 Warriors: back-to-back −3 · καθαρο 3.0 π. ΚΟΝΤΡΑ μας",
+   "fat_pts": -3.0,
    "hrs_birth": 20.3
   }
  ]
