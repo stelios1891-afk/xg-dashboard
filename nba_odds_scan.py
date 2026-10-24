@@ -110,9 +110,12 @@ def main():
     try:
         import nba_injrep_live as IL
         print(f'NBA επισημη αναφορα: {IL.refresh(now)}')
+        try:                                         # 24/10: RotoWire (ομαδες που δεν εχουν δηλωσει ακομα — π.χ. 2ο ματς back-to-back ως τις 13:00 τοπικη)
+            import nba_rw_lineups; print(f'NBA RotoWire: {nba_rw_lineups.refresh(now)}')
+        except Exception as e: print('NBA RotoWire σφαλμα —', e)
         if IL.enabled():
             OFF = IL.Official(now)
-            if not OFF.ok: _stale_alert(IL, now)
+            if not OFF.ok_off: _stale_alert(IL, now)
     except Exception as e: print('NBA επισημη αναφορα σφαλμα —', e)
     AB = None                                        # 19/10: απουσιες (ESPN Out) στην προβλεψη
     try:

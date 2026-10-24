@@ -3,6 +3,7 @@
 Πηγη: PDF του NBA (ak-static.cms.nba.com/referee/injury/Injury-Report_YYYY-MM-DD_HH_MMAM.pdf), νεα αναφορα ανα 15′. Διαβαζεται με
 nba_injrep_fetch.parse (ιδιο με τα 5 χρονια ιστορικου). Σε καθε scan: ελεγχος ΜΟΝΟ των νεων 15λεπτων απο την τελευταια που βρεθηκε
 (λιγα αιτηματα, ο CDN μπλοκαρει) → nba_injrep_live.json (τελευταια αναφορα) + nba_injrep_live_hist.jsonl (καθε νεα αναφορα, για ελεγχο).
+24/10: + RotoWire για ομαδες που δεν εχουν δηλωσει ακομα (nba_rw_lineups.py, βλ. Official).
 ΔΙΑΚΟΠΤΗΣ: nba_injury_source.json {"source": "espn" | "official"}. Με «espn» το αρχειο ΚΑΤΕΒΑΙΝΕΙ και ΚΑΤΑΓΡΑΦΕΤΑΙ αλλα ΔΕΝ χρησιμοποιειται.
 Με «official»: για καθε ομαδα που εχει ματς στην αναφορα, οι καταστασεις της αναφορας αντικαθιστουν το ESPN (nba_absence, nba_roster_now,
 nba_trades)· ομαδες/ματς εκτος αναφορας → ESPN. Παλια αναφορα (>3ω) → ESPN + ειδοποιηση info bot.
@@ -104,17 +105,34 @@ def age_min(now=None):
 
 
 class Official:
-    """Καταστασεις της τελευταιας αναφορας: ανα (ομαδα, ημερα ματς ΗΠΑ) → {κλειδι: (κατασταση, λογος, ονομα)}."""
+    """Καταστασεις ανα (ομαδα, ημερα ματς ΗΠΑ) → {κλειδι: (κατασταση, λογος, ονομα)}.
+    24/10/2026 (Στελιος «ναι ετσι μετρα το»): ΣΕΙΡΑ ΠΗΓΩΝ επισημη αναφορα (ομαδα που εχει δηλωσει) → RotoWire (nba_rw_lineups, ιδιες
+    πιθανοτητες ανα σημα) → ESPN (εξω απο την κλαση). Στο RotoWire: καθε «Out» του ESPN που το RotoWire ΔΕΝ αναφερει μενει Out (ασφαλεια).
+    self.src[(ομαδα, ημερα)] = 'official' | 'rotowire' · self.ok_off = φρεσκια επισημη αναφορα (για την ειδοποιηση «παλια αναφορα»)."""
     def __init__(self, now=None):
-        self.S = _load(STATE, {}); self.ok = bool(self.S.get('rows')) and (age_min(now) or 1e9) <= STALE_MIN
-        self.by = {}; self.teams_dates = set()
-        for x in self.S.get('rows', []):
+        self.S = _load(STATE, {}); self.ok_off = bool(self.S.get('rows')) and (age_min(now) or 1e9) <= STALE_MIN
+        self.by = {}; self.teams_dates = set(); self.src = {}
+        for x in (self.S.get('rows', []) if self.ok_off else []):
             try: gd = dt.datetime.strptime(x['gd'], '%m/%d/%Y').date().isoformat()
             except Exception: continue
             # 24/10/2026: ομαδα με ΜΟΝΟ G-League γραμμες ειναι ΚΑΛΥΜΜΕΝΗ (ως τωρα επεφτε στη λιστα ESPN, π.χ. NOP 23/10)
-            self.teams_dates.add((x['team'], gd))
+            self.teams_dates.add((x['team'], gd)); self.src[(x['team'], gd)] = 'official'
             if 'gleague' in str(x.get('reason') or '').replace(' ', '').lower(): continue
             self.by.setdefault((x['team'], gd), {})[x['key']] = (x['status'], x.get('reason'), x['raw'])
+        try:
+            import nba_rw_lineups as RW
+            esp = {}
+            for v in _load('nba_injuries.json', {}).get('teams', {}).values():
+                for y in v.get('players', []):
+                    if v.get('code') and str(y[1] or '').strip().lower() == 'out': esp.setdefault(v['code'], []).append(y[0])
+            for (t, gd), d in RW.by_team(now, STALE_MIN).items():
+                if (t, gd) in self.teams_dates: continue                 # η επισημη αναφορα προηγειται
+                self.teams_dates.add((t, gd)); self.src[(t, gd)] = 'rotowire'
+                D = self.by.setdefault((t, gd), {})
+                for nm, (stt, tag, pct) in d.items(): D[ckey(nm)] = (stt, f'RotoWire {tag} · τελεια {pct}%', nm)
+                for nm in esp.get(t, []): D.setdefault(ckey(nm), ('Out', 'ESPN Out (οχι στο RotoWire)', nm))
+        except Exception as e: print('RotoWire: απενεργο —', e)
+        self.ok = bool(self.teams_dates)
 
     def covers(self, team, gdate):
         return self.ok and (team, gdate) in self.teams_dates

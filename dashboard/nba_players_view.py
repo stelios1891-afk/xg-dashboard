@@ -50,7 +50,9 @@ def _status(r):
         return ''
     lab = {'out': '🔴 Εκτος', 'doubtful': '🟠 Μαλλον εκτος (D)', 'day-to-day': '🟡 Αμφιβολος (DTD)',
            'questionable': '🟡 Αμφιβολος (Q)', 'probable': '🟢 Πιθανον παιζει'}.get(s, s)
-    return lab + (' · στο μοντελο' if r.get('in_model') else '')
+    it = str(r.get('itype') or '')
+    src = ' · RotoWire' if it.startswith('RotoWire') else (' · επισημη' if r.get('pr') is not None and not it.startswith('ESPN') else '')   # 24/10: πηγη
+    return lab + src + (' · στο μοντελο' if r.get('in_model') else '')
 
 
 # ------------------------------ καρτα ματς ------------------------------
@@ -194,7 +196,7 @@ def _colcfg(mx):
     return {'Εκτος': cc.SelectboxColumn('Παιζει;', options=[OPT_PLAY, OPT_OUT, OPT_ASIS], required=True, width='small',
                                         help='παιζει / εκτος = σιγουρα · οπως το μοντελο = με την πιθανοτητα της επισημης αναφορας (π.χ. Questionable 42%)'),
             'Παικτης': cc.TextColumn('Παικτης', width='medium'),
-            'Κατασταση': cc.TextColumn('Κατασταση ESPN', width='medium'),
+            'Κατασταση': cc.TextColumn('Κατασταση', width='medium', help='επισημη αναφορα NBA → RotoWire (ομαδες που δεν εχουν δηλωσει) → ESPN'),
             'Χαντικαπ': cc.NumberColumn('Χαντ. αν λειψει', format='%+.1f', help='Ποσους ποντους χανει η ομαδα στο χαντικαπ αν δεν παιξει'),
             'Κοστος': cc.ProgressColumn('Βαρος', min_value=0.0, max_value=mx, format=' '),
             'Συνολο': cc.NumberColumn('Συνολο αν λειψει', format='%+.1f', help='Αλλαγη στο συνολο ποντων του ματς'),
@@ -211,7 +213,7 @@ def _team_head(name, crest, sub):
                   f'<div style="font-size:10px;color:#6b7fa3;letter-spacing:1.3px">{_h.escape(sub)}</div></div></div>', unsafe_allow_html=True)
 
 
-LEGEND = ('**Χρωματα (λιστα τραυματιων ESPN):** 🔴 **Εκτος** (Out) — δεν παιζει · 🟠 **Μαλλον εκτος** (Doubtful) · '
+LEGEND = ('**Χρωματα (επισημη αναφορα → RotoWire → ESPN):** 🔴 **Εκτος** (Out) — δεν παιζει · 🟠 **Μαλλον εκτος** (Doubtful) · '
           '🟡 **Αμφιβολος** (Questionable / Day-To-Day) — αποφαση την ημερα του αγωνα · 🟢 **Πιθανον παιζει** (Probable) · χωρις σημα = δεν ειναι στη λιστα. '
           '«στο μοντελο» = Εκτος που η προβλεψη ΗΔΗ αφαιρει (παικτης ρολου ≥20′ που επαιξε φετος, ή εκτος απο την αρχη της σεζον). '
           'Ολοι οι υπολοιποι (και οι 🟠/🟡) ΔΕΝ μετρανε μεχρι να τους βαλεις «εκτος» — εκτος αν ειναι στην επισημη αναφορα NBA: τοτε μετρανε με την πιθανοτητα τους («οπως το μοντελο»). '
