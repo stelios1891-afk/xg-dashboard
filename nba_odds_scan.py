@@ -152,6 +152,23 @@ def main():
         hh_, aa_ = code_of(g['home_team']), code_of(g['away_team'])
         if hh_ and aa_:
             for t in (hh_, aa_): sched.setdefault(t, set()).add((d, hh_))
+    # 24/10/2026 (Στελιος «να ξερει οτι αυτη η ομαδα παιζει back2back»): ΠΡΟΓΡΑΜΜΑ ESPN των 2 προηγουμενων ημερων καθε ματς (παιγμενα, σε
+    # εξελιξη ή μελλοντικα) → back-to-back και ζωνη ωρας απο το ΠΡΟΓΡΑΜΜΑ, οχι απο το αν εγινε ηδη το χθεσινο ματς / το πρωινο nba_refresh
+    # (24/10: το scan 06:02 UTC εχασε 10 back-to-back γιατι το nba_state ηταν της προηγουμενης μερας και τα χθεσινα ματς ειχαν φυγει απο την Pinnacle)
+    try:
+        from nba_espn import get as _eget, B as _EB, AB as _EAB
+        need = set()
+        for g in data:
+            try: d0 = datetime.date.fromisoformat(us_date(g['commence_time']))
+            except Exception: continue
+            need |= {(d0 - datetime.timedelta(days=k)).isoformat() for k in (1, 2)}
+        for ds in sorted(need):
+            for ev in _eget(f"{_EB}/scoreboard?dates={ds.replace('-', '')}&limit=50").get('events', []):
+                c = ev['competitions'][0]; tm = {x['homeAway']: _EAB.get(x['team']['abbreviation'], x['team']['abbreviation']) for x in c['competitors']}
+                if 'home' not in tm or 'away' not in tm: continue
+                loc = None if c.get('neutralSite') else tm['home']
+                for t in (tm['home'], tm['away']): days.setdefault(t, set()).add(ds); sched.setdefault(t, set()).add((ds, loc))
+    except Exception as e: print('NBA προγραμμα ESPN (back-to-back) σφαλμα —', e)
     # 21/10/2026 (Στελιος «ποτε ανοιγει η pinnacle;»): ΠΡΩΤΗ ΕΜΦΑΝΙΣΗ καθε ματς στην Pinnacle (ολα τα ματς, ανεξαρτητα απο μοντελο/παραθυρο)
     try:
         _pf = F('nba_pin_first_seen.json'); _PF = json.load(open(_pf, encoding='utf-8')) if os.path.exists(_pf) else {}
