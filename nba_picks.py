@@ -309,6 +309,11 @@ def compute():
                     import nba_board; pk['move_note'], pk['move_pts'] = nba_board.move_note(pk, f0, pin, sm)
                 except Exception as e_:
                     print('κινηση αγορας σφαλμα —', e_)
+                try:                                   # 24/10 (Στελιος): ποινη back-to-back / αλλαγης ωρας (αν υπαρχει)
+                    import nba_board; fn_, fp_ = nba_board.fatigue_note(g, side)
+                    if fn_: pk['fat_note'], pk['fat_pts'] = fn_, fp_
+                except Exception as e_:
+                    print('κουραση σφαλμα —', e_)
                 picks.append(pk)
         # ---- συνολο (6/10): μοντελο μονο του ≥8% ----
         tm = tot_mix(g, pin, st)
@@ -380,7 +385,8 @@ def line(p, prev=None):
     ch = f" (ηταν {prev:.2f})" if prev else ''
     return (f"🏀 NBA · {tm}\n{p['home']} - {p['away']}\n"
             f"{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})"
-            + (f"\n📈 {p['move_note']}" if p.get('move_note') and prev is None else ''))     # 20/10: κινηση αγορας απο το ανοιγμα
+            + (f"\n📈 {p['move_note']}" if p.get('move_note') and prev is None else '')      # 20/10: κινηση αγορας απο το ανοιγμα
+            + (f"\n{p['fat_note']}" if p.get('fat_note') and prev is None else ''))           # 24/10: back-to-back / αλλαγη ωρας
 
 def inj_block(p, P=None):
     """20/10 (Στελιος): pick σε ματς με κινηση ≥1.5 π. απο το ανοιγμα → και η λιστα απουσιων των 2 ομαδων (εξηγει την κινηση;)."""

@@ -131,6 +131,28 @@ def fair_margin(L, oh, oa, sig):
     except Exception: return None
 
 
+FAT_B2B, FAT_TZ = 3.0, 0.68                   # ιδια με nba_refresh.B2B_K / nba_odds_scan.TZ_K
+def fatigue_note(g, side=None):
+    """24/10/2026 (Στελιος «να εμφανιζεται η ποινη back2back / αλλαγης ωρας οταν βγαινει το pick»): απο τα πεδια b2b_h/b2b_a/tz_h/tz_a του
+    nba_projections → («Bucks back-to-back −3 + ωρα 1ω −0.7 · καθαρο +3.7 π. ΥΠΕΡ μας», καθαροι ποντοι υπερ της πλευρας) ή ('', 0)."""
+    parts, net = [], 0.0                      # net = ποντοι υπερ γηπεδουχου
+    for sd, nm in ((1, g.get('home')), (-1, g.get('away'))):
+        k = 'h' if sd == 1 else 'a'
+        b2 = int(g.get(f'b2b_{k}') or 0); tz = float(g.get(f'tz_{k}') or 0)
+        if not b2 and not tz: continue
+        x = []
+        if b2: x.append(f'back-to-back −{FAT_B2B:g}')
+        if tz: x.append(f'αλλαγη ωρας {tz:g}ω −{FAT_TZ * tz:.1f}')
+        parts.append(f"{(nm or '').split()[-1]}: " + ' + '.join(x))
+        net -= sd * (FAT_B2B * b2 + FAT_TZ * tz)
+    if not parts: return '', 0.0
+    if abs(net) < 0.05: tail = ' · αλληλοαναιρουνται'
+    elif side is None: tail = f" · καθαρο {abs(net):.1f} π. υπερ {((g.get('home') if net > 0 else g.get('away')) or '').split()[-1]}"
+    else:
+        ps = net * side; tail = f" · καθαρο {abs(ps):.1f} π. {'ΥΠΕΡ' if ps > 0 else 'ΚΟΝΤΡΑ'} μας"
+    return '😴 ' + ' · '.join(parts) + tail, round(net * (side or 1), 2)
+
+
 def move_note(p, f0, pin, sig):
     """«κινηση: Hornets +1 @1.95 → −3.5 @1.91 · δικαιη 2.9 π. ΚΟΝΤΡΑ/ΥΠΕΡ» για την πλευρα του pick (+ ποντοι κινησης για το κατωφλι)."""
     s = int(p['side']); team = p['home'] if s == 1 else p['away']

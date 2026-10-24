@@ -550,6 +550,20 @@ def _abs_line(g):
             + f'<br><span style="color:#8fa3c8">{esc(g["abs_note"])}</span></div>')
 
 
+def _fat_line(g):
+    """24/10/2026 (Στελιος): NBA — ποινη back-to-back / αλλαγης ωρας στην καρτα (ηδη μεσα στην προβλεψη)."""
+    if 'b2b_h' not in g:
+        return ''
+    try:
+        import nba_board; t, _ = nba_board.fatigue_note(g)
+    except Exception:
+        return ''
+    if not t:
+        return ''
+    return (f'<div style="font-size:9px;color:#f5b731;text-align:center;padding:4px 8px;border-top:1px solid #16203a;line-height:1.5">'
+            f'{esc(t)} <span style="color:#8fa3c8">(ηδη στην προβλεψη)</span></div>')
+
+
 def card_html(g, data, rm, now=None):
     proj = data['proj']
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
@@ -591,7 +605,7 @@ def card_html(g, data, rm, now=None):
   <button class="tbtn" onclick="tg('{uid}','su',this)">Match summary</button>
 </div>
 <div id="od_{uid}" class="pane" hidden>{_odds_pane(g, mk, sm, st)}</div>
-<div id="su_{uid}" class="pane" hidden>{_summary_pane(g, rm)}</div>{_abs_line(g)}
+<div id="su_{uid}" class="pane" hidden>{_summary_pane(g, rm)}</div>{_abs_line(g)}{_fat_line(g)}
 <div class="time">{tip_fmt(g.get('utc'))} · {esc(g.get('venue') or '')}{neu} · αγωνιστικη {esc(g.get('round'))}</div></div>"""
 
 
