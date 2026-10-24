@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-24T01:31+00:00",
+ "generated": "2026-10-24T01:42+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -856,7 +856,9 @@
    "roster_dm": 0.0,
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/cha.png",
-   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/atl.png"
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/atl.png",
+   "hs": 81,
+   "as_": 128
   },
   {
    "code": "pin1638943065",
@@ -901,7 +903,9 @@
    "roster_dm": 0.0,
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/orl.png",
-   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/min.png"
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/min.png",
+   "hs": 93,
+   "as_": 115
   },
   {
    "code": "pin1637470981",
@@ -991,7 +995,9 @@
    "roster_dm": 0.0,
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/wsh.png",
-   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/tor.png"
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/tor.png",
+   "hs": 102,
+   "as_": 112
   },
   {
    "code": "pin1638951757",
@@ -1099,7 +1105,7 @@
    "pts_h": 115.6,
    "pts_a": 111.7,
    "p_home": 0.614,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 0,
@@ -1144,7 +1150,7 @@
    "pts_h": 120.5,
    "pts_a": 119.2,
    "p_home": 0.537,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 0,
