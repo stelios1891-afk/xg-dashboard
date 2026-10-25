@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-25T16:51+00:00",
+ "generated": "2026-10-25T17:03+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -2041,12 +2041,12 @@
    "away": "Detroit Pistons",
    "hcode": "PHI",
    "acode": "DET",
-   "margin": -6.34,
-   "total": 231.3,
+   "margin": -5.66,
+   "total": 231.4,
    "total_src": "μοντελο",
-   "pts_h": 112.5,
-   "pts_a": 118.8,
-   "p_home": 0.319,
+   "pts_h": 112.9,
+   "pts_a": 118.5,
+   "p_home": 0.338,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -2059,23 +2059,16 @@
    "gp_a": 2,
    "margin_base": -4.48,
    "total_base": 231.3,
-   "abs_dm": -1.86,
-   "abs_dt": 0.04,
-   "abs_shadow": 1.4,
+   "abs_dm": -1.18,
+   "abs_dt": 0.15,
+   "abs_shadow": 1.43,
    "abs_h": [
     [
-     "LeBron James",
-     33.5,
-     0,
-     "Questionable",
-     0.42
-    ],
-    [
-     "Joel Embiid",
+     "Embiid,Joel",
      34.3,
      1,
-     "Doubtful",
-     0.965
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -2088,10 +2081,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0,
-   "abs_ld": 0,
-   "abs_lop": 2.036,
-   "abs_ldp": 1.054,
+   "abs_lo": 1.499,
+   "abs_ld": 0.305,
+   "abs_lop": 1.511,
+   "abs_ldp": 0.903,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
