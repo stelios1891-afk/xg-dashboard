@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-25T13:26+00:00",
+ "generated": "2026-10-25T13:37+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -1837,12 +1837,12 @@
    "away": "Indiana Pacers",
    "hcode": "BRK",
    "acode": "IND",
-   "margin": -3.13,
+   "margin": -2.84,
    "total": 229.5,
    "total_src": "μοντελο",
-   "pts_h": 113.2,
-   "pts_a": 116.3,
-   "p_home": 0.408,
+   "pts_h": 113.3,
+   "pts_a": 116.1,
+   "p_home": 0.417,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -1855,7 +1855,7 @@
    "gp_a": 2,
    "margin_base": -2.85,
    "total_base": 229.5,
-   "abs_dm": -0.28,
+   "abs_dm": 0.01,
    "abs_dt": -0.0,
    "abs_shadow": 0.01,
    "abs_h": [
@@ -1863,8 +1863,8 @@
      "Mikel Brown",
      20.0,
      1,
-     "Out",
-     1.0
+     "Probable",
+     0.07
     ]
    ],
    "abs_a": [
@@ -1877,8 +1877,8 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.0,
-   "abs_ld": 0.0,
+   "abs_lo": 0,
+   "abs_ld": 0,
    "abs_lop": 0.014,
    "abs_ldp": 0.004,
    "trade_dm": 0.0,
@@ -2041,12 +2041,12 @@
    "away": "Detroit Pistons",
    "hcode": "PHI",
    "acode": "DET",
-   "margin": -7.38,
-   "total": 231.2,
+   "margin": -6.34,
+   "total": 231.3,
    "total_src": "μοντελο",
-   "pts_h": 111.9,
-   "pts_a": 119.3,
-   "p_home": 0.292,
+   "pts_h": 112.5,
+   "pts_a": 118.8,
+   "p_home": 0.319,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -2059,16 +2059,16 @@
    "gp_a": 2,
    "margin_base": -4.48,
    "total_base": 231.3,
-   "abs_dm": -2.9,
-   "abs_dt": -0.14,
+   "abs_dm": -1.86,
+   "abs_dt": 0.04,
    "abs_shadow": 1.4,
    "abs_h": [
     [
      "LeBron James",
      33.5,
      0,
-     "Out",
-     1.0
+     "Questionable",
+     0.42
     ],
     [
      "Joel Embiid",
@@ -2088,10 +2088,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.373,
-   "abs_ld": 0.384,
-   "abs_lop": 2.832,
-   "abs_ldp": 1.276,
+   "abs_lo": 0,
+   "abs_ld": 0,
+   "abs_lop": 2.036,
+   "abs_ldp": 1.054,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
