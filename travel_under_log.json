@@ -1,254 +1,3307 @@
 {
-"5781783|10235": {
-"seen": "2026-10-25T11:36",
-"lg": "Eredivisie",
-"ko": "2026-10-25T13:30",
-"home": "PSV Eindhoven",
-"away": "Feyenoord",
-"team": "Feyenoord",
-"side": "εκτος",
-"eu": "ChampionsLeague @Real Betis",
-"km": 1808,
+"5868102": {
+"seen": "2026-10-25T11:42",
+"lg": "LaLiga",
+"ko": "2026-10-25T13:00",
+"home": "Athletic Club",
+"away": "Getafe",
+"T_model": 1.92,
+"ah_first": [
+-1.0,
+2.09,
+1.85
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.25,
+"over": 1.91,
+"under": 1.99
+},
+"trav": [
+{
+"side": "away",
+"team": "Getafe",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Getafe",
+"eu_t": "2026-10-22T16:45",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -1.0,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "17/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Valencia",
+"km": 299,
+"rest": 7.3
+},
+{
+"d": "21/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Levante",
+"km": 2,
+"rest": 4.0
+}
+],
+"scen": "Π✈ Π✈ → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 471,
+"km14": 773,
 "rest": 3.8,
-"patt": 1,
-"cat": "γηινη",
-"sup": -0.25,
-"T_model": 3.55,
-"first": {
-"t": "2026-10-25T11:36",
-"line": 3.75,
-"over": 2.03,
-"under": 1.86
+"min_rest": 3.8,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
 },
-"last": {
-"t": "2026-10-25T11:36",
-"line": 3.75,
-"over": 2.03,
-"under": 1.86
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Universitatea Craiova",
+"km": 1790,
+"rest": 5.0
+},
+{
+"d": "19/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Rayo Vallecano",
+"km": 2293,
+"rest": 4.1
+},
+{
+"d": "22/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Lugano",
+"km": 0,
+"rest": 2.9
+}
+],
+"scen": "Ε✈ Π🏠 Ε🏠 → Π✈",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 333,
+"km14": 4416,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
 }
 },
-"5781783|8640": {
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.25,
+"over": 1.91,
+"under": 1.99
+},
+"ah_last": [
+-1.0,
+2.09,
+1.85
+]
+},
+"5781777": {
+"seen": "2026-10-25T11:42",
+"lg": "Eredivisie",
+"ko": "2026-10-25T13:30",
+"home": "NEC Nijmegen",
+"away": "FC Groningen",
+"T_model": 3.44,
+"ah_first": [
+-0.25,
+1.94,
+1.97
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.94,
+"under": 1.95
+},
+"trav": [
+{
+"side": "home",
+"team": "NEC Nijmegen",
+"eu_comp": "EuropaLeague",
+"eu_at": "Dinamo Zagreb",
+"eu_t": "2026-10-22T16:45",
+"eu_away": true,
+"km": 999,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Levski Sofia",
+"km": 82,
+"rest": 5.0
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Fortuna Sittard",
+"km": 0,
+"rest": 3.0
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Dinamo Zagreb",
+"km": 999,
+"rest": 3.9
+}
+],
+"scen": "Ε🏠 Π🏠 Ε✈ → Π🏠",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 999,
+"km14": 2080,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "11/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Excelsior",
+"km": 200,
+"rest": 22.9
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Ajax",
+"km": 200,
+"rest": 7.0
+}
+],
+"scen": "Π✈ Π🏠 → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 162,
+"km14": 563,
+"rest": 6.9,
+"min_rest": 6.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.94,
+"under": 1.95
+},
+"ah_last": [
+-0.25,
+1.94,
+1.97
+]
+},
+"5781783": {
 "seen": "2026-10-25T11:36",
 "lg": "Eredivisie",
 "ko": "2026-10-25T13:30",
 "home": "PSV Eindhoven",
 "away": "Feyenoord",
-"team": "PSV Eindhoven",
-"side": "εντος",
-"eu": "ChampionsLeague @FC Porto",
-"km": 1567,
-"rest": 4.8,
-"patt": 1,
-"cat": "γηινη",
-"sup": 0.25,
 "T_model": 3.55,
+"ah_first": [
+-0.25,
+1.87,
+2.04
+],
 "first": {
 "t": "2026-10-25T11:36",
 "line": 3.75,
 "over": 2.03,
 "under": 1.86
 },
+"trav": [
+{
+"side": "home",
+"team": "PSV Eindhoven",
+"eu_comp": "ChampionsLeague",
+"eu_at": "FC Porto",
+"eu_t": "2026-10-20T19:00",
+"eu_away": true,
+"km": 1567,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": true
+},
+{
+"side": "away",
+"team": "Feyenoord",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Real Betis",
+"eu_t": "2026-10-21T19:00",
+"eu_away": true,
+"km": 1808,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "13/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "RB Leipzig",
+"km": 477,
+"rest": 4.0
+},
+{
+"d": "17/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "ADO Den Haag",
+"km": 554,
+"rest": 3.8
+},
+{
+"d": "20/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "FC Porto",
+"km": 1560,
+"rest": 3.2
+}
+],
+"scen": "Ε✈ Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 1567,
+"km14": 4159,
+"rest": 4.8,
+"min_rest": 3.2,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "14/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Como",
+"km": 0,
+"rest": 4.0
+},
+{
+"d": "17/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Telstar",
+"km": 63,
+"rest": 3.1
+},
+{
+"d": "21/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Real Betis",
+"km": 1866,
+"rest": 4.0
+}
+],
+"scen": "Ε🏠 Π✈ Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 2,
+"here": "εκτ",
+"trip_now": 1801,
+"km14": 3730,
+"rest": 3.8,
+"min_rest": 3.1,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
 "last": {
-"t": "2026-10-25T11:36",
+"t": "2026-10-25T11:42",
 "line": 3.75,
 "over": 2.03,
 "under": 1.86
+},
+"ah_last": [
+-0.25,
+1.87,
+2.04
+]
+},
+"5749710": {
+"seen": "2026-10-25T11:42",
+"lg": "SerieA",
+"ko": "2026-10-25T14:00",
+"home": "Atalanta",
+"away": "Frosinone",
+"T_model": 3.16,
+"ah_first": [
+-0.5,
+1.91,
+2.02
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.89,
+"under": 2.03
+},
+"trav": [
+{
+"side": "home",
+"team": "Atalanta",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Ajax",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 811,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "12/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Venezia",
+"km": 173,
+"rest": 22.0
+},
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Pafos FC",
+"km": 0,
+"rest": 3.1
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Milan",
+"km": 50,
+"rest": 2.9
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Ajax",
+"km": 819,
+"rest": 4.1
+}
+],
+"scen": "Π🏠 Ε🏠 Π✈ Ε✈ → Π🏠",
+"n7": 2,
+"n14": 4,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 811,
+"km14": 1853,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "16/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Sassuolo",
+"km": 116,
+"rest": 6.0
+}
+],
+"scen": "Π🏠 → Π✈",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 539,
+"km14": 655,
+"rest": 8.8,
+"min_rest": 6.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
 }
 },
-"5795489|9826": {
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.89,
+"under": 2.03
+},
+"ah_last": [
+-0.5,
+1.91,
+2.02
+]
+},
+"5795489": {
 "seen": "2026-10-25T11:36",
 "lg": "EPL",
 "ko": "2026-10-25T14:00",
 "home": "Crystal Palace",
 "away": "Newcastle United",
-"team": "Crystal Palace",
-"side": "εντος",
-"eu": "EuropaLeague @Beşiktaş",
-"km": 2494,
-"rest": 2.8,
-"patt": 1,
-"cat": "γηινη",
-"sup": -0.25,
 "T_model": 3.04,
+"ah_first": [
+0.25,
+1.83,
+2.12
+],
 "first": {
 "t": "2026-10-25T11:36",
 "line": 3.0,
 "over": 1.92,
 "under": 1.99
 },
+"trav": [
+{
+"side": "home",
+"team": "Crystal Palace",
+"eu_comp": "EuropaLeague",
+"eu_at": "Beşiktaş",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 2494,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Lyon",
+"km": 728,
+"rest": 4.2
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Brighton & Hove Albion",
+"km": 679,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Beşiktaş",
+"km": 2478,
+"rest": 4.2
+}
+],
+"scen": "Ε✈ Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 2494,
+"km14": 6379,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "12/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Coventry City",
+"km": 281,
+"rest": 23.2
+},
+{
+"d": "17/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Aston Villa",
+"km": 281,
+"rest": 4.9
+}
+],
+"scen": "Π✈ Π🏠 → Π✈",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 411,
+"km14": 973,
+"rest": 7.9,
+"min_rest": 4.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
 "last": {
-"t": "2026-10-25T11:36",
+"t": "2026-10-25T11:42",
 "line": 3.0,
 "over": 1.92,
 "under": 1.99
+},
+"ah_last": [
+0.25,
+1.83,
+2.12
+]
+},
+"5795492": {
+"seen": "2026-10-25T11:42",
+"lg": "EPL",
+"ko": "2026-10-25T14:00",
+"home": "Liverpool",
+"away": "Brighton & Hove Albion",
+"T_model": 2.94,
+"ah_first": [
+-0.25,
+1.91,
+2.02
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.0,
+"over": 1.92,
+"under": 1.99
+},
+"trav": [
+{
+"side": "home",
+"team": "Liverpool",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Liverpool",
+"eu_t": "2026-10-20T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Brighton & Hove Albion",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Jablonec",
+"eu_t": "2026-10-22T16:45",
+"eu_away": true,
+"km": 1070,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "11/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Manchester City",
+"km": 309,
+"rest": 21.1
+},
+{
+"d": "14/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "LASK",
+"km": 1333,
+"rest": 3.1
+},
+{
+"d": "17/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Brentford",
+"km": 1100,
+"rest": 2.9
+},
+{
+"d": "20/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Villarreal",
+"km": 282,
+"rest": 3.2
+}
+],
+"scen": "Π🏠 Ε✈ Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 4,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 3024,
+"rest": 4.8,
+"min_rest": 2.9,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "FK Kauno Žalgiris",
+"km": 459,
+"rest": 5.2
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Crystal Palace",
+"km": 0,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Jablonec",
+"km": 1070,
+"rest": 4.2
+}
+],
+"scen": "Ε🏠 Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 1271,
+"km14": 2800,
+"rest": 2.9,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
 }
 },
-"5881201|8178": {
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.0,
+"over": 1.92,
+"under": 1.99
+},
+"ah_last": [
+-0.25,
+1.91,
+2.02
+]
+},
+"5795493": {
+"seen": "2026-10-25T11:42",
+"lg": "EPL",
+"ko": "2026-10-25T14:00",
+"home": "Manchester United",
+"away": "AFC Bournemouth",
+"T_model": 2.97,
+"ah_first": [
+-0.25,
+2.12,
+1.83
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.75,
+"over": 2.03,
+"under": 1.88
+},
+"trav": [
+{
+"side": "home",
+"team": "Manchester United",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Como",
+"eu_t": "2026-10-21T16:45",
+"eu_away": true,
+"km": 1178,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "AFC Bournemouth",
+"eu_comp": "EuropaLeague",
+"eu_at": "AFC Bournemouth",
+"eu_t": "2026-10-22T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "13/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Atlético Madrid",
+"km": 1452,
+"rest": 3.1
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Leeds United",
+"km": 1491,
+"rest": 4.8
+},
+{
+"d": "21/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Como",
+"km": 1167,
+"rest": 3.2
+}
+],
+"scen": "Ε✈ Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 1178,
+"km14": 5288,
+"rest": 3.9,
+"min_rest": 3.1,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Sturm Graz",
+"km": 142,
+"rest": 5.2
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Sunderland",
+"km": 0,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Milan",
+"km": 0,
+"rest": 4.2
+}
+],
+"scen": "Ε🏠 Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 305,
+"km14": 447,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.75,
+"over": 2.03,
+"under": 1.88
+},
+"ah_last": [
+-0.25,
+2.12,
+1.83
+]
+},
+"5802969": {
+"seen": "2026-10-25T11:42",
+"lg": "Ligue1",
+"ko": "2026-10-25T14:00",
+"home": "Monaco",
+"away": "Lille",
+"T_model": 2.58,
+"ah_first": [
+-0.5,
+1.98,
+1.94
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.85,
+"under": 2.06
+},
+"trav": [
+{
+"side": "home",
+"team": "Monaco",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Monaco",
+"eu_t": "2026-10-22T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Lille",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Lille",
+"eu_t": "2026-10-21T16:45",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -0.5,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "CSKA Sofia",
+"km": 1294,
+"rest": 4.9
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Lorient",
+"km": 2155,
+"rest": 2.9
+},
+{
+"d": "22/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Freiburg",
+"km": 948,
+"rest": 4.2
+}
+],
+"scen": "Ε✈ Π✈ Ε🏠 → Π🏠",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 4396,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "13/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Arsenal",
+"km": 249,
+"rest": 3.2
+},
+{
+"d": "17/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Brest",
+"km": 249,
+"rest": 4.0
+},
+{
+"d": "21/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Galatasaray",
+"km": 0,
+"rest": 3.9
+}
+],
+"scen": "Ε✈ Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 831,
+"km14": 1330,
+"rest": 3.9,
+"min_rest": 3.2,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.85,
+"under": 2.06
+},
+"ah_last": [
+-0.5,
+1.98,
+1.94
+]
+},
+"5881201": {
 "seen": "2026-10-25T11:36",
 "lg": "Bundesliga",
 "ko": "2026-10-25T14:30",
 "home": "Hoffenheim",
 "away": "Bayer Leverkusen",
-"team": "Bayer Leverkusen",
-"side": "εκτος",
-"eu": "EuropaLeague @OFI Crete",
-"km": 2268,
-"rest": 2.9,
-"patt": 1,
-"cat": "γηινη",
-"sup": 0.5,
 "T_model": 3.56,
+"ah_first": [
+0.5,
+1.89,
+2.01
+],
 "first": {
 "t": "2026-10-25T11:36",
 "line": 3.75,
 "over": 1.94,
 "under": 1.93
 },
+"trav": [
+{
+"side": "home",
+"team": "Hoffenheim",
+"eu_comp": "EuropaLeague",
+"eu_at": "Hoffenheim",
+"eu_t": "2026-10-22T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -0.5,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Bayer Leverkusen",
+"eu_comp": "EuropaLeague",
+"eu_at": "OFI Crete",
+"eu_t": "2026-10-22T16:45",
+"eu_away": true,
+"km": 2268,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Beşiktaş",
+"km": 0,
+"rest": 5.2
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Borussia Mönchengladbach",
+"km": 279,
+"rest": 2.9
+},
+{
+"d": "22/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Lyon",
+"km": 279,
+"rest": 4.1
+}
+],
+"scen": "Ε🏠 Π✈ Ε🏠 → Π🏠",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 559,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Lech Poznań",
+"km": 658,
+"rest": 5.1
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Freiburg",
+"km": 695,
+"rest": 2.9
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "OFI Crete",
+"km": 2268,
+"rest": 4.1
+}
+],
+"scen": "Ε✈ Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 2033,
+"km14": 5655,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+}
+},
 "last": {
-"t": "2026-10-25T11:36",
+"t": "2026-10-25T11:42",
 "line": 3.75,
 "over": 1.94,
 "under": 1.93
-}
 },
-"5868104|9910": {
+"ah_last": [
+0.5,
+1.89,
+2.01
+]
+},
+"5868104": {
 "seen": "2026-10-25T11:36",
 "lg": "LaLiga",
 "ko": "2026-10-25T15:15",
 "home": "Celta Vigo",
 "away": "Real Betis",
-"team": "Celta Vigo",
-"side": "εντος",
-"eu": "EuropaLeague @Celtic",
-"km": 1551,
-"rest": 2.8,
-"patt": 1,
-"cat": "γηινη",
-"sup": -0.25,
 "T_model": 2.48,
+"ah_first": [
+0.25,
+1.92,
+2.01
+],
 "first": {
 "t": "2026-10-25T11:36",
 "line": 2.75,
 "over": 2.03,
 "under": 1.89
 },
+"trav": [
+{
+"side": "home",
+"team": "Celta Vigo",
+"eu_comp": "EuropaLeague",
+"eu_at": "Celtic",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 1551,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": true
+},
+{
+"side": "away",
+"team": "Real Betis",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Real Betis",
+"eu_t": "2026-10-21T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Juventus",
+"km": 813,
+"rest": 4.3
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Deportivo Alavés",
+"km": 0,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Celtic",
+"km": 1551,
+"rest": 4.2
+}
+],
+"scen": "Ε🏠 Π🏠 Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 1551,
+"km14": 3916,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "11/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Osasuna",
+"km": 693,
+"rest": 21.0
+},
+{
+"d": "14/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "FC Porto",
+"km": 0,
+"rest": 3.1
+},
+{
+"d": "17/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Barcelona",
+"km": 0,
+"rest": 2.9
+},
+{
+"d": "21/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Feyenoord",
+"km": 0,
+"rest": 4.1
+}
+],
+"scen": "Π🏠 Ε🏠 Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 4,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 582,
+"km14": 1275,
+"rest": 3.8,
+"min_rest": 2.9,
+"euro14": 2,
+"euro_away14": 0,
+"cups14": 0
+}
+},
 "last": {
-"t": "2026-10-25T11:36",
+"t": "2026-10-25T11:42",
 "line": 2.75,
 "over": 2.03,
 "under": 1.89
+},
+"ah_last": [
+0.25,
+1.92,
+2.01
+]
+},
+"5781778": {
+"seen": "2026-10-25T11:42",
+"lg": "Eredivisie",
+"ko": "2026-10-25T15:45",
+"home": "Sparta Rotterdam",
+"away": "Ajax",
+"T_model": 3.51,
+"ah_first": [
+1.25,
+1.99,
+1.92
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.91,
+"under": 1.98
+},
+"trav": [
+{
+"side": "away",
+"team": "Ajax",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Ajax",
+"eu_t": "2026-10-22T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.25,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "17/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Willem II",
+"km": 125,
+"rest": 7.2
+}
+],
+"scen": "Π🏠 → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 125,
+"rest": 7.9,
+"min_rest": 7.2,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Hajduk Split",
+"km": 1297,
+"rest": 4.9
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "FC Groningen",
+"km": 1297,
+"rest": 2.9
+},
+{
+"d": "22/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Atalanta",
+"km": 149,
+"rest": 4.2
+}
+],
+"scen": "Ε✈ Π✈ Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 56,
+"km14": 2798,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
 }
 },
-"5868108|8560": {
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.91,
+"under": 1.98
+},
+"ah_last": [
+1.25,
+1.99,
+1.92
+]
+},
+"5802968": {
+"seen": "2026-10-25T11:42",
+"lg": "Ligue1",
+"ko": "2026-10-25T16:15",
+"home": "Marseille",
+"away": "Le Havre",
+"T_model": 2.9,
+"ah_first": [
+-1.25,
+2.04,
+1.89
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.25,
+"over": 2.04,
+"under": 1.85
+},
+"trav": [
+{
+"side": "home",
+"team": "Marseille",
+"eu_comp": "EuropaLeague",
+"eu_at": "Sturm Graz",
+"eu_t": "2026-10-22T16:45",
+"eu_away": true,
+"km": 893,
+"inzone": true,
+"patt": 1,
+"sup": 1.25,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "11/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Troyes",
+"km": 569,
+"rest": 21.0
+},
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Olympiacos",
+"km": 569,
+"rest": 4.0
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Angers",
+"km": 657,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Sturm Graz",
+"km": 1205,
+"rest": 4.2
+}
+],
+"scen": "Π✈ Ε🏠 Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 4,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 893,
+"km14": 3893,
+"rest": 3.0,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Auxerre",
+"km": 245,
+"rest": 8.0
+}
+],
+"scen": "Π🏠 → Π✈",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 800,
+"km14": 1045,
+"rest": 7.0,
+"min_rest": 7.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.25,
+"over": 2.04,
+"under": 1.85
+},
+"ah_last": [
+-1.25,
+2.04,
+1.89
+]
+},
+"5802970": {
+"seen": "2026-10-25T11:42",
+"lg": "Ligue1",
+"ko": "2026-10-25T16:15",
+"home": "Rennes",
+"away": "Strasbourg",
+"T_model": 3.71,
+"ah_first": [
+-0.75,
+2.01,
+1.92
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.25,
+"over": 1.95,
+"under": 1.95
+},
+"trav": [
+{
+"side": "home",
+"team": "Rennes",
+"eu_comp": "EuropaLeague",
+"eu_at": "Juventus",
+"eu_t": "2026-10-22T16:45",
+"eu_away": true,
+"km": 788,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "OFI Crete",
+"km": 0,
+"rest": 4.2
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Paris FC",
+"km": 304,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Juventus",
+"km": 582,
+"rest": 4.1
+}
+],
+"scen": "Ε🏠 Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 788,
+"km14": 1674,
+"rest": 3.0,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "17/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Paris Saint-Germain",
+"km": 542,
+"rest": 6.1
+}
+],
+"scen": "Π🏠 → Π✈",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 701,
+"km14": 1243,
+"rest": 8.0,
+"min_rest": 6.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.25,
+"over": 1.95,
+"under": 1.95
+},
+"ah_last": [
+-0.75,
+2.01,
+1.92
+]
+},
+"5795494": {
+"seen": "2026-10-25T11:42",
+"lg": "EPL",
+"ko": "2026-10-25T16:30",
+"home": "Sunderland",
+"away": "Leeds United",
+"T_model": 2.43,
+"ah_first": [
+0.0,
+2.09,
+1.85
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.25,
+"over": 1.97,
+"under": 1.94
+},
+"trav": [
+{
+"side": "home",
+"team": "Sunderland",
+"eu_comp": "EuropaLeague",
+"eu_at": "Lech Poznań",
+"eu_t": "2026-10-22T16:45",
+"eu_away": true,
+"km": 1231,
+"inzone": true,
+"patt": 1,
+"sup": -0.0,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Torreense",
+"km": 1855,
+"rest": 5.1
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "AFC Bournemouth",
+"km": 1418,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Lech Poznań",
+"km": 1302,
+"rest": 4.2
+}
+],
+"scen": "Ε✈ Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 1231,
+"km14": 5805,
+"rest": 3.0,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Manchester United",
+"km": 266,
+"rest": 8.1
+}
+],
+"scen": "Π🏠 → Π✈",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 127,
+"km14": 393,
+"rest": 7.1,
+"min_rest": 7.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.25,
+"over": 1.97,
+"under": 1.94
+},
+"ah_last": [
+0.0,
+2.09,
+1.85
+]
+},
+"5881200": {
+"seen": "2026-10-25T11:42",
+"lg": "Bundesliga",
+"ko": "2026-10-25T16:30",
+"home": "Freiburg",
+"away": "Bayern München",
+"T_model": 3.15,
+"ah_first": [
+1.25,
+1.83,
+2.02
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.88,
+"under": 2.0
+},
+"trav": [
+{
+"side": "home",
+"team": "Freiburg",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Monaco",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 479,
+"inzone": true,
+"patt": 1,
+"sup": -1.25,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Bayern München",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Bayern München",
+"eu_t": "2026-10-21T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.25,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Jablonec",
+"km": 0,
+"rest": 4.1
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Bayer Leverkusen",
+"km": 341,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Monaco",
+"km": 813,
+"rest": 4.2
+}
+],
+"scen": "Ε🏠 Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 479,
+"km14": 1633,
+"rest": 2.9,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "13/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Viking",
+"km": 1225,
+"rest": 3.2
+},
+{
+"d": "17/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "RB Leipzig",
+"km": 1250,
+"rest": 3.9
+},
+{
+"d": "21/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Arsenal",
+"km": 0,
+"rest": 4.1
+}
+],
+"scen": "Ε✈ Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 283,
+"km14": 2758,
+"rest": 3.9,
+"min_rest": 3.2,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.88,
+"under": 2.0
+},
+"ah_last": [
+1.25,
+1.83,
+2.02
+]
+},
+"5749716": {
+"seen": "2026-10-25T11:42",
+"lg": "SerieA",
+"ko": "2026-10-25T17:00",
+"home": "Lecce",
+"away": "Juventus",
+"T_model": 2.24,
+"ah_first": [
+1.0,
+1.98,
+1.94
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.75,
+"over": 2.03,
+"under": 1.86
+},
+"trav": [
+{
+"side": "away",
+"team": "Juventus",
+"eu_comp": "EuropaLeague",
+"eu_at": "Juventus",
+"eu_t": "2026-10-22T16:45",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.0,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Udinese",
+"km": 754,
+"rest": 6.9
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 754,
+"km14": 1508,
+"rest": 7.3,
+"min_rest": 6.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "11/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Cagliari",
+"km": 669,
+"rest": 21.1
+},
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Celta Vigo",
+"km": 1541,
+"rest": 4.0
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Lazio",
+"km": 1354,
+"rest": 3.0
+},
+{
+"d": "22/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Rennes",
+"km": 0,
+"rest": 3.9
+}
+],
+"scen": "Π✈ Ε✈ Π🏠 Ε🏠 → Π✈",
+"n7": 2,
+"n14": 4,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 1010,
+"km14": 4573,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.75,
+"over": 2.03,
+"under": 1.86
+},
+"ah_last": [
+1.0,
+1.98,
+1.94
+]
+},
+"5868108": {
 "seen": "2026-10-25T11:36",
 "lg": "LaLiga",
 "ko": "2026-10-25T17:30",
 "home": "Real Sociedad",
 "away": "Levante",
-"team": "Real Sociedad",
-"side": "εντος",
-"eu": "EuropaLeague @Lillestrøm",
-"km": 2051,
-"rest": 2.9,
-"patt": 1,
-"cat": "δυνατη",
-"sup": 1.0,
 "T_model": 3.67,
+"ah_first": [
+-1.0,
+1.96,
+1.96
+],
 "first": {
 "t": "2026-10-25T11:36",
 "line": 3.25,
 "over": 1.99,
 "under": 1.92
 },
-"last": {
-"t": "2026-10-25T11:36",
-"line": 3.25,
-"over": 1.99,
-"under": 1.92
-}
-},
-"5781782|10229": {
-"seen": "2026-10-25T11:36",
-"lg": "Eredivisie",
-"ko": "2026-10-25T19:00",
-"home": "AZ Alkmaar",
-"away": "FC Twente",
-"team": "AZ Alkmaar",
-"side": "εντος",
-"eu": "EuropaLeague @Ararat Armenia",
-"km": 3297,
-"rest": 3.1,
+"trav": [
+{
+"side": "home",
+"team": "Real Sociedad",
+"eu_comp": "EuropaLeague",
+"eu_at": "Lillestrøm",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 2051,
+"inzone": true,
 "patt": 1,
-"cat": "γηινη",
-"sup": 0.25,
-"T_model": 2.79,
-"first": {
-"t": "2026-10-25T11:36",
-"line": 3.25,
-"over": 2.06,
-"under": 1.83
+"sup": 1.0,
+"cat": "δυνατη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Union St.Gilloise",
+"km": 962,
+"rest": 4.1
 },
-"last": {
-"t": "2026-10-25T11:36",
-"line": 3.25,
-"over": 2.06,
-"under": 1.83
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Málaga",
+"km": 1714,
+"rest": 3.0
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Lillestrøm",
+"km": 2809,
+"rest": 4.1
+}
+],
+"scen": "Ε✈ Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 2051,
+"km14": 7535,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "12/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Sevilla",
+"km": 55,
+"rest": 22.1
+},
+{
+"d": "16/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Deportivo A Coruña",
+"km": 797,
+"rest": 4.0
+},
+{
+"d": "21/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Athletic Club",
+"km": 797,
+"rest": 5.0
+}
+],
+"scen": "Π🏠 Π✈ Π🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 444,
+"km14": 2093,
+"rest": 4.0,
+"min_rest": 4.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
 }
 },
-"5781782|8611": {
-"seen": "2026-10-25T11:36",
-"lg": "Eredivisie",
-"ko": "2026-10-25T19:00",
-"home": "AZ Alkmaar",
-"away": "FC Twente",
-"team": "FC Twente",
-"side": "εκτος",
-"eu": "ConferenceLeague @Lincoln Red Imps FC",
-"km": 2033,
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.25,
+"over": 1.99,
+"under": 1.92
+},
+"ah_last": [
+-1.0,
+1.96,
+1.96
+]
+},
+"5887658": {
+"seen": "2026-10-25T11:42",
+"lg": "PrimeiraLiga",
+"ko": "2026-10-25T18:00",
+"home": "Nacional",
+"away": "Braga",
+"T_model": 2.66,
+"ah_first": [
+1.0,
+2.06,
+1.85
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.92,
+"under": 1.97
+},
+"trav": [
+{
+"side": "away",
+"team": "Braga",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Braga",
+"eu_t": "2026-10-22T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.0,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "17/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Portugal_TacaDePortugal",
+"opp": "Sanjoanense",
+"km": 0,
+"rest": 6.0
+}
+],
+"scen": "Κ✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 1206,
+"km14": 1206,
+"rest": 8.2,
+"min_rest": 6.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "FC København",
+"km": 2186,
+"rest": 6.0
+},
+{
+"d": "19/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Gil Vicente",
+"km": 2186,
+"rest": 4.0
+},
+{
+"d": "22/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Gent",
+"km": 0,
+"rest": 3.0
+}
+],
+"scen": "Ε✈ Π🏠 Ε🏠 → Π✈",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 1239,
+"km14": 5612,
 "rest": 3.0,
-"patt": 1,
-"cat": "γηινη",
-"sup": -0.25,
+"min_rest": 3.0,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.92,
+"under": 1.97
+},
+"ah_last": [
+1.0,
+2.06,
+1.85
+]
+},
+"5781782": {
+"seen": "2026-10-25T11:36",
+"lg": "Eredivisie",
+"ko": "2026-10-25T19:00",
+"home": "AZ Alkmaar",
+"away": "FC Twente",
 "T_model": 2.79,
+"ah_first": [
+-0.25,
+1.89,
+2.02
+],
 "first": {
 "t": "2026-10-25T11:36",
 "line": 3.25,
 "over": 2.06,
 "under": 1.83
 },
+"trav": [
+{
+"side": "home",
+"team": "AZ Alkmaar",
+"eu_comp": "EuropaLeague",
+"eu_at": "Ararat Armenia",
+"eu_t": "2026-10-22T16:45",
+"eu_away": true,
+"km": 3297,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": true
+},
+{
+"side": "away",
+"team": "FC Twente",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Lincoln Red Imps FC",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 2033,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Hapoel Beer Sheva",
+"km": 81,
+"rest": 5.0
+},
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Cambuur",
+"km": 95,
+"rest": 2.8
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Ararat Armenia",
+"km": 3240,
+"rest": 4.2
+}
+],
+"scen": "Ε🏠 Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 3297,
+"km14": 6714,
+"rest": 3.1,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Thun",
+"km": 154,
+"rest": 5.0
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "FC Utrecht",
+"km": 0,
+"rest": 3.0
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Lincoln Red Imps FC",
+"km": 2033,
+"rest": 4.0
+}
+],
+"scen": "Ε🏠 Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 1998,
+"km14": 4186,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
 "last": {
-"t": "2026-10-25T11:36",
+"t": "2026-10-25T11:42",
 "line": 3.25,
 "over": 2.06,
 "under": 1.83
+},
+"ah_last": [
+-0.25,
+1.89,
+2.02
+]
+},
+"5749719": {
+"seen": "2026-10-25T11:42",
+"lg": "SerieA",
+"ko": "2026-10-25T19:45",
+"home": "Udinese",
+"away": "Milan",
+"T_model": 2.53,
+"ah_first": [
+0.5,
+2.06,
+1.87
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.97,
+"under": 1.94
+},
+"trav": [
+{
+"side": "away",
+"team": "Milan",
+"eu_comp": "EuropaLeague",
+"eu_at": "AFC Bournemouth",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 1000,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "12/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Torino",
+"km": 447,
+"rest": 23.2
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Lecce",
+"km": 447,
+"rest": 5.7
+}
+],
+"scen": "Π✈ Π🏠 → Π🏠",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 894,
+"rest": 7.4,
+"min_rest": 5.7,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Salzburg",
+"km": 389,
+"rest": 4.0
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Atalanta",
+"km": 394,
+"rest": 3.0
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "AFC Bournemouth",
+"km": 1000,
+"rest": 4.1
+}
+],
+"scen": "Ε✈ Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 1222,
+"km14": 3005,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
 }
 },
-"5887660|9772": {
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.97,
+"under": 1.94
+},
+"ah_last": [
+0.5,
+2.06,
+1.87
+]
+},
+"5868105": {
+"seen": "2026-10-25T11:42",
+"lg": "LaLiga",
+"ko": "2026-10-25T20:00",
+"home": "Barcelona",
+"away": "Real Madrid",
+"T_model": 3.45,
+"ah_first": [
+-1.0,
+1.9,
+2.03
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 4.25,
+"over": 2.02,
+"under": 1.85
+},
+"trav": [
+{
+"side": "home",
+"team": "Barcelona",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Paris Saint-Germain",
+"eu_t": "2026-10-20T19:00",
+"eu_away": true,
+"km": 830,
+"inzone": true,
+"patt": 1,
+"sup": 1.0,
+"cat": "δυνατη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Real Madrid",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Real Madrid",
+"eu_t": "2026-10-21T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -1.0,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "13/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Galatasaray",
+"km": 2238,
+"rest": 3.1
+},
+{
+"d": "17/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Real Betis",
+"km": 3020,
+"rest": 3.9
+},
+{
+"d": "20/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Paris Saint-Germain",
+"km": 1434,
+"rest": 3.1
+}
+],
+"scen": "Ε✈ Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 830,
+"km14": 7522,
+"rest": 5.0,
+"min_rest": 3.1,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "14/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Roma",
+"km": 1359,
+"rest": 4.0
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Sevilla",
+"km": 1359,
+"rest": 4.0
+},
+{
+"d": "21/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "RB Leipzig",
+"km": 0,
+"rest": 3.0
+}
+],
+"scen": "Ε✈ Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 499,
+"km14": 3216,
+"rest": 4.0,
+"min_rest": 3.0,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 4.25,
+"over": 2.02,
+"under": 1.85
+},
+"ah_last": [
+-1.0,
+1.9,
+2.03
+]
+},
+"5887661": {
+"seen": "2026-10-25T11:42",
+"lg": "PrimeiraLiga",
+"ko": "2026-10-25T20:30",
+"home": "Sporting CP",
+"away": "Académico Viseu",
+"T_model": 3.19,
+"ah_first": [
+-2.0,
+2.06,
+1.81
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.97,
+"under": 1.9
+},
+"trav": [
+{
+"side": "home",
+"team": "Sporting CP",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Sporting CP",
+"eu_t": "2026-10-21T19:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 2.0,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "13/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Lens",
+"km": 1311,
+"rest": 3.9
+},
+{
+"d": "21/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "LASK",
+"km": 1603,
+"rest": 8.1
+}
+],
+"scen": "Ε✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 2914,
+"rest": 4.1,
+"min_rest": 3.9,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Portugal_TacaDePortugal",
+"opp": "Fátima",
+"km": 0,
+"rest": 7.8
+}
+],
+"scen": "Κ✈ → Π✈",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 237,
+"km14": 237,
+"rest": 7.3,
+"min_rest": 7.3,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.97,
+"under": 1.9
+},
+"ah_last": [
+-2.0,
+2.06,
+1.81
+]
+},
+"5887660": {
 "seen": "2026-10-25T11:36",
 "lg": "PrimeiraLiga",
 "ko": "2026-10-26T18:45",
 "home": "Santa Clara",
 "away": "Benfica",
-"team": "Benfica",
-"side": "εκτος",
-"eu": "EuropaLeague @Omonia Nicosia",
-"km": 3771,
-"rest": 4.0,
-"patt": 1,
-"cat": "μεγαλη",
-"sup": 1.25,
 "T_model": 2.19,
+"ah_first": [
+1.25,
+1.91,
+1.8
+],
 "first": {
 "t": "2026-10-25T11:36",
 "line": 2.5,
 "over": 1.81,
 "under": 1.89
 },
+"trav": [
+{
+"side": "away",
+"team": "Benfica",
+"eu_comp": "EuropaLeague",
+"eu_at": "Omonia Nicosia",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 3771,
+"inzone": true,
+"patt": 1,
+"sup": 1.25,
+"cat": "μεγαλη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "18/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Portugal_TacaDePortugal",
+"opp": "Mafra",
+"km": 0,
+"rest": 7.8
+}
+],
+"scen": "Κ✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 1460,
+"km14": 1460,
+"rest": 8.2,
+"min_rest": 7.8,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Celtic",
+"km": 0,
+"rest": 4.1
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Omonia Nicosia",
+"km": 3771,
+"rest": 7.0
+}
+],
+"scen": "Ε🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 5196,
+"km14": 8967,
+"rest": 4.0,
+"min_rest": 4.0,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
 "last": {
-"t": "2026-10-25T11:36",
+"t": "2026-10-25T11:42",
 "line": 2.5,
 "over": 1.81,
 "under": 1.89
+},
+"ah_last": [
+1.25,
+1.91,
+1.8
+]
+},
+"5802972": {
+"seen": "2026-10-25T11:42",
+"lg": "Ligue1",
+"ko": "2026-10-26T19:30",
+"home": "Paris Saint-Germain",
+"away": "Lyon",
+"T_model": 2.91,
+"ah_first": [
+-1.5,
+2.01,
+1.87
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.97,
+"under": 1.91
+},
+"trav": [
+{
+"side": "away",
+"team": "Lyon",
+"eu_comp": "EuropaLeague",
+"eu_at": "Hoffenheim",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 485,
+"inzone": true,
+"patt": 1,
+"sup": -1.5,
+"cat": "γηινη",
+"focus": false
 }
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "14/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Manchester City",
+"km": 602,
+"rest": 4.0
+},
+{
+"d": "17/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Strasbourg",
+"km": 884,
+"rest": 2.8
+},
+{
+"d": "20/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Barcelona",
+"km": 405,
+"rest": 3.2
+}
+],
+"scen": "Ε✈ Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 1891,
+"rest": 6.0,
+"min_rest": 2.8,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Crystal Palace",
+"km": 543,
+"rest": 5.9
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Nice",
+"km": 0,
+"rest": 3.1
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Hoffenheim",
+"km": 485,
+"rest": 4.0
+}
+],
+"scen": "Ε🏠 Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 485,
+"km14": 1514,
+"rest": 4.0,
+"min_rest": 3.1,
+"euro14": 2,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 3.5,
+"over": 1.97,
+"under": 1.91
+},
+"ah_last": [
+-1.5,
+2.01,
+1.87
+]
+},
+"5749720": {
+"seen": "2026-10-25T11:42",
+"lg": "SerieA",
+"ko": "2026-10-28T17:30",
+"home": "Milan",
+"away": "Bologna",
+"T_model": 2.26,
+"ah_first": [
+-0.75,
+1.79,
+2.05
+],
+"first": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.84,
+"under": 2.0
+},
+"trav": [
+{
+"side": "home",
+"team": "Milan",
+"eu_comp": "EuropaLeague",
+"eu_at": "AFC Bournemouth",
+"eu_t": "2026-10-22T19:00",
+"eu_away": true,
+"km": 1000,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "15/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Salzburg",
+"km": 389,
+"rest": 4.0
+},
+{
+"d": "18/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Atalanta",
+"km": 394,
+"rest": 3.0
+},
+{
+"d": "22/10",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "AFC Bournemouth",
+"km": 1000,
+"rest": 4.1
+},
+{
+"d": "25/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Udinese",
+"km": 1222,
+"rest": 3.0
+}
+],
+"scen": "Ε✈ Π🏠 Ε✈ Π✈ → Π🏠",
+"n7": 2,
+"n14": 4,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 323,
+"km14": 3328,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 2,
+"euro_away14": 2,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "17/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Inter",
+"km": 728,
+"rest": 6.1
+},
+{
+"d": "24/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Cagliari",
+"km": 615,
+"rest": 6.9
+}
+],
+"scen": "Π🏠 Π✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 698,
+"km14": 2042,
+"rest": 4.2,
+"min_rest": 4.2,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-10-25T11:42",
+"line": 2.5,
+"over": 1.84,
+"under": 2.0
+},
+"ah_last": [
+-0.75,
+1.79,
+2.05
+]
 }
 }
