@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-10-25T16:23+00:00",
+ "scanned_at": "2026-10-25T16:28+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 2,
  "n_changed": 0,
  "picks": [
   {
@@ -104,6 +104,72 @@
    "fat_note": "😴 76ers: back-to-back −3 · καθαρο 3.0 π. ΥΠΕΡ μας",
    "fat_pts": 3.0,
    "hrs_birth": 20.2
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Houston Rockets",
+   "away": "Atlanta Hawks",
+   "hcode": "HOU",
+   "acode": "ATL",
+   "code": "pin1639261574",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-27T00:40",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": -1,
+   "hcap": 5.5,
+   "odds": 1.926,
+   "edge": 0.1966,
+   "proj_odds": 1.61,
+   "model_line": -1.3,
+   "mkt_line": -5.5,
+   "first": {
+    "line": -5.5,
+    "oh": 1.926,
+    "oa": 1.926,
+    "seen": "2026-10-25T16:28+00:00"
+   },
+   "move_note": "ανοιγμα Atlanta Hawks +5.5 @1.93 → τωρα +5.5 @1.93 · ουσιαστικα ιδια",
+   "move_pts": -0.0,
+   "fat_note": "😴 Rockets: αλλαγη ωρας 1ω −0.7 · Hawks: αλλαγη ωρας 1ω −0.7 · αλληλοαναιρουνται",
+   "fat_pts": -0.0,
+   "hrs_birth": 32.2
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Denver Nuggets",
+   "away": "Golden State Warriors",
+   "hcode": "DEN",
+   "acode": "GSW",
+   "code": "pin1638783288",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-27T02:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": -5.0,
+   "odds": 1.935,
+   "edge": 0.1739,
+   "proj_odds": 1.64,
+   "model_line": -8.6,
+   "mkt_line": -5.0,
+   "first": {
+    "line": -5.0,
+    "oh": 1.935,
+    "oa": 1.917,
+    "seen": "2026-10-25T16:28+00:00"
+   },
+   "move_note": "ανοιγμα Denver Nuggets -5 @1.94 → τωρα -5 @1.94 · ουσιαστικα ιδια",
+   "move_pts": 0.0,
+   "fat_note": "😴 Warriors: αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΥΠΕΡ μας",
+   "fat_pts": 0.68,
+   "hrs_birth": 33.7
   }
  ]
 }
