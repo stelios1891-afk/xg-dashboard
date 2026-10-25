@@ -337,7 +337,8 @@ def compute():
 
 def migrate():
     """19/10 (Στελιος): ΜΙΑ ΦΟΡΑ (idempotent) — τα χαντικαπ του ημερολογιου ΕΚΤΟΣ καταγραφης (live) · τα συνολα ΕΞΩ απο το ημερολογιο → TOT_LOG.
-    Γινεται απο τον scanner (οχι χειροκινητα), ωστε να μη συγκρουεται με τα δικα του commits."""
+    Γινεται απο τον scanner (οχι χειροκινητα), ωστε να μη συγκρουεται με τα δικα του commits.
+    25/10: τα LIVE συνολα (ματς απο TOT_LIVE_FROM) ΜΕΝΟΥΝ στο ημερολογιο — και επιστρεφουν οσα μετακινηθηκαν κατα λαθος (WAS@CHO, HOU, MIA)."""
     fn = F('nba_clv_bets.jsonl')
     if not os.path.exists(fn): return
     keep, moved, changed = [], [], False
@@ -345,9 +346,26 @@ def migrate():
         if not ln.strip(): continue
         try: b = json.loads(ln)
         except Exception: keep.append(ln.rstrip('\n')); continue
-        if b.get('mkt') == 'total': moved.append(b); changed = True; continue
+        if b.get('mkt') == 'total' and (PAPER_TOT or b.get('when', '') < TOT_LIVE_FROM): moved.append(b); changed = True; continue
         if b.get('mkt') == 'hcap' and b.get('paper'): b['paper'] = False; changed = True
         keep.append(json.dumps(b, ensure_ascii=False))
+    tl = F(TOT_LOG)
+    if not PAPER_TOT and os.path.exists(tl):            # επιστροφη: live συνολα που ειχαν μετακινηθει στο κρυφο αρχειο
+        have = {(json.loads(k).get('code'), json.loads(k).get('bet')) for k in keep if k.strip().startswith('{')}
+        tkeep, back = [], []
+        for ln in open(tl, encoding='utf-8'):
+            if not ln.strip(): continue
+            try: r = json.loads(ln)
+            except Exception: tkeep.append(ln.rstrip('\n')); continue
+            if r.get('migrated') and r.get('paper') is False and r.get('when', '') >= TOT_LIVE_FROM:
+                if (r.get('code'), r.get('bet')) not in have:
+                    back.append(json.dumps({k: v for k, v in r.items() if k != 'migrated'}, ensure_ascii=False))
+                continue
+            tkeep.append(ln.rstrip('\n'))
+        if len(tkeep) < sum(1 for ln in open(tl, encoding='utf-8') if ln.strip()):
+            keep += back; changed = True
+            open(tl, 'w', encoding='utf-8').write('\n'.join(tkeep) + ('\n' if tkeep else ''))
+            print(f'NBA ημερολογιο: {len(back)} live συνολα επεστρεψαν απο {TOT_LOG}')
     if not changed: return
     if moved:
         with open(F(TOT_LOG), 'a', encoding='utf-8') as fh:
