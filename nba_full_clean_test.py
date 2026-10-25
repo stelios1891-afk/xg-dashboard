@@ -79,6 +79,51 @@ def run_all(cfg):
         fin[int(s)] = dict(mu=float(mu), pm=float(pm), O={t: float(O[i]) for t, i in ix.items()}, D={t: float(Dd[i]) for t, i in ix.items()}, P={t: float(Pc[i]) for t, i in ix.items()})
         prior = {t: (O[i], Dd[i], Pc[i]) for t, i in ix.items()}; mu0 = mu; pm0 = pm
     return cfg, mg.astype(np.float32), tt.astype(np.float32), fin
+def run_all_split(cfg, w_def):
+    """25/10/2026 (t85-t91, Στελιος «το περναμε»): ιδια με run_all αλλα «τυχη» ΧΩΡΙΣΤΑ — βαθμολογια ΕΠΙΘΕΣΗΣ απο ποντους με τυχη cfg[3],
+    βαθμολογια ΑΜΥΝΑΣ απο ποντους με τυχη w_def (3P%/FT% αντιπαλων ≈ τυχη). Δυο fit ανα μερα (ιδια βαρη/ridge), ξεχωριστη αφετηρια O/D.
+    w_def == cfg[3] → ιδιο με run_all. → (cfg, mg, tt, fin) οπως run_all."""
+    C = _W['C']; Z = _W['Z']; G = C.G
+    carry, lam, HL, lw, muw, beta, kx, kp = cfg; h = 2.0
+    for w_ in (lw, w_def):
+        if w_ not in C.EHA: C.EHA[w_] = C.luck_eff(w_)
+    EHo, EAo = C.EHA[lw]; EHd, EAd = C.EHA[w_def]; R2 = C._radj2()['V0|W1']
+    mg = np.full(len(G), np.nan); tt = np.full(len(G), np.nan); prO, prD, prP, fin = {}, {}, {}, {}
+    m0o = float((EHo.mean() + EAo.mean()) / 2); m0d = float((EHd.mean() + EAd.mean()) / 2); pm0 = float(G.pace.mean())
+    for s in C.SEAS:
+        sidx = np.where(G.season.values == s)[0]
+        teams = sorted(set(G.home.values[sidx]) | set(G.away.values[sidx])); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
+        adj = np.array([beta * R2.get(f'{s}|{t}', 0.0) + kx * Z['C'].get(f'{s}|{t}', 0.0) + kp * Z['P'].get(f'{s}|{t}', 0.0) for t in teams])
+        car = np.array([CARRY_MAP.get(f'{s}|{t}', carry) if CARRY_MAP is not None else carry for t in teams])
+        g_ = lambda pr, j: car * np.array([pr.get(t, (0, 0))[j] for t in teams])
+        o0, d0o, o0d, d0 = g_(prO, 0) + adj / 2, g_(prO, 1) - adj / 2, g_(prD, 0) + adj / 2, g_(prD, 1) - adj / 2
+        p0 = car * np.array([prP.get(t, 0.0) for t in teams])
+        hi = np.array([ix[t] for t in G.home.values[sidx]]); ai = np.array([ix[t] for t in G.away.values[sidx]])
+        nt = (~G.neutral.values[sidx]).astype(float); hb = nt * h / 2; dn = C.dnum[sidx]; pc = G.pace.values[sidx]
+        eho, eao, ehd, ead = EHo[sidx], EAo[sidx], EHd[sidx], EAd[sidx]
+        for d in np.unique(dn):
+            past = dn < d; cur = np.where(dn == d)[0]
+            if past.any():
+                w = 0.5 ** ((d - dn[past]) / HL)
+                mA, O, _ = fit_mu(hi[past], ai[past], eho[past], eao[past], hb[past], w, n, o0, d0o, lam, m0o, muw)
+                mB, _, Dd = fit_mu(hi[past], ai[past], ehd[past], ead[past], hb[past], w, n, o0d, d0, lam, m0d, muw)
+                pm, Pc = C.fit_pace(hi[past], ai[past], pc[past], w, n, p0, lam, pm0)
+            else:
+                mA, mB, O, Dd, pm, Pc = m0o, m0d, o0, d0, pm0, p0
+            mu = (mA + mB) / 2
+            hh, aa = hi[cur], ai[cur]; e_h = mu + O[hh] + Dd[aa] + hb[cur]; e_a = mu + O[aa] + Dd[hh] - hb[cur]; poss = pm + Pc[hh] + Pc[aa]
+            mg[sidx[cur]] = poss * (e_h - e_a) / 100; tt[sidx[cur]] = poss * (e_h + e_a) / 100
+        w = 0.5 ** ((dn.max() - dn) / HL)
+        if END_APR != 1.0 and (END_APR_BEFORE is None or s < END_APR_BEFORE):
+            w = w * np.where(G.date.dt.month.values[sidx] == 4, END_APR, 1.0)
+        mA, O, Do = fit_mu(hi, ai, eho, eao, hb, w, n, o0, d0o, lam, m0o, muw)
+        mB, Od, Dd = fit_mu(hi, ai, ehd, ead, hb, w, n, o0d, d0, lam, m0d, muw)
+        pm, Pc = C.fit_pace(hi, ai, pc, w, n, p0, lam, pm0)
+        fin[int(s)] = dict(mu=float((mA + mB) / 2), pm=float(pm), O={t: float(O[i]) for t, i in ix.items()}, D={t: float(Dd[i]) for t, i in ix.items()},
+                           P={t: float(Pc[i]) for t, i in ix.items()})
+        prO = {t: (O[i], Do[i]) for t, i in ix.items()}; prD = {t: (Od[i], Dd[i]) for t, i in ix.items()}; prP = {t: Pc[i] for t, i in ix.items()}
+        m0o, m0d, pm0 = mA, mB, pm
+    return cfg, mg.astype(np.float32), tt.astype(np.float32), fin
 def main():
     sys.stdout.reconfigure(encoding='utf-8')
     import pandas as pd

@@ -17,7 +17,8 @@ from statistics import NormalDist
 sys.stdout.reconfigure(encoding='utf-8')
 CUR, LAB = 2027, '2026-27'                                # ετησια ενημερωση
 CFG_H = (0.8, 8, 60, .75, 5.0, 1.0, .75, .25)            # (περσι, K, HL, τυχη, μ_w, ροστερ, ειδικοι, φιλικα)
-CFG_T = (0.7, 8, 60, .5, 5.0, 0.0, 0.0, 0.0)
+CFG_T = (0.7, 6, 45, .5, 5.0, 0.0, 0.0, 0.0)              # 25/10/2026 (t91, Στελιος «το περναμε»): ηταν (0.7, 8, 60, …) — αφετηρια σαν 6 ματς, μνημη 45 μερες
+LUCK_DEF_T = 0.25                                         # 25/10/2026 (t85-t91): «τυχη» ΑΜΥΝΑΣ συνολων .25 (επιθεση .5) — run_all_split
 B2B_K, H_ADV = 3.0, 2.0
 SIG_M, SIG_T = 13.5, 18.0                                 # sd (πραγματικο − κλεισιμο) 2021-26
 if '--no-fetch' not in sys.argv:
@@ -118,7 +119,7 @@ except Exception as _e:
 out = {}
 for nm, cfg in (('h', CFG_H), ('t', CFG_T)):
     F.CARRY_MAP = CMAP if nm == 'h' else None
-    _, mg, tt, fin = F.run_all(cfg)
+    _, mg, tt, fin = F.run_all(cfg) if nm == 'h' else F.run_all_split(cfg, LUCK_DEF_T)
     carry, beta, kx, kp = cfg[0], cfg[5], cfg[6], cfg[7]
     if CUR in fin:
         f = {k: (dict(v) if isinstance(v, dict) else v) for k, v in fin[CUR].items()}; src = f'{CUR}: {int((G.season.values == CUR).sum())} ματς'
@@ -153,7 +154,7 @@ state = dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'
              cfg_h=list(CFG_H), cfg_t=list(CFG_T), res_t=RES, n_res=int(len(resid)),
              h_eng={k: v for k, v in out['h'].items()}, t_eng={k: v for k, v in out['t'].items()}, gp=dict(gp), last=last,
              roster=RL.get('delta', {}), z=dict(C={k.split('|')[1]: v for k, v in Z['C'].items() if k.startswith(f'{CUR}|')}, P={k.split('|')[1]: v for k, v in Z['P'].items() if k.startswith(f'{CUR}|')}),
-             model=f'NBA: χαντικαπ {CFG_H} + B2B {B2B_K} + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα {CFG_T} + Φ3')
+             model=f'NBA: χαντικαπ {CFG_H} + B2B {B2B_K} + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα {CFG_T} τυχη αμυνας {LUCK_DEF_T} + Φ3')
 json.dump(state, open('nba_state.json', 'w', encoding='utf-8'), ensure_ascii=False)
 h = out['h']; net = {t: (h['O'][t] - h['D'][t]) for t in h['O']}
 print(f"nba_state.json: {h['src']} · Φ3 {RES:+.2f} ({len(resid)} ματς) · κορυφη: " + ' · '.join(f'{t} {v:+.1f}' for t, v in sorted(net.items(), key=lambda kv: -kv[1])[:5])
