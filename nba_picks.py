@@ -26,7 +26,8 @@ def hc_min(g):
     except Exception: mon = 0
     return HC_MIN_JF if mon in (1, 2) else HC_MIN
 PAPER_HCAP = False  # 19/10: ΧΑΝΤΙΚΑΠ LIVE (Στελιος «τα χαντικαπς τα θελουμε live») — ανοιγμα +7.1% Οκτ-Δεκ (B2B+απουσιες), αγων 1-10 το δυνατοτερο
-PAPER_TOT = True    # ΣΥΝΟΛΑ μενουν ΚΑΤΑΓΡΑΦΗ (totals_test 19/10: κερδος μονο 2021-22, τελευταιες 2 σεζον αρνητικα)
+PAPER_TOT = False   # 25/10/2026 (Στελιος «να περνανε κανονικα τα πικς για τα ματς των 27/10»): ΣΥΝΟΛΑ LIVE με τη νεα μηχανη (t91) — ηταν ΚΑΤΑΓΡΑΦΗ απο 19/10
+TOT_LIVE_FROM = '2026-10-26T22:00'  # ματς με τζαμπολ απο εδω (UTC) = απο 27/10 ωρα Ελλαδας· τα προηγουμενα μενουν μονο στο κρυφο TOT_LOG
 TOT_LOG = 'nba_totals_log.jsonl'    # 19/10 (Στελιος «τα συνολα τα κραταμε, τα αναλυουμε, χωρις να εμφανιζονται»): ΚΡΥΦΟ αρχειο, εκτος ημερολογιου/οθονης/Telegram
 def _is_tot_msg(t):                 # μηνυματα κατασταστασης (bk_pick_status.track) που αφορουν συνολα → οχι Telegram
     ls = t.split('\n'); return len(ls) > 1 and ls[1].replace('μπηκε: ', '').startswith(('Over ', 'Under '))
@@ -423,7 +424,9 @@ def main(notify_tg=True):
                 print('Telegram σφαλμα (steam):', e)
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
     tots = [p for p in picks if p['mkt'] == 'total']; picks = [p for p in picks if p['mkt'] != 'total']   # 19/10: συνολα ΚΡΥΦΑ
-    n_tot_new = log_totals(tots, now)
+    n_tot_new = log_totals(tots, now)                   # ολα τα συνολα και στο κρυφο αρχειο (συνεχεια καταγραφης)
+    if not PAPER_TOT:                                   # 25/10: συνολα ΚΑΝΟΝΙΚΑ (ημερολογιο, Value Picks, Telegram) για ματς απο TOT_LIVE_FROM
+        picks += [dict(p, paper=False) for p in tots if p['when'] >= TOT_LIVE_FROM]
     state = _load(F('nba_value_state.json'), {})
     import bk_pick_status as _b; _b.migrate_keys(state, 'NBA')
     new, changed, cur = [], [], set()
@@ -463,7 +466,7 @@ def main(notify_tg=True):
     json.dump(state, open(F('nba_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, tot_w=TOT_W, n_new=len(new), n_changed=len(changed), picks=picks),
               open(F('nba_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    new_l = [p for p in new if not p.get('paper', True)]; chg_l = [(p, pr) for p, pr in changed if not p.get('paper', True)]   # 19/10: μονο τα live (χαντικαπ)
+    new_l = [p for p in new if not p.get('paper', True)]; chg_l = [(p, pr) for p, pr in changed if not p.get('paper', True)]   # 19/10: μονο τα live (χαντικαπ· απο 25/10 και συνολα)
     if notify_tg and (new_l or chg_l):
         msg = []
         if new_l:
@@ -486,7 +489,7 @@ def main(notify_tg=True):
             if drops: notify.send('🏀 NBA · pick που ΔΕΝ ισχυει πια (αλλαξε γραμμη/τιμη)' + chr(10) * 2 + (chr(10) * 2).join(drops), silent=True)
         except Exception as e:
             print('Telegram σφαλμα (κατασταση):', e)
-    print(f'[NBA picks] {len(picks)} χαντικαπ (live) · {len(new)} νεα · {len(changed)} αλλαγες · συνολα (κρυφα): {len(tots)} ({n_tot_new} νεα στο {TOT_LOG})')
+    print(f'[NBA picks] {len(picks)} live (χαντικαπ + συνολα απο {TOT_LIVE_FROM[:10]}) · {len(new)} νεα · {len(changed)} αλλαγες · συνολα (κρυφα): {len(tots)} ({n_tot_new} νεα στο {TOT_LOG})')
     for p in picks: print('  ' + line(p).replace('\n', ' | '))
     return picks
 
