@@ -28,7 +28,7 @@ def _utc(s):
         return None
     try:
         if s[:4].isdigit():
-            t = dt.datetime.fromisoformat(s.replace('Z', '+00:00')[:25])
+            t = dt.datetime.fromisoformat(s.replace('Z', '').replace(' ', 'T')[:19])   # 25/10: '...:00.000Z' επεφτε (ολα UTC)
         else:
             t = dt.datetime.strptime(s.split(', ', 1)[1].replace(' UTC', ''), '%b %d, %Y, %H:%M')
         return t if t.tzinfo else t.replace(tzinfo=dt.timezone.utc)
