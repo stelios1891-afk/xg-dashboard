@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-10-25T16:34+00:00",
+ "scanned_at": "2026-10-25T16:40+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
   {
@@ -55,8 +55,8 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": 6.5,
-   "odds": 1.943,
-   "edge": 0.1171,
+   "odds": 1.952,
+   "edge": 0.1222,
    "proj_odds": 1.74,
    "model_line": 4.0,
    "mkt_line": 6.5,
@@ -66,8 +66,8 @@
     "oa": 1.98,
     "seen": "2026-10-25T01:29+00:00"
    },
-   "move_note": "ανοιγμα Utah Jazz +6.5 @1.91 → τωρα +6.5 @1.94 · ουσιαστικα ιδια",
-   "move_pts": -0.2,
+   "move_note": "ανοιγμα Utah Jazz +6.5 @1.91 → τωρα +6.5 @1.95 · αγορα 0.3 π. ΚΟΝΤΡΑ μας",
+   "move_pts": -0.3,
    "fat_note": "😴 Lakers: αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΥΠΕΡ μας",
    "fat_pts": 0.68,
    "hrs_birth": 19.7
@@ -99,8 +99,8 @@
     "oa": 1.943,
     "seen": "2026-10-25T03:29+00:00"
    },
-   "move_note": "ανοιγμα Detroit Pistons +3 @1.94 → τωρα -1 @1.98 · αγορα 3.8 π. ΥΠΕΡ μας",
-   "move_pts": 3.8,
+   "move_note": "ανοιγμα Detroit Pistons +3 @1.94 → τωρα -1 @1.98 · αγορα 3.7 π. ΥΠΕΡ μας",
+   "move_pts": 3.7,
    "fat_note": "😴 76ers: back-to-back −3 · καθαρο 3.0 π. ΥΠΕΡ μας",
    "fat_pts": 3.0,
    "hrs_birth": 20.2
@@ -170,6 +170,39 @@
    "fat_note": "😴 Warriors: αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΥΠΕΡ μας",
    "fat_pts": 0.68,
    "hrs_birth": 33.7
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Miami Heat",
+   "away": "Dallas Mavericks",
+   "hcode": "MIA",
+   "acode": "DAL",
+   "code": "pin1639261572",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-26T23:40",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": -1,
+   "hcap": 8.5,
+   "odds": 1.943,
+   "edge": 0.2311,
+   "proj_odds": 1.58,
+   "model_line": -3.9,
+   "mkt_line": -8.5,
+   "first": {
+    "line": -8.5,
+    "oh": 1.909,
+    "oa": 1.943,
+    "seen": "2026-10-25T16:40+00:00"
+   },
+   "move_note": "ανοιγμα Dallas Mavericks +8.5 @1.94 → τωρα +8.5 @1.94 · ουσιαστικα ιδια",
+   "move_pts": -0.0,
+   "fat_note": "😴 Mavericks: αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΚΟΝΤΡΑ μας",
+   "fat_pts": -0.68,
+   "hrs_birth": 31.0
   }
  ]
 }
