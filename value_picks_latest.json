@@ -1,37 +1,14 @@
 {
- "scanned_at": "2026-10-25T19:29",
+ "scanned_at": "2026-10-25T19:47",
  "ratings_season": "2526",
- "gross": 0.3309035235338541,
- "scale": 0.6044057732118359,
+ "gross": 0.3624824506259833,
+ "scale": 0.5517508493297074,
  "cap": 0.2,
  "credits_remaining": null,
  "credits_cost": 0,
  "n_new": 0,
  "n_changed": 0,
  "picks": [
-  {
-   "lg": "EPL",
-   "home": "Aston Villa",
-   "away": "Fulham",
-   "home_id": 10252,
-   "away_id": 9879,
-   "when": "2026-10-31T20:00",
-   "md": 9,
-   "role": "dog",
-   "mxh": 1.421,
-   "mxa": 1.193,
-   "side": -1,
-   "hcap": 0.5,
-   "odds": 1.971,
-   "pw": 0.5810815233980261,
-   "pp": 0.0,
-   "edge": 0.12838477784092495,
-   "proj_odds": 1.7209289225928897,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.01652739158611289,
-   "stake_final": 0.009989250890779351
-  },
   {
    "lg": "EPL",
    "home": "Chelsea",
@@ -53,7 +30,30 @@
    "hnote": "",
    "anote": "",
    "stake": 0.018068237172382894,
-   "stake_final": 0.010920546858748917
+   "stake_final": 0.009969165205752853
+  },
+  {
+   "lg": "EPL",
+   "home": "Aston Villa",
+   "away": "Fulham",
+   "home_id": 10252,
+   "away_id": 9879,
+   "when": "2026-10-31T20:00",
+   "md": 9,
+   "role": "dog",
+   "mxh": 1.421,
+   "mxa": 1.193,
+   "side": -1,
+   "hcap": 0.5,
+   "odds": 1.971,
+   "pw": 0.5810815233980261,
+   "pp": 0.0,
+   "edge": 0.12838477784092495,
+   "proj_odds": 1.7209289225928897,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.01652739158611289,
+   "stake_final": 0.009119002344842447
   },
   {
    "lg": "EPL",
@@ -76,53 +76,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03496498270978434,
-   "stake_final": 0.021133037410045675
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Real Betis",
-   "away": "Málaga",
-   "home_id": 8603,
-   "away_id": 9864,
-   "when": "2026-10-31T17:30",
-   "md": 10,
-   "role": "dog",
-   "mxh": 2.145,
-   "mxa": 0.851,
-   "side": -1,
-   "hcap": 1.25,
-   "odds": 2.01,
-   "pw": 0.5690788347555531,
-   "pp": 0.0,
-   "edge": 0.1266053691655683,
-   "proj_odds": 1.7572257812567365,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.01566898133237232,
-   "stake_final": 0.009470422777634314
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Barcelona",
-   "away": "Deportivo Alavés",
-   "home_id": 8634,
-   "away_id": 9866,
-   "when": "2026-10-31T20:00",
-   "md": 10,
-   "role": "dog",
-   "mxh": 2.785,
-   "mxa": 0.77,
-   "side": -1,
-   "hcap": 2.5,
-   "odds": 1.885,
-   "pw": 0.6243661116152284,
-   "pp": 0.0,
-   "edge": 0.16035320013132115,
-   "proj_odds": 1.601624401768076,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.022648757080695078,
-   "stake_final": 0.013689039535644551
+   "stake_final": 0.019291958906922046
   },
   {
    "lg": "LaLiga",
@@ -145,7 +99,53 @@
    "hnote": "",
    "anote": "",
    "stake": 0.019156158944008277,
-   "stake_final": 0.011578093058322149
+   "stake_final": 0.010569426967251438
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Barcelona",
+   "away": "Deportivo Alavés",
+   "home_id": 8634,
+   "away_id": 9866,
+   "when": "2026-10-31T20:00",
+   "md": 10,
+   "role": "dog",
+   "mxh": 2.785,
+   "mxa": 0.77,
+   "side": -1,
+   "hcap": 2.5,
+   "odds": 1.885,
+   "pw": 0.6243661116152284,
+   "pp": 0.0,
+   "edge": 0.16035320013132115,
+   "proj_odds": 1.601624401768076,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.022648757080695078,
+   "stake_final": 0.012496470955535733
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Real Betis",
+   "away": "Málaga",
+   "home_id": 8603,
+   "away_id": 9864,
+   "when": "2026-10-31T17:30",
+   "md": 10,
+   "role": "dog",
+   "mxh": 2.145,
+   "mxa": 0.851,
+   "side": -1,
+   "hcap": 1.25,
+   "odds": 2.01,
+   "pw": 0.5690788347555531,
+   "pp": 0.0,
+   "edge": 0.1266053691655683,
+   "proj_odds": 1.7572257812567365,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.01566898133237232,
+   "stake_final": 0.008645373758267757
   },
   {
    "lg": "SerieA",
@@ -171,7 +171,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.025775920895089562,
-   "stake_final": 0.015579115398843723
+   "stake_final": 0.014221886246121019
   },
   {
    "lg": "Bundesliga",
@@ -194,7 +194,30 @@
    "hnote": "low-confidence",
    "anote": "",
    "stake": 0.024874240164331193,
-   "stake_final": 0.015034134359579497
+   "stake_final": 0.013724383137100856
+  },
+  {
+   "lg": "Ligue1",
+   "home": "Paris Saint-Germain",
+   "away": "Lyon",
+   "home_id": 9847,
+   "away_id": 9748,
+   "when": "2026-10-26T19:30",
+   "md": 8,
+   "role": "dog",
+   "mxh": 1.921,
+   "mxa": 0.991,
+   "side": -1,
+   "hcap": 1.5,
+   "odds": 1.926,
+   "pw": 0.6500493577659558,
+   "pp": 0.0,
+   "edge": 0.23393669189849264,
+   "proj_odds": 1.5383447242171426,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.03157892709212914,
+   "stake_final": 0.01742369984400316
   },
   {
    "lg": "Ligue1",
@@ -217,7 +240,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.021486862157039512,
-   "stake_final": 0.012986783535921602
+   "stake_final": 0.0118553944445769
   },
   {
    "lg": "Ligue1",
@@ -240,7 +263,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.053530468403463524,
-   "stake_final": 0.03235412414578712
+   "stake_final": 0.029535481406628067
   },
   {
    "lg": "PrimeiraLiga",
@@ -263,7 +286,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.05833569567864036,
-   "stake_final": 0.03525843125249898
+   "stake_final": 0.03218676963692916
   },
   {
    "lg": "Eredivisie",
@@ -286,7 +309,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01986582740993416,
-   "stake_final": 0.012007020776194137
+   "stake_final": 0.010960987146068553
   }
  ]
 }
