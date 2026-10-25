@@ -67,7 +67,12 @@ for r in B.to_dict('records'):
     elif eu_aw >= 2: fam = 'Σ3 σερι ≥3 & 2 Ευρωπη εκτος (Ε✈ Π✈ Ε✈)'
     else: fam = 'Σ3β σερι ≥3, 1 Ευρωπη εκτος'
     scen = ' '.join(f"{s[1]}{'✈' if s[2] else '🏠'}" for s in seq[-3:]) + (' → Π🏠' if r['nhome'] else ' → Π✈')
-    rows.append(dict(r, fam=fam, scen=scen, streak=streak, eu_away14=eu_aw, n14=len(seq), rest=rest, orest=orest,
+    # 25/10 (τεστ 4): ΚΑΤΑΣΤΑΣΗ ΤΟΥ ΑΝΤΙΠΑΛΟΥ — ευρωπαικο ≤6 μερες πριν; εκτος; ποσα χλμ;
+    _oe = [e for e in (CAL.get(oid) or []) if e[4] == 'eu' and e[0] < G[r['mid']]['t'] and (G[r['mid']]['t'] - e[0]).total_seconds() / 86400 <= 6]
+    opp_eu = bool(_oe); opp_eu_away = bool(_oe and _oe[-1][3])
+    opp_trip = km(LOC.get(oid), LOC.get(_oe[-1][2])) if (opp_eu_away and _oe[-1][2]) else 0.0
+    rows.append(dict(r, tid=tid, oid=oid, opp_eu=opp_eu, opp_eu_away=opp_eu_away, opp_trip=opp_trip,
+                     fam=fam, scen=scen, streak=streak, eu_away14=eu_aw, n14=len(seq), rest=rest, orest=orest,
                      rest_diff=rest - orest if np.isfinite(orest) else np.nan, trip_band='≥1.500' if r['trip'] >= 1500 else '<1.500'))
 D = pd.DataFrame(rows)
 AH_SEAS = ['2223', '2324', '2425', '2526']
