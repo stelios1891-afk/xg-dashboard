@@ -132,6 +132,7 @@ def shadow_def(g, pin, ko, now):
         print('σκιωδης κανονας σφαλμα —', e)
 
 M2D_LOG = 'nba_totals_m2d_log.jsonl'  # 21/10/2026 (Στελιος «τρεξτο οκ»): ΣΚΙΩΔΗΣ μηχανη συνολων Μ2δ — ΜΟΝΟ καταγραφη (οχι Telegram/ημερολογιο)
+M2D_ON = False                        # 25/10/2026 (Στελιος «σταματα τη, δεν μου λεει κατι»· t95: Οκτ-Δεκ ~0, συνολο < νεα μηχανη) — η καταγραφη Μ2δ ΣΤΑΜΑΤΗΣΕ· το m2 υπολογιζεται ακομα μονο για τις 2 σκιες πανω της
 def shadow_m2d(g, pin, ko, now):
     """Μ2δ (nba_tests/t36-t39, nba_totals_m2d.json): δικαιο συνολο Pinnacle + 0.30·(μοντελο − αγορα) − 0.32·LO + 0.68·LD + αμφιβολοι + περιοδος (Οκτ-Δεκ/Μαρ-Απρ/Απρ)
     + γραμμη + αγων ≤10. Pick αν edge ≥6% (σ 18). Γραφεται η ΠΡΩΤΗ φορα ανα ματς/πλευρα (+ ολα τα πεδια για αξιολογηση)."""
@@ -155,7 +156,7 @@ def shadow_m2d(g, pin, ko, now):
                 except Exception: pass
         for nm, p_, od in (('Over', po2, oo), ('Under', pu2, ou)):
             e = p_ * od + pq - 1
-            if e < float(J.get('thr', 0.06)) or f"{g['code']}|{nm}" in done: continue
+            if not M2D_ON or e < float(J.get('thr', 0.06)) or f"{g['code']}|{nm}" in done: continue
             rec = dict(seen=now.isoformat(timespec='minutes'), code=g['code'], home=g['home'], away=g['away'], when=ko.strftime('%Y-%m-%dT%H:%M'),
                        side=nm, line=T, odds=od, edge=round(e, 4), m2d=round(m2, 1), fair=round(fair, 1), model_total=round(float(g['total']), 1),
                        hrs=round((ko - now).total_seconds() / 3600, 1), x={k: round(v, 3) for k, v in x.items()}, inj_src=g.get('inj_src'), paper=True)
