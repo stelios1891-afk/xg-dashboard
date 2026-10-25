@@ -172,16 +172,41 @@ OPT_PLAY, OPT_OUT, OPT_ASIS = 'παιζει', 'εκτος', 'οπως το μο�
 
 
 def _state0(r):
-    """24/10: αρχικη επιλογη — σιγουρα εκτος στο μοντελο → εκτος · μερικως (πιθανοτητα επισημης αναφορας) → οπως το μοντελο · αλλιως παιζει."""
+    """25/10 (Στελιος «με μπερδευει»): ΟΛΟΙ ξεκινουν «οπως το μοντελο» (καμια αλλαγη) — το τι μετραει το λεει η στηλη «Μετραει;»."""
+    return OPT_ASIS
+
+
+_MPG = None
+def _mpg_prev(name):
+    global _MPG
+    if _MPG is None:
+        try:
+            import json, os
+            _MPG = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'nba_mpg_prev.json'), encoding='utf-8')).get('mpg', {})
+        except Exception: _MPG = {}
+    return _MPG.get(str(name).lower())
+
+
+def _counts(r):
+    """25/10: σε απλα λογια, αν και ποσο τον αφαιρει ΤΩΡΑ το μοντελο (ιδια λογικη με nba_board / nba_absence)."""
     import nba_board
-    w = nba_board.counted(r)
-    return OPT_OUT if w >= 1 else (OPT_ASIS if w > 0 else OPT_PLAY)
+    w = nba_board.counted(r); how = str(r.get('how') or ''); st_ = str(r.get('status') or '').strip().lower()
+    if w > 0:
+        if how.startswith('αφετηρια'): return f'✅ ναι · στην αφετηρια ομαδας ({r["imp_m"]:.1f} π.)'
+        return f'✅ ναι · {int(round(w * 100))}%'
+    if not st_: return '— διαθεσιμος'
+    if how.startswith('κατω απο 20'):
+        prev = _mpg_prev(r['name'])
+        return f'❌ οχι · {r["min"]:.0f}′ φετος (<20′)' + (f' · περσι {prev:.0f}′' if prev else '')
+    if how.startswith('αφετηρια'): return f'⚪ μονο στην αφετηρια ({r["imp_m"]:.1f} π.)'
+    if st_ in ('day-to-day', 'questionable', 'doubtful', 'probable'): return '❌ οχι · αμφιβολος ESPN (μετρα μονο Out)'
+    return '❌ οχι'
 
 
 def _df(rows, with_box):
     import pandas as pd
     ic = lambda r: {'out': '🔴 ', 'doubtful': '🟠 ', 'day-to-day': '🟡 ', 'questionable': '🟡 ', 'probable': '🟢 '}.get(str(r.get('status') or '').strip().lower(), '')
-    d = pd.DataFrame([{'Εκτος': _state0(r), 'Παικτης': ic(r) + r['name'], 'Κατασταση': _status(r),
+    d = pd.DataFrame([{'Εκτος': _state0(r), 'Παικτης': ic(r) + r['name'], 'Μετραει': _counts(r), 'Κατασταση': _status(r),
                        'Χαντικαπ': -r['imp_m'], 'Κοστος': r['imp_m'], 'Συνολο': r['imp_t'],
                        'Πως μετραει': {'απουσια': 'απουσια (φορμουλα)', 'αφετηρια': 'αφετηρια ομαδας', 'κατω απο 20′': 'δεν μετραει (<20′)'}.get(r.get('how'), ''),
                        'Λεπτα': r['min'], 'Πηγη λεπτων': 'φετος' if r['msrc'] == 'φετος' else ('περσι' if r['msrc'] == 'περσι' else '—'),
@@ -193,8 +218,9 @@ def _df(rows, with_box):
 
 def _colcfg(mx):
     cc = st.column_config
-    return {'Εκτος': cc.SelectboxColumn('Παιζει;', options=[OPT_PLAY, OPT_OUT, OPT_ASIS], required=True, width='small',
-                                        help='παιζει / εκτος = σιγουρα · οπως το μοντελο = με την πιθανοτητα της επισημης αναφορας (π.χ. Questionable 42%)'),
+    return {'Εκτος': cc.SelectboxColumn('Σεναριο', options=[OPT_ASIS, OPT_PLAY, OPT_OUT], required=True, width='small',
+                                        help='οπως το μοντελο = καμια αλλαγη (δες «Μετραει;») · παιζει / εκτος = σιγουρο σεναριο για να δεις πως αλλαζουν οι τιμες'),
+            'Μετραει': cc.TextColumn('Μετραει;', width='large', help='Αν και ποσο τον αφαιρει ΤΩΡΑ το μοντελο: ✅ ναι (100% ή πιθανοτητα επισημης αναφορας) · ❌ οχι (κατω απο 20′ φετος, ή αμφιβολος μονο στο ESPN) · ⚪ μονο στην αφετηρια (δεν εχει παιξει φετος)'),
             'Παικτης': cc.TextColumn('Παικτης', width='medium'),
             'Κατασταση': cc.TextColumn('Κατασταση', width='medium', help='επισημη αναφορα NBA → RotoWire (ομαδες που δεν εχουν δηλωσει) → ESPN'),
             'Χαντικαπ': cc.NumberColumn('Χαντ. αν λειψει', format='%+.1f', help='Ποσους ποντους χανει η ομαδα στο χαντικαπ αν δεν παιξει'),
@@ -215,8 +241,7 @@ def _team_head(name, crest, sub):
 
 LEGEND = ('**Χρωματα (επισημη αναφορα → RotoWire → ESPN):** 🔴 **Εκτος** (Out) — δεν παιζει · 🟠 **Μαλλον εκτος** (Doubtful) · '
           '🟡 **Αμφιβολος** (Questionable / Day-To-Day) — αποφαση την ημερα του αγωνα · 🟢 **Πιθανον παιζει** (Probable) · χωρις σημα = δεν ειναι στη λιστα. '
-          '«στο μοντελο» = Εκτος που η προβλεψη ΗΔΗ αφαιρει (παικτης ρολου ≥20′ που επαιξε φετος, ή εκτος απο την αρχη της σεζον). '
-          'Ολοι οι υπολοιποι (και οι 🟠/🟡) ΔΕΝ μετρανε μεχρι να τους βαλεις «εκτος» — εκτος αν ειναι στην επισημη αναφορα NBA: τοτε μετρανε με την πιθανοτητα τους («οπως το μοντελο»). '
+          'Το χρωμα ειναι η ΚΑΤΑΣΤΑΣΗ του παικτη — το αν τον αφαιρει το μοντελο το λεει η στηλη **Μετραει;** (π.χ. 🔴 Out αλλα κατω απο 20′ φετος → ❌ δεν μετραει). '
           '**Ποσο μετραει (οπως ακριβως το μοντελο):** οποιος **επαιξε φετος** (≥20′) → **απουσια** 0.75·(αξια+2)·λεπτα/48 σε καθε ματς που λειπει · '
           'οποιος **δεν εχει παιξει φετος** → μετρα μονο στην **αφετηρια** της ομαδας (η θεση του συγκρινεται με τον μεσο συμπαικτη, οχι με αδυναμο αντικαταστατη), '
           'γι αυτο βγαινει μικροτερο, και σβηνει οσο η ομαδα παιζει (≈ 8/(8+ματς)) · στα συνολα η αφετηρια δεν μετρα. Παικτες <20′ που επαιξαν φετος: δεν μετρανε.')
@@ -249,17 +274,16 @@ def render(league=None):
                               format_func=lambda i: f"{_gr_time(up[i]['utc'])}   ·   {up[i]['home']}  –  {up[i]['away']}")
             g = up[gi]; pin = (odds.get(str(g['code'])) or {}).get('pin') or {}
             slot = st.container()
-            st.caption('Στη στηλη **Παιζει;** διαλεξε «εκτος» σε οποιον δεν παιζει — η καρτα πανω ενημερωνεται αμεσως. Οσοι λενε «στο μοντελο» ειναι ηδη μεσα στην προβλεψη '
-                       '(βαλε «παιζει» αν επιστρεφουν). Αμφιβολοι του ESPN (DTD) ΔΕΝ μετρανε μεχρι να τους βαλεις «εκτος». '
-                       'Αμφιβολοι της επισημης αναφορας ξεκινουν «οπως το μοντελο» (μετρανε με την πιθανοτητα τους) — βαλε «παιζει» ή «εκτος» για σιγουρο σεναριο.')
+            st.caption('Η στηλη **Μετραει;** λεει τι αφαιρει ΤΩΡΑ το μοντελο για καθε παικτη (✅ ναι / ❌ οχι / ⚪ μονο στην αφετηρια). '
+                       'Η στηλη **Σεναριο** ξεκιναει «οπως το μοντελο» (καμια αλλαγη) — βαλε «εκτος» ή «παιζει» για να δεις πως αλλαζουν οι τιμες πανω.')
             c1, c2 = st.columns(2, gap='medium')
             off, asis, sel = {}, {}, {}
             for col, code, nm, k, sub in ((c1, g['hcode'], g['home'], 'h', 'ΓΗΠΕΔΟΥΧΟΣ'), (c2, g['acode'], g['away'], 'a', 'ΦΙΛΟΞΕΝΟΥΜΕΝΟΣ')):
                 rows = P.get(code, [])
                 with col:
                     _team_head(nm, g.get('hcrest' if k == 'h' else 'acrest'), sub)
-                    ed = st.data_editor(_df(rows, True)[['Εκτος', 'Παικτης', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Πως μετραει', 'Λεπτα', 'Κατασταση']] if rows else _df(rows, True),
-                                        column_config=_colcfg(mx), disabled=['Παικτης', 'Κατασταση', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα'],
+                    ed = st.data_editor(_df(rows, True)[['Εκτος', 'Παικτης', 'Μετραει', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα', 'Κατασταση']] if rows else _df(rows, True),
+                                        column_config=_colcfg(mx), disabled=['Παικτης', 'Μετραει', 'Κατασταση', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Λεπτα'],
                                         hide_index=True, use_container_width=True, key=f"nbp_ed_{k}_{g['code']}", height=min(36 * len(rows) + 40, 560))
                     nm_ = lambda n: n.split(' ', 1)[1] if n[:1] in '🔴🟠🟡🟢' else n
                     off[k] = {nm_(n) for n in ed.loc[ed['Εκτος'] == OPT_OUT, 'Παικτης']} if len(ed) else set()
@@ -288,7 +312,7 @@ def render(league=None):
         rows = P.get(tc, [])
         nout = sum(1 for r in rows if r['status'])
         _team_head(names.get(tc, tc), crest.get(tc), f"{len(rows)} ΠΑΙΚΤΕΣ · {nout} ΣΤΗ ΛΙΣΤΑ ESPN")
-        st.dataframe(_df(rows, False)[['Παικτης', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Πως μετραει', 'Λεπτα', 'Πηγη λεπτων', 'Αξια', 'Κατασταση']] if rows else _df(rows, False), column_config=_colcfg(mx), hide_index=True, use_container_width=True, height=min(36 * len(rows) + 40, 760))
+        st.dataframe(_df(rows, False)[['Παικτης', 'Μετραει', 'Χαντικαπ', 'Κοστος', 'Συνολο', 'Πως μετραει', 'Λεπτα', 'Πηγη λεπτων', 'Αξια', 'Κατασταση']] if rows else _df(rows, False), column_config=_colcfg(mx), hide_index=True, use_container_width=True, height=min(36 * len(rows) + 40, 760))
         st.markdown(f'<div style="font-size:12px;color:#8fa3c8;line-height:1.6;margin-top:4px">{_md(LEGEND)}</div>', unsafe_allow_html=True)
         st.caption('Χαντ. αν λειψει = αυτο που αφαιρει το μοντελο: «απουσια» 0.75 × (αξια + 2) × λεπτα / 48 (επαιξε φετος) ή «αφετηρια» (δεν εχει παιξει φετος) · '
                    'Συνολο (μονο «απουσια»): χαμενη επιθεση −0.5, χαμενη αμυνα +1.0 · Λεπτα = μεσος στα ≤10 τελευταια φετινα ματς, αλλιως περσινα.')
