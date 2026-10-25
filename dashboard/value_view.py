@@ -143,7 +143,7 @@ def pick_card(p):
             else:
                 tags += f'<span class="tag eu" title="{_h.escape(p["abs_note"])}">🩹 απουσιες {p.get("abs_adj") or 0:+.1f}</span>'
         if p.get('travel'):                  # 1/10: ταξιδι 2ου ματς διαβολοβδομαδας (διορθωση μοντελου υπερ γηπεδουχου)
-            tags += f'<span class="tag eu" title="{_h.escape(p["travel"].get("note", ""))}">🧳 ταξιδι +{p["travel"].get("adj", 0):g}</span>'
+            tags += f'<span class="tag eu" title="{_h.escape(p["travel"].get("note", ""))}">🧳 ταξιδι {_h.escape(str(p.get("away") or ""))} {p["travel"].get("km", "")} χλμ → +{p["travel"].get("adj", 0):g} γηπ.</span>'
         if p.get('old_agree') is not None:   # 1/10: συνολα αγων 1-10 — συμφωνει και το μοντελο χωρις προετοιμασια; (μονο ενδειξη)
             tags += (f'<span class="tag eu" title="Συνολο χωρις την ταση ποντων των φιλικων: {p.get("total_base")}">'
                      + ('ℹ ✓ και το παλιο' if p['old_agree'] else 'ℹ μονο με φιλικα (σημειωση)') + '</span>')

@@ -23,7 +23,8 @@ CITY = {  # γηπεδο -> (lat, lon)
  'ARENA MYTISHCHI': (55.91, 37.73), 'MOVISTAR ARENA': (40.42, -3.67), 'WIZINK CENTER': (40.42, -3.67), 'MARTIN CARPENA': (36.70, -4.46),
  'ETIHAD ARENA': (24.47, 54.60), 'SALLE GASTON MEDECIN': (43.73, 7.42), 'ALLIANZ CLOUD': (45.47, 9.15), 'FORUM': (45.40, 9.15),
  'MEDIOLANUM FORUM': (45.40, 9.15), 'UNIPOL FORUM': (45.40, 9.15), 'PALABANCODESIO': (45.62, 9.21), 'AUDI DOME': (48.13, 11.52),
- 'BMW PARK': (48.13, 11.52), 'SAP GARDEN': (48.18, 11.55), 'HERAKLION ARENA': (35.34, 25.13), 'PEACE AND FRIENDSHIP STADIUM': (37.94, 23.66), 'SUNEL ARENA': (37.94, 23.66),
+ 'BMW PARK': (48.13, 11.52), 'SAP GARDEN': (48.18, 11.55), 'HERAKLION ARENA': (35.34, 25.13), 'PEACE AND FRIENDSHIP STADIUM': (37.94, 23.66), 'SUNEL ARENA': (38.08, 23.70),  # SUNEL = γηπεδο ΑΕΚ (Ανω Λιοσια)· ο Ολυμπιακος εκει Οκτ-Δεκ 2026 (εργα στο ΣΕΦ)
+
  'TELEKOM CENTER ATHENS': (38.04, 23.79), 'OAKA': (38.04, 23.79), 'OAKA ALTION': (38.04, 23.79), 'OLYMPIC SPORTS CENTER ATHENS': (38.04, 23.79),
  'LA FONTETA': (39.45, -0.36), 'PABELLON FUENTE DE SAN LUIS': (39.45, -0.36), 'ROIG ARENA': (39.46, -0.36), 'ACCOR ARENA': (48.84, 2.38),
  'ADIDAS ARENA': (48.89, 2.36), 'KALNAPILIO ARENA': (55.73, 24.36), 'ULKER SPORTS AND EVENT HALL': (40.98, 29.06),
@@ -53,7 +54,7 @@ def adjustments(sched, neutral=lambda x: False):
                 if d is not None and d >= KM_MIN:
                     fh = pa['hcode'] == a
                     out[x['code']] = dict(adj=ADJ_FROM_HOME if fh else ADJ_FROM_AWAY, km=round(d), frm='εντος' if fh else 'εκτος',
-                                          note=f"🧳 ταξιδι: {x.get('away')} {round(d)} χλμ σε ≤3.5 μερες απο {'το σπιτι της' if fh else 'αλλο εκτος'}, "
-                                               f"{x.get('home')} εμεινε σπιτι → +{ADJ_FROM_HOME if fh else ADJ_FROM_AWAY} π. στον γηπεδουχο")
+                                          note=f"🧳 ταξιδι (2ο ματς διαβολοβδομαδας): η {x.get('away')} ερχεται {round(d)} χλμ σε {ra:.0f} μερες απο {'ματς στην εδρα της' if fh else 'αλλο εκτος ματς'}, "
+                                               f"η {x.get('home')} παιζει και το προηγουμενο στην εδρα της → +{ADJ_FROM_HOME if fh else ADJ_FROM_AWAY} π. στον γηπεδουχο")
         prev[h] = x; prev[a] = x
     return out, sorted(m for m in missing if m)
