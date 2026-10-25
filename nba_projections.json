@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-25T03:17+00:00",
+ "generated": "2026-10-25T03:29+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 8, 60, 0.5, 5.0, 0.0, 0.0, 0.0) + Φ3",
@@ -2026,6 +2026,67 @@
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/min.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/tor.png"
+  },
+  {
+   "code": "pin1639222430",
+   "round": 1,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-10-25T23:40:00Z",
+   "home": "Philadelphia 76ers",
+   "away": "Detroit Pistons",
+   "hcode": "PHI",
+   "acode": "DET",
+   "margin": -4.95,
+   "total": 228.8,
+   "total_src": "μοντελο",
+   "pts_h": 111.9,
+   "pts_a": 116.9,
+   "p_home": 0.357,
+   "played": false,
+   "version": "nba1",
+   "venue": "",
+   "b2b_h": 1,
+   "b2b_a": 0,
+   "tz_h": 0.0,
+   "tz_a": 0.0,
+   "gno": 2,
+   "gp_h": 2,
+   "gp_a": 2,
+   "margin_base": -3.78,
+   "total_base": 228.5,
+   "abs_dm": -1.17,
+   "abs_dt": 0.29,
+   "abs_shadow": 0.77,
+   "abs_h": [
+    [
+     "LeBron James",
+     33.5,
+     0,
+     "Out",
+     1.0
+    ]
+   ],
+   "abs_a": [
+    [
+     "Thompson,Ausar",
+     26.0,
+     1,
+     "Questionable",
+     0.46
+    ]
+   ],
+   "inj_src": "espn",
+   "abs_lo": 1.373,
+   "abs_ld": 0.384,
+   "abs_lop": 1.386,
+   "abs_ldp": 0.982,
+   "trade_dm": 0.0,
+   "trades": [],
+   "roster_dm": 0.0,
+   "roster_now": [],
+   "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/phi.png",
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/det.png"
   },
   {
    "code": "pin1639222195",
