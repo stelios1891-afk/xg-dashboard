@@ -165,8 +165,52 @@ def nbc_hist():
             if p % 100 == 0: print(f'NBC παλιες σελιδα {p} · {oldest} · {n} νεες', flush=True)
             if oldest and oldest < H_START: print('NBC παλιες: εφτασε πριν το 2021-22 · ΤΕΛΟΣ', p, n, flush=True); break
             p += 1; time.sleep(SLEEP)
+# ---------------- RotoWire παλιες σεζον (25/10/2026, Στελιος «κατεβασε και το rotowire για ολες τις σεζον») ----------------
+# Ιδια μεθοδος με rw() αλλα 2021-22 … 2024-25, ΜΟΝΟ κανονικη περιοδος + πλει οφ (25/9 → 20/4)· στο καλοκαιρι πηδαει στο 20/4 της
+# προηγουμενης σεζον. Δικο του αρχειο κατασταστασης (state_rw_hist.json) · εξοδος nba_news/rw_hist.jsonl.
+RW_SEASONS = [(dt.datetime(y, 9, 25, tzinfo=dt.timezone.utc), dt.datetime(y + 1, 4, 20, tzinfo=dt.timezone.utc)) for y in (2024, 2023, 2022, 2021)]
+RHSTF = os.path.join(OUT, 'state_rw_hist.json')
+def rw_hist(k=0, K=1):
+    RHSTF = os.path.join(OUT, f'state_rw_hist_{k}.json') if K > 1 else globals()['RHSTF']
+    try: S = json.load(open(RHSTF, encoding='utf-8'))
+    except Exception: S = {}
+    codes = st_load().get('rw_code', {}); fn = os.path.join(OUT, f'rw_hist_{k}.jsonl' if K > 1 else 'rw_hist.jsonl'); done = set(S.get('done', []))
+    fmt = lambda t: t.astimezone(PT).strftime('%Y-%m-%d %H:%M:%S.000')
+    with open(fn, 'a', encoding='utf-8') as fh:
+        for team in RW_TEAMS[k::K]:
+            code = codes.get(team, team)
+            for si, (s0, s1) in enumerate(RW_SEASONS):
+                key = f'{team}|{s0.year}'
+                if key in done: continue
+                last = S.get('last', {}).get(key, fmt(s1)); n = 0; same = 0; prev_t = None
+                d = rw_call(code, last)
+                while d and d.get('updatesHTML'):
+                    t_pt = d.get('newLastUpdateTime'); q = d['updatesHTML']
+                    try: ts = dt.datetime.strptime(t_pt, '%Y-%m-%d %H:%M:%S.%f').replace(tzinfo=PT)
+                    except Exception: ts = None
+                    if ts and ts < s0: break
+                    same = same + 1 if t_pt == prev_t else 0
+                    nw = re.search(r'news-update__news">(.*?)</div>', q, re.S); news = nw.group(1) if nw else ''
+                    rec = dict(src='rw', team=team, ts=ts.astimezone(dt.timezone.utc).isoformat(timespec='milliseconds') if ts else None, ts_pt=t_pt,
+                               player=clean((re.search(r'player-link"[^>]*>([^<]+)', q) or [None, ''])[1]),
+                               headline=clean((re.search(r'news-update__headline">([^<]+)', q) or [None, ''])[1]),
+                               news=clean(news)[:600], date_txt=clean((re.search(r'timestamp">([^<]+)', q) or [None, ''])[1]),
+                               inj=clean((re.search(r'news-update__inj">([^<]+)', q) or [None, ''])[1]),
+                               links=re.findall(r'href="([^"]+)"', news)[:6], tweets=tweets(news))
+                    if same == 0: fh.write(json.dumps(rec, ensure_ascii=False) + '\n'); n += 1
+                    prev_t = t_pt
+                    try: last = (dt.datetime.strptime(t_pt, '%Y-%m-%d %H:%M:%S.%f') - dt.timedelta(milliseconds=1)).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+                    except Exception: break
+                    S.setdefault('last', {})[key] = last
+                    if n % 100 == 0 and same == 0:
+                        fh.flush(); json.dump(S, open(RHSTF, 'w', encoding='utf-8')); print(f'RotoWire παλιες {key}: {n} · {t_pt}', flush=True)
+                    if same > 5: print('RotoWire', key, 'κολλημα — επομενη', flush=True); break
+                    time.sleep(SLEEP); d = rw_call(code, last)
+                fh.flush(); done.add(key); S['done'] = sorted(done); json.dump(S, open(RHSTF, 'w', encoding='utf-8'))
+                print(f'RotoWire παλιες {key} ΤΕΛΟΣ · {n} ειδησεις', flush=True)
 if __name__ == '__main__':
     m = sys.argv[1] if len(sys.argv) > 1 else 'all'
     if m == 'nbc_hist': nbc_hist(); sys.exit()
+    if m == 'rw_hist': rw_hist(*(int(x) for x in sys.argv[2:4])) if len(sys.argv) > 3 else rw_hist(); sys.exit()   # πχ rw_hist 0 3 = εργατης 0 απο 3
     if m in ('nbc', 'all') and not st_load().get('nbc_done'): nbc()
     if m in ('rw', 'all'): rw()
