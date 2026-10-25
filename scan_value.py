@@ -229,8 +229,8 @@ def scan(notify_tg=True):
     # (Pinnacle −12.5%, χειροτερα απο τα τυφλα) γινονται καταγραφη: γραφονται κανονικα (picks/ledger/σκια), χωρις ειδοποιηση.
     def _tg_ok(p):
         md = p.get('md')
-        if p.get('rule') == 'fav714':
-            return p.get('side') == 1
+        if p.get('rule') == 'fav714':      # 25/10/2026 (Στελιος «βρες τα κοντα φαβορι ... αφαιρεσε τα απο παντου»): κανενα Telegram
+            return False
         return md is None or md >= 15
     tg_new = [p for p in new_alerts if _tg_ok(p)]
     tg_changed = [(p, o) for p, o in changed_alerts if _tg_ok(p)]

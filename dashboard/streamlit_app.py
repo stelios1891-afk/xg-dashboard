@@ -520,7 +520,7 @@ def render_value(league):
     def _upcoming(p):
         w = str(p.get('when') or '')[:16]
         return (not w) or (w > _now)   # UTC ISO συγκριση ως string
-    picks = [p for p in picks if _upcoming(p)]
+    picks = [p for p in picks if _upcoming(p) and p.get('rule') != 'fav714']   # 25/10: κοντα φαβορι 7-14 αφαιρεθηκαν (Στελιος)
     try:
         import calc_data                                        # 28/9: κομπιουτερακι στα εγχωρια
         for p in picks:

@@ -254,7 +254,7 @@ def compute_picks_toa(leagues, ratings_season, current_season=None):
                     fav714.append(dict(lg=lg, home=hfot, away=afot, hid=H, aid=A, ko=f['startTime'], md=md, side=_s, hcap=_ud,
                                        odds=round(_o, 3), edge=round(_e, 4), q=bool(engine.OMIN <= _o <= engine.OMAX and _e >= 0),
                                        mxh=round(xr_h, 3), mxa=round(xr_a, 3), pin=list(f['pin']) if f.get('pin') else None))
-                    if fav714[-1]['q']:     # 9/10 (Στελιος «βαλτα να ερχονται κανονικα»): και ως ΚΑΝΟΝΙΚΟ pick (Telegram/ledger, paper οπως ολα τα 7-14)
+                    if False and fav714[-1]['q']:     # 25/10/2026 (Στελιος «βρες τα κοντα φαβορι ... αφαιρεσε τα απο παντου»): ΟΧΙ πια κανονικο pick — μονο η σκια (dom_fav714_shadow) συνεχιζει. 9/10 (Στελιος «βαλτα να ερχονται κανονικα»): και ως ΚΑΝΟΝΙΚΟ pick (Telegram/ledger, paper οπως ολα τα 7-14)
                         _pw, _pp = engine.p_cover_q(engine.gd_dist_dom(max(xr_h, .05), max(xr_a, .05)), _s, _ud)
                         all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A, when=f['startTime'], md=md,
                                               role='fav', rule='fav714', **({'coach_notes': _cn} if _cn else {}),

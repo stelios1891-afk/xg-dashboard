@@ -52,7 +52,7 @@ def core7_gone(active):
     act = {(p['lg'], p['home'], p['away'], p['side']) for p in active}
     first = {}
     for b in _jsonl('clv_bets.jsonl'):
-        if b.get('paper'):
+        if b.get('paper') or b.get('rule') == 'fav714':   # 25/10: κοντα φαβορι 7-14 αφαιρεθηκαν
             continue
         try: ko = _ko(b['ko'])
         except Exception: continue
