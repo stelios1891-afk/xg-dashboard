@@ -1,14 +1,37 @@
 {
- "scanned_at": "2026-10-25T19:06",
+ "scanned_at": "2026-10-25T19:12",
  "ratings_season": "2526",
- "gross": 0.3303526271703656,
- "scale": 0.6054136808691348,
+ "gross": 0.3309035235338541,
+ "scale": 0.6044057732118359,
  "cap": 0.2,
  "credits_remaining": null,
  "credits_cost": 0,
  "n_new": 0,
  "n_changed": 0,
  "picks": [
+  {
+   "lg": "EPL",
+   "home": "Tottenham Hotspur",
+   "away": "Crystal Palace",
+   "home_id": 8586,
+   "away_id": 9826,
+   "when": "2026-10-31T17:30",
+   "md": 8,
+   "role": "dog",
+   "mxh": 1.57,
+   "mxa": 1.122,
+   "side": -1,
+   "hcap": 1.0,
+   "odds": 2.06,
+   "pw": 0.5266375589312581,
+   "pp": 0.2283767563545935,
+   "edge": 0.2965030533789712,
+   "proj_odds": 1.465188402459017,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.03496498270978434,
+   "stake_final": 0.021133037410045675
+  },
   {
    "lg": "EPL",
    "home": "Chelsea",
@@ -30,7 +53,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.018068237172382894,
-   "stake_final": 0.010938757973348857
+   "stake_final": 0.010920546858748917
   },
   {
    "lg": "EPL",
@@ -53,76 +76,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01652739158611289,
-   "stake_final": 0.010005908975314172
-  },
-  {
-   "lg": "EPL",
-   "home": "Tottenham Hotspur",
-   "away": "Crystal Palace",
-   "home_id": 8586,
-   "away_id": 9826,
-   "when": "2026-10-31T17:30",
-   "md": 8,
-   "role": "dog",
-   "mxh": 1.57,
-   "mxa": 1.122,
-   "side": -1,
-   "hcap": 1.0,
-   "odds": 2.06,
-   "pw": 0.5266375589312581,
-   "pp": 0.2283767563545935,
-   "edge": 0.2965030533789712,
-   "proj_odds": 1.465188402459017,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.03496498270978434,
-   "stake_final": 0.021168278883856195
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Racing Santander",
-   "away": "Real Madrid",
-   "home_id": 8696,
-   "away_id": 8633,
-   "when": "2026-11-01T15:15",
-   "md": 10,
-   "role": "dog",
-   "mxh": 1.129,
-   "mxa": 2.365,
-   "side": 1,
-   "hcap": 1.75,
-   "odds": 2.06,
-   "pw": 0.5731408282443498,
-   "pp": 0.0,
-   "edge": 0.1624442278451902,
-   "proj_odds": 1.744771879300955,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.019156158944008277,
-   "stake_final": 0.01159740069760625
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Real Betis",
-   "away": "Málaga",
-   "home_id": 8603,
-   "away_id": 9864,
-   "when": "2026-10-31T17:30",
-   "md": 10,
-   "role": "dog",
-   "mxh": 2.145,
-   "mxa": 0.851,
-   "side": -1,
-   "hcap": 1.25,
-   "odds": 2.01,
-   "pw": 0.5690788347555531,
-   "pp": 0.0,
-   "edge": 0.1266053691655683,
-   "proj_odds": 1.7572257812567365,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.01566898133237232,
-   "stake_final": 0.009486215663901286
+   "stake_final": 0.009989250890779351
   },
   {
    "lg": "LaLiga",
@@ -145,7 +99,53 @@
    "hnote": "",
    "anote": "",
    "stake": 0.022648757080695078,
-   "stake_final": 0.013711867391334488
+   "stake_final": 0.013689039535644551
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Racing Santander",
+   "away": "Real Madrid",
+   "home_id": 8696,
+   "away_id": 8633,
+   "when": "2026-11-01T15:15",
+   "md": 10,
+   "role": "dog",
+   "mxh": 1.129,
+   "mxa": 2.365,
+   "side": 1,
+   "hcap": 1.75,
+   "odds": 2.06,
+   "pw": 0.5731408282443498,
+   "pp": 0.0,
+   "edge": 0.1624442278451902,
+   "proj_odds": 1.744771879300955,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.019156158944008277,
+   "stake_final": 0.011578093058322149
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Real Betis",
+   "away": "Málaga",
+   "home_id": 8603,
+   "away_id": 9864,
+   "when": "2026-10-31T17:30",
+   "md": 10,
+   "role": "dog",
+   "mxh": 2.145,
+   "mxa": 0.851,
+   "side": -1,
+   "hcap": 1.25,
+   "odds": 2.01,
+   "pw": 0.5690788347555531,
+   "pp": 0.0,
+   "edge": 0.1266053691655683,
+   "proj_odds": 1.7572257812567365,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.01566898133237232,
+   "stake_final": 0.009470422777634314
   },
   {
    "lg": "SerieA",
@@ -171,7 +171,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.025775920895089562,
-   "stake_final": 0.015605095146887817
+   "stake_final": 0.015579115398843723
   },
   {
    "lg": "Bundesliga",
@@ -194,7 +194,7 @@
    "hnote": "low-confidence",
    "anote": "",
    "stake": 0.024874240164331193,
-   "stake_final": 0.01505920529671062
+   "stake_final": 0.015034134359579497
   },
   {
    "lg": "Ligue1",
@@ -217,7 +217,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.053530468403463524,
-   "stake_final": 0.03240807791478977
+   "stake_final": 0.03235412414578712
   },
   {
    "lg": "Ligue1",
@@ -240,7 +240,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.021486862157039512,
-   "stake_final": 0.01300844030882101
+   "stake_final": 0.012986783535921602
   },
   {
    "lg": "PrimeiraLiga",
@@ -263,7 +263,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.05833569567864036,
-   "stake_final": 0.035317228246867345
+   "stake_final": 0.03525843125249898
   },
   {
    "lg": "Eredivisie",
@@ -278,15 +278,15 @@
    "mxa": 0.824,
    "side": -1,
    "hcap": 2.25,
-   "odds": 1.952,
+   "odds": 1.962,
    "pw": 0.5963807110436147,
    "pp": 0.0,
-   "edge": 0.14710251484973014,
+   "edge": 0.15288740774685328,
    "proj_odds": 1.6767812598266072,
    "hnote": "",
    "anote": "",
-   "stake": 0.01931493104644566,
-   "stake_final": 0.011693523500562197
+   "stake": 0.01986582740993416,
+   "stake_final": 0.012007020776194137
   }
  ]
 }
