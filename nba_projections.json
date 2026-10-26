@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-26T00:02+00:00",
+ "generated": "2026-10-26T00:15+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -2111,12 +2111,12 @@
    "away": "Memphis Grizzlies",
    "hcode": "SAC",
    "acode": "MEM",
-   "margin": -5.57,
-   "total": 235.8,
+   "margin": -5.88,
+   "total": 235.9,
    "total_src": "μοντελο",
-   "pts_h": 115.1,
-   "pts_a": 120.7,
-   "p_home": 0.34,
+   "pts_h": 115.0,
+   "pts_a": 120.9,
+   "p_home": 0.332,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -2129,8 +2129,8 @@
    "gp_a": 2,
    "margin_base": -5.92,
    "total_base": 235.0,
-   "abs_dm": 0.35,
-   "abs_dt": 0.78,
+   "abs_dm": 0.04,
+   "abs_dt": 0.88,
    "abs_shadow": 1.18,
    "abs_h": [
     [
@@ -2143,13 +2143,6 @@
    ],
    "abs_a": [
     [
-     "Coward,Cedric",
-     28.0,
-     0,
-     "Questionable",
-     0.46
-    ],
-    [
      "Edey,Zach",
      21.5,
      1,
@@ -2160,8 +2153,8 @@
    "inj_src": "official",
    "abs_lo": 0.072,
    "abs_ld": 0.912,
-   "abs_lop": 0.219,
-   "abs_ldp": 0.888,
+   "abs_lop": 0.072,
+   "abs_ldp": 0.912,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
