@@ -1,8 +1,38 @@
 {
- "scanned_at": "2026-10-26T11:47+00:00",
+ "scanned_at": "2026-10-26T11:52+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
- "picks": []
+ "picks": [
+  {
+   "lg": "Euroleague",
+   "home": "FC Bayern Munich",
+   "away": "FC Barcelona",
+   "hcode": "MUN",
+   "acode": "BAR",
+   "code": 74,
+   "round": 8,
+   "coach_notes": null,
+   "when": "2026-10-27T19:00",
+   "el": true,
+   "model": "v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · H",
+   "abs_adj": 0.37,
+   "abs_note": "FC Barcelona: Dario Brizuela 18′ PIR/40 13 ×1 → 0.37 (on/off επιθ -2.3 αμυνα -1.4), Yoan Makoundou: δεν επαιξε φετος · συνολο +0.6 (on/off αμυνα & επιθεση)",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": 1.0,
+   "odds": 1.901,
+   "edge": 0.1559,
+   "travel": null,
+   "proj_odds": 1.64,
+   "model_line": -2.1,
+   "mkt_line": 1.0,
+   "kind1h": "σταδιακη",
+   "hrs_birth": 31.133333333333333,
+   "move_open": null,
+   "drift": 0.0,
+   "mkt_note": null
+  }
+ ]
 }
