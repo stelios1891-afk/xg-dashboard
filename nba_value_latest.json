@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-10-26T18:14+00:00",
+ "scanned_at": "2026-10-26T18:20+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
   {
@@ -108,6 +108,39 @@
   {
    "lg": "NBA",
    "paper": false,
+   "home": "Milwaukee Bucks",
+   "away": "Indiana Pacers",
+   "hcode": "MIL",
+   "acode": "IND",
+   "code": "pin1639261664",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-27T00:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": 4.5,
+   "odds": 1.98,
+   "edge": 0.1389,
+   "proj_odds": 1.74,
+   "model_line": 1.9,
+   "mkt_line": 4.5,
+   "first": {
+    "line": 4.5,
+    "oh": 1.926,
+    "oa": 1.962,
+    "seen": "2026-10-26T06:45+00:00"
+   },
+   "move_note": "ανοιγμα Milwaukee Bucks +4.5 @1.93 → τωρα +4.5 @1.98 · αγορα 0.4 π. ΚΟΝΤΡΑ μας",
+   "move_pts": -0.4,
+   "fat_note": "😴 Bucks: αλλαγη ωρας 1ω −0.7 · Pacers: back-to-back −3 + αλλαγη ωρας 1ω −0.7 · καθαρο 3.0 π. ΥΠΕΡ μας",
+   "fat_pts": 3.0,
+   "hrs_birth": 5.8
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
    "home": "Houston Rockets",
    "away": "Atlanta Hawks",
    "hcode": "HOU",
@@ -131,33 +164,6 @@
    "mkt_line": 229.5,
    "gno": 3,
    "hrs_birth": 31.3
-  },
-  {
-   "lg": "NBA",
-   "paper": false,
-   "home": "Oklahoma City Thunder",
-   "away": "Phoenix Suns",
-   "hcode": "OKC",
-   "acode": "PHO",
-   "code": "pin1638781277",
-   "round": 2,
-   "group": null,
-   "when": "2026-10-27T00:10",
-   "nba": true,
-   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
-   "mkt": "total",
-   "side": 0,
-   "hcap": 221.5,
-   "bet": "Under 221.5",
-   "odds": 1.909,
-   "edge": 0.1511,
-   "proj_odds": 1.66,
-   "model_total": 216.8,
-   "mix_total": 216.8,
-   "mkt_total": 221.1,
-   "mkt_line": 221.5,
-   "gno": 3,
-   "hrs_birth": 17.0
   }
  ]
 }
