@@ -213,6 +213,19 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
         det.append(f'{name} {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + f' ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 else ''))
     return round(cost, 2), det, so, sd_
 
+MANUAL_F = 'el_absence_manual.json'
+def manual_for(g, ko):
+    """27/10/2026 (Στελιος «δεν μπορεις να περασεις χειροκινητα;»): χειροκινητες απουσιες για ΣΥΓΚΕΚΡΙΜΕΝΟ ματς, ΠΑΝΩ απο τη RotoWire (μετρανε ως OUT).
+    el_absence_manual.json: {"<code ματς>": {"<κωδικος ομαδας>": ["Ονομα Επωνυμο", ...], "note": "..."}} — ισχυει μονο για εκεινο το ματς.
+    → {'home': [...], 'visit': [...]} (κενο αν τιποτα)."""
+    try: M = json.load(open(F(MANUAL_F), encoding='utf-8'))
+    except Exception: return {}
+    e = M.get(str(g.get('code'))) or {}
+    out = {}
+    for side_, tc in (('home', g.get('hcode')), ('visit', g.get('acode'))):
+        if e.get(tc): out[side_] = [str(x) for x in e[tc]]
+    return out
+
 def adjustments(games, B=None):
     """games: λιστα ματς el_projections (home, away, hcode, acode, utc). → {code: dict(adj, cost_h, cost_a, note)}"""
     B = B if B is not None else json.load(open(F('el_box.json'), encoding='utf-8'))
@@ -232,7 +245,13 @@ def adjustments(games, B=None):
         best = None
         for r in rw:
             if set(_tok(r['home'])) & set(_tok(g['home'])) and set(_tok(r['visit'])) & set(_tok(g['away'])): best = r; break
-        if not best: continue
+        man = manual_for(g, ko)                                    # 27/10: χειροκινητες απουσιες (el_absence_manual.json) ΠΑΝΩ απο τη RotoWire
+        if not best and not man: continue
+        best = dict(home=g['home'], visit=g['away'], inj={'home': list((best or {}).get('inj', {}).get('home', [])), 'visit': list((best or {}).get('inj', {}).get('visit', []))})
+        for side_, names in man.items():
+            for nm_ in names:
+                sur = _tok(nm_)[-1:]
+                best['inj'][side_] = [x for x in best['inj'][side_] if _tok(x[0])[-1:] != sur] + [(nm_, 'OUT')]
         out_h = [n for n, s in best['inj']['home'] if s.upper() == 'OUT']; out_a = [n for n, s in best['inj']['visit'] if s.upper() == 'OUT']
         gtd_h = [n for n, s in best['inj']['home'] if s.upper() != 'OUT']; gtd_a = [n for n, s in best['inj']['visit'] if s.upper() != 'OUT']
         gtd = gtd_h + gtd_a
@@ -247,6 +266,7 @@ def adjustments(games, B=None):
         if dh: parts.append(f"{g['home']}: " + ', '.join(dh))
         if da: parts.append(f"{g['away']}: " + ', '.join(da))
         if gtd: parts.append('αμφιβολοι (GTD): στο χαντικαπ με πιθανοτητα, στα συνολα δεν μετρανε')
+        if man: parts.append('χειροκινητα OUT (Στελιος): ' + ', '.join(n for v in man.values() for n in v))
         res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, note=' · '.join(parts))
         if shh['ok'] and sha['ok']:                                # 23/10 ΣΚΙΑ «δικο box» (el_box_shadow) — μονο καταγραφη στο el_picks
             res[str(g['code'])].update(adj_box=round(sha['box'] - shh['box'], 2), cost_box_h=round(shh['box'], 2), cost_box_a=round(sha['box'], 2))
