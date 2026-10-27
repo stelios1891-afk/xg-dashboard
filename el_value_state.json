@@ -95,8 +95,9 @@
   "kind1h": "ξαφνικη"
  },
  "STATUS|73|hcap|1": {
-  "active": true,
-  "when": "2026-10-27T20:00"
+  "active": false,
+  "when": "2026-10-27T20:00",
+  "at": "2026-10-27T15:03+00:00"
  },
  "EL|71|total|Over": {
   "odds": 1.926,
@@ -165,5 +166,14 @@
  "STATUS|79|total|Over": {
   "active": true,
   "when": "2026-10-28T17:30"
+ },
+ "EL|79|hcap|-1": {
+  "odds": 1.935,
+  "edge": 0.2085,
+  "when": "2026-10-28T17:30",
+  "first_seen": "2026-10-27T15:03+00:00",
+  "hcap": -3.5,
+  "drift": -0.0,
+  "kind1h": "σταδιακη"
  }
 }
