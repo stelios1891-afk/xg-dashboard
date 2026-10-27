@@ -9,6 +9,10 @@ bk_pick_status.py — ΠΑΡΑΚΟΛΟΥΘΗΣΗ ΚΑΤΑΣΤΑΣΗΣ PICKS ΜΠ
 Οχι «πινγκ-πονγκ»: νεο μηνυμα για το ιδιο pick μονο αν περασαν ≥30′ απο το προηγουμενο. Κατασταση στο *_value_state.json (κλειδι STATUS|...).
 """
 import json, datetime as dt
+try:
+    from played import is_played as _played      # 27/10/2026 (Στελιος): «ΞΑΝΑ PICK» οχι για οσα εχει παιξει
+except Exception:
+    _played = lambda *a: False
 
 QUIET_MIN = 30
 
@@ -107,7 +111,8 @@ def track(state, picks, bets_path, games, odds, sig_of, min_edge_of, cover, lg_l
             st.update(active=True, at=now_iso, when=b['when'])
             p = next(p for p in picks if (str(p['code']), p['mkt'], _dir(p['mkt'], p.get('side'), p.get('bet'))) == k)
             lab = p.get('bet') or f"{(p['home'] if p['side'] == 1 else p['away'])} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
-            if not quiet: backs.append(f"🔁 ΞΑΝΑ PICK · {lg_label} · {b['home']} – {b['away']}\n{lab} @{p['odds']:.2f} · edge {p['edge']*100:.0f}%")
+            if not quiet and not _played(b['home'], b['away'], _dir(b['mkt'], b.get('side'), b.get('bet')), b['when']):   # 27/10: οχι για οσα εχει παιξει (✅ στο dashboard)
+                backs.append(f"🔁 ΞΑΝΑ PICK · {lg_label} · {b['home']} – {b['away']}\n{lab} @{p['odds']:.2f} · edge {p['edge']*100:.0f}%")
         state[sk] = st
     return drops, backs
 

@@ -224,7 +224,13 @@ def track_status(rows, dash, now, known_before):
                                        f"{ps.describe(r, st, r['home'], r['away'])}")
         elif not prev and st['active']:
             r['active'] = True; r['back_at'] = stamp; changed = True
-            if not quiet: backs.append(f"🔁 ΞΑΝΑ PICK · {r['comp']} · {r['home']} – {r['away']}\n{ps.describe(r, st, r['home'], r['away'])}"
+            _pl = False
+            try:
+                from played import is_played      # 27/10/2026 (Στελιος): «ΞΑΝΑ PICK» οχι για οσα εχει παιξει (✅ στο dashboard)
+                _pl = is_played(r['home'], r['away'], 'Over' if r.get('mkt') == 'OVER' else (1 if r.get('side') == 1 else -1), str(r['ko']).replace(' ', 'T'))
+            except Exception:
+                pass
+            if not quiet and not _pl: backs.append(f"🔁 ΞΑΝΑ PICK · {r['comp']} · {r['home']} – {r['away']}\n{ps.describe(r, st, r['home'], r['away'])}"
                                        f" · {st.get('models') or ''}\n(αρχικα: {r['label']}, {r['first_seen']} UTC)")
     return changed, drops, backs
 
