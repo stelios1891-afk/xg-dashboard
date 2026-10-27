@@ -1,11 +1,112 @@
 {
- "checked": "2026-10-27T06:20+00:00",
- "upcoming_matches": 0,
- "leagues": {},
+ "checked": "2026-10-27T23:20+00:00",
+ "upcoming_matches": 9,
+ "leagues": {
+  "AustrianBundesliga": {
+   "status": "OK",
+   "finished": 60,
+   "in_file": 60,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 16:00"
+  },
+  "Bundesliga": {
+   "status": "OK",
+   "finished": 63,
+   "in_file": 63,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 16:30"
+  },
+  "EPL": {
+   "status": "OK",
+   "finished": 80,
+   "in_file": 80,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 16:30"
+  },
+  "Eliteserien": {
+   "status": "OK",
+   "finished": 192,
+   "in_file": 192,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 18:15"
+  },
+  "Eredivisie": {
+   "status": "OK",
+   "finished": 90,
+   "in_file": 90,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 19:00"
+  },
+  "LaLiga": {
+   "status": "OK",
+   "finished": 99,
+   "in_file": 99,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "26/10 20:00"
+  },
+  "Ligue1": {
+   "status": "OK",
+   "finished": 72,
+   "in_file": 72,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "26/10 19:30"
+  },
+  "PrimeiraLiga": {
+   "status": "OK",
+   "finished": 81,
+   "in_file": 81,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "26/10 18:45"
+  },
+  "SerieA": {
+   "status": "ΛΕΙΠΟΥΝ",
+   "finished": 83,
+   "in_file": 80,
+   "missing": 3,
+   "missing_euro_teams": [
+    "27/10 Roma-Cagliari"
+   ],
+   "last_finished": "27/10 19:45"
+  },
+  "SlovakiaNikeLiga": {
+   "status": "OK",
+   "finished": 70,
+   "in_file": 70,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 17:00"
+  },
+  "TurkishSuperLig": {
+   "status": "OK",
+   "finished": 81,
+   "in_file": 81,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "26/10 18:30"
+  },
+  "UkrainePremierLeague": {
+   "status": "OK",
+   "finished": 76,
+   "in_file": 76,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 11:00"
+  }
+ },
  "ben_fallback": {
   "mode": "elo",
   "fallback": {}
  },
  "no_elo": [],
- "missing": []
+ "missing": [
+  "SerieA: 27/10 Roma - Cagliari"
+ ]
 }
