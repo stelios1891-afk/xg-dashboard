@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-10-27T02:23+00:00",
+ "scanned_at": "2026-10-27T02:29+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
   {
@@ -88,8 +88,8 @@
    "mkt": "hcap",
    "side": -1,
    "hcap": 3.5,
-   "odds": 1.943,
-   "edge": 0.3746,
+   "odds": 1.952,
+   "edge": 0.3809,
    "proj_odds": 1.41,
    "model_line": 3.9,
    "mkt_line": -3.5,
@@ -99,8 +99,8 @@
     "oa": 1.943,
     "seen": "2026-10-27T02:18+00:00"
    },
-   "move_note": "ανοιγμα Detroit Pistons +3.5 @1.94 → τωρα +3.5 @1.94 · ουσιαστικα ιδια",
-   "move_pts": -0.0,
+   "move_note": "ανοιγμα Detroit Pistons +3.5 @1.94 → τωρα +3.5 @1.95 · ουσιαστικα ιδια",
+   "move_pts": -0.1,
    "hrs_birth": 21.9
   },
   {
@@ -120,15 +120,42 @@
    "side": 0,
    "hcap": 229.0,
    "bet": "Over 229",
-   "odds": 1.901,
-   "edge": 0.131,
+   "odds": 1.877,
+   "edge": 0.117,
    "proj_odds": 1.68,
    "model_total": 233.3,
    "mix_total": 233.3,
-   "mkt_total": 229.4,
+   "mkt_total": 229.7,
    "mkt_line": 229.0,
    "gno": 3,
    "hrs_birth": 21.9
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Boston Celtics",
+   "away": "Brooklyn Nets",
+   "hcode": "BOS",
+   "acode": "BRK",
+   "code": "pin1639313817",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-27T23:40",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "total",
+   "side": 0,
+   "hcap": 221.5,
+   "bet": "Under 221.5",
+   "odds": 1.962,
+   "edge": 0.1151,
+   "proj_odds": 1.76,
+   "model_total": 218.4,
+   "mix_total": 218.4,
+   "mkt_total": 221.8,
+   "mkt_line": 221.5,
+   "gno": 3,
+   "hrs_birth": 21.2
   }
  ]
 }
