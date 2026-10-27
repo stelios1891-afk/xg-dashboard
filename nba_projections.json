@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T00:24+00:00",
+ "generated": "2026-10-27T00:35+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -2598,12 +2598,12 @@
    "away": "Golden State Warriors",
    "hcode": "DEN",
    "acode": "GSW",
-   "margin": 8.56,
-   "total": 232.1,
+   "margin": 8.2,
+   "total": 232.0,
    "total_src": "μοντελο",
-   "pts_h": 120.3,
-   "pts_a": 111.8,
-   "p_home": 0.737,
+   "pts_h": 120.1,
+   "pts_a": 111.9,
+   "p_home": 0.728,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -2616,9 +2616,9 @@
    "gp_a": 3,
    "margin_base": 8.55,
    "total_base": 232.0,
-   "abs_dm": 0.02,
-   "abs_dt": 0.16,
-   "abs_shadow": 0.27,
+   "abs_dm": -0.35,
+   "abs_dt": 0.0,
+   "abs_shadow": 0.0,
    "abs_h": [
     [
      "Diallo,Alpha",
@@ -2628,20 +2628,12 @@
      1.0
     ]
    ],
-   "abs_a": [
-    [
-     "Santos,Gui",
-     22.7,
-     1,
-     "Questionable",
-     0.46
-    ]
-   ],
+   "abs_a": [],
    "inj_src": "official",
    "abs_lo": 0.0,
    "abs_ld": 0.0,
-   "abs_lop": 0.074,
-   "abs_ldp": 0.199,
+   "abs_lop": 0.0,
+   "abs_ldp": 0.0,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
