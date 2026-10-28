@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-10-28T02:45+00:00",
+ "scanned_at": "2026-10-28T02:50+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 2,
  "n_changed": 0,
  "picks": [
   {
@@ -172,6 +172,39 @@
   {
    "lg": "NBA",
    "paper": false,
+   "home": "Utah Jazz",
+   "away": "San Antonio Spurs",
+   "hcode": "UTA",
+   "acode": "SAS",
+   "code": "pin1639304862",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-29T01:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": 12.5,
+   "odds": 1.893,
+   "edge": 0.2042,
+   "proj_odds": 1.57,
+   "model_line": 7.8,
+   "mkt_line": 12.5,
+   "first": {
+    "line": 12.5,
+    "oh": 1.893,
+    "oa": 1.99,
+    "seen": "2026-10-28T02:50+00:00"
+   },
+   "move_note": "ανοιγμα Utah Jazz +12.5 @1.89 → τωρα +12.5 @1.89 · ουσιαστικα ιδια",
+   "move_pts": 0.0,
+   "fat_note": "😴 Spurs: back-to-back −3 + αλλαγη ωρας 1ω −0.7 · καθαρο 3.7 π. ΥΠΕΡ μας",
+   "fat_pts": 3.68,
+   "hrs_birth": 22.3
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
    "home": "Indiana Pacers",
    "away": "Philadelphia 76ers",
    "hcode": "IND",
@@ -222,6 +255,33 @@
    "mkt_line": 222.5,
    "gno": 3,
    "hrs_birth": 21.2
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Dallas Mavericks",
+   "away": "Oklahoma City Thunder",
+   "hcode": "DAL",
+   "acode": "OKC",
+   "code": "pin1638951813",
+   "round": 2,
+   "group": null,
+   "when": "2026-10-29T01:40",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "total",
+   "side": 0,
+   "hcap": 229.5,
+   "bet": "Under 229.5",
+   "odds": 1.952,
+   "edge": 0.1812,
+   "proj_odds": 1.65,
+   "model_total": 224.7,
+   "mix_total": 224.7,
+   "mkt_total": 229.7,
+   "mkt_line": 229.5,
+   "gno": 4,
+   "hrs_birth": 22.8
   }
  ]
 }

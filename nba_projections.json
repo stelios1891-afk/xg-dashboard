@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T02:45+00:00",
+ "generated": "2026-10-28T02:50+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -3279,6 +3279,155 @@
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/no.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/den.png"
+  },
+  {
+   "code": "pin1639304862",
+   "round": 2,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-10-29T01:10:00Z",
+   "home": "Utah Jazz",
+   "away": "San Antonio Spurs",
+   "hcode": "UTA",
+   "acode": "SAS",
+   "margin": -7.8,
+   "total": 233.9,
+   "total_src": "μοντελο",
+   "pts_h": 113.1,
+   "pts_a": 120.9,
+   "p_home": 0.282,
+   "played": false,
+   "version": "nba1",
+   "venue": "",
+   "b2b_h": 0,
+   "b2b_a": 1,
+   "tz_h": 0.0,
+   "tz_a": 1.0,
+   "gno": 4,
+   "gp_h": 4,
+   "gp_a": 3,
+   "margin_base": -5.74,
+   "total_base": 233.2,
+   "abs_dm": -2.06,
+   "abs_dt": 0.75,
+   "abs_shadow": 1.23,
+   "abs_h": [
+    [
+     "Hayes,Jaxson",
+     23.7,
+     0,
+     "Questionable",
+     0.46
+    ],
+    [
+     "JacksonJr.,Jaren",
+     26.0,
+     1,
+     "Out",
+     1.0
+    ],
+    [
+     "Markkanen,Lauri",
+     28.5,
+     1,
+     "Questionable",
+     0.46
+    ]
+   ],
+   "abs_a": [],
+   "inj_src": "official",
+   "abs_lo": 0.098,
+   "abs_ld": 0.768,
+   "abs_lop": 0.694,
+   "abs_ldp": 1.095,
+   "trade_dm": 0.0,
+   "trades": [],
+   "roster_dm": 0.0,
+   "roster_now": [],
+   "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/utah.png",
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/sa.png"
+  },
+  {
+   "code": "pin1638951813",
+   "round": 2,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-10-29T01:40:00Z",
+   "home": "Dallas Mavericks",
+   "away": "Oklahoma City Thunder",
+   "hcode": "DAL",
+   "acode": "OKC",
+   "margin": -5.69,
+   "total": 224.7,
+   "total_src": "μοντελο",
+   "pts_h": 109.5,
+   "pts_a": 115.2,
+   "p_home": 0.337,
+   "played": false,
+   "version": "nba1",
+   "venue": "",
+   "b2b_h": 0,
+   "b2b_a": 0,
+   "tz_h": 1.0,
+   "tz_a": 0.0,
+   "gno": 4,
+   "gp_h": 4,
+   "gp_a": 4,
+   "margin_base": -8.91,
+   "total_base": 224.0,
+   "abs_dm": 3.22,
+   "abs_dt": 0.7,
+   "abs_shadow": 0.43,
+   "abs_h": [
+    [
+     "Irving,Kyrie",
+     27.3,
+     1,
+     "Questionable",
+     0.46
+    ],
+    [
+     "Marshall,Naji",
+     27.7,
+     0,
+     "Questionable",
+     0.46
+    ]
+   ],
+   "abs_a": [
+    [
+     "Holmgren,Chet",
+     30.0,
+     0,
+     "Out",
+     1.0
+    ],
+    [
+     "Mitchell,Ajay",
+     24.8,
+     1,
+     "Questionable",
+     0.46
+    ],
+    [
+     "Williams,Jalen",
+     31.7,
+     0,
+     "Out",
+     1.0
+    ]
+   ],
+   "inj_src": "official",
+   "abs_lo": 1.947,
+   "abs_ld": 2.064,
+   "abs_lop": 2.996,
+   "abs_ldp": 2.199,
+   "trade_dm": 0.0,
+   "trades": [],
+   "roster_dm": 0.0,
+   "roster_now": [],
+   "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/dal.png",
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/okc.png"
   }
  ],
  "ratings": [
