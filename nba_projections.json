@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T14:27+00:00",
+ "generated": "2026-10-28T14:39+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -3097,12 +3097,12 @@
    "away": "Orlando Magic",
    "hcode": "TOR",
    "acode": "ORL",
-   "margin": 6.48,
-   "total": 227.2,
+   "margin": 6.91,
+   "total": 227.4,
    "total_src": "μοντελο",
-   "pts_h": 116.9,
-   "pts_a": 110.4,
-   "p_home": 0.684,
+   "pts_h": 117.2,
+   "pts_a": 110.3,
+   "p_home": 0.696,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -3115,9 +3115,9 @@
    "gp_a": 3,
    "margin_base": 6.1,
    "total_base": 227.5,
-   "abs_dm": 0.38,
-   "abs_dt": -0.26,
-   "abs_shadow": 1.48,
+   "abs_dm": 0.81,
+   "abs_dt": -0.05,
+   "abs_shadow": 1.82,
    "abs_h": [
     [
      "Leonard,Kawhi",
@@ -3136,6 +3136,13 @@
      1.0
     ],
     [
+     "Black,Anthony",
+     26.0,
+     1,
+     "Questionable",
+     0.46
+    ],
+    [
      "Suggs,Jalen",
      33.3,
      1,
@@ -3146,8 +3153,8 @@
    "inj_src": "official",
    "abs_lo": 3.87,
    "abs_ld": 1.678,
-   "abs_lop": 3.87,
-   "abs_ldp": 1.678,
+   "abs_lop": 3.947,
+   "abs_ldp": 1.927,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
