@@ -1,6 +1,6 @@
 {
- "checked": "2026-10-28T06:20+00:00",
- "upcoming_matches": 9,
+ "checked": "2026-10-28T23:20+00:00",
+ "upcoming_matches": 19,
  "leagues": {
   "AustrianBundesliga": {
    "status": "OK",
@@ -10,6 +10,22 @@
    "missing_euro_teams": [],
    "last_finished": "25/10 16:00"
   },
+  "AzerbaijanPremierLeague": {
+   "status": "OK",
+   "finished": 52,
+   "in_file": 52,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 14:00"
+  },
+  "Belgium": {
+   "status": "OK",
+   "finished": 80,
+   "in_file": 80,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 18:15"
+  },
   "Bundesliga": {
    "status": "OK",
    "finished": 63,
@@ -17,6 +33,14 @@
    "missing": 0,
    "missing_euro_teams": [],
    "last_finished": "25/10 16:30"
+  },
+  "CzechFirstLeague": {
+   "status": "OK",
+   "finished": 94,
+   "in_file": 94,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 17:00"
   },
   "EPL": {
    "status": "OK",
@@ -41,6 +65,14 @@
    "missing": 0,
    "missing_euro_teams": [],
    "last_finished": "25/10 19:00"
+  },
+  "GreeceSL": {
+   "status": "OK",
+   "finished": 55,
+   "in_file": 55,
+   "missing": 0,
+   "missing_euro_teams": [],
+   "last_finished": "25/10 18:00"
   },
   "LaLiga": {
    "status": "OK",
@@ -67,20 +99,23 @@
    "last_finished": "26/10 18:45"
   },
   "SerieA": {
-   "status": "OK",
-   "finished": 83,
+   "status": "ΛΕΙΠΟΥΝ",
+   "finished": 88,
    "in_file": 83,
-   "missing": 0,
-   "missing_euro_teams": [],
-   "last_finished": "27/10 19:45"
+   "missing": 5,
+   "missing_euro_teams": [
+    "28/10 Venezia-Inter",
+    "28/10 Monza-Napoli"
+   ],
+   "last_finished": "28/10 19:45"
   },
   "SlovakiaNikeLiga": {
    "status": "OK",
-   "finished": 70,
-   "in_file": 70,
+   "finished": 72,
+   "in_file": 72,
    "missing": 0,
    "missing_euro_teams": [],
-   "last_finished": "25/10 17:00"
+   "last_finished": "28/10 17:00"
   },
   "TurkishSuperLig": {
    "status": "OK",
@@ -104,5 +139,8 @@
   "fallback": {}
  },
  "no_elo": [],
- "missing": []
+ "missing": [
+  "SerieA: 28/10 Venezia - Inter",
+  "SerieA: 28/10 Monza - Napoli"
+ ]
 }
