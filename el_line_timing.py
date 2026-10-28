@@ -28,7 +28,8 @@ HPRED = NSH['PREDS']['καλυτερη ακριβεια']
 TSH = {}
 src = open('el_total_curve_test.py', encoding='utf-8').read().split("VARS = ")[0].replace("sys.stdout.reconfigure(encoding='utf-8')", '')
 exec(src, TSH)
-assert len(TSH['D']) == len(D) and (TSH['D'].t.values == D.t.values).all(), 'διαφορετικο D'
+# 28/10: ματς της τρεχουσας σεζον με ιδια ωρα τζαμπολ μπορει να ερθουν με αλλη σειρα (νεα ματς στο el_box) → ελεγχος μονο στις σεζον του τεστ (SE5)
+assert len(TSH['D']) == len(D) and (TSH['D'].t.values == D.t.values)[np.isin(D.season.values, SE5)].all(), 'διαφορετικο D'
 TPRED = np.full(len(D), np.nan); TPRED[TSH['IDX']] = TSH['C2']
 SM, ST = 11.5, 16.7
 SHIFT = 8 * 3600
