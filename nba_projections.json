@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T21:39+00:00",
+ "generated": "2026-10-28T21:51+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -2865,12 +2865,12 @@
    "away": "Philadelphia 76ers",
    "hcode": "IND",
    "acode": "PHI",
-   "margin": -5.45,
-   "total": 231.7,
+   "margin": -5.18,
+   "total": 231.9,
    "total_src": "μοντελο",
-   "pts_h": 113.1,
-   "pts_a": 118.6,
-   "p_home": 0.343,
+   "pts_h": 113.4,
+   "pts_a": 118.5,
+   "p_home": 0.351,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -2883,9 +2883,9 @@
    "gp_a": 4,
    "margin_base": -3.13,
    "total_base": 232.0,
-   "abs_dm": -2.33,
-   "abs_dt": -0.32,
-   "abs_shadow": 0.27,
+   "abs_dm": -2.05,
+   "abs_dt": -0.15,
+   "abs_shadow": 0.31,
    "abs_h": [
     [
      "Haliburton,Tyrese",
@@ -2895,18 +2895,11 @@
      0.42
     ],
     [
-     "Nembhard,Andrew",
-     32.0,
-     0,
-     "Questionable",
-     0.42
-    ],
-    [
      "Nesmith,Aaron",
      20.0,
      1,
-     "Probable",
-     0.07
+     "Questionable",
+     0.46
     ],
     [
      "Toppin,Obi",
@@ -2927,8 +2920,8 @@
    "inj_src": "official",
    "abs_lo": 0.165,
    "abs_ld": 0.468,
-   "abs_lop": 1.611,
-   "abs_ldp": 0.488,
+   "abs_lop": 1.378,
+   "abs_ldp": 0.542,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
