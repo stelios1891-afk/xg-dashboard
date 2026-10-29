@@ -7,16 +7,17 @@
   → Data.oddsList [{ut: unix, hs, gs, u, g(γραμμη), d, close, t(2=pre-match)}]· Crown ~60 σειρες/≈20h πριν, Bet365 λιγοτερες/≈2 μερες.
   Session init απο τη σελιδα του ματς (oddscompbasket/{ngid}) + Referer.
 Εξοδος: nowgoal_el/sched_{YY-YY}.json (ματς) · nowgoal_el/odds.jsonl (ngid, ot, cid, rows [ut, g, u, d, t, hs, gs]) — resumable."""
-import os, sys, json, gzip, re, time, random
+import os, sys, json, gzip, re, time, random, datetime
 import requests
 sys.stdout.reconfigure(encoding='utf-8')
 OUT = 'nowgoal_el'; os.makedirs(OUT, exist_ok=True)
 S = requests.Session(); S.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36'})
-SEAS = ['20-21', '21-22', '22-23', '23-24', '24-25', '25-26']
+SEAS = [a for a in sys.argv[1:] if not a.startswith('--')] or ['20-21', '21-22', '22-23', '23-24', '24-25', '25-26']
+CUR = '26-27'   # τρεχουσα σεζον: προγραμμα ΠΑΝΤΑ φρεσκο + μονο ματς που εχουν ΤΕΛΕΙΩΣΕΙ (29/10/2026)
 
 def sched(sea):
     fn = f'{OUT}/sched_{sea}.json'
-    if os.path.exists(fn): return json.load(open(fn, encoding='utf-8'))
+    if os.path.exists(fn) and sea != CUR: return json.load(open(fn, encoding='utf-8'))
     r = S.get(f'https://basketball.nowgoal26.com/jsData/matchResult/{sea}/c7.js', headers={'Referer': 'https://basketball.nowgoal26.com/'}, timeout=30)
     t = r.content
     try: t = gzip.decompress(t)
@@ -43,6 +44,7 @@ for sea in SEAS:
     games = sched(sea); print(f'{sea}: {len(games)} ματς', flush=True)
     for g in games:
         if g['hs'] is None: continue
+        if sea == CUR and (time.time() - (datetime.datetime.strptime(g['bj'], '%Y-%m-%d %H:%M') - datetime.datetime(1970, 1, 1)).total_seconds() + 8 * 3600) < 4 * 3600: continue   # ακομα σε εξελιξη
         todo = [(6, t, cid) for t in (21, 23) for cid in (3, 8) if (g['ngid'], 6, t, cid) not in done]
         if not todo: continue
         ref = f"https://live11.nowgoal26.com/oddscompbasket/{g['ngid']}"
