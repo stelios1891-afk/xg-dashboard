@@ -75,16 +75,17 @@
   "when": "2026-10-30T19:15"
  },
  "STATUS|87|hcap|1": {
-  "active": true,
-  "when": "2026-10-30T19:30"
+  "active": false,
+  "when": "2026-10-30T19:30",
+  "at": "2026-10-29T14:58+00:00"
  },
  "STATUS|89|hcap|1": {
   "active": true,
   "when": "2026-10-30T19:30"
  },
  "EL|85|total|Over": {
-  "odds": 1.893,
-  "edge": 0.1268,
+  "odds": 1.952,
+  "edge": 0.1612,
   "when": "2026-10-30T19:00",
   "first_seen": "2026-10-29T14:45+00:00",
   "hcap": 177.0,
@@ -95,5 +96,14 @@
  "STATUS|85|total|Over": {
   "active": true,
   "when": "2026-10-30T19:00"
+ },
+ "EL|84|hcap|1": {
+  "odds": 1.885,
+  "edge": 0.1256,
+  "when": "2026-10-30T16:00",
+  "first_seen": "2026-10-29T14:58+00:00",
+  "hcap": -3.0,
+  "drift": -0.8,
+  "kind1h": "σταδιακη"
  }
 }
