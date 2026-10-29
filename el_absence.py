@@ -101,6 +101,22 @@ def _team_games(B, season, code):
 #   (περσινα+ απο el_player_pir_prev.json + φετινα απο el_box). picks ≥8% +9.4% → +10.5% (+55.5 → +65.8μ, 5/5)· RMSE 3/5 (ενα κριτηριο ✗,
 #   αποφαση Στελιου). Επιστροφες: ΚΑΜΙΑ διορθωση (el_absence_return_test: καμια εκδοχη δεν περασε με λογικη).
 V_B0, V_B1, PIR_MU, PIR_SD, PIR_PRIOR = 0.56, 1.06, 12.1, 5.6, 200.0
+# 29/10/2026 (Στελιος «ναι περνα το»): ΧΑΝΤΙΚΑΠ = «PIR + ΑΜΥΝΑ» (el_pird_tests / el_pird_open_news, E2021-25):
+#   κοστος = (B0 + B1·zPIR + B2·zΑΜΥΝΑ)·λεπτα/40·g(k) · zΑΜΥΝΑ = −D του Σ / sd (el_defense.py, + = καλος αμυνομενος) · B απο el_defense_params.json
+#   (ελαχιστα τετραγωνα τελειας γνωσης E2021-25: 0.26 / 0.88 / 0.81). «Οπως παιζουμε» LOSO +92.0 vs PIR +76.9μ, ειδησεις μεσα στη μερα +21 vs +7·
+#   CLV χαμηλοτερο (η αγορα δεν τιμολογει αμυνα), τυχη p .06 LOSO / .45 WF. Το σκετο PIR (V_B0/V_B1) μενει ΚΑΤΑΓΡΑΦΗ (adj_pir → el_pir_shadow.jsonl).
+#   Κριση: μετα την 20η αγωνιστικη — αν «PIR + αμυνα» πισω απο PIR σε μοναδες → επιστροφη. ENGINE = 'PIR' επαναφερει το παλιο.
+ENGINE = 'PIR+D'
+def _def_params():
+    try:
+        import el_defense; return el_defense.params()
+    except Exception:
+        return None
+def _zd(pid):
+    try:
+        import el_defense; return el_defense.zd(pid)
+    except Exception:
+        return None
 _PIR_PREV = None
 def _pir_prev():
     global _PIR_PREV
@@ -175,9 +191,11 @@ def _box_shadow_cost(pid, before_utc, avg, g):
 
 def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(), shadow=None):
     """→ (κοστος χαντικαπ, [λεπτομερειες], Σ w·onO/sd, Σ w·onD/sd) · gtd_names: μονο στο χαντικαπ, × GTD_P
-    shadow: dict → shadow['box'] += κοστος σκιας «δικο box» (ιδιοι αποντες/βαρη, μονο καταγραφη)"""
+    shadow: dict → shadow['box'] += κοστος σκιας «δικο box» · shadow['pir'] += κοστος με σκετο PIR (29/10: ο παλιος live τυπος, μονο καταγραφη)"""
     tg = [x for x in _team_games(B, season, code) if x[0] < before_utc]
     if not tg: return 0.0, [], 0.0, 0.0
+    DP = _def_params() if ENGINE == 'PIR+D' else None
+    if DP is None and ENGINE == 'PIR+D' and shadow is not None: shadow['def_ok'] = False
     roster = {}
     for _, _, nm in tg: roster.update(nm)
     last10 = tg[-10:]; played = {pid: sum(1 for _, mn, _ in last10 if mn.get(pid, 0) > 0) for pid in roster}
@@ -196,21 +214,26 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
         g = 1.0 if k <= 3 else (G_LONG if k <= 10 else 0.0)
         pv = pir40(B, season, pid, before_utc)
         z = 0.0 if pv is None else (pv - PIR_MU) / PIR_SD
-        c = (V_B0 + V_B1 * z) * avg / 40 * g
+        c_pir = (V_B0 + V_B1 * z) * avg / 40 * g
+        zd = _zd(pid) if DP is not None else None
+        c = (DP['B0'] + DP['B1'] * z + DP['B2'] * (zd or 0.0)) * avg / 40 * g if DP is not None else c_pir
+        dtxt = (f' αμυνα z {zd:+.1f}' if zd is not None else ' αμυνα —') if DP is not None else ''
         cb = _box_shadow_cost(pid, before_utc, avg, g) if shadow is not None else None
         if cb is None and shadow is not None: shadow['ok'] = False
         if is_gtd:
             pw = GTD_P[('missed' if tg[-1][1].get(pid, 0) <= 0 else 'new', avg >= 20)]
             c *= pw; cost += c
             if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb * pw
-            det.append(f'{name} GTD {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + f' ×{g:g} ×πιθ. απουσιας {pw:.2f} → {c:.2f} (μονο χαντικαπ)')
+            if shadow is not None: shadow['pir'] = shadow.get('pir', 0.0) + c_pir * pw
+            det.append(f'{name} GTD {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + dtxt + f' ×{g:g} ×πιθ. απουσιας {pw:.2f} → {c:.2f} (μονο χαντικαπ)')
             continue
         cost += c
         if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb
+        if shadow is not None: shadow['pir'] = shadow.get('pir', 0.0) + c_pir
         oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
         if oo and OO:
             so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
-        det.append(f'{name} {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + f' ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 else ''))
+        det.append(f'{name} {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + dtxt + f' ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 else ''))
     return round(cost, 2), det, so, sd_
 
 MANUAL_F = 'el_absence_manual.json'
@@ -268,6 +291,7 @@ def adjustments(games, B=None):
         if gtd: parts.append('αμφιβολοι (GTD): στο χαντικαπ με πιθανοτητα, στα συνολα δεν μετρανε')
         if man: parts.append('χειροκινητα OUT (Στελιος): ' + ', '.join(n for v in man.values() for n in v))
         res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, note=' · '.join(parts))
+        res[str(g['code'])].update(adj_pir=round(sha.get('pir', 0.0) - shh.get('pir', 0.0), 2), engine=ENGINE if shh.get('def_ok', True) and sha.get('def_ok', True) else 'PIR')
         if shh['ok'] and sha['ok']:                                # 23/10 ΣΚΙΑ «δικο box» (el_box_shadow) — μονο καταγραφη στο el_picks
             res[str(g['code'])].update(adj_box=round(sha['box'] - shh['box'], 2), cost_box_h=round(shh['box'], 2), cost_box_a=round(sha['box'], 2))
         if tot: parts.append(f'συνολο {tot:+.1f} (on/off αμυνα & επιθεση)'); res[str(g['code'])]['note'] = ' · '.join(parts)

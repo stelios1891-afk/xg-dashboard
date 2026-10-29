@@ -1204,3 +1204,34 @@ def test_nba_stale_ratings_guard(tmp_path, monkeypatch):
     src = open(os.path.join(ROOT, 'scanner_tick.sh'), encoding='utf-8').read()
     assert src.index('python nba_ratings_due.py') < src.index('python nba_odds_scan.py') < src.index('python nba_picks.py')
     assert 'skip_codes=STALE' in open(os.path.join(ROOT, 'nba_picks.py'), encoding='utf-8').read()
+
+
+def test_el_absence_pir_plus_defense():
+    """29/10/2026 (Στελιος «ναι περνα το»): χαντικαπ EL = «PIR + αμυνα». Κλειδωμενα βαρη, αρχεια el_defense, ο τυπος κοστους, και
+    το σκετο PIR να μενει καταγραφη (shadow['pir']). Golden: Valencia–Olympiacos 13/10 με τιμες αμυνας «πριν το ματς» = +1.83 (τεστ el_pird_open_news)."""
+    import el_absence as EA, el_defense as ED
+    assert EA.ENGINE == 'PIR+D'
+    P_ = ED.params()
+    assert P_ is not None and P_['season'].startswith('E')
+    assert (round(P_['B0'], 2), round(P_['B1'], 2), round(P_['B2'], 2)) == (0.26, 0.88, 0.81)
+    assert 0.3 < P_['sdD'] < 0.5 and P_['K'] == 500.0 and P_['LAM'] == 8000.0 and len(P_['prev']) > 200
+    V = json.load(open(os.path.join(ROOT, 'el_defense_values.json'), encoding='utf-8'))
+    assert V['games'] > 0 and len(V['players']) > 200
+    assert all(isinstance(v['zd'], float) and math.isfinite(v['zd']) for v in V['players'].values())
+    S = json.load(open(os.path.join(ROOT, 'el_defense_stints.json'), encoding='utf-8'))
+    games = [v for v in S.values() if v['utc'] < '2026-10-13T18:00:00Z']
+    old = ED._C.get('V')
+    try:
+        ED._C['V'] = ED.values(P_, games)
+        B = json.load(open(os.path.join(ROOT, 'el_box.json'), encoding='utf-8'))
+        prev = json.load(open(os.path.join(ROOT, 'el_player_min_prev.json'), encoding='utf-8'))['players']
+        sh, sa = {}, {}
+        ch = EA.team_cost(B, 'E2026', 'PAM', ['Mario Saint-Supery'], '2026-10-13T19:00:00Z', prev, None, (), shadow=sh)
+        ca = EA.team_cost(B, 'E2026', 'OLY', ['Donta Hall'], '2026-10-13T19:00:00Z', prev, None, (), shadow=sa)
+        assert abs((ca[0] - ch[0]) - 1.83) < 0.015, (ca, ch)
+        assert abs((sa['pir'] - sh['pir']) - 1.57) < 0.015, (sa, sh)
+    finally:
+        if old is None: ED._C.pop('V', None)
+        else: ED._C['V'] = old
+    src = open(os.path.join(ROOT, 'el_picks.py'), encoding='utf-8').read()
+    assert "'pir': dict(log=F('el_pir_shadow.jsonl')" in src

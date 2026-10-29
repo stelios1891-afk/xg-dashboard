@@ -327,3 +327,11 @@ try:
     print(f'el_box_shadow_stats.json: +{_n} ματς · συνολο {_t}')
 except Exception as e:
     print('el_box_shadow σφαλμα (μη κρισιμο):', e)
+# 29/10/2026 (Στελιος «ναι περνα το»): ΑΜΥΝΤΙΚΗ ΑΞΙΑ παικτων για το live χαντικαπ «PIR + αμυνα» (el_defense.py → el_defense_values.json).
+# Αν αποτυχει: το el_absence χρησιμοποιει τις τελευταιες τιμες του repo (ή πεφτει στο σκετο PIR αν λειπουν τα αρχεια).
+try:
+    import el_defense
+    _n, _t = el_defense.update()
+    print(f'el_defense: +{_n} ματς · συνολο {_t}')
+except Exception as e:
+    print('el_defense σφαλμα (μη κρισιμο):', e)

@@ -138,34 +138,38 @@ def _abs(games):
 # +72.2 vs PIR +62.3, RMSE 4/5 αλλα τυχη .43 → δεν περασε). ΜΟΝΟ ΚΑΤΑΓΡΑΦΗ: el_box_shadow.jsonl (πρωτη εμφανιση ανα ματς & πλευρα, edge ≥8%)
 # + el_box_shadow_adj.json (τελευταια διορθωση πριν το τζαμπολ, live vs box, ανα ματς). Οχι Telegram, οχι ledger, οχι dashboard picks.
 # ΚΡΙΣΗ (προ-δηλωμενη): τελος κανονικης, ΜΟΝΟ αγων. 11-38: ακριβεια καλυτερη ΚΑΙ μοναδες ≥ live ΚΑΙ CLV ≥ live → απο την 11η της επομενης σεζον.
-BOX_SH_LOG, BOX_SH_ADJ = F('el_box_shadow.jsonl'), F('el_box_shadow_adj.json')
-_BOX_SH = {'seen': None, 'adj': None}
-def _box_shadow(base, g, ab, L, oh, oa, sm, now, ko):
-    if _BOX_SH['seen'] is None:
-        _BOX_SH['seen'] = set()
+# 29/10/2026 (Στελιος «ναι περνα το»): το live χαντικαπ περασε σε «PIR + αμυνα» (el_absence.ENGINE)· το ΣΚΕΤΟ PIR (ο προηγουμενος live τυπος)
+# μενει ΚΑΤΑΓΡΑΦΗ με τον ιδιο μηχανισμο: el_pir_shadow.jsonl + el_pir_shadow_adj.json. Κριση μετα την 20η αγωνιστικη (μοναδες PIR+αμυνα vs PIR).
+_SH = {'box': dict(log=F('el_box_shadow.jsonl'), adjf=F('el_box_shadow_adj.json'), seen=None, adj=None),
+       'pir': dict(log=F('el_pir_shadow.jsonl'), adjf=F('el_pir_shadow_adj.json'), seen=None, adj=None)}
+def _shadow(kind, base, g, ab, L, oh, oa, sm, now, ko):
+    S_ = _SH[kind]; fld = 'adj_' + kind
+    if S_['seen'] is None:
+        S_['seen'] = set()
         try:
-            for ln in open(BOX_SH_LOG, encoding='utf-8'):
-                try: r = json.loads(ln); _BOX_SH['seen'].add((str(r['code']), r['side']))
+            for ln in open(S_['log'], encoding='utf-8'):
+                try: r = json.loads(ln); S_['seen'].add((str(r['code']), r['side']))
                 except Exception: pass
         except FileNotFoundError: pass
-        _BOX_SH['adj'] = _load(BOX_SH_ADJ, {})
-    m_live = float(g['margin']) + float(ab.get('adj', 0.0)); m_box = float(g['margin']) + float(ab['adj_box'])
+        S_['adj'] = _load(S_['adjf'], {})
+    m_live = float(g['margin']) + float(ab.get('adj', 0.0)); m_sh = float(g['margin']) + float(ab[fld])
     tnow = now.isoformat(timespec='seconds')
-    _BOX_SH['adj'][str(g['code'])] = dict(t=tnow, when=base['when'], round=g['round'], home=g['home'], away=g['away'], margin=g['margin'],
-                                          adj=ab.get('adj', 0.0), adj_box=ab['adj_box'], line=L, oh=oh, oa=oa)
-    pw, pp = cover(m_box, L, sm); pl = 1 - pw - pp
+    S_['adj'][str(g['code'])] = {'t': tnow, 'when': base['when'], 'round': g['round'], 'home': g['home'], 'away': g['away'], 'margin': g['margin'],
+                                 'adj': ab.get('adj', 0.0), fld: ab[fld], 'line': L, 'oh': oh, 'oa': oa}
+    pw, pp = cover(m_sh, L, sm); pl = 1 - pw - pp
     lw, lp = cover(m_live, L, sm); ll = 1 - lw - lp
     for side, p_, od, hc, pl_ in ((1, pw, oh, L, lw), (-1, pl, oa, -L, ll)):
         e = p_ * od + pp - 1
-        if e < HC_MIN or (str(g['code']), side) in _BOX_SH['seen']: continue
-        _BOX_SH['seen'].add((str(g['code']), side))
-        rec = dict(seen=tnow, code=g['code'], round=g['round'], home=g['home'], away=g['away'], when=base['when'], side=side, hcap=hc, odds=od,
-                   edge=round(e, 4), edge_live=round(pl_ * od + lp - 1, 4), model_line_box=round(-m_box, 1), model_line=round(-m_live, 1), mkt_line=L,
-                   adj=ab.get('adj', 0.0), adj_box=ab['adj_box'], hrs_to_ko=round((ko - now).total_seconds() / 3600, 1))
-        open(BOX_SH_LOG, 'a', encoding='utf-8').write(json.dumps(rec, ensure_ascii=False) + '\n')
-def _box_shadow_save():
-    if _BOX_SH['adj'] is not None:
-        json.dump(_BOX_SH['adj'], open(BOX_SH_ADJ, 'w', encoding='utf-8'), ensure_ascii=False)
+        if e < HC_MIN or (str(g['code']), side) in S_['seen']: continue
+        S_['seen'].add((str(g['code']), side))
+        rec = {'seen': tnow, 'code': g['code'], 'round': g['round'], 'home': g['home'], 'away': g['away'], 'when': base['when'], 'side': side, 'hcap': hc, 'odds': od,
+               'edge': round(e, 4), 'edge_live': round(pl_ * od + lp - 1, 4), 'model_line_' + kind: round(-m_sh, 1), 'model_line': round(-m_live, 1), 'mkt_line': L,
+               'adj': ab.get('adj', 0.0), fld: ab[fld], 'hrs_to_ko': round((ko - now).total_seconds() / 3600, 1)}
+        open(S_['log'], 'a', encoding='utf-8').write(json.dumps(rec, ensure_ascii=False) + '\n')
+def _shadow_save():
+    for S_ in _SH.values():
+        if S_['adj'] is not None:
+            json.dump(S_['adj'], open(S_['adjf'], 'w', encoding='utf-8'), ensure_ascii=False)
 def compute():
     proj = _load(F('el_projections.json'), {}); odds = _load(F('el_odds_latest.json'), {}).get('odds', {})
     sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
@@ -194,9 +198,10 @@ def compute():
                 if e >= HC_MIN:
                     picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4), travel=g.get('travel'),
                                       proj_odds=round((p_ + (1 - p_ - pu)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L))
-            if 'adj_box' in ab:                                          # 23/10 ΣΚΙΑ «δικο box» — ΔΕΝ μπαινει στα picks
-                try: _box_shadow(base, g, ab, L, oh, oa, sm, now, ko)
-                except Exception as _e: print('σκια box σφαλμα:', _e)
+            for kind in ('box', 'pir'):                                  # 23/10 ΣΚΙΑ «δικο box» · 29/10 ΚΑΤΑΓΡΑΦΗ σκετο PIR — ΔΕΝ μπαινουν στα picks
+                if 'adj_' + kind in ab:
+                    try: _shadow(kind, base, g, ab, L, oh, oa, sm, now, ko)
+                    except Exception as _e: print(f'σκια {kind} σφαλμα:', _e)
         # ---- συνολο ----
         if pin.get('tl') is not None and pin.get('to') and pin.get('tu'):
             T, ov, un = float(pin['tl']), float(pin['to']), float(pin['tu'])
@@ -216,8 +221,8 @@ def compute():
                         bo, bq = cover(float(tb), -T, st); bp = bo if nm == 'Over' else 1 - bo - bq
                         pk['old_agree'] = bool(bp * od + bq - 1 >= TOT_MIN); pk['total_base'] = round(float(tb), 1)
                     picks.append(pk)
-    try: _box_shadow_save()
-    except Exception as e: print('σκια box σφαλμα (αποθηκευση):', e)
+    try: _shadow_save()
+    except Exception as e: print('σκιες σφαλμα (αποθηκευση):', e)
     return picks
 
 def key(p):                                   # 7/10: ΕΝΑ pick ανα ματς & πλευρα (η γραμμη εκτος κλειδιου)
