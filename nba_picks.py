@@ -37,6 +37,68 @@ MOTIV_LOG = 'nba_motiv_skip.jsonl'  #   (κλειδωμενη / μαθ. εκτο
 EAST = set('ATL BOS BRK CHO CHI CLE DET IND MIA MIL NYK ORL PHI TOR WAS'.split())
 NOMOT, MOT = ('ΚΛΕΙΔΩΜΕΝΗ', 'ΑΔΙΑΦΟΡΗ', 'TANKING', 'ΠΡΑΚΤΙΚΑ ΕΚΤΟΣ'), ('ΜΑΧΗ ΘΕΣΗΣ 1-6', 'ΜΑΧΗ PLAY-IN')
 
+STALE_LOG = 'nba_stale_skip.jsonl'  # 29/10/2026 (Στελιος «περνα και τα 2»): picks που ΚΟΠΗΚΑΝ γιατι μια ομαδα ειχε ματς που δεν ειχε περασει στις δυναμεις
+STALE_WIN_H = 48                    #   (Πελικανς–Κινγκς Over 237.5: βγηκε 04:56 με +11%, μετα την ανανεωση −12%· 13/62 picks ως 29/10, CLV +1.2% vs +7.2%)
+def started_days(proj, now):
+    """{ομαδα: {ημερες ΗΠΑ}} — ματς κανονικης περιοδου που ΞΕΚΙΝΗΣΑΝ τις τελευταιες 48ω (προγραμμα Pinnacle + ESPN)."""
+    from nba_espn import us_date
+    started = {}
+    for g in proj.get('games', []):
+        try: ko = dt.datetime.fromisoformat(str(g['utc']).replace('Z', '+00:00'))
+        except Exception: continue
+        if now - dt.timedelta(hours=STALE_WIN_H) <= ko <= now:
+            d = us_date(str(g['utc']))
+            for t in (g.get('hcode'), g.get('acode')):
+                if t: started.setdefault(t, set()).add(d)
+    for g in _load(F('nba_espn_games.json'), {}).values():
+        if g.get('stype') != 2: continue
+        try: ko = dt.datetime.fromisoformat(str(g['utc']).replace('Z', '+00:00'))
+        except Exception: continue
+        if now - dt.timedelta(hours=STALE_WIN_H) <= ko <= now:
+            for t in (g.get('home'), g.get('away')):
+                if t: started.setdefault(t, set()).add(g['date'])
+    return started
+
+def stale_of(g, started, last):
+    """{ομαδα: [ημερες]} του ματς g με ματς που ξεκινησε ΜΕΤΑ την τελευταια μερα των δυναμεων που εφτιαξαν ΑΥΤΗ την προβλεψη
+    (rl_h/rl_a απο το nba_odds_scan· αν λειπουν → nba_state.json)."""
+    out = {}
+    for t, rl in ((g.get('hcode'), g.get('rl_h')), (g.get('acode'), g.get('rl_a'))):
+        if not t: continue
+        rl = str(rl if rl is not None else last.get(t, ''))
+        d = sorted(x for x in started.get(t, ()) if x > rl)
+        if d: out[t] = d
+    return out
+
+def stale_filter(picks, proj, now):
+    """→ (picks χωρις τα ματς με «παλιες» δυναμεις, κωδικοι αυτων των ματς)· καθε κομμενο pick γραφεται ΜΙΑ φορα στο STALE_LOG."""
+    started = started_days(proj, now)
+    if not started: return picks, set()
+    last = _load(F('nba_state.json'), {}).get('last', {})
+    G_ = {str(g['code']): g for g in proj.get('games', [])}
+    SG = {c: stale_of(g, started, last) for c, g in G_.items() if not g.get('played')}
+    SG = {c: v for c, v in SG.items() if v}
+    codes = set(SG)
+    keep = [p for p in picks if str(p['code']) not in codes]; cut = [p for p in picks if str(p['code']) in codes]
+    if cut:
+        done = set()
+        if os.path.exists(F(STALE_LOG)):
+            for ln in open(F(STALE_LOG), encoding='utf-8'):
+                try: r_ = json.loads(ln); done.add(r_['k'])
+                except Exception: pass
+        with open(F(STALE_LOG), 'a', encoding='utf-8') as fh:
+            for p in cut:
+                k = f"{p['code']}|{p['mkt']}|{p.get('bet') or p.get('side')}"
+                if k in done: continue
+                done.add(k); g = G_[str(p['code'])]
+                fh.write(json.dumps(dict(k=k, t=now.isoformat(timespec='minutes'), code=p['code'], home=p['home'], away=p['away'], when=p['when'], mkt=p['mkt'],
+                                         side=p.get('side'), bet=p.get('bet'), hcap=p['hcap'], odds=p['odds'], edge=p['edge'],
+                                         model=(g.get('total') if p['mkt'] == 'total' else g.get('margin')),
+                                         stale=SG[str(p['code'])]), ensure_ascii=False) + '\n')
+    for c in sorted(codes):
+        g = G_[c]; print(f"NBA: {g.get('home', c)} – {g.get('away', '')}: ΧΩΡΙΣ picks ως την ανανεωση δυναμεων (" + ', '.join(f"{t} ματς {'/'.join(d)}" for t, d in SG[c].items()) + ')')
+    return keep, codes
+
 def gnum(g):
     """αριθμος αγωνα οπως στα τεστ: μικροτερος των δυο ομαδων + 1"""
     return min(int(g.get('gp_h') or 0), int(g.get('gp_a') or 0)) + 1
@@ -433,6 +495,7 @@ def steam_line(r):
 def main(notify_tg=True):
     migrate()
     picks = compute()
+    picks, STALE = stale_filter(picks, _load(F('nba_projections.json'), {}), dt.datetime.now(dt.timezone.utc))   # 29/10: οχι picks με παλιες δυναμεις
     if STEAM_NEW:
         for r in STEAM_NEW: print(steam_line(r).replace('\n', ' | '))
         if notify_tg and STEAM_LIVE:
@@ -473,7 +536,8 @@ def main(notify_tg=True):
         tm_ = tot_mix(g_, (odds_.get(c_) or {}).get('pin') or {}, st_)
         if tm_: games_[c_] = dict(g_, total=tm_[0])
     drops, backs = bps.track(state, picks, F('nba_clv_bets.jsonl'), games_, odds_,
-                             lambda m: sm_ if m == 'hcap' else st_, lambda m, g=None: hc_min(g) if m == 'hcap' else tot_rule(g)[1], cover, 'NBA', now)
+                             lambda m: sm_ if m == 'hcap' else st_, lambda m, g=None: hc_min(g) if m == 'hcap' else tot_rule(g)[1], cover, 'NBA', now,
+                             skip_codes=STALE)
     state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
     if new:
         with open(F('nba_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:

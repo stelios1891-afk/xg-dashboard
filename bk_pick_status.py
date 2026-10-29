@@ -86,12 +86,14 @@ def current_view(b, game, pin, sig, min_edge, cover):
     return lab, od, e, need
 
 
-def track(state, picks, bets_path, games, odds, sig_of, min_edge_of, cover, lg_label, now_iso):
-    """Ενημερωνει το state· επιστρεφει (drops, backs) κειμενα Telegram."""
+def track(state, picks, bets_path, games, odds, sig_of, min_edge_of, cover, lg_label, now_iso, skip_codes=None):
+    """Ενημερωνει το state· επιστρεφει (drops, backs) κειμενα Telegram.
+    skip_codes (29/10/2026, NBA): ματς με «παλιες» δυναμεις → η κατασταση τους ΔΕΝ αλλαζει ως την ανανεωση (οχι ψευτικο «δεν ισχυει πια»)."""
     now = dt.datetime.fromisoformat(now_iso)
     active_now = {(str(p['code']), p['mkt'], _dir(p['mkt'], p.get('side'), p.get('bet'))) for p in picks}
     drops, backs = [], []
     for k, b in open_bets(bets_path, now).items():
+        if skip_codes and str(b['code']) in skip_codes: continue
         sk = 'STATUS|' + '|'.join(k)
         st = state.get(sk) or dict(active=True, when=b['when'])
         is_active = k in active_now

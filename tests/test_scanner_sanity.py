@@ -1174,3 +1174,33 @@ def test_e_ucl_freshness_flag():
     if bad and os.path.exists(_p('euro_picks_ledger.jsonl')):
         led = [r for r in _jsonl('euro_picks_ledger.jsonl') if str(r.get('mid')) in bad and str(r.get('seen', '')) >= str(d.get('scanned_at', ''))[:16]]
         assert not led, f'euro_picks_ledger: γραφτηκε UCL pick με eu_ok=False ({led[0]["home"]}-{led[0]["away"]})'
+
+
+def test_nba_stale_ratings_guard(tmp_path, monkeypatch):
+    """29/10/2026 (Στελιος «περνα και τα 2»): οχι NBA pick οσο μια ομαδα εχει ματς που ξεκινησε αλλα δεν εχει περασει στις δυναμεις
+    (Πελικανς–Κινγκς Over 237.5: +11% → −12% μετα την ανανεωση). Μετα την ανανεωση (rl_h = νεα μερα) → ξανα κανονικα."""
+    import nba_picks as NP
+    from nba_espn import us_date
+    monkeypatch.setattr(NP, 'F', lambda n: str(tmp_path / n))
+    now = datetime.datetime.now(datetime.timezone.utc)
+    iso = lambda t: t.strftime('%Y-%m-%dT%H:%M:00Z')
+    prev = now - datetime.timedelta(hours=3); fut = now + datetime.timedelta(hours=20)
+    old = (now - datetime.timedelta(days=3)).date().isoformat()
+    json.dump(dict(last={'NOP': old, 'SAC': old, 'BOS': old, 'NYK': old}), open(tmp_path / 'nba_state.json', 'w'))
+    json.dump({}, open(tmp_path / 'nba_espn_games.json', 'w'))
+    proj = dict(games=[dict(code='1', utc=iso(prev), hcode='NOP', acode='DEN', played=True),
+                       dict(code='2', utc=iso(fut), hcode='NOP', acode='SAC', played=False, rl_h=old, rl_a=old),
+                       dict(code='3', utc=iso(fut), hcode='BOS', acode='NYK', played=False, rl_h=old, rl_a=old)])
+    pk = lambda c: dict(code=c, mkt='total', side=0, bet='Over 237.5', hcap=237.5, odds=1.97, edge=0.11, home='H', away='A', when=iso(fut)[:16])
+    keep, codes = NP.stale_filter([pk('2'), pk('3')], proj, now)
+    assert codes == {'2'} and [p['code'] for p in keep] == ['3'], (codes, keep)
+    log = [json.loads(l) for l in open(tmp_path / NP.STALE_LOG, encoding='utf-8')]
+    assert len(log) == 1 and log[0]['stale'] == {'NOP': [us_date(iso(prev))]}
+    NP.stale_filter([pk('2')], proj, now)                                   # ιδιο κομμενο pick → ΟΧΙ δευτερη εγγραφη
+    assert len(open(tmp_path / NP.STALE_LOG, encoding='utf-8').readlines()) == 1
+    proj['games'][1]['rl_h'] = us_date(iso(prev))                           # μετα την ανανεωση: η προβλεψη εχει το χθεσινο ματς
+    keep, codes = NP.stale_filter([pk('2'), pk('3')], proj, now)
+    assert not codes and len(keep) == 2
+    src = open(os.path.join(ROOT, 'scanner_tick.sh'), encoding='utf-8').read()
+    assert src.index('python nba_ratings_due.py') < src.index('python nba_odds_scan.py') < src.index('python nba_picks.py')
+    assert 'skip_codes=STALE' in open(os.path.join(ROOT, 'nba_picks.py'), encoding='utf-8').read()

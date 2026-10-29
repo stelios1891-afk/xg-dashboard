@@ -213,6 +213,7 @@ def main():
                            margin=round(m, 2), total=round(T, 1), total_src='μοντελο', pts_h=round((T + m) / 2, 1), pts_a=round((T - m) / 2, 1),
                            p_home=round(Phi(m / st['sig_m']), 3), played=False, version='nba1', venue='', b2b_h=b2h, b2b_a=b2a, tz_h=tzh, tz_a=tza,
                            gno=max(st['gp'].get(h, 0), st['gp'].get(a, 0)), gp_h=st['gp'].get(h, 0), gp_a=st['gp'].get(a, 0),
+                           rl_h=st.get('last', {}).get(h), rl_a=st.get('last', {}).get(a),   # 29/10: τελευταια μερα στις δυναμεις αυτης της προβλεψης (nba_picks.stale_filter)
                            margin_base=round(m0, 2), total_base=round(T0, 1), abs_dm=round(dm, 2), abs_dt=round(dtot, 2), abs_shadow=round(shadow, 2),
                            abs_h=[[p['name'], p['min'], int(p['fresh']), p.get('status', 'Out'), p.get('w', 1.0)] for p in LH], abs_a=[[p['name'], p['min'], int(p['fresh']), p.get('status', 'Out'), p.get('w', 1.0)] for p in LA],
                            inj_src='official' if (OFF is not None and OFF.covers(h, d)) else 'espn',
