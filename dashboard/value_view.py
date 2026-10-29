@@ -137,9 +137,10 @@ def pick_card(p):
             tags += f'<span class="tag lc" title="{_h.escape(p["mkt_note"])}">{_h.escape(short)}</span>'
         if p.get('coach_notes'):             # 1/10: νεος προπονητης (10 ματς μετα την αλλαγη) — μονο ενδειξη
             tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 νεος προπονητης</span>'
-        if p.get('abs_note'):                # 9/10: απουσιες (RotoWire OUT) — χαντικαπ: κοστος λεπτων · συνολα: on/off αμυνα & επιθεση
-            if p.get('mkt') == 'total':
-                tags += f'<span class="tag eu" title="{_h.escape(p["abs_note"])}">🩹 απουσιες συνολο {p.get("abs_tot") or 0:+.1f}</span>'
+        if p.get('abs_note') and p.get('mkt') != 'total':   # 9/10 απουσιες στο χαντικαπ (29/10: συνολα χωρις διορθωση → καμια ετικετα)
+            if p.get('abs_born'):            # 29/10 (Στελιος): pick που υπαρχει ΜΟΝΟ λογω απουσιων
+                tags += (f'<span class="tag eu" title="{_h.escape(p["abs_note"])}">🩹 PICK ΛΟΓΩ ΑΠΟΥΣΙΩΝ {p.get("abs_adj") or 0:+.1f} '
+                         f'(χωρις: edge {(p.get("edge_noabs") or 0) * 100:.0f}%)</span>')
             else:
                 tags += f'<span class="tag eu" title="{_h.escape(p["abs_note"])}">🩹 απουσιες {p.get("abs_adj") or 0:+.1f}</span>'
         if p.get('travel'):                  # 1/10: ταξιδι 2ου ματς διαβολοβδομαδας (διορθωση μοντελου υπερ γηπεδουχου)

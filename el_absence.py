@@ -206,11 +206,12 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
     cost, det, so, sd_ = 0.0, [], 0.0, 0.0
     for name, is_gtd in [(n, False) for n in out_names] + [(n, True) for n in gtd_names]:
         pid = _match(name, roster)
-        if not pid: det.append(f'{name}: δεν επαιξε φετος'); continue
-        if played.get(pid, 0) < 3: det.append(f'{name}: οχι τακτικος ({played.get(pid, 0)}/10)'); continue
+        st_ = 'αμφίβολος' if is_gtd else 'OUT'                      # 29/10 (Στελιος): σημειωση = ποιος λειπει + κοστος, χωρις PIR/αμυνα
+        if not pid: det.append(f'{name} {st_} → 0 (δεν έχει παίξει φέτος)'); continue
+        if played.get(pid, 0) < 3: det.append(f'{name} {st_} → 0 (όχι τακτικός)'); continue
         mins = list((prev.get(pid) or {}).get('mins', [])) + [mn[pid] for _, mn, _ in tg if mn.get(pid, 0) > 0]
         avg = sum(mins[-10:]) / len(mins[-10:]) if mins else 0.0
-        if avg < MIN_MIN: det.append(f'{name}: {avg:.0f}′ (<10)'); continue
+        if avg < MIN_MIN: det.append(f'{name} {st_} → 0 (λίγα λεπτά)'); continue
         k = 1
         for _, mn, _ in reversed(tg):
             if mn.get(pid, 0) > 0: break
@@ -221,7 +222,6 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
         c_pir = (V_B0 + V_B1 * z) * avg / 40 * g
         zd = _zd(pid) if DP is not None else None
         c = (DP['B0'] + DP['B1'] * z + DP['B2'] * (zd or 0.0)) * avg / 40 * g if DP is not None else c_pir
-        dtxt = (f' αμυνα z {zd:+.1f}' if zd is not None else ' αμυνα —') if DP is not None else ''
         cb = _box_shadow_cost(pid, before_utc, avg, g) if shadow is not None else None
         if cb is None and shadow is not None: shadow['ok'] = False
         if is_gtd:
@@ -229,7 +229,7 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
             c *= pw; cost += c
             if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb * pw
             if shadow is not None: shadow['pir'] = shadow.get('pir', 0.0) + c_pir * pw
-            det.append(f'{name} GTD {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + dtxt + f' ×{g:g} ×πιθ. απουσιας {pw:.2f} → {c:.2f} (μονο χαντικαπ)')
+            det.append(f'{name} αμφίβολος {pw:.0%} → {c:.2f}')
             continue
         cost += c
         if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb
@@ -237,7 +237,7 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
         oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
         if oo and OO:
             so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
-        det.append(f'{name} {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + dtxt + f' ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 and TOTALS_ONOFF else ''))
+        det.append(f'{name} OUT → {c:.2f}')
     return round(cost, 2), det, so, sd_
 
 MANUAL_F = 'el_absence_manual.json'
@@ -281,7 +281,6 @@ def adjustments(games, B=None):
                 best['inj'][side_] = [x for x in best['inj'][side_] if _tok(x[0])[-1:] != sur] + [(nm_, 'OUT')]
         out_h = [n for n, s in best['inj']['home'] if s.upper() == 'OUT']; out_a = [n for n, s in best['inj']['visit'] if s.upper() == 'OUT']
         gtd_h = [n for n, s in best['inj']['home'] if s.upper() != 'OUT']; gtd_a = [n for n, s in best['inj']['visit'] if s.upper() != 'OUT']
-        gtd = gtd_h + gtd_a
         shh, sha = {'box': 0.0, 'ok': True}, {'box': 0.0, 'ok': True}
         ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO, gtd_h, shadow=shh)
         ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO, gtd_a, shadow=sha)
@@ -291,9 +290,8 @@ def adjustments(games, B=None):
             tot_onoff = round(bO * oh_ + bD * da_ + bO * oa_ + bD * dh_, 2)
             if TOTALS_ONOFF: tot = tot_onoff
         parts = []
-        if dh: parts.append(f"{g['home']}: " + ', '.join(dh))
-        if da: parts.append(f"{g['away']}: " + ', '.join(da))
-        if gtd: parts.append('αμφιβολοι (GTD): στο χαντικαπ με πιθανοτητα, στα συνολα δεν μετρανε')
+        if dh: parts.append(f"{g['home']} (κόστος {ch:.2f}): " + ', '.join(dh))
+        if da: parts.append(f"{g['away']} (κόστος {ca:.2f}): " + ', '.join(da))
         if man: parts.append('χειροκινητα OUT (Στελιος): ' + ', '.join(n for v in man.values() for n in v))
         res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, tot_onoff=tot_onoff, note=' · '.join(parts))
         res[str(g['code'])].update(adj_pir=round(sha.get('pir', 0.0) - shh.get('pir', 0.0), 2), engine=ENGINE if shh.get('def_ok', True) and sha.get('def_ok', True) else 'PIR')

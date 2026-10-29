@@ -193,11 +193,15 @@ def compute():
             L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa'])
             m = float(g['margin']) + float(ab.get('adj', 0.0))          # 9/10: + κοστος απουσιων (φιλοξ − γηπ)
             pw, pp = cover(m, L, sm); pl = 1 - pw - pp
-            for side, p_, pu, od, hc in ((1, pw, pp, oh, L), (-1, pl, pp, oa, -L)):
+            pw0, pp0 = cover(float(g['margin']), L, sm); pl0 = 1 - pw0 - pp0  # 29/10 (Στελιος): χωρις απουσιες — για την ενδειξη «pick λογω απουσιων»
+            for side, p_, pu, od, hc, p0 in ((1, pw, pp, oh, L, pw0), (-1, pl, pp, oa, -L, pl0)):
                 e = p_ * od + pu - 1
                 if e >= HC_MIN:
-                    picks.append(dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4), travel=g.get('travel'),
-                                      proj_odds=round((p_ + (1 - p_ - pu)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L))
+                    e0 = p0 * od + pp0 - 1
+                    pk = dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4), travel=g.get('travel'),
+                              proj_odds=round((p_ + (1 - p_ - pu)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L)
+                    if abs(float(ab.get('adj', 0.0))) > 1e-9 and e0 < HC_MIN: pk.update(abs_born=True, edge_noabs=round(e0, 4))
+                    picks.append(pk)
             for kind in ('box', 'pir'):                                  # 23/10 ΣΚΙΑ «δικο box» · 29/10 ΚΑΤΑΓΡΑΦΗ σκετο PIR — ΔΕΝ μπαινουν στα picks
                 if 'adj_' + kind in ab:
                     try: _shadow(kind, base, g, ab, L, oh, oa, sm, now, ko)
@@ -247,7 +251,11 @@ def line(p, prev=None):
             why += f" · {'✓ συμφωνει και το παλιο' if p['old_agree'] else '✗ μονο με την προετοιμασια'} ({p['total_base']:.1f} χωρις φιλικα)"
     ch = f" (ηταν {prev:.2f})" if prev else ''
     if p.get('coach_notes'): why += ' · ' + ' · '.join(p['coach_notes'])
-    return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})" + (f"\n{p['mkt_note']}" if p.get('mkt_note') else '')
+    absb = ''
+    if p.get('abs_born'):                          # 29/10 (Στελιος): pick που υπαρχει ΜΟΝΟ λογω απουσιων → καθαρα στο μηνυμα
+        absb = (f"\n🩹 PICK ΛΟΓΩ ΑΠΟΥΣΙΩΝ — χωρις τις απουσιες edge {p['edge_noabs']*100:.0f}% (δεν θα ηταν pick)"
+                + (f"\n{p['abs_note']}" if p.get('abs_note') else ''))
+    return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})" + absb + (f"\n{p['mkt_note']}" if p.get('mkt_note') else '')
 
 # 1/10/2026 (Στελιος): ELEGXOS KLEISIMATOS — για καθε pick που ΠΑΙΞΑΜΕ (πρωτη εγγραφη, οχι paper): ποσο κινηθηκε η αγορα απο την
 # εισοδο μας ως το ΚΛΕΙΣΙΜΟ (αναμενομενη διαφορα/συνολο, με αποδοσεις). el_alert_types (picks στο ανοιγμα, κινηση ως το κλεισιμο):
@@ -375,7 +383,7 @@ def main(notify_tg=True):
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
-                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'), abs_tot=p.get('abs_tot'),
+                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'), abs_tot=p.get('abs_tot'), abs_born=p.get('abs_born'), edge_noabs=p.get('edge_noabs'),
                                          paper=p.get('paper'), late_kind=p.get('late_kind'), move_open=state.get(key(p), {}).get('move_open')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
