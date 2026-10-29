@@ -81,6 +81,42 @@ def market_just_opened(p, now):
         return (dt.datetime.fromisoformat(now) - t0).total_seconds() < OPEN_GRACE_MIN * 60
     except Exception:
         return False
+# 29/10/2026 (Στελιος): ΑΡΓΑ PICKS (μετα το ανοιγμα) = ταξινομηση ανα ΑΙΤΙΑ + ιστορικο στο μηνυμα (el_late_groups.py, Crown E2021-25, μηχανη PIR + αμυνα).
+# ΧΑΝΤΙΚΑΠ: ΕΝΑΣ κανονας αποφυγης αντι για late2h/late6dog — pick απο ΣΤΑΔΙΑΚΗ κοντρα (≥0.5 π. σε 3ω ή 6ω, χωρις αλμα ≥1 π./1ω, οχι λογω απουσιας)
+# που γεννηθηκε ≤6ω πριν το τζαμπολ = ΚΑΤΑΓΡΑΦΗ (paper='gradual'): 60 picks −12.0μ (−20%), αρνητικο 5/5 σεζον. Ολα τα αλλα αργα παιζονται.
+# «χωρις κανονες» 999 +133.3 · late2h+late6dog 862 +124.9 · ΜΟΝΟ σταδιακη ≤6ω 939 +145.3 (in-sample — κριση με τα φετινα).
+# Τα picks που κοβονται (gradual, move15) πανε στο info bot ως «ΔΕΝ ΠΑΙΖΕΤΑΙ».
+GRAD_PTS, GRAD_H = 0.5, 6.0
+LATE_HC = {'Α': ('🩹 λογω απουσιας (νεα ειδηση)', '+39%', 71, '5/5'), 'Β': ('⚡ ξαφνικη κινηση της αγορας (≥1 π. σε 1ω)', '+23%', 59, '5/5'),
+           'Γ': ('〰️ σταδιακη κοντρα, νωρις (>6ω πριν)', '+7%', 45, '3/5'), 'Δ': ('💱 αλλαξε μονο η αποδοση', '+25%', 75, '5/5'),
+           'Ε': ('▫️ μικρη κινηση', '+46%', 29, '5/5')}
+LATE_TOT = {'Β': ('⚡ ξαφνικη κινηση της αγορας (≥1 π. σε 1ω)', '+14%', 107, '4/5'), 'Γ': ('〰️ σταδιακη κοντρα', '+8%', 93, '3/5'),
+            'Δ': ('💱 αλλαξε μονο η αποδοση', '+11%', 50, '3/5'), 'Ε': ('▫️ μικρη κινηση', '−5%', 10, '1/5')}
+def _hist_rows(p):
+    key_ = 'line' if p['mkt'] == 'hcap' else 'tl'
+    return [r for r in (_HIST or {}).get(int(p['code']), []) if r.get(key_) is not None], key_
+def late_class(p, now, sm, st):
+    """→ (γκρουπ Α-Ε, κινηση 1ω, 3ω, 6ω, ωρες απο το ανοιγμα) για pick που γεννηθηκε μετα το ανοιγμα (− = κοντρα σε εμας)."""
+    d1, d3, d6 = (drift_before(p, now, sm, st, hours=h) for h in (1.0, 3.0, 6.0))
+    H, key_ = _hist_rows(p); t_now = dt.datetime.fromisoformat(now).astimezone(dt.timezone.utc)
+    ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
+    h_open = (t_now - ts(H[0])).total_seconds() / 3600 if H else None
+    if p['mkt'] == 'hcap' and p.get('abs_born'): c = 'Α'
+    elif d1 is not None and d1 <= -SUDDEN_PTS: c = 'Β'
+    elif min([x for x in (d3, d6) if x is not None], default=0.0) <= -GRAD_PTS: c = 'Γ'
+    else:
+        before = [r for r in H if ts(r) <= t_now - dt.timedelta(hours=3)]; nowr = [r for r in H if ts(r) <= t_now + dt.timedelta(minutes=15)]
+        same = bool(before) and bool(nowr) and abs(float(before[-1][key_]) - float(nowr[-1][key_])) < 1e-9
+        c = 'Δ' if same else 'Ε'
+    return c, d1, d3, d6, h_open
+def late_note(p):
+    c = p.get('late_cls')
+    if not c: return None
+    lab, roi, n, pos = (LATE_HC if p['mkt'] == 'hcap' else LATE_TOT)[c]
+    mv = [f'{x:+.1f} π. σε {h}' for x, h in ((p.get('d1'), '1ω'), (p.get('d3'), '3ω'), (p.get('d6'), '6ω')) if x is not None]
+    ho = p.get('h_open')
+    return (f"⏱ ΑΡΓΟ PICK" + (f" ({ho:.0f}ω μετα το ανοιγμα)" if ho is not None else '') + f" · {lab}"
+            + (f" · αγορα {', '.join(mv)}" if mv and c != 'Α' else '') + f" — ιστορικα {roi} ({n} picks, θετικο {pos} σεζον)")
 MOVE_LATE_H = 6.0     # 7/10/2026 (Στελιος «περνα το»): κοντρα ≥1.5 που ΞΕΠΕΡΑΣΤΗΚΕ <6ω πριν το τζαμπολ = κανονικο pick (el_totals_move_deep:
                       # <6ω +19.5% (44, 4/5) · 6-12ω −29.8% (41) · 12-24ω −32.9% (23) — οι νωρις κοντρα κινησεις ειναι «εξυπνα» λεφτα)
 def move_cross_hours(p, st):
@@ -324,9 +360,11 @@ def main(notify_tg=True):
         if prev is None:
             new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now, hcap=p['hcap'])
             hrs = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc) - dt.datetime.fromisoformat(now)).total_seconds() / 3600
-            if p['mkt'] == 'hcap' and hrs < LATE_H: state[k]['paper'] = 'late2h'
-            elif p['mkt'] == 'hcap' and float(p['hcap']) > 0 and hrs < LATE_DOG_H and not market_just_opened(p, now):
-                state[k]['paper'] = 'late6dog'                    # 17/10: αουτσαιντερ 2-6ω = καταγραφη
+            # 29/10: late2h (1/10) & late6dog (17/10) ΣΤΑΜΑΤΗΣΑΝ για νεα picks — στη θεση τους ο κανονας «σταδιακη κοντρα ≤6ω» (GRAD_*)
+            if not market_just_opened(p, now):                   # αργο pick → ταξινομηση ανα αιτια (+ ιστορικο στο μηνυμα)
+                c, d1, d3, d6, ho = late_class(p, now, sm_, st_)
+                state[k].update(late_cls=c, d1=d1, d3=d3, d6=d6, h_open=ho)
+                if p['mkt'] == 'hcap' and c == 'Γ' and hrs <= GRAD_H: state[k]['paper'] = 'gradual'
             if p['mkt'] == 'total':
                 d_open = drift_before(p, now, sm_, st_, hours=1e4)       # απο την ΠΡΩΤΗ τιμη του ιστορικου ως τωρα (+ = προς εμας)
                 state[k]['move_open'] = d_open
@@ -353,7 +391,8 @@ def main(notify_tg=True):
         except Exception:
             p['hrs_birth'] = None
         p['move_open'] = st0.get('move_open')
-        p['drift'] = st0['drift']; p['mkt_note'] = drift_note(p)
+        for f_ in ('late_cls', 'd1', 'd3', 'd6', 'h_open'): p[f_] = st0.get(f_)
+        p['drift'] = st0['drift']; p['mkt_note'] = late_note(p) if p.get('late_cls') else drift_note(p)
         if st0.get('paper'):
             if 'late_kind' not in st0:
                 d1 = drift_before(p, st0.get('first_seen', now), sm_, st_, hours=1.0)
@@ -363,9 +402,13 @@ def main(notify_tg=True):
             if st0['paper'] == 'late6dog':
                 p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: αουτσαιντερ που βγηκε 2-6ω πριν (ιστορικα −6.8%, 2/5 σεζον· «σταδιακη» κοντρα −14%)· κινηση αγορας: {p['late_kind']}"
                                  + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
+            elif st0['paper'] == 'gradual':                       # 29/10: σταδιακη κοντρα ≤6ω πριν
+                mv = [f'{x:+.1f} π. σε {h}' for x, h in ((p.get('d3'), '3ω'), (p.get('d6'), '6ω')) if x is not None]
+                p['mkt_note'] = (f"📝 ΔΕΝ ΠΑΙΖΕΤΑΙ — σταδιακη κινηση της αγορας κοντρα μας ({', '.join(mv)}, χωρις αλμα ή ειδηση απουσιας) "
+                                 f"μεσα στις τελευταιες 6ω — ιστορικα −20% (60 picks, αρνητικο 5/5 σεζον)")
             elif st0['paper'] == 'move15':
-                p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε αφου η αγορα κινηθηκε {st0.get('move_open') or 0:+.1f} π. κοντρα απο το ανοιγμα "
-                                 f"(ιστορικα κοντρα ≥1.5 π. −10%, 1/5 σεζον)· κινηση: {p['late_kind']}")
+                p['mkt_note'] = (f"📝 ΔΕΝ ΠΑΙΖΕΤΑΙ — η αγορα πηγε {st0.get('move_open') or 0:+.1f} π. κοντρα απο το ανοιγμα (κανονας Γ, νωρις κοντρα ≥1.5 π.) "
+                                 f"— ιστορικα −31% (64 picks, 0/5 σεζον)· κινηση: {p['late_kind']}")
             else:
                 p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε στο τελευταιο 2ωρο (ιστορικα −9%, 1/5 σεζον)· κινηση αγορας: {p['late_kind']}"
                                  + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
@@ -383,7 +426,7 @@ def main(notify_tg=True):
             for p in new:
                 fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
                                          bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
-                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'), abs_tot=p.get('abs_tot'), abs_born=p.get('abs_born'), edge_noabs=p.get('edge_noabs'),
+                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'), abs_tot=p.get('abs_tot'), abs_born=p.get('abs_born'), edge_noabs=p.get('edge_noabs'), late_cls=p.get('late_cls'),
                                          paper=p.get('paper'), late_kind=p.get('late_kind'), move_open=state.get(key(p), {}).get('move_open')), ensure_ascii=False) + '\n')
     json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
@@ -397,6 +440,14 @@ def main(notify_tg=True):
             import notify; notify.send('\n'.join(msg))
         except Exception as e:
             print('Telegram σφαλμα:', e)
+    no_play = [p for p in new if p.get('paper') in ('gradual', 'move15')]   # 29/10 (Στελιος): τα κομμενα «ΔΕΝ ΠΑΙΖΕΤΑΙ» → info bot
+    if notify_tg and no_play:
+        try:
+            import notify
+            notify.send('📝 Ευρωλιγκα · picks που ΔΕΝ παιζονται' + chr(10) * 2 + (chr(10) * 2).join(line(p) for p in sorted(no_play, key=lambda x: x['when'])),
+                        silent=True, channel='info')
+        except Exception as e:
+            print('Telegram σφαλμα (δεν παιζεται):', e)
     for t in backs + drops: print(t.replace(chr(10), ' | '))
     if notify_tg and (backs or drops):
         try:

@@ -133,7 +133,8 @@ def pick_card(p):
     if p.get('el'):
         tags += '<span class="tag eu">🏀 μπασκετ</span>'
         if p.get('mkt_note') and not p.get('paper_late'):          # 30/9: «αγορα κοντρα» — η τιμη μας ανεβαινε τις 3ω πριν το alert
-            short = 'ℹ αγορα κοντρα ' + f"{p.get('drift') or 0:+.1f}π"
+            short = ('⏱ αργο: ' + {'Α': 'απουσια', 'Β': 'ξαφνικη κινηση', 'Γ': 'σταδιακη (νωρις)', 'Δ': 'μονο αποδοση', 'Ε': 'μικρη κινηση'}.get(p['late_cls'], '')
+                     if p.get('late_cls') else 'ℹ αγορα κοντρα ' + f"{p.get('drift') or 0:+.1f}π")      # 29/10: αργα picks ανα αιτια
             tags += f'<span class="tag lc" title="{_h.escape(p["mkt_note"])}">{_h.escape(short)}</span>'
         if p.get('coach_notes'):             # 1/10: νεος προπονητης (10 ματς μετα την αλλαγη) — μονο ενδειξη
             tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 νεος προπονητης</span>'

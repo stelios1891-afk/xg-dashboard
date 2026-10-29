@@ -1243,3 +1243,17 @@ def test_el_totals_without_absence_correction():
     assert EA.TOTALS_ONOFF is False
     src = open(os.path.join(ROOT, 'el_absence.py'), encoding='utf-8').read()
     assert 'if TOTALS_ONOFF: tot = tot_onoff' in src
+
+
+def test_el_late_picks_by_cause():
+    """29/10/2026 (Στελιος): αργα picks EL ταξινομουνται ανα αιτια (Α-Ε) με ιστορικο στο μηνυμα· ΧΑΝΤΙΚΑΠ: μονο «σταδιακη κοντρα ≤6ω» = καταγραφη
+    (gradual) — τα late2h/late6dog δεν μπαινουν σε νεα picks· τα κομμενα (gradual, move15) πανε στο info bot."""
+    import el_picks as EP
+    assert (EP.GRAD_PTS, EP.GRAD_H, EP.SUDDEN_PTS) == (0.5, 6.0, 1.0)
+    assert set(EP.LATE_HC) == {'Α', 'Β', 'Γ', 'Δ', 'Ε'} and set(EP.LATE_TOT) == {'Β', 'Γ', 'Δ', 'Ε'}
+    src = open(os.path.join(ROOT, 'el_picks.py'), encoding='utf-8').read()
+    assert "state[k]['paper'] = 'late2h'" not in src and "state[k]['paper'] = 'late6dog'" not in src
+    assert "c == 'Γ' and hrs <= GRAD_H: state[k]['paper'] = 'gradual'" in src
+    assert "p.get('paper') in ('gradual', 'move15')" in src and "channel='info'" in src
+    p = dict(mkt='hcap', late_cls='Β', d1=-1.4, d3=-1.5, d6=-1.2, h_open=5.0)
+    assert 'ξαφνικη' in EP.late_note(p) and '+23%' in EP.late_note(p)
