@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-28T23:20+00:00",
+ "checked": "2026-10-29T06:24+00:00",
  "upcoming_matches": 19,
  "leagues": {
   "AustrianBundesliga": {
@@ -99,14 +99,11 @@
    "last_finished": "26/10 18:45"
   },
   "SerieA": {
-   "status": "ΛΕΙΠΟΥΝ",
+   "status": "OK",
    "finished": 88,
-   "in_file": 83,
-   "missing": 5,
-   "missing_euro_teams": [
-    "28/10 Venezia-Inter",
-    "28/10 Monza-Napoli"
-   ],
+   "in_file": 88,
+   "missing": 0,
+   "missing_euro_teams": [],
    "last_finished": "28/10 19:45"
   },
   "SlovakiaNikeLiga": {
@@ -139,8 +136,5 @@
   "fallback": {}
  },
  "no_elo": [],
- "missing": [
-  "SerieA: 28/10 Venezia - Inter",
-  "SerieA: 28/10 Monza - Napoli"
- ]
+ "missing": []
 }
