@@ -15,7 +15,7 @@
   ΠΕΡΝΑ (ανα σημειο): ROI > 0 στο 8% ΚΑΙ στο 6% ΚΑΙ στο 10% ΚΑΙ κλιση > 0 με t ≥ 2.
   ΠΕΡΙΟΡΙΣΜΟΣ: 1 σεζον in-play → το καλυτερο δυνατο = ΣΚΙΑ (EuroCup χωρις pbp, φετος χωρις in-play Nowgoal).
 Εξοδος: el_live_pace_test_out.txt"""
-import sys, io, contextlib
+import sys, io, os, contextlib
 import numpy as np
 from statistics import NormalDist
 Phi = NormalDist().cdf
@@ -32,7 +32,25 @@ class _B(io.StringIO):
 NS = {}
 with contextlib.redirect_stdout(_B()): exec(A, NS); exec(B, NS)
 sys.stdout.reconfigure(encoding='utf-8')
-rows, live_at, settle = NS['rows'], NS['live_at'], NS['settle']
+rows, live_at_last, settle = NS['rows'], NS['live_at'], NS['settle']
+ROWS_ = NS['ROWS']
+# 29/10 ΔΙΟΡΘΩΣΗ (Στελιος: «δεν μπορει η Crown να ειναι 10 π. κατω απο την Pinnacle»): η «τελευταια γραμμη με το σκορ του σημειου»
+# ειναι συχνα ΜΕΣΑ στην επομενη περιοδο, μετα απο λεπτα χωρις καλαθι (η γραμμη πεφτει με τον χρονο). Π.χ. Ολυμπιακος–Εφες: διαλειμμα 149
+# (19:00-19:14 σταθερη), «τελευταια» 144 στις 19:16 (2′ της 3ης χωρις καλαθι). ΣΩΣΤΟ = η γραμμη που εμεινε ΣΤΑΘΕΡΗ τον περισσοτερο
+# χρονο οσο το σκορ ηταν ιδιο (το διαλειμμα, οπου το ρολοι σταματα). MODE=last δινει την παλια (λαθος) εκδοχη για συγκριση.
+MODE = os.environ.get('LIVE_MODE', 'break')
+def live_at(g, sc):
+    if MODE == 'last': return live_at_last(g, sc)
+    hs, as_ = sc; R_ = sorted((x for x in ROWS_.get((g['ng'], 23), []) if len(x) >= 7 and x[4] == 3 and x[5] is not None and x[6] is not None), key=lambda x: x[0])
+    dur = {}; best_row = {}
+    for i, x in enumerate(R_):
+        if (int(x[5]), int(x[6])) not in ((hs, as_), (as_, hs)) or not x[1] or not x[2] or not x[3] or x[1] <= 0 or x[2] <= 0 or x[3] <= 0: continue
+        d = (R_[i + 1][0] - x[0]) if i + 1 < len(R_) else 0
+        dur[x[1]] = dur.get(x[1], 0) + d
+        if d >= best_row.get(x[1], (-1, None))[0]: best_row[x[1]] = (d, x)
+    if not dur: return None
+    L = max(dur, key=dur.get); x = best_row[L][1]
+    return (float(L), 1 + x[2], 1 + x[3])
 out = []
 def P(s=''): print(s, flush=True); out.append(str(s))
 def save(): open('el_live_pace_test_out.txt' if TEST == 'E2025' else f'el_live_pace_test_{TEST}_out.txt', 'w', encoding='utf-8').write(chr(10).join(out))
