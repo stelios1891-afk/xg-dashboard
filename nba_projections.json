@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-29T22:09+00:00",
+ "generated": "2026-10-29T22:21+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -3630,12 +3630,12 @@
    "away": "Sacramento Kings",
    "hcode": "NOP",
    "acode": "SAC",
-   "margin": 5.1,
-   "total": 235.0,
+   "margin": 3.85,
+   "total": 235.1,
    "total_src": "μοντελο",
-   "pts_h": 120.0,
-   "pts_a": 114.9,
-   "p_home": 0.647,
+   "pts_h": 119.5,
+   "pts_a": 115.6,
+   "p_home": 0.612,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -3650,10 +3650,18 @@
    "rl_a": "2026-10-27",
    "margin_base": 4.39,
    "total_base": 234.6,
-   "abs_dm": 0.71,
-   "abs_dt": 0.41,
-   "abs_shadow": 0.0,
-   "abs_h": [],
+   "abs_dm": -0.54,
+   "abs_dt": 0.56,
+   "abs_shadow": 0.63,
+   "abs_h": [
+    [
+     "Murray,Dejounte",
+     32.2,
+     1,
+     "Out",
+     1.0
+    ]
+   ],
    "abs_a": [
     [
      "Murray,Keegan",
@@ -3664,10 +3672,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.033,
-   "abs_ld": 0.427,
-   "abs_lop": 0.033,
-   "abs_ldp": 0.427,
+   "abs_lo": 0.571,
+   "abs_ld": 0.847,
+   "abs_lop": 0.571,
+   "abs_ldp": 0.847,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
