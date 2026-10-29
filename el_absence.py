@@ -107,6 +107,10 @@ V_B0, V_B1, PIR_MU, PIR_SD, PIR_PRIOR = 0.56, 1.06, 12.1, 5.6, 200.0
 #   CLV χαμηλοτερο (η αγορα δεν τιμολογει αμυνα), τυχη p .06 LOSO / .45 WF. Το σκετο PIR (V_B0/V_B1) μενει ΚΑΤΑΓΡΑΦΗ (adj_pir → el_pir_shadow.jsonl).
 #   Κριση: μετα την 20η αγωνιστικη — αν «PIR + αμυνα» πισω απο PIR σε μοναδες → επιστροφη. ENGINE = 'PIR' επαναφερει το παλιο.
 ENGINE = 'PIR+D'
+# 29/10/2026 (Στελιος «οκ βγαλε το on/off»): ΣΥΝΟΛΑ ΧΩΡΙΣ διορθωση απουσιων. el_totals_absence_final / el_total_physics_step5 (1563 ματς E2021-25):
+#   «οπως ο scanner» χωρις +80.4 vs on/off +60.2 (LOSO), WF +69.3 vs +53.6 — η ζημια απο ειδησεις μεσα στη μερα (η αγορα συνολων τις τιμολογει)·
+#   ακριβεια ιδια (16.544). Το on/off υπολογιζεται ακομα ως tot_onoff (μονο πληροφορια), tot = 0. TOTALS_ONOFF = True επαναφερει.
+TOTALS_ONOFF = False
 def _def_params():
     try:
         import el_defense; return el_defense.params()
@@ -233,7 +237,7 @@ def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(
         oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
         if oo and OO:
             so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
-        det.append(f'{name} {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + dtxt + f' ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 else ''))
+        det.append(f'{name} {avg:.0f}′' + (f' PIR/40 {pv:.0f}' if pv is not None else '') + dtxt + f' ×{g:g} → {c:.2f}' + (f' (on/off επιθ {oo[0]:+.1f} αμυνα {oo[1]:+.1f})' if oo and g > 0 and TOTALS_ONOFF else ''))
     return round(cost, 2), det, so, sd_
 
 MANUAL_F = 'el_absence_manual.json'
@@ -281,16 +285,17 @@ def adjustments(games, B=None):
         shh, sha = {'box': 0.0, 'ok': True}, {'box': 0.0, 'ok': True}
         ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO, gtd_h, shadow=shh)
         ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO, gtd_a, shadow=sha)
-        tot = 0.0
+        tot = 0.0; tot_onoff = 0.0
         if OO:                                                     # ΣΥΝΟΛΑ: ποντοι γηπ += bO·δικα επιθ + bD·αμυνα φιλοξ (και αντιστροφα)
             bO, bD = OO[2]['bO'], OO[2]['bD']
-            tot = round(bO * oh_ + bD * da_ + bO * oa_ + bD * dh_, 2)
+            tot_onoff = round(bO * oh_ + bD * da_ + bO * oa_ + bD * dh_, 2)
+            if TOTALS_ONOFF: tot = tot_onoff
         parts = []
         if dh: parts.append(f"{g['home']}: " + ', '.join(dh))
         if da: parts.append(f"{g['away']}: " + ', '.join(da))
         if gtd: parts.append('αμφιβολοι (GTD): στο χαντικαπ με πιθανοτητα, στα συνολα δεν μετρανε')
         if man: parts.append('χειροκινητα OUT (Στελιος): ' + ', '.join(n for v in man.values() for n in v))
-        res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, note=' · '.join(parts))
+        res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, tot_onoff=tot_onoff, note=' · '.join(parts))
         res[str(g['code'])].update(adj_pir=round(sha.get('pir', 0.0) - shh.get('pir', 0.0), 2), engine=ENGINE if shh.get('def_ok', True) and sha.get('def_ok', True) else 'PIR')
         if shh['ok'] and sha['ok']:                                # 23/10 ΣΚΙΑ «δικο box» (el_box_shadow) — μονο καταγραφη στο el_picks
             res[str(g['code'])].update(adj_box=round(sha['box'] - shh['box'], 2), cost_box_h=round(shh['box'], 2), cost_box_a=round(sha['box'], 2))

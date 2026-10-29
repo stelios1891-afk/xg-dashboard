@@ -1235,3 +1235,11 @@ def test_el_absence_pir_plus_defense():
         else: ED._C['V'] = old
     src = open(os.path.join(ROOT, 'el_picks.py'), encoding='utf-8').read()
     assert "'pir': dict(log=F('el_pir_shadow.jsonl')" in src
+
+
+def test_el_totals_without_absence_correction():
+    """29/10/2026 (Στελιος «οκ βγαλε το on/off»): ΣΥΝΟΛΑ Ευρωλιγκας χωρις διορθωση απουσιων (tot = 0)· το on/off μονο ως tot_onoff."""
+    import el_absence as EA
+    assert EA.TOTALS_ONOFF is False
+    src = open(os.path.join(ROOT, 'el_absence.py'), encoding='utf-8').read()
+    assert 'if TOTALS_ONOFF: tot = tot_onoff' in src
