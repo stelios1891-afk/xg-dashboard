@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T22:09+00:00",
+ "generated": "2026-10-30T22:22+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -3738,12 +3738,12 @@
    "away": "Charlotte Hornets",
    "hcode": "WAS",
    "acode": "CHO",
-   "margin": 1.36,
-   "total": 220.2,
+   "margin": 1.32,
+   "total": 220.3,
    "total_src": "μοντελο",
    "pts_h": 110.8,
-   "pts_a": 109.4,
-   "p_home": 0.54,
+   "pts_a": 109.5,
+   "p_home": 0.539,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -3758,18 +3758,10 @@
    "rl_a": "2026-10-28",
    "margin_base": 1.3,
    "total_base": 220.4,
-   "abs_dm": 0.07,
-   "abs_dt": -0.14,
+   "abs_dm": 0.02,
+   "abs_dt": -0.01,
    "abs_shadow": -0.01,
-   "abs_h": [
-    [
-     "Johnson,Tre",
-     22.8,
-     0,
-     "Questionable",
-     0.46
-    ]
-   ],
+   "abs_h": [],
    "abs_a": [
     [
      "Schroder,Dennis",
@@ -3782,8 +3774,8 @@
    "inj_src": "official",
    "abs_lo": 0,
    "abs_ld": 0,
-   "abs_lop": -0.169,
-   "abs_ldp": -0.222,
+   "abs_lop": 0.005,
+   "abs_ldp": -0.01,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
