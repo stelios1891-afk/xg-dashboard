@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T22:22+00:00",
+ "generated": "2026-10-30T22:34+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -3965,12 +3965,12 @@
    "away": "New York Knicks",
    "hcode": "PHI",
    "acode": "NYK",
-   "margin": 1.96,
+   "margin": 1.87,
    "total": 219.0,
    "total_src": "μοντελο",
-   "pts_h": 110.5,
-   "pts_a": 108.5,
-   "p_home": 0.558,
+   "pts_h": 110.4,
+   "pts_a": 108.6,
+   "p_home": 0.555,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -3985,9 +3985,9 @@
    "rl_a": "2026-10-28",
    "margin_base": 3.52,
    "total_base": 220.1,
-   "abs_dm": -1.56,
+   "abs_dm": -1.64,
    "abs_dt": -1.09,
-   "abs_shadow": 0.23,
+   "abs_shadow": 0.18,
    "abs_h": [
     [
      "Brown,Jaylen",
@@ -3997,20 +3997,12 @@
      1.0
     ]
    ],
-   "abs_a": [
-    [
-     "Towns,Karl-Anthony",
-     31.0,
-     1,
-     "Probable",
-     0.04
-    ]
-   ],
+   "abs_a": [],
    "inj_src": "official",
    "abs_lo": 1.926,
    "abs_ld": -0.131,
-   "abs_lop": 1.987,
-   "abs_ldp": -0.096,
+   "abs_lop": 1.926,
+   "abs_ldp": -0.131,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
