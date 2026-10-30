@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-10-30T02:37+00:00",
+ "scanned_at": "2026-10-30T02:42+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "n_new": 0,
- "n_changed": 0,
+ "n_changed": 1,
  "picks": [
   {
    "lg": "Euroleague",
@@ -112,6 +112,45 @@
    "h_open": null,
    "drift": 0.0,
    "mkt_note": null
+  },
+  {
+   "lg": "Euroleague",
+   "home": "Dubai Basketball",
+   "away": "Hapoel IBI Tel Aviv",
+   "hcode": "DUB",
+   "acode": "HTA",
+   "code": 84,
+   "round": 9,
+   "coach_notes": null,
+   "when": "2026-10-30T16:00",
+   "el": true,
+   "model": "v4: χαντικαπ/1-2 = Β1 (0.5 ομαδα + 0.42 BasketNews · K12 · H",
+   "abs_adj": -1.2,
+   "abs_note": "Dubai Basketball (κόστος 1.20): Justin Anderson OUT → 0 (δεν έχει παίξει φέτος), Mam Jaiteh OUT → 0 (δεν έχει παίξει φέτος), Thomas Walkup OUT → 1.20 · Hapoel IBI Tel Aviv (κόστος 0.00): Tamir Blatt OUT → 0 (δεν έχει παίξει φέτος), Tyler Ennis OUT → 0 (δεν έχει παίξει φέτος)",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": -3.0,
+   "odds": 1.971,
+   "edge": 0.0956,
+   "travel": {
+    "adj": 4.5,
+    "km": 3472,
+    "frm": "εντος",
+    "note": "🧳 ταξιδι (2ο ματς διαβολοβδομαδας): η Hapoel IBI Tel Aviv ερχεται 3472 χλμ σε 2 μερες απο ματς στην εδρα της, η Dubai Basketball παιζει και το προηγουμενο στην εδρα της → +4.5 π. στον γηπεδουχο"
+   },
+   "proj_odds": 1.79,
+   "model_line": -4.6,
+   "mkt_line": -3.0,
+   "kind1h": "σταδιακη",
+   "hrs_birth": 25.033333333333335,
+   "move_open": null,
+   "late_cls": null,
+   "d1": null,
+   "d3": null,
+   "d6": null,
+   "h_open": null,
+   "drift": -0.8,
+   "mkt_note": "ℹ️ Αγορα κοντρα (-0.8 π. τις 3ω πριν, σταδιακη) — ιστορικα ≥6ω πριν δεν βλαπτει: σταδιακη +12.9% (70 picks)."
   },
   {
    "lg": "Euroleague",
