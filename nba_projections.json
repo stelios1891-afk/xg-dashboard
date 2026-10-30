@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T19:55+00:00",
+ "generated": "2026-10-30T20:07+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -3763,7 +3763,7 @@
    "abs_shadow": -0.01,
    "abs_h": [
     [
-     "Tre Johnson",
+     "Johnson,Tre",
      22.8,
      0,
      "Questionable",
@@ -3772,7 +3772,7 @@
    ],
    "abs_a": [
     [
-     "Dennis Schroder",
+     "Schroder,Dennis",
      32.6,
      1,
      "Probable",
@@ -3826,14 +3826,14 @@
    "abs_shadow": 0.17,
    "abs_h": [
     [
-     "Noah Clowney",
+     "Clowney,Noah",
      21.5,
      1,
      "Questionable",
      0.46
     ],
     [
-     "Egor Demin",
+     "Demin,Egor",
      21.8,
      1,
      "Out",
@@ -3888,7 +3888,7 @@
    "abs_shadow": 0.0,
    "abs_h": [
     [
-     "Kawhi Leonard",
+     "Leonard,Kawhi",
      26.0,
      0,
      "Out",
@@ -3897,14 +3897,14 @@
    ],
    "abs_a": [
     [
-     "Paolo Banchero",
+     "Banchero,Paolo",
      33.5,
      0,
      "Out",
      1.0
     ],
     [
-     "Jalen Suggs",
+     "Suggs,Jalen",
      33.3,
      0,
      "Out",
@@ -3959,7 +3959,7 @@
    "abs_h": [],
    "abs_a": [
     [
-     "Jalen Smith",
+     "Smith,Jalen",
      23.4,
      1,
      "Questionable",
@@ -3988,12 +3988,12 @@
    "away": "New York Knicks",
    "hcode": "PHI",
    "acode": "NYK",
-   "margin": 2.83,
-   "total": 219.6,
+   "margin": 2.01,
+   "total": 219.0,
    "total_src": "μοντελο",
-   "pts_h": 111.2,
-   "pts_a": 108.4,
-   "p_home": 0.583,
+   "pts_h": 110.5,
+   "pts_a": 108.5,
+   "p_home": 0.559,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4008,24 +4008,32 @@
    "rl_a": "2026-10-28",
    "margin_base": 3.52,
    "total_base": 220.1,
-   "abs_dm": -0.69,
-   "abs_dt": -0.46,
-   "abs_shadow": 0.08,
+   "abs_dm": -1.5,
+   "abs_dt": -1.05,
+   "abs_shadow": 0.23,
    "abs_h": [
     [
-     "Jaylen Brown",
+     "Brown,Jaylen",
      36.4,
      1,
-     "Questionable",
-     0.42
+     "Doubtful",
+     0.965
     ]
    ],
-   "abs_a": [],
+   "abs_a": [
+    [
+     "Towns,Karl-Anthony",
+     31.0,
+     1,
+     "Probable",
+     0.04
+    ]
+   ],
    "inj_src": "official",
    "abs_lo": 0,
    "abs_ld": 0,
-   "abs_lop": 0.809,
-   "abs_ldp": -0.055,
+   "abs_lop": 1.92,
+   "abs_ldp": -0.091,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -4043,12 +4051,12 @@
    "away": "Indiana Pacers",
    "hcode": "MIA",
    "acode": "IND",
-   "margin": 4.97,
-   "total": 235.2,
+   "margin": 5.36,
+   "total": 235.1,
    "total_src": "μοντελο",
-   "pts_h": 120.1,
-   "pts_a": 115.1,
-   "p_home": 0.644,
+   "pts_h": 120.2,
+   "pts_a": 114.9,
+   "p_home": 0.654,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4063,34 +4071,41 @@
    "rl_a": "2026-10-28",
    "margin_base": 1.75,
    "total_base": 236.0,
-   "abs_dm": 3.21,
-   "abs_dt": -0.82,
-   "abs_shadow": 0.01,
+   "abs_dm": 3.61,
+   "abs_dt": -0.94,
+   "abs_shadow": 0.06,
    "abs_h": [],
    "abs_a": [
     [
-     "Andrew Nembhard",
-     32.8,
-     1,
-     "Probable",
-     0.04
-    ],
-    [
-     "Aaron Nesmith",
-     21.8,
-     1,
-     "Probable",
-     0.07
-    ],
-    [
-     "Tyrese Haliburton",
+     "Haliburton,Tyrese",
      33.0,
      0,
      "Out",
      1.0
     ],
     [
-     "Ivica Zubac",
+     "Nembhard,Andrew",
+     32.8,
+     1,
+     "Probable",
+     0.04
+    ],
+    [
+     "Nesmith,Aaron",
+     21.8,
+     1,
+     "Probable",
+     0.07
+    ],
+    [
+     "Toppin,Obi",
+     23.0,
+     1,
+     "Questionable",
+     0.46
+    ],
+    [
+     "Zubac,Ivica",
      21.7,
      0,
      "Out",
@@ -4100,8 +4115,8 @@
    "inj_src": "official",
    "abs_lo": 2.742,
    "abs_ld": 0.573,
-   "abs_lop": 2.788,
-   "abs_ldp": 0.575,
+   "abs_lop": 3.035,
+   "abs_ldp": 0.576,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -4119,12 +4134,12 @@
    "away": "Los Angeles Clippers",
    "hcode": "MIN",
    "acode": "LAC",
-   "margin": 11.2,
-   "total": 217.6,
+   "margin": 11.07,
+   "total": 217.7,
    "total_src": "μοντελο",
    "pts_h": 114.4,
-   "pts_a": 103.2,
-   "p_home": 0.797,
+   "pts_a": 103.3,
+   "p_home": 0.794,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4139,12 +4154,12 @@
    "rl_a": "2026-10-28",
    "margin_base": 13.08,
    "total_base": 219.0,
-   "abs_dm": -1.88,
-   "abs_dt": -1.41,
+   "abs_dm": -2.01,
+   "abs_dt": -1.33,
    "abs_shadow": 0.0,
    "abs_h": [
     [
-     "Anthony Edwards",
+     "Edwards,Anthony",
      33.8,
      0,
      "Out",
@@ -4153,18 +4168,18 @@
    ],
    "abs_a": [
     [
-     "Rui Hachimura",
+     "Hachimura,Rui",
      31.3,
      0,
-     "Questionable",
-     0.42
+     "Probable",
+     0.04
     ]
    ],
    "inj_src": "official",
    "abs_lo": 2.278,
    "abs_ld": -0.187,
-   "abs_lop": 2.279,
-   "abs_ldp": -0.274,
+   "abs_lop": 2.278,
+   "abs_ldp": -0.195,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -4182,12 +4197,12 @@
    "away": "Houston Rockets",
    "hcode": "DAL",
    "acode": "HOU",
-   "margin": -3.49,
-   "total": 230.8,
+   "margin": -3.28,
+   "total": 230.9,
    "total_src": "μοντελο",
-   "pts_h": 113.7,
-   "pts_a": 117.2,
-   "p_home": 0.398,
+   "pts_h": 113.8,
+   "pts_a": 117.1,
+   "p_home": 0.404,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4202,46 +4217,46 @@
    "rl_a": "2026-10-28",
    "margin_base": -4.96,
    "total_base": 230.5,
-   "abs_dm": 1.47,
-   "abs_dt": 0.36,
+   "abs_dm": 1.68,
+   "abs_dt": 0.43,
    "abs_shadow": 0.13,
    "abs_h": [
     [
-     "Naji Marshall",
+     "Marshall,Naji",
      27.7,
      0,
-     "Questionable",
-     0.46
+     "Probable",
+     0.07
     ]
    ],
    "abs_a": [
     [
-     "Alperen Sengun",
+     "Sengun,Alperen",
      34.0,
      0,
      "Questionable",
      0.42
     ],
     [
-     "Marcus Smart",
-     23.5,
-     0,
-     "Questionable",
-     0.46
-    ],
-    [
-     "Reed Sheppard",
+     "Sheppard,Reed",
      23.2,
      1,
      "Out",
      1.0
+    ],
+    [
+     "Smart,Marcus",
+     23.5,
+     0,
+     "Questionable",
+     0.46
     ]
    ],
    "inj_src": "official",
    "abs_lo": 0.045,
    "abs_ld": 0.092,
-   "abs_lop": 0.469,
-   "abs_ldp": 0.597,
+   "abs_lop": 0.423,
+   "abs_ldp": 0.647,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -4259,12 +4274,12 @@
    "away": "Los Angeles Lakers",
    "hcode": "GSW",
    "acode": "LAL",
-   "margin": -3.0,
-   "total": 234.0,
+   "margin": -2.16,
+   "total": 234.2,
    "total_src": "μοντελο",
-   "pts_h": 115.5,
-   "pts_a": 118.5,
-   "p_home": 0.412,
+   "pts_h": 116.0,
+   "pts_a": 118.2,
+   "p_home": 0.436,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4279,32 +4294,32 @@
    "rl_a": "2026-10-28",
    "margin_base": -2.51,
    "total_base": 233.3,
-   "abs_dm": -0.48,
-   "abs_dt": 0.69,
+   "abs_dm": 0.35,
+   "abs_dt": 0.9,
    "abs_shadow": 0.0,
    "abs_h": [
     [
-     "Gui Santos",
+     "Santos,Gui",
      24.0,
-     0,
-     "Doubtful",
-     0.963
-    ]
-   ],
-   "abs_a": [
-    [
-     "Ziaire Williams",
-     28.5,
      0,
      "Questionable",
      0.46
     ]
    ],
+   "abs_a": [
+    [
+     "Williams,Ziaire",
+     28.5,
+     0,
+     "Out",
+     1.0
+    ]
+   ],
    "inj_src": "official",
-   "abs_lo": 0,
-   "abs_ld": 0,
-   "abs_lop": -0.008,
-   "abs_ldp": 0.689,
+   "abs_lo": -0.373,
+   "abs_ld": 0.54,
+   "abs_lop": -0.295,
+   "abs_ldp": 0.75,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -4322,12 +4337,12 @@
    "away": "Denver Nuggets",
    "hcode": "PHO",
    "acode": "DEN",
-   "margin": 0.01,
+   "margin": 0.18,
    "total": 223.9,
    "total_src": "μοντελο",
    "pts_h": 112.0,
-   "pts_a": 112.0,
-   "p_home": 0.5,
+   "pts_a": 111.9,
+   "p_home": 0.505,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4342,17 +4357,17 @@
    "rl_a": "2026-10-28",
    "margin_base": -0.15,
    "total_base": 223.9,
-   "abs_dm": 0.16,
+   "abs_dm": 0.34,
    "abs_dt": 0.0,
    "abs_shadow": 0.0,
    "abs_h": [],
    "abs_a": [
     [
-     "Alpha Diallo",
+     "Diallo,Alpha",
      22.0,
      0,
-     "Questionable",
-     0.46
+     "Doubtful",
+     0.963
     ]
    ],
    "inj_src": "official",
