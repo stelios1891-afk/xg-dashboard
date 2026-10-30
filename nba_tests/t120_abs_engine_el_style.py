@@ -112,6 +112,8 @@ def settle(i, L, sd, od):
     x = (ACT[i] + L) * sd; return (od - 1) if x > 0 else (0.0 if x == 0 else -1.0)
 
 T1, T2, DIE, BETS = [], [], [], {'A': {}, 'B': {}, 'F': {}}
+PLAYED = collections.defaultdict(float)
+for r in g['A2'].itertuples(index=False): PLAYED[(r.pid, r.dd)] += float(r.MIN)
 n_games = 0
 for i, (sw, tip, r21, _) in SER.items():
     s = int(SEAS_G[i])
@@ -171,8 +173,13 @@ for i, (sw, tip, r21, _) in SER.items():
                     elif ch_own: kind = 'επιστροφη/αναβαθμιση δικου μας'
                     elif gone_opp: kind = 'αλλο'
                     else: kind = 'αλλο'
+                    # 30/10 (Στελιος «ποιες ειναι οι επιστροφες;»): λεπτομερειες δικων μας αλλαγων — καταστασ. πριν → τωρα, κοστος πριν, ΕΠΑΙΞΕ τελικα (λεπτα)
+                    ret_ = [(k, oprev[k][0], onow[k][0] if k in onow else 'εκτος αναφορας', round(oprev[k][1], 2),
+                             PLAYED.get((K2P.get((k, own_team, s)), d), 0.0)) for k in ch_own]
+                    opp_ = [(k, dprev[k][0] if k in dprev else 'καθολου', v[0], round(v[1], 2), PLAYED.get((K2P.get((k, side_team, s)), d), 0.0)) for k, v in ch_opp.items()]
                     r_ = dict(sea=s, res=settle(i, L, sd, od), clv=sd * (close[3] - fair), kind='ειδηση', hrs=(tip - tau) / 3600, who=who, nk=kind,
-                              dpts=(adj - prev_adj) * sd, dog=(L * sd > 0))
+                              dpts=(adj - prev_adj) * sd, dog=(L * sd > 0), ret=ret_, opp=opp_, game=f'{str(d)[:10]} {h}-{a}', side=(h if sd == 1 else a), L=L * sd, od=od,
+                              mv_open=sd * (fair - f0))
                     T2.append(r_); BETS['B'][(i, sd)] = r_
             # «δεν ισχυει πια»: pick ανοιγματος, η ειδηση το κανει edge < 0 στην ΙΔΙΑ γραμμη ανοιγματος
             if open_pick and open_pick[0] == sd and sd not in died and abs(adj - prev_adj) > 1e-9:
@@ -217,6 +224,17 @@ if len(X2):
     for k_ in X2.nk.unique(): P(f'  {k_:32s}: {cell(X2[X2.nk == k_])}')
     P(f'  αουτσαιντερ {cell(X2[X2.dog])} · φαβορι {cell(X2[~X2.dog])}')
     P(f'  αλλαγη διορθωσης <1 π. {cell(X2[X2.dpts < 1])} · 1-2 π. {cell(X2[(X2.dpts >= 1) & (X2.dpts < 2)])} · ≥2 π. {cell(X2[X2.dpts >= 2])}')
+if len(X2):
+    X2.to_pickle(os.path.join(ROOT, 'nba_injrep', 't120_news_picks.pkl'))
+    R2 = X2[X2.who == 'ΕΠΙΣΤΡΟΦΗ σε εμας']
+    P(f'\n=== ΕΠΙΣΤΡΟΦΕΣ (picks υπερ ομαδας που ξαναπαιρνει παικτη): {cell(R2)} ===')
+    rows_ = [(r.sea, r.res, st0, st1, c0, mn) for r in R2.itertuples() for (k, st0, st1, c0, mn) in r.ret]
+    if rows_:
+        RR = pd.DataFrame(rows_, columns=['sea', 'res', 'st0', 'st1', 'c0', 'mn'])
+        for (a0, a1), x in RR.groupby(['st0', 'st1']): P(f'  {a0:12s} → {a1:16s}: {len(x):3d} περιπτωσεις · ROI picks {100 * x.res.mean():+6.1f}% · επαιξε τελικα {100 * (x.mn > 0).mean():.0f}% (μ.ο. {x.mn[x.mn > 0].mean() if (x.mn > 0).any() else 0:.0f}′) · κοστος που αφαιρεθηκε {x.c0.mean():.2f} π.')
+        P(f'  επαιξε τελικα: {cell(RR[RR.mn > 0])} · ΔΕΝ επαιξε: {cell(RR[RR.mn == 0])}')
+    for r in R2.itertuples():
+        P(f'   {r.game} · pick {r.side} {r.L:+g} @{r.od:.2f} · {r.hrs:.1f}ω πριν · ' + ', '.join(f'{k} {a0}→{a1} (κοστος {c0}, επαιξε {mn:.0f}′)' for k, a0, a1, c0, mn in r.ret) + f' · {r.res:+.2f}')
 XD = pd.DataFrame(DIE)
 P('\n=== «ΔΕΝ ΙΣΧΥΕΙ ΠΙΑ»: pick ανοιγματος που η ειδηση κανει edge < 0 (στη γραμμη ανοιγματος) ===')
 if len(XD):
