@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T13:40+00:00",
+ "generated": "2026-10-31T13:54+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -4406,12 +4406,12 @@
    "away": "Philadelphia 76ers",
    "hcode": "CHO",
    "acode": "PHI",
-   "margin": -4.82,
-   "total": 208.7,
+   "margin": -2.46,
+   "total": 208.1,
    "total_src": "μοντελο",
-   "pts_h": 101.9,
-   "pts_a": 106.7,
-   "p_home": 0.36,
+   "pts_h": 102.8,
+   "pts_a": 105.3,
+   "p_home": 0.428,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4426,9 +4426,9 @@
    "rl_a": "2026-10-30",
    "margin_base": -5.51,
    "total_base": 209.1,
-   "abs_dm": 0.69,
-   "abs_dt": -0.46,
-   "abs_shadow": 0.0,
+   "abs_dm": 3.06,
+   "abs_dt": -1.02,
+   "abs_shadow": 0.96,
    "abs_h": [],
    "abs_a": [
     [
@@ -4437,13 +4437,27 @@
      0,
      "Questionable",
      0.42
+    ],
+    [
+     "LeBron James",
+     33.4,
+     1,
+     "Questionable",
+     0.42
+    ],
+    [
+     "Joel Embiid",
+     35.0,
+     1,
+     "Doubtful",
+     0.965
     ]
    ],
    "inj_src": "official",
    "abs_lo": 0,
    "abs_ld": 0,
-   "abs_lop": 0.809,
-   "abs_ldp": -0.055,
+   "abs_lop": 2.86,
+   "abs_ldp": 0.406,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
