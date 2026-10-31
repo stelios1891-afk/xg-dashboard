@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T23:23+00:00",
+ "generated": "2026-10-31T23:36+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -4635,12 +4635,12 @@
    "away": "Sacramento Kings",
    "hcode": "MEM",
    "acode": "SAC",
-   "margin": 11.32,
-   "total": 232.4,
+   "margin": 10.33,
+   "total": 232.1,
    "total_src": "μοντελο",
-   "pts_h": 121.8,
-   "pts_a": 110.5,
-   "p_home": 0.799,
+   "pts_h": 121.2,
+   "pts_a": 110.9,
+   "p_home": 0.778,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -4655,16 +4655,16 @@
    "rl_a": "2026-10-29",
    "margin_base": 11.33,
    "total_base": 232.2,
-   "abs_dm": -0.01,
-   "abs_dt": 0.22,
-   "abs_shadow": 0.16,
+   "abs_dm": -1.01,
+   "abs_dt": -0.05,
+   "abs_shadow": 0.37,
    "abs_h": [
     [
      "Jerome,Ty",
      30.0,
      1,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -4677,10 +4677,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.033,
-   "abs_ld": 0.427,
-   "abs_lop": 0.528,
-   "abs_ldp": 0.479,
+   "abs_lo": 1.211,
+   "abs_ld": 0.551,
+   "abs_lop": 1.211,
+   "abs_ldp": 0.551,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
