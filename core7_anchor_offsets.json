@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-31T05:13Z",
+ "updated": "2026-11-01T05:13Z",
  "season": "2627",
  "lam": 0.5,
  "learn_min_played": 6,
@@ -11,198 +11,134 @@
  "leagues": {
   "EPL": {
    "teams": {
-    "9825": {
-     "name": "Arsenal",
-     "o": 0.1945,
-     "n": 2
-    },
     "8586": {
      "name": "Tottenham Hotspur",
-     "o": 0.1696,
-     "n": 2
+     "o": 0.2239,
+     "n": 3
     },
-    "8650": {
-     "name": "Liverpool",
-     "o": 0.1525,
+    "9825": {
+     "name": "Arsenal",
+     "o": 0.1948,
      "n": 2
     },
     "8456": {
      "name": "Manchester City",
-     "o": 0.1409,
-     "n": 2
+     "o": 0.18,
+     "n": 3
     },
-    "9937": {
-     "name": "Brentford",
-     "o": 0.084,
-     "n": 2
-    },
-    "8678": {
-     "name": "AFC Bournemouth",
-     "o": 0.0699,
-     "n": 2
-    },
-    "8455": {
-     "name": "Chelsea",
-     "o": 0.0588,
+    "8650": {
+     "name": "Liverpool",
+     "o": 0.1532,
      "n": 2
     },
     "8472": {
      "name": "Sunderland",
-     "o": 0.0498,
-     "n": 2
+     "o": 0.0846,
+     "n": 3
+    },
+    "9937": {
+     "name": "Brentford",
+     "o": 0.0537,
+     "n": 3
     },
     "10261": {
      "name": "Newcastle United",
      "o": 0.0477,
      "n": 2
     },
-    "9879": {
-     "name": "Fulham",
-     "o": 0.0262,
-     "n": 2
+    "8678": {
+     "name": "AFC Bournemouth",
+     "o": 0.0417,
+     "n": 3
+    },
+    "8455": {
+     "name": "Chelsea",
+     "o": 0.0223,
+     "n": 3
     },
     "8463": {
      "name": "Leeds United",
-     "o": -0.0092,
+     "o": 0.019,
+     "n": 3
+    },
+    "10252": {
+     "name": "Aston Villa",
+     "o": 0.0189,
+     "n": 3
+    },
+    "9902": {
+     "name": "Ipswich Town",
+     "o": -0.0573,
+     "n": 3
+    },
+    "10260": {
+     "name": "Manchester United",
+     "o": -0.0738,
+     "n": 3
+    },
+    "9879": {
+     "name": "Fulham",
+     "o": -0.0862,
+     "n": 3
+    },
+    "10203": {
+     "name": "Nottingham Forest",
+     "o": -0.0919,
+     "n": 3
+    },
+    "8668": {
+     "name": "Everton",
+     "o": -0.0954,
      "n": 2
     },
     "10204": {
      "name": "Brighton & Hove Albion",
-     "o": -0.0605,
-     "n": 2
+     "o": -0.1003,
+     "n": 3
     },
     "9826": {
      "name": "Crystal Palace",
-     "o": -0.0768,
-     "n": 2
-    },
-    "10252": {
-     "name": "Aston Villa",
-     "o": -0.0941,
-     "n": 2
-    },
-    "8668": {
-     "name": "Everton",
-     "o": -0.0953,
-     "n": 2
-    },
-    "10260": {
-     "name": "Manchester United",
-     "o": -0.1105,
-     "n": 2
-    },
-    "9902": {
-     "name": "Ipswich Town",
-     "o": -0.1161,
-     "n": 2
-    },
-    "10203": {
-     "name": "Nottingham Forest",
-     "o": -0.1223,
-     "n": 2
+     "o": -0.131,
+     "n": 3
     },
     "8669": {
      "name": "Coventry City",
-     "o": -0.1478,
-     "n": 2
+     "o": -0.1834,
+     "n": 3
     },
     "8667": {
      "name": "Hull City",
-     "o": -0.1612,
-     "n": 2
+     "o": -0.2205,
+     "n": 3
     }
    },
-   "matches": 80,
-   "learnable": 20,
-   "learned": 20,
+   "matches": 88,
+   "learnable": 28,
+   "learned": 28,
    "log": [
-    {
-     "date": "2026-09-04",
-     "h": "Ipswich Town",
-     "a": "Liverpool",
-     "played": 2,
-     "s_mod": -0.711,
-     "s": -0.711
-    },
-    {
-     "date": "2026-09-05",
-     "h": "Brentford",
-     "a": "Sunderland",
-     "played": 2,
-     "s_mod": 0.651,
-     "s": 0.651
-    },
-    {
-     "date": "2026-09-05",
-     "h": "Brighton & Hove Albion",
-     "a": "Leeds United",
-     "played": 2,
-     "s_mod": 0.673,
-     "s": 0.673
-    },
-    {
-     "date": "2026-09-05",
-     "h": "Fulham",
-     "a": "Crystal Palace",
-     "played": 2,
-     "s_mod": 0.366,
-     "s": 0.366
-    },
-    {
-     "date": "2026-09-05",
-     "h": "Hull City",
-     "a": "Aston Villa",
-     "played": 2,
-     "s_mod": -0.31,
-     "s": -0.31
-    },
-    {
-     "date": "2026-09-05",
-     "h": "Manchester City",
-     "a": "Coventry City",
-     "played": 2,
-     "s_mod": 1.767,
-     "s": 1.767
-    },
-    {
-     "date": "2026-09-05",
-     "h": "Newcastle United",
-     "a": "AFC Bournemouth",
-     "played": 2,
-     "s_mod": 0.117,
-     "s": 0.117
-    },
-    {
-     "date": "2026-09-05",
-     "h": "Nottingham Forest",
-     "a": "Tottenham Hotspur",
-     "played": 2,
-     "s_mod": 0.445,
-     "s": 0.445
-    },
     {
      "date": "2026-09-06",
      "h": "Arsenal",
      "a": "Chelsea",
      "played": 2,
-     "s_mod": 1.072,
-     "s": 1.072
+     "s_mod": 1.074,
+     "s": 1.074
     },
     {
      "date": "2026-09-06",
      "h": "Everton",
      "a": "Manchester United",
      "played": 2,
-     "s_mod": -0.622,
-     "s": -0.622
+     "s_mod": -0.623,
+     "s": -0.623
     },
     {
      "date": "2026-09-12",
      "h": "AFC Bournemouth",
      "a": "Brentford",
      "played": 3,
-     "s_mod": 0.101,
-     "s": 0.101
+     "s_mod": 0.1,
+     "s": 0.1
     },
     {
      "date": "2026-09-12",
@@ -217,48 +153,48 @@
      "h": "Chelsea",
      "a": "Hull City",
      "played": 3,
-     "s_mod": 1.257,
-     "s": 1.257
+     "s_mod": 1.259,
+     "s": 1.259
     },
     {
      "date": "2026-09-12",
      "h": "Crystal Palace",
      "a": "Ipswich Town",
      "played": 3,
-     "s_mod": 0.5,
-     "s": 0.5
+     "s_mod": 0.501,
+     "s": 0.501
     },
     {
      "date": "2026-09-12",
      "h": "Liverpool",
      "a": "Fulham",
      "played": 3,
-     "s_mod": 0.607,
-     "s": 0.607
+     "s_mod": 0.609,
+     "s": 0.609
     },
     {
      "date": "2026-09-12",
      "h": "Sunderland",
      "a": "Arsenal",
      "played": 3,
-     "s_mod": -0.855,
-     "s": -0.855
+     "s_mod": -0.857,
+     "s": -0.857
     },
     {
      "date": "2026-09-12",
      "h": "Tottenham Hotspur",
      "a": "Everton",
      "played": 3,
-     "s_mod": 0.101,
-     "s": 0.101
+     "s_mod": 0.1,
+     "s": 0.1
     },
     {
      "date": "2026-09-13",
      "h": "Coventry City",
      "a": "Brighton & Hove Albion",
      "played": 3,
-     "s_mod": -0.513,
-     "s": -0.513
+     "s_mod": -0.514,
+     "s": -0.514
     },
     {
      "date": "2026-09-13",
@@ -273,56 +209,56 @@
      "h": "Leeds United",
      "a": "Newcastle United",
      "played": 3,
-     "s_mod": 0.153,
-     "s": 0.153
+     "s_mod": 0.154,
+     "s": 0.154
     },
     {
      "date": "2026-09-18",
      "h": "Brentford",
      "a": "Chelsea",
      "played": 4,
-     "s_mod": 0.294,
-     "s": 0.294
+     "s_mod": 0.295,
+     "s": 0.295
     },
     {
      "date": "2026-09-19",
      "h": "Brighton & Hove Albion",
      "a": "Arsenal",
      "played": 4,
-     "s_mod": -0.562,
-     "s": -0.562
+     "s_mod": -0.563,
+     "s": -0.563
     },
     {
      "date": "2026-09-19",
      "h": "Everton",
      "a": "Ipswich Town",
      "played": 4,
-     "s_mod": 0.623,
-     "s": 0.623
+     "s_mod": 0.625,
+     "s": 0.625
     },
     {
      "date": "2026-09-19",
      "h": "Newcastle United",
      "a": "Hull City",
      "played": 4,
-     "s_mod": 0.794,
-     "s": 0.794
+     "s_mod": 0.796,
+     "s": 0.796
     },
     {
      "date": "2026-09-19",
      "h": "Nottingham Forest",
      "a": "Coventry City",
      "played": 4,
-     "s_mod": 0.904,
-     "s": 0.904
+     "s_mod": 0.906,
+     "s": 0.906
     },
     {
      "date": "2026-09-19",
      "h": "Tottenham Hotspur",
      "a": "Aston Villa",
      "played": 4,
-     "s_mod": 0.243,
-     "s": 0.243
+     "s_mod": 0.242,
+     "s": 0.242
     },
     {
      "date": "2026-09-20",
@@ -345,24 +281,24 @@
      "h": "Leeds United",
      "a": "Crystal Palace",
      "played": 4,
-     "s_mod": 0.481,
-     "s": 0.481
+     "s_mod": 0.482,
+     "s": 0.482
     },
     {
      "date": "2026-09-20",
      "h": "Manchester City",
      "a": "Sunderland",
      "played": 4,
-     "s_mod": 1.226,
-     "s": 1.226
+     "s_mod": 1.228,
+     "s": 1.228
     },
     {
      "date": "2026-10-10",
      "h": "Arsenal",
      "a": "Leeds United",
      "played": 5,
-     "s_mod": 1.059,
-     "s": 1.059
+     "s_mod": 1.06,
+     "s": 1.06
     },
     {
      "date": "2026-10-10",
@@ -385,16 +321,16 @@
      "h": "Ipswich Town",
      "a": "Fulham",
      "played": 5,
-     "s_mod": -0.239,
-     "s": -0.239
+     "s_mod": -0.24,
+     "s": -0.24
     },
     {
      "date": "2026-10-10",
      "h": "Manchester United",
      "a": "Tottenham Hotspur",
      "played": 5,
-     "s_mod": 1.008,
-     "s": 1.008
+     "s_mod": 1.01,
+     "s": 1.01
     },
     {
      "date": "2026-10-10",
@@ -409,16 +345,16 @@
      "h": "Crystal Palace",
      "a": "Nottingham Forest",
      "played": 5,
-     "s_mod": -0.147,
-     "s": -0.147
+     "s_mod": -0.146,
+     "s": -0.146
     },
     {
      "date": "2026-10-11",
      "h": "Hull City",
      "a": "Everton",
      "played": 5,
-     "s_mod": -0.285,
-     "s": -0.285
+     "s_mod": -0.286,
+     "s": -0.286
     },
     {
      "date": "2026-10-11",
@@ -441,21 +377,21 @@
      "h": "Brentford",
      "a": "Liverpool",
      "played": 6,
-     "s_mod": -0.01,
-     "s": -0.01,
+     "s_mod": -0.009,
+     "s": -0.009,
      "line": 0.0,
      "s_mkt": -0.09,
-     "e": -0.08
+     "e": -0.081
     },
     {
      "date": "2026-10-17",
      "h": "Everton",
      "a": "Chelsea",
      "played": 6,
-     "s_mod": 0.014,
-     "s": 0.014,
+     "s_mod": 0.013,
+     "s": 0.013,
      "line": 0.25,
-     "s_mkt": -0.184,
+     "s_mkt": -0.185,
      "e": -0.198
     },
     {
@@ -463,11 +399,11 @@
      "h": "Fulham",
      "a": "Hull City",
      "played": 6,
-     "s_mod": 0.787,
-     "s": 0.787,
+     "s_mod": 0.786,
+     "s": 0.786,
      "line": -0.75,
      "s_mkt": 1.016,
-     "e": 0.229
+     "e": 0.23
     },
     {
      "date": "2026-10-17",
@@ -496,11 +432,11 @@
      "h": "AFC Bournemouth",
      "a": "Sunderland",
      "played": 6,
-     "s_mod": 0.456,
-     "s": 0.456,
+     "s_mod": 0.455,
+     "s": 0.455,
      "line": -0.5,
      "s_mkt": 0.512,
-     "e": 0.056
+     "e": 0.057
     },
     {
      "date": "2026-10-18",
@@ -518,11 +454,11 @@
      "h": "Leeds United",
      "a": "Manchester United",
      "played": 6,
-     "s_mod": -0.117,
-     "s": -0.117,
+     "s_mod": -0.116,
+     "s": -0.116,
      "line": 0.0,
-     "s_mkt": 0.102,
-     "e": 0.219
+     "s_mkt": 0.101,
+     "e": 0.217
     },
     {
      "date": "2026-10-18",
@@ -540,44 +476,44 @@
      "h": "Tottenham Hotspur",
      "a": "Coventry City",
      "played": 6,
-     "s_mod": 0.449,
-     "s": 0.449,
+     "s_mod": 0.448,
+     "s": 0.448,
      "line": -1.0,
      "s_mkt": 1.164,
-     "e": 0.715
+     "e": 0.716
     },
     {
      "date": "2026-10-23",
      "h": "Ipswich Town",
      "a": "Nottingham Forest",
      "played": 7,
-     "s_mod": -0.276,
-     "s": -0.217,
+     "s_mod": -0.275,
+     "s": -0.216,
      "line": 0.25,
      "s_mkt": -0.323,
-     "e": -0.106
+     "e": -0.107
     },
     {
      "date": "2026-10-24",
      "h": "Arsenal",
      "a": "Everton",
      "played": 7,
-     "s_mod": 1.114,
-     "s": 1.312,
+     "s_mod": 1.113,
+     "s": 1.311,
      "line": -1.25,
      "s_mkt": 1.495,
-     "e": 0.183
+     "e": 0.184
     },
     {
      "date": "2026-10-24",
      "h": "Aston Villa",
      "a": "Manchester City",
      "played": 7,
-     "s_mod": -0.672,
-     "s": -0.804,
+     "s_mod": -0.673,
+     "s": -0.805,
      "line": 0.75,
      "s_mkt": -1.009,
-     "e": -0.205
+     "e": -0.204
     },
     {
      "date": "2026-10-24",
@@ -585,7 +521,7 @@
      "a": "Tottenham Hotspur",
      "played": 7,
      "s_mod": 0.739,
-     "s": 0.61,
+     "s": 0.609,
      "line": -0.5,
      "s_mkt": 0.647,
      "e": 0.037
@@ -595,11 +531,11 @@
      "h": "Coventry City",
      "a": "Fulham",
      "played": 7,
-     "s_mod": -0.193,
+     "s_mod": -0.192,
      "s": -0.429,
      "line": 0.25,
      "s_mkt": -0.305,
-     "e": 0.124
+     "e": 0.123
     },
     {
      "date": "2026-10-25",
@@ -628,11 +564,11 @@
      "h": "Liverpool",
      "a": "Brighton & Hove Albion",
      "played": 7,
-     "s_mod": 0.029,
-     "s": -0.023,
+     "s_mod": 0.027,
+     "s": -0.025,
      "line": -0.5,
      "s_mkt": 0.507,
-     "e": 0.53
+     "e": 0.532
     },
     {
      "date": "2026-10-25",
@@ -655,6 +591,94 @@
      "line": 0.0,
      "s_mkt": 0.073,
      "e": 0.255
+    },
+    {
+     "date": "2026-10-31",
+     "h": "AFC Bournemouth",
+     "a": "Leeds United",
+     "played": 8,
+     "s_mod": 0.47,
+     "s": 0.55,
+     "line": -0.5,
+     "s_mkt": 0.436,
+     "e": -0.114
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Aston Villa",
+     "a": "Fulham",
+     "played": 8,
+     "s_mod": 0.231,
+     "s": 0.111,
+     "line": -0.5,
+     "s_mkt": 0.562,
+     "e": 0.451
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Brentford",
+     "a": "Nottingham Forest",
+     "played": 8,
+     "s_mod": 0.272,
+     "s": 0.478,
+     "line": -0.25,
+     "s_mkt": 0.357,
+     "e": -0.12
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Chelsea",
+     "a": "Manchester United",
+     "played": 8,
+     "s_mod": 0.257,
+     "s": 0.426,
+     "line": -0.25,
+     "s_mkt": 0.28,
+     "e": -0.146
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Coventry City",
+     "a": "Sunderland",
+     "played": 8,
+     "s_mod": 0.099,
+     "s": -0.099,
+     "line": 0.25,
+     "s_mkt": -0.239,
+     "e": -0.14
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Hull City",
+     "a": "Ipswich Town",
+     "played": 8,
+     "s_mod": 0.133,
+     "s": 0.088,
+     "line": 0.25,
+     "s_mkt": -0.148,
+     "e": -0.236
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Manchester City",
+     "a": "Brighton & Hove Albion",
+     "played": 8,
+     "s_mod": 0.549,
+     "s": 0.751,
+     "line": -0.75,
+     "s_mkt": 0.908,
+     "e": 0.157
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Tottenham Hotspur",
+     "a": "Crystal Palace",
+     "played": 8,
+     "s_mod": 0.445,
+     "s": 0.692,
+     "line": -0.75,
+     "s_mkt": 0.908,
+     "e": 0.217
     }
    ]
   },
@@ -662,18 +686,23 @@
    "teams": {
     "8634": {
      "name": "Barcelona",
-     "o": 0.4957,
-     "n": 4
-    },
-    "8633": {
-     "name": "Real Madrid",
-     "o": 0.2647,
-     "n": 4
+     "o": 0.588,
+     "n": 5
     },
     "9906": {
      "name": "Atlético Madrid",
-     "o": 0.2219,
+     "o": 0.2682,
+     "n": 5
+    },
+    "8633": {
+     "name": "Real Madrid",
+     "o": 0.265,
      "n": 4
+    },
+    "8603": {
+     "name": "Real Betis",
+     "o": 0.1304,
+     "n": 5
     },
     "8560": {
      "name": "Real Sociedad",
@@ -685,118 +714,81 @@
      "o": 0.1062,
      "n": 4
     },
-    "8603": {
-     "name": "Real Betis",
-     "o": 0.0882,
-     "n": 4
-    },
     "8370": {
      "name": "Rayo Vallecano",
-     "o": 0.057,
-     "n": 3
+     "o": 0.0681,
+     "n": 4
     },
     "8315": {
      "name": "Athletic Club",
-     "o": 0.0382,
+     "o": 0.0383,
      "n": 3
     },
     "9910": {
      "name": "Celta Vigo",
-     "o": 0.0091,
-     "n": 4
+     "o": -0.0023,
+     "n": 5
     },
     "8696": {
      "name": "Racing Santander",
      "o": -0.009,
      "n": 4
     },
-    "9866": {
-     "name": "Deportivo Alavés",
-     "o": -0.033,
-     "n": 3
-    },
     "10267": {
      "name": "Valencia",
-     "o": -0.0589,
+     "o": -0.0591,
      "n": 4
     },
     "8302": {
      "name": "Sevilla",
-     "o": -0.068,
-     "n": 4
-    },
-    "9864": {
-     "name": "Málaga",
-     "o": -0.1035,
+     "o": -0.0683,
      "n": 4
     },
     "8371": {
      "name": "Osasuna",
-     "o": -0.1245,
+     "o": -0.1243,
+     "n": 4
+    },
+    "9866": {
+     "name": "Deportivo Alavés",
+     "o": -0.1255,
      "n": 4
     },
     "8305": {
      "name": "Getafe",
-     "o": -0.1375,
+     "o": -0.1374,
      "n": 4
+    },
+    "9864": {
+     "name": "Málaga",
+     "o": -0.1455,
+     "n": 5
     },
     "9783": {
      "name": "Deportivo A Coruña",
-     "o": -0.1658,
-     "n": 4
-    },
-    "8581": {
-     "name": "Levante",
-     "o": -0.2192,
+     "o": -0.1659,
      "n": 4
     },
     "8558": {
      "name": "Espanyol",
-     "o": -0.2428,
+     "o": -0.2426,
      "n": 5
     },
     "10268": {
      "name": "Elche",
      "o": -0.2473,
      "n": 4
+    },
+    "8581": {
+     "name": "Levante",
+     "o": -0.2655,
+     "n": 5
     }
    },
-   "matches": 100,
-   "learnable": 39,
-   "learned": 39,
+   "matches": 104,
+   "learnable": 43,
+   "learned": 43,
    "log": [
-    {
-     "date": "2026-09-07",
-     "h": "Getafe",
-     "a": "Celta Vigo",
-     "played": 3,
-     "s_mod": 0.183,
-     "s": 0.183
-    },
-    {
-     "date": "2026-09-11",
-     "h": "Sevilla",
-     "a": "Valencia",
-     "played": 4,
-     "s_mod": 0.386,
-     "s": 0.386
-    },
-    {
-     "date": "2026-09-12",
-     "h": "Athletic Club",
-     "a": "Elche",
-     "played": 4,
-     "s_mod": 0.912,
-     "s": 0.912
-    },
-    {
-     "date": "2026-09-12",
-     "h": "Osasuna",
-     "a": "Espanyol",
-     "played": 4,
-     "s_mod": 0.385,
-     "s": 0.385
-    },
     {
      "date": "2026-09-12",
      "h": "Racing Santander",
@@ -810,8 +802,8 @@
      "h": "Real Madrid",
      "a": "Rayo Vallecano",
      "played": 4,
-     "s_mod": 1.733,
-     "s": 1.733
+     "s_mod": 1.732,
+     "s": 1.732
     },
     {
      "date": "2026-09-13",
@@ -826,16 +818,16 @@
      "h": "Getafe",
      "a": "Deportivo A Coruña",
      "played": 4,
-     "s_mod": 0.245,
-     "s": 0.245
+     "s_mod": 0.244,
+     "s": 0.244
     },
     {
      "date": "2026-09-13",
      "h": "Levante",
      "a": "Barcelona",
      "played": 4,
-     "s_mod": -1.356,
-     "s": -1.356
+     "s_mod": -1.357,
+     "s": -1.357
     },
     {
      "date": "2026-09-13",
@@ -850,16 +842,16 @@
      "h": "Villarreal",
      "a": "Real Betis",
      "played": 4,
-     "s_mod": 0.839,
-     "s": 0.839
+     "s_mod": 0.838,
+     "s": 0.838
     },
     {
      "date": "2026-09-15",
      "h": "Deportivo Alavés",
      "a": "Valencia",
      "played": 5,
-     "s_mod": 0.758,
-     "s": 0.758
+     "s_mod": 0.759,
+     "s": 0.759
     },
     {
      "date": "2026-09-15",
@@ -874,16 +866,16 @@
      "h": "Rayo Vallecano",
      "a": "Espanyol",
      "played": 5,
-     "s_mod": 0.22,
-     "s": 0.22
+     "s_mod": 0.219,
+     "s": 0.219
     },
     {
      "date": "2026-09-16",
      "h": "Atlético Madrid",
      "a": "Osasuna",
      "played": 5,
-     "s_mod": 0.779,
-     "s": 0.779
+     "s_mod": 0.778,
+     "s": 0.778
     },
     {
      "date": "2026-09-16",
@@ -985,11 +977,11 @@
      "h": "Deportivo A Coruña",
      "a": "Real Betis",
      "played": 6,
-     "s_mod": -0.272,
-     "s": -0.272,
+     "s_mod": -0.271,
+     "s": -0.271,
      "line": 0.5,
      "s_mkt": -0.585,
-     "e": -0.313
+     "e": -0.314
     },
     {
      "date": "2026-09-20",
@@ -1070,11 +1062,11 @@
      "h": "Real Betis",
      "a": "Osasuna",
      "played": 7,
-     "s_mod": 0.825,
-     "s": 0.947,
+     "s_mod": 0.826,
+     "s": 0.949,
      "line": -1.25,
      "s_mkt": 1.336,
-     "e": 0.389
+     "e": 0.387
     },
     {
      "date": "2026-10-11",
@@ -1158,8 +1150,8 @@
      "h": "Valencia",
      "a": "Athletic Club",
      "played": 6,
-     "s_mod": -0.352,
-     "s": -0.411,
+     "s_mod": -0.351,
+     "s": -0.41,
      "line": 0.25,
      "s_mkt": -0.26,
      "e": 0.151
@@ -1202,11 +1194,11 @@
      "h": "Osasuna",
      "a": "Racing Santander",
      "played": 8,
-     "s_mod": 0.475,
-     "s": 0.36,
+     "s_mod": 0.476,
+     "s": 0.361,
      "line": -0.5,
      "s_mkt": 0.54,
-     "e": 0.18
+     "e": 0.179
     },
     {
      "date": "2026-10-18",
@@ -1236,7 +1228,7 @@
      "a": "Athletic Club",
      "played": 7,
      "s_mod": -0.177,
-     "s": -0.319,
+     "s": -0.32,
      "line": 0.25,
      "s_mkt": -0.279,
      "e": 0.04
@@ -1268,11 +1260,11 @@
      "h": "Racing Santander",
      "a": "Espanyol",
      "played": 9,
-     "s_mod": -0.021,
-     "s": 0.023,
+     "s_mod": -0.02,
+     "s": 0.024,
      "line": -0.25,
      "s_mkt": 0.273,
-     "e": 0.25
+     "e": 0.249
     },
     {
      "date": "2026-10-24",
@@ -1302,7 +1294,7 @@
      "a": "Getafe",
      "played": 8,
      "s_mod": 0.803,
-     "s": 0.806,
+     "s": 0.807,
      "line": -1.0,
      "s_mkt": 1.151,
      "e": 0.344
@@ -1312,22 +1304,22 @@
      "h": "Celta Vigo",
      "a": "Real Betis",
      "played": 9,
-     "s_mod": 0.136,
-     "s": 0.106,
+     "s_mod": 0.137,
+     "s": 0.107,
      "line": 0.0,
      "s_mkt": 0.007,
-     "e": -0.099
+     "e": -0.1
     },
     {
      "date": "2026-10-25",
      "h": "Barcelona",
      "a": "Real Madrid",
      "played": 9,
-     "s_mod": 0.924,
-     "s": 1.107,
+     "s_mod": 0.925,
+     "s": 1.108,
      "line": -1.0,
      "s_mkt": 1.203,
-     "e": 0.096
+     "e": 0.095
     },
     {
      "date": "2026-10-25",
@@ -1345,11 +1337,11 @@
      "h": "Sevilla",
      "a": "Osasuna",
      "played": 9,
-     "s_mod": 0.5,
-     "s": 0.5,
+     "s_mod": 0.501,
+     "s": 0.501,
      "line": -0.5,
      "s_mkt": 0.613,
-     "e": 0.113
+     "e": 0.112
     },
     {
      "date": "2026-10-30",
@@ -1357,10 +1349,54 @@
      "a": "Espanyol",
      "played": 10,
      "s_mod": 1.107,
-     "s": 1.327,
+     "s": 1.326,
      "line": -1.5,
      "s_mkt": 1.585,
-     "e": 0.258
+     "e": 0.259
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Real Betis",
+     "a": "Málaga",
+     "played": 10,
+     "s_mod": 1.29,
+     "s": 1.482,
+     "line": -1.5,
+     "s_mkt": 1.65,
+     "e": 0.168
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Barcelona",
+     "a": "Deportivo Alavés",
+     "played": 10,
+     "s_mod": 2.005,
+     "s": 2.533,
+     "line": -2.75,
+     "s_mkt": 2.904,
+     "e": 0.37
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Levante",
+     "a": "Atlético Madrid",
+     "played": 10,
+     "s_mod": -0.702,
+     "s": -1.143,
+     "line": 1.25,
+     "s_mkt": -1.328,
+     "e": -0.185
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Rayo Vallecano",
+     "a": "Celta Vigo",
+     "played": 9,
+     "s_mod": 0.155,
+     "s": 0.203,
+     "line": -0.25,
+     "s_mkt": 0.248,
+     "e": 0.044
     }
    ]
   },
@@ -1368,17 +1404,12 @@
    "teams": {
     "8543": {
      "name": "Lazio",
-     "o": 0.1872,
+     "o": 0.1875,
      "n": 3
     },
     "9875": {
      "name": "Napoli",
-     "o": 0.1739,
-     "n": 3
-    },
-    "8564": {
-     "name": "Milan",
-     "o": 0.1626,
+     "o": 0.1737,
      "n": 3
     },
     "9891": {
@@ -1388,12 +1419,17 @@
     },
     "8535": {
      "name": "Fiorentina",
-     "o": 0.1243,
+     "o": 0.1245,
      "n": 3
+    },
+    "8564": {
+     "name": "Milan",
+     "o": 0.1118,
+     "n": 4
     },
     "9885": {
      "name": "Juventus",
-     "o": 0.1051,
+     "o": 0.1047,
      "n": 3
     },
     "10171": {
@@ -1403,53 +1439,53 @@
     },
     "10233": {
      "name": "Genoa",
-     "o": 0.0848,
-     "n": 3
-    },
-    "9804": {
-     "name": "Torino",
-     "o": 0.0552,
-     "n": 3
-    },
-    "8529": {
-     "name": "Cagliari",
-     "o": 0.0305,
+     "o": 0.0851,
      "n": 3
     },
     "8636": {
      "name": "Inter",
-     "o": 0.0169,
+     "o": 0.0672,
+     "n": 4
+    },
+    "9804": {
+     "name": "Torino",
+     "o": 0.0558,
      "n": 3
+    },
+    "8529": {
+     "name": "Cagliari",
+     "o": 0.0306,
+     "n": 3
+    },
+    "8686": {
+     "name": "Roma",
+     "o": -0.0458,
+     "n": 4
     },
     "7881": {
      "name": "Venezia",
      "o": -0.0621,
      "n": 3
     },
-    "8600": {
-     "name": "Udinese",
-     "o": -0.0755,
-     "n": 3
+    "9857": {
+     "name": "Bologna",
+     "o": -0.0858,
+     "n": 4
     },
     "10167": {
      "name": "Parma",
-     "o": -0.1049,
-     "n": 3
-    },
-    "8686": {
-     "name": "Roma",
-     "o": -0.112,
-     "n": 3
-    },
-    "9857": {
-     "name": "Bologna",
-     "o": -0.1259,
+     "o": -0.1052,
      "n": 3
     },
     "8524": {
      "name": "Atalanta",
-     "o": -0.1267,
+     "o": -0.1268,
      "n": 3
+    },
+    "8600": {
+     "name": "Udinese",
+     "o": -0.1418,
+     "n": 4
     },
     "9888": {
      "name": "Lecce",
@@ -1458,66 +1494,42 @@
     },
     "7943": {
      "name": "Sassuolo",
-     "o": -0.1786,
+     "o": -0.1784,
      "n": 3
     },
     "6504": {
      "name": "Monza",
-     "o": -0.2092,
-     "n": 3
+     "o": -0.2494,
+     "n": 4
     }
    },
-   "matches": 90,
-   "learnable": 30,
-   "learned": 30,
+   "matches": 93,
+   "learnable": 33,
+   "learned": 33,
    "log": [
-    {
-     "date": "2026-09-11",
-     "h": "Venezia",
-     "a": "Fiorentina",
-     "played": 3,
-     "s_mod": 0.171,
-     "s": 0.171
-    },
-    {
-     "date": "2026-09-12",
-     "h": "Atalanta",
-     "a": "Cagliari",
-     "played": 3,
-     "s_mod": 0.376,
-     "s": 0.376
-    },
-    {
-     "date": "2026-09-12",
-     "h": "Genoa",
-     "a": "Frosinone",
-     "played": 3,
-     "s_mod": 0.301,
-     "s": 0.301
-    },
     {
      "date": "2026-09-12",
      "h": "Lazio",
      "a": "Milan",
      "played": 3,
-     "s_mod": -0.161,
-     "s": -0.161
+     "s_mod": -0.162,
+     "s": -0.162
     },
     {
      "date": "2026-09-13",
      "h": "Lecce",
      "a": "Monza",
      "played": 3,
-     "s_mod": -0.196,
-     "s": -0.196
+     "s_mod": -0.197,
+     "s": -0.197
     },
     {
      "date": "2026-09-13",
      "h": "Napoli",
      "a": "Bologna",
      "played": 3,
-     "s_mod": 0.209,
-     "s": 0.209
+     "s_mod": 0.208,
+     "s": 0.208
     },
     {
      "date": "2026-09-13",
@@ -1532,24 +1544,24 @@
      "h": "Como",
      "a": "Parma",
      "played": 3,
-     "s_mod": 1.172,
-     "s": 1.172
+     "s_mod": 1.171,
+     "s": 1.171
     },
     {
      "date": "2026-09-14",
      "h": "Inter",
      "a": "Udinese",
      "played": 3,
-     "s_mod": 1.561,
-     "s": 1.561
+     "s_mod": 1.559,
+     "s": 1.559
     },
     {
      "date": "2026-09-14",
      "h": "Torino",
      "a": "Roma",
      "played": 3,
-     "s_mod": -1.18,
-     "s": -1.18
+     "s_mod": -1.179,
+     "s": -1.179
     },
     {
      "date": "2026-09-18",
@@ -1564,8 +1576,8 @@
      "h": "Roma",
      "a": "Inter",
      "played": 4,
-     "s_mod": 0.2,
-     "s": 0.2
+     "s_mod": 0.199,
+     "s": 0.199
     },
     {
      "date": "2026-09-19",
@@ -1588,16 +1600,16 @@
      "h": "Venezia",
      "a": "Lazio",
      "played": 4,
-     "s_mod": -0.059,
-     "s": -0.059
+     "s_mod": -0.058,
+     "s": -0.058
     },
     {
      "date": "2026-09-20",
      "h": "Milan",
      "a": "Lecce",
      "played": 4,
-     "s_mod": 1.089,
-     "s": 1.089
+     "s_mod": 1.088,
+     "s": 1.088
     },
     {
      "date": "2026-09-20",
@@ -1612,8 +1624,8 @@
      "h": "Frosinone",
      "a": "Como",
      "played": 4,
-     "s_mod": -0.907,
-     "s": -0.907
+     "s_mod": -0.906,
+     "s": -0.906
     },
     {
      "date": "2026-09-20",
@@ -1628,24 +1640,24 @@
      "h": "Parma",
      "a": "Genoa",
      "played": 4,
-     "s_mod": -0.117,
-     "s": -0.117
+     "s_mod": -0.118,
+     "s": -0.118
     },
     {
      "date": "2026-10-10",
      "h": "Genoa",
      "a": "Fiorentina",
      "played": 5,
-     "s_mod": -0.158,
-     "s": -0.158
+     "s_mod": -0.157,
+     "s": -0.157
     },
     {
      "date": "2026-10-10",
      "h": "Inter",
      "a": "Parma",
      "played": 5,
-     "s_mod": 1.919,
-     "s": 1.919
+     "s_mod": 1.918,
+     "s": 1.918
     },
     {
      "date": "2026-10-10",
@@ -1660,32 +1672,32 @@
      "h": "Cagliari",
      "a": "Juventus",
      "played": 5,
-     "s_mod": -0.899,
-     "s": -0.899
+     "s_mod": -0.898,
+     "s": -0.898
     },
     {
      "date": "2026-10-11",
      "h": "Como",
      "a": "Roma",
      "played": 5,
-     "s_mod": -0.094,
-     "s": -0.094
+     "s_mod": -0.093,
+     "s": -0.093
     },
     {
      "date": "2026-10-11",
      "h": "Lazio",
      "a": "Monza",
      "played": 5,
-     "s_mod": 0.327,
-     "s": 0.327
+     "s_mod": 0.326,
+     "s": 0.326
     },
     {
      "date": "2026-10-11",
      "h": "Lecce",
      "a": "Bologna",
      "played": 5,
-     "s_mod": -0.528,
-     "s": -0.528
+     "s_mod": -0.527,
+     "s": -0.527
     },
     {
      "date": "2026-10-11",
@@ -1738,55 +1750,55 @@
      "h": "Bologna",
      "a": "Inter",
      "played": 6,
-     "s_mod": -0.816,
-     "s": -0.816,
+     "s_mod": -0.815,
+     "s": -0.815,
      "line": 1.0,
      "s_mkt": -1.118,
-     "e": -0.302
+     "e": -0.303
     },
     {
      "date": "2026-10-17",
      "h": "Venezia",
      "a": "Napoli",
      "played": 6,
-     "s_mod": -0.616,
-     "s": -0.616,
+     "s_mod": -0.615,
+     "s": -0.615,
      "line": 0.75,
      "s_mkt": -0.739,
-     "e": -0.123
+     "e": -0.124
     },
     {
      "date": "2026-10-18",
      "h": "Milan",
      "a": "Atalanta",
      "played": 6,
-     "s_mod": 0.562,
-     "s": 0.562,
+     "s_mod": 0.563,
+     "s": 0.563,
      "line": -0.75,
      "s_mkt": 0.952,
-     "e": 0.39
+     "e": 0.389
     },
     {
      "date": "2026-10-18",
      "h": "Fiorentina",
      "a": "Como",
      "played": 6,
-     "s_mod": -0.498,
-     "s": -0.498,
+     "s_mod": -0.497,
+     "s": -0.497,
      "line": 0.25,
      "s_mkt": -0.286,
-     "e": 0.212
+     "e": 0.211
     },
     {
      "date": "2026-10-18",
      "h": "Juventus",
      "a": "Lazio",
      "played": 6,
-     "s_mod": 0.954,
-     "s": 0.954,
+     "s_mod": 0.955,
+     "s": 0.955,
      "line": -0.75,
      "s_mkt": 0.978,
-     "e": 0.024
+     "e": 0.023
     },
     {
      "date": "2026-10-18",
@@ -1804,33 +1816,33 @@
      "h": "Monza",
      "a": "Cagliari",
      "played": 6,
-     "s_mod": 0.321,
-     "s": 0.321,
+     "s_mod": 0.322,
+     "s": 0.322,
      "line": -0.25,
      "s_mkt": 0.259,
-     "e": -0.062
+     "e": -0.063
     },
     {
      "date": "2026-10-19",
      "h": "Parma",
      "a": "Torino",
      "played": 6,
-     "s_mod": -0.167,
-     "s": -0.167,
+     "s_mod": -0.166,
+     "s": -0.166,
      "line": 0.25,
      "s_mkt": -0.325,
-     "e": -0.158
+     "e": -0.159
     },
     {
      "date": "2026-10-23",
      "h": "Torino",
      "a": "Monza",
      "played": 7,
-     "s_mod": 0.044,
+     "s_mod": 0.043,
      "s": 0.099,
      "line": -0.25,
      "s_mkt": 0.454,
-     "e": 0.355
+     "e": 0.356
     },
     {
      "date": "2026-10-24",
@@ -1838,7 +1850,7 @@
      "a": "Bologna",
      "played": 7,
      "s_mod": -0.239,
-     "s": -0.148,
+     "s": -0.147,
      "line": 0.0,
      "s_mkt": -0.092,
      "e": 0.056
@@ -1852,18 +1864,18 @@
      "s": 1.017,
      "line": -1.25,
      "s_mkt": 1.292,
-     "e": 0.275
+     "e": 0.274
     },
     {
      "date": "2026-10-24",
      "h": "Lazio",
      "a": "Parma",
      "played": 7,
-     "s_mod": 0.75,
-     "s": 0.784,
+     "s_mod": 0.749,
+     "s": 0.783,
      "line": -1.25,
      "s_mkt": 1.276,
-     "e": 0.492
+     "e": 0.493
     },
     {
      "date": "2026-10-24",
@@ -1892,11 +1904,11 @@
      "h": "Genoa",
      "a": "Venezia",
      "played": 7,
-     "s_mod": 0.121,
-     "s": 0.225,
+     "s_mod": 0.12,
+     "s": 0.224,
      "line": -0.25,
      "s_mkt": 0.365,
-     "e": 0.14
+     "e": 0.141
     },
     {
      "date": "2026-10-25",
@@ -1907,7 +1919,7 @@
      "s": 1.722,
      "line": -1.5,
      "s_mkt": 1.502,
-     "e": -0.219
+     "e": -0.22
     },
     {
      "date": "2026-10-25",
@@ -1915,7 +1927,7 @@
      "a": "Juventus",
      "played": 7,
      "s_mod": -0.858,
-     "s": -0.875,
+     "s": -0.874,
      "line": 1.0,
      "s_mkt": -1.179,
      "e": -0.304
@@ -1958,7 +1970,7 @@
      "h": "Torino",
      "a": "Como",
      "played": 8,
-     "s_mod": -0.692,
+     "s_mod": -0.693,
      "s": -0.58,
      "line": 0.75,
      "s_mkt": -0.872,
@@ -1980,8 +1992,8 @@
      "h": "Genoa",
      "a": "Juventus",
      "played": 8,
-     "s_mod": -0.726,
-     "s": -0.7,
+     "s_mod": -0.727,
+     "s": -0.701,
      "line": 0.75,
      "s_mkt": -0.792,
      "e": -0.092
@@ -1991,11 +2003,11 @@
      "h": "Monza",
      "a": "Napoli",
      "played": 8,
-     "s_mod": -0.53,
-     "s": -0.703,
+     "s_mod": -0.531,
+     "s": -0.705,
      "line": 1.0,
      "s_mkt": -1.123,
-     "e": -0.419
+     "e": -0.418
     },
     {
      "date": "2026-10-28",
@@ -2013,22 +2025,22 @@
      "h": "Venezia",
      "a": "Inter",
      "played": 8,
-     "s_mod": -1.473,
-     "s": -1.559,
+     "s_mod": -1.474,
+     "s": -1.561,
      "line": 1.5,
      "s_mkt": -1.545,
-     "e": 0.015
+     "e": 0.016
     },
     {
      "date": "2026-10-29",
      "h": "Fiorentina",
      "a": "Atalanta",
      "played": 8,
-     "s_mod": -0.065,
-     "s": 0.153,
+     "s_mod": -0.066,
+     "s": 0.151,
      "line": -0.25,
      "s_mkt": 0.219,
-     "e": 0.067
+     "e": 0.068
     },
     {
      "date": "2026-10-29",
@@ -2040,6 +2052,39 @@
      "line": -0.75,
      "s_mkt": 0.861,
      "e": 0.325
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Milan",
+     "a": "Inter",
+     "played": 9,
+     "s_mod": -0.452,
+     "s": -0.306,
+     "line": 0.5,
+     "s_mkt": -0.509,
+     "e": -0.202
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Bologna",
+     "a": "Monza",
+     "played": 9,
+     "s_mod": 0.674,
+     "s": 0.757,
+     "line": -0.75,
+     "s_mkt": 0.918,
+     "e": 0.161
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Udinese",
+     "a": "Roma",
+     "played": 9,
+     "s_mod": -0.973,
+     "s": -0.937,
+     "line": 1.0,
+     "s_mkt": -1.201,
+     "e": -0.265
     }
    ]
   },
@@ -2047,47 +2092,47 @@
    "teams": {
     "9823": {
      "name": "Bayern München",
-     "o": 0.1594,
-     "n": 1
+     "o": 0.3151,
+     "n": 2
+    },
+    "8178": {
+     "name": "Bayer Leverkusen",
+     "o": 0.1674,
+     "n": 2
     },
     "9905": {
      "name": "Mainz 05",
-     "o": 0.1573,
+     "o": 0.1569,
      "n": 2
     },
     "8406": {
      "name": "Augsburg",
-     "o": 0.1294,
-     "n": 1
+     "o": 0.1015,
+     "n": 2
     },
-    "10269": {
-     "name": "VfB Stuttgart",
-     "o": 0.1024,
-     "n": 1
-    },
-    "8178": {
-     "name": "Bayer Leverkusen",
-     "o": 0.0803,
-     "n": 1
-    },
-    "10189": {
-     "name": "Schalke 04",
-     "o": 0.0559,
-     "n": 1
-    },
-    "9789": {
-     "name": "Borussia Dortmund",
-     "o": 0.0501,
-     "n": 1
+    "8697": {
+     "name": "Werder Bremen",
+     "o": 0.0332,
+     "n": 2
     },
     "8460": {
      "name": "Paderborn",
-     "o": 0.0259,
-     "n": 1
+     "o": 0.017,
+     "n": 2
+    },
+    "10269": {
+     "name": "VfB Stuttgart",
+     "o": 0.0151,
+     "n": 2
+    },
+    "10189": {
+     "name": "Schalke 04",
+     "o": 0.0102,
+     "n": 2
     },
     "8232": {
      "name": "Elversberg",
-     "o": -0.019,
+     "o": -0.0184,
      "n": 2
     },
     "9790": {
@@ -2095,114 +2140,66 @@
      "o": -0.0259,
      "n": 1
     },
+    "178475": {
+     "name": "RB Leipzig",
+     "o": -0.0352,
+     "n": 2
+    },
     "9810": {
      "name": "Eintracht Frankfurt",
-     "o": -0.0501,
+     "o": -0.0499,
      "n": 1
     },
     "8722": {
      "name": "1. FC Köln",
-     "o": -0.0559,
-     "n": 1
-    },
-    "8697": {
-     "name": "Werder Bremen",
-     "o": -0.0579,
-     "n": 1
-    },
-    "8226": {
-     "name": "Hoffenheim",
-     "o": -0.0803,
-     "n": 1
-    },
-    "178475": {
-     "name": "RB Leipzig",
-     "o": -0.0804,
+     "o": -0.056,
      "n": 1
     },
     "9788": {
      "name": "Borussia Mönchengladbach",
-     "o": -0.1024,
-     "n": 1
+     "o": -0.0933,
+     "n": 2
+    },
+    "9789": {
+     "name": "Borussia Dortmund",
+     "o": -0.1058,
+     "n": 2
     },
     "8149": {
      "name": "Union Berlin",
-     "o": -0.1294,
+     "o": -0.1296,
      "n": 1
     },
     "8358": {
      "name": "Freiburg",
-     "o": -0.1594,
-     "n": 1
+     "o": -0.1313,
+     "n": 2
+    },
+    "8226": {
+     "name": "Hoffenheim",
+     "o": -0.1711,
+     "n": 2
     }
    },
-   "matches": 64,
-   "learnable": 10,
-   "learned": 10,
+   "matches": 70,
+   "learnable": 16,
+   "learned": 16,
    "log": [
-    {
-     "date": "2026-08-29",
-     "h": "Mainz 05",
-     "a": "Paderborn",
-     "played": 0,
-     "s_mod": 0.768,
-     "s": 0.768
-    },
-    {
-     "date": "2026-08-29",
-     "h": "RB Leipzig",
-     "a": "Borussia Mönchengladbach",
-     "played": 0,
-     "s_mod": 1.09,
-     "s": 1.09
-    },
-    {
-     "date": "2026-08-29",
-     "h": "Union Berlin",
-     "a": "Eintracht Frankfurt",
-     "played": 0,
-     "s_mod": 0.326,
-     "s": 0.326
-    },
-    {
-     "date": "2026-08-30",
-     "h": "Augsburg",
-     "a": "Schalke 04",
-     "played": 0,
-     "s_mod": 0.377,
-     "s": 0.377
-    },
-    {
-     "date": "2026-08-30",
-     "h": "Freiburg",
-     "a": "Werder Bremen",
-     "played": 0,
-     "s_mod": 0.603,
-     "s": 0.603
-    },
-    {
-     "date": "2026-09-04",
-     "h": "VfB Stuttgart",
-     "a": "1. FC Köln",
-     "played": 1,
-     "s_mod": 0.717,
-     "s": 0.717
-    },
     {
      "date": "2026-09-05",
      "h": "Bayer Leverkusen",
      "a": "Union Berlin",
      "played": 1,
-     "s_mod": 0.918,
-     "s": 0.918
+     "s_mod": 0.917,
+     "s": 0.917
     },
     {
      "date": "2026-09-05",
      "h": "Borussia Mönchengladbach",
      "a": "Elversberg",
      "played": 1,
-     "s_mod": 0.427,
-     "s": 0.427
+     "s_mod": 0.428,
+     "s": 0.428
     },
     {
      "date": "2026-09-05",
@@ -2225,8 +2222,8 @@
      "h": "Schalke 04",
      "a": "Bayern München",
      "played": 1,
-     "s_mod": -1.676,
-     "s": -1.676
+     "s_mod": -1.674,
+     "s": -1.674
     },
     {
      "date": "2026-09-05",
@@ -2265,80 +2262,80 @@
      "h": "Augsburg",
      "a": "Bayer Leverkusen",
      "played": 2,
-     "s_mod": -0.57,
-     "s": -0.57
+     "s_mod": -0.569,
+     "s": -0.569
     },
     {
      "date": "2026-09-12",
      "h": "Borussia Dortmund",
      "a": "Paderborn",
      "played": 2,
-     "s_mod": 1.521,
-     "s": 1.521
+     "s_mod": 1.519,
+     "s": 1.519
     },
     {
      "date": "2026-09-12",
      "h": "1. FC Köln",
      "a": "Werder Bremen",
      "played": 2,
-     "s_mod": 0.661,
-     "s": 0.661
+     "s_mod": 0.66,
+     "s": 0.66
     },
     {
      "date": "2026-09-12",
      "h": "Freiburg",
      "a": "Borussia Mönchengladbach",
      "played": 2,
-     "s_mod": 0.617,
-     "s": 0.617
+     "s_mod": 0.615,
+     "s": 0.615
     },
     {
      "date": "2026-09-12",
      "h": "Hoffenheim",
      "a": "VfB Stuttgart",
      "played": 2,
-     "s_mod": 0.242,
-     "s": 0.242
+     "s_mod": 0.241,
+     "s": 0.241
     },
     {
      "date": "2026-09-12",
      "h": "Mainz 05",
      "a": "Eintracht Frankfurt",
      "played": 2,
-     "s_mod": 0.635,
-     "s": 0.635
+     "s_mod": 0.634,
+     "s": 0.634
     },
     {
      "date": "2026-09-13",
      "h": "Elversberg",
      "a": "Bayern München",
      "played": 2,
-     "s_mod": -1.792,
-     "s": -1.792
+     "s_mod": -1.789,
+     "s": -1.789
     },
     {
      "date": "2026-09-13",
      "h": "RB Leipzig",
      "a": "Hamburger SV",
      "played": 2,
-     "s_mod": 1.557,
-     "s": 1.557
+     "s_mod": 1.554,
+     "s": 1.554
     },
     {
      "date": "2026-09-18",
      "h": "Bayern München",
      "a": "Union Berlin",
      "played": 3,
-     "s_mod": 2.335,
-     "s": 2.335
+     "s_mod": 2.332,
+     "s": 2.332
     },
     {
      "date": "2026-09-19",
      "h": "Borussia Mönchengladbach",
      "a": "Mainz 05",
      "played": 3,
-     "s_mod": -0.291,
-     "s": -0.291
+     "s_mod": -0.29,
+     "s": -0.29
     },
     {
      "date": "2026-09-19",
@@ -2353,24 +2350,24 @@
      "h": "Hamburger SV",
      "a": "1. FC Köln",
      "played": 3,
-     "s_mod": -0.215,
-     "s": -0.215
+     "s_mod": -0.214,
+     "s": -0.214
     },
     {
      "date": "2026-09-19",
      "h": "VfB Stuttgart",
      "a": "Borussia Dortmund",
      "played": 3,
-     "s_mod": -0.144,
-     "s": -0.144
+     "s_mod": -0.143,
+     "s": -0.143
     },
     {
      "date": "2026-09-19",
      "h": "Werder Bremen",
      "a": "Augsburg",
      "played": 3,
-     "s_mod": 0.152,
-     "s": 0.152
+     "s_mod": 0.153,
+     "s": 0.153
     },
     {
      "date": "2026-09-20",
@@ -2385,64 +2382,64 @@
      "h": "Paderborn",
      "a": "Hoffenheim",
      "played": 3,
-     "s_mod": -0.558,
-     "s": -0.558
+     "s_mod": -0.557,
+     "s": -0.557
     },
     {
      "date": "2026-09-20",
      "h": "Schalke 04",
      "a": "Elversberg",
      "played": 3,
-     "s_mod": 0.37,
-     "s": 0.37
+     "s_mod": 0.369,
+     "s": 0.369
     },
     {
      "date": "2026-10-09",
      "h": "Borussia Dortmund",
      "a": "Werder Bremen",
      "played": 4,
-     "s_mod": 1.167,
-     "s": 1.167
+     "s_mod": 1.164,
+     "s": 1.164
     },
     {
      "date": "2026-10-10",
      "h": "Augsburg",
      "a": "Bayern München",
      "played": 4,
-     "s_mod": -1.972,
-     "s": -1.972
+     "s_mod": -1.97,
+     "s": -1.97
     },
     {
      "date": "2026-10-10",
      "h": "Hoffenheim",
      "a": "Hamburger SV",
      "played": 4,
-     "s_mod": 1.249,
-     "s": 1.249
+     "s_mod": 1.247,
+     "s": 1.247
     },
     {
      "date": "2026-10-10",
      "h": "Mainz 05",
      "a": "Bayer Leverkusen",
      "played": 4,
-     "s_mod": -0.322,
-     "s": -0.322
+     "s_mod": -0.321,
+     "s": -0.321
     },
     {
      "date": "2026-10-10",
      "h": "Paderborn",
      "a": "VfB Stuttgart",
      "played": 4,
-     "s_mod": -0.672,
-     "s": -0.672
+     "s_mod": -0.671,
+     "s": -0.671
     },
     {
      "date": "2026-10-10",
      "h": "RB Leipzig",
      "a": "Eintracht Frankfurt",
      "played": 4,
-     "s_mod": 1.216,
-     "s": 1.216
+     "s_mod": 1.214,
+     "s": 1.214
     },
     {
      "date": "2026-10-10",
@@ -2465,16 +2462,16 @@
      "h": "Freiburg",
      "a": "Schalke 04",
      "played": 4,
-     "s_mod": 1.068,
-     "s": 1.068
+     "s_mod": 1.067,
+     "s": 1.067
     },
     {
      "date": "2026-10-16",
      "h": "Eintracht Frankfurt",
      "a": "1. FC Köln",
      "played": 5,
-     "s_mod": 0.083,
-     "s": 0.083
+     "s_mod": 0.082,
+     "s": 0.082
     },
     {
      "date": "2026-10-17",
@@ -2489,16 +2486,16 @@
      "h": "Elversberg",
      "a": "Augsburg",
      "played": 5,
-     "s_mod": 0.135,
-     "s": 0.135
+     "s_mod": 0.136,
+     "s": 0.136
     },
     {
      "date": "2026-10-17",
      "h": "Hamburger SV",
      "a": "VfB Stuttgart",
      "played": 5,
-     "s_mod": -0.574,
-     "s": -0.574
+     "s_mod": -0.573,
+     "s": -0.573
     },
     {
      "date": "2026-10-17",
@@ -2513,16 +2510,16 @@
      "h": "Union Berlin",
      "a": "Borussia Dortmund",
      "played": 5,
-     "s_mod": -0.726,
-     "s": -0.726
+     "s_mod": -0.725,
+     "s": -0.725
     },
     {
      "date": "2026-10-17",
      "h": "Werder Bremen",
      "a": "Paderborn",
      "played": 5,
-     "s_mod": 0.629,
-     "s": 0.629
+     "s_mod": 0.628,
+     "s": 0.628
     },
     {
      "date": "2026-10-18",
@@ -2545,33 +2542,33 @@
      "h": "VfB Stuttgart",
      "a": "Borussia Mönchengladbach",
      "played": 6,
-     "s_mod": 1.306,
-     "s": 1.306,
+     "s_mod": 1.307,
+     "s": 1.307,
      "line": -1.5,
      "s_mkt": 1.716,
-     "e": 0.41
+     "e": 0.409
     },
     {
      "date": "2026-10-24",
      "h": "Augsburg",
      "a": "Union Berlin",
      "played": 6,
-     "s_mod": 0.404,
-     "s": 0.404,
+     "s_mod": 0.403,
+     "s": 0.403,
      "line": -0.75,
      "s_mkt": 0.922,
-     "e": 0.518
+     "e": 0.519
     },
     {
      "date": "2026-10-24",
      "h": "Borussia Dortmund",
      "a": "Eintracht Frankfurt",
      "played": 6,
-     "s_mod": 1.312,
-     "s": 1.312,
+     "s_mod": 1.313,
+     "s": 1.313,
      "line": -1.25,
      "s_mkt": 1.513,
-     "e": 0.201
+     "e": 0.2
     },
     {
      "date": "2026-10-24",
@@ -2589,11 +2586,11 @@
      "h": "Mainz 05",
      "a": "Werder Bremen",
      "played": 6,
-     "s_mod": 0.644,
-     "s": 0.644,
+     "s_mod": 0.645,
+     "s": 0.645,
      "line": -0.75,
      "s_mkt": 0.875,
-     "e": 0.231
+     "e": 0.23
     },
     {
      "date": "2026-10-24",
@@ -2611,11 +2608,11 @@
      "h": "RB Leipzig",
      "a": "Elversberg",
      "played": 6,
-     "s_mod": 1.556,
-     "s": 1.556,
+     "s_mod": 1.558,
+     "s": 1.558,
      "line": -1.0,
      "s_mkt": 1.234,
-     "e": -0.322
+     "e": -0.324
     },
     {
      "date": "2026-10-25",
@@ -2644,11 +2641,77 @@
      "h": "Elversberg",
      "a": "Mainz 05",
      "played": 7,
-     "s_mod": -0.278,
-     "s": -0.255,
+     "s_mod": -0.279,
+     "s": -0.256,
      "line": 0.5,
      "s_mkt": -0.653,
-     "e": -0.398
+     "e": -0.397
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Augsburg",
+     "a": "Freiburg",
+     "played": 7,
+     "s_mod": -0.233,
+     "s": 0.056,
+     "line": 0.0,
+     "s_mkt": -0.056,
+     "e": -0.112
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Bayer Leverkusen",
+     "a": "VfB Stuttgart",
+     "played": 7,
+     "s_mod": 0.651,
+     "s": 0.629,
+     "line": -0.75,
+     "s_mkt": 0.977,
+     "e": 0.348
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Bayern München",
+     "a": "Borussia Dortmund",
+     "played": 7,
+     "s_mod": 1.078,
+     "s": 1.188,
+     "line": -1.75,
+     "s_mkt": 1.81,
+     "e": 0.623
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Borussia Mönchengladbach",
+     "a": "Paderborn",
+     "played": 7,
+     "s_mod": 0.472,
+     "s": 0.344,
+     "line": -0.25,
+     "s_mkt": 0.379,
+     "e": 0.035
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Schalke 04",
+     "a": "RB Leipzig",
+     "played": 7,
+     "s_mod": -0.664,
+     "s": -0.527,
+     "line": 0.5,
+     "s_mkt": -0.71,
+     "e": -0.183
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Werder Bremen",
+     "a": "Hoffenheim",
+     "played": 7,
+     "s_mod": -0.18,
+     "s": -0.157,
+     "line": -0.25,
+     "s_mkt": 0.206,
+     "e": 0.363
     }
    ]
   },
@@ -2656,17 +2719,17 @@
    "teams": {
     "9847": {
      "name": "Paris Saint-Germain",
-     "o": 0.3227,
+     "o": 0.3222,
      "n": 3
     },
     "9831": {
      "name": "Nice",
-     "o": 0.2234,
+     "o": 0.2233,
      "n": 3
     },
     "9829": {
      "name": "Monaco",
-     "o": 0.2227,
+     "o": 0.2225,
      "n": 2
     },
     "8592": {
@@ -2676,17 +2739,17 @@
     },
     "9941": {
      "name": "Toulouse",
-     "o": 0.1146,
+     "o": 0.1147,
      "n": 2
     },
     "6379": {
      "name": "Paris FC",
-     "o": 0.1011,
+     "o": 0.1014,
      "n": 2
     },
     "8583": {
      "name": "Auxerre",
-     "o": 0.0244,
+     "o": 0.0243,
      "n": 2
     },
     "9851": {
@@ -2696,8 +2759,13 @@
     },
     "8682": {
      "name": "Le Mans",
-     "o": -0.0218,
-     "n": 2
+     "o": -0.0469,
+     "n": 3
+    },
+    "10242": {
+     "name": "Troyes",
+     "o": -0.0509,
+     "n": 3
     },
     "8521": {
      "name": "Brest",
@@ -2706,27 +2774,22 @@
     },
     "8588": {
      "name": "Lens",
-     "o": -0.0674,
+     "o": -0.0673,
      "n": 3
-    },
-    "10242": {
-     "name": "Troyes",
-     "o": -0.0759,
-     "n": 2
     },
     "8689": {
      "name": "Lorient",
-     "o": -0.0892,
+     "o": -0.0891,
      "n": 2
     },
     "8121": {
      "name": "Angers",
-     "o": -0.1157,
+     "o": -0.1156,
      "n": 2
     },
     "9848": {
      "name": "Strasbourg",
-     "o": -0.1376,
+     "o": -0.1374,
      "n": 2
     },
     "8639": {
@@ -2736,7 +2799,7 @@
     },
     "9746": {
      "name": "Le Havre",
-     "o": -0.252,
+     "o": -0.2519,
      "n": 3
     },
     "9748": {
@@ -2745,18 +2808,10 @@
      "n": 2
     }
    },
-   "matches": 75,
-   "learnable": 21,
-   "learned": 21,
+   "matches": 76,
+   "learnable": 22,
+   "learned": 22,
    "log": [
-    {
-     "date": "2026-08-30",
-     "h": "Monaco",
-     "a": "Marseille",
-     "played": 1,
-     "s_mod": -0.156,
-     "s": -0.156
-    },
     {
      "date": "2026-08-30",
      "h": "Paris FC",
@@ -2770,8 +2825,8 @@
      "h": "Rennes",
      "a": "Le Mans",
      "played": 1,
-     "s_mod": 0.895,
-     "s": 0.895
+     "s_mod": 0.893,
+     "s": 0.893
     },
     {
      "date": "2026-09-03",
@@ -2786,16 +2841,16 @@
      "h": "Lyon",
      "a": "Auxerre",
      "played": 2,
-     "s_mod": 0.586,
-     "s": 0.586
+     "s_mod": 0.585,
+     "s": 0.585
     },
     {
      "date": "2026-09-04",
      "h": "Paris Saint-Germain",
      "a": "Monaco",
      "played": 2,
-     "s_mod": 1.229,
-     "s": 1.229
+     "s_mod": 1.227,
+     "s": 1.227
     },
     {
      "date": "2026-09-05",
@@ -2810,32 +2865,32 @@
      "h": "Lens",
      "a": "Lorient",
      "played": 2,
-     "s_mod": 0.89,
-     "s": 0.89
+     "s_mod": 0.888,
+     "s": 0.888
     },
     {
      "date": "2026-09-05",
      "h": "Nice",
      "a": "Le Mans",
      "played": 2,
-     "s_mod": 0.412,
-     "s": 0.412
+     "s_mod": 0.411,
+     "s": 0.411
     },
     {
      "date": "2026-09-06",
      "h": "Angers",
      "a": "Rennes",
      "played": 2,
-     "s_mod": -0.299,
-     "s": -0.299
+     "s_mod": -0.298,
+     "s": -0.298
     },
     {
      "date": "2026-09-06",
      "h": "Marseille",
      "a": "Paris FC",
      "played": 2,
-     "s_mod": 0.653,
-     "s": 0.653
+     "s_mod": 0.652,
+     "s": 0.652
     },
     {
      "date": "2026-09-06",
@@ -2850,8 +2905,8 @@
      "h": "Rennes",
      "a": "Marseille",
      "played": 3,
-     "s_mod": -0.063,
-     "s": -0.063
+     "s_mod": -0.064,
+     "s": -0.064
     },
     {
      "date": "2026-09-12",
@@ -2898,32 +2953,32 @@
      "h": "Brest",
      "a": "Paris Saint-Germain",
      "played": 3,
-     "s_mod": -0.829,
-     "s": -0.829
+     "s_mod": -0.828,
+     "s": -0.828
     },
     {
      "date": "2026-09-13",
      "h": "Le Mans",
      "a": "Lens",
      "played": 3,
-     "s_mod": -1.026,
-     "s": -1.026
+     "s_mod": -1.025,
+     "s": -1.025
     },
     {
      "date": "2026-09-13",
      "h": "Lille",
      "a": "Troyes",
      "played": 3,
-     "s_mod": 0.904,
-     "s": 0.904
+     "s_mod": 0.903,
+     "s": 0.903
     },
     {
      "date": "2026-09-18",
      "h": "Monaco",
      "a": "Lens",
      "played": 4,
-     "s_mod": -0.26,
-     "s": -0.26
+     "s_mod": -0.259,
+     "s": -0.259
     },
     {
      "date": "2026-09-19",
@@ -2938,8 +2993,8 @@
      "h": "Le Mans",
      "a": "Lorient",
      "played": 4,
-     "s_mod": -0.223,
-     "s": -0.223
+     "s_mod": -0.222,
+     "s": -0.222
     },
     {
      "date": "2026-09-19",
@@ -2970,16 +3025,16 @@
      "h": "Auxerre",
      "a": "Brest",
      "played": 4,
-     "s_mod": -0.06,
-     "s": -0.06
+     "s_mod": -0.059,
+     "s": -0.059
     },
     {
      "date": "2026-09-20",
      "h": "Nice",
      "a": "Lille",
      "played": 4,
-     "s_mod": -0.499,
-     "s": -0.499
+     "s_mod": -0.498,
+     "s": -0.498
     },
     {
      "date": "2026-09-20",
@@ -3010,8 +3065,8 @@
      "h": "Lille",
      "a": "Le Havre",
      "played": 5,
-     "s_mod": 0.824,
-     "s": 0.824
+     "s_mod": 0.823,
+     "s": 0.823
     },
     {
      "date": "2026-10-10",
@@ -3034,8 +3089,8 @@
      "h": "Paris Saint-Germain",
      "a": "Le Mans",
      "played": 5,
-     "s_mod": 1.851,
-     "s": 1.851
+     "s_mod": 1.85,
+     "s": 1.85
     },
     {
      "date": "2026-10-11",
@@ -3050,27 +3105,27 @@
      "h": "Rennes",
      "a": "Auxerre",
      "played": 5,
-     "s_mod": 0.559,
-     "s": 0.559
+     "s_mod": 0.558,
+     "s": 0.558
     },
     {
      "date": "2026-10-11",
      "h": "Troyes",
      "a": "Marseille",
      "played": 5,
-     "s_mod": -0.288,
-     "s": -0.288
+     "s_mod": -0.287,
+     "s": -0.287
     },
     {
      "date": "2026-10-16",
      "h": "Le Mans",
      "a": "Toulouse",
      "played": 6,
-     "s_mod": -0.213,
-     "s": -0.213,
+     "s_mod": -0.212,
+     "s": -0.212,
      "line": 0.25,
      "s_mkt": -0.384,
-     "e": -0.171
+     "e": -0.172
     },
     {
      "date": "2026-10-17",
@@ -3088,22 +3143,22 @@
      "h": "Strasbourg",
      "a": "Paris Saint-Germain",
      "played": 6,
-     "s_mod": -0.999,
-     "s": -0.999,
+     "s_mod": -1.0,
+     "s": -1.0,
      "line": 1.25,
      "s_mkt": -1.404,
-     "e": -0.405
+     "e": -0.404
     },
     {
      "date": "2026-10-17",
      "h": "Troyes",
      "a": "Lens",
      "played": 6,
-     "s_mod": -0.742,
-     "s": -0.742,
+     "s_mod": -0.741,
+     "s": -0.741,
      "line": 0.5,
      "s_mkt": -0.758,
-     "e": -0.016
+     "e": -0.017
     },
     {
      "date": "2026-10-18",
@@ -3121,22 +3176,22 @@
      "h": "Le Havre",
      "a": "Auxerre",
      "played": 6,
-     "s_mod": 0.431,
-     "s": 0.431,
+     "s_mod": 0.432,
+     "s": 0.432,
      "line": -0.25,
      "s_mkt": 0.249,
-     "e": -0.182
+     "e": -0.183
     },
     {
      "date": "2026-10-18",
      "h": "Lorient",
      "a": "Monaco",
      "played": 6,
-     "s_mod": -0.06,
-     "s": -0.06,
+     "s_mod": -0.061,
+     "s": -0.061,
      "line": 0.5,
      "s_mkt": -0.562,
-     "e": -0.502
+     "e": -0.501
     },
     {
      "date": "2026-10-18",
@@ -3154,11 +3209,11 @@
      "h": "Paris FC",
      "a": "Rennes",
      "played": 6,
-     "s_mod": 0.372,
-     "s": 0.372,
+     "s_mod": 0.371,
+     "s": 0.371,
      "line": -0.25,
      "s_mkt": 0.45,
-     "e": 0.078
+     "e": 0.079
     },
     {
      "date": "2026-10-23",
@@ -3198,11 +3253,11 @@
      "h": "Auxerre",
      "a": "Le Mans",
      "played": 7,
-     "s_mod": 0.38,
-     "s": 0.468,
+     "s_mod": 0.381,
+     "s": 0.47,
      "line": -0.25,
      "s_mkt": 0.384,
-     "e": -0.084
+     "e": -0.085
     },
     {
      "date": "2026-10-25",
@@ -3232,7 +3287,7 @@
      "a": "Strasbourg",
      "played": 7,
      "s_mod": 0.501,
-     "s": 0.583,
+     "s": 0.582,
      "line": -0.75,
      "s_mkt": 0.728,
      "e": 0.145
@@ -3257,18 +3312,18 @@
      "s": 1.139,
      "line": -1.5,
      "s_mkt": 1.747,
-     "e": 0.607
+     "e": 0.608
     },
     {
      "date": "2026-10-30",
      "h": "Le Havre",
      "a": "Paris Saint-Germain",
      "played": 8,
-     "s_mod": -0.936,
-     "s": -1.372,
+     "s_mod": -0.937,
+     "s": -1.373,
      "line": 1.5,
      "s_mkt": -1.65,
-     "e": -0.278
+     "e": -0.277
     },
     {
      "date": "2026-10-30",
@@ -3279,7 +3334,7 @@
      "s": 0.018,
      "line": 0.0,
      "s_mkt": -0.023,
-     "e": -0.041
+     "e": -0.04
     },
     {
      "date": "2026-10-30",
@@ -3287,10 +3342,21 @@
      "a": "Rennes",
      "played": 8,
      "s_mod": -0.245,
-     "s": -0.046,
+     "s": -0.045,
      "line": 0.0,
      "s_mkt": -0.017,
      "e": 0.029
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Troyes",
+     "a": "Le Mans",
+     "played": 8,
+     "s_mod": 0.259,
+     "s": 0.205,
+     "line": -0.25,
+     "s_mkt": 0.305,
+     "e": 0.101
     }
    ]
   },
@@ -3303,12 +3369,12 @@
     },
     "9773": {
      "name": "FC Porto",
-     "o": 0.2535,
-     "n": 3
+     "o": 0.308,
+     "n": 4
     },
     "9768": {
      "name": "Sporting CP",
-     "o": 0.0966,
+     "o": 0.0962,
      "n": 4
     },
     "1634": {
@@ -3321,19 +3387,14 @@
      "o": 0.0822,
      "n": 3
     },
-    "7842": {
-     "name": "Estoril",
-     "o": 0.0744,
-     "n": 3
-    },
     "10264": {
      "name": "Braga",
-     "o": 0.0697,
+     "o": 0.0694,
      "n": 3
     },
     "158085": {
      "name": "Arouca",
-     "o": 0.0539,
+     "o": 0.0543,
      "n": 3
     },
     "1786": {
@@ -3341,44 +3402,49 @@
      "o": 0.0269,
      "n": 3
     },
+    "7842": {
+     "name": "Estoril",
+     "o": 0.0196,
+     "n": 4
+    },
     "212821": {
      "name": "Casa Pia AC",
-     "o": 0.0142,
+     "o": 0.0144,
      "n": 4
     },
     "9780": {
      "name": "Alverca",
-     "o": -0.0048,
-     "n": 3
-    },
-    "8348": {
-     "name": "Moreirense",
-     "o": -0.0165,
-     "n": 3
-    },
-    "7844": {
-     "name": "Vitória de Guimarães",
-     "o": -0.0782,
+     "o": -0.005,
      "n": 3
     },
     "1074320": {
      "name": "Estrela da Amadora",
-     "o": -0.1017,
+     "o": -0.043,
+     "n": 4
+    },
+    "8348": {
+     "name": "Moreirense",
+     "o": -0.0751,
+     "n": 4
+    },
+    "7844": {
+     "name": "Vitória de Guimarães",
+     "o": -0.0781,
      "n": 3
     },
     "10212": {
      "name": "Marítimo",
-     "o": -0.197,
+     "o": -0.1968,
      "n": 2
     },
     "10214": {
      "name": "Nacional",
-     "o": -0.2278,
+     "o": -0.2275,
      "n": 3
     },
     "9764": {
      "name": "Gil Vicente",
-     "o": -0.2335,
+     "o": -0.2336,
      "n": 3
     },
     "1567": {
@@ -3387,26 +3453,10 @@
      "n": 2
     }
    },
-   "matches": 82,
-   "learnable": 27,
-   "learned": 27,
+   "matches": 84,
+   "learnable": 29,
+   "learned": 29,
    "log": [
-    {
-     "date": "2026-08-23",
-     "h": "Vitória de Guimarães",
-     "a": "Nacional",
-     "played": 2,
-     "s_mod": 0.718,
-     "s": 0.718
-    },
-    {
-     "date": "2026-08-24",
-     "h": "Gil Vicente",
-     "a": "Casa Pia AC",
-     "played": 1,
-     "s_mod": 1.375,
-     "s": 1.375
-    },
     {
      "date": "2026-08-28",
      "h": "Rio Ave",
@@ -3420,16 +3470,16 @@
      "h": "Académico Viseu",
      "a": "FC Porto",
      "played": 3,
-     "s_mod": -1.304,
-     "s": -1.304
+     "s_mod": -1.303,
+     "s": -1.303
     },
     {
      "date": "2026-08-29",
      "h": "Alverca",
      "a": "Santa Clara",
      "played": 3,
-     "s_mod": -0.287,
-     "s": -0.287
+     "s_mod": -0.286,
+     "s": -0.286
     },
     {
      "date": "2026-08-29",
@@ -3476,8 +3526,8 @@
      "h": "Benfica",
      "a": "Estoril",
      "played": 2,
-     "s_mod": 2.053,
-     "s": 2.053
+     "s_mod": 2.052,
+     "s": 2.052
     },
     {
      "date": "2026-09-04",
@@ -3532,8 +3582,8 @@
      "h": "Santa Clara",
      "a": "Rio Ave",
      "played": 4,
-     "s_mod": 1.037,
-     "s": 1.037
+     "s_mod": 1.036,
+     "s": 1.036
     },
     {
      "date": "2026-09-06",
@@ -3588,8 +3638,8 @@
      "h": "Nacional",
      "a": "Alverca",
      "played": 5,
-     "s_mod": 0.309,
-     "s": 0.309
+     "s_mod": 0.308,
+     "s": 0.308
     },
     {
      "date": "2026-09-13",
@@ -3604,8 +3654,8 @@
      "h": "Famalicão",
      "a": "Sporting CP",
      "played": 5,
-     "s_mod": -0.778,
-     "s": -0.778
+     "s_mod": -0.779,
+     "s": -0.779
     },
     {
      "date": "2026-09-13",
@@ -3674,11 +3724,11 @@
      "h": "Sporting CP",
      "a": "Arouca",
      "played": 6,
-     "s_mod": 2.065,
-     "s": 2.065,
+     "s_mod": 2.066,
+     "s": 2.066,
      "line": -2.25,
      "s_mkt": 2.268,
-     "e": 0.203
+     "e": 0.202
     },
     {
      "date": "2026-09-20",
@@ -3738,7 +3788,7 @@
      "a": "Sporting CP",
      "played": 6,
      "s_mod": -0.192,
-     "s": -0.243,
+     "s": -0.242,
      "line": 0.25,
      "s_mkt": -0.252,
      "e": -0.01
@@ -3781,11 +3831,11 @@
      "h": "Marítimo",
      "a": "FC Porto",
      "played": 7,
-     "s_mod": -1.094,
-     "s": -1.091,
+     "s_mod": -1.095,
+     "s": -1.092,
      "line": 1.5,
      "s_mkt": -1.637,
-     "e": -0.546
+     "e": -0.545
     },
     {
      "date": "2026-10-11",
@@ -3796,7 +3846,7 @@
      "s": 0.163,
      "line": -0.25,
      "s_mkt": 0.396,
-     "e": 0.234
+     "e": 0.233
     },
     {
      "date": "2026-10-11",
@@ -3858,11 +3908,11 @@
      "h": "Alverca",
      "a": "Arouca",
      "played": 8,
-     "s_mod": 0.475,
+     "s_mod": 0.476,
      "s": 0.509,
      "line": -0.25,
      "s_mkt": 0.324,
-     "e": -0.185
+     "e": -0.186
     },
     {
      "date": "2026-10-24",
@@ -3873,7 +3923,7 @@
      "s": 0.752,
      "line": -0.5,
      "s_mkt": 0.72,
-     "e": -0.032
+     "e": -0.033
     },
     {
      "date": "2026-10-24",
@@ -3881,7 +3931,7 @@
      "a": "FC Porto",
      "played": 8,
      "s_mod": -0.542,
-     "s": -0.79,
+     "s": -0.789,
      "line": 1.25,
      "s_mkt": -1.268,
      "e": -0.479
@@ -3902,11 +3952,11 @@
      "h": "Nacional",
      "a": "Braga",
      "played": 8,
-     "s_mod": -0.805,
-     "s": -1.059,
+     "s_mod": -0.806,
+     "s": -1.06,
      "line": 1.0,
      "s_mkt": -1.146,
-     "e": -0.087
+     "e": -0.086
     },
     {
      "date": "2026-10-25",
@@ -3946,11 +3996,33 @@
      "h": "Casa Pia AC",
      "a": "Sporting CP",
      "played": 9,
-     "s_mod": -1.509,
-     "s": -1.519,
+     "s_mod": -1.51,
+     "s": -1.52,
      "line": 1.5,
      "s_mkt": -1.664,
      "e": -0.144
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Moreirense",
+     "a": "Estrela da Amadora",
+     "played": 9,
+     "s_mod": 0.005,
+     "s": 0.09,
+     "line": 0.0,
+     "s_mkt": -0.144,
+     "e": -0.235
+    },
+    {
+     "date": "2026-10-31",
+     "h": "FC Porto",
+     "a": "Estoril",
+     "played": 9,
+     "s_mod": 1.911,
+     "s": 2.09,
+     "line": -2.25,
+     "s_mkt": 2.309,
+     "e": 0.219
     }
    ]
   },
@@ -3958,131 +4030,99 @@
    "teams": {
     "6433": {
      "name": "Go Ahead Eagles",
-     "o": 0.3127,
-     "n": 4
-    },
-    "8593": {
-     "name": "Ajax",
-     "o": 0.2748,
+     "o": 0.313,
      "n": 4
     },
     "10229": {
      "name": "AZ Alkmaar",
-     "o": 0.2276,
-     "n": 4
+     "o": 0.2597,
+     "n": 5
     },
-    "8640": {
-     "name": "PSV Eindhoven",
-     "o": 0.178,
-     "n": 4
+    "8593": {
+     "name": "Ajax",
+     "o": 0.2426,
+     "n": 5
     },
     "10235": {
      "name": "Feyenoord",
-     "o": 0.1161,
-     "n": 4
+     "o": 0.1519,
+     "n": 5
+    },
+    "8640": {
+     "name": "PSV Eindhoven",
+     "o": 0.1482,
+     "n": 5
     },
     "6413": {
      "name": "PEC Zwolle",
-     "o": 0.079,
+     "o": 0.0789,
      "n": 4
     },
     "10217": {
      "name": "ADO Den Haag",
-     "o": 0.0549,
-     "n": 4
-    },
-    "10228": {
-     "name": "SC Heerenveen",
-     "o": 0.0044,
+     "o": 0.0553,
      "n": 4
     },
     "8611": {
      "name": "FC Twente",
-     "o": 0.0027,
+     "o": 0.0023,
      "n": 4
     },
     "8614": {
      "name": "Sparta Rotterdam",
-     "o": -0.0407,
+     "o": -0.0402,
      "n": 4
+    },
+    "10228": {
+     "name": "SC Heerenveen",
+     "o": -0.0414,
+     "n": 5
     },
     "9908": {
      "name": "FC Utrecht",
-     "o": -0.064,
+     "o": -0.0641,
      "n": 4
     },
     "8674": {
      "name": "FC Groningen",
-     "o": -0.0905,
+     "o": -0.0904,
      "n": 4
+    },
+    "8464": {
+     "name": "NEC Nijmegen",
+     "o": -0.1013,
+     "n": 5
     },
     "10218": {
      "name": "Excelsior",
      "o": -0.1277,
      "n": 4
     },
-    "8464": {
-     "name": "NEC Nijmegen",
-     "o": -0.1465,
-     "n": 4
-    },
     "8525": {
      "name": "Willem II",
-     "o": -0.1644,
-     "n": 4
+     "o": -0.1348,
+     "n": 5
     },
     "7788": {
      "name": "Cambuur",
-     "o": -0.187,
-     "n": 4
-    },
-    "6422": {
-     "name": "Fortuna Sittard",
-     "o": -0.2106,
+     "o": -0.1869,
      "n": 4
     },
     "6414": {
      "name": "Telstar",
-     "o": -0.2188,
+     "o": -0.2185,
      "n": 4
+    },
+    "6422": {
+     "name": "Fortuna Sittard",
+     "o": -0.2466,
+     "n": 5
     }
    },
-   "matches": 90,
-   "learnable": 36,
-   "learned": 36,
+   "matches": 94,
+   "learnable": 40,
+   "learned": 40,
    "log": [
-    {
-     "date": "2026-08-30",
-     "h": "Willem II",
-     "a": "SC Heerenveen",
-     "played": 2,
-     "s_mod": -0.147,
-     "s": -0.147
-    },
-    {
-     "date": "2026-08-30",
-     "h": "Telstar",
-     "a": "Ajax",
-     "played": 2,
-     "s_mod": -0.605,
-     "s": -0.605
-    },
-    {
-     "date": "2026-08-30",
-     "h": "Cambuur",
-     "a": "FC Twente",
-     "played": 2,
-     "s_mod": -1.222,
-     "s": -1.222
-    },
-    {
-     "date": "2026-09-04",
-     "h": "Sparta Rotterdam",
-     "a": "PEC Zwolle",
-     "played": 4,
-     "s_mod": 0.842,
-     "s": 0.842
-    },
     {
      "date": "2026-09-05",
      "h": "Ajax",
@@ -4096,8 +4136,8 @@
      "h": "NEC Nijmegen",
      "a": "Feyenoord",
      "played": 3,
-     "s_mod": -0.025,
-     "s": -0.025
+     "s_mod": -0.024,
+     "s": -0.024
     },
     {
      "date": "2026-09-05",
@@ -4120,8 +4160,8 @@
      "h": "Telstar",
      "a": "Cambuur",
      "played": 3,
-     "s_mod": 0.693,
-     "s": 0.693
+     "s_mod": 0.692,
+     "s": 0.692
     },
     {
      "date": "2026-09-06",
@@ -4144,72 +4184,72 @@
      "h": "NEC Nijmegen",
      "a": "Excelsior",
      "played": 4,
-     "s_mod": 0.992,
-     "s": 0.992
+     "s_mod": 0.993,
+     "s": 0.993
     },
     {
      "date": "2026-09-08",
      "h": "FC Utrecht",
      "a": "Go Ahead Eagles",
      "played": 4,
-     "s_mod": 0.729,
-     "s": 0.729
+     "s_mod": 0.728,
+     "s": 0.728
     },
     {
      "date": "2026-09-09",
      "h": "FC Twente",
      "a": "Telstar",
      "played": 4,
-     "s_mod": 1.646,
-     "s": 1.646
+     "s_mod": 1.645,
+     "s": 1.645
     },
     {
      "date": "2026-09-11",
      "h": "AZ Alkmaar",
      "a": "Willem II",
      "played": 4,
-     "s_mod": 1.631,
-     "s": 1.631
+     "s_mod": 1.63,
+     "s": 1.63
     },
     {
      "date": "2026-09-12",
      "h": "Cambuur",
      "a": "NEC Nijmegen",
      "played": 5,
-     "s_mod": -0.961,
-     "s": -0.961
+     "s_mod": -0.96,
+     "s": -0.96
     },
     {
      "date": "2026-09-12",
      "h": "FC Twente",
      "a": "ADO Den Haag",
      "played": 5,
-     "s_mod": 2.099,
-     "s": 2.099
+     "s_mod": 2.098,
+     "s": 2.098
     },
     {
      "date": "2026-09-12",
      "h": "Fortuna Sittard",
      "a": "Ajax",
      "played": 4,
-     "s_mod": -0.618,
-     "s": -0.618
+     "s_mod": -0.617,
+     "s": -0.617
     },
     {
      "date": "2026-09-12",
      "h": "Go Ahead Eagles",
      "a": "FC Groningen",
      "played": 5,
-     "s_mod": -0.225,
-     "s": -0.225
+     "s_mod": -0.224,
+     "s": -0.224
     },
     {
      "date": "2026-09-13",
      "h": "PSV Eindhoven",
      "a": "Sparta Rotterdam",
      "played": 5,
-     "s_mod": 2.039,
-     "s": 2.039
+     "s_mod": 2.038,
+     "s": 2.038
     },
     {
      "date": "2026-09-13",
@@ -4224,8 +4264,8 @@
      "h": "Excelsior",
      "a": "FC Utrecht",
      "played": 5,
-     "s_mod": 0.379,
-     "s": 0.379
+     "s_mod": 0.378,
+     "s": 0.378
     },
     {
      "date": "2026-09-13",
@@ -4240,41 +4280,41 @@
      "h": "Ajax",
      "a": "Willem II",
      "played": 5,
-     "s_mod": 1.909,
-     "s": 1.909
+     "s_mod": 1.908,
+     "s": 1.908
     },
     {
      "date": "2026-09-18",
      "h": "FC Groningen",
      "a": "PEC Zwolle",
      "played": 6,
-     "s_mod": 1.395,
-     "s": 1.395,
+     "s_mod": 1.396,
+     "s": 1.396,
      "line": -1.0,
      "s_mkt": 1.125,
-     "e": -0.27
+     "e": -0.271
     },
     {
      "date": "2026-09-19",
      "h": "ADO Den Haag",
      "a": "Cambuur",
      "played": 6,
-     "s_mod": 0.185,
-     "s": 0.185,
+     "s_mod": 0.184,
+     "s": 0.184,
      "line": -0.5,
      "s_mkt": 0.595,
-     "e": 0.41
+     "e": 0.411
     },
     {
      "date": "2026-09-19",
      "h": "Sparta Rotterdam",
      "a": "SC Heerenveen",
      "played": 6,
-     "s_mod": 0.089,
-     "s": 0.089,
+     "s_mod": 0.088,
+     "s": 0.088,
      "line": 0.0,
      "s_mkt": 0.023,
-     "e": -0.066
+     "e": -0.065
     },
     {
      "date": "2026-09-19",
@@ -4336,22 +4376,22 @@
      "h": "FC Twente",
      "a": "PSV Eindhoven",
      "played": 6,
-     "s_mod": 0.131,
-     "s": 0.131,
+     "s_mod": 0.132,
+     "s": 0.132,
      "line": 0.25,
      "s_mkt": -0.317,
-     "e": -0.448
+     "e": -0.449
     },
     {
      "date": "2026-10-09",
      "h": "PSV Eindhoven",
      "a": "SC Heerenveen",
      "played": 7,
-     "s_mod": 1.614,
-     "s": 1.71,
+     "s_mod": 1.615,
+     "s": 1.711,
      "line": -1.75,
      "s_mkt": 1.837,
-     "e": 0.127
+     "e": 0.126
     },
     {
      "date": "2026-10-10",
@@ -4392,10 +4432,10 @@
      "a": "FC Twente",
      "played": 7,
      "s_mod": -1.158,
-     "s": -1.018,
+     "s": -1.017,
      "line": 1.25,
      "s_mkt": -1.366,
-     "e": -0.348
+     "e": -0.349
     },
     {
      "date": "2026-10-11",
@@ -4406,7 +4446,7 @@
      "s": -0.097,
      "line": 0.0,
      "s_mkt": -0.116,
-     "e": -0.019
+     "e": -0.02
     },
     {
      "date": "2026-10-11",
@@ -4425,10 +4465,10 @@
      "a": "Cambuur",
      "played": 7,
      "s_mod": 0.067,
-     "s": 0.237,
+     "s": 0.238,
      "line": -0.5,
      "s_mkt": 0.458,
-     "e": 0.221
+     "e": 0.22
     },
     {
      "date": "2026-10-11",
@@ -4457,22 +4497,22 @@
      "h": "Sparta Rotterdam",
      "a": "Willem II",
      "played": 8,
-     "s_mod": 0.896,
-     "s": 0.898,
+     "s_mod": 0.895,
+     "s": 0.897,
      "line": -1.0,
      "s_mkt": 1.134,
-     "e": 0.236
+     "e": 0.237
     },
     {
      "date": "2026-10-17",
      "h": "Telstar",
      "a": "Feyenoord",
      "played": 8,
-     "s_mod": -1.285,
-     "s": -1.498,
+     "s_mod": -1.286,
+     "s": -1.499,
      "line": 1.5,
      "s_mkt": -1.664,
-     "e": -0.166
+     "e": -0.165
     },
     {
      "date": "2026-10-17",
@@ -4491,7 +4531,7 @@
      "a": "Fortuna Sittard",
      "played": 8,
      "s_mod": 0.929,
-     "s": 0.748,
+     "s": 0.749,
      "line": -0.75,
      "s_mkt": 0.872,
      "e": 0.124
@@ -4501,11 +4541,11 @@
      "h": "Cambuur",
      "a": "AZ Alkmaar",
      "played": 8,
-     "s_mod": -0.804,
-     "s": -1.112,
+     "s_mod": -0.805,
+     "s": -1.113,
      "line": 1.25,
      "s_mkt": -1.38,
-     "e": -0.268
+     "e": -0.267
     },
     {
      "date": "2026-10-18",
@@ -4513,10 +4553,10 @@
      "a": "Ajax",
      "played": 8,
      "s_mod": -0.32,
-     "s": -0.657,
+     "s": -0.658,
      "line": 0.5,
      "s_mkt": -0.521,
-     "e": 0.136
+     "e": 0.137
     },
     {
      "date": "2026-10-18",
@@ -4524,21 +4564,21 @@
      "a": "FC Utrecht",
      "played": 8,
      "s_mod": 1.407,
-     "s": 1.415,
+     "s": 1.414,
      "line": -1.5,
      "s_mkt": 1.568,
-     "e": 0.153
+     "e": 0.154
     },
     {
      "date": "2026-10-18",
      "h": "PEC Zwolle",
      "a": "Go Ahead Eagles",
      "played": 8,
-     "s_mod": -0.387,
-     "s": -0.494,
+     "s_mod": -0.386,
+     "s": -0.493,
      "line": 0.5,
      "s_mkt": -0.642,
-     "e": -0.147
+     "e": -0.148
     },
     {
      "date": "2026-10-23",
@@ -4556,8 +4596,8 @@
      "h": "ADO Den Haag",
      "a": "SC Heerenveen",
      "played": 9,
-     "s_mod": -0.5,
-     "s": -0.464,
+     "s_mod": -0.501,
+     "s": -0.465,
      "line": 0.25,
      "s_mkt": -0.435,
      "e": 0.03
@@ -4582,29 +4622,29 @@
      "s": 0.175,
      "line": 0.0,
      "s_mkt": 0.024,
-     "e": -0.151
+     "e": -0.15
     },
     {
      "date": "2026-10-25",
      "h": "NEC Nijmegen",
      "a": "FC Groningen",
      "played": 9,
-     "s_mod": 0.484,
-     "s": 0.304,
+     "s_mod": 0.485,
+     "s": 0.305,
      "line": -0.5,
      "s_mkt": 0.552,
-     "e": 0.248
+     "e": 0.247
     },
     {
      "date": "2026-10-25",
      "h": "Sparta Rotterdam",
      "a": "Ajax",
      "played": 9,
-     "s_mod": -0.851,
-     "s": -1.098,
+     "s_mod": -0.852,
+     "s": -1.099,
      "line": 1.25,
      "s_mkt": -1.235,
-     "e": -0.137
+     "e": -0.136
     },
     {
      "date": "2026-10-25",
@@ -4622,11 +4662,11 @@
      "h": "AZ Alkmaar",
      "a": "FC Twente",
      "played": 9,
-     "s_mod": -0.056,
-     "s": 0.148,
+     "s_mod": -0.057,
+     "s": 0.146,
      "line": -0.25,
      "s_mkt": 0.19,
-     "e": 0.043
+     "e": 0.044
     },
     {
      "date": "2026-10-25",
@@ -4638,6 +4678,50 @@
      "line": -0.25,
      "s_mkt": 0.409,
      "e": 0.027
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Ajax",
+     "a": "AZ Alkmaar",
+     "played": 10,
+     "s_mod": 0.78,
+     "s": 0.827,
+     "line": -0.5,
+     "s_mkt": 0.699,
+     "e": -0.128
+    },
+    {
+     "date": "2026-10-31",
+     "h": "Feyenoord",
+     "a": "Fortuna Sittard",
+     "played": 10,
+     "s_mod": 1.99,
+     "s": 2.317,
+     "line": -2.25,
+     "s_mkt": 2.461,
+     "e": 0.144
+    },
+    {
+     "date": "2026-10-31",
+     "h": "SC Heerenveen",
+     "a": "NEC Nijmegen",
+     "played": 10,
+     "s_mod": 0.318,
+     "s": 0.469,
+     "line": -0.25,
+     "s_mkt": 0.287,
+     "e": -0.182
+    },
+    {
+     "date": "2026-10-31",
+     "h": "PSV Eindhoven",
+     "a": "Willem II",
+     "played": 10,
+     "s_mod": 2.989,
+     "s": 3.331,
+     "line": -3.0,
+     "s_mkt": 3.213,
+     "e": -0.119
     }
    ]
   }
