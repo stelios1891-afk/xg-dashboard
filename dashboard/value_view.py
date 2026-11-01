@@ -1,0 +1,370 @@
+"""value_view.py — HTML cards για τα live Value Picks."""
+import html as _h
+import json as _json
+import build_data
+
+TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
+LLOGO = 'https://images.fotmob.com/image_resources/logo/leaguelogo/dark/{}.png'
+LEAGUE_LABELS = {'Euroleague': 'Euroleague', 'EuroCup': 'EuroCup', 'BCL': 'Champions League (FIBA)', 'NBA': 'NBA', 'EPL': 'Premier League', 'LaLiga': 'La Liga', 'SerieA': 'Serie A',
+                 'Bundesliga': 'Bundesliga', 'Ligue1': 'Ligue 1', 'Eredivisie': 'Eredivisie',
+                 'PrimeiraLiga': 'Primeira',
+                 'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League',
+                 'ConferenceLeague': 'Conference League'}
+EURO_FOTMOB = {'ChampionsLeague': 42, 'EuropaLeague': 73, 'ConferenceLeague': 10216}
+
+CSS = """
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf8;padding:2px;}
+.wrap{display:flex;flex-direction:column;gap:9px;}
+.pc{background:#111827;border:1px solid #1e2d47;border-left:3px solid #4b7cf3;border-radius:12px;padding:12px 15px;}
+.pc.hi{border-left-color:#34d17a;}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.lg{display:flex;align-items:center;gap:7px;font-size:10px;color:#6b7fa3;text-transform:uppercase;letter-spacing:.6px;}
+.lg img{width:16px;height:16px;object-fit:contain;}
+.when{font-size:10px;color:#5a6b8c;font-family:'JetBrains Mono',monospace;}
+.mrow{display:flex;align-items:center;gap:10px;}
+.tm{display:flex;align-items:center;gap:7px;font-size:14px;}
+.tm img{width:22px;height:22px;object-fit:contain;}
+.tm.pick{font-weight:700;color:#e8edf8;}
+.tm.dim{color:#6b7fa3;}
+.vs{color:#5a6b8c;font-size:11px;}
+.bet{margin-left:auto;background:#182444;border:1px solid #2d4470;border-radius:8px;padding:5px 11px;
+     font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#7ea2ff;white-space:nowrap;}
+.stats{display:flex;gap:20px;margin-top:10px;padding-top:9px;border-top:1px solid #121b30;flex-wrap:wrap;}
+.st{display:flex;flex-direction:column;gap:1px;}
+.st .k{font-size:9px;color:#6b7fa3;text-transform:uppercase;letter-spacing:.5px;}
+.st .v{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;}
+.v.edge{color:#34d17a;}.v.stake{color:#7ea2ff;}
+.tag{font-size:8.5px;padding:1px 6px;border-radius:4px;margin-left:6px;}
+.tag.watch{background:rgba(245,183,49,.14);color:#f5b731;border:1px solid rgba(245,183,49,.3);}
+.tag.lc{background:rgba(240,79,90,.12);color:#f04f5a;border:1px solid rgba(240,79,90,.3);}
+.tag.eu{background:rgba(126,162,255,.12);color:#7ea2ff;border:1px solid rgba(126,162,255,.3);}
+.tag.t75{background:rgba(52,209,122,.12);color:#34d17a;border:1px solid rgba(52,209,122,.3);}
+.tag.np{background:rgba(160,160,160,.14);color:#b9b9b9;border:1px dashed rgba(180,180,180,.45);}
+.pc.np{opacity:.72;}
+.bet.ov{color:#3ec98f;border-color:#2d6e57;}
+.cbtn{margin-left:8px;background:#0f1a30;border:1px solid #2d4470;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;line-height:1;color:#7ea2ff;}
+.cbtn:hover,.cbtn.on{background:#182444;border-color:#4b7cf3;}
+.calc{display:none;margin-top:10px;padding:9px 11px;background:#0c1426;border:1px solid #1e2d47;border-radius:9px;}
+.calc.on{display:block;}
+.crow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:#8da0c4;}
+.calc select,.calc input{background:#111c33;border:1px solid #2d4470;border-radius:6px;color:#e8edf8;font-family:'JetBrains Mono',monospace;
+     font-size:13px;padding:4px 6px;}
+.calc input{width:74px;}
+.cres{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+.cm{display:flex;flex-direction:column;gap:1px;}
+.cm .n{font-size:9px;color:#6b7fa3;text-transform:uppercase;letter-spacing:.5px;}
+.cm .e{font-weight:700;}
+.cm .q{font-size:10px;color:#6b7fa3;}
+.g{color:#34d17a;}.a{color:#f5b731;}.r{color:#f04f5a;}
+.csum{margin-top:7px;font-size:11.5px;font-weight:700;}
+.cnote{font-size:10px;color:#f5b731;margin-left:8px;font-weight:400;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+"""
+
+WATCH = {'PrimeiraLiga'}
+
+def _logo(tid, cls='', tpl=TLOGO):
+    return f'<img class="{cls}" src="{tpl.format(tid)}" onerror="this.style.visibility=\'hidden\'">' if tid else ''
+
+def _when_ath(w):
+    """10/10/2026 (Στελιος «value picks σε ωρα Ελλαδος»): τα αρχεια ειναι UTC → ωρα Ελλαδας (θερινη/χειμερινη σωστα)."""
+    import datetime
+    try:
+        d = datetime.datetime.fromisoformat(str(w).replace(' ', 'T').replace('Z', '+00:00')[:25])
+        d = d.replace(tzinfo=datetime.timezone.utc) if d.tzinfo is None else d
+        try:
+            from zoneinfo import ZoneInfo
+            a = d.astimezone(ZoneInfo('Europe/Athens'))
+        except Exception:
+            last_sun = max(datetime.date(d.year, 10, x) for x in range(25, 32) if datetime.date(d.year, 10, x).weekday() == 6)
+            a = d + datetime.timedelta(hours=3 if datetime.date(d.year, 3, 25) <= d.date() < last_sun else 2)
+        return f'{a:%Y-%m-%d %H:%M}'
+    except Exception:
+        return (w or '').replace('T', ' ')
+
+
+def play_status(p):
+    """12/10/2026 (Στελιος «να ειναι ξεκαθαρο το δεν παιζεται»): → (παιζεται;, λογος). Ενα ξεκαθαρο σημα σε ΚΑΘΕ καρτα."""
+    if p.get('gone'):
+        return False, 'δεν ισχυει πια'
+    if p.get('stale'):
+        return False, 'αναμονη ανανεωσης αποτελεσματων'
+    if p.get('rule') == 'uel_home_fav_wait':
+        return False, 'αναμονη: κανονικο 12-36ω πριν'
+    if p.get('no_play'):
+        return False, 'σκια'
+    if p.get('paper_late'):
+        n = p.get('mkt_note') or ''
+        return False, ('αουτσαιντερ 2-6ω πριν' if 'αουτσαιντερ που βγηκε 2-6ω' in n else   # 17/10: late6dog
+                       'τελευταιο 2ωρο' if '2ωρο' in n else ('αγορα κοντρα ≥1.5 απο το ανοιγμα' if 'κοντρα' in n else
+                       ('λιγα δεδομενα' if p.get('late_kind') == 'λιγα δεδομενα' else 'καταγραφη')))
+    if p.get('rule') == 'fav714':
+        return (p.get('side') == 1), 'κοντο φαβορι 7-14 εκτος'
+    # 20/10: το παλιο «NBA σε καταγραφη» ΑΦΑΙΡΕΘΗΚΕ — απο 19/10 τα χαντικαπ NBA ειναι live (paper=False)· αν ποτε ξαναγινουν paper τα πιανει το paper_late
+    if not (p.get('eu') or p.get('intl') or p.get('el')) and p.get('md') is not None and p.get('md') < 15:
+        return False, f"αγωνιστικη {p.get('md')} (<15)"
+    return True, ''
+
+
+def pick_card(p):
+    side = p['side']
+    over = side == 0                     # ευρωπαϊκο pick στα γκολ (Over)
+    hcls = 'pick' if side == 1 else 'dim'
+    acls = 'pick' if side == -1 else 'dim'
+    hi = 'hi' if p['edge'] >= 0.15 else ''
+    lid = build_data.LEAGUE_FOTMOB.get(p['lg']) or EURO_FOTMOB.get(p['lg'])
+    tags = ''
+    if p['lg'] in WATCH:
+        tags += '<span class="tag watch">watch</span>'
+    if p.get('hnote') or p.get('anote'):
+        tags += '<span class="tag lc">low-conf</span>'
+    if p.get('eu'):
+        tags += '<span class="tag eu">EU beta</span>'
+        _lm = (p.get('lim') or {}).get(p.get('lim_mkt') or 'spreads')      # 11/10 (Στελιος): τρεχον οριο Pinnacle της αγορας του pick
+        if _lm:
+            tags += f'<span class="tag" title="Τρεχον οριο Pinnacle ({"γκολ" if p.get("lim_mkt") == "totals" else "χαντικαπ"}), απο την τελευταια σαρωση">💰 οριο {_lm:g}</span>'
+    if p.get('intl'):
+        tags += f'<span class="tag eu" title="συναινεση μοντελων εθνικων">ΕΘΝ. · {_h.escape(p.get("models") or "")}</span>'
+        if p.get('late'):
+            tags += f'<span class="tag lc">{_h.escape(p["late"])}</span>'
+    if p.get('el'):
+        tags += '<span class="tag eu">🏀 μπασκετ</span>'
+        if p.get('mkt_note') and not p.get('paper_late'):          # 30/9: «αγορα κοντρα» — η τιμη μας ανεβαινε τις 3ω πριν το alert
+            short = ('⏱ αργο: ' + {'Α': 'απουσια', 'Β': 'ξαφνικη κινηση', 'Γ': 'σταδιακη (νωρις)', 'Δ': 'μονο αποδοση', 'Ε': 'μικρη κινηση'}.get(p['late_cls'], '')
+                     if p.get('late_cls') else 'ℹ αγορα κοντρα ' + f"{p.get('drift') or 0:+.1f}π")      # 29/10: αργα picks ανα αιτια
+            tags += f'<span class="tag lc" title="{_h.escape(p["mkt_note"])}">{_h.escape(short)}</span>'
+        if p.get('coach_notes'):             # 1/10: νεος προπονητης (10 ματς μετα την αλλαγη) — μονο ενδειξη
+            tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 νεος προπονητης</span>'
+        if p.get('abs_note') and p.get('mkt') != 'total':   # 9/10 απουσιες στο χαντικαπ (29/10: συνολα χωρις διορθωση → καμια ετικετα)
+            if p.get('abs_born'):            # 29/10 (Στελιος): pick που υπαρχει ΜΟΝΟ λογω απουσιων
+                tags += (f'<span class="tag eu" title="{_h.escape(p["abs_note"])}">🩹 PICK ΛΟΓΩ ΑΠΟΥΣΙΩΝ {p.get("abs_adj") or 0:+.1f} '
+                         f'(χωρις: edge {(p.get("edge_noabs") or 0) * 100:.0f}%)</span>')
+            else:
+                tags += f'<span class="tag eu" title="{_h.escape(p["abs_note"])}">🩹 απουσιες {p.get("abs_adj") or 0:+.1f}</span>'
+        if p.get('travel'):                  # 1/10: ταξιδι 2ου ματς διαβολοβδομαδας (διορθωση μοντελου υπερ γηπεδουχου)
+            tags += f'<span class="tag eu" title="{_h.escape(p["travel"].get("note", ""))}">🧳 ταξιδι {_h.escape(str(p.get("away") or ""))} {p["travel"].get("km", "")} χλμ → +{p["travel"].get("adj", 0):g} γηπ.</span>'
+        if p.get('old_agree') is not None:   # 1/10: συνολα αγων 1-10 — συμφωνει και το μοντελο χωρις προετοιμασια; (μονο ενδειξη)
+            tags += (f'<span class="tag eu" title="Συνολο χωρις την ταση ποντων των φιλικων: {p.get("total_base")}">'
+                     + ('ℹ ✓ και το παλιο' if p['old_agree'] else 'ℹ μονο με φιλικα (σημειωση)') + '</span>')
+    if p.get('fatigue'):                  # 16/10 (Στελιος «καντο ναι»): φιλοξενουμενος με 3ο+ συνεχομενο εκτος — ΜΟΝΟ ενδειξη, οχι στο μοντελο
+        tags += (f'<span class="tag lc" title="{_h.escape(p["fatigue"])} — δεν μπαινει στο μοντελο (τεστ: ιστορικα δεν ξεχωριζει απο την τυχη)· '
+                 f'καταγραφεται ως σκια">{_h.escape(p["fatigue"])}</span>')
+    if p.get('coach_notes') and not p.get('el'):   # 5/10: αλλαγη προπονητη στα εγχωρια (μονο πληροφορια· το φιλτρο κοβει ηδη τα «κακη και στα δυο»)
+        tags += f'<span class="tag lc" title="{_h.escape(" | ".join(p["coach_notes"]))}">🔄 προπονητης</span>'
+    if p.get('rule') == 'uecl_b_under':   # 14/10: Conference Β under — η αγορα κατεβαζει τα συνολα 12→8ω πριν (uecl_under_path)
+        try:
+            import datetime as _d
+            _dl = _when_ath((_d.datetime.fromisoformat(str(p.get('when'))[:16]) - _d.timedelta(hours=12)).isoformat())
+            _dl = _d.datetime.strptime(_dl, '%Y-%m-%d %H:%M').strftime('%d/%m %H:%M')
+        except Exception:
+            _dl = None
+        tags += ('<span class="tag lc" title="Conference Β under: ιστορικα η αγορα κατεβαζει το συνολο 12-8 ωρες πριν τη σεντρα — μετα χανεται η αξια">'
+                 + (f'⏰ παιξε το αργοτερο ως {_dl} (12ω πριν)' if _dl else '⏰ παιξε το αργοτερο 12ω πριν τη σεντρα') + '</span>')
+    if p.get('rule') == 'uel_home_fav':   # 9/10: UEL φαβορι εντος — ΚΑΝΟΝΙΚΟ (μιξη 80% xG, εισοδος 12-36ω)
+        tags += '<span class="tag eu" title="UEL φαβορι εντος: μηχανη 80% xG, σωστα τεταρτα, edge ≥4%, εισοδος ~24ω πριν· backtest 49 picks +24%, 4/4 σεζον· μικρο stake">⭐ UEL φαβορι εντος</span>'
+    elif p.get('rule') == 'uel_home_fav_wait':
+        tags += f'<span class="tag np" title="{_h.escape(p.get("eu_note") or "")}">⏳ UEL φαβορι εντος · κανονικο 12-36ω πριν</span>'
+    elif p.get('rule') == 'fav714' and p.get('side') != 1:     # 10/10: ΕΚΤΟΣ = μονο καταγραφη (Pinnacle −12.5%, χειροτερα απο τυφλα)
+        tags += '<span class="tag np" title="Κοντο φαβορι 7-14 ΕΚΤΟΣ: μονο καταγραφη, οχι Telegram (backtest Pinnacle −12.5%, χειροτερα απο τα τυφλα· τα εντος +9…+14%)">📝 φαβορι 7-14 εκτος · καταγραφη</span>'
+    elif p.get('rule') == 'fav714':      # 9/10: κοντο φαβορι 7-14 (10/10: μονο ΕΝΤΟΣ στο Telegram)
+        tags += '<span class="tag eu" title="Κοντο φαβορι 7-14 ΕΝΤΟΣ: γραμμη −0.5/−0.75, 1.70-2.10, edge ≥0% σωστα τεταρτα· κρινεται στο κλεισιμο (συνηθως η τιμη ανεβαινει ως τη σεντρα)">⭐ φαβορι 7-14 εντος</span>'
+    elif p.get('role') == 'fav':       # 1/10: φαβορι 15η+ (αγκυρα .7 + σωστα τεταρτα)
+        tags +='<span class="tag eu" title="Φαβορι 15η+: αγκυρα αγορας ×0.7 σε ολες τις γραμμες, σωστα τεταρτα, edge ≥10%">⭐ φαβορι</span>'
+    if p.get('anchor'):                # 29/9: αγκυρα αγορας στις κοντες γραμμες (15η+)· 1/10 και στα φαβορι (×0.7)
+        a = p['anchor']
+        tags += (f'<span class="tag eu" title="Αγκυρα αγορας (15η+{", ×" + format(a["w"], "g") + " φαβορι" if a.get("w") else ", κοντη γραμμη"}): διορθωση υπεροχης {a.get("shift", 0):+.2f} γκολ '
+                 f'(γηπ {a.get("o_h", 0):+.2f} · φιλ {a.get("o_a", 0):+.2f})">⚓ αγκυρα {a.get("shift", 0):+.2f}</span>')
+    if p.get('tag75'):
+        tags += '<span class="tag t75">🎯 −0.75</span>'
+    if p.get('gone'):                    # 1/10: μπασκετ — βγηκε pick, τωρα ΟΧΙ (επεσε η αποδοση/αλλαξε η γραμμη)· μενει ως το τζαμπολ
+        g_ = p.get('gone_now')
+        now_ = ((f"τωρα {g_['lab']}" + (f" @{g_['odds']:.2f}" if g_.get('odds') else '') + (f" · edge {g_['edge']*100:+.0f}%" if g_.get('edge') is not None else '')
+                 + (f" · χρειαζεται @{g_['need']:.2f}" if g_.get('need') and g_['need'] > 1 else '')) if g_ and g_.get('lab') else 'τωρα χωρις τιμη')
+        tags += f'<span class="tag np" title="Βγηκε pick στην τιμη που φαινεται· η αγορα αλλαξε. Δες στο 🧮 αλλες γραμμες / τιμες του broker.">⚠ δεν ισχυει πια · {_h.escape(now_)}</span>'
+    if p.get('paper_late'):              # 1/10: EL χαντικαπ τελευταιου 2ωρου = καταγραφη (ιστορικα −9%, 1/5)
+        tags += f'<span class="tag np" title="{_h.escape(p.get("mkt_note") or "")}">📝 καταγραφη · δεν παιζεται' + (' · ⚠ λίγα δεδομένα' if p.get('late_kind') == 'λιγα δεδομενα' else '') + '</span>'
+    if p.get('stale'):                   # 1/10: φρενο φρεσκαδας εθνικων
+        tags += f'<span class="tag np" title="{_h.escape(p["stale"])}">⏸ περιμενει ανανεωση αποτελεσματων · δεν παιζεται ακομα</span>'
+    if p.get('no_play') and p.get('rule') != 'uel_home_fav_wait':
+        tags += '<span class="tag np" title="UEL κλειστο 11/9 (b=0.02 στο κλεισιμο) — μονο για παρακολουθηση">👁 ΣΚΙΑ · δεν παιζεται</span>'
+    if over:
+        bet = _h.escape(p.get('bet') or f"Over {p['hcap']:g}")
+    else:
+        pick_team = p['home'] if side == 1 else p['away']
+        bet = f"{_h.escape(pick_team)} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
+    proj = f"{p['proj_odds']:.2f}" if p.get('proj_odds') else '—'
+    stake_k, stake_v = ('Ποντ.', '~¼ μον.') if (p.get('eu') or p.get('intl') or p.get('el')) else \
+        ('Ποντ. (καβα)', f"{p['stake_final']*100:.1f}%")
+    if p.get('no_play'):
+        stake_k, stake_v = 'Ποντ.', ('— (αναμονη 12-36ω)' if p.get('rule') == 'uel_home_fav_wait' else '— (σκια)')
+    elif p.get('rule') == 'uel_home_fav':
+        stake_k, stake_v = 'Ποντ.', 'μικρο'
+    if p.get('paper_late'):
+        stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
+    if p.get('stale'):
+        stake_k, stake_v = 'Ποντ.', '— (αναμονη ανανεωσης)'
+    if p.get('gone'):
+        stake_k, stake_v = 'Ποντ.', '— (δες 🧮)'
+    pk = _h.escape(f"{p['lg']}|{p['home']}|{p['away']}|{p.get('mkt') or ''}|{str(p.get('bet') or side).split(' ')[0]}|{(p.get('when') or '')[:10]}", quote=True)   # 7/10: χωρις γραμμη (ιδια πλευρα = ιδιο pick)
+    if p.get('first_note'):
+        tags += f'<span class="tag" title="η γραμμη αλλαξε απο τοτε — ιδιο pick">{_h.escape(p["first_note"])}</span>'
+    if p.get('move_note'):                   # 20/10 (Στελιος): NBA — κινηση αγορας ανοιγμα → τωρα
+        _mp = p.get('move_pts') or 0
+        tags += f'<span class="tag{" lc" if abs(_mp) >= 1.5 else ""}" title="κινηση της αγορας (Pinnacle) απο την πρωτη γραμμη ως τωρα">📈 {_h.escape(p["move_note"])}</span>'
+    if p.get('fat_note'):                    # 24/10 (Στελιος): NBA — ποινη back-to-back / αλλαγης ωρας
+        tags += f'<span class="tag" title="ποινη κουρασης στην προβλεψη: back-to-back −3 π., αλλαγη ζωνης ωρας με ≤2 μερες ξεκουραση −0.68 π./ωρα">{_h.escape(p["fat_note"])}</span>'
+    _ok, _why = play_status(p)          # 12/10: ΞΕΚΑΘΑΡΟ σημα πρωτο στην καρτα
+    badge = ('<span style="background:#123d27;color:#4ee28f;border:1px solid #2f9d5e;border-radius:6px;padding:1px 7px;'
+             'font-weight:700;font-size:11px;margin-right:6px">✅ ΠΑΙΖΕΤΑΙ</span>') if _ok else             (f'<span style="background:#4a1518;color:#ff7b82;border:1px solid #b23a42;border-radius:6px;padding:1px 7px;'
+             f'font-weight:700;font-size:11px;margin-right:6px" title="{_h.escape(_why)}">⛔ ΔΕΝ ΠΑΙΖΕΤΑΙ · {_h.escape(_why)}</span>')
+    if not _ok and stake_v not in ('— (καταγραφη)', '— (σκια)', '— (αναμονη ανανεωσης)', '— (δες 🧮)', '— (αναμονη 12-36ω)'):
+        stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
+    return f"""
+<div class="pc {hi} {'np' if not _ok else ''}" data-k="{pk}" data-day="{_when_ath(p.get('when'))[:10]}">
+  <div class="top">
+    <div class="lg">{badge}{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
+    <div class="when">{_h.escape(_when_ath(p.get('when')))}<button class="played" onclick="tgPlayed(this)" title="Σημειωσε οτι το επαιξες (αποθηκευεται σε αυτη τη συσκευη)">☐ το έπαιξα</button></div>
+  </div>
+  <div class="mrow">
+    <div class="tm {hcls}">{_logo(p.get('home_id'))}{_h.escape(p['home'])}</div>
+    <span class="vs">vs</span>
+    <div class="tm {acls}">{_logo(p.get('away_id'))}{_h.escape(p['away'])}</div>
+    <div class="bet {'ov' if over else ''}">{bet}</div>{_calc_btn(p)}
+  </div>
+  <div class="stats">
+    <div class="st"><span class="k">Projection</span><span class="v">{proj}</span></div>
+    <div class="st"><span class="k">Market</span><span class="v">{p['odds']:.2f}</span></div>
+    <div class="st"><span class="k">Edge</span><span class="v edge">{p['edge']*100:.0f}%</span></div>
+    <div class="st"><span class="k">{stake_k}</span><span class="v stake">{stake_v}</span></div>
+  </div>{_calc_panel(p)}
+</div>"""
+
+_CID = [0]
+
+
+def _calc_btn(p):
+    """28/9/2026: κουμπι «κομπιουτερακι» (edge στην τιμη που βρισκεις τωρα) — μονο οπου υπαρχουν δεδομενα μοντελου."""
+    if not p.get('calc'):
+        return ''
+    _CID[0] += 1; p['_cid'] = _CID[0]
+    return f'<button class="cbtn" title="Κομπιουτερακι: βαλε την τιμη που βρισκεις τωρα → edge ανα μοντελο" onclick="vpToggle({_CID[0]})">🧮</button>'
+
+
+def _calc_panel(p):
+    c = p.get('calc')
+    if not c or not p.get('_cid'):
+        return ''
+    i = p['_cid']
+    opts = ''.join(f'<option value="{k}"{" selected" if k == c["def"] else ""}>{_h.escape(L["lab"])}</option>'
+                   for k, L in enumerate(c['lines']))
+    pr = f"{c['price']:.2f}" if c.get('price') else ''
+    return (f'<div class="calc" id="vpc{i}" data-c="{_h.escape(_json.dumps(c, ensure_ascii=False))}">'
+            f'<div class="crow">Γραμμη <select onchange="vpCalc({i})">{opts}</select>'
+            f'Τιμη που βρισκω <input type="number" step="0.01" min="1.01" value="{pr}" oninput="vpCalc({i})">'
+            f'<span style="margin-left:auto">οριο pick {c["thr"]*100:.0f}%</span></div>'
+            f'<div class="cres" id="vpr{i}"></div><div class="csum" id="vps{i}"></div></div>')
+
+
+CALC_JS = """
+<script>
+function vpToggle(i){var p=document.getElementById('vpc'+i);p.classList.toggle('on');
+  var b=p.parentNode.querySelector('.cbtn');if(b)b.classList.toggle('on');if(p.classList.contains('on'))vpCalc(i);}
+function vpFmt(x){return (x+0.004).toFixed(2);}
+function vpCalc(i){
+  var p=document.getElementById('vpc'+i),c=JSON.parse(p.dataset.c),L=c.lines[+p.querySelector('select').value];
+  var o=parseFloat(p.querySelector('input').value),out='',ok=0,mins=[],eds=[],T=Math.round(c.thr*100);
+  for(var k=0;k<c.models.length;k++){
+    var a=L.c[k][0],b=L.c[k][1],mn=a>0?(c.thr-b)/a:null,m0=a>0?-b/a:null;mins.push(mn);
+    var e=(o>1)?(a*o+b):null,cls=e===null?'':(e>=c.thr?'g':(e>=0?'a':'r'));
+    if(e!==null){eds.push(e);}
+    if(e!==null&&e>=c.thr)ok++;
+    out+='<div class="cm"><span class="n">'+c.models[k]+'</span><span class="e '+cls+'">'+
+      (e===null?'—':((e>=0?'+':'')+(e*100).toFixed(1)+'%'))+(e!==null&&e>=c.thr?' ✓':'')+'</span>'+
+      '<span class="q">'+(mn&&mn>1?('για '+T+'%: ≥'+vpFmt(mn)):'')+(m0&&m0>1?(' · 0%: ≥'+vpFmt(m0)):'')+'</span></div>';
+  }
+  // 28/9: ΣΥΝΟΛΟ = ιδιος κανονας με την καρτα: το ΜΙΚΡΟΤΕΡΟ edge απο τα μοντελα που περνουν το οριο (αν ≥need)·
+  // αλλιως το need-οστο καλυτερο (ποσο λειπει για συναινεση)
+  if(c.models.length>1&&eds.length>=c.need){
+    var pas=eds.filter(function(x){return x>=c.thr;}),srt=eds.slice().sort(function(x,y){return y-x;});
+    var tot=pas.length>=c.need?Math.min.apply(null,pas):srt[c.need-1],tc=tot>=c.thr?'g':(tot>=0?'a':'r');
+    out='<div class="cm" style="padding-right:14px;border-right:1px solid #1e2d47"><span class="n">Συνολο</span><span class="e '+tc+'" style="font-size:15px">'+
+      ((tot>=0?'+':'')+(tot*100).toFixed(1)+'%')+(tot>=c.thr?' ✓':'')+'</span><span class="q">'+
+      (pas.length>=c.need?'μικροτερο των '+pas.length+' που συμφωνουν':(c.need+'ο καλυτερο · οχι συναινεση'))+'</span></div>'+out;
+  }
+  document.getElementById('vpr'+i).innerHTML=out;
+  var notes='';
+  if(c.rng&&o>1&&(o<c.rng[0]||o>c.rng[1]))notes+='τιμη εκτος '+c.rng[0].toFixed(2)+'–'+c.rng[1].toFixed(2)+' ';
+  if(c.minabs&&Math.abs(L.l)<c.minabs)notes+='γραμμη κατω απο ±'+c.minabs+' ';
+  var s=mins.filter(function(x){return x&&x>1;}).sort(function(x,y){return x-y;}),need=s.length>=c.need?s[c.need-1]:null;
+  var multi=c.models.length>1,pass=ok>=c.need;
+  var head=multi?('συναινεση '+ok+'/'+c.models.length+' '+(pass?'✓':'✗')):(pass?'✓ περνα το οριο':'✗ κατω απο το οριο');
+  document.getElementById('vps'+i).innerHTML='<span class="'+(pass?'g':'r')+'">'+head+'</span>'+
+    (need?'<span style="color:#8da0c4;font-weight:400;margin-left:8px">'+(multi?'συναινεση (≥'+c.need+' μοντελα)':'οριο')+' απο ≥'+vpFmt(need)+'</span>':'')+
+    (notes?'<span class="cnote">⚠ '+notes+'</span>':'');
+}
+</script>"""
+
+
+def picks_html(picks):
+    _CID[0] = 0   # 21/10: ιδια ids σε καθε rerun → ιδιο HTML → το component ΔΕΝ ξαναζωγραφιζει (φιλτρα/🧮 μενουν μετα το «το επαιξα»)
+    picks = sorted(picks, key=lambda p: (p.get('when') or '9999'))   # χρονολογικα: νωριτερο πανω, πιο μετα κατω
+    return (CSS + PLAYED_CSS + '<div class="wrap"><div class="pbar2"><span id="pcnt">✅ παιγμένα 0</span>'
+            '<button class="pf on" data-f="all" onclick="pfSet(this)">Όλα</button><button class="pf" data-f="todo" onclick="pfSet(this)">Μη παιγμένα</button>'
+            '<button class="pf" data-f="done" onclick="pfSet(this)">Παιγμένα</button>'
+            '<span class="pfsep">+</span><button class="pf pt" onclick="ptSet(this)" title="Μονο ματς με σεντρα σημερα (ωρα Ελλαδας)· συνδυαζεται με τα αλλα φιλτρα">Σημερινά</button></div>'
+            + ''.join(pick_card(p) for p in picks) + '</div>' + CALC_JS + PLAYED_JS)
+
+# 7/10/2026 (Στελιος «ενδειξη τικ — να την πατω και να αποθηκευεται»): «✅ το επαιξα» ανα pick, στη μνημη του browser (localStorage)·
+# κλειδι = λιγκα|γηπ|φιλ|αγορα|στοιχημα|γραμμη|μερα (αλλη γραμμη του ιδιου ματς = αλλο pick)· σβηνονται μετα απο 14 μερες.
+PLAYED_CSS = """<style>
+.played{margin-left:8px;background:none;border:1px solid #2a3a5c;color:#8fa3c8;border-radius:6px;padding:1px 7px;font-size:10px;cursor:pointer;font-family:inherit}
+.played:hover{border-color:#34d17a;color:#cdd8ee}
+.pc.done{border-color:#34d17a !important;background:linear-gradient(0deg,#0f2a1d,#101a2e) !important}
+.pc.done .played{background:#16402a;border-color:#34d17a;color:#7ff0b0;font-weight:600}
+.pbar2{display:flex;gap:6px;align-items:center;margin:0 0 8px 2px;font-size:11px;color:#8fa3c8}
+.pbar2 #pcnt{margin-right:8px}
+.pf{background:none;border:1px solid #2a3a5c;color:#8fa3c8;border-radius:12px;padding:2px 10px;font-size:10px;cursor:pointer;font-family:inherit}
+.pf.on{background:#16203a;color:#e8edf8;border-color:#4a6390}
+.pfsep{color:#4a6390;margin:0 2px}
+</style>"""
+PLAYED_JS = """<script>
+(function(){
+  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false;
+  var FKEY='vp_filters_v1';   // 21/10: τα φιλτρα θυμουνται σε αυτη τη συσκευη
+  try{ var fs=JSON.parse(localStorage.getItem(FKEY)||'{}'); if(['all','todo','done'].indexOf(fs.f)>=0) filt=fs.f; today=!!fs.t; }catch(e){}
+  function saveF(){ try{ localStorage.setItem(FKEY, JSON.stringify({f:filt, t:today})); }catch(e){} }
+  function showF(){ document.querySelectorAll('.pf[data-f]').forEach(function(x){x.classList.toggle('on', x.getAttribute('data-f')===filt);});
+    var t=document.querySelector('.pf.pt'); if(t) t.classList.toggle('on', today); }   // 21/10: «Σημερινά» = ξεχωριστο κουμπι, ΚΑΙ με τα αλλα φιλτρα
+  var S = !!(window.VP_SYNC && window.VP_SYNC.on);     // 12/10: κοινο σε ολες τις συσκευες (played_store → GitHub)· αλλιως μνημη browser
+  if(S){ mem = window.VP_SYNC.played || {}; }
+  else { try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; } }
+  var now=Date.now(); for(var k in mem){ if(now-mem[k]>14*864e5) delete mem[k]; }
+  for(var k in mem){ var a=k.split('|'); if(a.length===7){ var nk=[a[0],a[1],a[2],a[3],a[4].split(' ')[0],a[6]].join('|'); if(!mem[nk]) mem[nk]=mem[k]; delete mem[k]; } }   // 7/10: παλια κλειδια (με γραμμη) → νεα
+  save();
+  function save(){ if(S||!ok) return; try{ localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
+  function paint(){
+    var cards=document.querySelectorAll('.pc[data-k]'), n=0;
+    cards.forEach(function(c){
+      var d=!!mem[c.getAttribute('data-k')]; if(d) n++;
+      c.classList.toggle('done', d);
+      var b=c.querySelector('.played'); if(b) b.textContent = d ? '✅ το έπαιξα' : '☐ το έπαιξα';
+      c.style.display = ((filt==='all' || (filt==='done')===d) && (!today || c.getAttribute('data-day')===athToday())) ? '' : 'none';
+    });
+    var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (S?' · 🔄 κοινό σε όλες τις συσκευές':(ok?' · μόνο σε αυτή τη συσκευή':' (ο browser δεν επιτρέπει αποθήκευση)'));
+  }
+  var pend={};   // 13/10: πατηματα που δεν εχει επιβεβαιωσει ακομα ο server (κρατανε την κατασταση τους ως 20″)
+  window.tgPlayed=function(btn){ var c=btn.closest('.pc'); var k=c.getAttribute('data-k'); var on=!mem[k]; if(on) mem[k]=Date.now(); else delete mem[k];
+    if(S){ pend[k]={on:on, t:Date.now()}; window.VP_SYNC.send(k, on); } else { save(); } paint(); };
+  window.vpRepaint=function(){
+    if(window.VP_SYNC && window.VP_SYNC.on){ S=true; var srv=window.VP_SYNC.played||{}; mem={}; for(var k in srv) mem[k]=srv[k];
+      var now=Date.now(); for(var k in pend){ var p=pend[k]; if(now-p.t>20000 || (!!srv[k])===p.on){ delete pend[k]; continue; } if(p.on) mem[k]=p.t; else delete mem[k]; } }
+    paint(); };
+  function athToday(){ try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Athens',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
+  window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); saveF(); showF(); paint(); };
+  window.ptSet=function(btn){ today=!today; saveF(); showF(); paint(); };
+  showF(); paint();
+})();
+</script>"""

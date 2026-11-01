@@ -1,0 +1,141 @@
+# -*- coding: utf-8 -*-
+"""bcl_refresh.py — ΚΑΘΗΜΕΡΙΝΗ ενημερωση Basketball Champions League (6/10/2026, Στελιος «BCL σημερα»).
+1. Flashscore: αποτελεσματα τρεχουσας σεζον (BCL + box, flashscore_bcl_stats.py· εγχωρια/Ευρωπη, flashscore_bk_domestic.py --current· extra, flashscore_bk_extra.py)
+2. Μηχανη (bcl_engine_test.py — ρυθμισεις παρακατω): Μ1 = μονο BCL (box, κατοχες, τυχη) · Μ2 = ΚΟΙΝΗ ΚΛΙΜΑΚΑ απο ΟΛΑ τα ματς (bcl_common)
+   προβλεψη = (1 − A)·Μ1 + A·Μ2 (Μ1 λειπει → μονο Μ2).
+3. bcl_state.json: ratings σημερα ανα κωδικο Flashscore + ονοματα (για ταιριασμα με Pinnacle στο bcl_odds_scan.py).
+Χρηση: python bcl_refresh.py [--no-fetch]"""
+import sys, os, json, subprocess, datetime as dt, io, contextlib, collections
+import numpy as np
+sys.stdout.reconfigure(encoding='utf-8')
+from el_season import Y as CUR
+M1_CFG = dict(carry=1.4, lam=8, HL=9999, w=0.5)      # bcl_engine_test2: επιλογη σε ολες τις 5 σεζον (με φιλικα), 6/10
+M2_CFG = (1.3, 1.5, 9999.0, 25.0, 0.5)                # (περσι, λ, HL, ψαλιδισμα, βαρος φιλικων) — bcl_engine_test2 (φιλικα: 21/24 ρυθμισεις καλυτερες ≥4/5)
+TOT_CFG = dict(carry=.35, lam=20.0, kf=1.0, wo=1.0, luck=.1)   # ΣΥΝΟΛΑ (bcl_totals_luck_test 6/10: LOSO 5/5, Κ2 .41 t 2.8 5/5) — Στελιος «ναι» live
+TOT_QMODE = 'own'   # 7/10 Στελιος «κρατα το δικο τους»: προκριματικα BCL = ΔΙΚΟ ΤΟΥΣ επιπεδο συνολων (φετος 183 π. vs ιστορικα 157-162) — το επιπεδο της κανονικης ξεκινα απο το περσινο (bcl_qual_test)
+SIGMA_TOT = 17.3                                       # sd (πραγματικο − κλεισιμο συνολου) 2021-26
+WO = 1.5                                               # βαρος εγχωριων/Ευρωπης vs BCL στην κοινη κλιμακα (bcl_round_anchor_test Β: 4/5)
+KX = 4.5                                               # ειδικοι/αποδοσεις: αφετηρια += KX · z (bcl_expert_z.json, bcl_expert_test.py) — 6/10 Στελιος: μονο αποδοσεις νικητη (ιστορικο δεν υπαρχει, κx απο 2024-25 ειδικους)
+A = 0.75                                               # μιξη Μ1/Μ2 (bcl_engine_test2)
+# 13/10/2026 (Στελιος «περνα το»): ΑΠΟΔΟΣΕΙΣ ΝΙΚΗΤΗ ΕΚΤΟΣ ΜΗΧΑΝΗΣ — μπαινουν στην ΤΕΛΙΚΗ προβλεψη: + OR_KX·(z_γηπ − z_φιλ)·OR_K/(OR_K + r),
+# r = μεσος αριθμος ματς BCL (κανονικη, χωρις προκριματικα) που εχουν ηδη παιξει οι 2 ομαδες φετος. Πριν: μεσα στην αφετηρια της Μ2 (σβηναν με ΟΛΑ τα ματς,
+# ~19% στη 2η αγων.). outright_persist_test / _k2_test (EC 3 + EL 2 + BCL 1 σεζον): σβησιμο σε 4 ματς διοργανωσης καλυτερο σε 5/6 (|Δ|/τσ 1.28)· LOSO κ 2.5-3, k 4.
+OR_KX, OR_K = 2.5, 4.0
+SIGMA = 12.0                                           # sd (πραγματικο − κλεισιμο) 2024-26
+if '--no-fetch' not in sys.argv:
+    for cmd in (['python', 'flashscore_bcl_stats.py'], ['python', 'flashscore_bk_domestic.py', '--current'], ['python', 'flashscore_bk_extra.py', '--current']):
+        if not os.path.exists(cmd[1]): continue
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', env=dict(os.environ, PYTHONIOENCODING='utf-8'))
+        print(f'{cmd[1]}: exit {r.returncode} · ' + (r.stdout.strip().splitlines() or [''])[-1][:120])
+# ---- Μ2 κοινη κλιμακα ----
+import bcl_common as B
+rows = B.load(pre=M2_CFG[4] > 0)
+ADJ = None
+if KX > 0:
+    try: ADJ = {int(y): {t: KX * v for t, v in d.items()} for y, d in json.load(open('bcl_expert_z.json', encoding='utf-8')).items()}
+    except Exception as e: print('ΠΡΟΣΟΧΗ: bcl_expert_z.json —', e); ADJ = {}
+    try:
+        import math, re, unicodedata
+        def _tk(x):
+            x = unicodedata.normalize('NFKD', x or '').encode('ascii', 'ignore').decode().lower()
+            return {w for w in re.split(r'[^a-z0-9]+', x) if len(w) >= 3 and w not in {'basket', 'basketball', 'club', 'the', 'bc', 'bk', 'kk', 'cb', 'sc', 'fc', 'baskets'}}
+        _FG = json.load(open('fs_bk_games.json', encoding='utf-8')); _nm = {}
+        for _k, _L in _FG.items():
+            if int(_k.rsplit('_', 1)[1]) < CUR - 1: continue
+            for _e in _L:
+                for _t, _n in ((_e.get('hid'), _e.get('home')), (_e.get('aid'), _e.get('away'))):
+                    if _t and _n: _nm.setdefault(_t, set()).add(_n)
+        _OR = json.load(open('bcl_outrights.json', encoding='utf-8')); _Z = {}
+        for _k, _v in _OR.items():
+            if _k != f'U{CUR}': continue        # 13/10/2026 Στελιος «μη χρησιμοποιησεις 2ο βιβλιο, παρε απλα τις Novibet»: το 2ο (U2026_foxbet) ειχε ΜΟΝΟ τις 8 πρωτες → z μεσα στα 8 = λαθος ποινη στις 6η-8η
+            _p = {n: 1 / o for n, o in _v['odds'].items() if o and o > 1}; _s = sum(_p.values())
+            _lp = {n: math.log(x / _s) for n, x in _p.items()}; _mu = np.mean(list(_lp.values())); _sd = np.std(list(_lp.values())) or 1
+            for n, x in _lp.items():
+                tn = _tk(n); best = (0, None)
+                for t, ns in _nm.items():
+                    for nn in ns:
+                        tt = _tk(nn)
+                        if tt and tn and len(tn & tt) / min(len(tn), len(tt)) > best[0]: best = (len(tn & tt) / min(len(tn), len(tt)), t)
+                if best[0] >= .5: _Z.setdefault(best[1], []).append((x - _mu) / _sd)
+        if _Z: ADJ[CUR] = {t: KX * float(np.mean(v)) for t, v in _Z.items()}; print(f'αποδοσεις νικητη {CUR}: {len(_Z)} ομαδες (εκτος μηχανης: {OR_KX}·z·{OR_K:g}/({OR_K:g}+ματς BCL) στην τελικη προβλεψη)')
+    except Exception as e: print('ΠΡΟΣΟΧΗ: bcl_outrights.json —', e)
+OR_Z = {t: v / KX for t, v in (ADJ or {}).get(CUR, {}).items()} if KX else {}      # z ανα ομαδα (Novibet) για τον ορο εκτος μηχανης
+ADJ_ENG = {y: d for y, d in (ADJ or {}).items() if y != CUR} or None                # 13/10: φετινες αποδοσεις ΟΧΙ στην αφετηρια
+_, states = B.run(rows, *M2_CFG[:4], kf=M2_CFG[4], wo=WO, want_state=True, prior_adj=ADJ_ENG)
+st2 = states.get(CUR) or states[max(states)]
+# ομαδες χωρις ματς φετος: περσινο × carry (οπως στο τεστ, οπου η αφετηρια ειναι carry × περσινο τελος)
+if CUR in states and CUR - 1 in states:
+    st2 = dict(r={**{t: M2_CFG[0] * v + (ADJ or {}).get(CUR, {}).get(t, 0.0) for t, v in states[CUR - 1]['r'].items()}, **states[CUR]['r']}, h=states[CUR]['h'])
+# ---- ΣΥΝΟΛΑ: κοινη κλιμακα συνολων με διορθωση τυχης ----
+tot = None
+try:
+    _, tst = B.run_tot(B.load(pre=True), TOT_CFG['carry'], TOT_CFG['lam'], kf=TOT_CFG['kf'], wo=TOT_CFG['wo'], tmap=B.luck_totals(TOT_CFG['luck']), want_state=True, qmode=TOT_QMODE)
+    tc = tst.get(CUR) or tst[max(tst)]
+    s_ = dict(tc['s'])
+    if CUR in tst and CUR - 1 in tst:                   # ομαδες χωρις ματς φετος: carry × περσινο
+        s_ = {**{t: TOT_CFG['carry'] * v for t, v in tst[CUR - 1]['s'].items()}, **tst[CUR]['s']}
+    mu_bcl = tc['mu'].get('BCL', (tst.get(CUR - 1) or {}).get('mu', {}).get('BCL', 160.0))
+    tot = dict(s=s_, mu_bcl=mu_bcl, cfg=dict(TOT_CFG, qmode=TOT_QMODE), sigma=SIGMA_TOT)
+except Exception as e:
+    print('ΠΡΟΣΟΧΗ: συνολα απενεργα —', e)
+# ---- Μ1 μονο BCL ----
+src = open('dom_bk_engine_test.py', encoding='utf-8').read().split("LIVE = (.7, 8, 9999, .5, False)")[0]
+src = src.replace("sys.stdout.reconfigure(encoding='utf-8')", '', 1).replace("ARGS = [a for a in sys.argv[1:] if not a.startswith('--')] or ['ACB', 'LBA']", "ARGS = ['BCL']")
+dsrc = open('dom_bk_screen.py', encoding='utf-8').read()
+NS = {'__name__': 'r'}
+with contextlib.redirect_stdout(io.StringIO()):
+    # η σεζον της βασης (dom_bk_screen) σταματα στο 2025 → επεκταση ως την τρεχουσα
+    exec(src.replace("src = open('dom_bk_screen.py', encoding='utf-8').read()", "src = open('dom_bk_screen.py', encoding='utf-8').read().replace('YRS = range(2020, 2026)', 'YRS = range(2020, %d)')" % (CUR + 1)), NS)
+G, EFF, fit = NS['G'], NS['EFF'], NS['fit']
+m1 = None
+try:
+    EH, EA, PC = EFF[M1_CFG['w']]
+    idx_all = np.where(G.lg.values == 'BCL')[0]
+    prior, h0, mu0 = {}, 4.0, float(np.mean(np.r_[EH[idx_all], EA[idx_all]]))
+    for y in sorted(set(G.y.values[idx_all])):
+        sidx = idx_all[G.y.values[idx_all] == y]
+        teams = sorted(set(G.hid.values[sidx]) | set(G.aid.values[sidx])); ix = {t: i for i, t in enumerate(teams)}; n = len(teams)
+        hi = np.array([ix[t] for t in G.hid.values[sidx]]); ai = np.array([ix[t] for t in G.aid.values[sidx]])
+        o0 = np.array([M1_CFG['carry'] * prior.get(t, (0, 0))[0] for t in teams]); d0 = np.array([M1_CFG['carry'] * prior.get(t, (0, 0))[1] for t in teams])
+        dn = G.d.values[sidx]; w = 0.5 ** ((dn.max() - dn) / M1_CFG['HL'])
+        mu, h, O, D, _ = fit(hi, ai, EH[sidx], EA[sidx], w, n, o0, d0, h0, mu0, M1_CFG['lam'], False)
+        prev_prior = dict(prior)
+        prior = {t: (O[i], D[i]) for t, i in ix.items()}; h0, mu0 = h, mu
+        if y == CUR:
+            m1 = dict(O={t: float(O[i]) for t, i in ix.items()}, D={t: float(D[i]) for t, i in ix.items()}, h=float(h), pace=float(np.mean(PC[sidx])), n=int(len(sidx)))
+            for t, v in prev_prior.items():           # ομαδες BCL περσι χωρις ματς φετος: carry × περσινο
+                if t not in m1['O']: m1['O'][t] = M1_CFG['carry'] * float(v[0]); m1['D'][t] = M1_CFG['carry'] * float(v[1])
+    if m1 is None:   # η σεζον δεν εχει ακομα ματς BCL → περσινο × carry
+        m1 = dict(O={t: M1_CFG['carry'] * v[0] for t, v in prior.items()}, D={t: M1_CFG['carry'] * v[1] for t, v in prior.items()}, h=float(h0), pace=float(np.mean(PC[idx_all])), n=0)
+except Exception as e:
+    print('ΠΡΟΣΟΧΗ: Μ1 απενεργη —', e)
+# ---- ονοματα ----
+FG = json.load(open('fs_bk_games.json', encoding='utf-8'))
+try: FG.update({k: v for k, v in json.load(open('fs_bk_extra.json', encoding='utf-8')).items() if k not in FG})
+except Exception: pass
+names, bcl_now = {}, set()
+for key, L in FG.items():
+    comp, y = key.rsplit('_', 1)
+    if int(y) < CUR - 1 or comp in B.EXCLUDE: continue        # 7/10: ομαδες μονο απο Τσεχια/Φινλανδια δεν αναγνωριζονται → χωρις προβλεψη ως το 1ο ματς BCL
+    for e in L:
+        for t, nm in ((B.ALIAS.get(e.get('hid'), e.get('hid')), e.get('home')), (B.ALIAS.get(e.get('aid'), e.get('aid')), e.get('away'))):
+            if t and nm: names.setdefault(t, set()).add(nm)
+            if t and comp == 'BCL' and int(y) == CUR: bcl_now.add(t)
+# 7/10 (Στελιος «βαλε τη σημειωση, περιμενουμε 3-4 αγωνιστικες και μετα παιζουμε»): ομαδες BCL ΧΩΡΙΣ κανενα ματς στη μηχανη πριν τη φετινη σεζον
+# (σημερα Σλαβια, Παρντουμπιτσε) → {κωδικος: ματς BCL φετος}· τα picks τους = καταγραφη ως το LOWINFO_N-οστο ματς (bcl_picks)
+# 20/10/2026 (Στελιος «στις ομαδες χωρις εγχωρια κραταμε οσες επαιζαν περσι στην Ευρωπη… περνα»): «λιγα δεδομενα» = ΧΩΡΙΣ εγχωρια ματς
+#   (περσι/φετος) ΚΑΙ ΧΩΡΙΣ ευρωπαϊκα επισημα ματς περσι. Πριν: «κανενα επισημο ματς ποτε» → η Pardubice (2 ματς FEC 2023) ξεφευγε
+#   (Unicaja −20, edge 62% κανονικο pick)· ιδιο κενο και η Vilpas (1 ματς 2021).
+_EU = {'BCL', 'EC', 'EL', 'FEC'}
+_hist = {t for r in rows if r[1] != 'PRE' and ((r[1] not in _EU and CUR - 1 <= r[0] <= CUR) or (r[1] in _EU and r[0] == CUR - 1)) for t in (r[3], r[4])}   # 13/10/2026 (Στελιος «περνα το»): ΜΟΝΟ επισημα ματς — τα φιλικα προηγουμενων ετων εκαναν τη Σλαβια «με ιστορικο» (Bilbao −14.5 edge 85% ως κανονικο)
+_nb = collections.Counter(t for r in rows if r[0] == CUR and r[1] == 'BCL' and r[5] is not None for t in (r[3], r[4]))
+lowinfo = {t: int(_nb.get(t, 0)) for t in bcl_now if t not in _hist}
+_nb_rs = collections.Counter(t for r in rows if r[0] == CUR and r[1] == 'BCL' and r[5] is not None and not (len(r) > 8 and r[8]) for t in (r[3], r[4]))   # 13/10: ματς κανονικης BCL (για το σβησιμο των αποδοσεων)
+print('ομαδες χωρις ιστορικο:', {(names.get(t) and sorted(names[t])[0]) or t: n for t, n in lowinfo.items()})
+json.dump(dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=CUR, A=A, sigma=SIGMA, m1_cfg=M1_CFG, m2_cfg=list(M2_CFG), lowinfo=lowinfo,
+               m2=dict(r=st2['r'], h=st2['h']), m1=m1, tot=tot,
+               outright=dict(kx=OR_KX, k=OR_K, z=OR_Z, nbcl={t: int(n) for t, n in _nb_rs.items()}), names={t: sorted(v) for t, v in names.items()}, bcl_teams=sorted(bcl_now),
+               model=f'BCL: (1−{A})·μονο BCL (περσι {M1_CFG["carry"]}, λ {M1_CFG["lam"]}, HL {M1_CFG["HL"]}, τυχη {M1_CFG["w"]}) + {A}·κοινη κλιμακα (ολα τα ματς, περσι {M2_CFG[0]}, λ {M2_CFG[1]}, φιλικα {M2_CFG[4]}, εγχωρια ×{WO}) + αποδοσεις νικητη {OR_KX}·z·{OR_K:g}/({OR_K:g}+ματς BCL)'),
+          open('bcl_state.json', 'w', encoding='utf-8'), ensure_ascii=False)
+print(f'συνολα: μ BCL {tot["mu_bcl"]:.1f} · {len(tot["s"])} ομαδες' if tot else 'συνολα: —')
+print(f'bcl_state.json: Μ2 {len(st2["r"])} ομαδες · Μ1 {len(m1["O"]) if m1 else 0} (ματς φετος {m1["n"] if m1 else 0}) · ομαδες BCL φετος {len(bcl_now)}')

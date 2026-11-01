@@ -1,0 +1,1259 @@
+# -*- coding: utf-8 -*-
+"""
+test_scanner_sanity.py — regression / sanity tests για τον live scanner (18/9/2026).
+
+Σκοπος: να τρεχει ΠΡΙΝ απο καθε commit του scanner (scanner_tick.sh / euro-refresh /
+data-refresh) και να μπλοκαρει τα προφανη:
+  (a) ακεραιοτητα αρχειων εξοδου (JSON/JSONL φορτωνουν, ΟΧΙ git conflict markers,
+      ΟΧΙ διπλες εγγραφες στο clv_bets, μονοτονα timestamps στο odds_history)
+  (b) «κλειδωμενες» σταθερες του live μοντελου (ενα λαθος autostash να πιανεται)
+      + MIN_PRIOR: cloud=6 (committed), τοπικα 6 ή 14
+  (c) λογικη picks πανω στο τρεχον value_picks_latest.json
+  (d) αναπαραγωγη pricing (golden values απο picks.evaluate_bet, 18/9/2026)
+  (e) ευρωπαικα picks (euro_value_latest.json) — UEL μονο ως σκια (no_play=True), ΕΚΤΟΣ UEL φαβορι εντος 12-36ω (9/10)
+
+ΧΩΡΙΣ δικτυο. Εξαρτησεις: pytest (+ οτι ηδη χρειαζεται το picks.py: pandas/numpy).
+Τρεξιμο:  python -m pytest -q tests/test_scanner_sanity.py
+"""
+import os, sys, re, ast, json, math, subprocess, datetime
+
+import pytest
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+sys.path.insert(0, os.path.join(ROOT, 'dashboard'))
+os.chdir(ROOT)
+
+IS_CLOUD = os.environ.get('GITHUB_ACTIONS') == 'true'
+
+CORE7 = ['EPL', 'LaLiga', 'SerieA', 'Bundesliga', 'Ligue1', 'PrimeiraLiga', 'Eredivisie']
+EURO_ALLOWED = {'ChampionsLeague', 'ConferenceLeague'}        # παιζονται
+EURO_SHADOW = {'EuropaLeague'}                                # UEL ΚΛΕΙΣΤΟ 11/9 → ορατο ως ΣΚΙΑ (no_play=True), 18/9
+UEL_HF_RULES = {'uel_home_fav', 'uel_home_fav_wait'}          # 9/10/2026: ΕΞΑΙΡΕΣΗ — UEL φαβορι εντος (80% xG) κανονικα 12-36ω
+KELLY_FRAC, STAKE_CAP = 0.125, 0.20
+EPS = 1e-9
+
+JSON_FILES = ['value_picks_latest.json', 'market_1x2_latest.json',
+              'euro_value_latest.json', 'value_scan_state.json']
+JSONL_FILES = ['odds_history.jsonl', 'clv_bets.jsonl', 'clv_ledger.jsonl',
+               'dom_live_odds.jsonl', 'projected_lineups.jsonl']
+CONFLICT_RE = re.compile(r'^(<<<<<<<|=======|>>>>>>>)')
+
+
+# ----------------------------------------------------------------- βοηθητικα
+def _p(name):
+    return os.path.join(ROOT, name)
+
+
+def _need(name):
+    """Το αρχειο πρεπει να υπαρχει· αλλιως skip (δεν ειναι μερος αυτου του checkout)."""
+    if not os.path.exists(_p(name)):
+        pytest.skip(f'{name}: δεν υπαρχει σε αυτο το checkout')
+    return _p(name)
+
+
+def _json(name):
+    path = _need(name)
+    if os.path.getsize(path) == 0:
+        pytest.fail(f'{name}: ΑΔΕΙΟ αρχειο (0 bytes) — το dashboard/scanner θα σκασει στο json.load')
+    with open(path, encoding='utf-8') as fh:
+        try:
+            return json.load(fh)
+        except Exception as e:
+            pytest.fail(f'{name}: δεν φορτωνει ως JSON ({type(e).__name__}: {e})')
+
+
+def _jsonl(name):
+    """Καθε μη-κενη γραμμη πρεπει να ειναι εγκυρο JSON. Επιστρεφει λιστα dict."""
+    path = _need(name)
+    rows, bad = [], []
+    with open(path, encoding='utf-8') as fh:
+        for i, line in enumerate(fh, 1):
+            if not line.strip():
+                continue
+            try:
+                rows.append(json.loads(line))
+            except Exception as e:
+                bad.append(f'γραμμη {i}: {type(e).__name__} -> {line[:80]!r}')
+    assert not bad, f'{name}: {len(bad)} γραμμες δεν ειναι εγκυρο JSON (πιθανο μισο-γραψιμο/conflict):\n' + '\n'.join(bad[:5])
+    return rows
+
+
+def _src_const(fname, name):
+    """Τιμη σταθερας απο τον πηγαιο κωδικα (AST, ΧΩΡΙΣ import/εκτελεση) — για scripts που
+    τρεχουν βαρια δουλεια στο import (euro_live_projections) ή σταθερες μεσα σε συναρτησεις
+    (toa_live KELLY_FRAC/CAP, euro_shadow_scan EDGE_*). Πιανει και tuple-assign
+    `A, B = 1, 2`. Επιστρεφει την ΤΕΛΕΥΤΑΙΑ αναθεση στο αρχειο."""
+    with open(_p(fname), encoding='utf-8') as fh:
+        tree = ast.parse(fh.read(), fname)
+    found = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        for tgt in node.targets:
+            if isinstance(tgt, ast.Name) and tgt.id == name:
+                try:
+                    found.append(ast.literal_eval(node.value))
+                except Exception:
+                    pass
+            elif isinstance(tgt, ast.Tuple) and isinstance(node.value, ast.Tuple):
+                for el, val in zip(tgt.elts, node.value.elts):
+                    if isinstance(el, ast.Name) and el.id == name:
+                        try:
+                            found.append(ast.literal_eval(val))
+                        except Exception:
+                            pass
+    assert found, f'{fname}: δεν βρεθηκε σταθερα {name} στον κωδικα'
+    return found[-1]
+
+
+def _dt(s):
+    """iso (με/χωρις tz, με/χωρις Z) -> aware UTC datetime ή None."""
+    if not s:
+        return None
+    try:
+        d = datetime.datetime.fromisoformat(str(s).replace('Z', '+00:00'))
+    except ValueError:
+        return None
+    return d.replace(tzinfo=datetime.timezone.utc) if d.tzinfo is None else d.astimezone(datetime.timezone.utc)
+
+
+def _approx(a, b, tol=EPS):
+    return a is not None and b is not None and abs(float(a) - float(b)) <= tol
+
+
+# ================================================================ (a) ΑΚΕΡΑΙΟΤΗΤΑ ΑΡΧΕΙΩΝ
+@pytest.mark.parametrize('name', JSON_FILES + JSONL_FILES)
+def test_a_no_git_conflict_markers(name):
+    path = _need(name)
+    hits = []
+    with open(path, encoding='utf-8', errors='replace') as fh:
+        for i, line in enumerate(fh, 1):
+            if CONFLICT_RE.match(line):
+                hits.append(f'γραμμη {i}: {line.rstrip()[:60]}')
+    assert not hits, (f'{name}: ΒΡΕΘΗΚΑΝ git conflict markers (<<<<<<< / ======= / >>>>>>>) — '
+                      f'αποτυχημενο autostash/rebase, ΜΗΝ γινει commit:\n' + '\n'.join(hits[:6]))
+
+
+@pytest.mark.parametrize('name', JSON_FILES)
+def test_a_json_loads(name):
+    d = _json(name)
+    assert isinstance(d, dict), f'{name}: περιμενα dict στη ριζα, βρηκα {type(d).__name__}'
+
+
+@pytest.mark.parametrize('name', JSONL_FILES)
+def test_a_jsonl_every_line_parses(name):
+    rows = _jsonl(name)
+    assert all(isinstance(r, dict) for r in rows), f'{name}: υπαρχουν γραμμες που δεν ειναι JSON object'
+
+
+def test_a_value_picks_shape():
+    d = _json('value_picks_latest.json')
+    for k in ('scanned_at', 'ratings_season', 'gross', 'scale', 'cap', 'picks'):
+        assert k in d, f'value_picks_latest.json: λειπει το πεδιο {k!r}'
+    assert isinstance(d['picks'], list), 'value_picks_latest.json: το picks δεν ειναι λιστα'
+    need = {'lg', 'home', 'away', 'home_id', 'away_id', 'when', 'md', 'mxh', 'mxa',
+            'side', 'hcap', 'odds', 'pw', 'pp', 'edge', 'proj_odds', 'stake', 'stake_final'}
+    for p in d['picks']:
+        miss = need - set(p)
+        assert not miss, f'pick {p.get("home")}-{p.get("away")}: λειπουν πεδια {sorted(miss)}'
+        assert p['side'] in (1, -1), f'pick {p["home"]}-{p["away"]}: side={p["side"]} (περιμενα ±1)'
+
+
+def test_a_market_1x2_shape():
+    d = _json('market_1x2_latest.json')
+    assert 'scanned_at' in d and isinstance(d.get('odds'), dict), 'market_1x2_latest.json: περιμενα {scanned_at, odds{}}'
+    for k, v in d['odds'].items():
+        assert re.fullmatch(r'\d+_\d+', k), f'market_1x2: κλειδι {k!r} δεν ειναι "hid_aid"'
+        for f in ('h', 'd', 'a'):
+            assert isinstance(v.get(f), (int, float)) and v[f] > 1.0, f'market_1x2 {k}: αποδοση {f}={v.get(f)!r} μη εγκυρη'
+        assert _dt(v.get('when')) is not None, f'market_1x2 {k}: when={v.get("when")!r} δεν ειναι ημερομηνια'
+
+
+def test_a_scan_state_shape():
+    d = _json('value_scan_state.json')
+    for k, v in d.items():
+        parts = k.split('|')
+        assert len(parts) == 5, f'value_scan_state: κλειδι {k!r} δεν ειναι "lg|home|away|side|hcap"'
+        assert parts[0] in CORE7, f'value_scan_state: λιγκα {parts[0]!r} εκτος CORE7 στο κλειδι {k!r}'
+        assert isinstance(v.get('odds'), (int, float)) and 'edge' in v, f'value_scan_state {k!r}: λειπει odds/edge'
+
+
+def test_a_clv_bets_no_duplicate_entries():
+    """Ιδιο ματς + ιδια πλευρα + ιδια γραμμη = μια εγγραφη (το state του scanner το εγγυαται·
+    διπλη σημαινει χαμενο/κατεστραμμενο state). Σημ.: ιδιο ματς/πλευρα με ΑΛΛΗ γραμμη
+    ειναι νομιμο (η γραμμη κουνηθηκε -> νεο pick, βλ. scan_value.pick_key)."""
+    rows = _jsonl('clv_bets.jsonl')
+    seen, dup = {}, []
+    for i, b in enumerate(rows, 1):
+        key = (b.get('hid'), b.get('aid'), b.get('ko'), b.get('side'), b.get('hcap'), bool(b.get('h72')))   # 26/9: h72 = εισοδος ≤72ω (νομιμη διπλη με παλια)
+        if key in seen:
+            dup.append(f'{b.get("lg")} {b.get("home")}-{b.get("away")} side={b.get("side")} hcap={b.get("hcap")} '
+                       f'(γραμμες {seen[key]} & {i})')
+        seen[key] = i
+    assert not dup, f'clv_bets.jsonl: {len(dup)} ΔΙΠΛΕΣ εγγραφες ιδιου (ματς, πλευρα, γραμμη):\n' + '\n'.join(dup[:8])
+
+
+def test_a_clv_bets_h72_once_per_match_side():
+    """26/9/2026: απο εδω και περα μια εισοδος (h72) ανα ματς & πλευρα, μεσα σε 72ω πριν τη σεντρα."""
+    rows = [b for b in _jsonl('clv_bets.jsonl') if b.get('h72')]
+    seen = set()
+    for b in rows:
+        k = (b.get('hid'), b.get('aid'), str(b.get('ko'))[:16], b.get('side'))
+        assert k not in seen, f'clv_bets: 2η εισοδος h72 για {b.get("home")}-{b.get("away")} side={b.get("side")}'
+        seen.add(k)
+        assert 0 < b.get('hours_before', 0) <= 72, f'clv_bets h72 εκτος 72ω: {b.get("home")}-{b.get("away")} {b.get("hours_before")}'
+
+
+def test_a_euro_ledger_once_within_72h():
+    """26/9/2026: euro_picks_ledger — μια εισοδος ανα ματς & πλευρα, μεσα σε 72ω πριν τη σεντρα· UEL = σκια."""
+    rows = _jsonl('euro_picks_ledger.jsonl')
+    keys = [r['key'] for r in rows]
+    assert len(keys) == len(set(keys)), 'euro_picks_ledger: διπλη εισοδος ιδιου ματς/πλευρας'
+    for r in rows:
+        # 16/10/2026: Champions League φαβορι/αουτσαιντερ/DNB/over απο 168ω (euro_picks_ledger.ENTRY_H_UCL_EARLY)· ολα τα αλλα ≤72ω
+        lim_h = 168 if (r['comp'] == 'ChampionsLeague' and r.get('role') in ('fav', 'dog', 'dnb', 'over')) else 72
+        assert 0 < r['hours_before'] <= lim_h, f'euro_picks_ledger εκτος {lim_h}ω: {r["home"]}-{r["away"]} {r["hours_before"]}'
+        if r['comp'] == 'EuropaLeague':
+            if r.get('rule') == 'uel_home_fav':          # 9/10: κανονικο — μονο γηπεδουχος φαβορι
+                assert r['side'] == 1 and r['role'] == 'fav' and r['line'] <= -0.5 and r['key'].endswith('|uel_hf'),                     f'euro_picks_ledger: uel_home_fav εκτος κανονα ({r["home"]}-{r["away"]})'
+            else:
+                assert r['no_play'], f'euro_picks_ledger: UEL χωρις no_play ({r["home"]}-{r["away"]})'
+        assert r.get('rule') != 'uel_home_fav_wait', 'euro_picks_ledger: γραφτηκε uel_home_fav_wait (μονο ενδειξη)'
+
+
+def test_a_clv_bets_fields():
+    rows = _jsonl('clv_bets.jsonl')
+    need = {'seen', 'lg', 'home', 'away', 'hid', 'aid', 'ko', 'side', 'hcap', 'odds', 'edge', 'stake'}
+    for i, b in enumerate(rows, 1):
+        miss = need - set(b)
+        assert not miss, f'clv_bets γραμμη {i}: λειπουν πεδια {sorted(miss)}'
+        assert b['lg'] in CORE7, f'clv_bets γραμμη {i}: λιγκα {b["lg"]!r} εκτος CORE7'
+
+
+@pytest.mark.parametrize('name', ['odds_history.jsonl', 'dom_live_odds.jsonl'])
+def test_a_timestamps_monotonic(name):
+    rows = _jsonl(name)
+    prev, prev_i, bad = None, 0, []
+    for i, r in enumerate(rows, 1):
+        t = _dt(r.get('t'))
+        assert t is not None, f'{name} γραμμη {i}: t={r.get("t")!r} δεν ειναι ημερομηνια'
+        if prev is not None and t < prev:
+            bad.append(f'γραμμη {i}: {r["t"]} < γραμμη {prev_i}: {rows[prev_i-1]["t"]}')
+        prev, prev_i = t, i
+    assert not bad, (f'{name}: τα timestamps ΔΕΝ ειναι μονοτονα ({len(bad)} πισωγυρισματα — '
+                     f'πιθανο ανακατεμα γραμμων απο rebase/autostash):\n' + '\n'.join(bad[:6]))
+
+
+def test_a_odds_history_rows_shape():
+    rows = _jsonl('odds_history.jsonl')
+    need = {'t', 'lg', 'hid', 'aid', 'ko', 'line', 'oh', 'oa'}
+    for i, r in enumerate(rows, 1):
+        miss = need - set(r)
+        assert not miss, f'odds_history γραμμη {i}: λειπουν πεδια {sorted(miss)}'
+        assert r['lg'] in CORE7, f'odds_history γραμμη {i}: λιγκα {r["lg"]!r} εκτος CORE7'
+
+
+# ================================================================ (b) ΚΛΕΙΔΩΜΕΝΕΣ ΣΤΑΘΕΡΕΣ
+def test_b_picks_locked_constants():
+    import picks
+    exp = dict(EDGE=0.10, OMIN=1.70, OMAX=2.10, MIN_LINE=0.5, DRAW_BOOST=1.13, MARGIN=0.03,
+               BLEND=0.60, DECAY=0.96, SOS=0.75, SOS_MIN_N=6, SOS_MAX_N=13,
+               BLEND_EARLY=1.00, BLEND_SPLIT=13, BLEND_KG=12.0)
+    bad = [f'{k}={getattr(picks, k, None)!r} (περιμενα {v!r})' for k, v in exp.items()
+           if not _approx(getattr(picks, k, None), v)]
+    assert not bad, 'picks.py: ΑΛΛΑΞΑΝ κλειδωμενες σταθερες (λαθος autostash/commit;): ' + ', '.join(bad)
+
+
+def test_b_picks_hfa_and_core7():
+    import picks
+    exp_hfa = {'EPL': 1.10, 'LaLiga': 1.15, 'SerieA': 1.08, 'Bundesliga': 1.12, 'Ligue1': 1.105,
+               'Eredivisie': 1.130, 'PrimeiraLiga': 1.116}
+    bad = [f'{lg}: {picks.HFA_FIX.get(lg)!r} (περιμενα {v})' for lg, v in exp_hfa.items()
+           if not _approx(picks.HFA_FIX.get(lg), v)]
+    assert not bad, 'picks.HFA_FIX: αλλαξε το σταθερο HFA: ' + ', '.join(bad)
+    assert list(picks.TOP5) == CORE7, f'picks.TOP5 (CORE7) = {picks.TOP5} — περιμενα {CORE7} (Belgium/ScottishPrem ΕΚΤΟΣ απο 8/2026)'
+
+
+def test_b_blend_ramp_lands_on_060():
+    import picks
+    assert _approx(picks.blend_at(None), 0.60) and _approx(picks.blend_at(14), 0.60), \
+        f'blend_at: ωριμο βαρος xG {picks.blend_at(None)} / 14η {picks.blend_at(14)} — περιμενα 0.60'
+    assert _approx(picks.blend_at(0), 1.00), f'blend_at(0)={picks.blend_at(0)} — περιμενα 1.00 (md1 = 100% xG)'
+    assert picks.blend_at(7) > picks.blend_at(10) > picks.blend_at(13) - EPS, 'blend_at: η ραμπα δεν ειναι φθινουσα προς το 0.60'
+    assert _approx(picks.blend_at(13), 0.60), f'blend_at(13)={picks.blend_at(13)} — η ραμπα πρεπει να προσγειωνεται ΑΚΡΙΒΩΣ στο 0.60 στη 13η (καμια ασυνεχεια 13/14)'
+
+
+def test_b_min_prior_cloud_is_6():
+    """MIN_PRIOR: cloud (GitHub Actions / committed HEAD) = 6 · τοπικο working copy = 14
+    (παιζει 15η+) ή 6. Το 14 ΔΕΝ πρεπει ΠΟΤΕ να φτασει στο cloud (memory min-prior-switch-point)."""
+    import picks
+    if IS_CLOUD:
+        assert picks.MIN_PRIOR == 6, (f'ΣΤΟ CLOUD picks.MIN_PRIOR={picks.MIN_PRIOR} — περιμενα 6. '
+                                      f'Το τοπικο 14 εφτασε στο repo (λαθος commit/autostash)!')
+    else:
+        assert picks.MIN_PRIOR in (6, 14), f'picks.MIN_PRIOR={picks.MIN_PRIOR} — τοπικα επιτρεπονται μονο 6 ή 14'
+
+
+def test_b_min_prior_committed_head_is_6():
+    """Ο,τι ειναι committed (= αυτο που τρεχει ο cloud scanner) πρεπει να εχει MIN_PRIOR = 6."""
+    try:
+        src = subprocess.run(['git', 'show', 'HEAD:picks.py'], cwd=ROOT, capture_output=True,
+                             timeout=30).stdout.decode('utf-8', errors='replace')
+    except Exception as e:
+        pytest.skip(f'git δεν ειναι διαθεσιμο ({type(e).__name__})')
+    if not src.strip():
+        pytest.skip('κενο committed picks.py (rev-parse/shallow;)')
+    # 2026-09-18: ο διακοπτης ειναι ρητος — MIN_PRIOR = 6 if os.environ.get('GITHUB_ACTIONS') == 'true' else 14.
+    # Δεκτο: (α) η env-μορφη με 6 στο cloud σκελος, ή (β) σκετο MIN_PRIOR = 6 (παλιο σχημα). ΟΧΙ σκετο 14.
+    m_env = re.search(r"^MIN_PRIOR\s*=\s*(\d+)\s+if\s+os\.environ\.get\('GITHUB_ACTIONS'\)\s*==\s*'true'\s+else\s+(\d+)", src, re.M)
+    m_old = re.search(r'^\s*BLEND\s*=.*?MIN_PRIOR\s*=\s*(\d+)', src, re.M) or re.search(r'^MIN_PRIOR\s*=\s*(\d+)\s*(#.*)?$', src, re.M)
+    if m_env:
+        assert int(m_env.group(1)) == 6, (f'COMMITTED picks.py: το cloud σκελος του MIN_PRIOR ειναι {m_env.group(1)} — περιμενα 6.')
+    elif m_old:
+        assert int(m_old.group(1)) == 6, (f'COMMITTED picks.py (HEAD) εχει MIN_PRIOR={m_old.group(1)} — περιμενα 6. '
+                                          f'Το τοπικο 14 μπηκε στο repo· ο cloud scanner θα σιωπησει μεχρι τη 15η!')
+    else:
+        pytest.fail('δεν βρεθηκε MIN_PRIOR στο committed picks.py σε καμια απο τις δυο αποδεκτες μορφες')
+
+
+def test_b_build_data_constants():
+    import build_data
+    assert build_data.CURRENT_SEASON == '2627', f'build_data.CURRENT_SEASON={build_data.CURRENT_SEASON!r} (περιμενα 2627)'
+    assert build_data.RATINGS_SEASON_DEFAULT == '2526', f'build_data.RATINGS_SEASON_DEFAULT={build_data.RATINGS_SEASON_DEFAULT!r} (περιμενα 2526)'
+    assert _approx(build_data.K_WARM, 8.0), f'build_data.K_WARM={build_data.K_WARM} (περιμενα 8 — warm-start n/(n+8))'
+    assert _approx(build_data.KN_NORM, 20.0), f'build_data.KN_NORM={build_data.KN_NORM} (περιμενα 20)'
+    assert set(build_data.LEAGUE_FOTMOB) >= set(CORE7), f'build_data.LEAGUE_FOTMOB λειπουν λιγκες CORE7: {set(CORE7) - set(build_data.LEAGUE_FOTMOB)}'
+
+
+def test_b_scan_value_and_toa_constants():
+    import scan_value, toa_live, build_data
+    assert scan_value.RATINGS_SEASON == build_data.RATINGS_SEASON_DEFAULT == '2526', \
+        f'scan_value.RATINGS_SEASON={scan_value.RATINGS_SEASON!r} / build_data {build_data.RATINGS_SEASON_DEFAULT!r} — περιμενα 2526 (περσινο prior)'
+    assert _approx(scan_value.ODDS_DELTA, 0.05), f'scan_value.ODDS_DELTA={scan_value.ODDS_DELTA} (περιμενα 0.05)'
+    assert list(toa_live.SPORT) == CORE7, f'toa_live.SPORT λιγκες = {list(toa_live.SPORT)} — περιμενα CORE7 {CORE7}'
+    kf = _src_const('toa_live.py', 'KELLY_FRAC'); cap = _src_const('toa_live.py', 'CAP')
+    assert _approx(kf, KELLY_FRAC), f'toa_live KELLY_FRAC={kf} (περιμενα 0.125 = 1/8 Kelly)'
+    assert _approx(cap, STAKE_CAP), f'toa_live CAP={cap} (περιμενα 0.20 συνολικη εκθεση)'
+
+
+def test_b_regulation_time_90():
+    """19/10/2026 (Στελιος «τεραστιο λαθος»): ματς με παραταση/πεναλτι → σκορ/σουτ 90′ (euro_regulation / dl.parse)·
+    στα ευρωπαικα & εθνικες κανενα ματς με σουτ μετα το 90′ χωρις ελεγχο περιοδου (p90)."""
+    import glob as _g
+    bad = []
+    for f in sorted(_g.glob(os.path.join(ROOT, 'data_Europe_*.json')) + _g.glob(os.path.join(ROOT, 'data_WorldCup_*.json'))
+                    + _g.glob(os.path.join(ROOT, 'data_EURO_*.json')) + _g.glob(os.path.join(ROOT, 'data_NationsLeague*_*.json'))):
+        d = json.load(open(f, encoding='utf-8'))
+        for r in (d.values() if isinstance(d, dict) else []):
+            if not isinstance(r, dict):
+                continue
+            if any((s.get('min') or 0) > 90 for s in (r.get('shots') or [])) and not r.get('p90'):
+                bad.append(f"{os.path.basename(f)} {r.get('mid')}: σουτ μετα το 90′ χωρις p90")
+            if r.get('reg90') and (r.get('hs_ft') is None or 'shots_et' not in r):
+                bad.append(f"{os.path.basename(f)} {r.get('mid')}: reg90 χωρις hs_ft/shots_et")
+    assert not bad, 'παραταση/πεναλτι ΔΕΝ εχουν γυρισει σε 90′ (τρεξε python euro_regulation.py): ' + '; '.join(bad[:10])
+
+
+def test_b_euro_locked_constants():
+    """Ευρωπαικο stack (μεσω AST — το euro_live_projections.py τρεχει βαρια δουλεια στο import)."""
+    exp_proj = dict(GAMMA_LG_DEFLATE=-0.470, UCL_FAV_SCALE=1.16, EU_DRAW_SCALE=0.85, W_EU=2.0)
+    bad = [f'{k}={_src_const("euro_live_projections.py", k)!r} (περιμενα {v})' for k, v in exp_proj.items()
+           if not _approx(_src_const('euro_live_projections.py', k), v)]
+    assert not bad, 'euro_live_projections.py: αλλαξαν σταθερες (γ ξεφουσκωμα / κ UCL / X-scale / w prior): ' + ', '.join(bad)
+    exp_scan = dict(EDGE_DOG=0.10, EDGE_FAV=0.04, EDGE_OVER=0.04, EDGE_FAV_UCL=0.04, EDGE_DOG_UCL=0.04, EDGE_OVER_UECL=-0.02)
+    bad = [f'{k}={_src_const("euro_shadow_scan.py", k)!r} (περιμενα {v})' for k, v in exp_scan.items()
+           if not _approx(_src_const('euro_shadow_scan.py', k), v)]
+    assert not bad, 'euro_shadow_scan.py: αλλαξαν κατωφλια (UCL favs @4 απο 19/10 / UCL dogs @4 / dogs @10 / favs @4): ' + ', '.join(bad)
+    exp_eng = dict(GAMMA_PLAYER=1.09, KN_NORM=20.0, MIN_NOPRIOR_N=6)
+    bad = [f'{k}={_src_const("euro_engine.py", k)!r} (περιμενα {v})' for k, v in exp_eng.items()
+           if not _approx(_src_const('euro_engine.py', k), v)]
+    assert not bad, 'euro_engine.py: αλλαξαν σταθερες: ' + ', '.join(bad)
+
+
+def test_b_euro_projections_header_matches_source():
+    """Το euro_projections.json (εισοδος του euro scanner) πρεπει να εχει βγει με τις live σταθερες."""
+    d = _json('euro_projections.json')
+    exp = dict(lg_deflate=-0.470, ucl_fav_scale=1.16, eu_draw_scale=0.85, w_eu_prior=2.0)
+    bad = [f'{k}={d.get(k)!r} (περιμενα {v})' for k, v in exp.items() if not _approx(d.get(k), v)]
+    assert not bad, 'euro_projections.json βγηκε με ΑΛΛΕΣ σταθερες απο τις live: ' + ', '.join(bad)
+
+
+# ================================================================ (c) ΛΟΓΙΚΗ PICKS (τρεχον αρχειο)
+def _picks():
+    d = _json('value_picks_latest.json')
+    return d, d.get('picks', [])
+
+
+def _lab(p):
+    team = p['home'] if p['side'] == 1 else p['away']
+    return f'[{p["lg"]}] {p["home"]}-{p["away"]} {team} +{p["hcap"]:g} @{p["odds"]}'
+
+
+def test_c_odds_in_zone():
+    import picks
+    _, P = _picks()
+    bad = [f'{_lab(p)} (odds {p["odds"]})' for p in P if not (picks.OMIN - EPS <= p['odds'] <= picks.OMAX + EPS)]
+    assert not bad, f'picks εκτος ζωνης αποδοσεων [{picks.OMIN}, {picks.OMAX}]:\n' + '\n'.join(bad)
+
+
+def test_c_only_dog_side_hcap_ge_half():
+    import picks
+    _, P = _picks()
+    # 10/10/2026: και τα ΦΑΒΟΡΙ (role 'fav': 15η+ απο 1/10 · rule 'fav714' κοντα φαβορι 7-14 απο 9/10). Πριν το τεστ ηξερε μονο dogs:
+    # το πρωτο fav714 pick (Santa Clara −0.5) το εριχνε → ακυρωνοταν ΚΑΘΕ commit του scanner → το ιδιο alert ξαναστελνοταν καθε σαρωση
+    bad = []
+    for p in P:
+        if p.get('role') == 'fav':
+            if p['hcap'] > -picks.MIN_LINE + EPS:
+                bad.append(f'{_lab(p)} φαβορι με hcap {p["hcap"]}')
+            if p.get('rule') == 'fav714' and (abs(p['hcap']) not in picks.FAV714_LINES
+                                              or not (picks.FAV714_MD[0] <= (p.get('md') or 0) <= picks.FAV714_MD[1])):
+                bad.append(f'{_lab(p)} fav714 εκτος κανονα (γραμμη {p["hcap"]}, αγων {p.get("md")})')
+        elif p['hcap'] < picks.MIN_LINE - EPS:
+            bad.append(f'{_lab(p)} (hcap {p["hcap"]})')
+    assert not bad, f'picks με λαθος γραμμη (dog >= +{picks.MIN_LINE} · φαβορι <= −{picks.MIN_LINE} · fav714 μονο −0.5/−0.75 αγων 7-14):\n' + '\n'.join(bad)
+
+
+def test_c_edge_threshold():
+    import picks
+    _, P = _picks()
+    # 10/10: fav714 (κοντα φαβορι 7-14) εχει δικο του κατωφλι: edge >= 0 (core7_714_shortfav_test)
+    bad = [f'{_lab(p)} edge {p["edge"]*100:.2f}%' for p in P if p['edge'] < (0.0 if p.get('rule') == 'fav714' else picks.EDGE) - EPS]
+    assert not bad, f'picks με edge κατω απο το κατωφλι ({picks.EDGE*100:.0f}% · fav714 0%):\n' + '\n'.join(bad)
+
+
+def test_c_league_in_core7():
+    _, P = _picks()
+    bad = [f'{_lab(p)}' for p in P if p['lg'] not in CORE7]
+    assert not bad, 'picks σε λιγκα ΕΚΤΟΣ CORE7 (Belgium/ScottishPrem/UEL κλπ ΔΕΝ παιζονται):\n' + '\n'.join(bad)
+
+
+def test_c_kickoff_in_future_not_inplay():
+    """Ο scanner πεταει τα in-play (toa_live inplay=True) πριν τα picks. Το scanned_at γραφεται
+    σε τοπικη ωρα της μηχανης που εσκαναρε (runner=UTC, laptop=Ελλαδα) → ανοχη 3h."""
+    d, P = _picks()
+    scanned = _dt(d.get('scanned_at'))
+    assert scanned is not None, f'value_picks_latest.scanned_at={d.get("scanned_at")!r} δεν ειναι ημερομηνια'
+    bad = []
+    for p in P:
+        if p.get('inplay'):
+            bad.append(f'{_lab(p)} — inplay=True'); continue
+        ko = _dt(p.get('when'))
+        if ko is None:
+            bad.append(f'{_lab(p)} — when={p.get("when")!r} μη εγκυρο'); continue
+        if ko < scanned - datetime.timedelta(hours=3):
+            bad.append(f'{_lab(p)} — σεντρα {p["when"]} ΠΡΙΝ το scan {d["scanned_at"]}')
+    assert not bad, 'picks σε ματς που εχει ηδη αρχισει/τελειωσει:\n' + '\n'.join(bad)
+
+
+def test_c_stakes_kelly_and_cap():
+    d, P = _picks()
+    assert _approx(d.get('cap'), STAKE_CAP), f'value_picks_latest.cap={d.get("cap")} (περιμενα 0.20)'
+    bad = []
+    for p in P:
+        k = KELLY_FRAC * p['edge'] / (p['odds'] - 1)
+        if p['stake'] > k + 1e-9:
+            bad.append(f'{_lab(p)}: stake {p["stake"]:.5f} > 0.125·edge/(odds−1) = {k:.5f}')
+        if not _approx(p['stake_final'], p['stake'] * d['scale'], 1e-9):
+            bad.append(f'{_lab(p)}: stake_final {p["stake_final"]:.5f} ≠ stake·scale {p["stake"]*d["scale"]:.5f}')
+    assert not bad, 'staking ΕΚΤΟΣ κανονα (1/8 Kelly):\n' + '\n'.join(bad)
+    gross = sum(p['stake'] for p in P)
+    assert _approx(gross, d['gross'], 1e-6), f'gross {d["gross"]} ≠ Σstake {gross}'
+    exp_scale = STAKE_CAP / gross if gross > STAKE_CAP else 1.0
+    assert _approx(d['scale'], exp_scale, 1e-9), f'scale={d["scale"]} — περιμενα min(1, 0.20/gross)={exp_scale}'
+    tot = sum(p['stake_final'] for p in P)
+    assert tot <= STAKE_CAP + 1e-9, f'Σstake_final = {tot:.4f} > cap 0.20 (η συνολικη εκθεση ξεπερασε το οριο)'
+
+
+def test_c_edge_and_proj_odds_reproduce_from_pw_pp():
+    """Ο τυπος pricing πανω στο ΠΡΑΓΜΑΤΙΚΟ αρχειο: edge = pw·(odds−1)·(1−MARGIN) − (1−pw−pp),
+    fair = (1−pp)/pw. Αν αλλαξει ο τυπος (ή το MARGIN) στο live, σπαει εδω."""
+    import picks
+    _, P = _picks()
+    bad = []
+    for p in P:
+        e = p['pw'] * (p['odds'] - 1) * (1 - picks.MARGIN) - (1 - p['pw'] - p['pp'])
+        f = (1 - p['pp']) / p['pw'] if p['pw'] > 0 else float('inf')
+        if not _approx(e, p['edge'], 1e-9):
+            bad.append(f'{_lab(p)}: edge {p["edge"]:.6f} ≠ τυπος {e:.6f}')
+        if not _approx(f, p['proj_odds'], 1e-9):
+            bad.append(f'{_lab(p)}: proj_odds {p["proj_odds"]:.6f} ≠ (1−pp)/pw {f:.6f}')
+        if not (0 < p['pw'] < 1 and 0 <= p['pp'] < 1 and p['pw'] + p['pp'] <= 1 + 1e-9):
+            bad.append(f'{_lab(p)}: pw={p["pw"]}, pp={p["pp"]} εκτος [0,1]')
+    assert not bad, 'pricing στο value_picks_latest.json ΔΕΝ αναπαραγεται απο τον τυπο:\n' + '\n'.join(bad)
+
+
+# ================================================================ (d) GOLDEN PRICING
+# Υπολογιστηκαν 28/9/2026 με picks.evaluate_bet (EDGE .10, ζωνη 1.70-2.10, MIN_LINE .5, MARGIN .03) και
+# ΚΑΝΟΝΙΚΟ Dixon-Coles εγχωριων (picks.gd_dist_dom, ρ = DC_RHO_DOM −0.03· αποφαση Στελιου 28/9, core7_drawboost_test.py).
+# (Πριν: DRAW_BOOST 1.13 σε ολη τη διαγωνιο — τα 1 και 5 ηταν picks· με DC οι οριακοι dogs +0.5 κοβονται: λιγοτερες ισοπαλιες.)
+# (xg_h, xg_a, line[home persp.], oh, oa) -> picks.
+GOLDEN = [
+    # 1) Tottenham-Aston Villa 18/9: dog Villa +0.5 @1.89 — με Dixon-Coles ΔΕΝ περνα πια το 10%
+    ((1.246, 1.004, -0.5, 1.95, 1.89), []),
+    # 2) Levante-Barcelona 13/9 (clv_bets): dog Levante +2.5, βαθια γραμμη
+    ((1.058, 2.497, 2.5, 1.88, 2.04),
+     [dict(side=1, hcap=2.5, odds=1.88, pw=0.7288972095238393, pp=0.0,
+           edge=0.3510838675733885, proj_odds=1.3719355581746044)]),
+    # 3) ακεραια γραμμη +1.0 με push (pp>0), odds στο ανω οριο 2.10
+    ((1.8, 0.9, -1.0, 1.87, 2.1),
+     [dict(side=-1, hcap=1.0, odds=2.1, pw=0.4171949401047084, pp=0.24602262697741398,
+           edge=0.10836456817384621, proj_odds=1.8072543565206023)]),
+    # 4) quarter γραμμη ±0.25 < MIN_LINE 0.5 -> ΚΑΝΕΝΑ pick
+    ((1.3, 1.1, -0.25, 1.9, 2.0), []),
+    # 5) οριακο edge (ηταν 10.04% με το παλιο boost) -> με Dixon-Coles κατω απο 10% -> κανενα pick
+    ((1.5, 1.2, -0.5, 1.9, 1.95), []),
+    # 6) (28/9) θετικη περιπτωση +0.5 με Dixon-Coles
+    ((1.25, 1.0, -0.5, 1.95, 2.02),
+     [dict(side=-1, hcap=0.5, odds=2.02, pw=0.5840549863967728, pp=0.0,
+           edge=0.1619189899377398, proj_odds=1.7121675583481082)]),
+]
+
+
+@pytest.mark.parametrize('args,expected', GOLDEN, ids=[f'golden{i+1}' for i in range(len(GOLDEN))])
+def test_d_evaluate_bet_golden(args, expected):
+    import picks
+    out = picks.evaluate_bet(*args)
+    assert len(out) == len(expected), (f'evaluate_bet{args}: {len(out)} picks αντι {len(expected)} — '
+                                       f'το pricing/φιλτρα ΑΛΛΑΞΑΝ (βγηκε: {out})')
+    for got, exp in zip(out, expected):
+        for k, v in exp.items():
+            assert _approx(got.get(k), v, 1e-9), (f'evaluate_bet{args}: {k}={got.get(k)!r} αντι golden {v!r} '
+                                                  f'(διαφορα {abs(float(got.get(k)) - v):.2e}) — το pricing ΑΛΛΑΞΕ')
+
+
+def test_d_gd_dist_dom_dixon_coles():
+    """28/9/2026: εγχωρια = κανονικο Dixon-Coles — αθροιζει 1, λιγοτερες ισοπαλιες απο το ×1.13, ρ −0.03, evaluate_bet το χρησιμοποιει."""
+    import picks
+    assert abs(picks.DC_RHO_DOM - (-0.03)) < 1e-12, f'DC_RHO_DOM={picks.DC_RHO_DOM} (αναμενοταν −0.03)'
+    d = picks.gd_dist_dom(1.4, 1.1); s = sum(d.values())
+    assert _approx(s, 1.0, 1e-9), f'gd_dist_dom δεν αθροιζει στο 1 ({s})'
+    old = picks.gd_dist(1.4, 1.1)
+    assert 0.22 < d[0] < old[0], f'ισοπαλια DC {d[0]:.4f} vs ×1.13 {old[0]:.4f} — αναμενοταν μικροτερη αλλα >0.22'
+
+
+def test_d_correct_sos_before_blend():
+    """1/10/2026: «σωστο» SoS = διορθωση στα ΦΕΤΙΝΑ νουμερα ΠΡΙΝ τη μιξη με το prior (οχι πανω στο μεικτο rating)·
+    ενεργο μονο με 6-13 φετινους αντιπαλους."""
+    import picks, build_data as BD
+    def hist(n, opp, x=1.4):
+        return dict(sf=[12.0] * n, xf=[x] * n, sa=[11.0] * n, xa=[1.1] * n, gf=[x] * n, ga=[1.1] * n, opp=[opp] * n)
+    histc = {1: hist(8, 2), 2: hist(8, 1, 1.0), 3: hist(3, 1)}
+    prior_r = {1: (0.10, 0.10, 12.0, 11.0), 2: (0.09, 0.11, 11.0, 12.0), 3: (0.10, 0.10, 12.0, 12.0)}
+    blended, _ = BD.blend_league(prior_r, histc)
+    out = BD.apply_sos(blended, prior_r, histc, 11.5, 0.10)
+    exp1 = BD._shrink(picks.sos_adjust(BD._rating(histc[1], 8), histc[1]['opp'], blended, 11.5, 0.10), prior_r[1], 8)
+    old1 = picks.sos_adjust(blended[1], histc[1]['opp'], blended, 11.5, 0.10)
+    assert all(abs(a - b) < 1e-12 for a, b in zip(out[1], exp1)), 'SoS πρεπει να μπαινει στα φετινα ΠΡΙΝ το shrink'
+    assert any(abs(a - b) > 1e-6 for a, b in zip(out[1], old1)), 'apply_sos ιδιο με το παλιο (SoS πανω στο μεικτο);'
+    assert out[3] == blended[3], 'με <6 αντιπαλους το SoS πρεπει να ειναι ανενεργο'
+
+
+def test_d_fav_shadow_sos_matches_live():
+    """1/10/2026: η σκια FAV S2 εχει δικο της αντιγραφο της μηχανης — το SoS της πρεπει να ειναι το live (βαρος & παραθυρο)."""
+    import picks, dom_fav_shadow as F
+    assert (F.ST, F.SOS_MIN_N, F.SOS_MAX_N) == (picks.SOS, picks.SOS_MIN_N, picks.SOS_MAX_N)
+    # ιδια αριθμητικη με build_data.apply_sos: SoS στα φετινα ΠΡΙΝ το shrink
+    pr = [(0, 0, t, 0, 12.0, 1.3, 11.0, 1.2, 1.3, 1.2) for t in (1, 2)] * 5
+    cur = [(d, 0, 1, 2, 12.0, 1.6, 11.0, 1.0, 1.6, 1.0) for d in range(8)] + [(d, 0, 2, 1, 11.0, 1.0, 12.0, 1.6, 1.0, 1.6) for d in range(8)]
+    E = F.LeagueEngine('EPL', pr, cur)
+    got = E.sosadj(E.warm(1), 1)
+    c = E.cur_raw(1); o = E.warm(2)
+    exp = E.shrink((c[0] * (E.lx / o[1]) ** F.ST, c[1] * (E.lx / o[0]) ** F.ST, c[2] * (E.ls / o[3]) ** F.ST, c[3] * (E.ls / o[2]) ** F.ST), 1)
+    assert all(abs(a - b) < 1e-9 for a, b in zip(got, exp)), 'FAV S2: SoS οχι στα φετινα πριν το shrink'
+
+
+def test_d_fav15_rule():
+    """1/10/2026: ΦΑΒΟΡΙ 15η+ κανονικα picks — μονο πλευρα <= -0.5, 1.70-2.10, edge >=10% με ΣΩΣΤΑ τεταρτα, αγκυρα .7 απο την 15η."""
+    import picks, core7_anchor
+    assert (picks.FAV_MIN_MD, picks.FAV_ANCHOR_W) == (15, 0.7)
+    out = picks.evaluate_fav(2.2, 0.8, -0.75, 1.95, 1.90)          # δυνατο γηπεδουχο φαβορι στο -0.75
+    assert out and all(b['role'] == 'fav' and b['hcap'] <= -0.5 and b['side'] == 1 for b in out)
+    d = picks.gd_dist_dom(2.2, 0.8)
+    e = sum((w * 0.95 * (1 - picks.MARGIN) - (1 - w - q)) / 2 for w, q in (picks.p_cover(d, 1, -1.0), picks.p_cover(d, 1, -0.5)))
+    assert abs(out[0]['edge'] - e) < 1e-12, 'edge φαβορι: οχι ο μεσος των δυο μισων (σωστα τεταρτα)'
+    assert not picks.evaluate_fav(2.2, 0.8, -0.25, 1.95, 1.90), 'γραμμη -0.25 δεν ειναι φαβορι-pick'
+    assert not picks.evaluate_fav(0.8, 2.2, -0.75, 1.95, 1.90) or all(b['side'] == -1 for b in picks.evaluate_fav(0.8, 2.2, 0.75, 1.95, 1.90))
+    assert not picks.evaluate_fav(2.2, 0.8, -0.75, 2.30, 1.60), 'εκτος 1.70-2.10'
+    assert core7_anchor.apply_fav('EPL', 1, 2, 1.5, 1.0, 14)[2] is None, 'αγκυρα φαβορι πριν την 15η'
+    src = open(os.path.join(ROOT, 'toa_live.py'), encoding='utf-8').read()
+    assert 'engine.evaluate_fav(' in src and 'core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)' in src and 'engine.FAV_MIN_MD' in src
+
+
+def test_d_intl_freshness_guard():
+    """1/10/2026: ΦΡΕΝΟ εθνικων — pick μπλοκαρεται αν ομαδα του εχει τελειωμενο ματς που δεν περασε, ή αν τα ratings δεν ξαναχτιστηκαν."""
+    import intl_freshness as fr, datetime as dt
+    now = dt.datetime(2026, 10, 1, 12, tzinfo=dt.timezone.utc)
+    fake = [('999999999', 111, 222, '2026-09-30 18:45', 'NL C', 'A – B')]          # ματς που ΔΕΝ υπαρχει στο intl_matches
+    g = fr.check(now, finished=fake)
+    assert 111 in g['stale_teams'] and 222 in g['stale_teams'] and g['missing_matches']
+    assert fr.blocked(dict(hid=111, aid=5), dict(g, ok_ratings=True)) and fr.blocked(dict(hid=5, aid=222), dict(g, ok_ratings=True))
+    assert fr.blocked(dict(hid=5, aid=6), dict(g, ok_ratings=True)) is None
+    assert fr.blocked(dict(hid=5, aid=6), dict(g, ok_ratings=False)), 'ratings μη ξαναχτισμενα → ολα μπλοκ'
+    assert fr.blocked(dict(hid=5, aid=6), dict(g, ok_ratings=True, fotmob_ok=False)), 'χωρις FotMob → μπλοκ (δεν επιβεβαιωνεται)'
+    src = open(os.path.join(ROOT, 'intl_picks_ledger.py'), encoding='utf-8').read()
+    assert 'fr.check(now)' in src and 'fr.blocked(r, g)' in src
+    assert 'intl_guard_state.json' in open(os.path.join(ROOT, 'scanner_tick.sh'), encoding='utf-8').read()
+
+
+def test_workflows_valid_yaml():
+    """1/10/2026: ενα «: » μεσα σε run γραμμη εσπασε ολοκληρο το intl-refresh.yml (το GitHub δεν το ξεκινουσε καν)."""
+    yaml = pytest.importorskip('yaml')
+    import glob
+    bad = []
+    for f in glob.glob(os.path.join(ROOT, '.github', 'workflows', '*.yml')):
+        try:
+            d = yaml.safe_load(open(f, encoding='utf-8'))
+            assert isinstance(d, dict) and d.get('jobs'), 'χωρις jobs'
+        except Exception as e:
+            bad.append(f'{os.path.basename(f)}: {str(e)[:120]}')
+    assert not bad, 'ΜΗ εγκυρα workflows: ' + ' | '.join(bad)
+
+
+def test_bk_pick_status_drop_and_back():
+    """1/10/2026: μπασκετ — pick που βγηκε και δεν ειναι πια pick (σε καμια γραμμη) → «δεν ισχυει πια»· ξαναγινεται → «ΞΑΝΑ PICK»."""
+    import bk_pick_status as bps, el_picks, json, tempfile, datetime as dt
+    ko = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=6)).strftime('%Y-%m-%dT%H:%M')
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
+    bet = dict(seen=now, code=99, home='A', away='B', mkt='total', side=0, hcap=171.0, bet='Over 171', odds=1.86, edge=0.09, when=ko)
+    f = tempfile.NamedTemporaryFile('w', suffix='.jsonl', delete=False, encoding='utf-8'); f.write(json.dumps(bet) + chr(10)); f.close()
+    games = {'99': dict(margin=0.0, total=174.6)}; odds = {'99': dict(pin=dict(tl=172.5, to=1.885, tu=1.97))}
+    state = {}
+    drops, backs = bps.track(state, [], f.name, games, odds, lambda m: 16.7, lambda m: 0.08, el_picks.cover, 'Euroleague', now)
+    assert len(drops) == 1 and 'Over 172.5' in drops[0] and 'χρειαζεται @1.96' in drops[0] and not backs
+    later = (dt.datetime.fromisoformat(now) + dt.timedelta(minutes=40)).isoformat(timespec='minutes')
+    p = dict(code=99, mkt='total', side=0, bet='Over 173', hcap=173.0, odds=2.05, edge=0.09, home='A', away='B')
+    drops, backs = bps.track(state, [p], f.name, games, odds, lambda m: 16.7, lambda m: 0.08, el_picks.cover, 'Euroleague', later)
+    assert len(backs) == 1 and 'ΞΑΝΑ PICK' in backs[0] and not drops
+    src = open(os.path.join(ROOT, 'el_picks.py'), encoding='utf-8').read() + open(os.path.join(ROOT, 'ec_picks.py'), encoding='utf-8').read()
+    assert src.count('bps.track(') == 2
+
+
+def test_intl_x12_win_as_minus_half():
+    """1/10/2026: εθνικες — γραμμη φαβορι −0.25/0 → η ξερη νικη 1Χ2 τιμολογειται ως −0.5 (ιδιοι κανονες) και διαβαζεται απο τη συναινεση."""
+    import intl_dashboard_build as B, intl_consensus as ic
+    mk = {'pinnacle': {'ah_line': 0.25, 'oh': 2.05, 'oa': 1.85, 'o1': 4.6, 'ox': 3.6, 'o2': 1.95}}
+    pk = B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False)
+    assert pk.startswith('FAV 2 -0.50 @1.95') and '1Χ2' in pk, pk
+    c = ic.parse(pk)[0]
+    assert c['mkt'] == 'AH' and c['line'] == -0.5 and c['side'] == 2 and 'νικη (1Χ2)' in ic.label(c, 'A', 'B')
+    mk['pinnacle']['o2'] = 2.35        # 2/10 βραδυ: ΝΕΟ pick νικης μονο 1.70-2.10 (τεστ: 2.10-2.60 −19/−23%)
+    assert B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False) == '', 'νεα νικη πανω απο 2.10 → οχι pick'
+    import intl_pick_status as ps         # αλλα ΣΤΑΛΜΕΝΗ νικη που ανεβηκε πανω απο 2.10 μενει ενεργη
+    m = {'market': {'source': 'pinnacle', 'pinnacle': dict(mk['pinnacle'])}, 'versions': {v: {'xg_h': 0.7, 'xg_a': 1.9} for v in ('H', 'A', 'AV')}}
+    st = ps.status(dict(mkt='AH', side=2, line=-0.5, book='Pinnacle 1Χ2'), m)
+    assert st['active'] and st.get('x12') and 'νικη (1Χ2)' in ps.describe(dict(mkt='AH', side=2, line=-0.5), st, 'A', 'B')
+    mk['pinnacle']['o2'] = 1.65
+    assert B.pick_ah(0.7, 1.9, mk, ['pinnacle'], allow_x12=False) == '', 'κατω απο 1.70 → οχι pick'
+
+
+def test_intl_status_better_price_stays_active():
+    """1/10/2026: pick που σταλθηκε (−0.5 @2.09) δεν «πεφτει» οταν η τιμη ανεβαινει πανω απο 2.10 με ≥2 μοντελα ακομα ≥10%."""
+    import intl_pick_status as ps
+    row = dict(mkt='AH', side=2, line=-0.5)
+    m = {'market': {'source': 'pinnacle', 'pinnacle': {'ah_line': 0.5, 'oh': 1.79, 'oa': 2.15}},
+         'edges': {'H': {'pinnacle': {'ah_away': 11.0, 'need_a': 2.12}}, 'A': {'pinnacle': {'ah_away': 5.0, 'need_a': 2.3}},
+                   'AV': {'pinnacle': {'ah_away': 16.0, 'need_a': 2.0}}}}
+    assert ps.status(row, m)['active']
+    m['edges']['H']['pinnacle'].update(ah_away=9.8, need_a=2.16)
+    st = ps.status(row, m)
+    assert not st['active'] and abs(st['need'] - 2.16) < 1e-9, 'need πανω απο 2.10 πρεπει να αναφερεται'
+
+
+def test_d_core7_anchor_short_lines_only():
+    """29/9/2026: αγκυρα αγορας ΜΟΝΟ σε +0.5/+0.75 απο την 15η (core7_anchor.apply) — αλλου xG αμεταβλητα· συνολο γκολ ιδιο."""
+    import core7_anchor as CA
+    assert CA.LAM == 0.5 and CA.APPLY_MD == 15 and CA.LEARN_MIN_PLAYED == 6 and set(CA.SHORT_LINES) == {0.5, 0.75}
+    saved = CA._OFF
+    CA._OFF = {'leagues': {'EPL': {'teams': {'1': {'o': 0.2}, '2': {'o': -0.1}}}}}
+    try:
+        assert CA.apply('EPL', 1, 2, 1.5, 1.0, -0.5, 14)[2] is None, 'εφαρμοστηκε πριν την 15η'
+        assert CA.apply('EPL', 1, 2, 1.5, 1.0, -1.0, 20)[2] is None, 'εφαρμοστηκε σε βαθια γραμμη'
+        h, a, info = CA.apply('EPL', 1, 2, 1.5, 1.0, -0.75, 15)
+        assert info is not None and _approx(h - a, 0.5 + 0.3, 1e-9) and _approx(h + a, 2.5, 1e-9), (h, a, info)
+        assert CA.apply('EPL', 1, 2, 1.5, 1.0, 0.5, 15)[2] is not None, 'δεν εφαρμοστηκε σε +0.5 (γηπεδουχος dog)'
+        assert CA.apply('LaLiga', 1, 2, 1.5, 1.0, -0.5, 20)[:2] == (1.5, 1.0), 'ομαδες χωρις διορθωση πρεπει να μενουν ιδιες'
+    finally:
+        CA._OFF = saved
+    src = open(os.path.join(ROOT, 'toa_live.py'), encoding='utf-8').read()
+    i_a, i_e = src.find('core7_anchor.apply('), src.find('engine.evaluate_bet(xg_h, xg_a')
+    assert 0 < i_a < i_e, 'toa_live: η αγκυρα πρεπει να εφαρμοζεται ΠΡΙΝ το evaluate_bet'
+    if os.path.exists(os.path.join(ROOT, 'core7_anchor_offsets.json')):
+        d = json.load(open(os.path.join(ROOT, 'core7_anchor_offsets.json'), encoding='utf-8'))
+        assert set(d.get('leagues', {})) == set(CA.CORE7), 'core7_anchor_offsets.json: λειπουν λιγκες'
+        for lg, L in d['leagues'].items():
+            for t, v in L['teams'].items():
+                assert abs(v['o']) < 1.5, f'{lg} {v.get("name")}: διορθωση {v["o"]} — υποπτα μεγαλη'
+
+
+def test_e_euro_fav_proper_quarters():
+    """30/9/2026: ευρωπαϊκα ΦΑΒΟΡΙ = σωστα τεταρτα (cover_q), ΑΟΥΤΣΑΙΝΤΕΡ = p_cover ως εχει (quarters_all_markets)."""
+    import euro_shadow_scan as E, picks
+    src = open(os.path.join(ROOT, 'euro_shadow_scan.py'), encoding='utf-8').read()
+    assert "cover_q(dist, side, ln) if role in ('fav', 'dnb') else picks.p_cover(dist, side, ln)" in src, \
+        'euro_shadow_scan: τα φαβορι πρεπει να τιμολογουνται με cover_q και τα dogs με p_cover'
+    d = picks.gd_dist(1.8, 0.9)
+    pw, pp = E.cover_q(d, 1, -0.75)            # −0.75 = μισο −0.5 + μισο −1: νικη με 1 γκολ = μισο νικη + μισο επιστροφη
+    assert _approx(pw, sum(v for k, v in d.items() if k >= 2) + d[1] / 2, 1e-12) and _approx(pp, d[1] / 2, 1e-12), (pw, pp)
+    pw0, pp0 = picks.p_cover(d, 1, -0.75)
+    assert pw0 > pw and pp0 == 0, 'p_cover πρεπει να μετρα το −0.75 σαν −0.5 (ο λογος της αλλαγης)'
+
+
+def test_d_proj_archive():
+    """29/9/2026: αρχειο Match Projections — προεπιλεγμενη αγωνιστικη = του τρεχοντος σ/κ (οχι αναβληθεν) · εγγραφες ακεραιες."""
+    import proj_archive as pa
+    up = [dict(gw=4, utc='2026-10-01T18:00Z')] + [dict(gw=7, utc=f'2026-10-0{d}T14:00Z') for d in (3, 3, 4, 4)] + \
+         [dict(gw=8, utc='2026-10-17T14:00Z')] * 5
+    assert pa.default_gw(up, [1, 2, 3, 4, 5, 6, 7, 8]) == 7, 'αναβληθεν ματς παλιας αγωνιστικης δεν πρεπει να ειναι η προεπιλογη'
+    assert pa.default_gw([], [1, 2, 3]) == 3
+    p = os.path.join(ROOT, 'match_projections_archive.json')
+    if os.path.exists(p):
+        A = json.load(open(p, encoding='utf-8'))
+        for k, m in A.items():
+            assert m.get('src') in ('live', 'recon') and str(m.get('fid')) == k, (k, m.get('src'))
+            if m.get('projectable'):
+                assert 0.05 < m['home_adj_xg'] < 6 and 0.05 < m['away_adj_xg'] < 6, (k, m['home_adj_xg'], m['away_adj_xg'])
+                assert abs(m['hw'] + m['d'] + m['aw'] - 100) < 0.5, (k, m['hw'], m['d'], m['aw'])
+
+
+def test_d_gd_dist_is_probability():
+    import picks
+    dist = picks.gd_dist(1.4, 1.1)
+    s = sum(dist.values())
+    assert _approx(s, 1.0, 1e-6), f'gd_dist δεν αθροιζει στο 1 ({s})'
+    assert dist[0] > 0.2, f'P(ισοπαλια)={dist[0]:.3f} — υποπτα χαμηλο (DRAW_BOOST 1.13 χαθηκε;)'
+
+
+# ================================================================ (e) ΕΥΡΩΠΑΪΚΑ
+def _euro():
+    if not os.path.exists(_p('euro_value_latest.json')):
+        pytest.skip('euro_value_latest.json δεν υπαρχει')
+    d = _json('euro_value_latest.json')
+    return d, d.get('picks', [])
+
+
+def _elab(p):
+    return f'[{p.get("comp")}] {p.get("home")}-{p.get("away")} {p.get("team")} {p.get("line")} @{p.get("odds")} ({p.get("role")}, edge {float(p.get("edge", 0))*100:.1f}%)'
+
+
+def test_e_rules_block_matches_live():
+    d, _ = _euro()
+    r = d.get('rules', {})
+    exp = dict(edge_dog=0.10, edge_fav=0.04, edge_fav_ucl=0.04, edge_dog_ucl=0.04)
+    bad = [f'{k}={r.get(k)!r} (περιμενα {v})' for k, v in exp.items() if not _approx(r.get(k), v)]
+    z = r.get('zone')
+    if not (isinstance(z, list) and len(z) == 2 and _approx(z[0], 1.70) and _approx(z[1], 2.10)):
+        bad.append(f'zone={z!r} (περιμενα [1.70, 2.10])')
+    assert not bad, 'euro_value_latest.rules ≠ live κανονες (UCL favs @4 απο 19/10, UCL dogs @4, dogs @10, favs @4): ' + ', '.join(bad)
+
+
+def test_e_uel_only_as_shadow():
+    """UEL: επιτρεπεται ΜΟΝΟ με no_play=True (σκια — δειχνεται, δεν παιζεται, 18/9). Αλλες λιγκες:
+    ποτε no_play, ποτε εκτος UCL/UEL/UECL."""
+    d, P = _euro()
+    bad = []
+    for p in P:
+        c = p.get('comp')
+        if c in EURO_SHADOW and p.get('rule') in UEL_HF_RULES:
+            # 9/10/2026: UEL φαβορι εντος — γηπεδουχος, γραμμη ≤ −0.5, edge ≥4%· κανονικο ΜΟΝΟ 12-36ω πριν
+            ko = datetime.datetime.fromisoformat(str(p['ko']).replace('Z', '+00:00'))
+            sc = datetime.datetime.fromisoformat(str(d.get('scanned_at'))).replace(tzinfo=datetime.timezone.utc)
+            hb = (ko - sc).total_seconds() / 3600
+            if p.get('side') != 1 or p.get('role') != 'fav' or float(p['line']) > -0.5 + EPS or float(p['edge']) < 0.04 - EPS:
+                bad.append(f'{_elab(p)}: {p.get("rule")} εκτος κανονα (γηπ. φαβορι ≤−0.5, edge ≥4%)')
+            if p.get('rule') == 'uel_home_fav' and (p.get('no_play') or not (12 - 0.1 <= hb <= 36 + 0.1)):
+                bad.append(f'{_elab(p)}: uel_home_fav κανονικο εκτος 12-36ω ({hb:.1f}ω) ή με no_play')
+            if p.get('rule') == 'uel_home_fav_wait' and p.get('no_play') is not True:
+                bad.append(f'{_elab(p)}: uel_home_fav_wait χωρις no_play')
+        elif c in EURO_SHADOW:
+            if p.get('no_play') is not True:
+                bad.append(f'{_elab(p)}: UEL pick ΧΩΡΙΣ no_play=True (UEL κλειστο 11/9, μονο σκια)')
+        elif c in EURO_ALLOWED:
+            # 13/10/2026: εξαιρεσεις UCL με no_play = late2h (χαντικαπ που πρωτοβγαινει <2ω) & nonfm_fav_shadow (σκια κατηγοριας Β)
+            if p.get('rule') == 'late2h':
+                if c != 'ChampionsLeague' or p.get('role') not in ('fav', 'dog') or p.get('no_play') is not True:
+                    bad.append(f'{_elab(p)}: late2h εκτος κανονα (μονο UCL φαβορι/αουτσαιντερ, no_play=True)')
+            elif p.get('no_play') and not (c == 'ChampionsLeague' and p.get('rule') in ('nonfm_fav_shadow', 'ucl_under_shadow', 'ucl_dog_band_shadow')):   # 19/10: + UCL under σκια
+                bad.append(f'{_elab(p)}: no_play σε {c} (μονο το UEL ειναι σκια)')
+        else:
+            bad.append(f'{_elab(p)}: αγνωστη διοργανωση {c!r}')
+    assert not bad, 'UEL σκια / διοργανωσεις:' + chr(10) + chr(10).join(bad)
+    assert 'EuropaLeague' in (d.get('rules', {}).get('no_play_comps') or []), (
+        'euro_value_latest.rules.no_play_comps δεν περιεχει EuropaLeague (τρεξε euro_shadow_scan.py)')
+
+
+def test_e_zone_role_and_thresholds():
+    _, P = _euro()
+    bad = []
+    for p in P:
+        o, ln, role, e, comp = float(p['odds']), float(p['line']), p.get('role'), float(p['edge']), p.get('comp')
+        if not (1.70 - EPS <= o <= 2.10 + EPS):
+            bad.append(f'{_elab(p)}: odds εκτος [1.70, 2.10]')
+        ucl = comp == 'ChampionsLeague'
+        if role == 'fav':
+            if ln > -0.5 + EPS:
+                bad.append(f'{_elab(p)}: φαβορι με line {ln} (περιμενα <= −0.5)')
+            thr = 0.10 if (ucl and p.get('rule') == 'nonfm_fav_shadow') else 0.04      # 19/10/2026: UCL φαβορι @4 (σκια Β @10)
+            if e < thr - EPS:
+                bad.append(f'{_elab(p)}: φαβορι edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
+        elif role == 'dog':
+            if p.get('rule') == 'uecl_b_dog' and comp != 'ConferenceLeague':      # 13/10/2026: αουτσαιντερ χωρις FotMob, μονο Conference Β
+                bad.append(f'{_elab(p)}: uecl_b_dog εκτος Conference')
+            if ln < 0.5 - EPS:
+                bad.append(f'{_elab(p)}: dog με line {ln} (περιμενα >= +0.5)')
+            thr = 0.04 if ucl else 0.10
+            if e < thr - EPS:
+                bad.append(f'{_elab(p)}: dog edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
+            if ucl and e < 0.10 and p.get('band') != '4-10':
+                bad.append(f'{_elab(p)}: UCL dog στη ζωνη 4-10% χωρις band="4-10"')
+            # 19/10/2026: UCL dog 4-10% = ΣΚΙΑ (rule ucl_dog_band_shadow, no_play=True)· ≥10% κανονικο
+            if ucl and e < 0.10 and (p.get('rule') != 'ucl_dog_band_shadow' or p.get('no_play') is not True):
+                bad.append(f'{_elab(p)}: UCL dog 4-10% πρεπει να ειναι σκια (rule ucl_dog_band_shadow, no_play=True)')
+        elif role == 'over':                     # 12/10/2026: Conference (κατηγορια Α) over ≥ −2% (EDGE_OVER_UECL), αλλου ≥4%
+            thr = -0.02 if comp == 'ConferenceLeague' else 0.04
+            if e < thr - EPS:
+                bad.append(f'{_elab(p)}: over edge {e*100:.1f}% < κατωφλι {thr*100:.0f}%')
+        elif role == 'dnb':                      # 10/10/2026: DNB ΜΟΝΟ Champions League, γραμμη 0, edge ≥4%
+            if not ucl:
+                bad.append(f'{_elab(p)}: DNB εκτος Champions League')
+            if abs(ln) > EPS:
+                bad.append(f'{_elab(p)}: DNB με γραμμη {ln} (περιμενα 0)')
+            if e < 0.04 - EPS:
+                bad.append(f'{_elab(p)}: DNB edge {e*100:.1f}% < 4%')
+        elif role == 'under':                    # 10/10/2026: ΜΟΝΟ Champions League, edge ≥10%
+            # 13/10/2026: + Conference κατηγορια Β (rule uecl_b_under) με κατωφλι 14%
+            uecl_b = comp == 'ConferenceLeague' and p.get('rule') == 'uecl_b_under'
+            # 16/10/2026: + Europa κατηγορια Α ως ΣΚΙΑ (rule uel_under_shadow, no_play=True), κατωφλι 10%
+            uel_u = comp == 'EuropaLeague' and p.get('rule') == 'uel_under_shadow'
+            if uel_u and p.get('no_play') is not True:
+                bad.append(f'{_elab(p)}: UEL under σκια χωρις no_play=True')
+            # 19/10/2026: UCL under = ΣΚΙΑ (rule ucl_under_shadow, no_play=True)
+            if ucl and (p.get('rule') != 'ucl_under_shadow' or p.get('no_play') is not True):
+                bad.append(f'{_elab(p)}: UCL under πρεπει να ειναι σκια (rule ucl_under_shadow, no_play=True)')
+            if not (ucl or uecl_b or uel_u):
+                bad.append(f'{_elab(p)}: under εκτος Champions League / Conference Β / Europa σκια')
+            thr_u = 0.14 if uecl_b else 0.10
+            if e < thr_u - EPS:
+                bad.append(f'{_elab(p)}: under edge {e*100:.1f}% < {thr_u*100:.0f}%')
+        else:
+            bad.append(f'{_elab(p)}: αγνωστος ρολος {role!r}')
+    assert not bad, 'ευρωπαικα picks εκτος κανονων:\n' + '\n'.join(bad)
+
+
+def test_e_ucl_kappa_applied():
+    """Το κ (UCL_FAV_SCALE=1.16) εφαρμοζεται στα projections· ο euro scanner τιμολογει απο εκει.
+    Ελεγχος: header του euro_projections.json + τα xG του pick ταυτιζονται με το projection."""
+    _, P = _euro()
+    if not os.path.exists(_p('euro_projections.json')):
+        pytest.skip('euro_projections.json δεν υπαρχει')
+    proj = _json('euro_projections.json')
+    assert _approx(proj.get('ucl_fav_scale'), 1.16), \
+        f'euro_projections.ucl_fav_scale={proj.get("ucl_fav_scale")!r} — το κ=1.16 ΔΕΝ εφαρμοστηκε στα projections'
+    by_mid = {str(m.get('mid')): m for m in proj.get('matches', [])}
+    # 9/10/2026: το euro-refresh ξαναγραφει τα projections ΠΡΙΝ ξανατρεξει ο scanner → τα picks ειναι (σωστα) απο τα
+    # προηγουμενα projections. Η συνεπεια xG ελεγχεται ΜΟΝΟ αν η σαρωση ειναι νεοτερη απο τα projections (αλλιως
+    # το test μπλοκαρε ΚΑΘΕ commit του euro-refresh απο 6/10 οταν εμφανιστηκαν αποδοσεις UCL R3).
+    d_ = _json('euro_value_latest.json')
+    fresh = str(d_.get('scanned_at') or '')[:16] >= str(proj.get('generated') or '')[:16].replace('Z', '')
+    bad = []
+    for p in (P if fresh else []):
+        m = by_mid.get(str(p.get('mid')))
+        if m is None:
+            bad.append(f'{_elab(p)}: mid {p.get("mid")} δεν υπαρχει στο euro_projections.json'); continue
+        if p.get('role') in ('fav', 'dog') and p.get('rule') not in UEL_HF_RULES:   # UEL φαβ εντος: xG απο euro_projections_uel80.json
+            if not (_approx(p.get('xgh'), m.get('xgh'), 1e-6) and _approx(p.get('xga'), m.get('xga'), 1e-6)):
+                bad.append(f'{_elab(p)}: xG pick {p.get("xgh")}/{p.get("xga")} ≠ projection {m.get("xgh")}/{m.get("xga")} (μπαγιατικο pricing)')
+        if p.get('comp') == 'ChampionsLeague' and m.get('covered'):
+            # με κ=1.16 η πλευρα του φαβορι πρεπει να ειναι > ουδετερη·HFA (xgh0·hfa ή xga0/hfa)
+            hfa = float(proj.get('hfa', 1.0))
+            base_h, base_a = m['xgh0'] * hfa, m['xga0'] / hfa
+            fav_ratio = (m['xgh'] / base_h) if m['xgh'] >= m['xga'] else (m['xga'] / base_a)
+            if fav_ratio < 1.0:
+                bad.append(f'{_elab(p)}: UCL φαβορι xG/βαση = {fav_ratio:.3f} < 1 — το κ δεν φαινεται εφαρμοσμενο')
+    assert not bad, 'κ UCL / συνεπεια projections:\n' + '\n'.join(bad)
+
+
+def test_e_inseason_european_in_rating():
+    """9/10/2026: φετινα ευρωπαικα στο ευρωπαικο rating (Μ8, βαρος 0.5) — ενεργο οταν υπαρχουν τελειωμενα ματς με σουτ."""
+    if not os.path.exists(_p('euro_projections.json')):
+        pytest.skip('euro_projections.json δεν υπαρχει')
+    proj = _json('euro_projections.json')
+    ins = proj.get('eu_inseason')
+    if ins is None:
+        pytest.skip('παλια projections (πριν 9/10)')
+    assert ins.get('method') == 'M8' and _approx(ins.get('w'), 0.5), f'eu_inseason={ins!r} (περιμενα Μ8, βαρος 0.5)'
+    assert os.path.exists(_p('euro_m8_coef.json')), 'λειπει euro_m8_coef.json'
+    if os.path.exists(_p('data_Europe_2627.json')):
+        n27 = sum(1 for v in _json('data_Europe_2627.json').values() if v.get('shots') and v.get('hs') is not None)
+        if n27:
+            assert ins.get('on') and ins.get('n_obs', 0) > 0, f'{n27} φετινα ευρωπαικα με σουτ αλλα eu_inseason ανενεργο: {ins!r}'
+    for m in proj.get('matches', []):
+        if m.get('covered'):
+            assert 'xgh_noins' in m and 'eu_in_h' in m, f'{m.get("home")}-{m.get("away")}: λειπουν πεδια φετινων ευρωπαικων'
+
+
+def test_e_uel_home_fav_uses_80():
+    """9/10/2026: τα UEL φαβορι εντος τιμολογουνται απο το euro_projections_uel80.json (μιξη 80% xG)."""
+    d, P = _euro()
+    hf = [p for p in P if p.get('rule') in UEL_HF_RULES]
+    pr0 = _json('euro_projections_uel80.json') if os.path.exists(_p('euro_projections_uel80.json')) else {}
+    ins = pr0.get('eu_inseason')
+    if ins is not None and os.path.exists(_p('data_Europe_2627.json')) and             any(v.get('shots') and v.get('hs') is not None for v in _json('data_Europe_2627.json').values()):
+        assert ins.get('on'), 'euro_projections_uel80: φετινα ευρωπαικα ανενεργα (9/10: πρεπει να ειναι ενεργα και στο 80%)'
+    if not hf:
+        pytest.skip('κανενα UEL φαβορι εντος τωρα')
+    assert os.path.exists(_p('euro_projections_uel80.json')), 'uel_home_fav picks χωρις euro_projections_uel80.json'
+    pr = _json('euro_projections_uel80.json')
+    if str(d.get('scanned_at') or '')[:16] < str(pr.get('generated') or '')[:16].replace('Z', ''):
+        pytest.skip('η σαρωση ειναι παλαιοτερη απο τα projections 80% (θα ελεγχθει στην επομενη σαρωση)')
+    by = {str(m.get('mid')): m for m in pr.get('matches', [])}
+    bad = [f'{_elab(p)}: xG {p.get("xgh")}/{p.get("xga")} ≠ 80%' for p in hf
+           if not (str(p['mid']) in by and _approx(p.get('xgh'), round(by[str(p['mid'])]['xgh'], 3), 1e-6)
+                   and _approx(p.get('xga'), round(by[str(p['mid'])]['xga'], 3), 1e-6))]
+    assert not bad, 'UEL φαβ εντος ≠ projections 80%:' + chr(10) + chr(10).join(bad)
+
+
+# ---------------------------------------------------------------- F. ΕΘΝΙΚΕΣ: κλειδι ασφαλειας κατα των διπλων ματς (25/9/2026)
+def test_f_intl_dedupe_logic():
+    """intl_dedupe πιανει: ιδιο ζευγος με ids κειμενο/αριθμο, ανεστραμμενο γηπ/φιλοξ, ±1 μερα· κραταει FotMob· αφηνει ρεβανς μετα απο μερες."""
+    import pandas as pd
+    import intl_dedupe
+    M = pd.DataFrame([
+        dict(mid='1', src='fotmob', date='2026-06-04 19:10', hid=6723, aid=6709, hs=1, **{'as': 2}),
+        dict(mid='ng1', src='nowgoal_friendly', date='2026-06-04 19:10', hid='6723', aid='6709', hs=1, **{'as': 2}),   # ids κειμενο
+        dict(mid='ng2', src='nowgoal_friendly', date='2026-06-04 21:00', hid=6709, aid=6723, hs=2, **{'as': 1}),       # ανεστραμμενο
+        dict(mid='ng3', src='nowgoal_friendly', date='2026-06-05 18:00', hid=6723, aid=6709, hs=1, **{'as': 2}),       # +1 μερα
+        dict(mid='2', src='fotmob', date='2026-06-09 19:10', hid=6723, aid=6709, hs=0, **{'as': 0}),                   # αλλο ματς (5 μερες μετα)
+    ])
+    C = intl_dedupe.dedupe(M, verbose=False)
+    assert sorted(C.mid) == ['1', '2'], f'κρατηθηκαν {sorted(C.mid)} — περιμενα μονο τα FotMob 1 και 2'
+    intl_dedupe.assert_clean(C)
+    with pytest.raises(AssertionError):
+        intl_dedupe.assert_clean(M)
+
+
+def test_f_intl_matches_has_no_duplicates():
+    """Ο πινακας ματς εθνικων (οπου υπαρχει — τοπικα, οχι στο repo) ΔΕΝ εχει διπλα."""
+    import pandas as pd
+    import intl_dedupe
+    p = os.path.join(ROOT, 'intl_matches.csv')
+    if not os.path.exists(p):
+        pytest.skip('intl_matches.csv δεν υπαρχει εδω (χτιζεται τοπικα)')
+    intl_dedupe.assert_clean(pd.read_csv(p, dtype={'mid': str}), where='intl_matches.csv')
+
+
+def test_f_intl_build_uses_guard():
+    """Το intl_build.py περναει απο τον κοινο ελεγχο διπλων και κανει τα ids ακεραιους (αιτια του bug 25/9)."""
+    p = os.path.join(ROOT, 'intl_build.py')
+    if not os.path.exists(p):
+        pytest.skip('intl_build.py ζει μονο τοπικα')
+    src = open(p, encoding='utf-8').read()
+    assert 'intl_dedupe.assert_clean' in src, 'intl_build.py χωρις intl_dedupe.assert_clean'
+    assert 'int(NAMES[' in src, 'intl_build.py: τα ids των φιλικων Nowgoal πρεπει να γινονται int'
+
+
+def test_f_intl_venue_flags_one_row_per_match():
+    """intl_venue_flags.csv (οπου υπαρχει — τοπικα) εχει μια γραμμη ανα ματς· αλλιως το join πολλαπλασιαζει ματς στο Elo (bug 25/9: 286 φιλικα ×4)."""
+    import pandas as pd
+    import intl_dedupe
+    p = os.path.join(ROOT, 'intl_venue_flags.csv')
+    if not os.path.exists(p):
+        pytest.skip('intl_venue_flags.csv δεν υπαρχει εδω (τοπικο)')
+    intl_dedupe.assert_unique_mid(pd.read_csv(p, dtype={'mid': str}), where='intl_venue_flags.csv')
+
+
+def test_f_intl_elo_walk_starts_after_seed():
+    """Ο υπολογισμος Elo εθνικων ξεκινα ΑΚΡΙΒΩΣ μετα την αφετηρια eloratings (τελος 2019 → 1/1/2020)· οχι επικαλυψη (bug 25/9: απο 1/7/2019)."""
+    for f, needle in (('intl_rating.py', "WALK_START = f'{int(SEED_YEAR) + 1}-01-01'"),
+                      ('intl_rating2_hist.py', "CUTOFF = pd.Timestamp('2020-01-01')")):
+        p = os.path.join(ROOT, f)
+        if not os.path.exists(p):
+            pytest.skip(f'{f} ζει μονο τοπικα')
+        src = open(p, encoding='utf-8').read()
+        assert needle in src, f'{f}: η εναρξη του υπολογισμου δεν ειναι η επομενη μερα της αφετηριας eloratings'
+        assert "'2019-07-01'" not in src.replace("ηταν '2019-07-01'", ''), f'{f}: εμεινε εναρξη 1/7/2019 (επικαλυψη με την αφετηρια)'
+
+
+def test_f_intl_over_pricing_push_aware():
+    """Over εθνικων (25/9, αποφαση Στελιου): σωστο edge με push/μισα — x.25/x.75 ΔΕΝ ειναι x.5, οι ακεραιες επιστρεφουν στο push."""
+    import intl_pricing as ip
+    for line, exp in ((2.25, 0.154), (2.5, 0.035), (2.75, -0.071), (3.0, -0.177)):
+        got = ip.over_ev(2.8, line, 1.95)
+        assert abs(got - exp) < 0.002, f'over {line} @1.95, T 2.8: edge {got:+.3f}, αναμενομενο {exp:+.3f}'
+    assert abs(ip.over_ev(2.8, 2.5, ip.over_fair(2.8, 2.5))) < 1e-6, 'fair τιμη δεν δινει edge 0'
+    src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
+    assert 'intl_pricing.over_ev' in src and "po, _ = p_over(T, b['ou_line']); e = po" not in src, 'το dashboard build δεν χρησιμοποιει τον σωστο τυπο over'
+
+
+def test_f_intl_ah_quarters_split():
+    """AH εθνικων (25/9, αποφαση Στελιου): τεταρτο = μισο/μισο στις διπλανες γραμμες· μισες/ακεραιες ιδιες με το picks.p_cover."""
+    import picks, intl_pricing as ip
+    dist = picks.gd_dist(1.6, 1.0)
+    for side, ud, o in ((1, -0.75, 1.95), (1, -1.25, 2.05), (1, -2.25, 2.0)):          # φαβορι: σωστα τεταρτα
+        avg = (ip.ah_ev(dist, side, ud - .25, o, picks.MARGIN) + ip.ah_ev(dist, side, ud + .25, o, picks.MARGIN)) / 2
+        assert abs(ip.ah_ev(dist, side, ud, o, picks.MARGIN) - avg) < 1e-12, f'τεταρτο {ud}: δεν ειναι μισο/μισο'
+    pw, pp = picks.p_cover(dist, 1, -0.5); old = pw * (1.95 - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+    assert abs(ip.ah_ev(dist, 1, -0.5, 1.95, picks.MARGIN) - old) < 1e-12, 'μιση γραμμη: διαφορα απο p_cover'
+    assert abs(ip.ah_ev(dist, 1, -0.75, ip.ah_fair(dist, 1, -0.75), 0.0)) < 0.01, 'fair τιμη τεταρτου δεν δινει ~0'
+    # 25/9 (β) Σχεδιο Β → 30/9: ΟΛΑ τα τεταρτα των dogs (+x.25 ΚΑΙ +x.75) με τον ΠΑΛΙΟ τροπο (p_cover στη γραμμη)
+    for ud in (0.25, 1.25, 2.25, 0.75, 1.75):
+        pw, pp = picks.p_cover(dist, -1, ud); old = pw * (1.9 - 1) * (1 - picks.MARGIN) - (1 - pw - pp)
+        assert abs(ip.ah_ev(dist, -1, ud, 1.9, picks.MARGIN) - old) < 1e-12, f'Σχεδιο Β: dog +{ud} δεν τιμολογειται με τον παλιο τροπο'
+    # 25/9 (γ) βαθια φαβορι: dist_for διαλεγει τη «βαθια» κατανομη ΜΟΝΟ για ≤ −2
+    dd = picks.gd_dist(1.4, 1.0)
+    assert ip.dist_for(dist, dd, -2.0) is dd and ip.dist_for(dist, dd, -2.5) is dd and ip.dist_for(dist, dd, -1.75) is dist and ip.dist_for(dist, dd, 1.25) is dist
+    assert ip.dist_for(dist, None, -3.0) is dist
+    cfg = json.load(open(os.path.join(ROOT, 'intl_deepfav_config.json'), encoding='utf-8'))['a_deep']
+    assert 0.0038 < cfg['H'] < 0.0048 and 0.0045 < cfg['A'] < 0.0055 and 0.0038 < cfg['AV'] < 0.0048, cfg
+    import intl_picks_ledger as L
+    assert L.variant_of(dict(mkt='AH', line=1.25)).startswith('Σχ.Β') and L.variant_of(dict(mkt='AH', line=0.75)).startswith('Σχ.Β') and L.variant_of(dict(mkt='AH', line=-2.5)).startswith('βαθυ') and L.variant_of(dict(mkt='AH', line=-1.5)) == ''
+    src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
+    assert 'intl_pricing.ah_ev' in src and 'picks.p_cover(dist, side, ud); e = pw' not in src, 'το dashboard build δεν χρησιμοποιει σωστα τεταρτα AH'
+
+
+def test_f_intl_consensus_and_ledger():
+    """Κανονικα picks εθνικων (25/9): συναινεση ≥2/3 (handicap + over, οχι 1Χ2/εκτος κανονα), πρωτη εμφανιση ≤72ω, σημειωση <2ω."""
+    import datetime as dt
+    import intl_consensus as ic, intl_picks_ledger as L
+    pk = {'H': 'DOG 2 +1.25 @1.90 (Bovada, +14%) · 1Χ2 φαβ γηπ ≥75% @1.20', 'A': 'DOG 2 +1.25 @1.90 (Bovada, +11%)', 'AV': 'FAV 1 -1.25 @1.95 (Bovada, +12%)',
+          'over': 'OVER 2.25 @2.00 (Bovada, +20%)', 'over_A': '(εκτος κανονα: αναντιστοιχια, edge +9% Bovada)', 'over_AV': 'OVER 2.25 @2.00 (Bovada, +15%)'}
+    cs = ic.consensus(pk)
+    assert [(c['mkt'], c['side'], c['models']) for c in cs] == [('AH', 2, 'Μ1+Μ2'), ('OVER', 0, 'Μ1+Μ3')], cs
+    assert abs(cs[0]['edge'] - 0.11) < 1e-9, 'edge συναινεσης = το μικροτερο'
+    assert ic.late_note(1.5) and ic.late_note(0.4) and not ic.late_note(5)
+    now = dt.datetime(2026, 9, 25, 17, 0, tzinfo=dt.timezone.utc)
+    dash = {'comps': [{'comp': 'NL B', 'matches': [dict(home='X', away='Y', utc='2026-09-25 18:45', picks=pk),
+                                                   dict(home='Z', away='W', utc='2026-09-29 18:45', picks=pk)]}]}
+    known = set(); rows = L.new_entries(dash, known, now)
+    cons = [r for r in rows if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ']
+    assert len(cons) == 2 and all(r['home'] == 'X' for r in rows), 'μονο ματς ≤72ω'
+    assert all(r['late'] for r in cons), 'pick 1.75ω πριν πρεπει να εχει σημειωση'
+    assert L.new_entries(dash, known, now) == [], 'δευτερη φορα: καμια νεα εγγραφη (πρωτη εμφανιση μονο)'
+    # Telegram (25/9): μηνυμα νεου pick + εκκαθαρισης χτιζεται· χωρις TELEGRAM_TOKEN δεν στελνει ουτε βαζει σημαια
+    msg = L.tg_new_msg(cons)
+    assert 'ΕΘΝΙΚΕΣ' in msg and 'Y +1.25 @1.90' in msg and 'Over 2.25' in msg and '21:45' in msg, msg
+    assert 'Μ1+Μ2' in msg and cons[0]['late'] in msg
+    done = [dict(cons[0], result='0-1', pnl=0.9), dict(cons[1], result='0-1', pnl=-1.0)]
+    sm = L.tg_settle_msg(done, done)
+    assert '✅' in sm and '❌' in sm and 'ROI -5.0%' in sm, sm
+    old = {k: os.environ.pop(k, None) for k in ('TELEGRAM_TOKEN', 'TELEGRAM_CHAT_ID')}
+    try:
+        assert L.telegram(rows, now) is False and not any(r.get('tg') for r in rows), 'χωρις token δεν πρεπει να σημαδευει'
+    finally:
+        for k, v in old.items():
+            if v is not None:
+                os.environ[k] = v
+
+
+def test_g_intl_refresh_guards():
+    """Αυτοματο refresh εθνικων (25/9): βαση χωρις διπλα, Μ1 κλειδωμενο στο H3, λ αγκυρας 0.3, closing Odds API για τα νεα ματς."""
+    import pandas as pd, intl_dedupe
+    f = os.path.join(ROOT, 'intl_matches.csv')
+    if os.path.exists(f):
+        M = pd.read_csv(f, dtype={'mid': str, 'season': str})
+        intl_dedupe.assert_clean(M, where='test')
+        assert M.mid.is_unique, 'διπλα mid στο intl_matches.csv'
+    src = open(os.path.join(ROOT, 'intl_refresh.py'), encoding='utf-8').read()
+    assert "INTL_PIN_VARIANT='H3'" in src, 'το refresh πρεπει να κλειδωνει το Μ1 στο H3'
+    anc = open(os.path.join(ROOT, 'intl_mkt_anchor.py'), encoding='utf-8').read()
+    assert 'run(0.3, keep=True)' in anc and 'intl_closing.jsonl' in anc and 'intl_close_hist.json' in anc
+    if os.path.exists(os.path.join(ROOT, 'intl_hfa_config.json')):
+        assert json.load(open(os.path.join(ROOT, 'intl_hfa_config.json'), encoding='utf-8'))['variant'] == 'H3'
+    # 25/9: Nowgoal ταιριαζει ΜΟΝΟ με ιδια ημερομηνια (ωρα Πεκινου) — ο ρεβανς του ιδιου ζευγους δεν παιρνει τις γραμμες του αλλου ματς
+    assert intl_dedupe.ng_same_fixture('2026-09-25 02:45', '2026-09-24T18:45')
+    assert not intl_dedupe.ng_same_fixture('2026-09-28 00:00', '2026-10-04T18:45')
+    rec = [{'dt': '2026-09-28 00:00', 'x': 1}]
+    assert intl_dedupe.ng_pick(rec, '2026-09-27 16:00') and intl_dedupe.ng_pick(rec, '2026-10-04 18:45') is None
+    # 25/9 (αποφαση Στελιου): στρωμα αξιας = ΚΛΗΣΗ (TM) — συντελεστης απο το τεστ, fallback V_full στην ιδια κλιμακα, προστασια απο μπλοκαρισμα TM
+    cfg = json.load(open(os.path.join(ROOT, 'intl_vcall_config.json'), encoding='utf-8'))
+    assert 30 < cfg['elo_per_doubling'] < 50 and 0.8 < cfg['r_scale'] < 1.5, cfg
+    pj = open(os.path.join(ROOT, 'intl_project.py'), encoding='utf-8').read()
+    assert 'ELO_LN_CALL * math.log(vh / va)' in pj and 'def v_call_of' in pj, 'το Μ1 πρεπει να χρησιμοποιει την αξια κλησης'
+    ct = open(os.path.join(ROOT, 'intl_callups_tm.py'), encoding='utf-8').read()
+    assert 'len(OUT) < 0.8 * len(TIDS)' in ct, 'χωρις προστασια: μπλοκαρισμα TM θα εσβηνε την κληση'
+    pr = os.path.join(ROOT, 'intl_projections.csv')
+    if os.path.exists(pr):
+        import pandas as pd
+        P = pd.read_csv(pr)
+        if 'val_src' in P and len(P):      # 10/10: εκτος παραθυρου εθνικων το αρχειο εχει μονο στηλες
+            assert (P.val_src.astype(str).str.count('κληση') >= 1).mean() > 0.5, 'λιγοτερα απο τα μισα ματς με αξια κλησης'
+
+
+def test_h_intl_new_T_over():
+    """26/9 (αποφαση Στελιου): νεο T για τα over = T + xG επιθεσης/αμυνας ομαδων· χωρις xG → T σημερα· μονο over (handicap απο intl_project)."""
+    import intl_pricing as ip
+    cfg = json.load(open(os.path.join(ROOT, 'intl_tmix_config.json'), encoding='utf-8'))
+    for v in ('H', 'A', 'AV'):
+        b0, b1, b2 = cfg[v]; assert 0.6 < b1 < 0.95 and 0.35 < b2 < 0.75 and -1.2 < b0 < -0.4, (v, cfg[v])
+    AD = {'_meta': {'mu': 1.23, 'hf': 1.15}, '1': {'att': 0.6, 'dfn': 0.9, 'n': 12}, '2': {'att': 0.7, 'dfn': 1.0, 'n': 12}, '3': {'att': 1.5, 'dfn': 1.4, 'n': 2}}
+    xs = ip.team_xg_sum(AD, 1, 2); assert xs is not None and xs < 1.4, xs
+    assert ip.team_xg_sum(AD, 1, 3) is None, 'λιγοτερα απο 3 ματς με xG → χωρις νεο T'
+    assert ip.t_over(2.5, 'H', None, cfg) == 2.5 and ip.t_over(2.5, 'H', xs, cfg) < 2.5, 'ομαδες με λιγα xG πρεπει να κατεβαζουν το T'
+    src = open(os.path.join(ROOT, 'intl_dashboard_build.py'), encoding='utf-8').read()
+    assert 'intl_pricing.t_over(T_H' in src and 'team_xg_sum(AD_XG' in src, 'το dashboard δεν χρησιμοποιει το νεο T στα over'
+    ad = json.load(open(os.path.join(ROOT, 'intl_xg_attdef.json'), encoding='utf-8'))
+    assert '_meta' in ad and len(ad) > 80, 'intl_xg_attdef.json χωρις meta/ομαδες'
+
+
+def test_i_intl_pick_status():
+    """26/9/2026: καταγεγραμμενο pick εθνικων — ενεργο αν υπαρχει στη συναινεση· αλλιως τιμη για να ξαναγινει = 2η μικροτερη των μοντελων."""
+    import intl_pick_status as ps
+    row = dict(mkt='AH', side=2, line=-2.5)
+    m = dict(consensus=[], market=dict(source='bovada', bovada=dict(ah_line=2.5, oh=2.0, oa=1.91)),
+             edges={'H': {'bovada': dict(ah_away=16.9, need_a=1.79)}, 'A': {'bovada': dict(ah_away=0.7, need_a=2.09)},
+                    'AV': {'bovada': dict(ah_away=7.0, need_a=1.97)}})
+    st = ps.status(row, m)
+    assert not st['active'] and st['cur_line'] == -2.5 and st['cur_odds'] == 1.91
+    assert st['need'] == 1.97, st                       # Μ1 1.79, Μ3 1.97 (το Μ2 2.09 εκτος ζωνης 2.10; οχι — 2.09 μεσα, αλλα 3ο)
+    m['consensus'] = [dict(mkt='AH', side=2, line=-2.5, odds=1.98, book='Bovada', edges={'Μ1': .2, 'Μ3': .1}, models='Μ1+Μ3')]
+    assert ps.status(row, m)['active']
+
+
+
+def test_red_card_direction():
+    """5/10/2026 (Στελιος): κοκκινες = red_modes.LIVE_MODE (εμπειρικη ανα σκορ). ΣΩΣΤΗ κατευθυνση: η ομαδα με 11 ΧΑΝΕΙ xG,
+    η ομαδα με 10 ΚΕΡΔΙΖΕΙ (αναιρουμε την κοκκινη). Η παλια φορμουλα εδινε +0.0083/λεπτο ΣΤΟΝ πλεονεκτουντα — να μην ξαναγυρισει."""
+    import red_modes, pandas as pd
+    assert red_modes.LIVE_MODE == 'emps'
+    m = dict(home=dict(id=1), away=dict(id=2), reds=[dict(home=False, min=30)],
+             shots=[dict(tid=1, xg=0.2, min=10, sit='RegularPlay', goal=False), dict(tid=2, xg=0.3, min=20, sit='RegularPlay', goal=False),
+                    dict(tid=1, xg=0.4, min=60, sit='RegularPlay', goal=True), dict(tid=1, xg=0.3, min=70, sit='RegularPlay', goal=False),
+                    dict(tid=2, xg=0.05, min=80, sit='RegularPlay', goal=False)])
+    a = red_modes.live_adj(m)
+    assert a[1]['term'] < 0, 'η ομαδα με 11 πρεπει να ΧΑΝΕΙ xG'
+    assert a[2]['term'] >= 0 and a[2]['fc'] > 1, 'η ομαδα με 10 πρεπει να ΚΕΡΔΙΖΕΙ'
+    for f in ('build_inputs.py', 'add_current_season.py', 'build_inputs_5s.py', 'build_inputs_5s_wf.py', 'brazil_shadow.py', 'dom_fav_shadow.py',
+              'euro_engine.py', 'euro_live_projections.py'):
+        src = open(os.path.join(ROOT, f), encoding='utf-8').read()
+        assert 'red_modes.live_adj' in src and '0.0083 *' not in src.replace('0.0083*', '0.0083 *'), f'{f}: παλια φορμουλα κοκκινων'
+    T = pd.read_csv(os.path.join(ROOT, 'teamgame_inputs.csv'))
+    assert T.red_xg.min() < 0 and T.red_xg.max() <= 1e-9, 'teamgame_inputs.csv: red_xg πρεπει να ειναι ≤0 (μονο αφαιρεση απο την ομαδα με 11)'
+    # εθνικες (Μ1/Μ2/Μ3): adj_xg με κοκκινες απο τη στηλη redsj
+    src = open(os.path.join(ROOT, 'intl_rating.py'), encoding='utf-8').read()
+    assert 'reds_json=None' in src and 'red_modes.live_adj' in src, 'intl_rating.adj_xg χωρις κοκκινες'
+    for f in ('intl_rating2_hist.py', 'intl_mkt_anchor.py'):
+        assert "getattr(r, 'redsj', None)" in open(os.path.join(ROOT, f), encoding='utf-8').read(), f'{f}: adj_xg χωρις redsj'
+    assert 'redsj=' in open(os.path.join(ROOT, 'intl_build.py'), encoding='utf-8').read(), 'intl_build χωρις στηλη redsj'
+
+
+def test_coach_filter():
+    """5/10/2026 (manager_picks_test): κοψιμο dog 15η+ ΥΠΕΡ ομαδας στα 1-8 ματς μετα απο αλλαγη προπονητη, αν πριν ηταν «κακη και στα δυο»."""
+    import coach_flags as cf
+    old = cf._CACHE
+    try:
+        cf._CACHE = {'1': dict(name='A', change=dict(next_match_no=3, type='bad_both', perm='X', first='X', date='2026-10-01', pre_luck=0.0)),
+                     '2': dict(name='B', change=dict(next_match_no=3, type='unlucky', perm='Y', first='Y', date='2026-10-01', pre_luck=-0.5)),
+                     '3': dict(name='C', change=dict(next_match_no=9, type='bad_both', perm='Z', first='Z', date='2026-09-01', pre_luck=0.0))}
+        assert cf.filter_reason(1, 16) and not cf.filter_reason(1, 12), 'μονο 15η+'
+        assert not cf.filter_reason(2, 16), 'ατυχη ομαδα δεν κοβεται'
+        assert not cf.filter_reason(3, 16), 'μετα το 8ο ματς δεν κοβεται'
+    finally:
+        cf._CACHE = old
+    # καθαρισμα: «μπλιπ» βοηθου ≤2 ματς αναμεσα στον ιδιο προπονητη αγνοειται
+    g = [dict(coach=c) for c in [7, 7, 7, 9, 7, 7, 5, 5, 5]]
+    runs = cf.runs_of(g)
+    assert [r[0] for r in runs] == [7, 5], runs
+    src = open(os.path.join(ROOT, 'toa_live.py'), encoding='utf-8').read()
+    assert 'coach_flags.filter_reason' in src and 'coach_flags.log_cut' in src, 'toa_live χωρις φιλτρο προπονητη'
+    assert os.path.exists(os.path.join(ROOT, 'coach_flags.json')), 'λειπει coach_flags.json'
+
+
+
+def test_e_ucl_freshness_flag():
+    """16/10/2026: καθε pick Champions League φερει eu_ok (ελεγχος φρεσκαδας: ολα τα προηγουμενα ευρωπαικα των ομαδων στο rating)·
+    οσα εχουν eu_ok=False ΔΕΝ υπαρχουν στο euro_picks_ledger (αναμονη μεχρι να ανανεωθουν τα δεδομενα)."""
+    if not os.path.exists(_p('euro_value_latest.json')):
+        pytest.skip('euro_value_latest.json δεν υπαρχει')
+    d = _json('euro_value_latest.json')
+    ucl = [p for p in d.get('picks', []) if p.get('comp') == 'ChampionsLeague']
+    if not ucl or 'eu_ok' not in ucl[0]:
+        pytest.skip('σαρωση πριν τον ελεγχο φρεσκαδας (16/10)')
+    assert all(isinstance(p.get('eu_ok'), bool) for p in ucl), 'UCL pick χωρις eu_ok'
+    bad = {(str(p['mid'])) for p in ucl if p.get('eu_ok') is False}
+    if bad and os.path.exists(_p('euro_picks_ledger.jsonl')):
+        led = [r for r in _jsonl('euro_picks_ledger.jsonl') if str(r.get('mid')) in bad and str(r.get('seen', '')) >= str(d.get('scanned_at', ''))[:16]]
+        assert not led, f'euro_picks_ledger: γραφτηκε UCL pick με eu_ok=False ({led[0]["home"]}-{led[0]["away"]})'
+
+
+def test_nba_stale_ratings_guard(tmp_path, monkeypatch):
+    """29/10/2026 (Στελιος «περνα και τα 2»): οχι NBA pick οσο μια ομαδα εχει ματς που ξεκινησε αλλα δεν εχει περασει στις δυναμεις
+    (Πελικανς–Κινγκς Over 237.5: +11% → −12% μετα την ανανεωση). Μετα την ανανεωση (rl_h = νεα μερα) → ξανα κανονικα."""
+    import nba_picks as NP
+    from nba_espn import us_date
+    monkeypatch.setattr(NP, 'F', lambda n: str(tmp_path / n))
+    now = datetime.datetime.now(datetime.timezone.utc)
+    iso = lambda t: t.strftime('%Y-%m-%dT%H:%M:00Z')
+    prev = now - datetime.timedelta(hours=3); fut = now + datetime.timedelta(hours=20)
+    old = (now - datetime.timedelta(days=3)).date().isoformat()
+    json.dump(dict(last={'NOP': old, 'SAC': old, 'BOS': old, 'NYK': old}), open(tmp_path / 'nba_state.json', 'w'))
+    json.dump({}, open(tmp_path / 'nba_espn_games.json', 'w'))
+    proj = dict(games=[dict(code='1', utc=iso(prev), hcode='NOP', acode='DEN', played=True),
+                       dict(code='2', utc=iso(fut), hcode='NOP', acode='SAC', played=False, rl_h=old, rl_a=old),
+                       dict(code='3', utc=iso(fut), hcode='BOS', acode='NYK', played=False, rl_h=old, rl_a=old)])
+    pk = lambda c: dict(code=c, mkt='total', side=0, bet='Over 237.5', hcap=237.5, odds=1.97, edge=0.11, home='H', away='A', when=iso(fut)[:16])
+    keep, codes = NP.stale_filter([pk('2'), pk('3')], proj, now)
+    assert codes == {'2'} and [p['code'] for p in keep] == ['3'], (codes, keep)
+    log = [json.loads(l) for l in open(tmp_path / NP.STALE_LOG, encoding='utf-8')]
+    assert len(log) == 1 and log[0]['stale'] == {'NOP': [us_date(iso(prev))]}
+    NP.stale_filter([pk('2')], proj, now)                                   # ιδιο κομμενο pick → ΟΧΙ δευτερη εγγραφη
+    assert len(open(tmp_path / NP.STALE_LOG, encoding='utf-8').readlines()) == 1
+    proj['games'][1]['rl_h'] = us_date(iso(prev))                           # μετα την ανανεωση: η προβλεψη εχει το χθεσινο ματς
+    keep, codes = NP.stale_filter([pk('2'), pk('3')], proj, now)
+    assert not codes and len(keep) == 2
+    src = open(os.path.join(ROOT, 'scanner_tick.sh'), encoding='utf-8').read()
+    assert src.index('python nba_ratings_due.py') < src.index('python nba_odds_scan.py') < src.index('python nba_picks.py')
+    assert 'skip_codes=STALE' in open(os.path.join(ROOT, 'nba_picks.py'), encoding='utf-8').read()
+
+
+def test_el_absence_pir_plus_defense():
+    """29/10/2026 (Στελιος «ναι περνα το»): χαντικαπ EL = «PIR + αμυνα». Κλειδωμενα βαρη, αρχεια el_defense, ο τυπος κοστους, και
+    το σκετο PIR να μενει καταγραφη (shadow['pir']). Golden: Valencia–Olympiacos 13/10 με τιμες αμυνας «πριν το ματς» = +1.83 (τεστ el_pird_open_news)."""
+    import el_absence as EA, el_defense as ED
+    assert EA.ENGINE == 'PIR+D'
+    P_ = ED.params()
+    assert P_ is not None and P_['season'].startswith('E')
+    assert (round(P_['B0'], 2), round(P_['B1'], 2), round(P_['B2'], 2)) == (0.26, 0.88, 0.81)
+    assert 0.3 < P_['sdD'] < 0.5 and P_['K'] == 500.0 and P_['LAM'] == 8000.0 and len(P_['prev']) > 200
+    V = json.load(open(os.path.join(ROOT, 'el_defense_values.json'), encoding='utf-8'))
+    assert V['games'] > 0 and len(V['players']) > 200
+    assert all(isinstance(v['zd'], float) and math.isfinite(v['zd']) for v in V['players'].values())
+    S = json.load(open(os.path.join(ROOT, 'el_defense_stints.json'), encoding='utf-8'))
+    games = [v for v in S.values() if v['utc'] < '2026-10-13T18:00:00Z']
+    old = ED._C.get('V')
+    try:
+        ED._C['V'] = ED.values(P_, games)
+        B = json.load(open(os.path.join(ROOT, 'el_box.json'), encoding='utf-8'))
+        prev = json.load(open(os.path.join(ROOT, 'el_player_min_prev.json'), encoding='utf-8'))['players']
+        sh, sa = {}, {}
+        ch = EA.team_cost(B, 'E2026', 'PAM', ['Mario Saint-Supery'], '2026-10-13T19:00:00Z', prev, None, (), shadow=sh)
+        ca = EA.team_cost(B, 'E2026', 'OLY', ['Donta Hall'], '2026-10-13T19:00:00Z', prev, None, (), shadow=sa)
+        assert abs((ca[0] - ch[0]) - 1.83) < 0.015, (ca, ch)
+        assert abs((sa['pir'] - sh['pir']) - 1.57) < 0.015, (sa, sh)
+    finally:
+        if old is None: ED._C.pop('V', None)
+        else: ED._C['V'] = old
+    src = open(os.path.join(ROOT, 'el_picks.py'), encoding='utf-8').read()
+    assert "'pir': dict(log=F('el_pir_shadow.jsonl')" in src
+
+
+def test_el_totals_without_absence_correction():
+    """29/10/2026 (Στελιος «οκ βγαλε το on/off»): ΣΥΝΟΛΑ Ευρωλιγκας χωρις διορθωση απουσιων (tot = 0)· το on/off μονο ως tot_onoff."""
+    import el_absence as EA
+    assert EA.TOTALS_ONOFF is False
+    src = open(os.path.join(ROOT, 'el_absence.py'), encoding='utf-8').read()
+    assert 'if TOTALS_ONOFF: tot = tot_onoff' in src
+
+
+def test_el_late_picks_by_cause():
+    """29/10/2026 (Στελιος): αργα picks EL ταξινομουνται ανα αιτια (Α-Ε) με ιστορικο στο μηνυμα· ΧΑΝΤΙΚΑΠ: μονο «σταδιακη κοντρα ≤6ω» = καταγραφη
+    (gradual) — τα late2h/late6dog δεν μπαινουν σε νεα picks· τα κομμενα (gradual, move15) πανε στο info bot."""
+    import el_picks as EP
+    assert (EP.GRAD_PTS, EP.GRAD_H, EP.SUDDEN_PTS) == (0.5, 6.0, 1.0)
+    assert set(EP.LATE_HC) == {'Α', 'Β', 'Γ', 'Δ', 'Ε'} and set(EP.LATE_TOT) == {'Β', 'Γ', 'Δ', 'Ε'}
+    src = open(os.path.join(ROOT, 'el_picks.py'), encoding='utf-8').read()
+    assert "state[k]['paper'] = 'late2h'" not in src and "state[k]['paper'] = 'late6dog'" not in src
+    assert "c == 'Γ' and hrs <= GRAD_H: state[k]['paper'] = 'gradual'" in src
+    assert "p.get('paper') in ('gradual', 'move15')" in src and "channel='info'" in src
+    p = dict(mkt='hcap', late_cls='Β', d1=-1.4, d3=-1.5, d6=-1.2, h_open=5.0)
+    assert 'ξαφνικη' in EP.late_note(p) and '+23%' in EP.late_note(p)

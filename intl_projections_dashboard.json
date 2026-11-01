@@ -1,0 +1,44 @@
+{
+ "generated": "2026-11-01 08:51",
+ "toa_scanned": null,
+ "toa_matches": 0,
+ "ng_snapshot": "2026-11-01 08:50",
+ "ng_snapshot_afconq": null,
+ "comps": [
+  {
+   "comp": "NL A",
+   "matches": []
+  },
+  {
+   "comp": "NL B",
+   "matches": []
+  },
+  {
+   "comp": "NL C",
+   "matches": []
+  },
+  {
+   "comp": "NL D",
+   "matches": []
+  }
+ ],
+ "rules": {
+  "ah": "AH: dog/φαβορι ≥0.5, τιμη 1.70-2.10, edge ≥10% (Pinnacle πρωτα, μετα Matchbook· χωρις TOA: Crown, μετα SBOBET)· γραμμη φαβορι −0.25/0 → ξερη νικη 1Χ2 = −0.5 (1/10), νεο pick 1.70-2.10, σταλμενο μενει και πανω απο 2.10 (2/10)",
+  "x12": "1Χ2: φαβορι με P ≥75% (και 1/τιμη <0.95)",
+  "dead": "νεκρη ομαδα (αδιαφορη για 1η/υποβιβασμο) = κανενα pick",
+  "over": "OVER: edge ≥8% ΚΑΙ (νοκ-αουτ ή |ΔElo| <150 = «κοντινο»)· αλλιως «εκτος κανονα»",
+  "hfa": {
+   "NL": 60,
+   "AFCONQ": 80
+  },
+  "T": "T = 0.29 + 0.33·|diff|/100 + 0.26·[KO] + 0.49·[κοντινο] + 0.10·(R_h+R_a)/2/100 − 0.05·[NL]",
+  "A_note": "Η εκδοχη Α (αγκυρα χωρις αξια) δινει ΜΟΝΟ AH picks (οπως τρεχει απο 21/9)· H και AV δινουν AH + 1Χ2 φαβορι.",
+  "afconq_note": "AFCONQ: αγκυρα μη διαθεσιμη για CAF (δεν εχει τρεξει intl_mkt_anchor) — μονο εκδοχη H, HFA 80. Χωρις TOA key → Nowgoal.",
+  "market": "Αγορα = TOA Pinnacle (αλλιως Matchbook) απο τον scanner· χωρις TOA → Nowgoal Crown/SBOBET (snapshot laptop)."
+ },
+ "versions": {
+  "H": "Rating H3 + αξια ροστερ",
+  "A": "Αγκυρα αγορας (λ=0.3) χωρις αξια",
+  "AV": "Αγκυρα + αξια ροστερ"
+ }
+}

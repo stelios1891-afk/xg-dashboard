@@ -1,0 +1,44 @@
+https://www.oddsportal.com/basketball/europe/eurocup-2024-2025/outrights/ → 0 chars
+   odds-like cells: 0
+https://www.oddsportal.com/basketball/europe/eurocup-2023-2024/outrights/ → 0 chars
+   odds-like cells: 0
+https://www.oddsportal.com/basketball/europe/eurocup-2022-2023/outrights/ → 4115 chars
+   odds-like cells: 1
+   hover ERR Locator.hover: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator("[data-testid*=\"odd\"], .odds-cell, p.height-content").first
+    - locator resolved to <p class="height-content truncate text-sm uppercase leading-[18px] text-white-main">MY LEAGUES</p>
+  - attempting hover action
+    2 × waiting for element to be visible and stable
+      - element is visible and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-6">…</div> from <div class="mt-3 flex min-h-0 min-w-0 w-full flex-1 flex-col min-lg:max-w-[772px]">…</div> subtree intercepts pointer events
+    - retrying hover action
+    - waiting 20ms
+    2 × waiting for element to be visible and stable
+      - element is visible and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-6">…</div> from <div class="mt-3 flex min-h-0 min-w-0 w-full flex-1 flex-col min-lg:max-w-[772px]">…</div> subtree intercepts pointer events
+    - retrying hover action
+      - waiting 100ms
+    58 × waiting for element to be visible and stable
+       - element is visible and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-6">…</div> from <div class="mt-3 flex min-h-0 min-w-0 w-full flex-1 flex-col min-lg:max-w-[772px]">…</div> subtree intercepts pointer events
+     - retrying hover action
+       - waiting 500ms
+
+https://www.oddsportal.com/basketball/europe/eurocup-2021-2022/outrights/ → 0 chars
+   odds-like cells: 0
+https://www.oddsportal.com/basketball/europe/eurocup-2019-2020/outrights/ → 3875 chars
+   odds-like cells: 1
+   hover: no "Opening" text
+https://www.oddsportal.com/basketball/europe/eurocup-2018-2019/outrights/ → 3884 chars
+   odds-like cells: 1
+   hover: no "Opening" text
+https://www.oddsportal.com/basketball/europe/eurocup-2017-2018/outrights/ → 5175 chars
+   odds-like cells: 1
+   hover: no "Opening" text

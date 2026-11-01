@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# scanner_tick.sh — ΕΝΑ πληρες περασμα του scanner (18/9/2026, anti-thinning).
+# Εξηχθη 1:1 απο τα steps του scanner.yml ωστε το workflow να το τρεχει ΣΕ ΒΡΟΧΟ
+# (ο runner μενει ζωντανος ~1 ωρα, τικ καθε 5') — τα scheduled crons του GitHub
+# αραιωνονται αγρια (κενα 3-5h) και δεν ειναι αξιοπιστα απο μονα τους.
+# Χρηση: bash scanner_tick.sh [auto|force]   (force = χειροκινητο, χωρις gating)
+# Το gating συχνοτητας/credits ζει ΜΕΣΑ στα scripts (scan_value.auto, euro/dom
+# odds gates) — τα «σκετα» τικ κοστιζουν 0 TOA credits.
+set -u
+MODE="${1:-auto}"
+
+if [ "$MODE" = "force" ]; then
+  python scan_value.py || echo "SCANNER FAILED (το τικ συνεχιζει)"
+else
+  python scan_value.py auto || echo "SCANNER FAILED (το τικ συνεχιζει)"
+fi
+python shadow_scan.py || echo "shadow failed (μη κρισιμο)"
+python brazil_shadow.py || echo "brazil shadow failed (μη κρισιμο)"
+python euro_odds_scan.py || echo "euro odds failed (μη κρισιμο)"
+python dom_odds_scan.py || echo "dom odds failed (μη κρισιμο)"
+python dom_fav_shadow.py || echo "fav shadow failed (μη κρισιμο)"
+python euro_shadow_scan.py || echo "euro shadow failed (μη κρισιμο)"
+# 26/9: ημερολογιο ευρωπαϊκων picks για το Pick History (εισοδος ≤72ω, κλεισιμο, σκορ/xG FotMob)
+python euro_picks_ledger.py || echo "euro ledger failed (μη κρισιμο)"
+# 10/10: ορια Pinnacle ευρωπαϊκων — «💰 οριο ↑» στο info bot ΜΟΝΟ για ματς με ανοιχτο pick (οπως el_pin_watch)
+python euro_lim_watch.py || echo "euro lim watch failed (μη κρισιμο)"
+# 25/9: 🌐 International — TOA (Nations League) odds + rebuild του tab json (fallback Nowgoal αν δεν υπαρχει TOA)
+# 27/9: απουσιες FotMob (unavailable) πριν την αποστολη — αν αλλαξαν → dispatch intl-reproject (νεες προβολες)
+python intl_unavailable.py --check || echo "intl unavailable failed (μη κρισιμο)"
+python intl_odds_scan.py || echo "intl odds failed (μη κρισιμο)"
+python intl_dashboard_build.py || echo "intl build failed (μη κρισιμο)"
+# 25/9: κανονικα picks εθνικων (συναινεση ≥2/3) — πρωτη εμφανιση ≤72ω + εκκαθαριση (intl_picks_ledger.jsonl)
+python intl_picks_ledger.py || echo "intl ledger failed (μη κρισιμο)"
+# 26/9: επισημες αποστολες FotMob ~60′ πριν → μετατοπιση τιμων Μ1/Μ3 + Telegram (intl_lineups.json)
+python intl_lineups_check.py || echo "intl lineups failed (μη κρισιμο)"
+# 26/9: ματς εθνικων τελειωσε (≥110′ απο σεντρα) και δεν εχει περασει → ζητα αμεσως intl-refresh (σκορ/xG/Elo/προβολες + Telegram)
+python intl_refresh_due.py || echo "intl refresh due failed (μη κρισιμο)"
+python euro_refresh_due.py || echo "euro refresh due failed (μη κρισιμο)"   # 10/10: euro-refresh στην ωρα του (το cron του GitHub αργει ~7ω)
+# 25/9: 🏀 Euroleague — TOA odds (3 credits/request, gating μεσα στο script: ≤48h πριν το τζαμπολ, 60'/15')
+# 3/10: αποτελεσματα Ευρωλιγκας/EuroCup αμεσως μετα τα ματς (το euro-refresh του GitHub αργει ~6ω) → el/ec_refresh οταν χρειαζεται
+python bk_results_due.py || echo "bk results due failed (μη κρισιμο)"
+python el_odds_scan.py || echo "el odds failed (μη κρισιμο)"
+python el_picks.py || echo "el picks failed (μη κρισιμο)"   # 25/9: value picks Ευρωλιγκας + Telegram
+python el_pin_watch.py || echo "el pinnacle watch failed (μη κρισιμο)"
+python el_report.py weekly || echo "el report failed (μη κρισιμο)"
+python el_report.py weekly BCL || echo "bcl report failed (μη κρισιμο)"   # 8/10: θερμομετρο BCL (Δευτερα)   # 26/9: εβδομαδιαια αναφορα EL (Δευτερα) → Telegram
+# 1/10: 🏀 EuroCup — Pinnacle (league 377, 0 credits, ≤48ω πριν, καθε 10') + value picks χαντικαπ ≥8% → Telegram (picks bot)
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python ec_odds_scan.py || echo "ec odds failed (μη κρισιμο)"
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python ec_picks.py || echo "ec picks failed (μη κρισιμο)"
+python bcl_odds_scan.py || echo "bcl odds failed (μη κρισιμο)"   # 6/10: Basketball Champions League (Pinnacle 197844)
+python bcl_picks.py || echo "bcl picks failed (μη κρισιμο)"
+# 29/10: δυναμεις NBA αμεσως μετα τα ματς (οχι μονο το πρωινο nba_refresh) — μαζι με το «φρενο» nba_picks.stale_filter
+python nba_ratings_due.py || echo "nba ratings due failed (μη κρισιμο)"
+python nba_odds_scan.py || echo "nba odds failed (μη κρισιμο)"   # 6/10: NBA (Pinnacle 487)
+python nba_picks.py || echo "nba picks failed (μη κρισιμο)"
+# 7/10: τα alerts ορίων ΜΕΤΑ τα scans (πολλα αιτηματα Pinnacle πριν τα scans → BCL/NBA σταματησαν 6/10 13:35 UTC)
+python el_pin_watch.py BCL || echo "bcl pinnacle watch failed (μη κρισιμο)"
+python el_pin_watch.py NBA || echo "nba pinnacle watch failed (μη κρισιμο)"   # 6/10: alerts ανοιγματος/οριων BCL
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python el_pin_watch.py EC || echo "ec pinnacle watch failed (μη κρισιμο)"   # 5/10: ιδια alerts ανοιγματος/οριων για το EuroCup   # 1/10: ανοιγμα Pinnacle & ορια → info bot + ιστορικο (0 credits)
+# 21/10/2026 ΣΤΑΜΑΤΗΣΕ (Στελιος: «βγαλε το EuroCup απο dashboard, live, telegram τα παντα») — python ec_playable_log.py || echo "ec playable log failed (μη κρισιμο)"   # 13/10: EuroCup — ηταν ακομα pick στο οριο 500 / 2ω / 1ω / 30′ πριν; (καταγραφη μονο)
+python absence_log.py || echo "absence log failed (μη κρισιμο)"   # 20/10: ΣΥΛΛΟΓΗ απουσιων FotMob (CORE7+Ευρωπη, ≤7 μερες· ολα καθε 3ω, ≤4ω πριν καθε 15′) — δεν αλλαζει picks
+python lineup_window.py || echo "lineup window failed (μη κρισιμο)"   # 21/10: παραθυρο σεντρας (−80′..+5′): ενδεκαδα + τιμη Pinnacle καθε περασμα + ΣΚΙΑ «ενδεκαδα πανω στο μοντελο» — κανενα pick
+python travel_under_scan.py --tick || echo "travel under failed (μη κρισιμο)"   # 25/10: μακρινο ευρωπαικο ταξιδι → επομενο ματς πρωταθληματος: ΚΑΤΑΓΡΑΦΗ under (πρωτη/κλεισιμο/αποτελεσμα) + λιστα στο info bot μια φορα την εβδομαδα — κανενα pick
+python core7_totals_shadow.py || echo "totals shadow failed (μη κρισιμο)"   # 29/10: ΚΑΤΑΓΡΑΦΗ συνολων εγχωριων με αγκυρα, νωρις (≥5 μερες, τιμιος χρονος, αγων 8+) — κανενα pick· χρηματα κρινονται στην 15η
+
+# ---- commit ΜΟΝΟ οταν αλλαξαν picks/market (ιδιο gate με πριν) ----
+git config user.name "scanner-bot"
+git config user.email "actions@github.com"
+for f in clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_shadow_state.json euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_fav714_shadow.jsonl dom_fav714_shadow_state.json dom_uncomp_pairs.json coach_filter_log.jsonl intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_closing.jsonl intl_picks_ledger.jsonl euro_picks_ledger.jsonl intl_lineups.json intl_refresh_due_state.json intl_guard_state.json intl_btts_hist.jsonl intl_unavailable_scan_state.json intl_projections_dashboard.json el_odds_latest.json el_odds_hist.jsonl el_value_latest.json el_value_state.json el_clv_bets.jsonl el_pin_state.json el_pin_hist.jsonl ec_pin_state.json ec_pin_hist.jsonl pin_fallback_state.json ec_odds_latest.json ec_odds_hist.jsonl ec_value_latest.json ec_value_state.json ec_clv_bets.jsonl bcl_pin_state.json bcl_pin_hist.jsonl nba_pin_state.json nba_pin_hist.jsonl pin_archive_state.json; do [ -f "$f" ] || : > "$f"; done
+git add -f value_last_scan.txt el_report_last.txt pin_archive pin_archive_state.json bk_results_due_state.json el_projections.json el_box.json el_sched.json el_shadow_lines.json ec_projections.json ec_box.json ec_sched.json 2>/dev/null || true   # 1/10: + αρχειο Pinnacle · 3/10: + αποτελεσματα μπασκετ   # ποτε εγινε το τελευταιο TOA scan — χωρις αυτο καθε runner ξαναπληρωνε (24/9)
+# 7/10: αρχεια BCL/NBA ενα-ενα και ΜΟΝΟ αν υπαρχουν — ενα αρχειο που λειπει (π.χ. nba_clv_bets.jsonl) εκανε ολη τη γραμμη να αποτυγχανει → BCL δεν αποθηκευοταν απο 6/10 13:45 UTC
+for f in bcl_projections.json bcl_odds_latest.json bcl_odds_hist.jsonl bcl_value_latest.json bcl_value_state.json bcl_clv_bets.jsonl bcl_pin_state.json bcl_pin_hist.jsonl nba_projections.json nba_odds_latest.json nba_odds_hist.jsonl nba_value_latest.json nba_value_state.json nba_clv_bets.jsonl nba_first_lines.json nba_shadow_def.jsonl nba_totals_log.jsonl nba_steam_log.jsonl nba_steam_state.json nba_shadow_po.jsonl nba_motiv_skip.jsonl nba_totals_m2d_log.jsonl nba_totals_shadow2_log.jsonl nba_refs_live.json nba_pin_first_seen.json nba_injrep_live.json nba_injrep_live_hist.jsonl nba_injrep_alert.json nba_rw_lineups.json nba_rw_lineups_hist.jsonl nba_pin_state.json nba_pin_hist.jsonl nba_espn_games.json nba_injuries.json nba_injuries_hist.jsonl nba_state.json nba_trades.json nba_stale_skip.jsonl nba_ratings_due_state.json bcl_scan_status.json nba_scan_status.json bcl_report_last.txt el_absence_now.json el_rotowire_state.json el_rotowire_hist.jsonl euro_lim_state.json ec_playable.jsonl fatigue_shadow.jsonl absence_log.jsonl absence_log_state.json lineup_window.jsonl lineup_shadow.jsonl lineup_window_state.json travel_under_log.json travel_under_state.json core7_totals_shadow.json el_box_shadow.jsonl el_box_shadow_adj.json el_pir_shadow.jsonl el_pir_shadow_adj.json; do [ -e "$f" ] && git add -f "$f"; done
+for f in nba_pbp_full/2027/*.jsonl; do [ -e "$f" ] && git add -f "$f"; done   # 24/10: το bk_results_due τρεχει nba_espn.py → φετινο play-by-play ΚΑΙ εδω (αλλιως χανοταν: το euro-refresh δεν ξανακατεβαζει ματς με pstats)
+git add -f intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_closing.jsonl intl_picks_ledger.jsonl euro_picks_ledger.jsonl intl_lineups.json intl_refresh_due_state.json intl_guard_state.json intl_btts_hist.jsonl intl_unavailable_scan_state.json intl_projections_dashboard.json 2>/dev/null || true   # 25/9 intl (δεν ειναι gitignored· -f για σιγουρια)
+git add value_scan_state.json value_picks_latest.json market_1x2_latest.json odds_history.jsonl odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl shadow_state.json brazil_shadow.jsonl brazil_shadow_state.json euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_shadow_state.json euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_fav714_shadow.jsonl dom_fav714_shadow_state.json dom_uncomp_pairs.json coach_filter_log.jsonl el_odds_latest.json el_odds_hist.jsonl el_value_latest.json el_value_state.json el_clv_bets.jsonl el_pin_state.json el_pin_hist.jsonl ec_pin_state.json ec_pin_hist.jsonl pin_fallback_state.json ec_odds_latest.json ec_odds_hist.jsonl ec_value_latest.json ec_value_state.json ec_clv_bets.jsonl pin_archive_state.json
+if git diff --cached --quiet -- core7_totals_shadow.json travel_under_log.json travel_under_state.json absence_log.jsonl lineup_window.jsonl lineup_shadow.jsonl euro_lim_state.json value_last_scan.txt value_scan_state.json market_1x2_latest.json odds_history_state.json clv_bets.jsonl clv_ledger.jsonl shadow_picks.jsonl brazil_shadow.jsonl euro_odds_latest.json dom_odds_latest.json euro_shadow.jsonl euro_value_latest.json euro_live_odds.jsonl euro_odds_hist.jsonl dom_odds_hist.jsonl dom_live_odds.jsonl dom_fav_shadow.jsonl dom_fav_shadow_state.json dom_fav714_shadow.jsonl dom_fav714_shadow_state.json dom_uncomp_pairs.json coach_filter_log.jsonl intl_odds_latest.json intl_odds_hist.jsonl intl_live_odds.jsonl intl_closing.jsonl intl_picks_ledger.jsonl euro_picks_ledger.jsonl intl_lineups.json intl_refresh_due_state.json intl_guard_state.json intl_btts_hist.jsonl intl_unavailable_scan_state.json intl_projections_dashboard.json el_odds_latest.json el_odds_hist.jsonl el_value_latest.json el_value_state.json el_clv_bets.jsonl el_pin_state.json el_pin_hist.jsonl ec_pin_state.json ec_pin_hist.jsonl pin_fallback_state.json ec_odds_latest.json ec_odds_hist.jsonl ec_value_latest.json ec_value_state.json ec_clv_bets.jsonl pin_archive_state.json pin_archive bk_results_due_state.json el_projections.json ec_projections.json el_report_last.txt bcl_report_last.txt bcl_projections.json bcl_odds_latest.json bcl_value_latest.json bcl_clv_bets.jsonl nba_projections.json nba_odds_latest.json nba_value_latest.json nba_clv_bets.jsonl nba_state.json nba_stale_skip.jsonl; then
+  echo "no pick/market changes — skip commit"
+else
+  # ---- sanity gate (2026-09-18): αν σπασει καποιος ελεγχος, ΔΕΝ γινεται commit, το τικ συνεχιζει ----
+  if ! python -m pytest -q -p no:cacheprovider tests/test_scanner_sanity.py; then
+    echo "::warning::SANITY TESTS FAILED — το commit ακυρωνεται (το workflow συνεχιζει)"
+    git reset -q
+    exit 0
+  fi
+  git commit -m "picks/market update [skip ci]"
+  # rebase πριν το push: μεσα στη βροχη μπορει να τρεχουν παραλληλα euro-refresh/one-offs
+  # 1/10/2026: -X theirs = σε συγκρουση κερδιζει η ΔΙΚΗ μας (μολις παραγμενη) εκδοχη· αλλιως το rebase «κολλουσε» (π.χ.
+  # intl_projections_dashboard.json που γραφει και το intl-reproject) και ο scanner δεν ανεβαζε ΤΙΠΟΤΑ ως το τελος του run.
+  git pull --rebase --autostash -X theirs || { echo "::warning::rebase απετυχε — abort"; git rebase --abort 2>/dev/null || true; }
+  git push || echo "push failed — θα ξαναπροσπαθησει το επομενο τικ"
+fi
+# 1/11/2026: ελαφρυ αντιγραφο για το Streamlit Cloud (κλαδι dashboard-live, χωρις ιστορικο· το main 305 MB δεν κατεβαινε στο Reboot).
+# Τελευταιο βημα: αν αποτυχει, δεν πειραζει picks/commits/Telegram — απλως το dashboard μενει στο προηγουμενο αντιγραφο.
+timeout 180 python dash_slim.py --push || echo "::warning::dash_slim απετυχε (dashboard-live δεν ενημερωθηκε)"
+exit 0
