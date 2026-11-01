@@ -89,4 +89,7 @@ else
   git pull --rebase --autostash -X theirs || { echo "::warning::rebase απετυχε — abort"; git rebase --abort 2>/dev/null || true; }
   git push || echo "push failed — θα ξαναπροσπαθησει το επομενο τικ"
 fi
+# 1/11/2026: ελαφρυ αντιγραφο για το Streamlit Cloud (κλαδι dashboard-live, χωρις ιστορικο· το main 305 MB δεν κατεβαινε στο Reboot).
+# Τελευταιο βημα: αν αποτυχει, δεν πειραζει picks/commits/Telegram — απλως το dashboard μενει στο προηγουμενο αντιγραφο.
+timeout 180 python dash_slim.py --push || echo "::warning::dash_slim απετυχε (dashboard-live δεν ενημερωθηκε)"
 exit 0
