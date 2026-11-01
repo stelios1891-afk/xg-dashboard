@@ -2,8 +2,8 @@
 Γιατι: το repo εφτασε ~305 MB ιστορικο (ο scanner ξαναγραφει μεγαλα αρχεια τιμων καθε 5′) και το Streamlit Cloud
 δεν προλαβαινε να το κατεβασει στο Reboot («Cloning repository…» ξανα και ξανα).
 Τι κανει: απο το HEAD κραταει τα αρχεια που χρειαζεται το dashboard (ολος ο κωδικας + μικρα αρχεια + μεγαλα που
-αναφερονται στον κωδικα του dashboard ή στα modules που φορτωνει) και τα βαζει σε ΕΝΑ commit χωρις ιστορικο στο
-κλαδι dashboard-live (force push). Το main ΔΕΝ αγγιζεται. Μονο git plumbing — δεν αλλαζει working tree/index.
+αναφερονται στον κωδικα του dashboard ή στα modules που φορτωνει) και τα βαζει σε commit στο
+κλαδι dashboard-live (συνεχες ιστορικο, που ξεκιναει απο την αρχη μια φορα την εβδομαδα). Το main ΔΕΝ αγγιζεται. Μονο git plumbing — δεν αλλαζει working tree/index.
 Χρηση: python dash_slim.py [--push] [--list]"""
 import os, re, sys, subprocess, fnmatch
 
@@ -100,11 +100,14 @@ def build(keep):
     return t
 
 
-def remote_tree():
-    """Το δεντρο που εχει τωρα το dashboard-live στο GitHub (None αν δεν υπαρχει ακομα)."""
+def remote_tip():
+    """(commit, tree, ημερα αρχης) του dashboard-live στο GitHub· None αν δεν υπαρχει. Μονο η κορυφη (--depth=1)."""
     try:
-        git('fetch', '-q', 'origin', f'+refs/heads/{BRANCH}:refs/remotes/origin/{BRANCH}')
-        return git('rev-parse', f'refs/remotes/origin/{BRANCH}^{{tree}}').decode().strip()
+        git('fetch', '-q', '--depth=1', 'origin', f'+refs/heads/{BRANCH}:refs/remotes/origin/{BRANCH}')
+        c = git('rev-parse', f'refs/remotes/origin/{BRANCH}').decode().strip()
+        t = git('rev-parse', f'{c}^{{tree}}').decode().strip()
+        m = re.search(r'αρχη:(\d{4}-\d{2}-\d{2})', git('log', '-1', '--format=%B', c).decode('utf-8'))
+        return c, t, (m.group(1) if m else '2000-01-01')
     except subprocess.CalledProcessError:
         return None
 
@@ -120,12 +123,20 @@ if __name__ == '__main__':
             print(f'  ΜΕΣΑ {r[2] / 1e6:6.2f} MB {r[3]}')
     t = build(keep)
     if '--push' in sys.argv:
-        if t == remote_tree():                     # τιποτα καινουργιο → κανενα push (να μη χτυπαει το Streamlit αδικα)
+        # Συνεχες ιστορικο (κανονικο «pull» για το Streamlit)· μια φορα την εβδομαδα, νυχτα, ξεκιναει απο την αρχη
+        # (νεο commit χωρις γονεα) για να μη φουσκωσει ξανα. Αν το Streamlit δεν παρει μονο του εκεινο το αλμα → ενα Reboot (13″).
+        tip = remote_tip()
+        if tip and t == tip[1]:                    # τιποτα καινουργιο → κανενα push (να μη χτυπαει το Streamlit αδικα)
             print('dashboard-live ηδη ενημερο')
             sys.exit(0)
+        import datetime as dt
+        now = dt.datetime.now(dt.timezone.utc)
+        fresh = (not tip or (now.date() - dt.date.fromisoformat(tip[2])).days >= 7 and 1 <= now.hour <= 3)
+        start = now.date().isoformat() if fresh else tip[2]
         head = git('rev-parse', '--short', 'HEAD').decode().strip()
-        c = git('commit-tree', t, '-m', f'dashboard-live: αντιγραφο του main {head} (μονο αρχεια dashboard, χωρις ιστορικο) [skip ci]').decode().strip()
+        par = [] if fresh else ['-p', tip[0]]
+        c = git('commit-tree', t, *par, '-m', f'dashboard-live: main {head} (μονο αρχεια dashboard) αρχη:{start} [skip ci]').decode().strip()
         git('push', '-q', '-f', 'origin', f'{c}:refs/heads/{BRANCH}')
-        print('push →', BRANCH, c[:9], 'απο', head)
+        print('push →', BRANCH, c[:9], 'απο', head, '(ΝΕΑ ΑΡΧΗ)' if fresh else '')
     else:
         print('tree', t, '(χωρις push)')
