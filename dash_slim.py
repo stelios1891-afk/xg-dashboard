@@ -107,7 +107,7 @@ def remote_tip():
         c = git('rev-parse', f'refs/remotes/origin/{BRANCH}').decode().strip()
         t = git('rev-parse', f'{c}^{{tree}}').decode().strip()
         m = re.search(r'αρχη:(\d{4}-\d{2}-\d{2})', git('log', '-1', '--format=%B', c).decode('utf-8'))
-        return c, t, (m.group(1) if m else '2000-01-01')
+        return c, t, (m.group(1) if m else '2026-11-01')      # το πρωτο αντιγραφο (1/11) δεν ειχε ημερα
     except subprocess.CalledProcessError:
         return None
 
