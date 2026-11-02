@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-02T23:44+00:00",
+ "generated": "2026-11-02T23:57+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -5081,12 +5081,12 @@
    "away": "Oklahoma City Thunder",
    "hcode": "CLE",
    "acode": "OKC",
-   "margin": 4.21,
-   "total": 224.1,
+   "margin": 3.89,
+   "total": 224.2,
    "total_src": "μοντελο",
-   "pts_h": 114.1,
-   "pts_a": 109.9,
-   "p_home": 0.622,
+   "pts_h": 114.0,
+   "pts_a": 110.1,
+   "p_home": 0.613,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -5101,9 +5101,9 @@
    "rl_a": "2026-10-31",
    "margin_base": 1.46,
    "total_base": 222.9,
-   "abs_dm": 2.75,
-   "abs_dt": 1.13,
-   "abs_shadow": 0.1,
+   "abs_dm": 2.43,
+   "abs_dt": 1.25,
+   "abs_shadow": 0.22,
    "abs_h": [
     [
      "Tyson,Jaylon",
@@ -5116,8 +5116,8 @@
      "Watson,Peyton",
      28.3,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -5137,10 +5137,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.168,
-   "abs_ld": 2.122,
-   "abs_lop": 2.141,
-   "abs_ldp": 2.205,
+   "abs_lo": 2.109,
+   "abs_ld": 2.302,
+   "abs_lop": 2.109,
+   "abs_ldp": 2.302,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -5621,12 +5621,12 @@
    "away": "Sacramento Kings",
    "hcode": "DAL",
    "acode": "SAC",
-   "margin": 12.22,
-   "total": 234.2,
+   "margin": 12.15,
+   "total": 234.1,
    "total_src": "μοντελο",
-   "pts_h": 123.2,
+   "pts_h": 123.1,
    "pts_a": 111.0,
-   "p_home": 0.817,
+   "p_home": 0.816,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -5641,16 +5641,16 @@
    "rl_a": "2026-10-31",
    "margin_base": 12.86,
    "total_base": 234.9,
-   "abs_dm": -0.64,
-   "abs_dt": -0.76,
-   "abs_shadow": -0.14,
+   "abs_dm": -0.7,
+   "abs_dt": -0.8,
+   "abs_shadow": -0.13,
    "abs_h": [
     [
      "Irving,Kyrie",
      28.8,
      1,
-     "Doubtful",
-     0.963
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -5670,10 +5670,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.033,
-   "abs_ld": 0.427,
-   "abs_lop": 1.696,
-   "abs_ldp": 0.084,
+   "abs_lo": 1.654,
+   "abs_ld": 0.31,
+   "abs_lop": 1.756,
+   "abs_ldp": 0.079,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
