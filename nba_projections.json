@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-02T22:57+00:00",
+ "generated": "2026-11-02T23:09+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -5392,12 +5392,12 @@
    "away": "Atlanta Hawks",
    "hcode": "IND",
    "acode": "ATL",
-   "margin": -11.18,
-   "total": 231.0,
+   "margin": -10.79,
+   "total": 230.8,
    "total_src": "μοντελο",
-   "pts_h": 109.9,
-   "pts_a": 121.1,
-   "p_home": 0.204,
+   "pts_h": 110.0,
+   "pts_a": 120.8,
+   "p_home": 0.212,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -5412,9 +5412,9 @@
    "rl_a": "2026-10-31",
    "margin_base": -5.53,
    "total_base": 233.1,
-   "abs_dm": -5.65,
-   "abs_dt": -2.12,
-   "abs_shadow": 0.6,
+   "abs_dm": -5.26,
+   "abs_dt": -2.38,
+   "abs_shadow": 0.87,
    "abs_h": [
     [
      "Haliburton,Tyrese",
@@ -5448,8 +5448,8 @@
      "Toppin,Obi",
      23.0,
      0,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
      "Zubac,Ivica",
@@ -5471,15 +5471,15 @@
      "Johnson,Jalen",
      32.7,
      1,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 4.954,
-   "abs_ld": 0.572,
-   "abs_lop": 5.582,
-   "abs_ldp": 0.675,
+   "abs_lo": 6.398,
+   "abs_ld": 0.817,
+   "abs_lop": 6.398,
+   "abs_ldp": 0.817,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
