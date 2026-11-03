@@ -34,14 +34,15 @@ def load():
         x.columns = ['game_id', 'season', 't', 'neutral', 'team', 'opp', 'pts']
         x['home'] = (1 - x.neutral) * (1 if side == 'home' else -1)
         rows.append(x)
-    off = pd.concat(rows).merge(tg[['game_id', 'team', 'cl_epa', 'plays', 'epa']], on=['game_id', 'team'], how='left')
+    off = pd.concat(rows).merge(tg.drop(columns=['season', 'opp']), on=['game_id', 'team'], how='left')
     off = off[off.pts.notna()]
     return g, off
 
 
-def fit(off, t_now, season_now, HL=8.0, PREV=0.5, LAM=None):
-    """Ratings με ματς πριν το t_now. Επιστρεφει {stat: (mu, h, {team: off}, {team: def})}."""
-    LAM = LAM or dict(cl_epa=4.0, pts=4.0, plays=4.0)
+def fit(off, t_now, season_now, HL=8.0, PREV=0.5, LAM=None, stats=STATS, home=True):
+    """Ratings με ματς πριν το t_now. Επιστρεφει {stat: (mu, h, {team: off}, {team: def})}.
+    home=False → χωρις ορο εδρας στα ratings (η εδρα μενει μονο στη σταθερα του τελικου μετασχηματισμου)."""
+    LAM = LAM or {}
     x = off[(off.t < t_now) & (off.season >= season_now - 2)]
     w = 0.5 ** ((t_now - x.t) / HL) * PREV ** (season_now - x.season)
     teams = sorted(set(x.team) | set(x.opp))
@@ -49,18 +50,18 @@ def fit(off, t_now, season_now, HL=8.0, PREV=0.5, LAM=None):
     n, m = len(x), len(teams)
     X = np.zeros((n, 2 + 2 * m))
     X[:, 0] = 1
-    X[:, 1] = x.home.values
+    X[:, 1] = x.home.values if home else 0
     X[np.arange(n), 2 + x.team.map(ix).values] = 1
     X[np.arange(n), 2 + m + x.opp.map(ix).values] = 1
     sw = np.sqrt(w.values)
     out = {}
-    for s in STATS:
+    for s in stats:
         y = x[s].values.astype(float)
         ok = ~np.isnan(y)
         A = X[ok] * sw[ok, None]
         b = y[ok] * sw[ok]
         # ridge μονο στις ομαδες, κλιμακα με τη διασπορα του μεγεθους
-        P = np.diag([0, 0] + [LAM[s]] * (2 * m)) * 1.0
+        P = np.diag([0, 1e-6] + [LAM.get(s, 3.0)] * (2 * m)) * 1.0
         beta = np.linalg.solve(A.T @ A + P, A.T @ b)
         out[s] = (beta[0], beta[1], dict(zip(teams, beta[2:2 + m])), dict(zip(teams, beta[2 + m:])))
     return out

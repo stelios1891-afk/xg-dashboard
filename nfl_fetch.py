@@ -16,7 +16,7 @@ CACHE = os.path.join(D, 'cache')
 GAMES_URL = 'https://github.com/nflverse/nfldata/raw/master/data/games.csv'
 PBP_URL = 'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_{y}.csv.gz'
 COLS = ['game_id', 'season', 'season_type', 'week', 'posteam', 'defteam', 'play_type', 'epa', 'success',
-        'pass', 'rush', 'qb_kneel', 'qb_spike', 'wp']
+        'pass', 'rush', 'qb_kneel', 'qb_spike', 'wp', 'fumble', 'fumble_lost']
 
 
 def get(url):
@@ -35,17 +35,24 @@ def pbp(y, fresh=False):
 def agg(p):
     p = p[p.play_type.isin(['pass', 'run']) & (p.qb_kneel != 1) & (p.qb_spike != 1) & p.epa.notna()].copy()
     p['cl'] = p.wp.between(0.1, 0.9)
+    # «χωρις τυχη φαμπλ»: ολες οι φασεις με φαμπλ παιρνουν τον ιδιο μεσο EPA (ποιος παιρνει την μπαλα ≈ κορονα-γραμματα)
+    fum = p.fumble == 1
+    p['nf_epa'] = p.epa.where(~fum, p.loc[fum, 'epa'].mean())
     p['p_epa'] = p.epa.where(p['pass'] == 1)
     p['r_epa'] = p.epa.where(p['rush'] == 1)
     g = p.groupby(['game_id', 'posteam', 'defteam'])
     o = g.agg(plays=('epa', 'size'), epa=('epa', 'mean'), sr=('success', 'mean'),
-              p_epa=('p_epa', 'mean'), r_epa=('r_epa', 'mean'), n_pass=('pass', 'sum')).reset_index()
+              p_epa=('p_epa', 'mean'), r_epa=('r_epa', 'mean'), n_pass=('pass', 'sum'),
+              nf_epa=('nf_epa', 'mean')).reset_index()
     c = p[p.cl].groupby(['game_id', 'posteam']).agg(cl_plays=('epa', 'size'), cl_epa=('epa', 'mean'),
-                                                    cl_sr=('success', 'mean')).reset_index()
+                                                    cl_sr=('success', 'mean'),
+                                                    cl_nf_epa=('nf_epa', 'mean'), cl_p_epa=('p_epa', 'mean'),
+                                                    cl_r_epa=('r_epa', 'mean')).reset_index()
     o = o.merge(c, on=['game_id', 'posteam'], how='left')
     o = o.rename(columns={'posteam': 'team', 'defteam': 'opp'})
     # αμυνα = η επιθεση του αντιπαλου στο ιδιο ματς
-    d = o[['game_id', 'team', 'plays', 'epa', 'sr', 'p_epa', 'r_epa', 'cl_plays', 'cl_epa', 'cl_sr']].rename(
+    d = o[['game_id', 'team', 'plays', 'epa', 'sr', 'p_epa', 'r_epa', 'cl_plays', 'cl_epa', 'cl_sr', 'nf_epa',
+           'cl_nf_epa', 'cl_p_epa', 'cl_r_epa']].rename(
         columns=lambda k: k if k == 'game_id' else ('opp' if k == 'team' else 'd_' + k))
     return o.merge(d, on=['game_id', 'opp'], how='left')
 
