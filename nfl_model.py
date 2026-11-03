@@ -16,6 +16,10 @@ POST_WEEK = {'WC': 19, 'DIV': 20, 'CON': 21, 'SB': 22}
 STATS = ('cl_epa', 'pts', 'plays')
 
 
+_rf = os.path.join(D, 'rain_flags.csv')
+RAIN = pd.read_csv(_rf).set_index('game_id').rain if os.path.exists(_rf) else pd.Series(dtype=float)
+
+
 def load():
     g = pd.read_csv(os.path.join(D, 'games.csv'), low_memory=False)
     g = g[g.season >= 2015].copy()
@@ -33,6 +37,11 @@ def load():
         x = g[['game_id', 'season', 't', 'neutral', f'{side}_team', f'{oth}_team', f'{side}_score']].copy()
         x.columns = ['game_id', 'season', 't', 'neutral', 'team', 'opp', 'pts']
         x['dome'] = g.roof.isin(['dome', 'closed']).astype(int).values   # κλειστο γηπεδο (για «καθαρες» δυναμεις, τεστ 16)
+        # καιρος του ματς (μονο ανοιχτα· κλειστα = 0) — για «καθαρες» δυναμεις απο καιρο (τεστ 17)
+        outd = ~g.roof.isin(['dome', 'closed']).values
+        x['wx_wind'] = np.where(outd, g.wind.clip(0, 30).fillna(g.wind.median()).values, 0)
+        x['wx_cold'] = np.where(outd, (50 - g.temp).clip(0, None).fillna(0).values, 0)
+        x['wx_rain'] = np.where(outd, g.game_id.map(RAIN).fillna(0).values, 0)
         x['home'] = (1 - x.neutral) * (1 if side == 'home' else -1)
         rows.append(x)
     off = pd.concat(rows).merge(tg.drop(columns=['season', 'opp']), on=['game_id', 'team'], how='left')
