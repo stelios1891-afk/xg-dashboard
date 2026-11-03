@@ -38,9 +38,14 @@ jobs:
         run: |
           git config user.name "ufc-pin-log-bot"
           git config user.email "actions@github.com"
-          for i in 1 2 3; do
-            for f in ufc_pin_log.jsonl ufc_pin_log_state.json; do [ -e "$f" ] && git add -f "$f"; done   # ενα-ενα (αρχειο που λειπει ακυρωνε ολο το add)
-            if git diff --cached --quiet; then echo "τιποτα"; break; fi
-            git commit -m "ufc pin log [skip ci]" && git pull --rebase -X theirs && git push && break
-            sleep 10
+          ls -la ufc_pin_log.jsonl ufc_pin_log_state.json || true
+          for f in ufc_pin_log.jsonl ufc_pin_log_state.json; do [ -e "$f" ] && git add -f "$f"; done   # ενα-ενα (αρχειο που λειπει ακυρωνε ολο το add)
+          if git diff --cached --quiet; then echo "τιποτα νεο"; exit 0; fi
+          git commit -m "ufc pin log [skip ci]"
+          for i in 1 2 3 4 5; do
+            git fetch origin main && git rebase -X theirs origin/main && git push origin HEAD:main && break   # 3/11: το παλιο pull --rebase αποτυγχανε σιωπηλα
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 10))
           done
+          git fetch origin main
+          if [ "$(git rev-list --count origin/main..HEAD)" != "0" ]; then echo "ΔΕΝ ανεβηκε"; exit 1; fi
