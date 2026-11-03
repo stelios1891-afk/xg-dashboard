@@ -27,6 +27,9 @@ def base_frame(g, off, q, tg, p):
     cfg = {k: p[k] for k in ('HL', 'PREV', 'lam_o', 'lam_d')}
     if p['sos'] is not None:
         cfg['sos'] = p['sos']
+    for k in ('HLp', 'home', 'post', 'nseas'):          # βαση v3+: επιπλεον ρυθμισεις αφετηριας (τεστ 13)
+        if k in p:
+            cfg[k] = p[k]
     feats = E.build(g, off, cfg, p['win'])
     qbf = Q.qb_features(g, q, HLQ=p['HLQ'], N0=p['N0'], M0=p['M0'], HL=p['HL'], PREV=p['PREV'], target=tg)
     return G.frame(g, feats, qbf)
