@@ -4162,5 +4162,121 @@
 1.93,
 1.98
 ]
+},
+"5868129": {
+"seen": "2026-11-03T20:01",
+"lg": "LaLiga",
+"ko": "2026-11-07T20:00",
+"home": "Valencia",
+"away": "Real Madrid",
+"T_model": 2.71,
+"ah_first": [
+1.5,
+2.04,
+1.88
+],
+"first": {
+"t": "2026-11-03T20:01",
+"line": 3.25,
+"over": 1.9,
+"under": 1.99
+},
+"trav": [
+{
+"side": "away",
+"team": "Real Madrid",
+"eu_comp": "ChampionsLeague",
+"eu_at": "AEK Athens",
+"eu_t": "2026-11-04T17:45",
+"eu_away": true,
+"km": 2368,
+"inzone": true,
+"patt": 1,
+"sup": 1.5,
+"cat": "μεγαλη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "01/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Elche",
+"km": 137,
+"rest": 8.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 1,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 137,
+"km14": 274,
+"rest": 6.1,
+"min_rest": 6.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Barcelona",
+"km": 499,
+"rest": 4.0
+},
+{
+"d": "01/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Racing Santander",
+"km": 538,
+"rest": 6.8
+},
+{
+"d": "04/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "AEK Athens",
+"km": 2385,
+"rest": 3.1
+}
+],
+"scen": "Π✈ Π✈ Ε✈ → Π✈",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εκτ",
+"trip_now": 2090,
+"km14": 5512,
+"rest": 3.1,
+"min_rest": 3.1,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-03T20:01",
+"line": 3.25,
+"over": 1.9,
+"under": 1.99
+},
+"ah_last": [
+1.5,
+2.04,
+1.88
+]
 }
 }
