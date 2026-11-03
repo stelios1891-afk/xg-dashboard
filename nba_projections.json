@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-02T23:57+00:00",
+ "generated": "2026-11-03T00:08+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -5621,12 +5621,12 @@
    "away": "Sacramento Kings",
    "hcode": "DAL",
    "acode": "SAC",
-   "margin": 12.15,
-   "total": 234.1,
+   "margin": 11.86,
+   "total": 234.4,
    "total_src": "μοντελο",
    "pts_h": 123.1,
-   "pts_a": 111.0,
-   "p_home": 0.816,
+   "pts_a": 111.3,
+   "p_home": 0.81,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -5641,9 +5641,9 @@
    "rl_a": "2026-10-31",
    "margin_base": 12.86,
    "total_base": 234.9,
-   "abs_dm": -0.7,
-   "abs_dt": -0.8,
-   "abs_shadow": -0.13,
+   "abs_dm": -1.0,
+   "abs_dt": -0.52,
+   "abs_shadow": 0.14,
    "abs_h": [
     [
      "Irving,Kyrie",
@@ -5655,13 +5655,6 @@
    ],
    "abs_a": [
     [
-     "LaVine,Zach",
-     34.0,
-     1,
-     "Questionable",
-     0.42
-    ],
-    [
      "Murray,Keegan",
      27.0,
      0,
@@ -5672,8 +5665,8 @@
    "inj_src": "official",
    "abs_lo": 1.654,
    "abs_ld": 0.31,
-   "abs_lop": 1.756,
-   "abs_ldp": 0.079,
+   "abs_lop": 1.654,
+   "abs_ldp": 0.31,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
