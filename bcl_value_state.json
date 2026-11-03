@@ -18,11 +18,11 @@
   "hcap": -15.5
  },
  "BCL|pin1639381210|hcap|-1": {
-  "odds": 1.855,
-  "edge": 0.3319,
+  "odds": 1.847,
+  "edge": 0.2981,
   "when": "2026-11-03T19:30",
   "first_seen": "2026-11-02T11:55+00:00",
-  "hcap": -6.0
+  "hcap": -6.5
  },
  "STATUS|pin1639375269|hcap|1": {
   "active": true,
@@ -104,5 +104,12 @@
  "STATUS|pin1639466071|total|Over": {
   "active": true,
   "when": "2026-11-04T19:00"
+ },
+ "BCL|pin1639375269|total|Under": {
+  "odds": 1.962,
+  "edge": 0.0848,
+  "when": "2026-11-03T19:30",
+  "first_seen": "2026-11-03T11:33+00:00",
+  "hcap": 162.5
  }
 }
