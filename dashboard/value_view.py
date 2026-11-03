@@ -314,7 +314,9 @@ def picks_html(picks):
     return (CSS + PLAYED_CSS + '<div class="wrap"><div class="pbar2"><span id="pcnt">✅ παιγμένα 0</span>'
             '<button class="pf on" data-f="all" onclick="pfSet(this)">Όλα</button><button class="pf" data-f="todo" onclick="pfSet(this)">Μη παιγμένα</button>'
             '<button class="pf" data-f="done" onclick="pfSet(this)">Παιγμένα</button>'
-            '<span class="pfsep">+</span><button class="pf pt" onclick="ptSet(this)" title="Μονο ματς με σεντρα σημερα (ωρα Ελλαδας)· συνδυαζεται με τα αλλα φιλτρα">Σημερινά</button></div>'
+            '<span class="pfsep">+</span><button class="pf pt" onclick="ptSet(this)" title="Μονο ματς με σεντρα σημερα (ωρα Ελλαδας)· συνδυαζεται με τα αλλα φιλτρα">Σημερινά</button>'
+            '<span class="pfsep">+</span><button class="pf pv" data-v="ok" onclick="pvSet(this)" title="Μονο οσα παιζονται τωρα (ξαναπατα για ολα)· συνδυαζεται με τα αλλα φιλτρα">Παίζεται</button>'
+            '<button class="pf pv" data-v="np" onclick="pvSet(this)" title="Μονο οσα ΔΕΝ παιζονται (δεν ισχυει πια / αναμονη κτλ.)· ξαναπατα για ολα">Δεν παίζεται</button></div>'
             + ''.join(pick_card(p) for p in picks) + '</div>' + CALC_JS + PLAYED_JS)
 
 # 7/10/2026 (Στελιος «ενδειξη τικ — να την πατω και να αποθηκευεται»): «✅ το επαιξα» ανα pick, στη μνημη του browser (localStorage)·
@@ -332,12 +334,13 @@ PLAYED_CSS = """<style>
 </style>"""
 PLAYED_JS = """<script>
 (function(){
-  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false;
+  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false, pv='';   // 3/11: pv = '' ολα · 'ok' παιζεται · 'np' δεν παιζεται
   var FKEY='vp_filters_v1';   // 21/10: τα φιλτρα θυμουνται σε αυτη τη συσκευη
-  try{ var fs=JSON.parse(localStorage.getItem(FKEY)||'{}'); if(['all','todo','done'].indexOf(fs.f)>=0) filt=fs.f; today=!!fs.t; }catch(e){}
-  function saveF(){ try{ localStorage.setItem(FKEY, JSON.stringify({f:filt, t:today})); }catch(e){} }
+  try{ var fs=JSON.parse(localStorage.getItem(FKEY)||'{}'); if(['all','todo','done'].indexOf(fs.f)>=0) filt=fs.f; today=!!fs.t; if(['ok','np'].indexOf(fs.v)>=0) pv=fs.v; }catch(e){}
+  function saveF(){ try{ localStorage.setItem(FKEY, JSON.stringify({f:filt, t:today, v:pv})); }catch(e){} }
   function showF(){ document.querySelectorAll('.pf[data-f]').forEach(function(x){x.classList.toggle('on', x.getAttribute('data-f')===filt);});
-    var t=document.querySelector('.pf.pt'); if(t) t.classList.toggle('on', today); }   // 21/10: «Σημερινά» = ξεχωριστο κουμπι, ΚΑΙ με τα αλλα φιλτρα
+    var t=document.querySelector('.pf.pt'); if(t) t.classList.toggle('on', today);
+    document.querySelectorAll('.pf.pv').forEach(function(x){x.classList.toggle('on', x.getAttribute('data-v')===pv);}); }   // 21/10: «Σημερινά» = ξεχωριστο κουμπι, ΚΑΙ με τα αλλα φιλτρα
   var S = !!(window.VP_SYNC && window.VP_SYNC.on);     // 12/10: κοινο σε ολες τις συσκευες (played_store → GitHub)· αλλιως μνημη browser
   if(S){ mem = window.VP_SYNC.played || {}; }
   else { try{ mem=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ ok=false; mem={}; } }
@@ -351,7 +354,8 @@ PLAYED_JS = """<script>
       var d=!!mem[c.getAttribute('data-k')]; if(d) n++;
       c.classList.toggle('done', d);
       var b=c.querySelector('.played'); if(b) b.textContent = d ? '✅ το έπαιξα' : '☐ το έπαιξα';
-      c.style.display = ((filt==='all' || (filt==='done')===d) && (!today || c.getAttribute('data-day')===athToday())) ? '' : 'none';
+      c.style.display = ((filt==='all' || (filt==='done')===d) && (!today || c.getAttribute('data-day')===athToday())
+        && (!pv || (pv==='np')===c.classList.contains('np'))) ? '' : 'none';
     });
     var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (S?' · 🔄 κοινό σε όλες τις συσκευές':(ok?' · μόνο σε αυτή τη συσκευή':' (ο browser δεν επιτρέπει αποθήκευση)'));
   }
@@ -365,6 +369,7 @@ PLAYED_JS = """<script>
   function athToday(){ try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Athens',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }catch(e){ return new Date().toISOString().slice(0,10); } }
   window.pfSet=function(btn){ filt=btn.getAttribute('data-f'); saveF(); showF(); paint(); };
   window.ptSet=function(btn){ today=!today; saveF(); showF(); paint(); };
+  window.pvSet=function(btn){ var v=btn.getAttribute('data-v'); pv=(pv===v)?'':v; saveF(); showF(); paint(); };
   showF(); paint();
 })();
 </script>"""
