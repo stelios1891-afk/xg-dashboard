@@ -33,6 +33,13 @@ def pbp(y, fresh=False):
 
 
 def agg(p):
+    # ειδικες ομαδες: καθαρο EPA (FG, XP, punt, kickoff) — υπερ μας οταν ειμαστε posteam, κατα οταν ειναι ο αντιπαλος
+    st = p[p.play_type.isin(['field_goal', 'extra_point', 'punt', 'kickoff']) & p.epa.notna()]
+    sf = st.groupby(['game_id', 'posteam']).epa.sum().rename('st_for')
+    sa = st.groupby(['game_id', 'defteam']).epa.sum().rename('st_against')
+    sa.index.names = ['game_id', 'posteam']
+    stn = pd.concat([sf, sa], axis=1).fillna(0)
+    stn = (stn.st_for - stn.st_against).rename('st_net').reset_index()
     p = p[p.play_type.isin(['pass', 'run']) & (p.qb_kneel != 1) & (p.qb_spike != 1) & p.epa.notna()].copy()
     p['cl'] = p.wp.between(0.1, 0.9)
     # «χωρις τυχη φαμπλ»: ολες οι φασεις με φαμπλ παιρνουν τον ιδιο μεσο EPA (ποιος παιρνει την μπαλα ≈ κορονα-γραμματα)
@@ -49,6 +56,7 @@ def agg(p):
                                                     cl_nf_epa=('nf_epa', 'mean'), cl_p_epa=('p_epa', 'mean'),
                                                     cl_r_epa=('r_epa', 'mean')).reset_index()
     o = o.merge(c, on=['game_id', 'posteam'], how='left')
+    o = o.merge(stn, on=['game_id', 'posteam'], how='left')
     o = o.rename(columns={'posteam': 'team', 'defteam': 'opp'})
     # αμυνα = η επιθεση του αντιπαλου στο ιδιο ματς
     d = o[['game_id', 'team', 'plays', 'epa', 'sr', 'p_epa', 'r_epa', 'cl_plays', 'cl_epa', 'cl_sr', 'nf_epa',
