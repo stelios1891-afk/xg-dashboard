@@ -3796,5 +3796,130 @@
 1.94,
 1.96
 ]
+},
+"5795505": {
+"seen": "2026-11-03T15:47",
+"lg": "EPL",
+"ko": "2026-11-07T15:00",
+"home": "Arsenal",
+"away": "Hull City",
+"T_model": 2.59,
+"ah_first": [
+-2.0,
+1.86,
+2.03
+],
+"first": {
+"t": "2026-11-03T15:47",
+"line": 3.0,
+"over": 1.79,
+"under": 2.01
+},
+"trav": [
+{
+"side": "home",
+"team": "Arsenal",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Slavia Prague",
+"eu_t": "2026-11-04T20:00",
+"eu_away": true,
+"km": 1036,
+"inzone": true,
+"patt": 1,
+"sup": 2.0,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "27/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "England_EFLCup",
+"opp": "Fleetwood Town",
+"km": 0,
+"rest": 3.2
+},
+{
+"d": "01/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Liverpool",
+"km": 284,
+"rest": 4.9
+},
+{
+"d": "04/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Slavia Prague",
+"km": 1253,
+"rest": 3.1
+}
+],
+"scen": "Κ✈ Π✈ Ε✈ → Π🏠",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 1036,
+"km14": 2573,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Brentford",
+"km": 253,
+"rest": 8.0
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Ipswich Town",
+"km": 0,
+"rest": 6.0
+}
+],
+"scen": "Π🏠 Π🏠 → Π✈",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 244,
+"km14": 497,
+"rest": 7.0,
+"min_rest": 6.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-03T15:47",
+"line": 3.0,
+"over": 1.79,
+"under": 2.01
+},
+"ah_last": [
+-2.0,
+1.86,
+2.03
+]
 }
 }
