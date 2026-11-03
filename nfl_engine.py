@@ -34,21 +34,32 @@ def _solve(x, w, stat, teams, lam_o, lam_d, home=True):
 
 
 def fit(off, t_now, S, HL=16, PREV=0.6, lam_o=3, lam_d=3, stats=('cl_epa', 'pts', 'plays', 'cl_sr', 'st_net'),
-        sos=None, ramp=None):
-    x = off[(off.t < t_now) & (off.season >= S - 2)]
+        sos=None, ramp=None, post=True, nseas=2, HLp=None, home=True):
+    """post: μετρανε τα playoffs · nseas: ποσες προηγουμενες σεζον · HLp: ξεχωριστο σβησιμο των ΠΕΡΣΙΝΩΝ καθως
+    προχωραει η φετινη (None = ιδιο με τα φετινα) · home=False: χωρις εδρα στα ratings (σταθερη εδρα μονο στον τελικο)."""
+    x = off[(off.t < t_now) & (off.season >= S - nseas)]
+    if not post:
+        x = x[(x.t - (x.season - 2015) * 30) <= 18]
     if ramp is not None:
         cur = x[x.season == S]
         prev = x[x.season < S]
         return _ramp(cur, prev, t_now, S, HL, PREV, lam_o, lam_d, stats, sos, ramp)
-    w = (0.5 ** ((t_now - x.t) / HL) * PREV ** (S - x.season)).values
-    return _fit_block(x, w, stats, lam_o, lam_d, sos)
+    if HLp is None:
+        w = (0.5 ** ((t_now - x.t) / HL) * PREV ** (S - x.season)).values
+    else:
+        t0 = (S - 2015) * 30 + 1                                   # αρχη φετινης σεζον
+        tend = (x.season - 2015) * 30 + 22                         # τελος της σεζον του καθε ματς
+        cur = (x.season == S).values
+        wp = PREV ** (S - x.season) * 0.5 ** ((tend - x.t) / HL) * 0.5 ** (max(0, t_now - t0) / HLp)
+        w = np.where(cur, 0.5 ** ((t_now - x.t) / HL), wp)
+    return _fit_block(x, np.asarray(w, float), stats, lam_o, lam_d, sos, home)
 
 
-def _fit_block(x, w, stats, lam_o, lam_d, sos):
+def _fit_block(x, w, stats, lam_o, lam_d, sos, home=True):
     teams = sorted(set(x.team) | set(x.opp))
     out = {}
     for s in stats:
-        beta, ix, y, ok = _solve(x, w, s, teams, lam_o, lam_d)
+        beta, ix, y, ok = _solve(x, w, s, teams, lam_o, lam_d, home)
         m = len(teams)
         mu, h = beta[0], beta[1]
         O, Dd = beta[2:2 + m], beta[2 + m:]
