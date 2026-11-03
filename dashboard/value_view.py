@@ -223,7 +223,7 @@ def pick_card(p):
     if not _ok and stake_v not in ('— (καταγραφη)', '— (σκια)', '— (αναμονη ανανεωσης)', '— (δες 🧮)', '— (αναμονη 12-36ω)'):
         stake_k, stake_v = 'Ποντ.', '— (καταγραφη)'
     return f"""
-<div class="pc {hi} {'np' if not _ok else ''}" data-k="{pk}" data-day="{_when_ath(p.get('when'))[:10]}">
+<div class="pc {hi} {'np' if not _ok else ''}" data-pv="{'ok' if _ok else ('gone' if p.get('gone') else 'sh')}" data-k="{pk}" data-day="{_when_ath(p.get('when'))[:10]}">
   <div class="top">
     <div class="lg">{badge}{_logo(lid, tpl=LLOGO)}{LEAGUE_LABELS.get(p['lg'], p['lg'])}{tags}</div>
     <div class="when">{_h.escape(_when_ath(p.get('when')))}<button class="played" onclick="tgPlayed(this)" title="Σημειωσε οτι το επαιξες (αποθηκευεται σε αυτη τη συσκευη)">☐ το έπαιξα</button></div>
@@ -316,7 +316,8 @@ def picks_html(picks):
             '<button class="pf" data-f="done" onclick="pfSet(this)">Παιγμένα</button>'
             '<span class="pfsep">+</span><button class="pf pt" onclick="ptSet(this)" title="Μονο ματς με σεντρα σημερα (ωρα Ελλαδας)· συνδυαζεται με τα αλλα φιλτρα">Σημερινά</button>'
             '<span class="pfsep">+</span><button class="pf pv" data-v="ok" onclick="pvSet(this)" title="Μονο οσα παιζονται τωρα (ξαναπατα για ολα)· συνδυαζεται με τα αλλα φιλτρα">Παίζεται</button>'
-            '<button class="pf pv" data-v="np" onclick="pvSet(this)" title="Μονο οσα ΔΕΝ παιζονται (δεν ισχυει πια / αναμονη κτλ.)· ξαναπατα για ολα">Δεν παίζεται</button></div>'
+            '<button class="pf pv" data-v="sh" onclick="pvSet(this)" title="Σκια / καταγραφη: δεν παιζονται απο κανονα (σκια, αγωνιστικη <15, καταγραφη, αναμονη)· ξαναπατα για ολα">Σκιά</button>'
+            '<button class="pf pv" data-v="gone" onclick="pvSet(this)" title="Βγηκαν pick αλλα η αγορα αλλαξε και δεν ισχυουν πια· ξαναπατα για ολα">Δεν ισχύει πια</button></div>'
             + ''.join(pick_card(p) for p in picks) + '</div>' + CALC_JS + PLAYED_JS)
 
 # 7/10/2026 (Στελιος «ενδειξη τικ — να την πατω και να αποθηκευεται»): «✅ το επαιξα» ανα pick, στη μνημη του browser (localStorage)·
@@ -334,9 +335,9 @@ PLAYED_CSS = """<style>
 </style>"""
 PLAYED_JS = """<script>
 (function(){
-  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false, pv='';   // 3/11: pv = '' ολα · 'ok' παιζεται · 'np' δεν παιζεται
+  var KEY='vp_played_v1', mem={}, ok=true, filt='all', today=false, pv='';   // 3/11: pv = '' ολα · 'ok' παιζεται · 'sh' σκια/καταγραφη · 'gone' δεν ισχυει πια
   var FKEY='vp_filters_v1';   // 21/10: τα φιλτρα θυμουνται σε αυτη τη συσκευη
-  try{ var fs=JSON.parse(localStorage.getItem(FKEY)||'{}'); if(['all','todo','done'].indexOf(fs.f)>=0) filt=fs.f; today=!!fs.t; if(['ok','np'].indexOf(fs.v)>=0) pv=fs.v; }catch(e){}
+  try{ var fs=JSON.parse(localStorage.getItem(FKEY)||'{}'); if(['all','todo','done'].indexOf(fs.f)>=0) filt=fs.f; today=!!fs.t; if(['ok','sh','gone'].indexOf(fs.v)>=0) pv=fs.v; }catch(e){}
   function saveF(){ try{ localStorage.setItem(FKEY, JSON.stringify({f:filt, t:today, v:pv})); }catch(e){} }
   function showF(){ document.querySelectorAll('.pf[data-f]').forEach(function(x){x.classList.toggle('on', x.getAttribute('data-f')===filt);});
     var t=document.querySelector('.pf.pt'); if(t) t.classList.toggle('on', today);
@@ -355,7 +356,7 @@ PLAYED_JS = """<script>
       c.classList.toggle('done', d);
       var b=c.querySelector('.played'); if(b) b.textContent = d ? '✅ το έπαιξα' : '☐ το έπαιξα';
       c.style.display = ((filt==='all' || (filt==='done')===d) && (!today || c.getAttribute('data-day')===athToday())
-        && (!pv || (pv==='np')===c.classList.contains('np'))) ? '' : 'none';
+        && (!pv || c.getAttribute('data-pv')===pv)) ? '' : 'none';
     });
     var el=document.getElementById('pcnt'); if(el) el.textContent='✅ παιγμένα '+n+' από '+cards.length + (S?' · 🔄 κοινό σε όλες τις συσκευές':(ok?' · μόνο σε αυτή τη συσκευή':' (ο browser δεν επιτρέπει αποθήκευση)'));
   }
