@@ -4046,5 +4046,121 @@
 1.95,
 1.95
 ]
+},
+"5795513": {
+"seen": "2026-11-03T17:55",
+"lg": "EPL",
+"ko": "2026-11-07T17:30",
+"home": "Nottingham Forest",
+"away": "Manchester City",
+"T_model": 2.74,
+"ah_first": [
+0.75,
+1.93,
+1.98
+],
+"first": {
+"t": "2026-11-03T17:55",
+"line": 2.75,
+"over": 1.83,
+"under": 2.04
+},
+"trav": [
+{
+"side": "away",
+"team": "Manchester City",
+"eu_comp": "ChampionsLeague",
+"eu_at": "RB Leipzig",
+"eu_t": "2026-11-04T20:00",
+"eu_away": true,
+"km": 1013,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "31/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Brentford",
+"km": 117,
+"rest": 7.8
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 171,
+"km14": 288,
+"rest": 7.1,
+"min_rest": 7.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "28/10",
+"ha": "εντ",
+"kind": "Κ",
+"comp": "England_EFLCup",
+"opp": "Brighton & Hove Albion",
+"km": 110,
+"rest": 4.3
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Brighton & Hove Albion",
+"km": 0,
+"rest": 2.8
+},
+{
+"d": "04/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "RB Leipzig",
+"km": 1013,
+"rest": 4.2
+}
+],
+"scen": "Κ🏠 Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 935,
+"km14": 2059,
+"rest": 2.9,
+"min_rest": 2.8,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-03T17:55",
+"line": 2.75,
+"over": 1.83,
+"under": 2.04
+},
+"ah_last": [
+0.75,
+1.93,
+1.98
+]
 }
 }
