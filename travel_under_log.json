@@ -4518,15 +4518,149 @@
 }
 },
 "last": {
-"t": "2026-11-03T20:08",
+"t": "2026-11-03T21:08",
 "line": 3.75,
-"over": 1.9,
-"under": 1.96
+"over": 1.89,
+"under": 1.97
 },
 "ah_last": [
--2.25,
-1.83,
-2.04
+-2.5,
+2.04,
+1.85
+]
+},
+"5887679": {
+"seen": "2026-11-03T21:08",
+"lg": "PrimeiraLiga",
+"ko": "2026-11-07T20:30",
+"home": "Sporting CP",
+"away": "Moreirense",
+"T_model": 3.27,
+"ah_first": [
+-2.0,
+1.85,
+2.01
+],
+"first": {
+"t": "2026-11-03T21:08",
+"line": 3.25,
+"over": 1.89,
+"under": 1.95
+},
+"trav": [
+{
+"side": "home",
+"team": "Sporting CP",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Shakhtar Donetsk",
+"eu_t": "2026-11-03T17:45",
+"eu_away": true,
+"km": 2882,
+"inzone": true,
+"patt": 1,
+"sup": 2.0,
+"cat": "μεγαλη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Académico Viseu",
+"km": 0,
+"rest": 4.1
+},
+{
+"d": "27/10",
+"ha": "εντ",
+"kind": "Κ",
+"comp": "Portugal_TacaDaLiga",
+"opp": "Marítimo",
+"km": 0,
+"rest": 2.0
+},
+{
+"d": "30/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Casa Pia AC",
+"km": 68,
+"rest": 3.0
+},
+{
+"d": "03/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Shakhtar Donetsk",
+"km": 2828,
+"rest": 3.9
+}
+],
+"scen": "Π🏠 Κ🏠 Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 4,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 2882,
+"km14": 5778,
+"rest": 4.1,
+"min_rest": 2.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Estoril",
+"km": 307,
+"rest": 8.0
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Estrela da Amadora",
+"km": 309,
+"rest": 6.0
+}
+],
+"scen": "Π✈ Π🏠 → Π✈",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 299,
+"km14": 915,
+"rest": 7.2,
+"min_rest": 6.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-03T21:08",
+"line": 3.25,
+"over": 1.89,
+"under": 1.95
+},
+"ah_last": [
+-2.0,
+1.85,
+2.01
 ]
 }
 }
