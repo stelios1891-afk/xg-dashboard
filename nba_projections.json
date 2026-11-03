@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-03T02:05+00:00",
+ "generated": "2026-11-03T02:16+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -5785,7 +5785,7 @@
    "pts_h": 112.6,
    "pts_a": 113.0,
    "p_home": 0.489,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 0,
@@ -5944,12 +5944,12 @@
    "away": "Toronto Raptors",
    "hcode": "LAC",
    "acode": "TOR",
-   "margin": -7.15,
+   "margin": -7.47,
    "total": 217.3,
    "total_src": "μοντελο",
-   "pts_h": 105.1,
-   "pts_a": 112.2,
-   "p_home": 0.298,
+   "pts_h": 104.9,
+   "pts_a": 112.4,
+   "p_home": 0.29,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -5964,9 +5964,9 @@
    "rl_a": "2026-11-01",
    "margin_base": -9.45,
    "total_base": 217.0,
-   "abs_dm": 2.29,
-   "abs_dt": 0.27,
-   "abs_shadow": 1.49,
+   "abs_dm": 1.98,
+   "abs_dt": 0.31,
+   "abs_shadow": 0.78,
    "abs_h": [
     [
      "Hachimura,Rui",
@@ -5988,8 +5988,8 @@
      "Barnes,Scottie",
      32.8,
      1,
-     "Questionable",
-     0.42
+     "Probable",
+     0.04
     ],
     [
      "Leonard,Kawhi",
@@ -6002,15 +6002,15 @@
      "Poeltl,Jakob",
      20.2,
      0,
-     "Questionable",
-     0.46
+     "Doubtful",
+     0.963
     ]
    ],
    "inj_src": "official",
    "abs_lo": 2.664,
    "abs_ld": 0.95,
-   "abs_lop": 3.115,
-   "abs_ldp": 1.826,
+   "abs_lop": 2.729,
+   "abs_ldp": 1.671,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
