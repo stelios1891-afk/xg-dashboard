@@ -51,6 +51,8 @@ import xgstats_view
 import value_view
 import results_view
 import proj_archive
+import self_update   # 3/11/2026: το app τραβαει μονο του τα νεα commits του dashboard-live (το Streamlit Cloud κολλαει)
+self_update.start()
 
 st.set_page_config(page_title="xG Model — Live", page_icon="⚽", layout="wide",
                    initial_sidebar_state="expanded")
@@ -643,7 +645,7 @@ def _age_note(label, ts, warn_min, hint=''):
     ago = f"{max(mins, 0):.0f}′" if mins < 90 else (f"{mins / 60:.1f} ωρες" if mins < 48 * 60 else f"{mins / 1440:.0f} μερες")
     txt = f"🕒 {label}: **{gr_time.stamp(ts)}** (πριν {ago})"
     if mins > warn_min:
-        st.warning(txt + " — ⚠ παλια δεδομενα" + (f" · {hint}" if hint else ''))
+        st.warning(txt + " — ⚠ παλια δεδομενα" + (f" · {hint}" if hint else '') + f" · {self_update.note()}")
     else:
         st.caption(txt)
 
