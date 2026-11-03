@@ -39,7 +39,7 @@ def _solve(x, w, stat, teams, lam_o, lam_d, home=True, pri=None):
 
 
 def fit(off, t_now, S, HL=16, PREV=0.6, lam_o=3, lam_d=3, stats=('cl_epa', 'pts', 'plays', 'cl_sr', 'st_net'),
-        sos=None, ramp=None, post=True, nseas=2, HLp=None, home=True, prior=None):
+        sos=None, ramp=None, post=True, nseas=2, HLp=None, home=True, prior=None, teamw=None):
     """post: μετρανε τα playoffs · nseas: ποσες προηγουμενες σεζον · HLp: ξεχωριστο σβησιμο των ΠΕΡΣΙΝΩΝ καθως
     προχωραει η φετινη (None = ιδιο με τα φετινα) · home=False: χωρις εδρα στα ratings (σταθερη εδρα μονο στον τελικο)."""
     x = off[(off.t < t_now) & (off.season >= S - nseas)]
@@ -57,7 +57,16 @@ def fit(off, t_now, S, HL=16, PREV=0.6, lam_o=3, lam_d=3, stats=('cl_epa', 'pts'
         cur = (x.season == S).values
         wp = PREV ** (S - x.season) * 0.5 ** ((tend - x.t) / HL) * 0.5 ** (max(0, t_now - t0) / HLp)
         w = np.where(cur, 0.5 ** ((t_now - x.t) / HL), wp)
-    return _fit_block(x, np.asarray(w, float), stats, lam_o, lam_d, sos, home, prior(S) if callable(prior) else prior)
+    w = np.asarray(w, float)
+    if teamw is not None:
+        # βαρος ΠΡΟΗΓΟΥΜΕΝΩΝ σεζον ανα ομαδα: × πολλαπλασιαστης επιθεσης της ομαδας × αμυνας του αντιπαλου
+        tw = teamw(S)
+        if tw:
+            old = (x.season < S).values
+            mo = x.team.map(tw['o']).fillna(1.0).values
+            md = x.opp.map(tw['d']).fillna(1.0).values
+            w = np.where(old, w * mo * md, w)
+    return _fit_block(x, w, stats, lam_o, lam_d, sos, home, prior(S) if callable(prior) else prior)
 
 
 def _fit_block(x, w, stats, lam_o, lam_d, sos, home=True, prior=None):
