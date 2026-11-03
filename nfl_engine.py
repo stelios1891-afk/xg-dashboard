@@ -16,7 +16,8 @@ import nfl_qb as Q
 WIN = {'cl': ('cl_epa', 'cl_sr'), 'c05': ('c05_epa', 'c05_sr'), 'c20': ('c20_epa', 'c20_sr'), 'all': ('epa', 'sr')}
 
 
-def _solve(x, w, stat, teams, lam_o, lam_d, home=True):
+def _solve(x, w, stat, teams, lam_o, lam_d, home=True, pri=None):
+    """pri: (dict ομαδα→στοχος επιθεσης, dict ομαδα→στοχος αμυνας) — μαζεμα προς αυτους αντι για 0."""
     ix = {k: i for i, k in enumerate(teams)}
     n, m = len(x), len(teams)
     y = x[stat].values.astype(float)
@@ -29,12 +30,16 @@ def _solve(x, w, stat, teams, lam_o, lam_d, home=True):
     sw = np.sqrt(w)
     A, b = X[ok] * sw[ok, None], y[ok] * sw[ok]
     P = np.diag([0, 1e-6] + [lam_o] * m + [lam_d] * m)
-    beta = np.linalg.solve(A.T @ A + P, A.T @ b)
+    rhs = A.T @ b
+    if pri is not None:
+        tgt = np.r_[0, 0, [pri[0].get(t, 0) for t in teams], [pri[1].get(t, 0) for t in teams]]
+        rhs = rhs + P @ tgt
+    beta = np.linalg.solve(A.T @ A + P, rhs)
     return beta, ix, y, ok
 
 
 def fit(off, t_now, S, HL=16, PREV=0.6, lam_o=3, lam_d=3, stats=('cl_epa', 'pts', 'plays', 'cl_sr', 'st_net'),
-        sos=None, ramp=None, post=True, nseas=2, HLp=None, home=True):
+        sos=None, ramp=None, post=True, nseas=2, HLp=None, home=True, prior=None):
     """post: μετρανε τα playoffs · nseas: ποσες προηγουμενες σεζον · HLp: ξεχωριστο σβησιμο των ΠΕΡΣΙΝΩΝ καθως
     προχωραει η φετινη (None = ιδιο με τα φετινα) · home=False: χωρις εδρα στα ratings (σταθερη εδρα μονο στον τελικο)."""
     x = off[(off.t < t_now) & (off.season >= S - nseas)]
@@ -52,14 +57,16 @@ def fit(off, t_now, S, HL=16, PREV=0.6, lam_o=3, lam_d=3, stats=('cl_epa', 'pts'
         cur = (x.season == S).values
         wp = PREV ** (S - x.season) * 0.5 ** ((tend - x.t) / HL) * 0.5 ** (max(0, t_now - t0) / HLp)
         w = np.where(cur, 0.5 ** ((t_now - x.t) / HL), wp)
-    return _fit_block(x, np.asarray(w, float), stats, lam_o, lam_d, sos, home)
+    return _fit_block(x, np.asarray(w, float), stats, lam_o, lam_d, sos, home, prior(S) if callable(prior) else prior)
 
 
-def _fit_block(x, w, stats, lam_o, lam_d, sos, home=True):
+def _fit_block(x, w, stats, lam_o, lam_d, sos, home=True, prior=None):
+    """prior: {stat: (dict επιθ., dict αμυν.)} — στοχοι μαζεματος (π.χ. απο win totals)· None = προς 0."""
     teams = sorted(set(x.team) | set(x.opp))
     out = {}
     for s in stats:
-        beta, ix, y, ok = _solve(x, w, s, teams, lam_o, lam_d, home)
+        pri = prior.get(s) if prior else None
+        beta, ix, y, ok = _solve(x, w, s, teams, lam_o, lam_d, home, pri)
         m = len(teams)
         mu, h = beta[0], beta[1]
         O, Dd = beta[2:2 + m], beta[2 + m:]
@@ -69,8 +76,10 @@ def _fit_block(x, w, stats, lam_o, lam_d, sos, home=True):
             res = y - mu - h * x.home.values
             ww = np.where(ok, w, 0)
             rr = np.where(ok, res, 0)
-            O2 = np.bincount(ti, ww * (rr - sos * Dd[oi]), m) / (np.bincount(ti, ww, m) + lam_o)
-            D2 = np.bincount(oi, ww * (rr - sos * O[ti]), m) / (np.bincount(oi, ww, m) + lam_d)
+            po = np.array([pri[0].get(t, 0) for t in teams]) if pri else 0
+            pd_ = np.array([pri[1].get(t, 0) for t in teams]) if pri else 0
+            O2 = (np.bincount(ti, ww * (rr - sos * Dd[oi]), m) + lam_o * po) / (np.bincount(ti, ww, m) + lam_o)
+            D2 = (np.bincount(oi, ww * (rr - sos * O[ti]), m) + lam_d * pd_) / (np.bincount(oi, ww, m) + lam_d)
             O, Dd = O2, D2
         out[s] = (mu, h, dict(zip(teams, O)), dict(zip(teams, Dd)))
     return out
