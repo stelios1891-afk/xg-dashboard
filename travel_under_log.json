@@ -3921,5 +3921,130 @@
 1.86,
 2.03
 ]
+},
+"5881223": {
+"seen": "2026-11-03T17:34",
+"lg": "Bundesliga",
+"ko": "2026-11-07T17:30",
+"home": "VfB Stuttgart",
+"away": "Werder Bremen",
+"T_model": 3.62,
+"ah_first": [
+-1.0,
+1.95,
+1.95
+],
+"first": {
+"t": "2026-11-03T17:34",
+"line": 3.5,
+"over": 1.87,
+"under": 2.03
+},
+"trav": [
+{
+"side": "home",
+"team": "VfB Stuttgart",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Galatasaray",
+"eu_t": "2026-11-03T17:45",
+"eu_away": true,
+"km": 1767,
+"inzone": true,
+"patt": 1,
+"sup": 1.0,
+"cat": "δυνατη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "28/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Germany_DFBPokal",
+"opp": "Paderborn",
+"km": 329,
+"rest": 4.9
+},
+{
+"d": "31/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Bayer Leverkusen",
+"km": 141,
+"rest": 2.9
+},
+{
+"d": "03/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Galatasaray",
+"km": 2012,
+"rest": 3.1
+}
+],
+"scen": "Κ✈ Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 1767,
+"km14": 4249,
+"rest": 4.0,
+"min_rest": 2.9,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "27/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Germany_DFBPokal",
+"opp": "Borussia Dortmund",
+"km": 176,
+"rest": 3.3
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Hoffenheim",
+"km": 199,
+"rest": 3.8
+}
+],
+"scen": "Κ✈ Π🏠 → Π✈",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 476,
+"km14": 851,
+"rest": 7.1,
+"min_rest": 3.3,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-03T17:34",
+"line": 3.5,
+"over": 1.87,
+"under": 2.03
+},
+"ah_last": [
+-1.0,
+1.95,
+1.95
+]
 }
 }
