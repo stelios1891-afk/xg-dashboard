@@ -32,6 +32,7 @@ def load():
     for side, oth in (('home', 'away'), ('away', 'home')):
         x = g[['game_id', 'season', 't', 'neutral', f'{side}_team', f'{oth}_team', f'{side}_score']].copy()
         x.columns = ['game_id', 'season', 't', 'neutral', 'team', 'opp', 'pts']
+        x['dome'] = g.roof.isin(['dome', 'closed']).astype(int).values   # κλειστο γηπεδο (για «καθαρες» δυναμεις, τεστ 16)
         x['home'] = (1 - x.neutral) * (1 if side == 'home' else -1)
         rows.append(x)
     off = pd.concat(rows).merge(tg.drop(columns=['season', 'opp']), on=['game_id', 'team'], how='left')
