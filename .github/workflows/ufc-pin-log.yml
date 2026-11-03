@@ -5,6 +5,10 @@ name: ufc-pin-log
 
 on:
   workflow_dispatch: {}
+  push:   # 1ο τρεξιμο αμεσως (το νεο schedule αργησε να ξεκινησει, 3/11)
+    paths:
+      - '.github/workflows/ufc-pin-log.yml'
+      - 'ufc_pin_log.py'
   schedule:
     - cron: '23 * * * *'
 
