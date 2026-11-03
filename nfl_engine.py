@@ -16,30 +16,32 @@ import nfl_qb as Q
 WIN = {'cl': ('cl_epa', 'cl_sr'), 'c05': ('c05_epa', 'c05_sr'), 'c20': ('c20_epa', 'c20_sr'), 'all': ('epa', 'sr')}
 
 
-def _solve(x, w, stat, teams, lam_o, lam_d, home=True, pri=None):
+def _solve(x, w, stat, teams, lam_o, lam_d, home=True, pri=None, venue=False):
     """pri: (dict ομαδα→στοχος επιθεσης, dict ομαδα→στοχος αμυνας) — μαζεμα προς αυτους αντι για 0."""
     ix = {k: i for i, k in enumerate(teams)}
     n, m = len(x), len(teams)
     y = x[stat].values.astype(float)
     ok = ~np.isnan(y)
-    X = np.zeros((n, 2 + 2 * m))
+    X = np.zeros((n, 2 + 2 * m + (1 if venue else 0)))
     X[:, 0] = 1
     X[:, 1] = x.home.values if home else 0
     X[np.arange(n), 2 + x.team.map(ix).values] = 1
     X[np.arange(n), 2 + m + x.opp.map(ix).values] = 1
+    if venue:
+        X[:, -1] = x.dome.values                     # κλειστο γηπεδο: ξεχωριστος ορος → οι δυναμεις «καθαριζουν» απο το γηπεδο
     sw = np.sqrt(w)
     A, b = X[ok] * sw[ok, None], y[ok] * sw[ok]
-    P = np.diag([0, 1e-6] + [lam_o] * m + [lam_d] * m)
+    P = np.diag([0, 1e-6] + [lam_o] * m + [lam_d] * m + ([1e-6] if venue else []))
     rhs = A.T @ b
     if pri is not None:
-        tgt = np.r_[0, 0, [pri[0].get(t, 0) for t in teams], [pri[1].get(t, 0) for t in teams]]
+        tgt = np.r_[0, 0, [pri[0].get(t, 0) for t in teams], [pri[1].get(t, 0) for t in teams], [0] * (1 if venue else 0)]
         rhs = rhs + P @ tgt
     beta = np.linalg.solve(A.T @ A + P, rhs)
     return beta, ix, y, ok
 
 
 def fit(off, t_now, S, HL=16, PREV=0.6, lam_o=3, lam_d=3, stats=('cl_epa', 'pts', 'plays', 'cl_sr', 'st_net'),
-        sos=None, ramp=None, post=True, nseas=2, HLp=None, home=True, prior=None, teamw=None):
+        sos=None, ramp=None, post=True, nseas=2, HLp=None, home=True, prior=None, teamw=None, venue=False):
     """post: μετρανε τα playoffs · nseas: ποσες προηγουμενες σεζον · HLp: ξεχωριστο σβησιμο των ΠΕΡΣΙΝΩΝ καθως
     προχωραει η φετινη (None = ιδιο με τα φετινα) · home=False: χωρις εδρα στα ratings (σταθερη εδρα μονο στον τελικο)."""
     x = off[(off.t < t_now) & (off.season >= S - nseas)]
@@ -66,23 +68,24 @@ def fit(off, t_now, S, HL=16, PREV=0.6, lam_o=3, lam_d=3, stats=('cl_epa', 'pts'
             mo = x.team.map(tw['o']).fillna(1.0).values
             md = x.opp.map(tw['d']).fillna(1.0).values
             w = np.where(old, w * mo * md, w)
-    return _fit_block(x, w, stats, lam_o, lam_d, sos, home, prior(S) if callable(prior) else prior)
+    return _fit_block(x, w, stats, lam_o, lam_d, sos, home, prior(S) if callable(prior) else prior, venue)
 
 
-def _fit_block(x, w, stats, lam_o, lam_d, sos, home=True, prior=None):
+def _fit_block(x, w, stats, lam_o, lam_d, sos, home=True, prior=None, venue=False):
     """prior: {stat: (dict επιθ., dict αμυν.)} — στοχοι μαζεματος (π.χ. απο win totals)· None = προς 0."""
     teams = sorted(set(x.team) | set(x.opp))
     out = {}
     for s in stats:
         pri = prior.get(s) if prior else None
-        beta, ix, y, ok = _solve(x, w, s, teams, lam_o, lam_d, home, pri)
+        beta, ix, y, ok = _solve(x, w, s, teams, lam_o, lam_d, home, pri, venue)
         m = len(teams)
         mu, h = beta[0], beta[1]
-        O, Dd = beta[2:2 + m], beta[2 + m:]
+        O, Dd = beta[2:2 + m], beta[2 + m:2 + 2 * m]
+        vd = beta[-1] if venue else 0.0
         if sos is not None:
             # μερικη διορθωση αντιπαλου: μεσος (y − μ − εδρα − s·αντιπαλος), μαζεμενος με λ
             ti, oi = x.team.map(ix).values, x.opp.map(ix).values
-            res = y - mu - h * x.home.values
+            res = y - mu - h * x.home.values - (vd * x.dome.values if venue else 0)
             ww = np.where(ok, w, 0)
             rr = np.where(ok, res, 0)
             po = np.array([pri[0].get(t, 0) for t in teams]) if pri else 0
