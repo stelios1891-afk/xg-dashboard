@@ -56,8 +56,9 @@ def qb_values(q, t_now, HLQ, N0, M0):
     return v.to_dict()
 
 
-def qb_features(g, q, HLQ=40, N0=200, M0=-0.10, HL=16, PREV=0.6):
-    """Για καθε ματς 2016+: διορθωση QB γηπεδουχου/φιλοξενουμενου (EPA/φαση· ο μετασχηματισμος σε ποντους στο τεστ)."""
+def qb_features(g, q, HLQ=40, N0=200, M0=-0.10, HL=16, PREV=0.6, target=None):
+    """Για καθε ματς 2016+: διορθωση QB γηπεδουχου/φιλοξενουμενου (EPA/φαση· ο μετασχηματισμος σε ποντους στο τεστ).
+    target: {(game_id, ομαδα): qb_id} για να χρησιμοποιηθει αλλος QB απο αυτον που ξεκινησε (π.χ. «γνωστος στο ανοιγμα»)."""
     starts = pd.concat([g[['game_id', 'season', 't', 'home_team', 'home_qb_id']].set_axis(['game_id', 'season', 't', 'team', 'qb'], axis=1),
                         g[['game_id', 'season', 't', 'away_team', 'away_qb_id']].set_axis(['game_id', 'season', 't', 'team', 'qb'], axis=1)])
     starts = starts[starts.qb.notna()]
@@ -74,6 +75,8 @@ def qb_features(g, q, HLQ=40, N0=200, M0=-0.10, HL=16, PREV=0.6):
             f = {'game_id': r.game_id}
             for side in ('home', 'away'):
                 tm, qb = getattr(r, f'{side}_team'), getattr(r, f'{side}_qb_id')
+                if target is not None:
+                    qb = target.get((r.game_id, tm), qb)
                 v = V.get(qb, M0) if isinstance(qb, str) else np.nan
                 f[f'{side}_qbv'], f[f'{side}_qbadj'] = v, v - base.get(tm, M0)
             res.append(f)

@@ -56,6 +56,11 @@ def agg(p):
                                                     cl_nf_epa=('nf_epa', 'mean'), cl_p_epa=('p_epa', 'mean'),
                                                     cl_r_epa=('r_epa', 'mean')).reset_index()
     o = o.merge(c, on=['game_id', 'posteam'], how='left')
+    # αλλα ορια garbage time (για τεστ): wp 0.05-0.95 και 0.2-0.8
+    for lab, lo, hi in (('c05', 0.05, 0.95), ('c20', 0.2, 0.8)):
+        q = p[p.wp.between(lo, hi)].groupby(['game_id', 'posteam']).agg(
+            **{f'{lab}_epa': ('epa', 'mean'), f'{lab}_sr': ('success', 'mean')}).reset_index()
+        o = o.merge(q, on=['game_id', 'posteam'], how='left')
     o = o.merge(stn, on=['game_id', 'posteam'], how='left')
     o = o.rename(columns={'posteam': 'team', 'defteam': 'opp'})
     # αμυνα = η επιθεση του αντιπαλου στο ιδιο ματς
