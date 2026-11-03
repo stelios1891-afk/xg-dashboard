@@ -203,9 +203,11 @@ def match_odds(fights):
     cols = ["open_dec", "close_dec", "close_spread_pp", "spark_first", "spark_last"]
     for c in cols:
         res[f"f1_{c}"] = np.nan; res[f"f2_{c}"] = np.nan
+    res["f1_bfo_url"] = None; res["f2_bfo_url"] = None
     for l in L.itertuples():
         u1, u2 = (l.bfo_f2, l.bfo_f1) if l.swap else (l.bfo_f1, l.bfo_f2)
         for side, u in (("f1", u1), ("f2", u2)):
+            res.at[l.idx, f"{side}_bfo_url"] = u  # ποιος μαχητής BFO είναι ο f1/f2 (χωρίς σύγκριση ονομάτων)
             if (l.matchup_id, u) in odk.index:
                 v = odk.loc[(l.matchup_id, u)]
                 for c in cols:

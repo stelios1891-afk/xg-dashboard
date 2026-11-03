@@ -1,0 +1,42 @@
+name: ufc-pin-log
+
+# 3/11/2026 (Στελιος «στησε την καταγραφη χωρις να λαμβανω αλερτς στο τελεγκραμ»): ωριαια καταγραφη τιμων + οριων
+# Pinnacle για UFC (guest API, 0 credits). ΜΟΝΟ καταγραφη — κανενα Telegram, κανενα pick. Script: ufc_pin_log.py
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '23 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ufc-pin-log
+  cancel-in-progress: false
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -q requests
+      - name: Log
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python ufc_pin_log.py
+      - name: Commit result
+        if: always()
+        run: |
+          git config user.name "ufc-pin-log-bot"
+          git config user.email "actions@github.com"
+          for i in 1 2 3; do
+            for f in ufc_pin_log.jsonl ufc_pin_log_state.json; do [ -e "$f" ] && git add -f "$f"; done   # ενα-ενα (αρχειο που λειπει ακυρωνε ολο το add)
+            if git diff --cached --quiet; then echo "τιποτα"; break; fi
+            git commit -m "ufc pin log [skip ci]" && git pull --rebase -X theirs && git push && break
+            sleep 10
+          done
