@@ -1,0 +1,53 @@
+name: nfl-toa-hist
+
+# Ιστορικες γραμμες NFL ανα ωρα (The Odds API historical, 2020→τωρα) — δες nfl_toa_hist.py.
+# Τρεχει χειροκινητα (Run workflow) Η οταν αλλαξει το nfl_toa_request.txt. ΚΑΝΕΝΑ cron.
+# Κοστος ~20 credits/snapshot, ~2.750 snapshots (~55k)· σταματα μονο του κατω απο 25k credits,
+# ξανατρεξιμο συνεχιζει απο εκει που εμεινε.
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'nfl_toa_request.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nfl-toa-hist
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Pull NFL historical snapshots
+        env:
+          TOA_KEY: ${{ secrets.TOA_KEY }}
+          PYTHONIOENCODING: utf-8
+        run: python nfl_toa_hist.py
+
+      - name: Commit snapshots
+        if: always()
+        run: |
+          git config user.name "nfl-toa-hist-bot"
+          git config user.email "actions@github.com"
+          git add -f nfl_data/toa_hist.jsonl
+          if git diff --cached --quiet; then
+            echo "no new snapshots"
+          else
+            git commit -m "nfl toa hist snapshots [skip ci]"
+            git pull --rebase --autostash || true
+            git push
+          fi
