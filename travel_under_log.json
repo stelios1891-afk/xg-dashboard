@@ -4268,15 +4268,15 @@
 }
 },
 "last": {
-"t": "2026-11-04T11:35",
+"t": "2026-11-04T17:52",
 "line": 3.25,
-"over": 1.93,
-"under": 1.96
+"over": 1.92,
+"under": 1.97
 },
 "ah_last": [
 1.5,
-2.02,
-1.89
+2.05,
+1.87
 ]
 },
 "5749740": {
@@ -7182,6 +7182,279 @@
 -1.0,
 1.85,
 2.07
+]
+},
+"5868122": {
+"seen": "2026-11-04T17:52",
+"lg": "LaLiga",
+"ko": "2026-11-08T17:30",
+"home": "Celta Vigo",
+"away": "Levante",
+"T_model": 2.55,
+"ah_first": [
+-0.5,
+1.84,
+2.05
+],
+"first": {
+"t": "2026-11-04T17:52",
+"line": 2.5,
+"over": 1.93,
+"under": 1.96
+},
+"trav": [
+{
+"side": "home",
+"team": "Celta Vigo",
+"eu_comp": "EuropaLeague",
+"eu_at": "Celta Vigo",
+"eu_t": "2026-11-05T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "31/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Rayo Vallecano",
+"km": 470,
+"rest": 6.0
+},
+{
+"d": "05/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Union St.Gilloise",
+"km": 470,
+"rest": 5.2
+}
+],
+"scen": "Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 940,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Real Sociedad",
+"km": 444,
+"rest": 4.0
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Atlético Madrid",
+"km": 444,
+"rest": 5.8
+},
+{
+"d": "05/11",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Spain_CopaDelRey",
+"opp": "CD Tarancon",
+"km": 0,
+"rest": 5.2
+}
+],
+"scen": "Π✈ Π🏠 Κ✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 766,
+"km14": 1654,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T17:52",
+"line": 2.5,
+"over": 1.93,
+"under": 1.96
+},
+"ah_last": [
+-0.5,
+1.84,
+2.05
+]
+},
+"5868130": {
+"seen": "2026-11-04T17:52",
+"lg": "LaLiga",
+"ko": "2026-11-08T17:30",
+"home": "Villarreal",
+"away": "Getafe",
+"T_model": 2.25,
+"ah_first": [
+-1.25,
+2.04,
+1.88
+],
+"first": {
+"t": "2026-11-04T17:52",
+"line": 2.75,
+"over": 2.02,
+"under": 1.85
+},
+"trav": [
+{
+"side": "home",
+"team": "Villarreal",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Villarreal",
+"eu_t": "2026-11-03T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.25,
+"cat": "μεγαλη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Getafe",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Getafe",
+"eu_t": "2026-11-05T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -1.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "27/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Spain_CopaDelRey",
+"opp": "CD Manacor",
+"km": 0,
+"rest": 3.1
+},
+{
+"d": "30/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Espanyol",
+"km": 57,
+"rest": 3.0
+},
+{
+"d": "03/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Paris Saint-Germain",
+"km": 0,
+"rest": 4.0
+}
+],
+"scen": "Κ✈ Π🏠 Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 57,
+"rest": 4.9,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "29/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Spain_CopaDelRey",
+"opp": "UB Lebrijana",
+"km": 0,
+"rest": 4.2
+},
+{
+"d": "01/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Sevilla",
+"km": 333,
+"rest": 2.8
+},
+{
+"d": "05/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Brighton & Hove Albion",
+"km": 0,
+"rest": 4.3
+}
+],
+"scen": "Κ✈ Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 310,
+"km14": 643,
+"rest": 2.9,
+"min_rest": 2.8,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T17:52",
+"line": 2.75,
+"over": 2.02,
+"under": 1.85
+},
+"ah_last": [
+-1.25,
+2.04,
+1.88
 ]
 }
 }
