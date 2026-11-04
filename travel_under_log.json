@@ -6543,15 +6543,15 @@
 }
 },
 "last": {
-"t": "2026-11-04T15:52",
+"t": "2026-11-04T16:56",
 "line": 3.75,
-"over": 1.83,
-"under": 2.01
+"over": 1.89,
+"under": 1.95
 },
 "ah_last": [
 1.5,
-1.89,
-1.96
+1.84,
+2.02
 ]
 },
 "5781798": {
@@ -6816,6 +6816,238 @@
 -0.25,
 1.93,
 1.97
+]
+},
+"5802984": {
+"seen": "2026-11-04T16:56",
+"lg": "Ligue1",
+"ko": "2026-11-08T16:15",
+"home": "Brest",
+"away": "Lyon",
+"T_model": 2.66,
+"ah_first": [
+0.0,
+2.08,
+1.84
+],
+"first": {
+"t": "2026-11-04T16:56",
+"line": 2.5,
+"over": 1.87,
+"under": 2.01
+},
+"trav": [
+{
+"side": "away",
+"team": "Lyon",
+"eu_comp": "EuropaLeague",
+"eu_at": "Real Sociedad",
+"eu_t": "2026-11-05T17:45",
+"eu_away": true,
+"km": 615,
+"inzone": true,
+"patt": 1,
+"sup": 0.0,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "02/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Lorient",
+"km": 109,
+"rest": 10.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 1,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 109,
+"km14": 218,
+"rest": 5.9,
+"min_rest": 5.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "26/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Paris Saint-Germain",
+"km": 485,
+"rest": 4.0
+},
+{
+"d": "01/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Angers",
+"km": 399,
+"rest": 5.9
+},
+{
+"d": "05/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Real Sociedad",
+"km": 615,
+"rest": 4.1
+}
+],
+"scen": "Π✈ Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 599,
+"km14": 2099,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-04T16:56",
+"line": 2.5,
+"over": 1.87,
+"under": 2.01
+},
+"ah_last": [
+0.0,
+2.08,
+1.84
+]
+},
+"5802986": {
+"seen": "2026-11-04T16:56",
+"lg": "Ligue1",
+"ko": "2026-11-08T16:15",
+"home": "Le Mans",
+"away": "Monaco",
+"T_model": 2.77,
+"ah_first": [
+0.75,
+1.88,
+2.04
+],
+"first": {
+"t": "2026-11-04T16:56",
+"line": 3.0,
+"over": 2.04,
+"under": 1.85
+},
+"trav": [
+{
+"side": "away",
+"team": "Monaco",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Monaco",
+"eu_t": "2026-11-05T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Auxerre",
+"km": 252,
+"rest": 8.9
+},
+{
+"d": "31/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Troyes",
+"km": 69,
+"rest": 6.1
+}
+],
+"scen": "Π✈ Π✈ → Π🏠",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 290,
+"km14": 611,
+"rest": 7.9,
+"min_rest": 6.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "01/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Paris FC",
+"km": 693,
+"rest": 7.1
+},
+{
+"d": "05/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Nordsjælland",
+"km": 693,
+"rest": 4.2
+}
+],
+"scen": "Π✈ Ε🏠 → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 729,
+"km14": 2115,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-04T16:56",
+"line": 3.0,
+"over": 2.04,
+"under": 1.85
+},
+"ah_last": [
+0.75,
+1.88,
+2.04
 ]
 }
 }
