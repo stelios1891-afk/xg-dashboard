@@ -8355,5 +8355,246 @@
 2.06,
 1.85
 ]
+},
+"5887673": {
+"seen": "2026-11-04T20:49",
+"lg": "PrimeiraLiga",
+"ko": "2026-11-08T20:30",
+"home": "Estrela da Amadora",
+"away": "Benfica",
+"T_model": 3.18,
+"ah_first": [
+1.75,
+1.94,
+1.92
+],
+"first": {
+"t": "2026-11-04T20:49",
+"line": 3.25,
+"over": 1.86,
+"under": 1.97
+},
+"trav": [
+{
+"side": "away",
+"team": "Benfica",
+"eu_comp": "EuropaLeague",
+"eu_at": "Benfica",
+"eu_t": "2026-11-05T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.75,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "31/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Moreirense",
+"km": 301,
+"rest": 7.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 301,
+"km14": 603,
+"rest": 8.2,
+"min_rest": 7.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "26/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Santa Clara",
+"km": 5196,
+"rest": 4.0
+},
+{
+"d": "29/10",
+"ha": "εντ",
+"kind": "Κ",
+"comp": "Portugal_TacaDaLiga",
+"opp": "Gil Vicente",
+"km": 1436,
+"rest": 3.1
+},
+{
+"d": "02/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Alverca",
+"km": 0,
+"rest": 4.0
+},
+{
+"d": "05/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Lech Poznań",
+"km": 0,
+"rest": 3.0
+}
+],
+"scen": "Π✈ Κ🏠 Π🏠 Ε🏠 → Π✈",
+"n7": 2,
+"n14": 4,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 2,
+"km14": 6633,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T20:49",
+"line": 3.25,
+"over": 1.86,
+"under": 1.97
+},
+"ah_last": [
+1.75,
+1.94,
+1.92
+]
+},
+"5887677": {
+"seen": "2026-11-04T20:49",
+"lg": "PrimeiraLiga",
+"ko": "2026-11-08T20:30",
+"home": "Rio Ave",
+"away": "Braga",
+"T_model": 2.61,
+"ah_first": [
+1.0,
+1.94,
+1.9
+],
+"first": {
+"t": "2026-11-04T20:49",
+"line": 2.75,
+"over": 2.03,
+"under": 1.81
+},
+"trav": [
+{
+"side": "away",
+"team": "Braga",
+"eu_comp": "ConferenceLeague",
+"eu_at": "AGF",
+"eu_t": "2026-11-05T17:45",
+"eu_away": true,
+"km": 2108,
+"inzone": true,
+"patt": 1,
+"sup": 1.0,
+"cat": "δυνατη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "01/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Académico Viseu",
+"km": 105,
+"rest": 7.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 105,
+"km14": 211,
+"rest": 7.1,
+"min_rest": 7.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "29/10",
+"ha": "εντ",
+"kind": "Κ",
+"comp": "Portugal_TacaDaLiga",
+"opp": "Famalicão",
+"km": 1239,
+"rest": 4.0
+},
+{
+"d": "01/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Famalicão",
+"km": 0,
+"rest": 3.1
+},
+{
+"d": "05/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "AGF",
+"km": 2108,
+"rest": 3.9
+}
+],
+"scen": "Κ🏠 Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 2141,
+"km14": 5489,
+"rest": 3.1,
+"min_rest": 3.1,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T20:49",
+"line": 2.75,
+"over": 2.03,
+"under": 1.81
+},
+"ah_last": [
+1.0,
+1.94,
+1.9
+]
 }
 }
