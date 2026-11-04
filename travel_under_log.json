@@ -6678,5 +6678,144 @@
 1.85,
 2.01
 ]
+},
+"5795512": {
+"seen": "2026-11-04T16:50",
+"lg": "EPL",
+"ko": "2026-11-08T16:30",
+"home": "Manchester United",
+"away": "Aston Villa",
+"T_model": 2.98,
+"ah_first": [
+-0.25,
+1.93,
+1.97
+],
+"first": {
+"t": "2026-11-04T16:50",
+"line": 3.0,
+"over": 1.96,
+"under": 1.93
+},
+"trav": [
+{
+"side": "home",
+"team": "Manchester United",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Manchester United",
+"eu_t": "2026-11-03T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Aston Villa",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Barcelona",
+"eu_t": "2026-11-03T20:00",
+"eu_away": true,
+"km": 1274,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "31/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Chelsea",
+"km": 262,
+"rest": 5.9
+},
+{
+"d": "03/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Roma",
+"km": 262,
+"rest": 3.3
+}
+],
+"scen": "Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 524,
+"rest": 4.9,
+"min_rest": 3.3,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "28/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "England_EFLCup",
+"opp": "AFC Bournemouth",
+"km": 197,
+"rest": 4.3
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Fulham",
+"km": 197,
+"rest": 3.0
+},
+{
+"d": "03/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Barcelona",
+"km": 1274,
+"rest": 3.0
+}
+],
+"scen": "Κ✈ Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 1383,
+"km14": 3052,
+"rest": 4.9,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T16:50",
+"line": 3.0,
+"over": 1.96,
+"under": 1.93
+},
+"ah_last": [
+-0.25,
+1.93,
+1.97
+]
 }
 }
