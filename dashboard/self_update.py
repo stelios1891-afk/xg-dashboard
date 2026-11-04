@@ -135,4 +135,5 @@ def note():
     s = STATUS
     if s.get('state') == 'σφαλμα':
         return f"αυτοματη ενημερωση: ΣΦΑΛΜΑ ({s.get('err', '')[:160]})"
-    return f"αυτοματη ενημερωση: {s.get('state')}" + (f" · ελεγχος {s['ok'][11:16]} UTC" if s.get('ok') else '')
+    import gr_time
+    return f"αυτοματη ενημερωση: {s.get('state')}" + (f" · ελεγχος {gr_time.stamp(s['ok'])[-5:]}" if s.get('ok') else '')
