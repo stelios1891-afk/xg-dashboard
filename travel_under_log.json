@@ -7604,5 +7604,121 @@
 2.06,
 1.85
 ]
+},
+"5887680": {
+"seen": "2026-11-04T18:59",
+"lg": "PrimeiraLiga",
+"ko": "2026-11-08T18:00",
+"home": "Vitória de Guimarães",
+"away": "FC Porto",
+"T_model": 2.29,
+"ah_first": [
+0.75,
+1.96,
+1.89
+],
+"first": {
+"t": "2026-11-04T18:59",
+"line": 2.5,
+"over": 1.92,
+"under": 1.92
+},
+"trav": [
+{
+"side": "away",
+"team": "FC Porto",
+"eu_comp": "ChampionsLeague",
+"eu_at": "FC Porto",
+"eu_t": "2026-11-04T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "02/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Gil Vicente",
+"km": 29,
+"rest": 10.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 1,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 29,
+"km14": 59,
+"rest": 5.9,
+"min_rest": 5.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "28/10",
+"ha": "εντ",
+"kind": "Κ",
+"comp": "Portugal_TacaDaLiga",
+"opp": "Académico Viseu",
+"km": 43,
+"rest": 4.0
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "PrimeiraLiga",
+"opp": "Estoril",
+"km": 0,
+"rest": 3.0
+},
+{
+"d": "04/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Napoli",
+"km": 0,
+"rest": 4.0
+}
+],
+"scen": "Κ🏠 Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 39,
+"km14": 83,
+"rest": 3.9,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T18:59",
+"line": 2.5,
+"over": 1.92,
+"under": 1.92
+},
+"ah_last": [
+0.75,
+1.96,
+1.89
+]
 }
 }
