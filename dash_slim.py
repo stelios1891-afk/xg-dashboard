@@ -93,6 +93,9 @@ def build(keep):
         os.remove(idx)
     except OSError:
         pass
+    # 5/11: σημαδι «αυτο ειναι το αντιγραφο του Cloud» για το dashboard/self_update.py (το main/laptop δεν το εχει)
+    mark = subprocess.run(['git', 'hash-object', '-w', '--stdin'], cwd=ROOT, input=b'dashboard-live\n', capture_output=True, check=True).stdout.decode().strip()
+    keep = keep + [('100644', mark, 15, '.dashboard_live')]
     info = ''.join(f'{m} {s}\t{p}\n' for m, s, _, p in keep).encode('utf-8')
     git('update-index', '--add', '--index-info', inp=info, env=env)
     t = git('write-tree', env=env).decode().strip()
