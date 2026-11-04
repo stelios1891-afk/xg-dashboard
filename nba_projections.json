@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-04T17:57+00:00",
+ "generated": "2026-11-04T18:10+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -6223,12 +6223,12 @@
    "away": "Chicago Bulls",
    "hcode": "NYK",
    "acode": "CHI",
-   "margin": 10.22,
-   "total": 228.7,
+   "margin": 9.43,
+   "total": 229.0,
    "total_src": "μοντελο",
-   "pts_h": 119.5,
-   "pts_a": 109.2,
-   "p_home": 0.775,
+   "pts_h": 119.2,
+   "pts_a": 109.8,
+   "p_home": 0.758,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -6243,16 +6243,16 @@
    "rl_a": "2026-11-02",
    "margin_base": 10.71,
    "total_base": 228.4,
-   "abs_dm": -0.49,
-   "abs_dt": 0.27,
-   "abs_shadow": 0.5,
+   "abs_dm": -1.28,
+   "abs_dt": 0.6,
+   "abs_shadow": 1.1,
    "abs_h": [
     [
      "Hart,Josh",
      31.6,
      1,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -6265,10 +6265,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0,
-   "abs_ld": 0,
-   "abs_lop": 0.186,
-   "abs_ldp": 0.361,
+   "abs_lo": 0.382,
+   "abs_ld": 0.762,
+   "abs_lop": 0.408,
+   "abs_ldp": 0.803,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
