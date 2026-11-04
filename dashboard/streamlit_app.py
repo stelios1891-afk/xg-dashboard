@@ -647,7 +647,7 @@ def _age_note(label, ts, warn_min, hint=''):
     if mins > warn_min:
         st.warning(txt + " — ⚠ παλια δεδομενα" + (f" · {hint}" if hint else '') + f" · {self_update.note()}")
     else:
-        st.caption(txt)
+        st.caption(txt + (f" · 🔄 {self_update.note()}" if self_update.active() else ''))
 
 
 def _newest(*pairs):
