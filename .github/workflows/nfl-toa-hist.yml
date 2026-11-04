@@ -2,7 +2,7 @@ name: nfl-toa-hist
 
 # Ιστορικες γραμμες NFL ανα ωρα (The Odds API historical, 2020→τωρα) — δες nfl_toa_hist.py.
 # Τρεχει χειροκινητα (Run workflow) Η οταν αλλαξει το nfl_toa_request.txt. ΚΑΝΕΝΑ cron.
-# Κοστος ~20 credits/snapshot, ~2.750 snapshots (~55k)· σταματα μονο του κατω απο 25k credits,
+# Κοστος ~20 credits/snapshot, ~2.750 snapshots (~55k)· σταματα μονο του κατω απο NFL_TOA_FLOOR credits,
 # ξανατρεξιμο συνεχιζει απο εκει που εμεινε.
 
 on:
@@ -36,6 +36,7 @@ jobs:
         env:
           TOA_KEY: ${{ secrets.TOA_KEY }}
           PYTHONIOENCODING: utf-8
+          NFL_TOA_FLOOR: '15000'
         run: python nfl_toa_hist.py
 
       - name: Commit snapshots
