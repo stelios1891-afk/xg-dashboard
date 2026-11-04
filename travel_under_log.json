@@ -6437,5 +6437,246 @@
 1.86,
 2.05
 ]
+},
+"5781796": {
+"seen": "2026-11-04T15:52",
+"lg": "Eredivisie",
+"ko": "2026-11-08T15:45",
+"home": "Cambuur",
+"away": "PSV Eindhoven",
+"T_model": 3.66,
+"ah_first": [
+1.5,
+1.89,
+1.96
+],
+"first": {
+"t": "2026-11-04T15:52",
+"line": 3.75,
+"over": 1.83,
+"under": 2.01
+},
+"trav": [
+{
+"side": "away",
+"team": "PSV Eindhoven",
+"eu_comp": "ChampionsLeague",
+"eu_at": "PSV Eindhoven",
+"eu_t": "2026-11-04T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.5,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "27/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Netherlands_KNVBBeker",
+"opp": "Kloetinge",
+"km": 0,
+"rest": 3.1
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Go Ahead Eagles",
+"km": 190,
+"rest": 4.0
+}
+],
+"scen": "Κ✈ Π🏠 → Π🏠",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 190,
+"rest": 7.8,
+"min_rest": 3.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Willem II",
+"km": 0,
+"rest": 6.2
+},
+{
+"d": "04/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Club Brugge",
+"km": 0,
+"rest": 4.1
+}
+],
+"scen": "Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 197,
+"km14": 197,
+"rest": 3.8,
+"min_rest": 3.8,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-04T15:52",
+"line": 3.75,
+"over": 1.83,
+"under": 2.01
+},
+"ah_last": [
+1.5,
+1.89,
+1.96
+]
+},
+"5781798": {
+"seen": "2026-11-04T15:52",
+"lg": "Eredivisie",
+"ko": "2026-11-08T15:45",
+"home": "AZ Alkmaar",
+"away": "FC Groningen",
+"T_model": 3.25,
+"ah_first": [
+-1.0,
+1.85,
+2.01
+],
+"first": {
+"t": "2026-11-04T15:52",
+"line": 3.25,
+"over": 1.84,
+"under": 2.0
+},
+"trav": [
+{
+"side": "home",
+"team": "AZ Alkmaar",
+"eu_comp": "EuropaLeague",
+"eu_at": "AZ Alkmaar",
+"eu_t": "2026-11-05T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 1.0,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "FC Twente",
+"km": 3297,
+"rest": 3.1
+},
+{
+"d": "31/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Ajax",
+"km": 36,
+"rest": 6.0
+},
+{
+"d": "05/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Juventus",
+"km": 36,
+"rest": 5.0
+}
+],
+"scen": "Π🏠 Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 3369,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "29/10",
+"ha": "εντ",
+"kind": "Κ",
+"comp": "Netherlands_KNVBBeker",
+"opp": "FC Emmen",
+"km": 162,
+"rest": 4.3
+},
+{
+"d": "01/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Sparta Rotterdam",
+"km": 0,
+"rest": 2.8
+}
+],
+"scen": "Κ🏠 Π🏠 → Π✈",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 140,
+"km14": 303,
+"rest": 7.0,
+"min_rest": 2.8,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T15:52",
+"line": 3.25,
+"over": 1.84,
+"under": 2.0
+},
+"ah_last": [
+-1.0,
+1.85,
+2.01
+]
 }
 }
