@@ -4662,5 +4662,255 @@
 1.85,
 2.01
 ]
+},
+"5781797": {
+"seen": "2026-11-04T11:40",
+"lg": "Eredivisie",
+"ko": "2026-11-08T11:15",
+"home": "SC Heerenveen",
+"away": "Feyenoord",
+"T_model": 3.22,
+"ah_first": [
+0.75,
+1.97,
+1.88
+],
+"first": {
+"t": "2026-11-04T11:40",
+"line": 3.5,
+"over": 2.0,
+"under": 1.85
+},
+"trav": [
+{
+"side": "away",
+"team": "Feyenoord",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Feyenoord",
+"eu_t": "2026-11-03T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "28/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Netherlands_KNVBBeker",
+"opp": "Excelsior Maassluis",
+"km": 0,
+"rest": 4.0
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "NEC Nijmegen",
+"km": 145,
+"rest": 2.9
+}
+],
+"scen": "Κ✈ Π🏠 → Π🏠",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 145,
+"rest": 7.7,
+"min_rest": 2.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+},
+"away": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "PSV Eindhoven",
+"km": 1801,
+"rest": 3.8
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Fortuna Sittard",
+"km": 82,
+"rest": 6.1
+},
+{
+"d": "03/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Inter",
+"km": 0,
+"rest": 3.2
+}
+],
+"scen": "Π✈ Π🏠 Ε🏠 → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 152,
+"km14": 2036,
+"rest": 4.6,
+"min_rest": 3.2,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-04T11:40",
+"line": 3.5,
+"over": 2.0,
+"under": 1.85
+},
+"ah_last": [
+0.75,
+1.97,
+1.88
+]
+},
+"5749746": {
+"seen": "2026-11-04T11:40",
+"lg": "SerieA",
+"ko": "2026-11-08T11:30",
+"home": "Napoli",
+"away": "Lazio",
+"T_model": 2.54,
+"ah_first": [
+-0.25,
+1.98,
+1.92
+],
+"first": {
+"t": "2026-11-04T11:40",
+"line": 2.75,
+"over": 1.98,
+"under": 1.91
+},
+"trav": [
+{
+"side": "home",
+"team": "Napoli",
+"eu_comp": "ChampionsLeague",
+"eu_at": "FC Porto",
+"eu_t": "2026-11-04T20:00",
+"eu_away": true,
+"km": 1906,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "28/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Monza",
+"km": 660,
+"rest": 4.2
+},
+{
+"d": "01/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Juventus",
+"km": 140,
+"rest": 4.0
+},
+{
+"d": "04/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "FC Porto",
+"km": 1385,
+"rest": 3.0
+}
+],
+"scen": "Π✈ Π✈ Ε✈ → Π🏠",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 3,
+"here": "εντ",
+"trip_now": 1906,
+"km14": 4092,
+"rest": 3.6,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "27/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Sassuolo",
+"km": 342,
+"rest": 2.9
+},
+{
+"d": "01/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Cagliari",
+"km": 342,
+"rest": 4.9
+}
+],
+"scen": "Π✈ Π🏠 → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 190,
+"km14": 874,
+"rest": 6.9,
+"min_rest": 2.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-04T11:40",
+"line": 2.75,
+"over": 1.98,
+"under": 1.91
+},
+"ah_last": [
+-0.25,
+1.98,
+1.92
+]
 }
 }
