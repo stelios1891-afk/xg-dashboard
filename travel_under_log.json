@@ -5318,10 +5318,10 @@
 }
 },
 "last": {
-"t": "2026-11-04T14:44",
+"t": "2026-11-04T15:47",
 "line": 3.0,
 "over": 1.96,
-"under": 1.93
+"under": 1.92
 },
 "ah_last": [
 -0.5,
@@ -6311,6 +6311,131 @@
 0.75,
 1.87,
 2.04
+]
+},
+"5868127": {
+"seen": "2026-11-04T15:47",
+"lg": "LaLiga",
+"ko": "2026-11-08T15:15",
+"home": "Real Sociedad",
+"away": "Rayo Vallecano",
+"T_model": 3.4,
+"ah_first": [
+-0.75,
+1.86,
+2.05
+],
+"first": {
+"t": "2026-11-04T15:47",
+"line": 3.0,
+"over": 1.93,
+"under": 1.96
+},
+"trav": [
+{
+"side": "home",
+"team": "Real Sociedad",
+"eu_comp": "EuropaLeague",
+"eu_at": "Real Sociedad",
+"eu_t": "2026-11-05T17:45",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "25/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Levante",
+"km": 2051,
+"rest": 2.9
+},
+{
+"d": "01/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Athletic Club",
+"km": 79,
+"rest": 7.1
+},
+{
+"d": "05/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Lyon",
+"km": 79,
+"rest": 3.9
+}
+],
+"scen": "Π🏠 Π✈ Ε🏠 → Π🏠",
+"n7": 2,
+"n14": 3,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 2209,
+"rest": 2.9,
+"min_rest": 2.9,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "27/10",
+"ha": "εκτ",
+"kind": "Κ",
+"comp": "Spain_CopaDelRey",
+"opp": "Recreativo Huelva",
+"km": 0,
+"rest": 3.3
+},
+{
+"d": "31/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Celta Vigo",
+"km": 0,
+"rest": 3.8
+}
+],
+"scen": "Κ✈ Π🏠 → Π✈",
+"n7": 0,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 352,
+"km14": 352,
+"rest": 8.0,
+"min_rest": 3.3,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 1
+}
+},
+"last": {
+"t": "2026-11-04T15:47",
+"line": 3.0,
+"over": 1.93,
+"under": 1.96
+},
+"ah_last": [
+-0.75,
+1.86,
+2.05
 ]
 }
 }
