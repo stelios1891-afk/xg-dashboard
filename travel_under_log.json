@@ -7961,5 +7961,260 @@
 2.02,
 1.89
 ]
+},
+"5749742": {
+"seen": "2026-11-04T19:45",
+"lg": "SerieA",
+"ko": "2026-11-08T19:45",
+"home": "Fiorentina",
+"away": "Juventus",
+"T_model": 2.55,
+"ah_first": [
+0.25,
+2.07,
+1.83
+],
+"first": {
+"t": "2026-11-04T19:45",
+"line": 2.75,
+"over": 2.04,
+"under": 1.85
+},
+"trav": [
+{
+"side": "away",
+"team": "Juventus",
+"eu_comp": "EuropaLeague",
+"eu_at": "AZ Alkmaar",
+"eu_t": "2026-11-05T20:00",
+"eu_away": true,
+"km": 861,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "29/10",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Atalanta",
+"km": 255,
+"rest": 4.3
+},
+{
+"d": "02/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Sassuolo",
+"km": 115,
+"rest": 3.9
+}
+],
+"scen": "Π🏠 Π✈ → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 115,
+"km14": 485,
+"rest": 6.1,
+"min_rest": 3.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "28/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Genoa",
+"km": 883,
+"rest": 3.1
+},
+{
+"d": "01/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Napoli",
+"km": 129,
+"rest": 4.0
+},
+{
+"d": "05/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "AZ Alkmaar",
+"km": 861,
+"rest": 4.0
+}
+],
+"scen": "Π✈ Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 3,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 1094,
+"km14": 2967,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-04T19:45",
+"line": 2.75,
+"over": 2.04,
+"under": 1.85
+},
+"ah_last": [
+0.25,
+2.07,
+1.83
+]
+},
+"5802990": {
+"seen": "2026-11-04T19:45",
+"lg": "Ligue1",
+"ko": "2026-11-08T19:45",
+"home": "Lens",
+"away": "Marseille",
+"T_model": 3.3,
+"ah_first": [
+-0.25,
+1.85,
+2.06
+],
+"first": {
+"t": "2026-11-04T19:45",
+"line": 3.25,
+"over": 2.01,
+"under": 1.88
+},
+"trav": [
+{
+"side": "home",
+"team": "Lens",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Lens",
+"eu_t": "2026-11-04T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Marseille",
+"eu_comp": "EuropaLeague",
+"eu_at": "Bayer Leverkusen",
+"eu_t": "2026-11-05T20:00",
+"eu_away": true,
+"km": 872,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "30/10",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Lille",
+"km": 30,
+"rest": 6.1
+},
+{
+"d": "04/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Como",
+"km": 30,
+"rest": 5.0
+}
+],
+"scen": "Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 60,
+"rest": 4.0,
+"min_rest": 4.0,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "01/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Ligue1",
+"opp": "Toulouse",
+"km": 0,
+"rest": 7.1
+},
+{
+"d": "05/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Bayer Leverkusen",
+"km": 872,
+"rest": 4.0
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 302,
+"km14": 1174,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-04T19:45",
+"line": 3.25,
+"over": 2.01,
+"under": 1.88
+},
+"ah_last": [
+-0.25,
+1.85,
+2.06
+]
 }
 }
