@@ -10,7 +10,7 @@
 ΑΣΦΑΛΕΙΑ: τρεχει ΜΟΝΟ αν υπαρχει το σημαδι .dashboard_live (το βαζει το dash_slim.py μονο στο κλαδι) — στο laptop δεν αγγιζει τιποτα.
 Token: GH_TOKEN (Streamlit secrets, ιδιο με το «✅ το έπαιξα»)· χωρις token δουλευει με το οριο 60 κλησεων/ωρα του GitHub.
 STATUS: τελευταια κατασταση (φαινεται στη γραμμη «🕒 …» των σελιδων)."""
-import os, sys, time, hashlib, threading, datetime
+import os, sys, time, json, base64, shutil, hashlib, threading, datetime
 import requests
 
 REPO = os.environ.get('GH_REPO_PLAYED', 'stelios1891-afk/xg-dashboard')
@@ -20,6 +20,9 @@ MARKER = '.dashboard_live'
 EVERY_S = 240
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NAME = 'dash-self-update'
+HEALTH_BRANCH, HEALTH_FILE = 'dash-health', 'dash_health.jsonl'   # 5/11: δελτιο υγειας, για να βλεπουμε το app απο μεσα (το Streamlit δεν δινει logs εξω)
+HEALTH_EVERY_S, HEALTH_KEEP = 900, 700                            # καθε 15′, ~1 εβδομαδα
+STARTED = sys.__dict__.setdefault('_dash_self_update_started', datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds'))
 # στο sys: το _reload_changed_modules ξαναφορτωνει αυτο το module, το νημα ομως μενει και γραφει στο ιδιο STATUS
 STATUS = sys.__dict__.setdefault('_dash_self_update_status', {'state': 'δεν ξεκινησε'})
 _HASHES = sys.__dict__.setdefault('_dash_self_update_hashes', {})   # path → (mtime, size, sha): να μη διαβαζει ολο τον δισκο καθε 4′
@@ -107,7 +110,68 @@ def check_once(root=ROOT):
     except Exception as e:
         msg = f'{type(e).__name__}: {e}'
         STATUS.update(state='σφαλμα', err=(msg.replace(tok, '***') if tok else msg)[:300])
+    _maybe_report()   # εδω και οχι στο _loop: το νημα που ηδη τρεχει το παιρνει με το reload, χωρις Reboot
     return STATUS
+
+
+def _read(fn, limit=200):
+    try:
+        with open(fn, encoding='utf-8', errors='replace') as fh:
+            return fh.read(limit).strip()
+    except OSError:
+        return None
+
+
+def _mtime(fn):
+    try:
+        return datetime.datetime.fromtimestamp(os.path.getmtime(fn), datetime.timezone.utc).isoformat(timespec='seconds')
+    except OSError:
+        return None
+
+
+def _snapshot(root=ROOT):
+    """Τι βλεπει το app απο μεσα (5/11): κλαδι, τελευταιο pull του Streamlit, φρεσκαδα δεδομενων, μνημη, δισκος. Χωρις μυστικα."""
+    git = os.path.join(root, '.git')
+    head = _read(os.path.join(git, 'HEAD')) or ''
+    ref = head[5:] if head.startswith('ref: ') else ''
+    du = shutil.disk_usage(root)
+    vm = dict(x.split(':', 1) for x in (_read('/proc/self/status', 4000) or '').splitlines() if ':' in x)
+    return {'t': _now(), 'pid': os.getpid(), 'root': root, 'py_started': STARTED,
+            'head': head, 'commit': _read(os.path.join(git, ref)) if ref else None,
+            'streamlit_fetch': _mtime(os.path.join(git, 'FETCH_HEAD')), 'streamlit_pull': _mtime(os.path.join(git, 'ORIG_HEAD')),
+            'git_index': _mtime(os.path.join(git, 'index')), 'marker': os.path.exists(os.path.join(root, MARKER)),
+            'odds_file': _mtime(os.path.join(root, 'odds_history.jsonl')),
+            'rss': (vm.get('VmRSS') or '').strip() or None, 'cg_mem': _read('/sys/fs/cgroup/memory.current'), 'cg_max': _read('/sys/fs/cgroup/memory.max'),
+            'disk_free_gb': round(du.free / 1e9, 1), 'threads': threading.active_count(),
+            'state': STATUS.get('state'), 'files': STATUS.get('files'), 'err': STATUS.get('err'), 'ok': STATUS.get('ok'), 'updated': STATUS.get('updated')}
+
+
+def report_health():
+    """Προσθετει μια γραμμη στο dash_health.jsonl του κλαδιου dash-health· σφαλμα εδω δεν αγγιζει ποτε την ενημερωση."""
+    tok = _token()
+    if not tok:
+        return
+    url = f'https://api.github.com/repos/{REPO}/contents/{HEALTH_FILE}'
+    head = {'Accept': 'application/vnd.github+json', 'Authorization': f'Bearer {tok}'}
+    r = requests.get(url, params={'ref': HEALTH_BRANCH}, headers=head, timeout=30)
+    r.raise_for_status()
+    cur = r.json()
+    lines = base64.b64decode(cur.get('content') or '').decode('utf-8').splitlines()[-(HEALTH_KEEP - 1):]
+    lines.append(json.dumps(_snapshot(), ensure_ascii=False))
+    body = {'message': 'dash health [skip ci]', 'branch': HEALTH_BRANCH, 'sha': cur['sha'],
+            'content': base64.b64encode(('\n'.join(lines) + '\n').encode('utf-8')).decode('ascii')}
+    requests.put(url, json=body, headers=head, timeout=30).raise_for_status()
+
+
+def _maybe_report():
+    if time.time() - STATUS.get('health_t', 0) < HEALTH_EVERY_S:
+        return
+    STATUS['health_t'] = time.time()
+    try:
+        report_health()
+        STATUS.pop('health_err', None)
+    except Exception as e:
+        STATUS['health_err'] = type(e).__name__
 
 
 def _loop():

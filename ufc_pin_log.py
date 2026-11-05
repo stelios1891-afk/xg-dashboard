@@ -2,7 +2,7 @@
 """ufc_pin_log.py — ΚΑΤΑΓΡΑΦΗ τιμων + οριων Pinnacle για UFC (3/11/2026, Στελιος «στησε την καταγραφη χωρις αλερτς»).
 
 ΜΟΝΟ καταγραφη: κανενα Telegram, κανενα pick. Πηγη: pin_api (guest API, 0 credits), league 1624 (UFC).
-Καθε τρεξιμο (ωριαιο, ufc-pin-log.yml) γραφει στο ufc_pin_log.jsonl ΜΟΝΟ οσες αγορες αλλαξαν (version) απο το προηγουμενο:
+Καθε τρεξιμο (καθε ~5 λεπτα, ufc-pin-log.yml) γραφει στο ufc_pin_log.jsonl ΜΟΝΟ οσες αγορες αλλαξαν (version) απο το προηγουμενο:
   {"ts", "mid", "start", "f_home", "f_away", "type" (moneyline/total/...), "key", "points", "status",
    "home"/"away"/"over"/"under" (American), "limit" (maxRiskStake $), "first": true στην 1η εμφανιση = ανοιγμα
    ("first": "pre_existing" = ηταν ηδη ανοιχτη στο 1ο τρεξιμο 3/11, ΟΧΙ πραγματικο ανοιγμα)}
@@ -27,6 +27,9 @@ def main():
         state, initial = {}, True  # 1ο τρεξιμο: οσα ειναι ηδη ανοιχτα ΔΕΝ ειναι πραγματικο ανοιγμα
     M = pin_api._get(f'/leagues/{LEAGUE}/matchups') or []
     P = pin_api._get(f'/leagues/{LEAGUE}/markets/straight') or []
+    if not M or not P:  # κενη απαντηση: ο καθαρισμος θα εσβηνε την κατασταση και ολα θα ξαναμετρουσαν ως ανοιγματα
+        print(f'{now}: κενη απαντηση (αγωνες {len(M)} · αγορες {len(P)}), τιποτα δεν αλλαζει')
+        return
     info = {}
     for m in M:
         ps = {x.get('alignment'): x.get('name') for x in m.get('participants', [])}
