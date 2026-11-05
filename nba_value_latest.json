@@ -1,9 +1,37 @@
 {
- "scanned_at": "2026-11-05T23:44+00:00",
+ "scanned_at": "2026-11-05T23:50+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
- "picks": []
+ "picks": [
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Milwaukee Bucks",
+   "away": "Toronto Raptors",
+   "hcode": "MIL",
+   "acode": "TOR",
+   "code": "pin1639668669",
+   "round": 3,
+   "group": null,
+   "when": "2026-11-07T01:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "total",
+   "side": 0,
+   "hcap": 232.0,
+   "bet": "Under 232",
+   "odds": 1.926,
+   "edge": 0.1662,
+   "proj_odds": 1.65,
+   "model_total": 227.2,
+   "mix_total": 227.2,
+   "mkt_total": 231.9,
+   "mkt_line": 232.0,
+   "gno": 8,
+   "hrs_birth": 25.3
+  }
+ ]
 }
