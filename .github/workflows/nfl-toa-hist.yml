@@ -2,7 +2,7 @@ name: nfl-toa-hist
 
 # Ιστορικες γραμμες NFL ανα ωρα (The Odds API historical, 2020→τωρα) — δες nfl_toa_hist.py.
 # Τρεχει χειροκινητα (Run workflow) Η οταν αλλαξει το nfl_toa_request.txt. ΚΑΝΕΝΑ cron.
-# Κοστος ~20 credits/snapshot, ~2.750 snapshots (~55k)· σταματα μονο του κατω απο 25k credits,
+# Κοστος ~20 credits/snapshot, ~2.750 snapshots (~55k)· σταματα μονο του κατω απο NFL_TOA_FLOOR credits,
 # ξανατρεξιμο συνεχιζει απο εκει που εμεινε.
 
 on:
@@ -36,7 +36,17 @@ jobs:
         env:
           TOA_KEY: ${{ secrets.TOA_KEY }}
           PYTHONIOENCODING: utf-8
+          NFL_TOA_FLOOR: '15000'
         run: python nfl_toa_hist.py
+
+      # ασφαλεια: το αρχειο μενει διαθεσιμο 14 μερες ακομα κι αν αποτυχει το commit (ετσι δεν ξαναπληρωνονται τα credits)
+      - name: Keep snapshots as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-toa-hist
+          path: nfl_data/toa_hist.jsonl
+          retention-days: 14
 
       - name: Commit snapshots
         if: always()
@@ -46,8 +56,13 @@ jobs:
           git add -f nfl_data/toa_hist.jsonl
           if git diff --cached --quiet; then
             echo "no new snapshots"
-          else
-            git commit -m "nfl toa hist snapshots [skip ci]"
-            git pull --rebase --autostash || true
-            git push
+            exit 0
           fi
+          git commit -m "nfl toa hist snapshots [skip ci]"
+          # ο scanner γραφει συχνα στο main: ξαναπροσπαθει με rebase
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            git pull --rebase --autostash && git push && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 15))
+          done
+          exit 1
