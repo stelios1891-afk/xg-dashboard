@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-05T01:11+00:00",
+ "generated": "2026-11-05T01:22+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -6582,12 +6582,12 @@
    "away": "Toronto Raptors",
    "hcode": "DEN",
    "acode": "TOR",
-   "margin": 1.21,
+   "margin": 1.28,
    "total": 225.3,
    "total_src": "μοντελο",
    "pts_h": 113.3,
    "pts_a": 112.0,
-   "p_home": 0.536,
+   "p_home": 0.538,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -6602,18 +6602,10 @@
    "rl_a": "2026-11-02",
    "margin_base": -1.61,
    "total_base": 225.8,
-   "abs_dm": 2.82,
-   "abs_dt": -0.52,
-   "abs_shadow": 0.03,
-   "abs_h": [
-    [
-     "Johnson,Cameron",
-     26.3,
-     1,
-     "Probable",
-     0.07
-    ]
-   ],
+   "abs_dm": 2.89,
+   "abs_dt": -0.51,
+   "abs_shadow": 0.0,
+   "abs_h": [],
    "abs_a": [
     [
      "Leonard,Kawhi",
@@ -6633,8 +6625,8 @@
    "inj_src": "official",
    "abs_lo": 2.505,
    "abs_ld": 0.425,
-   "abs_lop": 2.56,
-   "abs_ldp": 0.758,
+   "abs_lop": 2.516,
+   "abs_ldp": 0.744,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
