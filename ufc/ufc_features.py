@@ -18,7 +18,7 @@
   wc_move         αλλαγή κατηγορίας από τον προηγούμενο αγώνα (λίβρες, + = ανεβαίνει)
   reach / height / southpaw
 """
-import os
+import os, sys
 from pathlib import Path
 
 import numpy as np
@@ -27,6 +27,7 @@ import pandas as pd
 DATA = Path(os.environ.get("UFC_DATA", Path(__file__).parent / "data"))
 LBS = {"Strawweight": 115, "Flyweight": 125, "Bantamweight": 135, "Featherweight": 145, "Lightweight": 155,
        "Welterweight": 170, "Middleweight": 185, "Light Heavyweight": 205, "Heavyweight": 265}
+CAUSAL = "--causal" in sys.argv  # μέσοι όροι μόνο από αγώνες ΠΡΙΝ από κάθε ημέρα (έξοδος ufc_features_causal.csv)
 T0 = 900.0  # συρρίκνωση: 15 λεπτά «μέσου» μαχητή
 
 
@@ -77,7 +78,13 @@ def main():
     for c in ("sig", "sig_ab", "td", "td_att_ab", "td_ab", "ctrl", "ctrl_ab", "kd_ab", "t"):
         L[c + "_v"] = L[c].where(ok, 0.0).fillna(0.0)
     tot_t = L.t_v.sum()
-    mu_sl = L.sig_v.sum() / tot_t  # ανά δευτερόλεπτο, μέσος όρος
+
+    def mu(num, den):
+        if not CAUSAL:
+            return L[num].sum() / L[den].sum()
+        c = L.groupby("d")[[num, den]].sum().cumsum().shift()
+        return L.d.map((c[num] / c[den]).replace(np.inf, np.nan).bfill()).values
+    mu_sl = mu("sig_v", "t_v")  # ανά δευτερόλεπτο, μέσος όρος
 
     g = L.groupby("fighter", sort=False)
     prev = lambda c: g[c].cumsum() - L[c]  # άθροισμα ΠΡΙΝ από τον αγώνα
@@ -87,11 +94,11 @@ def main():
     L["slpm"] = 60 * (prev("sig_v") + mu_sl * T0) / (T + T0)
     L["sapm"] = 60 * (prev("sig_ab_v") + mu_sl * T0) / (T + T0)
     L["sdiff"] = L.slpm - L.sapm
-    L["td15"] = 900 * (prev("td_v") + (L.td_v.sum() / tot_t) * T0) / (T + T0)
-    mu_tdd = 1 - L.td_ab_v.sum() / L.td_att_ab_v.sum()
+    L["td15"] = 900 * (prev("td_v") + mu("td_v", "t_v") * T0) / (T + T0)
+    mu_tdd = 1 - mu("td_ab_v", "td_att_ab_v")
     L["tdd"] = 1 - (prev("td_ab_v") + (1 - mu_tdd) * 5) / (prev("td_att_ab_v") + 5)
     L["ctrl_share"] = (prev("ctrl_v") + 0.15 * T0) / (prev("ctrl_v") + prev("ctrl_ab_v") + T0 * 0.3 + 1e-9)
-    L["kd_abs15"] = 900 * (prev("kd_ab_v") + (L.kd_ab_v.sum() / tot_t) * T0) / (T + T0)
+    L["kd_abs15"] = 900 * (prev("kd_ab_v") + mu("kd_ab_v", "t_v") * T0) / (T + T0)
     L["ko_loss"] = ((L.res == "L") & (L.method == "KO")).astype(int)
     L["ko_losses"] = prev("ko_loss")
     L["last_ko_loss"] = g.ko_loss.shift().fillna(0)
@@ -109,7 +116,7 @@ def main():
     fv = L.fade.copy()
     L["fade_n"] = fv.notna().groupby(L.fighter).cumsum() - fv.notna()
     L["fade_s"] = fv.fillna(0).groupby(L.fighter).cumsum() - fv.fillna(0)
-    mu_f = fv.median()
+    mu_f = L.d.map(fv.groupby(L.d).median().expanding().median().shift().bfill()).values if CAUSAL else fv.median()
     L["fade"] = (L.fade_s + mu_f * 2) / (L.fade_n + 2)
     L["wc_move"] = L.lbs - g.lbs.shift()
 
@@ -138,8 +145,8 @@ def main():
                       on=["fid", "fighter"])
         sub = sub.drop_duplicates("fid").set_index("fid")[feats]
         out = out.join(sub.add_prefix(me + "_"))
-    out.to_csv(DATA / "ufc_features.csv", index=False)
-    print(f"ufc_features.csv: {len(out)} αγώνες · stats-λίγκας: {60 * mu_sl:.2f} καθαρά/λεπτό, άμυνα TD {mu_tdd:.2f}")
+    out.to_csv(DATA / ("ufc_features_causal.csv" if CAUSAL else "ufc_features.csv"), index=False)
+    print(f"ufc_features.csv: {len(out)} αγώνες · stats-λίγκας: {60 * np.mean(mu_sl):.2f} καθαρά/λεπτό, άμυνα TD {np.mean(mu_tdd):.2f}")
 
 
 if __name__ == "__main__":
