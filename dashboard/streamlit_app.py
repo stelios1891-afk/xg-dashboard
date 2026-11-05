@@ -717,12 +717,18 @@ def render_ledger(league):
     # 13/10/2026 (Στελιος): ΦΙΛΤΡΑ + τα συνολα ακολουθουν τα φιλτρα + «το έπαιξα» + πινακας ανα ομαδα + CSV
     settled, pending = copy.deepcopy(settled), copy.deepcopy(pending)
     _pl = st.session_state.get('vp_played')
-    if _pl is None:
+    import time as _time
+    if _pl is None or _time.time() - st.session_state.get('vp_played_t', 0) > 60:   # 5/11: και οσα πατηθηκαν απο αλλη συσκευη
+        _old = _pl
         try:
             import played_store
             _pl = played_store.load() if played_store.enabled() else {}
         except Exception:
-            _pl = {}
+            _pl = None
+        if _pl is None:            # σφαλμα GitHub → κραταω οσα ειχα
+            _pl = _old
+        else:
+            st.session_state.vp_played_t = _time.time()
         st.session_state.vp_played = _pl or {}
     lv.enrich(settled, _pl); lv.enrich(pending, _pl)
     allr = settled + pending

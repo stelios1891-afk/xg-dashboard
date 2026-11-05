@@ -3,14 +3,13 @@
 Αποθηκευση: αρχειο played_picks.json στο repo (GitHub contents API) = {κλειδι καρτας: χρονος σε ms}. Κλειδι = data-k της καρτας Value Picks
 (λιγκα|γηπ|φιλ|αγορα|πλευρα|μερα). Χρειαζεται GitHub token με δικαιωμα Contents read/write στο repo: Streamlit secrets «GH_TOKEN»
 (ή μεταβλητη περιβαλλοντος GH_TOKEN). Χωρις token → None (η σελιδα γυριζει στη μνημη του browser, οπως πριν).
-Εγγραφες παλιοτερες απο 14 μερες σβηνονται σε καθε αποθηκευση."""
+5/11: οι εγγραφες ΔΕΝ σβηνονται πια (πριν: 14 μερες), γιατι το Pick History δειχνει ✅ σε ολη τη σεζον."""
 import os, json, time, base64
 import requests
 
 REPO = os.environ.get('GH_REPO_PLAYED', 'stelios1891-afk/xg-dashboard')
 PATH = 'played_picks.json'
 API = f'https://api.github.com/repos/{REPO}/contents/{PATH}'
-KEEP_MS = 14 * 86400 * 1000
 LAST_ERR = ''          # 13/10: τι απαντησε το GitHub στο τελευταιο σφαλμα (εμφανιζεται στη σελιδα)
 
 
@@ -80,7 +79,6 @@ def toggle(key, on, tries=3):
             data, sha = _get()
             data = dict(data or {})
             now = int(time.time() * 1000)
-            data = {k: v for k, v in data.items() if now - int(v or 0) <= KEEP_MS}
             if on:
                 data[key] = now
             else:
