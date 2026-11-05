@@ -68,7 +68,8 @@ def _write(fn, data):
 
 def is_live_checkout(root=ROOT):
     """Μονο το αντιγραφο του dashboard-live (Streamlit Cloud) — ποτε το repo του laptop."""
-    return os.path.exists(os.path.join(root, MARKER))
+    # 5/11: και οποιοδηποτε αντιγραφο στο Streamlit Cloud (/mount/src/…), ακομα κι αν το app τρεχει απο το main (χωρις σημαδι)
+    return os.path.exists(os.path.join(root, MARKER)) or os.path.abspath(root).replace(os.sep, '/').startswith('/mount/src/')
 
 
 def check_once(root=ROOT):
