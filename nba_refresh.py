@@ -145,13 +145,18 @@ for nm, cfg in (('h', CFG_H), ('t', CFG_T)):
 mg_t, tt_t = out['t_pred']; m = (G.season.values == CUR) & np.isfinite(tt_t)
 resid = ((G.hs + G.as_).values.astype(float) - tt_t)[m][-150:]
 RES = float(np.mean(resid)) if len(resid) >= 30 else 0.0
+# 5/11/2026 (Στελιος «βαλτο»): ΣΚΙΑ Φ3 — ιδια ματς, αλλα με τις ΣΗΜΕΡΙΝΕΣ δυναμεις (οσα δεν εχει μαθει ακομα η μηχανη). ΔΕΝ μπαινει στα picks· κριση τελος σεζον
+_ft = out['t']; _q = np.where(m)[0][-150:]
+_ht = [_ft['mu'] * 2 + _ft['O'][G.home.values[k]] + _ft['D'][G.away.values[k]] + _ft['O'][G.away.values[k]] + _ft['D'][G.home.values[k]] for k in _q]
+_pt = [_ft['pm'] + _ft['P'][G.home.values[k]] + _ft['P'][G.away.values[k]] for k in _q]
+RES_ALT = float(np.mean((G.hs + G.as_).values.astype(float)[_q] - np.array(_pt) * np.array(_ht) / 100)) if len(_q) >= 30 else 0.0
 # αριθμος ματς & τελευταια μερα ανα ομαδα
 gp, last = collections.Counter(), {}
 for g in sorted(GM.values(), key=lambda g: g['utc']):
     if g['stype'] != 2: continue
     for t in (g['home'], g['away']): gp[t] += 1; last[t] = g['date']
 state = dict(built=dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), season=CUR, sig_m=SIG_M, sig_t=SIG_T, b2b_k=B2B_K, h=H_ADV,
-             cfg_h=list(CFG_H), cfg_t=list(CFG_T), res_t=RES, n_res=int(len(resid)),
+             cfg_h=list(CFG_H), cfg_t=list(CFG_T), res_t=RES, res_t_alt=RES_ALT, n_res=int(len(resid)),
              h_eng={k: v for k, v in out['h'].items()}, t_eng={k: v for k, v in out['t'].items()}, gp=dict(gp), last=last,
              roster=RL.get('delta', {}), z=dict(C={k.split('|')[1]: v for k, v in Z['C'].items() if k.startswith(f'{CUR}|')}, P={k.split('|')[1]: v for k, v in Z['P'].items() if k.startswith(f'{CUR}|')}),
              model=f'NBA: χαντικαπ {CFG_H} + B2B {B2B_K} + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα {CFG_T} τυχη αμυνας {LUCK_DEF_T} + Φ3')

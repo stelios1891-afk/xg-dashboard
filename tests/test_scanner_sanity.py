@@ -1176,6 +1176,22 @@ def test_e_ucl_freshness_flag():
         assert not led, f'euro_picks_ledger: γραφτηκε UCL pick με eu_ok=False ({led[0]["home"]}-{led[0]["away"]})'
 
 
+def test_nba_phi_shadow_log(tmp_path, monkeypatch):
+    """5/11/2026: η σκια Φ3 γραφει μια 'first' ανα ματς και μια 'pick' ανα πλευρα, μονο στο δικο της αρχειο, με καθαρο JSON."""
+    import nba_picks as NP
+    monkeypatch.setattr(NP, 'F', lambda n: str(tmp_path / n))
+    now = datetime.datetime(2026, 11, 6, tzinfo=datetime.timezone.utc); ko = now + datetime.timedelta(hours=20)
+    g = dict(code='9', home='H', away='A', total=220.0, total_src='μοντελο', gno=8)
+    pin = dict(tl=225.5, to=1.94, tu=1.94); f0 = dict(tl=225.5, to=1.94, tu=1.94)
+    proj = dict(res_t=-2.7, res_t_alt=-0.6)                                 # σκια 222.1 → Under 225.5 περνα
+    for _ in range(2): NP.shadow_phi(g, pin, f0, ko, now, proj, 18.0)
+    rows = [json.loads(l) for l in open(tmp_path / NP.PHI_LOG, encoding='utf-8')]
+    assert [(r['kind'], r['side']) for r in rows] == [('first', None), ('pick', 'Under')], rows
+    assert rows[0]['model_total_alt'] == 222.1 and rows[1]['edge_alt'] >= NP.tot_rule(g)[1]
+    assert os.listdir(tmp_path) == [NP.PHI_LOG]
+    NP.shadow_phi(g, pin, f0, ko, now, dict(res_t=-2.7), 18.0)              # χωρις res_t_alt (πριν το refresh) → τιποτα, χωρις σφαλμα
+
+
 def test_nba_stale_ratings_guard(tmp_path, monkeypatch):
     """29/10/2026 (Στελιος «περνα και τα 2»): οχι NBA pick οσο μια ομαδα εχει ματς που ξεκινησε αλλα δεν εχει περασει στις δυναμεις
     (Πελικανς–Κινγκς Over 237.5: +11% → −12% μετα την ανανεωση). Μετα την ανανεωση (rl_h = νεα μερα) → ξανα κανονικα."""
