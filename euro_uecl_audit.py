@@ -134,6 +134,7 @@ print(f"   τελειωμενα {len(D_)} · ανοιχτα {(Y.done == False).s
 for k, q in D_.groupby('rule'): print(f'   {k:14s} {len(q):2d} picks {q.p.sum():+.2f}μ ({100 * q.p.mean():+.1f}%)')
 for r in D_.itertuples(): print(f'      αγ.{r.rnd} {r.p:+.2f} {r.n}')
 print('\n' + '=' * 100 + '\n6. ΒΕΛΤΙΩΣΕΙΣ (μια παραμετρος η καθε μια· ιδια κατωφλια)')
+SM0 = float((INS[0] - INS[1])[UI & KN].mean())
 def seq_ah2(LL, mask, kind, hs, sidefn=None, c=1.0, lam=0.0):
     S = []
     for i in np.where(mask)[0]:
@@ -149,7 +150,7 @@ def seq_ah2(LL, mask, kind, hs, sidefn=None, c=1.0, lam=0.0):
                     if not (1.70 <= o <= 2.10): continue
                     if kind == 'fav' and ln > -0.5: continue
                     if kind == 'dog' and ln < 0.5: continue
-                    T = LL[0][i] + LL[1][i]; m = c * (LL[0][i] - LL[1][i])
+                    T = LL[0][i] + LL[1][i]; m = SM0 + c * (LL[0][i] - LL[1][i] - SM0)   # 5/11: συμπιεση γυρω απο τον μεσο ορο UECL, οχι και η εδρα
                     if lam: m = (1 - lam) * m + lam * fair(L, oh, oa)
                     D = sdist(max((T + m) / 2, .05), max((T - m) / 2, .05)); pw, pp = picks.p_cover(D, side, ln) if kind == 'dog' else cover_q(D, side, ln)
                     q.append((h, edge(pw, pp, o), L, oh, oa, ln, o))
@@ -197,7 +198,7 @@ ladder('Α. ΣΥΜΠΙΕΣΗ ΥΠΕΡΟΧΗΣ c (1 = σημερα): υπεροχ
 for c in (.9, .8, .7, .6):
     I = np.where(UI & KN)[0]; d = []
     for i in I:
-        T = INS[0][i] + INS[1][i]; m0 = INS[0][i] - INS[1][i]; m = c * m0
+        T = INS[0][i] + INS[1][i]; m0 = INS[0][i] - INS[1][i]; m = SM0 + c * (m0 - SM0)
         d.append(rps3(*probs((T + m) / 2, (T - m) / 2), GD[i]) - rps3(*probs(INS[0][i], INS[1][i]), GD[i]))
     d = np.array(d); print(f"      RPS c={c}: {1000 * d.mean():+.2f}±{1000 * d.std() / np.sqrt(len(d)):.2f} ×10⁻³ · " + ' '.join(f"{s[2:]}:{1000 * d[SEA[I] == s].mean():+.2f}" for s in SEAS))
 ladder('Β. ΑΓΚΥΡΑ ΣΤΗΝ ΑΓΟΡΑ λ (0 = σημερα): υπεροχη = (1−λ)·μοντελο + λ·γραμμη της στιγμης — χαντικαπ', (0.0, .2, .35, .5, .7), lambda l: HAND(lam=l))
