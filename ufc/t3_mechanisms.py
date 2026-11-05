@@ -37,7 +37,7 @@ def ll(p, w):
 
 def load():
     o = pd.read_csv(DATA / "ufc_fights_odds.csv")
-    x = pd.read_csv(DATA / "ufc_features.csv").drop(columns=["date", "event", "f1", "f2"])
+    x = pd.read_csv(DATA / os.environ.get("UFC_FEATURES", "ufc_features.csv")).drop(columns=["date", "event", "f1", "f2"])
     o = o.merge(x, on="fight_url")
     o = o[o.f1_result.isin(["W", "L"]) & o.f1_p_close.notna() & o.f1_p_open.notna() & (o.date >= "2008")].copy()
     o["y"] = o.date.str[:4].astype(int)
