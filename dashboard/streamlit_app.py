@@ -812,9 +812,12 @@ def render_moves(league):
                "**Εθνικες (NL A-D)** εμφανιζονται οσο υπαρχει διεθνες παραθυρο — Odds API: Pinnacle, αλλιως Bovada (γκανιοτα «σαν Pinnacle»), 1Χ2 Betfair οπου λειπει. "
                "**Ευρωπαϊκα (Champions / Europa / Conference League)** απο 10/10 — Pinnacle, απο τον ευρωπαϊκο scanner. "
                "**NBA** απο 22/10 — Pinnacle (νικητης, χαντικαπ, συνολο ποντων), καθε κυκλο του scanner.")
-    _age_note('τελευταια καταγραφη τιμων', _newest(('odds_history.jsonl', 't'), ('euro_odds_hist.jsonl', 't'), ('nba_odds_hist.jsonl', 't')), 6 * 60,
-              "χωρις ματς τις επομενες μερες ειναι φυσιολογικο· αλλιως ο scanner μαλλον σταματησε")
     H = _moves_hist(_stamp('odds_history.jsonl', 'intl_odds_hist.jsonl', 'euro_odds_hist.jsonl', 'euro_projections.json', 'nba_odds_hist.jsonl', 'nba_projections.json', 'dashboard/moves_view.py'))
+    # 5/11 (Στελιος: Thun 2.3 ενω ηταν 2.00): με ματς μεσα σε 24 ωρες η ⚠ βγαινει απο τα 90′, αλλιως απο τις 6 ωρες
+    _now = datetime.datetime.now(datetime.timezone.utc)
+    _warn = 90 if any(ko - _now < datetime.timedelta(hours=24) for _, _, ko in mv.upcoming(H)) else 6 * 60
+    _age_note('τελευταια καταγραφη τιμων', _newest(('odds_history.jsonl', 't'), ('euro_odds_hist.jsonl', 't'), ('nba_odds_hist.jsonl', 't')), _warn,
+              "χωρις ματς τις επομενες μερες ειναι φυσιολογικο· αλλιως ο scanner μαλλον σταματησε")
     if not H:
         st.info("Δεν υπαρχουν καταγραφες ακομα.")
         return
@@ -1516,7 +1519,7 @@ RENDER = {'projections': render_projections, 'goals': render_goals, 'trend': ren
           'nba_players': lambda lg: __import__('nba_players_view').render(lg)}
 # 21/10/2026 (Στελιος, ομαδα Β-3): Value Picks + μπασκετ ξαναδιαβαζουν τα δεδομενα μονα τους καθε 5′ (fragment: τρεχει ΜΟΝΟ η σελιδα,
 # οχι ολο το app). Αν δεν αλλαξε τιποτα, το HTML ειναι ιδιο → τιποτα δεν ξαναζωγραφιζεται (φιλτρα / ανοιχτο 🧮 μενουν).
-AUTO_REFRESH = {'value', 'euroleague', 'bcl', 'nba'}
+AUTO_REFRESH = {'value', 'euroleague', 'bcl', 'nba', 'moves'}   # 5/11: + Market Watch
 if page in RENDER:
     if page in AUTO_REFRESH:
         st.fragment(run_every=300)(RENDER[page])(league)
