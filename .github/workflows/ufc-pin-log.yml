@@ -1,10 +1,17 @@
 name: ufc-pin-log
 
-# 3/11/2026 (Στελιος «στησε την καταγραφη χωρις να λαμβανω αλερτς στο τελεγκραμ»): ωριαια καταγραφη τιμων + οριων
+# 3/11/2026 (Στελιος «στησε την καταγραφη χωρις να λαμβανω αλερτς στο τελεγκραμ»): καταγραφη τιμων + οριων
 # Pinnacle για UFC (guest API, 0 credits). ΜΟΝΟ καταγραφη — κανενα Telegram, κανενα pick. Script: ufc_pin_log.py
+# 5/11: το ωριαιο cron ετρεχε καθε 4-9 ωρες (ιδιο «κωμα» με τον scanner 18/9) → οπως ο scanner: βροχος καθε 5'
+# για ~1 ωρα και αυτο-αλυσιδα, το cron μενει ως εφεδρικο προσαναμμα. Σταματημα: Actions -> disable workflow.
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:             # χειροκινητο (μια καταγραφη) Ή κρικος της αλυσιδας (chain=yes)
+    inputs:
+      chain:
+        description: 'internal: self-chain link'
+        required: false
+        default: 'no'
   push:   # 1ο τρεξιμο αμεσως (το νεο schedule αργησε να ξεκινησει, 3/11)
     paths:
       - '.github/workflows/ufc-pin-log.yml'
@@ -14,6 +21,7 @@ on:
 
 permissions:
   contents: write
+  actions: write                 # για το self-dispatch της αλυσιδας
 
 concurrency:
   group: ufc-pin-log
@@ -22,30 +30,38 @@ concurrency:
 jobs:
   log:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install -q requests
-      - name: Log
+      - name: Log loop
         env:
           PYTHONIOENCODING: utf-8
-        run: python ufc_pin_log.py
-      - name: Commit result
-        if: always()
         run: |
           git config user.name "ufc-pin-log-bot"
           git config user.email "actions@github.com"
-          ls -la ufc_pin_log.jsonl ufc_pin_log_state.json || true
-          for f in ufc_pin_log.jsonl ufc_pin_log_state.json; do [ -e "$f" ] && git add -f "$f"; done   # ενα-ενα (αρχειο που λειπει ακυρωνε ολο το add)
-          if git diff --cached --quiet; then echo "τιποτα νεο"; exit 0; fi
-          git commit -m "ufc pin log [skip ci]"
-          for i in 1 2 3 4 5; do
-            git fetch origin main && git rebase -X theirs origin/main && git push origin HEAD:main && break   # 3/11: το παλιο pull --rebase αποτυγχανε σιωπηλα
-            git rebase --abort 2>/dev/null || true
-            sleep $((i * 10))
+          TICKS=12
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.chain }}" != "yes" ]; then TICKS=1; fi
+          for t in $(seq 1 $TICKS); do
+            python ufc_pin_log.py || echo "σφαλμα καταγραφης, συνεχιζω στο επομενο"
+            for f in ufc_pin_log.jsonl ufc_pin_log_state.json; do [ -e "$f" ] && git add -f "$f"; done   # ενα-ενα (αρχειο που λειπει ακυρωνε ολο το add)
+            git diff --cached --quiet || git commit -q -m "ufc pin log [skip ci]"
+            if [ "$(git rev-list --count origin/main..HEAD)" != "0" ]; then
+              for i in 1 2 3 4 5; do
+                git fetch -q origin main && git rebase -X theirs origin/main && git push -q origin HEAD:main && break   # 3/11: το παλιο pull --rebase αποτυγχανε σιωπηλα
+                git rebase --abort 2>/dev/null || true
+                sleep $((i * 10))
+              done
+              git fetch -q origin main
+              if [ "$(git rev-list --count origin/main..HEAD)" != "0" ]; then echo "ΔΕΝ ανεβηκε, ξαναδοκιμαζω στο επομενο"; fi
+            fi
+            [ "$t" = "$TICKS" ] || sleep 300
           done
-          git fetch origin main
           if [ "$(git rev-list --count origin/main..HEAD)" != "0" ]; then echo "ΔΕΝ ανεβηκε"; exit 1; fi
+      - name: Chain next run
+        if: always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.chain == 'yes')
+        run: |
+          curl -s -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/actions/workflows/ufc-pin-log.yml/dispatches" -d '{"ref":"main","inputs":{"chain":"yes"}}' && echo "επομενος κρικος ζητηθηκε" || echo "chain dispatch failed (το cron θα το πιασει)"
