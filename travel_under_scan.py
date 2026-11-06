@@ -11,7 +11,7 @@
 συνοψη (ματς 7/14 μερων, σερι εκτος πριν, χλμ 14 μερων, ξεκουραση, ελαχιστη ξεκουραση, ευρωπαικα εκτος). Τιμες under (κυρια γραμμη
 Pinnacle): πρωτη εμφανιση · τελευταια πριν τη σεντρα (≈ κλεισιμο) · αποτελεσμα. Πηγες προγραμματος: data_*_2627/2026 · match_projections_archive ·
 europe_fixtures_2627 · euq_fixtures (2627) · cups_fixtures (κυπελλα 2627/2026 — στατικο αρχειο 16/10, cups_fetch.py).
-INFO BOT: μια λιστα ανα ευρωπαικη εβδομαδα (12ω μετα το τελευταιο ευρωπαικο) με τα ματς «ταξιδιωτη» (εκτος ευρωπαικο ≥1.500 χλμ), με σεναριο.
+INFO BOT (6/11, οχι picks): Παρασκευη 10:00 τα επερχομενα ματς «ταξιδιωτη» (εκτος ευρωπαικο ≥1.500 χλμ) με σεναριο · Τριτη 10:00 τι εγινε + συνολο καταγραφης.
 Χρηση: python travel_under_scan.py (λιστα στην οθονη) · python travel_under_scan.py --tick (scanner)."""
 import os, sys, json, glob, datetime as dt
 import fatigue_flags as FF
@@ -185,6 +185,108 @@ def _row_txt(r):
     return '\n'.join(out)
 
 
+def _ath(t):
+    try:
+        from zoneinfo import ZoneInfo
+        return t.astimezone(ZoneInfo('Europe/Athens'))
+    except Exception:
+        return t + dt.timedelta(hours=2)
+
+
+def _ko(e):
+    return dt.datetime.fromisoformat(e['ko']).replace(tzinfo=UTC)
+
+
+def _focus(e):
+    return [t for t in e.get('trav', []) if t.get('focus')]
+
+
+def _sum(L):
+    f, c = sum(e['pnl_first'] for e in L), sum(e['pnl_close'] for e in L)
+    return f"{len(L)} ματς · στην πρωτη τιμη {f:+.2f}μ · στο κλεισιμο {c:+.2f}μ"
+
+
+def _record(log):
+    """Συνολο καταγραφης: ματς ταξιδιωτη ανα κατηγορια απο την αρχη (25/10) + ελεγχος, διπλα στο ιστορικο 2022-26."""
+    done = [e for e in log.values() if e.get('tg') is not None]
+    foc = [e for e in done if _focus(e)]; ctl = [e for e in done if not _focus(e)]
+    out = [f"Συνολο καταγραφης (απο 25/10, 1 μοναδα ανα ματς): {_sum(foc)}",
+           f"Ελεγχος (Ευρωπη αλλα χωρις μακρινο ταξιδι): {_sum(ctl)}"]
+    for (sd, b), h in HIST.items():
+        L = [e for e in foc if any(('εντος' if t['side'] == 'home' else 'εκτος', _bucket(t['km'])) == (sd, b) for t in _focus(e))]
+        if L:
+            rng = '≥3.500' if b == 3500 else ('2.500-3.500' if b == 2500 else '1.500-2.500')
+            out.append(f"   ταξιδι και μετα {sd}, {rng} χλμ: {len(L)} ματς, κλεισιμο {sum(e['pnl_close'] for e in L):+.2f}μ (ιστορικο under {h[1]:+.1f}%, {h[2]} μπετ)")
+    if any(len(_focus(e)) > 1 for e in foc):
+        out.append('   (ματς με 2 ομαδες ταξιδιου μετρα και στις 2 κατηγοριες)')
+    L = [e for e in foc if any(t.get('cat') == 'μεγαλη' for t in _focus(e))]
+    if L:
+        out.append(f"   μεγαλες ομαδες: {len(L)} ματς, κλεισιμο {sum(e['pnl_close'] for e in L):+.2f}μ (ιστορικο under −28%, 22 μπετ)")
+    return '\n'.join(out)
+
+
+def tuesday_text(log, since, now):
+    """Τι εγινε απο την προηγουμενη Τριτη στα ματς ταξιδιωτη. None αν δεν παιχτηκε κανενα."""
+    L = sorted([e for e in log.values() if _focus(e) and since < _ko(e) <= now], key=_ko)
+    done = [e for e in L if e.get('tg') is not None]
+    if not done:
+        return None
+    rows = []
+    for e in done:
+        lst = e.get('last') or e['first']
+        trav = ' · '.join(f"{t['team']} απο {t['eu_at']} {format(t['km'], ',').replace(',', '.')} χλμ, {'τωρα εντος' if t['side'] == 'home' else 'τωρα εκτος'}"
+                          + (' ⚠ μεγαλη' if t.get('cat') == 'μεγαλη' else '') for t in _focus(e))
+        rows.append(f"{'✅' if e['pnl_close'] > 0 else ('➖' if e['pnl_close'] == 0 else '❌')} {_gr(_ko(e))} {e['home']} – {e['away']} {e['score']} ({e['tg']} γκολ)\n"
+                    f"   {trav}\n"
+                    f"   under {e['first']['line']} @{e['first']['under']} (πρωτη) {e['pnl_first']:+.2f}μ · {lst['line']} @{lst['under']} (κλεισιμο) {e['pnl_close']:+.2f}μ")
+    wait = [e for e in L if e.get('tg') is None and _ko(e) <= now - dt.timedelta(hours=3)]
+    return ('🧳 ΕΝΗΜΕΡΩΣΗ, ΟΧΙ PICK: τι εγινε το under μετα απο μακρινο ευρωπαικο ταξιδι\n\n'
+            + '\n\n'.join(rows)
+            + f"\n\nΑυτη τη βδομαδα: {_sum(done)}\n"
+            + (f"Χωρις αποτελεσμα ακομα: {', '.join(e['home'] + ' – ' + e['away'] for e in wait)}\n" if wait else '')
+            + _record(log))
+
+
+def friday_text(rows, log, now):
+    """Τα επερχομενα ματς ταξιδιωτη (ως 5 μερες μπροστα, το ευρωπαικο εχει ηδη παιχτει). None αν δεν υπαρχει κανενα."""
+    fut = []
+    for r in rows:
+        if not now < r['ko'] <= now + dt.timedelta(days=5):
+            continue
+        tr = [t for t in r['trav'] if t['eu_t'] <= now]
+        if any(t['focus'] for t in tr):
+            fut.append(dict(r, trav=tr))
+    if not fut:
+        return None
+    return ('🧳 ΕΝΗΜΕΡΩΣΗ, ΟΧΙ PICK: επερχομενα ματς μετα απο μακρινο ευρωπαικο ταξιδι\n'
+            'Ιστορικα μπαινουν λιγοτερα γκολ απο οσα περιμενει η αγορα, κυριως ≥2.500 χλμ (★)· στις μεγαλες ομαδες το under εχανε.\n'
+            'Προγραμμα 14 ημερων: Ε = Ευρωπη · Π = πρωταθλημα · Κ = κυπελλο · ✈ εκτος (χλμ ταξιδιου) · 🏠 εντος.\n\n'
+            + '\n\n'.join(_row_txt(r) for r in fut) + '\n\n' + _record(log))
+
+
+def digests(now, rows, log, st):
+    """6/11/2026 (Στελιος): ενημερωσεις στο info bot, οχι picks. Τριτη 10:00: τι εγινε (περιμενει τα σκορ ως τις 20:00) · Παρασκευη 10:00: επερχομενα."""
+    a = _ath(now); day = a.date().isoformat()
+    if a.weekday() == 4 and a.hour >= 10 and day not in st.get('fri', []):
+        txt = friday_text(rows, log, now)
+        import notify
+        if txt is None or notify.send(txt, channel='info'):
+            st.setdefault('fri', []).append(day); st['fri'] = st['fri'][-20:]
+            json.dump(st, open(ST_F, 'w', encoding='utf-8'), ensure_ascii=False)
+            print(f"travel_under: ενημερωση Παρασκευης {day} {'κανενα ματς' if txt is None else 'σταλθηκε'}")
+    if a.weekday() == 1 and a.hour >= 10 and day not in st.get('tue', []):
+        since = dt.datetime.fromisoformat(st['tue_last']) if st.get('tue_last') else now - dt.timedelta(days=7)
+        wait = [e for e in log.values() if _focus(e) and e.get('tg') is None and since < _ko(e) <= now - dt.timedelta(hours=3)]
+        if wait and a.hour < 20:
+            return
+        txt = tuesday_text(log, since, now)
+        import notify
+        if txt is None or notify.send(txt, channel='info'):
+            st.setdefault('tue', []).append(day); st['tue'] = st['tue'][-20:]; st['tue_last'] = now.isoformat()
+            json.dump(st, open(ST_F, 'w', encoding='utf-8'), ensure_ascii=False)
+            print(f"travel_under: ενημερωση Τριτης {day} {'κανενα ματς' if txt is None else 'σταλθηκε'}")
+
+
 def tick():
     now = dt.datetime.now(UTC)
     rows = collect(now)
@@ -220,23 +322,10 @@ def tick():
                 pass
     if changed:
         json.dump(log, open(LOG_F, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
-    fut = [r for r in rows if r['ko'] > now and any(t['focus'] for t in r['trav'])]
-    if fut:
-        wk = max(t['eu_t'] for r in fut for t in r['trav'] if t['focus'])
-        wkey = wk.date().isoformat()
-        if now >= wk + dt.timedelta(hours=12) and wkey not in st.get('sent', []):
-            txt = ('✈️ ΜΑΚΡΙΝΟ ΕΥΡΩΠΑΪΚΟ ΤΑΞΙΔΙ → επομενο ματς πρωταθληματος (πληροφορια, ΟΧΙ pick)\n'
-                   'Ιστορικα μπαινουν λιγοτερα γκολ απο οσα περιμενει η αγορα, κυριως ≥2.500 χλμ (★)· στις μεγαλες ομαδες το under εχανε.\n'
-                   'Προγραμμα 14 ημερων: Ε = Ευρωπη · Π = πρωταθλημα · Κ = κυπελλο · ✈ εκτος (χλμ ταξιδιου) · 🏠 εντος.\n\n'
-                   + '\n\n'.join(_row_txt(r) for r in fut))
-            try:
-                import notify
-                notify.send(txt, channel='info')
-                st.setdefault('sent', []).append(wkey); st['sent'] = st['sent'][-20:]
-                json.dump(st, open(ST_F, 'w', encoding='utf-8'), ensure_ascii=False)
-                print(f'travel_under: λιστα εβδομαδας {wkey} σταλθηκε ({len(fut)} ματς)')
-            except Exception as ex:
-                print(f'travel_under: αποστολη απετυχε {str(ex)[:80]}')
+    try:
+        digests(now, rows, log, st)
+    except Exception as ex:
+        print(f'travel_under: ενημερωση απετυχε {str(ex)[:120]}')
     print(f'travel_under: ματς με ευρωπαικο ≤6μ {len(rows)} · καταγραφη {len(log)}')
 
 
@@ -246,6 +335,11 @@ if __name__ == '__main__':
         tick()
     else:
         _now = dt.datetime.now(UTC)
+        if '--digest' in sys.argv:          # δοκιμη χωρις αποστολη: τα 2 κειμενα (Τριτη = η αγωνιστικη 25-26/10)
+            _log = FF._load('travel_under_log.json', {})
+            print(friday_text(collect(_now), _log, _now)); print('\n' + '=' * 30 + '\n')
+            print(tuesday_text(_log, dt.datetime(2026, 10, 24, tzinfo=UTC), dt.datetime(2026, 10, 28, tzinfo=UTC)))
+            sys.exit()
         for r in collect(_now):
             if r['ko'] > _now and any(t['focus'] for t in r['trav']):
                 print(_row_txt(r)); print()
