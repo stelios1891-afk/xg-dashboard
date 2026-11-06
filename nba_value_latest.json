@@ -1,5 +1,5 @@
 {
- "scanned_at": "2026-11-06T15:02+00:00",
+ "scanned_at": "2026-11-06T15:08+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
@@ -36,6 +36,39 @@
    "move_note": "ανοιγμα Memphis Grizzlies +4 @1.94 → τωρα +4 @1.95 · ουσιαστικα ιδια",
    "move_pts": -0.1,
    "hrs_birth": 24.4
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Sacramento Kings",
+   "away": "San Antonio Spurs",
+   "hcode": "SAC",
+   "acode": "SAS",
+   "code": "pin1639660836",
+   "round": 3,
+   "group": null,
+   "when": "2026-11-07T03:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": 16.0,
+   "odds": 1.99,
+   "edge": 0.121,
+   "proj_odds": 1.77,
+   "model_line": 13.8,
+   "mkt_line": 16.0,
+   "first": {
+    "line": 16.0,
+    "oh": 1.935,
+    "oa": 1.952,
+    "seen": "2026-11-06T00:55+00:00"
+   },
+   "move_note": "ανοιγμα Sacramento Kings +16 @1.94 → τωρα +16 @1.99 · αγορα 0.4 π. ΚΟΝΤΡΑ μας",
+   "move_pts": -0.4,
+   "fat_note": "😴 Spurs: αλλαγη ωρας 2ω −1.4 · καθαρο 1.4 π. ΥΠΕΡ μας",
+   "fat_pts": 1.36,
+   "hrs_birth": 26.2
   },
   {
    "lg": "NBA",
@@ -123,6 +156,33 @@
    "mkt_line": 224.5,
    "gno": 8,
    "hrs_birth": 24.4
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Charlotte Hornets",
+   "away": "Boston Celtics",
+   "hcode": "CHO",
+   "acode": "BOS",
+   "code": "pin1639639620",
+   "round": 3,
+   "group": null,
+   "when": "2026-11-07T00:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "total",
+   "side": 0,
+   "hcap": 208.0,
+   "bet": "Under 208",
+   "odds": 1.98,
+   "edge": 0.0908,
+   "proj_odds": 1.81,
+   "model_total": 205.7,
+   "mix_total": 205.7,
+   "mkt_total": 208.4,
+   "mkt_line": 208.0,
+   "gno": 9,
+   "hrs_birth": 17.8
   }
  ]
 }
