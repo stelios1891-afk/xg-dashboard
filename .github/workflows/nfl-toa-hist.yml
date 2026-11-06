@@ -23,7 +23,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
+      # πληρες ιστορικο: με ρηχο checkout το pull στο commit κρατουσε παρα πολυ και χαθηκαν δεδομενα (4/11)
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
