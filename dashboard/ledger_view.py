@@ -400,10 +400,11 @@ def _later(r):
 
 
 def _pick_cell(r):
+    tick = '<span title="Το έπαιξα (Value Picks)">✅</span> ' if r.get('_played') else ''   # 5/11 (Στελιος): οσα πατησα «το έπαιξα»
     if r.get('bet_label'):
-        return f'{"🏀" if r.get("bk") else "⚽"} {_h.escape(r["bet_label"])}' + _later(r)
+        return f'{tick}{"🏀" if r.get("bk") else "⚽"} {_h.escape(r["bet_label"])}' + _later(r)
     team = r['home'] if r['side'] == 1 else r['away']
-    return f'{_logo(r, r["side"] == 1)}{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}' + _later(r)
+    return f'{tick}{_logo(r, r["side"] == 1)}{_h.escape(team)} {"+" if r["hcap"] >= 0 else ""}{r["hcap"]:g}' + _later(r)
 
 
 def _ath(ko):

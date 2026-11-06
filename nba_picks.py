@@ -194,6 +194,39 @@ def shadow_def(g, pin, ko, now):
     except Exception as e:
         print('σκιωδης κανονας σφαλμα —', e)
 
+PHI_LOG = 'nba_totals_phi_shadow.jsonl'  # 5/11/2026 (Στελιος «βαλτο και να το ξαναδουμε στο τελος της χρονιας»): ΣΚΙΑ Φ3 — ΜΟΝΟ καταγραφη (οχι Telegram/ημερολογιο)
+def shadow_phi(g, pin, f0, ko, now, proj, st):
+    """Συνολα με τη διορθωση «σημερινες δυναμεις» (res_t_alt) αντι για τη live (res_t), ιδιος κανονας picks. Μια εγγραφη kind='first' ανα ματς (1η γραμμη, και οι 2 εκδοχες)
+    και μια kind='pick' την πρωτη φορα ανα ματς/πλευρα που περνα η σκια. Κριση τελος σεζον (τεστ 5/11: διπλομετρημα ~1π, +136.7 vs +117.5μ)."""
+    try:
+        ra, rl = proj.get('res_t_alt'), proj.get('res_t')
+        if ra is None or rl is None or g.get('total') is None or f0.get('tl') is None or pin.get('tl') is None: return
+        d_ = float(ra) - float(rl); alt = dict(g, total=float(g['total']) + d_)
+        p0 = dict(tl=f0['tl'], to=f0.get('to'), tu=f0.get('tu')); tmA, tmA0, tmL0 = tot_mix(alt, pin, st), tot_mix(alt, p0, st), tot_mix(g, p0, st)
+        if not (tmA and tmA0 and tmL0): return
+        thr = tot_rule(g)[1]; T, oo, ou, T0, oo0, ou0 = float(pin['tl']), float(pin['to']), float(pin['tu']), float(f0['tl']), float(f0['to']), float(f0['tu'])
+        def eds(mu, T_, oo_, ou_):
+            po, pq = cover(mu, -T_, st); return {'Over': po * oo_ + pq - 1, 'Under': (1 - po - pq) * ou_ + pq - 1}
+        eA, eA0, eL0 = eds(tmA[0], T, oo, ou), eds(tmA0[0], T0, oo0, ou0), eds(tmL0[0], T0, oo0, ou0)
+        fn = F(PHI_LOG); done = set()
+        if os.path.exists(fn):
+            for ln in open(fn, encoding='utf-8'):
+                try: r_ = json.loads(ln); done.add(f"{r_['code']}|{r_['kind']}|{r_.get('side')}")
+                except Exception: pass
+        base = dict(seen=now.isoformat(timespec='minutes'), code=g['code'], home=g['home'], away=g['away'], when=ko.strftime('%Y-%m-%dT%H:%M'), gno=g.get('gno'),
+                    res_t=round(float(rl), 2), res_t_alt=round(float(ra), 2), model_total=round(float(g['total']), 1), model_total_alt=round(float(alt['total']), 1), paper=True)
+        rows = []
+        if f"{g['code']}|first|None" not in done:
+            rows.append(dict(base, kind='first', side=None, line=T0, oo=oo0, ou=ou0, edge_live={k: round(v, 4) for k, v in eL0.items()}, edge_alt={k: round(v, 4) for k, v in eA0.items()}))
+        for nm, od in (('Over', oo), ('Under', ou)):
+            if eA[nm] >= thr and eA0[nm] >= thr and f"{g['code']}|pick|{nm}" not in done:
+                rows.append(dict(base, kind='pick', side=nm, line=T, odds=od, edge_alt=round(eA[nm], 4), hrs=round((ko - now).total_seconds() / 3600, 1)))
+        if rows:
+            with open(fn, 'a', encoding='utf-8') as fh:
+                for r_ in rows: fh.write(json.dumps(r_, ensure_ascii=False) + chr(10))
+    except Exception as e:
+        print('σκια Φ3 σφαλμα —', e)
+
 M2D_LOG = 'nba_totals_m2d_log.jsonl'  # 21/10/2026 (Στελιος «τρεξτο οκ»): ΣΚΙΩΔΗΣ μηχανη συνολων Μ2δ — ΜΟΝΟ καταγραφη (οχι Telegram/ημερολογιο)
 M2D_ON = False                        # 25/10/2026 (Στελιος «σταματα τη, δεν μου λεει κατι»· t95: Οκτ-Δεκ ~0, συνολο < νεα μηχανη) — η καταγραφη Μ2δ ΣΤΑΜΑΤΗΣΕ· το m2 υπολογιζεται ακομα μονο για τις 2 σκιες πανω της
 def shadow_m2d(g, pin, ko, now):
@@ -355,6 +388,7 @@ def compute():
         f0 = FIRST.setdefault(str(code), dict(line=L, oh=oh, oa=oa, tl=pin.get('tl'), to=pin.get('to'), tu=pin.get('tu'), seen=now.isoformat(timespec='minutes')))
         shadow_def(g, pin, ko, now)
         shadow_m2d(g, pin, ko, now)
+        shadow_phi(g, pin, f0, ko, now, proj, st)
         steam_watch(g, pin, o, ko, now, sm, ST)
         shadow_po(g, f0, pin, ko, now, POW, PO_DONE)
         pw, pp = cover(m, L, sm); pl = 1 - pw - pp

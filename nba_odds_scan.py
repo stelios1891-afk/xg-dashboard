@@ -89,7 +89,7 @@ def finish(games, st, now):
     ratings = [dict(code=t, name=nm.get(t, t), net=round(E1['O'][t] - E1['D'][t], 2), O=round(E1['O'][t], 2), D=round(E1['D'][t], 2), pace=round(E1['P'][t], 2),
                     games=st['gp'].get(t, 0)) for t in E1['O']]
     json.dump(dict(generated=now.isoformat(timespec='minutes'), season=st['season'], comp='NBA', model=st.get('model'), sigma_margin=st['sig_m'], sigma_total=st['sig_t'],
-                   res_t=st.get('res_t'), games=sorted(games.values(), key=lambda g: g['utc']), ratings=ratings),
+                   res_t=st.get('res_t'), res_t_alt=st.get('res_t_alt'), games=sorted(games.values(), key=lambda g: g['utc']), ratings=ratings),
               open(F('nba_projections.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 def main():
     now = datetime.datetime.now(datetime.timezone.utc)
