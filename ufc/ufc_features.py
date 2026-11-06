@@ -27,7 +27,11 @@ import pandas as pd
 DATA = Path(os.environ.get("UFC_DATA", Path(__file__).parent / "data"))
 LBS = {"Strawweight": 115, "Flyweight": 125, "Bantamweight": 135, "Featherweight": 145, "Lightweight": 155,
        "Welterweight": 170, "Middleweight": 185, "Light Heavyweight": 205, "Heavyweight": 265}
-CAUSAL = "--causal" in sys.argv  # μέσοι όροι μόνο από αγώνες ΠΡΙΝ από κάθε ημέρα (έξοδος ufc_features_causal.csv)
+opt = lambda name: next((float(a.split("=")[1]) for a in sys.argv if a.startswith(f"--{name}=")), None)
+RECENT = opt("recent")  # μέσοι όροι μόνο από τα τελευταία Ν χρόνια πριν από κάθε ημέρα (έξοδος ufc_features_recentΝ.csv)
+DECAY = opt("decay")  # παλιοί αγώνες του μαχητή μετρούν λιγότερο, χρόνος ημιζωής Ν χρόνια (έξοδος ufc_features_decayΝ.csv)
+CAUSAL = "--causal" in sys.argv or RECENT or DECAY  # μέσοι όροι μόνο από αγώνες ΠΡΙΝ από κάθε ημέρα (έξοδος ufc_features_causal.csv)
+TAG = f"_recent{RECENT:g}" if RECENT else f"_decay{DECAY:g}" if DECAY else "_causal" if CAUSAL else ""
 T0 = 900.0  # συρρίκνωση: 15 λεπτά «μέσου» μαχητή
 
 
@@ -82,12 +86,25 @@ def main():
     def mu(num, den):
         if not CAUSAL:
             return L[num].sum() / L[den].sum()
-        c = L.groupby("d")[[num, den]].sum().cumsum().shift()
+        c = L.groupby("d")[[num, den]].sum()
+        c = c.rolling(f"{round(365.25 * RECENT)}D", closed="left").sum() if RECENT else c.cumsum().shift()
         return L.d.map((c[num] / c[den]).replace(np.inf, np.nan).bfill()).values
     mu_sl = mu("sig_v", "t_v")  # ανά δευτερόλεπτο, μέσος όρος
 
     g = L.groupby("fighter", sort=False)
-    prev = lambda c: g[c].cumsum() - L[c]  # άθροισμα ΠΡΙΝ από τον αγώνα
+    cum = lambda c: g[c].cumsum() - L[c]  # άθροισμα ΠΡΙΝ από τον αγώνα
+
+    def decayed(c):
+        """Ίδιο άθροισμα, με κάθε παλιό αγώνα να χάνει το μισό βάρος του κάθε DECAY χρόνια."""
+        x, t, out = L[c].values, L.d.values, np.zeros(len(L))
+        for idx in g.indices.values():
+            s, last = 0.0, None
+            for i in idx:
+                if last is not None:
+                    s *= 0.5 ** ((t[i] - last) / np.timedelta64(1, "D") / (365.25 * DECAY))
+                out[i], s, last = s, s + x[i], t[i]
+        return pd.Series(out, index=L.index)
+    prev = decayed if DECAY else cum
     L["n_prev"] = g.cumcount()
     L["layoff_d"] = (L.d - g.d.shift()).dt.days
     T = prev("t_v")
@@ -100,7 +117,7 @@ def main():
     L["ctrl_share"] = (prev("ctrl_v") + 0.15 * T0) / (prev("ctrl_v") + prev("ctrl_ab_v") + T0 * 0.3 + 1e-9)
     L["kd_abs15"] = 900 * (prev("kd_ab_v") + mu("kd_ab_v", "t_v") * T0) / (T + T0)
     L["ko_loss"] = ((L.res == "L") & (L.method == "KO")).astype(int)
-    L["ko_losses"] = prev("ko_loss")
+    L["ko_losses"] = cum("ko_loss")
     L["last_ko_loss"] = g.ko_loss.shift().fillna(0)
     rob = (L.res == "L") & L.split & (L.sig > L.sig_ab)
     luck = (L.res == "W") & L.split & (L.sig < L.sig_ab)
@@ -145,7 +162,7 @@ def main():
                       on=["fid", "fighter"])
         sub = sub.drop_duplicates("fid").set_index("fid")[feats]
         out = out.join(sub.add_prefix(me + "_"))
-    out.to_csv(DATA / ("ufc_features_causal.csv" if CAUSAL else "ufc_features.csv"), index=False)
+    out.to_csv(DATA / f"ufc_features{TAG}.csv", index=False)
     print(f"ufc_features.csv: {len(out)} αγώνες · stats-λίγκας: {60 * np.mean(mu_sl):.2f} καθαρά/λεπτό, άμυνα TD {np.mean(mu_tdd):.2f}")
 
 
