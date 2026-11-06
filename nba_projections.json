@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-06T23:35+00:00",
+ "generated": "2026-11-06T23:47+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -7124,12 +7124,12 @@
    "away": "Philadelphia 76ers",
    "hcode": "CLE",
    "acode": "PHI",
-   "margin": -1.06,
-   "total": 228.2,
+   "margin": -1.52,
+   "total": 228.4,
    "total_src": "μοντελο",
-   "pts_h": 113.6,
-   "pts_a": 114.7,
-   "p_home": 0.469,
+   "pts_h": 113.5,
+   "pts_a": 115.0,
+   "p_home": 0.455,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -7144,16 +7144,16 @@
    "rl_a": "2026-11-04",
    "margin_base": 0.4,
    "total_base": 228.0,
-   "abs_dm": -1.46,
-   "abs_dt": 0.29,
-   "abs_shadow": 0.55,
+   "abs_dm": -1.92,
+   "abs_dt": 0.48,
+   "abs_shadow": 1.19,
    "abs_h": [
     [
      "Allen,Jarrett",
      25.1,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
      "Tyson,Jaylon",
@@ -7161,21 +7161,14 @@
      0,
      "Out",
      1.0
-    ],
-    [
-     "Watson,Peyton",
-     28.3,
-     0,
-     "Questionable",
-     0.46
     ]
    ],
    "abs_a": [],
    "inj_src": "official",
-   "abs_lo": 0.221,
-   "abs_ld": 0.058,
-   "abs_lop": 0.478,
-   "abs_ldp": 0.527,
+   "abs_lo": 0.838,
+   "abs_ld": 0.898,
+   "abs_lop": 0.838,
+   "abs_ldp": 0.898,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -7193,12 +7186,12 @@
    "away": "Toronto Raptors",
    "hcode": "MIL",
    "acode": "TOR",
-   "margin": -5.5,
-   "total": 227.3,
+   "margin": -3.55,
+   "total": 227.5,
    "total_src": "μοντελο",
-   "pts_h": 110.9,
-   "pts_a": 116.4,
-   "p_home": 0.342,
+   "pts_h": 112.0,
+   "pts_a": 115.5,
+   "p_home": 0.396,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -7213,17 +7206,17 @@
    "rl_a": "2026-11-04",
    "margin_base": -9.61,
    "total_base": 227.8,
-   "abs_dm": 4.11,
-   "abs_dt": -0.53,
-   "abs_shadow": 1.15,
+   "abs_dm": 6.05,
+   "abs_dt": -0.25,
+   "abs_shadow": 2.5,
    "abs_h": [],
    "abs_a": [
     [
      "Barnes,Scottie",
      33.4,
      1,
-     "Questionable",
-     0.42
+     "Doubtful",
+     0.965
     ],
     [
      "Leonard,Kawhi",
@@ -7233,25 +7226,18 @@
      1.0
     ],
     [
-     "Poeltl,Jakob",
-     20.0,
-     1,
-     "Probable",
-     0.07
-    ],
-    [
      "Quickley,Immanuel",
      31.8,
      1,
-     "Questionable",
-     0.42
+     "Doubtful",
+     0.965
     ]
    ],
    "inj_src": "official",
    "abs_lo": 2.505,
    "abs_ld": 0.425,
-   "abs_lop": 3.44,
-   "abs_ldp": 1.191,
+   "abs_lop": 4.65,
+   "abs_ldp": 2.075,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
