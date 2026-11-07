@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-07T22:26+00:00",
+ "generated": "2026-11-07T22:37+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -7624,12 +7624,12 @@
    "away": "Brooklyn Nets",
    "hcode": "ATL",
    "acode": "BRK",
-   "margin": 5.97,
+   "margin": 6.03,
    "total": 224.0,
    "total_src": "μοντελο",
    "pts_h": 115.0,
    "pts_a": 109.0,
-   "p_home": 0.671,
+   "p_home": 0.673,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -7644,18 +7644,10 @@
    "rl_a": "2026-11-04",
    "margin_base": 5.42,
    "total_base": 223.8,
-   "abs_dm": 0.55,
-   "abs_dt": 0.22,
+   "abs_dm": 0.61,
+   "abs_dt": 0.23,
    "abs_shadow": -0.06,
-   "abs_h": [
-    [
-     "Johnson,Jalen",
-     32.7,
-     0,
-     "Probable",
-     0.04
-    ]
-   ],
+   "abs_h": [],
    "abs_a": [
     [
      "Clowney,Noah",
@@ -7675,8 +7667,8 @@
    "inj_src": "official",
    "abs_lo": -0.04,
    "abs_ld": 0.18,
-   "abs_lop": -0.112,
-   "abs_ldp": 0.16,
+   "abs_lop": -0.149,
+   "abs_ldp": 0.151,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
