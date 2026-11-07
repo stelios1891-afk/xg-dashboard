@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-06 05:18 UTC",
+ "updated": "2026-11-07 05:18 UTC",
  "season": "2627",
  "teams": {
   "8650": {
@@ -118,14 +118,14 @@
    "name": "Everton",
    "lg": "EPL",
    "coach": "David Moyes",
-   "played": 9,
+   "played": 10,
    "summer_new": false
   },
   "8669": {
    "name": "Coventry City",
    "lg": "EPL",
    "coach": "Frank Lampard",
-   "played": 9
+   "played": 10
   },
   "8667": {
    "name": "Hull City",
@@ -164,7 +164,7 @@
    "name": "Deportivo Alavés",
    "lg": "LaLiga",
    "coach": "Quique Sánchez Flores",
-   "played": 11,
+   "played": 12,
    "summer_new": false
   },
   "8581": {
@@ -226,7 +226,7 @@
    "name": "Sevilla",
    "lg": "LaLiga",
    "coach": "Luis García",
-   "played": 11,
+   "played": 12,
    "summer_new": false
   },
   "8558": {
@@ -468,9 +468,22 @@
   "8600": {
    "name": "Udinese",
    "lg": "SerieA",
-   "coach": "Kosta Runjaić",
-   "played": 10,
-   "summer_new": false
+   "coach": "Paolo Zanetti",
+   "played": 11,
+   "summer_new": false,
+   "change": {
+    "date": "2026-11-06",
+    "old": "Kosta Runjaić",
+    "first": "Paolo Zanetti",
+    "caretaker_first": false,
+    "perm": "Paolo Zanetti",
+    "played_since": 1,
+    "next_match_no": 2,
+    "pre_luck": -0.366,
+    "pre_gd": -1.62,
+    "pre_xgd": -1.26,
+    "type": "unlucky"
+   }
   },
   "8636": {
    "name": "Inter",
@@ -502,15 +515,15 @@
    "name": "Venezia",
    "lg": "SerieA",
    "coach": "Davide Nicola",
-   "played": 10,
+   "played": 11,
    "change": {
     "date": "2026-10-17",
     "old": "Giovanni Stroppa",
     "first": "Davide Nicola",
     "caretaker_first": false,
     "perm": "Davide Nicola",
-    "played_since": 4,
-    "next_match_no": 5,
+    "played_since": 5,
+    "next_match_no": 6,
     "pre_luck": -1.103,
     "pre_gd": -1.83,
     "pre_xgd": -0.73,
@@ -625,7 +638,7 @@
    "name": "Borussia Mönchengladbach",
    "lg": "Bundesliga",
    "coach": "Alexander Blessin",
-   "played": 8,
+   "played": 9,
    "summer_new": false,
    "change": {
     "date": "2026-09-19",
@@ -633,8 +646,8 @@
     "first": "Jan-Moritz Lichte",
     "caretaker_first": true,
     "perm": "Alexander Blessin",
-    "played_since": 5,
-    "next_match_no": 6,
+    "played_since": 6,
+    "next_match_no": 7,
     "pre_luck": 0.307,
     "pre_gd": -0.75,
     "pre_xgd": -1.06,
@@ -645,7 +658,7 @@
    "name": "Hamburger SV",
    "lg": "Bundesliga",
    "coach": "Merlin Polzin",
-   "played": 8,
+   "played": 9,
    "summer_new": false
   },
   "8232": {
@@ -732,7 +745,7 @@
    "name": "Toulouse",
    "lg": "Ligue1",
    "coach": "Jens Berthel Askou",
-   "played": 9,
+   "played": 10,
    "summer_new": false
   },
   "8521": {
@@ -781,7 +794,7 @@
    "name": "Strasbourg",
    "lg": "Ligue1",
    "coach": "Hugo Oliveira",
-   "played": 9,
+   "played": 10,
    "summer_new": false
   },
   "9847": {
@@ -848,7 +861,7 @@
    "name": "Arouca",
    "lg": "PrimeiraLiga",
    "coach": "Vitor Severino",
-   "played": 10,
+   "played": 11,
    "summer_new": false,
    "change": {
     "date": "2026-10-11",
@@ -856,8 +869,8 @@
     "first": "Vitor Severino",
     "caretaker_first": false,
     "perm": "Vitor Severino",
-    "played_since": 3,
-    "next_match_no": 4,
+    "played_since": 4,
+    "next_match_no": 5,
     "pre_luck": 0.761,
     "pre_gd": 0.62,
     "pre_xgd": -0.14,
@@ -868,7 +881,7 @@
    "name": "Famalicão",
    "lg": "PrimeiraLiga",
    "coach": "Ricardo Silva",
-   "played": 10,
+   "played": 11,
    "summer_new": false,
    "change": {
     "date": "2026-10-25",
@@ -876,8 +889,8 @@
     "first": "Ricardo Silva",
     "caretaker_first": false,
     "perm": "Ricardo Silva",
-    "played_since": 2,
-    "next_match_no": 3,
+    "played_since": 3,
+    "next_match_no": 4,
     "pre_luck": 0.364,
     "pre_gd": -0.12,
     "pre_xgd": -0.49,
@@ -1065,7 +1078,7 @@
    "name": "PEC Zwolle",
    "lg": "Eredivisie",
    "coach": "Dennis van der Ree",
-   "played": 11,
+   "played": 12,
    "summer_new": false,
    "change": {
     "date": "2026-10-18",
@@ -1073,8 +1086,8 @@
     "first": "Dennis van der Ree",
     "caretaker_first": false,
     "perm": "Dennis van der Ree",
-    "played_since": 3,
-    "next_match_no": 4,
+    "played_since": 4,
+    "next_match_no": 5,
     "pre_luck": -0.853,
     "pre_gd": -1.88,
     "pre_xgd": -1.02,
@@ -1133,15 +1146,15 @@
    "name": "Willem II",
    "lg": "Eredivisie",
    "coach": "Jurgen Streppel",
-   "played": 11,
+   "played": 12,
    "change": {
     "date": "2026-10-31",
     "old": "John Stegeman",
     "first": "Jurgen Streppel",
     "caretaker_first": false,
     "perm": "Jurgen Streppel",
-    "played_since": 1,
-    "next_match_no": 2,
+    "played_since": 2,
+    "next_match_no": 3,
     "pre_luck": -1.002,
     "pre_gd": -2.0,
     "pre_xgd": -1.0,
