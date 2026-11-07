@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-07T18:06+00:00",
+ "generated": "2026-11-07T18:18+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -7709,12 +7709,12 @@
    "away": "New York Knicks",
    "hcode": "CLE",
    "acode": "NYK",
-   "margin": 0.3,
-   "total": 222.4,
+   "margin": -1.26,
+   "total": 222.5,
    "total_src": "μοντελο",
-   "pts_h": 111.3,
-   "pts_a": 111.0,
-   "p_home": 0.509,
+   "pts_h": 110.6,
+   "pts_a": 111.9,
+   "p_home": 0.463,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -7729,30 +7729,30 @@
    "rl_a": "2026-11-04",
    "margin_base": 0.28,
    "total_base": 221.7,
-   "abs_dm": 0.02,
-   "abs_dt": 0.67,
-   "abs_shadow": 0.09,
+   "abs_dm": -1.53,
+   "abs_dt": 0.78,
+   "abs_shadow": 0.19,
    "abs_h": [
     [
-     "Jarrett Allen",
+     "Allen,Jarrett",
      25.1,
      0,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
-     "Sam Merrill",
+     "Merrill,Sam",
      23.1,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
-     "Jaylon Tyson",
+     "Tyson,Jaylon",
      20.8,
      0,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -7765,10 +7765,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.382,
-   "abs_ld": 0.762,
-   "abs_lop": 1.072,
-   "abs_ldp": 1.203,
+   "abs_lo": 1.882,
+   "abs_ld": 1.72,
+   "abs_lop": 1.882,
+   "abs_ldp": 1.72,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
