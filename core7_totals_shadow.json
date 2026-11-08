@@ -845,7 +845,11 @@
 "close_t": "2026-11-07T14:24",
 "clv_line": 0.0,
 "clv_price": 0.0404,
-"close_lim": 10000
+"close_lim": 10000,
+"score": "2-1",
+"tg": 3,
+"pnl": 1.06,
+"pnl_close": 0.98
 },
 "5795505": {
 "seen": "2026-11-01T18:35",
@@ -876,7 +880,11 @@
 "close_t": "2026-11-07T14:42",
 "clv_line": -0.25,
 "clv_price": null,
-"close_lim": 20000
+"close_lim": 20000,
+"score": "1-0",
+"tg": 1,
+"pnl": 1.06,
+"pnl_close": 0.99
 },
 "5868129": {
 "seen": "2026-11-01T19:30",
@@ -907,7 +915,11 @@
 "close_t": "2026-11-07T19:54",
 "clv_line": 0.0,
 "clv_price": 0.0556,
-"close_lim": 20000
+"close_lim": 20000,
+"score": "0-3",
+"tg": 3,
+"pnl": 0.545,
+"pnl_close": 0.49
 },
 "5868127": {
 "seen": "2026-11-01T22:05",
@@ -963,6 +975,35 @@
 "close_t": "2026-11-07T19:54",
 "clv_line": 0.0,
 "clv_price": 0.0051,
-"close_lim": 10000
+"close_lim": 10000,
+"score": "1-0",
+"tg": 1,
+"pnl": 0.962,
+"pnl_close": 0.952
+},
+"5781809": {
+"seen": "2026-11-08T05:24",
+"backfill": false,
+"lg": "Eredivisie",
+"gw": 13,
+"grp": "PT/NL",
+"home": "Go Ahead Eagles",
+"away": "Fortuna Sittard",
+"ko": "2026-11-22T15:45",
+"hours_before": 346.3,
+"side": "under",
+"line": 3.25,
+"odds": 1.962,
+"edge": 0.1584,
+"lim": 225,
+"T_model": 3.206,
+"T_anchor": 2.973,
+"anchor": [
+-0.186,
+-0.047
+],
+"T_market": 3.464,
+"paper": true,
+"window": "8-14"
 }
 }
