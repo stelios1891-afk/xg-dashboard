@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-08T23:13+00:00",
+ "generated": "2026-11-08T23:24+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -8123,12 +8123,12 @@
    "away": "Utah Jazz",
    "hcode": "MIN",
    "acode": "UTA",
-   "margin": 13.81,
-   "total": 221.2,
+   "margin": 14.31,
+   "total": 221.4,
    "total_src": "μοντελο",
-   "pts_h": 117.5,
-   "pts_a": 103.7,
-   "p_home": 0.847,
+   "pts_h": 117.8,
+   "pts_a": 103.5,
+   "p_home": 0.855,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -8143,9 +8143,9 @@
    "rl_a": "2026-11-06",
    "margin_base": 13.72,
    "total_base": 222.4,
-   "abs_dm": 0.09,
-   "abs_dt": -1.23,
-   "abs_shadow": -0.05,
+   "abs_dm": 0.59,
+   "abs_dt": -1.03,
+   "abs_shadow": 0.54,
    "abs_h": [
     [
      "Edwards,Anthony",
@@ -8157,13 +8157,6 @@
    ],
    "abs_a": [
     [
-     "George,Keyonte",
-     32.3,
-     1,
-     "Questionable",
-     0.42
-    ],
-    [
      "JacksonJr.,Jaren",
      26.0,
      0,
@@ -8174,15 +8167,15 @@
      "Markkanen,Lauri",
      30.9,
      1,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.376,
-   "abs_ld": 0.581,
-   "abs_lop": 3.29,
-   "abs_ldp": 0.417,
+   "abs_lo": 3.699,
+   "abs_ld": 0.82,
+   "abs_lop": 3.699,
+   "abs_ldp": 0.82,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
