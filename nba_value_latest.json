@@ -1,11 +1,42 @@
 {
- "scanned_at": "2026-11-08T06:45+00:00",
+ "scanned_at": "2026-11-08T06:51+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
  "n_new": 0,
  "n_changed": 0,
  "picks": [
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Minnesota Timberwolves",
+   "away": "Utah Jazz",
+   "hcode": "MIN",
+   "acode": "UTA",
+   "code": "pin1639799150",
+   "round": 4,
+   "group": null,
+   "when": "2026-11-09T00:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": -11.5,
+   "odds": 1.98,
+   "edge": 0.1008,
+   "proj_odds": 1.8,
+   "model_line": -13.4,
+   "mkt_line": -11.5,
+   "first": {
+    "line": -11.5,
+    "oh": 1.99,
+    "oa": 1.917,
+    "seen": "2026-11-08T01:59+00:00"
+   },
+   "move_note": "ανοιγμα Minnesota Timberwolves -11.5 @1.99 → τωρα -11.5 @1.98 · ουσιαστικα ιδια",
+   "move_pts": 0.1,
+   "hrs_birth": 22.2
+  },
   {
    "lg": "NBA",
    "paper": false,
