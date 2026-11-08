@@ -1,0 +1,338 @@
+"""
+scan_value.py — αυτοματος scanner value picks (Windows Task Scheduler).
+
+Τρεχει καθε Ν λεπτα:
+  1. Τραβαει live Betfair odds → υπολογιζει value picks (live_odds.compute_picks).
+  2. Κραταει STATE (τι εχει ηδη σταλει)· στελνει Telegram ΜΟΝΟ για ΝΕΑ picks ή
+     αλλαγες αποδοσεων (>=ODDS_DELTA)· τα ηδη-σταλμενα & ιδια -> σιωπη.
+  3. Γραφει value_picks_latest.json (το dashboard το διαβαζει ακαριαια, χωρις API).
+
+Χρηση:  python scan_value.py            # scan + Telegram
+        python scan_value.py --no-tg   # scan χωρις ειδοποιησεις (test)
+Quota: ~7 OddsPapi requests/scan (free plan 250/μηνα -> ~1/μερα· 30' θελει paid plan).
+"""
+import os, sys, json, datetime
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+STATE_F = os.path.join(ROOT, 'value_scan_state.json')
+LATEST_F = os.path.join(ROOT, 'value_picks_latest.json')
+MARKET_F = os.path.join(ROOT, 'market_1x2_latest.json')   # market 1X2 για ΟΛΑ τα fixtures (dashboard)
+HIST_F = os.path.join(ROOT, 'odds_history.jsonl')         # ιστορικο τιμων: μια γραμμη ανα ΑΛΛΑΓΗ (2026-08-28)
+HSTATE_F = os.path.join(ROOT, 'odds_history_state.json')  # τελευταιο στιγμιοτυπο ανα ματς (για ανιχνευση αλλαγης)
+DLIVE_F = os.path.join(ROOT, 'dom_live_odds.jsonl')       # in-play καταγραφη (12/9: εως ΚΟ+150', ΧΩΡΙΣΤΑ απο το pregame)
+FAV714_F = os.path.join(ROOT, 'dom_fav714_shadow.jsonl')          # 9/10: σκια κοντα φαβορι 7-14 (καταγραφη, οχι Telegram)
+FAV714_STATE_F = os.path.join(ROOT, 'dom_fav714_shadow_state.json')
+CLVBETS_F = os.path.join(ROOT, 'clv_bets.jsonl')          # CLV ημερολογιο: μια γραμμη ανα ΝΕΟ pick (2026-08-29)
+RATINGS_SEASON = '2526'   # warm-start· αλλαξε σε '2627' οταν μαζευτουν φετινα ματς
+ODDS_DELTA = 0.05         # κατωφλι αλλαγης αποδοσης για re-alert
+
+def _load(path, default):
+    try:
+        with open(path, encoding='utf-8') as fh:
+            return json.load(fh)
+    except Exception:
+        return default
+
+def _save(path, obj):
+    with open(path, 'w', encoding='utf-8') as fh:
+        json.dump(obj, fh, ensure_ascii=False, indent=1)
+
+def pick_key(p):
+    return f"{p['lg']}|{p['home']}|{p['away']}|{p['side']}|{p['hcap']:g}"
+
+_DAYS = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
+
+def _local(when):
+    """TOA commence_time (UTC) -> τοπικη ωρα (Ελλαδας, με DST απο το συστημα)."""
+    try:
+        return datetime.datetime.fromisoformat(when).replace(tzinfo=datetime.timezone.utc).astimezone()
+    except Exception:
+        return None
+
+def _pick_line(p, prev_odds=None):
+    team = p['home'] if p['side'] == 1 else p['away']
+    dt = _local(p.get('when') or '')
+    tm = dt.strftime('%H:%M') if dt else ''
+    ch = f" (ηταν {prev_odds:.2f})" if prev_odds is not None else ""
+    sign = '+' if p['hcap'] >= 0 else ''
+    return (f"{p['lg']} {tm}\n"
+            f"{p['home']} - {p['away']}, {team} {sign}{p['hcap']:g} @{p['odds']:.2f}{ch} bet {p['stake_final']*100:.1f}%\n"
+            f"Fair odds {p['proj_odds']:.2f}, edge {p['edge']*100:.0f}%"
+            + ("\n⭐ κοντό φαβορί 7-14 — καλύτερη τιμή συνήθως κοντά στη σέντρα" if p.get('rule') == 'fav714' else "")
+            + ("\n" + p['fatigue'] if p.get('fatigue') else ""))   # 16/10: σερι εκτος φιλοξενουμενου (fatigue_flags — μονο ενδειξη)
+
+def _build_msg(new_alerts, changed_alerts):
+    out = []
+    if new_alerts:
+        out.append(f"🎯 {len(new_alerts)} ΝΕΑ value picks")
+        cur = None
+        for p in sorted(new_alerts, key=lambda x: (x.get('when') or '')):
+            dt = _local(p.get('when') or '')
+            d = f"{_DAYS[dt.weekday()]} {dt.strftime('%d/%m')}" if dt else '—'
+            if d != cur:
+                out.append(f"\n📅 {d}"); cur = d
+            out.append(_pick_line(p)); out.append("")
+    if changed_alerts:
+        out.append(f"\n🔄 {len(changed_alerts)} ΑΛΛΑΞΑΝ odds")
+        for p, prev in sorted(changed_alerts, key=lambda x: (x[0].get('when') or '')):
+            out.append(_pick_line(p, prev))
+    return "\n".join(out)
+
+
+def log_odds_history(odds_rows, now_utc):
+    """Γραφει στο odds_history.jsonl ΜΟΝΟ τις αλλαγες (γραμμη/αποδοσεις/1Χ2) ανα ματς.
+    Κραταει το τελευταιο στιγμιοτυπο στο HSTATE_F. Επιστρεφει ποσες αλλαγες γραφτηκαν."""
+    hstate = _load(HSTATE_F, {})
+    wrote = 0
+    with open(HIST_F, 'a', encoding='utf-8') as fh, open(DLIVE_F, 'a', encoding='utf-8') as fl:
+        for r in odds_rows:
+            key = f"{r['hid']}_{r['aid']}"
+            sig = [r.get('line'), r.get('oh'), r.get('oa'), r.get('h2h'), r.get('pin'), r.get('mb'), r.get('ou'), r.get('lim')]   # 5/10: + ορια Pinnacle
+            if hstate.get(key, {}).get('sig') == sig:
+                continue
+            rec = dict(t=now_utc, **r)
+            # in-play -> ΞΕΧΩΡΙΣΤΟ αρχειο (12/9): το pregame ιστορικο μενει καθαρο,
+            # οι live τιμες κρατιουνται για τα live τεστ του Στελιου (οπως euro_live_odds).
+            (fl if r.get('inplay') else fh).write(json.dumps(rec, ensure_ascii=False) + chr(10))
+            hstate[key] = dict(sig=sig, t=now_utc)
+            wrote += 1
+    # καθαρισμος state: κρατα μονο ματς με προσφατη καταγραφη (30 μερες) — το jsonl μενει ανεπαφο
+    cutoff = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=30)).isoformat()
+    hstate = {k: v for k, v in hstate.items() if v.get('t', '') >= cutoff}
+    _save(HSTATE_F, hstate)
+    return wrote
+
+# Τ3 «κοκκινο φαναρι»: ΚΟΠΗΚΕ 15/9/2026 (αποφαση Στελιου, μετα την ετυμηγορια 5.1).
+# Ιστορικο: 29/8 alert validated σε closing-picks (−0.73% vs +13.2%)· 13/9 δυο
+# αναδρομικα με εισοδο −12h (t3_grade_retro / t3_narrow_retro, προ-δηλωμενα κριτηρια):
+# καθε κοντρασμα +8.9%, αποτομο σκαλι >=0.25 στο τελ. 2ωρο +15.0% (και στις 2 σεζον)
+# -> ΚΑΝΕΝΑ επικυρωμενο αρνητικο σημα για θεσεις που κρατιουνται απο νωρις.
+# Αν ξαναχρειαστει (πχ κριση Μαιου 2027), η αναλυση βγαινει αναδρομικα απο το
+# odds_history.jsonl (γραμμη/total/Pinnacle με ωρα για ολα τα ματς) — δεν χρειαζεται
+# live μηχανισμος.
+
+
+def scan(notify_tg=True):
+    import toa_live
+    res = toa_live.compute_picks_toa(list(toa_live.SPORT), RATINGS_SEASON)   # The Odds API (πληρωμενο)
+    picks = res['picks']
+    now = datetime.datetime.now().isoformat(timespec='minutes')
+    now_utc = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='minutes')
+    try:
+        n_hist = log_odds_history(res.get('odds_rows', []), now_utc)
+        print(f"odds_history: {n_hist} αλλαγες καταγραφηκαν ({len(res.get('odds_rows', []))} fixtures)")
+    except Exception as e:
+        print(f"odds_history ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
+    state = _load(STATE_F, {})
+
+    new_alerts, changed_alerts = [], []
+    cur_keys = set()
+    for p in picks:
+        k = pick_key(p); cur_keys.add(k)
+        prev = state.get(k)
+        if prev is None:
+            new_alerts.append(p)
+            state[k] = dict(odds=p['odds'], edge=p['edge'], when=p.get('when'), first_seen=now)
+        elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
+            changed_alerts.append((p, prev.get('odds')))
+            state[k].update(odds=p['odds'], edge=p['edge'])
+
+    # prune: πεταξε keys που το ματς τους περασε (η δεν εμφανιζονται εδω & πολυ παλια)
+    today = now[:10]
+    for k in list(state):
+        w = state[k].get('when') or ''
+        if w and w[:10] < today and k not in cur_keys:
+            del state[k]
+
+    # ---- CLV ημερολογιο: η εισοδος μας (≤72ω πριν, μια ανα ματς/πλευρα) — κρινεται στο κλεισιμο ----
+    try:
+        # 13/9 (ledger πακετο 5.1): total & Pinnacle ΤΗ ΣΤΙΓΜΗ του pick — σημεια
+        # αναφορας για τις μετα-το-ματς αναλυσεις (κινηση total/Pinnacle απο εισοδο).
+        orow = {f"{r['hid']}_{r['aid']}": r
+                for r in res.get('odds_rows', []) if not r.get('inplay')}
+        # 26/9/2026 (Στελιος): εγγραφη ΟΧΙ σε καθε νεο alert (πριν: και 3 εβδομαδες πριν, και νεα εγγραφη σε καθε αλλαγη γραμμης),
+        # αλλα ΜΙΑ ανα ματς & πλευρα, την πρωτη φορα που το pick ειναι ενεργο μεσα σε 72ω πριν τη σεντρα (τιμη/γραμμη εκεινης της στιγμης).
+        # Τα Telegram alerts μενουν οπως ηταν.
+        import clv_ledger as _cl
+        _now_dt = datetime.datetime.now(datetime.timezone.utc)
+        recorded = set()
+        for b in _cl._jsonl(CLVBETS_F):
+            if _cl.counts(b):
+                recorded.add((b.get('hid'), b.get('aid'), str(b.get('ko'))[:16], b.get('side')))
+        entries = []
+        for p in picks:
+            ko_dt = _cl._dt(p.get('when'))
+            if ko_dt is None:
+                continue
+            hb = (ko_dt - _now_dt).total_seconds() / 3600
+            k = (p.get('home_id'), p.get('away_id'), str(p.get('when'))[:16], p['side'])
+            if 0 < hb <= _cl.ENTRY_H and k not in recorded:
+                recorded.add(k); entries.append((p, hb))
+        with open(CLVBETS_F, 'a', encoding='utf-8') as fh:
+            for p, hb in entries:
+                # 13/9 Στελιος: καταγραφη απο την 1η αγωνιστικη (πριν: μονο md>=7) —
+                # να δουμε ΣΤΗΝ ΠΡΑΞΗ πως παει το μοντελο νωρις. paper=True σημαινει
+                # «καταγραφη μονο, ΔΕΝ παιζεται» (παιζουμε 15η+)· τα χειροκινητα πεδια
+                # (placed_at/stake/book) δειχνουν τι παιχτηκε πραγματικα.
+                md = p.get('md')
+                o = orow.get(f"{p.get('home_id')}_{p.get('away_id')}") or {}
+                rec = dict(seen=now_utc, lg=p['lg'], home=p['home'], away=p['away'],
+                           tot=(o.get('ou') or [None])[0], pin=o.get('pin'),
+                           hid=p.get('home_id'), aid=p.get('away_id'), ko=p.get('when'),
+                           side=p['side'], hcap=p['hcap'], odds=p['odds'],
+                           edge=round(p['edge'], 4), stake=round(p.get('stake_final', 0), 4),
+                           md=p.get('md'), mxh=p.get('mxh'), mxa=p.get('mxa'),
+                           anchor=p.get('anchor'), role=p.get('role', 'dog'), rule=p.get('rule'),   # 9/10: 'fav714' = κοντο φαβορι 7-14
+                             # 1/10: 'fav' = φαβορι 15η+   # 29/9: αγκυρα αγορας (κοντες γραμμες 15η+) — None αν δεν εφαρμοστηκε
+                           # 13/9 (ledger πακετο 5.1): ζωνη + χειροκινητα πεδια εκτελεσης
+                           # (τα υπολοιπα — προελευση/κινηση/CLV Pin−6h/πεθαμενα — βγαινουν
+                           # post-hoc απο odds_history με το ledger_enrich, οχι εδω)
+                           zone=('deep' if abs(p['hcap']) >= 1 else 'mid'),
+                           window=(None if md is None else
+                                   ('1-6' if md < 7 else ('7-14' if md < 15 else '15+'))),
+                           paper=(None if md is None else bool(md < 15)),
+                           placed_at=None, stake_asked=None, stake_accepted=None, book=None,
+                           h72=True, hours_before=round(hb, 1))
+                fh.write(json.dumps(rec, ensure_ascii=False) + chr(10))
+    except Exception as e:
+        print(f"clv_bets ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
+
+    # ---- 9/10/2026 ΣΚΙΑ κοντα φαβορι 7-14: append-on-change· η τελευταια γραμμη πριν τη σεντρα = κλεισιμο (κρινεται εκει) ----
+    try:
+        st714 = _load(FAV714_STATE_F, {}); n714 = 0
+        with open(FAV714_F, 'a', encoding='utf-8') as fh:
+            for r in res.get('fav714', []):
+                k = f"{r['hid']}_{r['aid']}_{str(r['ko'])[:16]}"; sig = f"{r['hcap']}|{r['odds']}|{r['q']}"
+                if st714.get(k) != sig:
+                    st714[k] = sig; n714 += 1
+                    fh.write(json.dumps(dict(seen=now_utc, **r), ensure_ascii=False) + chr(10))
+        for k in list(st714):                       # prune: ματς που περασαν (>2 μερες)
+            if k.split('_')[2][:10] < (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=2)).strftime('%Y-%m-%d'):
+                del st714[k]
+        _save(FAV714_STATE_F, st714)
+        print(f"σκια κοντα φαβορι 7-14: {len(res.get('fav714', []))} ματς · {n714} αλλαγες")
+    except Exception as e:
+        print(f"fav714 σκια ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
+
+    _save(STATE_F, state)
+    _save(LATEST_F, dict(scanned_at=now, ratings_season=RATINGS_SEASON,
+                         gross=res['gross'], scale=res['scale'], cap=res['cap'],
+                         credits_remaining=res.get('credits_remaining'), credits_cost=res.get('credits_cost'),
+                         n_new=len(new_alerts), n_changed=len(changed_alerts), picks=picks))
+    _save(MARKET_F, dict(scanned_at=now, odds=res.get('market_1x2', {})))   # market 1X2 -> dashboard cards
+
+    # ---- Telegram ----
+    # 10/10/2026 (Στελιος): ΟΧΙ πια οι καταγραφες (αγωνιστικες 1-14 = paper) — «ειναι ασκοπα αυτη τη στιγμη και πολλες
+    # ειδοποιησεις». Στελνονται ΜΟΝΟ οσα ενδεχεται να παιξουμε: κοντα φαβορι 7-14 (rule fav714) και τα κανονικα 15η+.
+    # Ολα τα αλλα γραφονται κανονικα σε value_picks_latest / clv_bets (καταγραφη), απλως χωρις ειδοποιηση.
+    # 10/10 (Στελιος «περνα το», core7_714_homeaway/core7_home_refit): κοντα φαβορι 7-14 ΜΟΝΟ ΕΝΤΟΣ στο Telegram — τα εκτος
+    # (Pinnacle −12.5%, χειροτερα απο τα τυφλα) γινονται καταγραφη: γραφονται κανονικα (picks/ledger/σκια), χωρις ειδοποιηση.
+    def _tg_ok(p):
+        md = p.get('md')
+        if p.get('rule') == 'fav714':      # 25/10/2026 (Στελιος «βρες τα κοντα φαβορι ... αφαιρεσε τα απο παντου»): κανενα Telegram
+            return False
+        return md is None or md >= 15
+    tg_new = [p for p in new_alerts if _tg_ok(p)]
+    tg_changed = [(p, o) for p, o in changed_alerts if _tg_ok(p)]
+    if notify_tg and (tg_new or tg_changed):
+        try:
+            import notify
+            notify.send(_build_msg(tg_new, tg_changed))
+        except Exception as e:
+            print("Telegram σφαλμα:", e)
+    if len(tg_new) + len(tg_changed) < len(new_alerts) + len(changed_alerts):
+        print(f"Telegram: σταλθηκαν {len(tg_new)} νεα / {len(tg_changed)} αλλαγες · καταγραφη χωρις ειδοποιηση "
+              f"{len(new_alerts) - len(tg_new)} / {len(changed_alerts) - len(tg_changed)}")
+
+    print(f"[{now}] {len(picks)} picks total · {len(new_alerts)} νεα · {len(changed_alerts)} changed")
+    return new_alerts, changed_alerts
+
+# ---------- ADAPTIVE gating (πυκνα κοντα σε ματς, αραια μεσοβδομαδα) ----------
+FIX_CACHE = os.path.join(ROOT, 'value_fixtures_cache.json')   # πλησιεστερα kickoffs (FotMob, cached 6h)
+LAST_SCAN = os.path.join(ROOT, 'value_last_scan.txt')   # ΠΡΕΠΕΙ να γινεται commit (scanner_tick): καθε runner ειναι καινουργιος
+# Διακοπη εθνικων (Στελιος 24/9/2026): κανενα TOA scan ως 6/10 (πρωτα ματς CORE7 9/10 -> το παραθυρο 72h ανοιγει ~6/10)
+PAUSE_UNTIL = datetime.datetime(2026, 10, 6, 0, 0, tzinfo=datetime.timezone.utc)
+
+def _now_utc():
+    return datetime.datetime.now(datetime.timezone.utc)
+
+def _fetch_kickoffs():
+    """Τα επομενα ~40 kickoffs ολων των λιγκων απο FotMob (δωρεαν)."""
+    sys.path.insert(0, os.path.join(ROOT, 'dashboard'))
+    import build_data
+    ks = []
+    for lg in build_data.LEAGUE_FOTMOB:
+        try:
+            ks += [f['utc'] for f in build_data.fetch_upcoming(lg) if f.get('utc')]
+        except Exception:
+            pass
+    now = _now_utc()
+    fut = sorted(k for k in ks if _to_dt(k) and (_to_dt(k) - now).total_seconds() > -7200)
+    return fut[:40]
+
+def _to_dt(s):
+    try:
+        return datetime.datetime.fromisoformat(str(s).replace('Z', '+00:00'))
+    except Exception:
+        return None
+
+def _nearest_kickoff_hours():
+    now = _now_utc()
+    cache = _load(FIX_CACHE, {})
+    ca = _to_dt(cache.get('cached_at'))
+    kicks = cache.get('kickoffs', [])
+    fresh = ca and (now - ca).total_seconds() < 6 * 3600
+    future = [(_to_dt(k) - now).total_seconds() / 3600 for k in kicks if _to_dt(k) and _to_dt(k) > now]
+    if not fresh or not future:
+        try:
+            kicks = _fetch_kickoffs()
+            _save(FIX_CACHE, {'cached_at': now.isoformat(), 'kickoffs': kicks})
+            future = [(_to_dt(k) - now).total_seconds() / 3600 for k in kicks if _to_dt(k) and _to_dt(k) > now]
+        except Exception as e:
+            print("FotMob kickoff-check σφαλμα:", e)
+            return 24.0   # ασφαλες default: σαν να ειναι ματς σε ~1 μερα (scan καθε 2h)
+    return min(future) if future else 999.0
+
+def _last_scan_hours():
+    try:
+        with open(LAST_SCAN, encoding='utf-8') as fh:
+            return (_now_utc() - _to_dt(fh.read().strip())).total_seconds() / 3600
+    except Exception:
+        return 999.0
+
+def auto():
+    """Καλειται καθε 15' απο το cron· κανει TOA scan ΜΟΝΟ οταν πρεπει."""
+    h = _nearest_kickoff_hours()
+    import pin_api
+    use_pin = pin_api.source('football') == 'pinnacle'   # 1/10/2026: τιμες απο Pinnacle (0 credits) → πυκνοτερα, χωρις παυση
+    gap = 24.0 if h > 72 else (1.0 if h > 24 else 0.5)   # <24h καθε 30' · <3μερες καθε 1h · αλλιως 1×/μερα (2026-08-29)
+    if 0 < h <= 2.0:       # ΤΕΛΙΚΟ 2ΩΡΟ προ σεντρας: καθε 15' (2026-09-02, ~+4k credits/μηνα)
+        gap = 0.2          # τρεφει: Market Watch σκαλια γραμμης, πυκνο ιστορικο τελικου 2ωρου
+                           # (γραμμη/total/Pinnacle) και το snapshot ΚΛΕΙΣΙΜΑΤΟΣ (CLV ledger =
+                           # τελευταια εγγραφη προ ΚΟ). [Τ3 κοπηκε 15/9 — δεν τρεφει πια αυτο]
+    if use_pin:
+        gap = 3.0 if h > 72 else (0.2 if 0 < h <= 2.0 else 0.25)   # Pinnacle δωρεαν: καθε 15' ως 3 μερες πριν, αλλιως καθε 3ω
+    since = _last_scan_hours()
+    if not use_pin and _now_utc() < PAUSE_UNTIL:
+        print(f"[{_now_utc().isoformat(timespec='minutes')}] ΠΑΥΣΗ TOA scans ως {PAUSE_UNTIL:%d/%m %H:%M} UTC "
+              f"(διακοπη εθνικων) · πλησιεστερο ματς {h:.1f}h")
+        since = -1.0
+    if since >= gap:
+        scan(notify_tg=True)
+        with open(LAST_SCAN, 'w', encoding='utf-8') as fh:
+            fh.write(_now_utc().isoformat())
+    else:
+        print(f"[{_now_utc().isoformat(timespec='minutes')}] skip · πλησιεστερο ματς {h:.1f}h · "
+              f"gap {gap}h · τελευταιο scan {since:.1f}h πριν")
+    # ---- CLV ημερολογιο: settle ο,τι τελειωσε · Δευτερα = εβδομαδιαια συνοψη Telegram ----
+    try:
+        import clv_ledger
+        clv_ledger.maybe_weekly(notify_tg=True)
+    except Exception as e:
+        print(f"clv_ledger ΣΦΑΛΜΑ (μη κρισιμο): {type(e).__name__}: {e}")
+
+if __name__ == '__main__':
+    if 'auto' in sys.argv:
+        auto()
+    else:
+        scan(notify_tg=('--no-tg' not in sys.argv))

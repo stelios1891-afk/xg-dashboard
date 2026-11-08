@@ -1,0 +1,32 @@
+αντιστοιχιση (σεζον: ομαδα EL → εγχωρια):
+  E2021: ASV→Lyon Asvel Villeur(LNB) · BAR→FC Barcelona(ACB) · BAS→Saski Baskonia(ACB) · BER→Alba Berlin(BBL) · CSK→CSKA Moscow 2(VTB) · IST→Efes Pilsen(TBL) · MAD→Real Madrid Teka(ACB) · MCO→Monaco(LNB) · MIL→EA7-Emporio Armani(LBA) · MUN→FC Bayern Munchen(BBL) · OLY→Olympiacos Piraeus(GBL) · PAN→Panathinaikos(GBL) · RED→Crvena Zvezda Red (ABA) · TEL→Maccabi Tel Aviv(ISR) · ULK→Fenerbahce Ulker(TBL) · ZAL→Zalgiris(LKL)
+     χωρις εγχωριο: ['DYR', 'UNK']
+  E2022: ASV→Lyon Asvel Villeur(LNB) · BAR→FC Barcelona(ACB) · BAS→Saski Baskonia(ACB) · BER→Alba Berlin(BBL) · IST→Efes Pilsen(TBL) · MAD→Real Madrid Teka(ACB) · MCO→Monaco(LNB) · MIL→EA7-Emporio Armani(LBA) · MUN→FC Bayern Munchen(BBL) · OLY→Olympiacos Piraeus(GBL) · PAM→Pamesa Valencia(ACB) · PAN→Panathinaikos(GBL) · PAR→Partizan(ABA) · RED→Crvena Zvezda Red (ABA) · TEL→Maccabi Tel Aviv(ISR) · ULK→Fenerbahce Ulker(TBL) · VIR→Virtus Bologna(LBA) · ZAL→Zalgiris(LKL)
+  E2023: ASV→Lyon Asvel Villeur(LNB) · BAR→FC Barcelona(ACB) · BAS→Saski Baskonia(ACB) · BER→Alba Berlin(BBL) · IST→Efes Pilsen(TBL) · MAD→Real Madrid Teka(ACB) · MCO→Monaco(LNB) · MIL→EA7-Emporio Armani(LBA) · MUN→FC Bayern Munchen(BBL) · OLY→Olympiacos Piraeus(GBL) · PAM→Pamesa Valencia(ACB) · PAN→Panathinaikos(GBL) · PAR→Partizan(ABA) · RED→Crvena Zvezda Red (ABA) · TEL→Maccabi Tel Aviv(ISR) · ULK→Fenerbahce Ulker(TBL) · VIR→Virtus Bologna(LBA) · ZAL→Zalgiris(LKL)
+  E2024: ASV→Lyon Asvel Villeur(LNB) · BAR→FC Barcelona(ACB) · BAS→Saski Baskonia(ACB) · BER→Alba Berlin(BBL) · IST→Efes Pilsen(TBL) · MAD→Real Madrid Teka(ACB) · MCO→Monaco(LNB) · MIL→EA7-Emporio Armani(LBA) · MUN→FC Bayern Munchen(BBL) · OLY→Olympiacos Piraeus(GBL) · PAN→Panathinaikos(GBL) · PAR→Partizan(ABA) · PRS→Paris(LNB) · RED→Crvena Zvezda Red (ABA) · TEL→Maccabi Tel Aviv(ISR) · ULK→Fenerbahce Ulker(TBL) · VIR→Virtus Bologna(LBA) · ZAL→Zalgiris(LKL)
+  E2025: ASV→Lyon Asvel Villeur(LNB) · BAR→FC Barcelona(ACB) · BAS→Saski Baskonia(ACB) · DUB→Dubai(ABA) · HTA→Hapoel Tel-Aviv(ISR) · IST→Efes Pilsen(TBL) · MAD→Real Madrid Teka(ACB) · MCO→Monaco(LNB) · MIL→EA7-Emporio Armani(LBA) · MUN→FC Bayern Munchen(BBL) · OLY→Olympiacos Piraeus(GBL) · PAM→Pamesa Valencia(ACB) · PAN→Panathinaikos(GBL) · PAR→Partizan(ABA) · PRS→Paris(LNB) · RED→Crvena Zvezda Red (ABA) · TEL→Maccabi Tel Aviv(ISR) · ULK→Fenerbahce Ulker(TBL) · VIR→Virtus Bologna(LBA) · ZAL→Zalgiris(LKL)
+
+=== IN-SAMPLE (5 σεζον): RMSE αγων 1-10 · ολη η σεζον ===
+  κ 0.0  ταβανι   —: 1-10 11.304 · ολη 11.663
+  κ 0.25 ταβανι   —: 1-10 11.300 · ολη 11.636
+  κ 0.5  ταβανι   —: 1-10 11.319 · ολη 11.631
+  κ 0.75 ταβανι   —: 1-10 11.358 · ολη 11.647
+  κ 1.0  ταβανι   —: 1-10 11.418 · ολη 11.684
+  κ 1.5  ταβανι   —: 1-10 11.601 · ολη 11.823
+  κ 0.25 ταβανι  20: 1-10 11.289 · ολη 11.637
+  κ 0.5  ταβανι  20: 1-10 11.287 · ολη 11.622
+  κ 0.75 ταβανι  20: 1-10 11.298 · ολη 11.620
+  κ 1.0  ταβανι  20: 1-10 11.320 · ολη 11.629
+  κ 1.5  ταβανι  20: 1-10 11.402 · ολη 11.684
+
+LOSO επιλογες: 2021: κ 0.5 ταβανι 20 | 2022: κ 0.25 ταβανι 20 | 2023: κ 0.5 ταβανι 20 | 2024: κ 0.5 ταβανι 20 | 2025: κ 0.5 ταβανι 20
+  αγων 1-10   : live 11.304 → με εγχωρια 11.297 · ανα σεζον -0.025 -0.060 +0.062 +0.026 -0.029 → καλυτερο 3/5 → ✗
+  αγων 11+    : live 11.808 → με εγχωρια 11.767 · ανα σεζον -0.066 -0.058 -0.032 -0.026 -0.035 → καλυτερο 5/5
+  ολη η σεζον : live 11.663 → με εγχωρια 11.631 · ανα σεζον -0.051 -0.059 -0.004 -0.014 -0.033 → καλυτερο 5/5
+
+  live (κ=0)         αγων 1-10 : b +0.269 · ROI ≥8% +8.5% (197) 4/5 · ≥5% +7.1% (264) 4/5
+  live (κ=0)         11+       : b +0.578 · ROI ≥8% +7.3% (528) 4/5 · ≥5% +4.3% (665) 4/5
+  live (κ=0)         ολη       : b +0.496 · ROI ≥8% +7.6% (725) 3/5 · ≥5% +5.1% (929) 3/5
+  με εγχωρια (LOSO)  αγων 1-10 : b +0.285 · ROI ≥8% +7.4% (190) 3/5 · ≥5% +5.7% (260) 4/5
+  με εγχωρια (LOSO)  11+       : b +0.659 · ROI ≥8% +11.1% (527) 4/5 · ≥5% +7.8% (675) 4/5
+  με εγχωρια (LOSO)  ολη       : b +0.560 · ROI ≥8% +10.1% (717) 4/5 · ≥5% +7.2% (935) 3/5

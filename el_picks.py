@@ -1,0 +1,466 @@
+# -*- coding: utf-8 -*-
+"""el_picks.py — VALUE PICKS Ευρωλιγκας + Telegram (25/9/2026, αποφαση Στελιου).
+Διαβαζει: el_projections.json (μοντελο v3: χαντικαπ v1+ειδικοι · συνολο v2+παρατασεις) + el_odds_latest.json (Pinnacle, scanner).
+Κανονες (ιστορικο ROI 6 σεζον, Pinnacle closing): edge ≥ 8% σε χαντικαπ ΚΑΙ σε συνολο (over/under), μονο ματς που δεν αρχισαν.
+  edge = P(μοντελο)·αποδοση + P(push) − 1 · διαφορα ~ N(margin, 11.5) · συνολο ~ N(total, 16.7) · ακεραιες γραμμες: διορθωση ±0.5.
+Γραφει: el_value_latest.json (dashboard, tab Value Picks) · el_clv_bets.jsonl (ημερολογιο: καθε ΝΕΟ pick με την τιμη εισοδου)
+Telegram: ΜΟΝΟ νεα picks ή αλλαγη αποδοσης ≥ 0.05 (state: el_value_state.json) — οπως το ποδοσφαιρο (notify.py).
+Χρηση: python el_picks.py [--no-tg]"""
+import os, sys, json, math, datetime as dt
+sys.stdout.reconfigure(encoding='utf-8')
+ROOT = os.path.dirname(os.path.abspath(__file__))
+F = lambda n: os.path.join(ROOT, n)
+HC_MIN, TOT_MIN = 0.08, 0.08
+ODDS_DELTA = 0.05
+Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
+# 30/9/2026 (Στελιος): σημειωση «αγορα κοντρα» — ποσο κινηθηκε η αγορα τις 3 ωρες ΠΡΙΝ την πρωτη εμφανιση του pick.
+# el_line_timing.py (Crown 2021-25): χαντικαπ με την τιμη μας να ΑΝΕΒΑΙΝΕΙ >=0.5 π. -> -1.4% (135, 2/5) vs σταθερη +5.2%·
+# συνολα ιδια περιπτωση +5.3% (215) = κανενα προβλημα. ΠΑΡΑΤΗΡΗΣΗ (οχι προ-δηλωμενο τεστ) -> μονο σημειωση, το pick μενει.
+DRIFT_H, DRIFT_MIN = 3.0, 0.5
+# 1/10/2026 (Στελιος «περασε το»): ΧΑΝΤΙΚΑΠ που γεννιουνται στο ΤΕΛΕΥΤΑΙΟ 2ΩΡΟ = ΚΑΤΑΓΡΑΦΗ, ΟΧΙ ΠΑΙΧΝΙΔΙ (paper).
+# el_alert_types.py (Crown καθε αλλαγη τιμης, E2021-25, live μοντελο): τελευταιο 2ωρο −9.0% (75, 1/5) · παλιο μοντελο −17.1% (1/5)·
+# ολες οι αλλες ωρες θετικες (ανοιγμα +7.5% 5/5, ≥12ω +24.8%, 6-12ω +14.6%, 2-6ω +8.6%). Μεσα στο 2ωρο: ξαφνικο αλμα ≥1π/1ω +27.7% (16)
+# vs σταδιακη κοντρα −22.6% (38) / ακινητη −12.3% (21) → λιγα για κανονα· καταγραφεται το ειδος για κριση με πραγματικα δεδομενα.
+# Οχι Telegram, οχι «παιζεται» στο dashboard· γραφεται στο el_clv_bets.jsonl με paper='late2h'. Συνολα: ΚΑΜΙΑ αλλαγη (2ωρο +4.5%).
+LATE_H, SUDDEN_PTS = 2.0, 1.0
+# 1/10/2026 (Στελιος «ναι»): ΣΥΝΟΛΑ που γεννιουνται αφου η αγορα κινηθηκε ≥1.5 π. ΚΟΝΤΡΑ απο την πρωτη τιμη που ειδε ο scanner
+# (αναμενομενο συνολο, με αποδοσεις) = ΚΑΤΑΓΡΑΦΗ (paper='move15'). el_alert_types_totals.py (Crown, 5 σεζον, live μοντελο):
+# κοντρα 1.5-2 −2.9% (54) · 2-3 −25.1% (44, 1/5)· κανονας «χωρις» ολα +7.1 → +9.7% (5/5 σεζον βελτιωση· παλιο μοντελο 4/5)· ορια 1/1.5/2 ιδια.
+MOVE_PTS = 1.5
+from statistics import NormalDist as _ND
+def _mu(row, mkt, sm, st):
+    try:
+        if mkt == 'hcap':
+            L, o1, o2 = float(row['line']), float(row['oh']), float(row['oa'])
+            p = (1 / o1) / (1 / o1 + 1 / o2); return -L + sm * _ND().inv_cdf(min(max(p, 1e-4), 1 - 1e-4))
+        T, o1, o2 = float(row['tl']), float(row['to']), float(row['tu'])
+        p = (1 / o1) / (1 / o1 + 1 / o2); return T + st * _ND().inv_cdf(min(max(p, 1e-4), 1 - 1e-4))
+    except Exception:
+        return None
+_HIST = None
+def drift_before(p, first_seen, sm, st, hours=DRIFT_H):
+    """+ = η αγορα ηρθε ΠΡΟΣ την πλευρα μας, - = εφυγε (η τιμη μας ανεβηκε) τις DRIFT_H ωρες πριν την πρωτη εμφανιση."""
+    global _HIST
+    if _HIST is None:
+        _HIST = {}
+        try:
+            for ln in open(F('el_odds_hist.jsonl'), encoding='utf-8'):
+                try:
+                    r = json.loads(ln); _HIST.setdefault(int(r['code']), []).append(r)
+                except Exception:
+                    pass
+            for v in _HIST.values(): v.sort(key=lambda r: r['t'])
+        except FileNotFoundError:
+            pass
+    key_ = 'line' if p['mkt'] == 'hcap' else 'tl'
+    H = [r for r in _HIST.get(int(p['code']), []) if r.get(key_) is not None]
+    if not H: return None
+    t_alert = dt.datetime.fromisoformat(first_seen).astimezone(dt.timezone.utc)
+    ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
+    now_rows = [r for r in H if ts(r) <= t_alert + dt.timedelta(minutes=15)]
+    prev_rows = [r for r in H if ts(r) <= t_alert - dt.timedelta(hours=hours)]
+    if not now_rows: return None
+    a, b = (prev_rows[-1] if prev_rows else H[0]), now_rows[-1]
+    m0, m1 = _mu(a, p['mkt'], sm, st), _mu(b, p['mkt'], sm, st)
+    if m0 is None or m1 is None: return None
+    s_ = p['side'] if p['mkt'] == 'hcap' else (1 if str(p.get('bet', '')).startswith('Over') else -1)
+    return round((m1 - m0) * s_, 1)
+# 17/10/2026 (Στελιος «βαλτο»): ΑΟΥΤΣΑΪΝΤΕΡ (χαντικαπ, παιρνουμε ποντους) που ΠΡΩΤΟΒΓΑΙΝΕΙ 2-6ω πριν το τζαμπολ = ΚΑΤΑΓΡΑΦΗ (paper='late6dog').
+# el_dog_late_test.py (Crown, E2021-25, live μοντελο, ΠΡΟ-ΔΗΛΩΜΕΝΟ): κομμενα 52 −6.8% / κλεισ. −9.1% (2/5) vs μενουν +8.6% (4/5)· χειροτερα 4/5 σεζον·
+# Χ=4 (−22.3%) & Χ=8 (−10.4%) ιδια φορα· μοναδες αουτσαιντερ +48.0 → +51.6 → ΠΕΡΝΑ 4/4. el_contra_birth: τα κακα = σταδιακη κοντρα 0.5-1.5π
+# με αλλαγη ΜΟΝΟ της αποδοσης (−14%, 0/5). ΦΑΒΟΡΙ ΟΧΙ (αργα +38.5%). Αν η αγορα ΜΟΛΙΣ ανοιξε (<6ω πριν) → τιμη ανοιγματος = κανονικο.
+LATE_DOG_H = 6.0
+OPEN_GRACE_MIN = 45     # αν η πρωτη τιμη του ματς στο ιστορικο ειναι νεοτερη απο τοσα λεπτα → «ανοιγμα»
+def market_just_opened(p, now):
+    drift_before(p, now, 11.5, 16.7, hours=0.01)        # φορτωνει το _HIST αν χρειαζεται
+    H = (_HIST or {}).get(int(p['code']), [])
+    if not H:
+        return True
+    try:
+        t0 = dt.datetime.fromisoformat(H[0]['t']).replace(tzinfo=dt.timezone.utc)
+        return (dt.datetime.fromisoformat(now) - t0).total_seconds() < OPEN_GRACE_MIN * 60
+    except Exception:
+        return False
+# 29/10/2026 (Στελιος): ΑΡΓΑ PICKS (μετα το ανοιγμα) = ταξινομηση ανα ΑΙΤΙΑ + ιστορικο στο μηνυμα (el_late_groups.py, Crown E2021-25, μηχανη PIR + αμυνα).
+# ΧΑΝΤΙΚΑΠ: ΕΝΑΣ κανονας αποφυγης αντι για late2h/late6dog — pick απο ΣΤΑΔΙΑΚΗ κοντρα (≥0.5 π. σε 3ω ή 6ω, χωρις αλμα ≥1 π./1ω, οχι λογω απουσιας)
+# που γεννηθηκε ≤6ω πριν το τζαμπολ = ΚΑΤΑΓΡΑΦΗ (paper='gradual'): 60 picks −12.0μ (−20%), αρνητικο 5/5 σεζον. Ολα τα αλλα αργα παιζονται.
+# «χωρις κανονες» 999 +133.3 · late2h+late6dog 862 +124.9 · ΜΟΝΟ σταδιακη ≤6ω 939 +145.3 (in-sample — κριση με τα φετινα).
+# Τα picks που κοβονται (gradual, move15) πανε στο info bot ως «ΔΕΝ ΠΑΙΖΕΤΑΙ».
+GRAD_PTS, GRAD_H = 0.5, 6.0
+LATE_HC = {'Α': ('🩹 λογω απουσιας (νεα ειδηση)', '+39%', 71, '5/5'), 'Β': ('⚡ ξαφνικη κινηση της αγορας (≥1 π. σε 1ω)', '+23%', 59, '5/5'),
+           'Γ': ('〰️ σταδιακη κοντρα, νωρις (>6ω πριν)', '+7%', 45, '3/5'), 'Δ': ('💱 αλλαξε μονο η αποδοση', '+25%', 75, '5/5'),
+           'Ε': ('▫️ μικρη κινηση', '+46%', 29, '5/5')}
+LATE_TOT = {'Β': ('⚡ ξαφνικη κινηση της αγορας (≥1 π. σε 1ω)', '+14%', 107, '4/5'), 'Γ': ('〰️ σταδιακη κοντρα', '+8%', 93, '3/5'),
+            'Δ': ('💱 αλλαξε μονο η αποδοση', '+11%', 50, '3/5'), 'Ε': ('▫️ μικρη κινηση', '−5%', 10, '1/5')}
+def _hist_rows(p):
+    key_ = 'line' if p['mkt'] == 'hcap' else 'tl'
+    return [r for r in (_HIST or {}).get(int(p['code']), []) if r.get(key_) is not None], key_
+def late_class(p, now, sm, st):
+    """→ (γκρουπ Α-Ε, κινηση 1ω, 3ω, 6ω, ωρες απο το ανοιγμα) για pick που γεννηθηκε μετα το ανοιγμα (− = κοντρα σε εμας)."""
+    d1, d3, d6 = (drift_before(p, now, sm, st, hours=h) for h in (1.0, 3.0, 6.0))
+    H, key_ = _hist_rows(p); t_now = dt.datetime.fromisoformat(now).astimezone(dt.timezone.utc)
+    ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
+    h_open = (t_now - ts(H[0])).total_seconds() / 3600 if H else None
+    if p['mkt'] == 'hcap' and p.get('abs_born'): c = 'Α'
+    elif d1 is not None and d1 <= -SUDDEN_PTS: c = 'Β'
+    elif min([x for x in (d3, d6) if x is not None], default=0.0) <= -GRAD_PTS: c = 'Γ'
+    else:
+        before = [r for r in H if ts(r) <= t_now - dt.timedelta(hours=3)]; nowr = [r for r in H if ts(r) <= t_now + dt.timedelta(minutes=15)]
+        same = bool(before) and bool(nowr) and abs(float(before[-1][key_]) - float(nowr[-1][key_])) < 1e-9
+        c = 'Δ' if same else 'Ε'
+    return c, d1, d3, d6, h_open
+def late_note(p):
+    c = p.get('late_cls')
+    if not c: return None
+    lab, roi, n, pos = (LATE_HC if p['mkt'] == 'hcap' else LATE_TOT)[c]
+    mv = [f'{x:+.1f} π. σε {h}' for x, h in ((p.get('d1'), '1ω'), (p.get('d3'), '3ω'), (p.get('d6'), '6ω')) if x is not None]
+    ho = p.get('h_open')
+    return (f"⏱ ΑΡΓΟ PICK" + (f" ({ho:.0f}ω μετα το ανοιγμα)" if ho is not None else '') + f" · {lab}"
+            + (f" · αγορα {', '.join(mv)}" if mv and c != 'Α' else '') + f" — ιστορικα {roi} ({n} picks, θετικο {pos} σεζον)")
+MOVE_LATE_H = 6.0     # 7/10/2026 (Στελιος «περνα το»): κοντρα ≥1.5 που ΞΕΠΕΡΑΣΤΗΚΕ <6ω πριν το τζαμπολ = κανονικο pick (el_totals_move_deep:
+                      # <6ω +19.5% (44, 4/5) · 6-12ω −29.8% (41) · 12-24ω −32.9% (23) — οι νωρις κοντρα κινησεις ειναι «εξυπνα» λεφτα)
+def move_cross_hours(p, st):
+    """Ωρες πριν το τζαμπολ οταν η αγορα ΠΡΩΤΟΞΕΠΕΡΑΣΕ τα MOVE_PTS κοντρα απο την πρωτη τιμη (αναμενομενο συνολο)· None αν δεν βρεθηκε."""
+    H = [r for r in (_HIST or {}).get(int(p['code']), []) if r.get('tl') is not None]
+    if not H: return None
+    s_ = 1 if str(p.get('bet', '')).startswith('Over') else -1
+    m0 = _mu(H[0], 'total', None, st)
+    tip = dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
+    for r in H:
+        m = _mu(r, 'total', None, st)
+        if m0 is not None and m is not None and (m - m0) * s_ <= -MOVE_PTS:
+            return round((tip - dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)).total_seconds() / 3600, 1)
+    return None
+def drift_note(p):
+    d = p.get('drift')
+    if d is None or d > -DRIFT_MIN: return None
+    if p['mkt'] == 'hcap':
+        # 1/10/2026: αντικαθιστα την παλια «⚠️ −1.4%» (el_line_timing, δεν ξεχωριζε ωρα/ειδος). el_alert_types.py (live μοντελο):
+        # πριν το τελευταιο 2ωρο η κοντρα ΔΕΝ βλαπτει — ≥6ω σταδιακη +12.9% (70) / ξαφνικη +36.5% (28)· 2-6ω σταδιακη −3.6% (47, 2/5) / ξαφνικη +44% (20).
+        kind = p.get('kind1h') or 'σταδιακη'; h = p.get('hrs_birth')
+        if h is not None and h < 6:
+            hist = 'ξαφνικη +44% (20 picks)' if kind == 'ξαφνικη' else 'σταδιακη −3.6% (47 picks, 2/5 σεζον)'
+            return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν, {kind}) — ιστορικα 2-6ω πριν: {hist}."
+        hist = 'ξαφνικη +36.5% (28 picks)' if kind == 'ξαφνικη' else 'σταδιακη +12.9% (70 picks)'
+        return f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν, {kind}) — ιστορικα ≥6ω πριν δεν βλαπτει: {hist}."
+    mo = p.get('move_open')      # 1/10: el_alert_types_totals — κοντρα απο το ανοιγμα <1.5 π. ιστορικα +9% (216 picks)· ≥1.5 → καταγραφη
+    return (f"ℹ️ Αγορα κοντρα ({d:+.1f} π. τις {DRIFT_H:.0f}ω πριν" + (f" · {mo:+.1f} απο το ανοιγμα" if mo is not None else '')
+            + ") — στα συνολα κοντρα κατω απο 1.5 π. απο το ανοιγμα ιστορικα δεν βλαπτει (+9%, 216 picks).")
+
+def _load(p, d):
+    try: return json.load(open(p, encoding='utf-8'))
+    except Exception: return d
+def _is_int(x): return abs(x - round(x)) < 1e-9
+def cover(mu, L, sig):
+    """P(νικη), P(push) για «mu + L > 0»."""
+    if _is_int(L):
+        pw = Phi((mu + L - 0.5) / sig); pl = Phi((-mu - L - 0.5) / sig); return pw, 1 - pw - pl
+    return Phi((mu + L) / sig), 0.0
+
+ABS = {}       # 9/10/2026 (Στελιος «να περασουν τα λεπτα»): κοστος απουσιων (el_absence.py, RotoWire OUT) ανα κωδικο ματς — ιδιο σε compute & track
+def _abs(games):
+    global ABS
+    try:
+        import el_absence; ABS = el_absence.adjustments(games)
+    except Exception as e:
+        print('απουσιες σφαλμα:', e); ABS = {}
+    try:                                                                     # 9/10: και για τη σελιδα 🏀 Euroleague (καρτες με απουσιες)
+        json.dump(dict(updated=dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'), games=ABS),
+                  open(F('el_absence_now.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+    except Exception as e:
+        print('el_absence_now σφαλμα:', e)
+    return ABS
+# 23/10/2026 (Στελιος «ναι»): ΣΚΙΑ «δικο box score» στο ΧΑΝΤΙΚΑΠ (el_box_shadow.py, el_value_system_page_test.py υποψηφιος 4:
+# +72.2 vs PIR +62.3, RMSE 4/5 αλλα τυχη .43 → δεν περασε). ΜΟΝΟ ΚΑΤΑΓΡΑΦΗ: el_box_shadow.jsonl (πρωτη εμφανιση ανα ματς & πλευρα, edge ≥8%)
+# + el_box_shadow_adj.json (τελευταια διορθωση πριν το τζαμπολ, live vs box, ανα ματς). Οχι Telegram, οχι ledger, οχι dashboard picks.
+# ΚΡΙΣΗ (προ-δηλωμενη): τελος κανονικης, ΜΟΝΟ αγων. 11-38: ακριβεια καλυτερη ΚΑΙ μοναδες ≥ live ΚΑΙ CLV ≥ live → απο την 11η της επομενης σεζον.
+# 29/10/2026 (Στελιος «ναι περνα το»): το live χαντικαπ περασε σε «PIR + αμυνα» (el_absence.ENGINE)· το ΣΚΕΤΟ PIR (ο προηγουμενος live τυπος)
+# μενει ΚΑΤΑΓΡΑΦΗ με τον ιδιο μηχανισμο: el_pir_shadow.jsonl + el_pir_shadow_adj.json. Κριση μετα την 20η αγωνιστικη (μοναδες PIR+αμυνα vs PIR).
+_SH = {'box': dict(log=F('el_box_shadow.jsonl'), adjf=F('el_box_shadow_adj.json'), seen=None, adj=None),
+       'pir': dict(log=F('el_pir_shadow.jsonl'), adjf=F('el_pir_shadow_adj.json'), seen=None, adj=None)}
+def _shadow(kind, base, g, ab, L, oh, oa, sm, now, ko):
+    S_ = _SH[kind]; fld = 'adj_' + kind
+    if S_['seen'] is None:
+        S_['seen'] = set()
+        try:
+            for ln in open(S_['log'], encoding='utf-8'):
+                try: r = json.loads(ln); S_['seen'].add((str(r['code']), r['side']))
+                except Exception: pass
+        except FileNotFoundError: pass
+        S_['adj'] = _load(S_['adjf'], {})
+    m_live = float(g['margin']) + float(ab.get('adj', 0.0)); m_sh = float(g['margin']) + float(ab[fld])
+    tnow = now.isoformat(timespec='seconds')
+    S_['adj'][str(g['code'])] = {'t': tnow, 'when': base['when'], 'round': g['round'], 'home': g['home'], 'away': g['away'], 'margin': g['margin'],
+                                 'adj': ab.get('adj', 0.0), fld: ab[fld], 'line': L, 'oh': oh, 'oa': oa}
+    pw, pp = cover(m_sh, L, sm); pl = 1 - pw - pp
+    lw, lp = cover(m_live, L, sm); ll = 1 - lw - lp
+    for side, p_, od, hc, pl_ in ((1, pw, oh, L, lw), (-1, pl, oa, -L, ll)):
+        e = p_ * od + pp - 1
+        if e < HC_MIN or (str(g['code']), side) in S_['seen']: continue
+        S_['seen'].add((str(g['code']), side))
+        rec = {'seen': tnow, 'code': g['code'], 'round': g['round'], 'home': g['home'], 'away': g['away'], 'when': base['when'], 'side': side, 'hcap': hc, 'odds': od,
+               'edge': round(e, 4), 'edge_live': round(pl_ * od + lp - 1, 4), 'model_line_' + kind: round(-m_sh, 1), 'model_line': round(-m_live, 1), 'mkt_line': L,
+               'adj': ab.get('adj', 0.0), fld: ab[fld], 'hrs_to_ko': round((ko - now).total_seconds() / 3600, 1)}
+        open(S_['log'], 'a', encoding='utf-8').write(json.dumps(rec, ensure_ascii=False) + '\n')
+def _shadow_save():
+    for S_ in _SH.values():
+        if S_['adj'] is not None:
+            json.dump(S_['adj'], open(S_['adjf'], 'w', encoding='utf-8'), ensure_ascii=False)
+def compute():
+    proj = _load(F('el_projections.json'), {}); odds = _load(F('el_odds_latest.json'), {}).get('odds', {})
+    sm, st = float(proj.get('sigma_margin', 11.5)), float(proj.get('sigma_total', 16.7))
+    games = {str(g['code']): g for g in proj.get('games', [])}
+    now = dt.datetime.now(dt.timezone.utc)
+    picks = []
+    _abs(list(games.values()))
+    for code, o in odds.items():
+        g = games.get(str(code)); pin = o.get('pin') or {}
+        if not g or g.get('played'): continue
+        ko = dt.datetime.fromisoformat(o['commence'].replace('Z', '+00:00'))
+        if ko <= now: continue
+        when = ko.strftime('%Y-%m-%dT%H:%M')
+        base = dict(lg='Euroleague', home=g['home'], away=g['away'], hcode=g['hcode'], acode=g['acode'], code=g['code'], round=g['round'], coach_notes=g.get('coach_notes'),
+                    when=when, el=True, model=proj.get('model', '')[:60])
+        ab = ABS.get(str(code)) or {}
+        if ab.get('note'): base.update(abs_adj=ab.get('adj', 0.0), abs_note=ab['note'])
+        tadj = float(ab.get('tot', 0.0) or 0.0)                          # 9/10 (Στελιος «αμυνα και επιθεση»): ΣΥΝΟΛΑ — on/off απουσιων (el_absence)
+        # ---- χαντικαπ ----
+        if pin.get('line') is not None and pin.get('oh') and pin.get('oa'):
+            L, oh, oa = float(pin['line']), float(pin['oh']), float(pin['oa'])
+            m = float(g['margin']) + float(ab.get('adj', 0.0))          # 9/10: + κοστος απουσιων (φιλοξ − γηπ)
+            pw, pp = cover(m, L, sm); pl = 1 - pw - pp
+            pw0, pp0 = cover(float(g['margin']), L, sm); pl0 = 1 - pw0 - pp0  # 29/10 (Στελιος): χωρις απουσιες — για την ενδειξη «pick λογω απουσιων»
+            for side, p_, pu, od, hc, p0 in ((1, pw, pp, oh, L, pw0), (-1, pl, pp, oa, -L, pl0)):
+                e = p_ * od + pu - 1
+                if e >= HC_MIN:
+                    e0 = p0 * od + pp0 - 1
+                    pk = dict(base, mkt='hcap', side=side, hcap=hc, odds=od, edge=round(e, 4), travel=g.get('travel'),
+                              proj_odds=round((p_ + (1 - p_ - pu)) / p_, 2) if p_ > 0 else None, model_line=round(-m, 1), mkt_line=L)
+                    if abs(float(ab.get('adj', 0.0))) > 1e-9 and e0 < HC_MIN: pk.update(abs_born=True, edge_noabs=round(e0, 4))
+                    picks.append(pk)
+            for kind in ('box', 'pir'):                                  # 23/10 ΣΚΙΑ «δικο box» · 29/10 ΚΑΤΑΓΡΑΦΗ σκετο PIR — ΔΕΝ μπαινουν στα picks
+                if 'adj_' + kind in ab:
+                    try: _shadow(kind, base, g, ab, L, oh, oa, sm, now, ko)
+                    except Exception as _e: print(f'σκια {kind} σφαλμα:', _e)
+        # ---- συνολο ----
+        if pin.get('tl') is not None and pin.get('to') and pin.get('tu'):
+            T, ov, un = float(pin['tl']), float(pin['to']), float(pin['tu'])
+            t = float(g['total']) + tadj
+            po, pq = cover(t, -T, st); pu_ = 1 - po - pq
+            for nm, p_, od in (('Over', po, ov), ('Under', pu_, un)):
+                e = p_ * od + pq - 1
+                if e >= TOT_MIN:
+                    pk = dict(base, mkt='total', side=0, hcap=T, bet=f'{nm} {T:g}', odds=od, edge=round(e, 4),
+                              proj_odds=round((p_ + (1 - p_ - pq)) / p_, 2) if p_ > 0 else None, model_total=round(t, 1), mkt_line=T)
+                    if tadj: pk['abs_tot'] = round(tadj, 2)
+                    # 1/10/2026: αγων 1-10 το συνολο εχει ταση ποντων προετοιμασιας· ενδειξη αν ΣΥΜΦΩΝΕΙ και το παλιο (χωρις προετοιμασια)
+                    # — μονο καταγραφη για κριση με πραγματικα δεδομενα (el_preseason_totals_deep.py F/G), δεν αλλαζει τα picks
+                    tb = g.get('total_base')
+                    if tb is not None: tb = float(tb) + tadj
+                    if tb is not None and abs(float(tb) - t) >= 0.05:
+                        bo, bq = cover(float(tb), -T, st); bp = bo if nm == 'Over' else 1 - bo - bq
+                        pk['old_agree'] = bool(bp * od + bq - 1 >= TOT_MIN); pk['total_base'] = round(float(tb), 1)
+                    picks.append(pk)
+    try: _shadow_save()
+    except Exception as e: print('σκιες σφαλμα (αποθηκευση):', e)
+    return picks
+
+def key(p):                                   # 7/10: ΕΝΑ pick ανα ματς & πλευρα (η γραμμη εκτος κλειδιου)
+    import bk_pick_status as _b; return _b.side_key('EL', p)
+def line(p, prev=None):
+    t = dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
+    try:
+        from zoneinfo import ZoneInfo; t = t.astimezone(ZoneInfo('Europe/Athens'))
+    except Exception:
+        t = t + dt.timedelta(hours=3)
+    tm = f"{['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'][t.weekday()]} {t:%d/%m %H:%M}"
+    if p['mkt'] == 'hcap':
+        team = p['home'] if p['side'] == 1 else p['away']
+        bet = f"{team} {'+' if p['hcap'] >= 0 else ''}{p['hcap']:g}"
+        why = f"μοντελο {p['model_line']:+.1f} · αγορα {p['mkt_line']:+.1f}"
+        if p.get('travel'): why += f" · {p['travel']['note']}"
+        if p.get('abs_adj'): why += f" · απουσιες {p['abs_adj']:+.1f} στη διαφορα γηπ."
+    else:
+        bet = p['bet']; why = f"μοντελο {p['model_total']:.1f} · αγορα {p['mkt_line']:g}"
+        if p.get('abs_tot'): why += f" · απουσιες {p['abs_tot']:+.1f} στο συνολο"
+        if p.get('old_agree') is not None:
+            why += f" · {'✓ συμφωνει και το παλιο' if p['old_agree'] else '✗ μονο με την προετοιμασια'} ({p['total_base']:.1f} χωρις φιλικα)"
+    ch = f" (ηταν {prev:.2f})" if prev else ''
+    if p.get('coach_notes'): why += ' · ' + ' · '.join(p['coach_notes'])
+    absb = ''
+    if p.get('abs_born'):                          # 29/10 (Στελιος): pick που υπαρχει ΜΟΝΟ λογω απουσιων → καθαρα στο μηνυμα
+        absb = (f"\n🩹 PICK ΛΟΓΩ ΑΠΟΥΣΙΩΝ — χωρις τις απουσιες edge {p['edge_noabs']*100:.0f}% (δεν θα ηταν pick)"
+                + (f"\n{p['abs_note']}" if p.get('abs_note') else ''))
+    return f"🏀 Euroleague · αγων {p['round']} · {tm}\n{p['home']} - {p['away']}\n{bet} @{p['odds']:.2f}{ch} · edge {p['edge']*100:.0f}% · fair {p['proj_odds']:.2f}\n({why})" + absb + (f"\n{p['mkt_note']}" if p.get('mkt_note') else '')
+
+# 1/10/2026 (Στελιος): ELEGXOS KLEISIMATOS — για καθε pick που ΠΑΙΞΑΜΕ (πρωτη εγγραφη, οχι paper): ποσο κινηθηκε η αγορα απο την
+# εισοδο μας ως το ΚΛΕΙΣΙΜΟ (αναμενομενη διαφορα/συνολο, με αποδοσεις). el_alert_types (picks στο ανοιγμα, κινηση ως το κλεισιμο):
+# κοντρα ≥1.5π συνολα −10.7% (39) / χαντικαπ −17.4% (38) · προς εμας ≥1.5π συνολα +31.4% (115) / χαντικαπ +28.4% (48). Μονο ΕΝΗΜΕΡΩΣΗ (info bot).
+# 1/10 βραδυ (Στελιος «να ερχεται ακριβως στο κλεισιμο, χωρις middle»): στελνεται ΜΕΤΑ το τζαμπολ (πρωτο τικ, εως 30′) με την
+# ΤΕΛΕΥΤΑΙΑ τιμη πριν το τζαμπολ (el_odds_hist) = το πραγματικο κλεισιμο· οχι πια 35′ πριν, οχι γραμμη middle.
+CLOSE_AFTER_MIN, CLOSE_PTS = 30, 1.5
+def close_check(state, now, sm, st):
+    msgs = []
+    try:
+        bets = {}
+        for ln in open(F('el_clv_bets.jsonl'), encoding='utf-8'):
+            try: b = json.loads(ln)
+            except Exception: continue
+            if b.get('paper'): continue
+            d = (b.get('bet') or '').split(' ')[0] if b['mkt'] == 'total' else b['side']
+            k = f"CLOSE|{b['code']}|{b['mkt']}|{d}"
+            if k not in bets or b['seen'] < bets[k]['seen']: bets[k] = b
+    except FileNotFoundError:
+        return msgs
+    tnow = dt.datetime.fromisoformat(now)
+    ts = lambda r: dt.datetime.fromisoformat(r['t']).replace(tzinfo=dt.timezone.utc)
+    for k, b in bets.items():
+        if k in state: continue
+        ko = dt.datetime.fromisoformat(b['when']).replace(tzinfo=dt.timezone.utc)
+        after = (tnow - ko).total_seconds() / 60
+        if not (0 <= after <= CLOSE_AFTER_MIN): continue                 # μολις ξεκινησε το ματς
+        p = dict(b, side=b['side'] if b['mkt'] == 'hcap' else (1 if str(b.get('bet', '')).startswith('Over') else -1))
+        drift_before(dict(p, side=p['side']), b['seen'], sm, st, hours=0.0)   # μονο για να φορτωσει το ιστορικο
+        H = [r for r in (_HIST or {}).get(int(b['code']), []) if r.get('line' if b['mkt'] == 'hcap' else 'tl') is not None]
+        ent = [r for r in H if ts(r) <= dt.datetime.fromisoformat(b['seen']) + dt.timedelta(minutes=15)]
+        cls = [r for r in H if ts(r) < ko]                                 # τελευταια τιμη ΠΡΙΝ το τζαμπολ = κλεισιμο
+        if not ent or not cls: continue
+        o = cls[-1]
+        mu0, mu1 = _mu(ent[-1], b['mkt'], sm, st), _mu(o, b['mkt'], sm, st)
+        if mu0 is None or mu1 is None: continue
+        mv = round((mu1 - mu0) * p['side'], 1)                     # + = η αγορα ηρθε ΠΡΟΣ εμας
+        state[k] = dict(when=b['when'], mv=mv, checked=now)
+        if abs(mv) < CLOSE_PTS: continue
+        if b['mkt'] == 'hcap':
+            team = b['home'] if b['side'] == 1 else b['away']
+            h1 = float(b['hcap']); h2 = float(o['line']) * (1 if b['side'] == 1 else -1)
+            co = o.get('oh') if b['side'] == 1 else o.get('oa')
+            bet = f"{team} {'+' if h1 >= 0 else ''}{h1:g} @{b['odds']:.2f}"
+            now_l = f"{team} {'+' if h2 >= 0 else ''}{h2:g}" + (f" @{float(co):.2f}" if co else '')
+            hist = ('χαντικαπ +28.4% (48 picks)' if mv > 0 else 'χαντικαπ −17.4% (38 picks)')
+        else:
+            T2 = float(o['tl']); over = p['side'] == 1
+            co = o.get('to') if over else o.get('tu')
+            bet = f"{b['bet']} @{b['odds']:.2f}"; now_l = f"{'Over' if over else 'Under'} {T2:g}" + (f" @{float(co):.2f}" if co else '')
+            hist = ('συνολα +31.4% (115 picks)' if mv > 0 else 'συνολα −10.7% (39 picks)')
+        head = '✅ ΚΛΕΙΣΙΜΟ ΥΠΕΡ ΜΑΣ' if mv > 0 else '⚠️ ΚΛΕΙΣΙΜΟ ΚΟΝΤΡΑ'
+        msgs.append(f"🏀 {head} · {b['home']} - {b['away']}\nπαιξαμε {bet} · εκλεισε {now_l} · κινηση {mv:+.1f} π. "
+                    f"{'προς εμας' if mv > 0 else 'κοντρα'}\nιστορικα: {hist}")
+    return msgs
+
+def main(notify_tg=True):
+    picks = compute()
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes')
+    state = _load(F('el_value_state.json'), {})
+    import bk_pick_status as _b; _b.migrate_keys(state, 'EL')
+    new, changed, cur = [], [], set()
+    proj_ = _load(F('el_projections.json'), {}); sm_, st_ = float(proj_.get('sigma_margin', 11.5)), float(proj_.get('sigma_total', 16.7))
+    for p in picks:
+        k = key(p); cur.add(k); prev = state.get(k)
+        if prev is None:
+            new.append(p); state[k] = dict(odds=p['odds'], edge=p['edge'], when=p['when'], first_seen=now, hcap=p['hcap'])
+            hrs = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc) - dt.datetime.fromisoformat(now)).total_seconds() / 3600
+            # 29/10: late2h (1/10) & late6dog (17/10) ΣΤΑΜΑΤΗΣΑΝ για νεα picks — στη θεση τους ο κανονας «σταδιακη κοντρα ≤6ω» (GRAD_*)
+            if not market_just_opened(p, now):                   # αργο pick → ταξινομηση ανα αιτια (+ ιστορικο στο μηνυμα)
+                c, d1, d3, d6, ho = late_class(p, now, sm_, st_)
+                state[k].update(late_cls=c, d1=d1, d3=d3, d6=d6, h_open=ho)
+                if p['mkt'] == 'hcap' and c == 'Γ' and hrs <= GRAD_H: state[k]['paper'] = 'gradual'
+            if p['mkt'] == 'total':
+                d_open = drift_before(p, now, sm_, st_, hours=1e4)       # απο την ΠΡΩΤΗ τιμη του ιστορικου ως τωρα (+ = προς εμας)
+                state[k]['move_open'] = d_open
+                if d_open is not None and d_open <= -MOVE_PTS:
+                    hx = move_cross_hours(p, st_); state[k]['move_h'] = hx
+                    if hx is None or hx >= MOVE_LATE_H: state[k]['paper'] = 'move15'     # νωρις κοντρα → καταγραφη· <6ω → κανονικο pick
+        elif not _b.same_line(prev, p):                 # 7/10: ιδια πλευρα, αλλη γραμμη → ΙΔΙΟ pick, σιωπηλα (οχι νεο/ημερολογιο/Telegram)
+            state[k].update(hcap=p['hcap'], odds=p['odds'], edge=p['edge'])
+        elif abs(p['odds'] - prev.get('odds', p['odds'])) >= ODDS_DELTA:
+            changed.append((p, prev.get('odds'))); state[k].update(odds=p['odds'], edge=p['edge'])
+    for p in picks:
+        st0 = state.get(key(p), {})
+        if 'drift' not in st0:
+            st0['drift'] = drift_before(p, st0.get('first_seen', now), sm_, st_)
+            if key(p) in state: state[key(p)]['drift'] = st0['drift']
+        if 'kind1h' not in st0:
+            d1 = drift_before(p, st0.get('first_seen', now), sm_, st_, hours=1.0)
+            st0['kind1h'] = None if d1 is None else ('ξαφνικη' if d1 <= -SUDDEN_PTS else 'σταδιακη')
+            if key(p) in state: state[key(p)]['kind1h'] = st0['kind1h']
+        p['kind1h'] = st0['kind1h']
+        try:
+            p['hrs_birth'] = (dt.datetime.fromisoformat(p['when']).replace(tzinfo=dt.timezone.utc)
+                              - dt.datetime.fromisoformat(st0.get('first_seen', now))).total_seconds() / 3600
+        except Exception:
+            p['hrs_birth'] = None
+        p['move_open'] = st0.get('move_open')
+        for f_ in ('late_cls', 'd1', 'd3', 'd6', 'h_open'): p[f_] = st0.get(f_)
+        p['drift'] = st0['drift']; p['mkt_note'] = late_note(p) if p.get('late_cls') else drift_note(p)
+        if st0.get('paper'):
+            if 'late_kind' not in st0:
+                d1 = drift_before(p, st0.get('first_seen', now), sm_, st_, hours=1.0)
+                st0['late_kind'] = 'αγνωστη' if d1 is None else ('ξαφνικη' if d1 <= -SUDDEN_PTS else 'σταδιακη/ακινητη')
+                if key(p) in state: state[key(p)]['late_kind'] = st0['late_kind']
+            p['paper'], p['late_kind'] = st0['paper'], st0['late_kind']
+            if st0['paper'] == 'late6dog':
+                p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: αουτσαιντερ που βγηκε 2-6ω πριν (ιστορικα −6.8%, 2/5 σεζον· «σταδιακη» κοντρα −14%)· κινηση αγορας: {p['late_kind']}"
+                                 + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
+            elif st0['paper'] == 'gradual':                       # 29/10: σταδιακη κοντρα ≤6ω πριν
+                mv = [f'{x:+.1f} π. σε {h}' for x, h in ((p.get('d3'), '3ω'), (p.get('d6'), '6ω')) if x is not None]
+                p['mkt_note'] = (f"📝 ΔΕΝ ΠΑΙΖΕΤΑΙ — σταδιακη κινηση της αγορας κοντρα μας ({', '.join(mv)}, χωρις αλμα ή ειδηση απουσιας) "
+                                 f"μεσα στις τελευταιες 6ω — ιστορικα −20% (60 picks, αρνητικο 5/5 σεζον)")
+            elif st0['paper'] == 'move15':
+                p['mkt_note'] = (f"📝 ΔΕΝ ΠΑΙΖΕΤΑΙ — η αγορα πηγε {st0.get('move_open') or 0:+.1f} π. κοντρα απο το ανοιγμα (κανονας Γ, νωρις κοντρα ≥1.5 π.) "
+                                 f"— ιστορικα −31% (64 picks, 0/5 σεζον)· κινηση: {p['late_kind']}")
+            else:
+                p['mkt_note'] = (f"📝 ΚΑΤΑΓΡΑΦΗ, δεν παιζεται: βγηκε στο τελευταιο 2ωρο (ιστορικα −9%, 1/5 σεζον)· κινηση αγορας: {p['late_kind']}"
+                                 + (f" ({p['drift']:+.1f} π. τις 3ω πριν)" if p.get('drift') is not None else ''))
+    today = now[:10]
+    close_msgs = close_check(state, now, sm_, st_)
+    # 1/10/2026 (Στελιος, Virtus–Olympiakos over 171): pick που ΔΕΝ ισχυει πια (σε καμια γραμμη) → μηνυμα· ξαναγινεται → «ΞΑΝΑ PICK»
+    import bk_pick_status as bps
+    drops, backs = bps.track(state, picks, F('el_clv_bets.jsonl'), {str(g['code']): (dict(g, margin=float(g['margin']) + (ABS.get(str(g['code'])) or {}).get('adj', 0.0),
+                                                                               total=float(g['total']) + float((ABS.get(str(g['code'])) or {}).get('tot', 0.0) or 0.0)) if g.get('margin') is not None and g.get('total') is not None else g) for g in proj_.get('games', [])},
+                             _load(F('el_odds_latest.json'), {}).get('odds', {}), lambda m: sm_ if m == 'hcap' else st_,
+                             lambda m: HC_MIN if m == 'hcap' else TOT_MIN, cover, 'Euroleague', now)
+    state = {k: v for k, v in state.items() if k in cur or (v.get('when') or '9999')[:10] >= today}
+    if new:
+        with open(F('el_clv_bets.jsonl'), 'a', encoding='utf-8') as fh:
+            for p in new:
+                fh.write(json.dumps(dict(seen=now, **{k: p[k] for k in ('lg', 'code', 'round', 'home', 'away', 'mkt', 'side', 'hcap', 'odds', 'edge', 'when')},
+                                         bet=p.get('bet'), model_line=p.get('model_line'), model_total=p.get('model_total'), mkt_line=p.get('mkt_line'),
+                                         model=p.get('model'), drift=p.get('drift'), old_agree=p.get('old_agree'), total_base=p.get('total_base'), abs_adj=p.get('abs_adj'), abs_tot=p.get('abs_tot'), abs_born=p.get('abs_born'), edge_noabs=p.get('edge_noabs'), late_cls=p.get('late_cls'),
+                                         paper=p.get('paper'), late_kind=p.get('late_kind'), move_open=state.get(key(p), {}).get('move_open')), ensure_ascii=False) + '\n')
+    json.dump(state, open(F('el_value_state.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    json.dump(dict(scanned_at=now, hc_min=HC_MIN, tot_min=TOT_MIN, n_new=len(new), n_changed=len(changed), picks=picks),
+              open(F('el_value_latest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    new_tg = [p for p in new if not p.get('paper')]; changed = [(p, pr) for p, pr in changed if not p.get('paper')]
+    if notify_tg and (new_tg or changed):
+        msg = []
+        if new_tg: msg += [f'🏀 {len(new_tg)} ΝΕΑ value picks Ευρωλιγκας', ''] + [line(p) + '\n' for p in sorted(new_tg, key=lambda x: x['when'])]
+        if changed: msg += [f'🔄 {len(changed)} ΑΛΛΑΞΑΝ odds'] + [line(p, pr) for p, pr in changed]
+        try:
+            import notify; notify.send('\n'.join(msg))
+        except Exception as e:
+            print('Telegram σφαλμα:', e)
+    no_play = [p for p in new if p.get('paper') in ('gradual', 'move15')]   # 29/10 (Στελιος): τα κομμενα «ΔΕΝ ΠΑΙΖΕΤΑΙ» → info bot
+    if notify_tg and no_play:
+        try:
+            import notify
+            notify.send('📝 Ευρωλιγκα · picks που ΔΕΝ παιζονται' + chr(10) * 2 + (chr(10) * 2).join(line(p) for p in sorted(no_play, key=lambda x: x['when'])),
+                        silent=True, channel='info')
+        except Exception as e:
+            print('Telegram σφαλμα (δεν παιζεται):', e)
+    for t in backs + drops: print(t.replace(chr(10), ' | '))
+    if notify_tg and (backs or drops):
+        try:
+            import notify
+            if backs: notify.send((chr(10) * 2).join(backs))
+            if drops: notify.send('🏀 pick που ΔΕΝ ισχυει πια (αλλαξε γραμμη/τιμη)' + chr(10) * 2 + (chr(10) * 2).join(drops), silent=True)
+        except Exception as e:
+            print('Telegram σφαλμα (κατασταση):', e)
+    if close_msgs:                                 # 21/10 Στελιος: ΟΧΙ Telegram πια (φαινεται στο Pick History) — μονο log
+        print('\n'.join(close_msgs))
+    print(f'[EL picks] {len(picks)} picks · {len(new)} νεα · {len(changed)} αλλαγες · ελεγχοι κλεισιματος {len(close_msgs)}')
+    for p in picks: print('  ' + line(p).replace('\n', ' | '))
+    return picks
+
+if __name__ == '__main__':
+    main(notify_tg='--no-tg' not in sys.argv)

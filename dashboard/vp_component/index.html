@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;padding:0;background:transparent;font-family:'DM Sans',sans-serif}#root{overflow:auto}</style></head>
+<body><div id="root"></div>
+<script>
+// 12/10/2026: Value Picks ως Streamlit component (χωρις build) — για να φτανει το «✅ το έπαιξα» στον server (κοινο σε ολες τις συσκευες).
+// Πρωτοκολλο Streamlit components: componentReady → render(args) · setFrameHeight · setComponentValue.
+var lastHtml = null, H = 600;
+function post(type, extra) { var m = Object.assign({isStreamlitMessage: true, type: type}, extra || {}); window.parent.postMessage(m, '*'); }
+window.VP_SYNC = {on: false, played: {}, send: function (k, on) { post('streamlit:setComponentValue', {value: {k: k, on: on, n: Date.now()}, dataType: 'json'}); }};
+function runScripts(el) {
+  el.querySelectorAll('script').forEach(function (old) { var s = document.createElement('script'); s.text = old.textContent; old.parentNode.replaceChild(s, old); });
+}
+window.addEventListener('message', function (ev) {
+  var d = ev.data; if (!d || d.type !== 'streamlit:render') return;
+  var a = d.args || {};
+  window.VP_SYNC.on = !!a.sync; window.VP_SYNC.played = a.played || {};
+  if (a.height) H = a.height;
+  var r = document.getElementById('root'); r.style.height = H + 'px';
+  if (a.html !== lastHtml) { lastHtml = a.html; r.innerHTML = a.html; runScripts(r); }
+  else if (window.vpRepaint) { window.vpRepaint(); }
+  post('streamlit:setFrameHeight', {height: H});
+});
+post('streamlit:componentReady', {apiVersion: 1});
+</script></body></html>

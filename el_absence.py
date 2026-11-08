@@ -1,0 +1,308 @@
+# -*- coding: utf-8 -*-
+"""el_absence.py — EUROLEAGUE: ΚΟΣΤΟΣ ΑΠΟΥΣΙΩΝ στην προβλεψη χαντικαπ (9/10/2026, Στελιος «να περασουν τα λεπτα»).
+Τεστ: el_player_absence_value.py («μονο λεπτα», γ .5): LOSO 4/5 · picks ≥8% ανοιγμα +6.9% (575) → +9.4% (589, 5/5) · el_absence_scorer_test.
+ΥΠΟΛΟΓΙΣΜΟΣ για καθε ομαδα:
+  1. ΑΠΟΝΤΕΣ = παικτες με OUT στη RotoWire (EuroLeague daily lineups)· οι GTD (αμφιβολοι) ΔΕΝ μετρανε, μονο σημειωνονται.
+  2. Μετραει μονο αν ειναι ΤΑΚΤΙΚΟΣ: επαιξε σε ≥3 απο τα 10 τελευταια φετινα ματς Ευρωλιγκας της ομαδας.
+  3. Λεπτα = μεσος ορος των 10 τελευταιων ματς Ευρωλιγκας που επαιξε (φετος + περσι/παλιοτερα, el_player_min_prev.json)· ≥10′.
+  4. k = ποσα συνεχομενα ματς της ομαδας λειπει (μαζι με το σημερινο): k 1-3 → πληρες· 4-10 → μισο· >10 → 0 (το μοντελο το εχει «μαθει» απο τα αποτελεσματα).
+  5. ΚΟΣΤΟΣ = 0.922 × λεπτα/40 × (1 / 0.5 / 0) ποντοι.  Προβλεψη γηπ. = μοντελο + κοστος φιλοξ − κοστος γηπ.
+     22/10/2026: ΑΝΤΙΚΑΤΑΣΤΑΘΗΚΕ απο (0.56 + 1.06·z_PIR) × λεπτα/40 × (1 / 0.5 / 0) — βλ. V_B0/V_B1 πιο κατω (σταρ ×2-3, αδυναμοι ρολιστες ≈0).
+Δεδομενα φετινα: el_box.json (ph/pa = [id, ονομα, λεπτα] ανα ματς — backfill() τα συμπληρωνει απο το επισημο API).
+ΣΥΝΟΛΑ (9/10/2026, Στελιος «ας περασουμε το αμυνα και επιθεση»): ΔΙΑΦΟΡΕΤΙΚΟΣ μηχανισμος — ON/OFF του αποντα (3StepsBasket, ΠΕΡΣΙΝΗ σεζον,
+  el_onoff_prev.json απο el_onoff_build.py). Για τους ιδιους μετρουμενους αποντες (βαρος w = λεπτα/40 × 1/0.5):
+  ποντοι ομαδας += bO·Σ_δικοι w·onO/sdO + bD·Σ_αντιπαλου w·onD/sdD  (bO −0.43: λειπει καλος επιθετικος → η ομαδα του βαζει λιγοτερα ·
+  bD −0.80: λειπει καλος αμυντικος (onD αρνητικο) → ο αντιπαλος βαζει περισσοτερα). Συνολο += αθροισμα των δυο ομαδων. Χωρις περσινο προφιλ → 0.
+  Τεστ el_absence_onoff_test.py W4: EL RMSE 3/5, picks συνολων +52.4 → +59.0μ (5/5)· EuroCup 4/5 (t −2.7 / −2.6)."""
+import os, re, json, html, time, unicodedata, datetime as dt, urllib.request
+ROOT = os.path.dirname(os.path.abspath(__file__))
+F = lambda n: os.path.join(ROOT, n)
+COEF, G_LONG, MIN_MIN = 0.922, 0.5, 10.0
+UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36'}
+
+def _tok(s):
+    s = unicodedata.normalize('NFKD', str(s or '')).encode('ascii', 'ignore').decode().lower()
+    return [w for w in re.split(r'[^a-z0-9]+', s) if w]
+
+def fetch_rotowire():
+    """→ [{visit, home, inj: {'visit': [(ονομα, κατασταση)], 'home': [...]}}] (κενη λιστα αν αποτυχει)"""
+    try:
+        req = urllib.request.Request('https://www.rotowire.com/euro/daily-lineups.php', headers=UA)
+        s = urllib.request.urlopen(req, timeout=30).read().decode('utf-8', 'ignore')
+    except Exception as e:
+        print('RotoWire σφαλμα:', e); return []
+    games = []
+    parts = s.split('class="lineup__matchup"')[1:]
+    for part in parts:
+        names = re.findall(r'lineup__mteam is-(visit|home)[^>]*>\s*([^<]+?)\s*</a>', part)
+        nm = {k: v.strip() for k, v in names}
+        inj = {'visit': [], 'home': []}
+        for side in ('visit', 'home'):
+            m = re.search(r'<ul class="lineup__list is-' + side + r'">(.*?)</ul>', part, re.S)
+            if not m or 'INJURIES' not in m.group(1): continue
+            seg = m.group(1).split('INJURIES', 1)[1]
+            for title, status in re.findall(r'<a title="([^"]+)"[^>]*>[^<]*</a>\s*<span class="lineup__inj">([^<]+)</span>', seg):
+                inj[side].append((html.unescape(title), status.strip()))
+        if 'visit' in nm and 'home' in nm: games.append(dict(visit=nm['visit'], home=nm['home'], inj=inj))
+    if games: _log_changes(games)
+    return games
+
+RW_STATE, RW_HIST = 'el_rotowire_state.json', 'el_rotowire_hist.jsonl'
+def _log_changes(games):
+    """21/10/2026 (Στελιος «την ιδια διαδικασια με το NBA»): ΙΣΤΟΡΙΚΟ RotoWire — καθε αλλαγη (νεος / αλλη κατασταση / βγηκε) με ωρα UTC.
+    Για μελλοντικα τεστ: ποσοι GTD τελικα δεν παιζουν, ποτε βγαινει η ειδηση σε σχεση με τη γραμμη. Μονο καταγραφη."""
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')
+    cur = {}
+    for g in games:
+        for side, team in (('home', g['home']), ('visit', g['visit'])):
+            for n, st in g['inj'][side]: cur[f"{g['home']}|{g['visit']}|{side}|{n}"] = st
+    try: old = json.load(open(F(RW_STATE), encoding='utf-8')).get('cur', {})
+    except Exception: old = {}
+    ch = []
+    for k, st in cur.items():
+        if old.get(k) != st: ch.append(dict(t=now, key=k, status=st, prev=old.get(k)))
+    games_now = {'|'.join(k.split('|')[:2]) for k in cur} | {f"{g['home']}|{g['visit']}" for g in games}
+    for k, st in old.items():
+        if k not in cur and '|'.join(k.split('|')[:2]) in games_now: ch.append(dict(t=now, key=k, status=None, prev=st))   # βγηκε απο τη λιστα
+    try:
+        if ch:
+            with open(F(RW_HIST), 'a', encoding='utf-8') as fh:
+                for r in ch: fh.write(json.dumps(r, ensure_ascii=False) + chr(10))
+        json.dump(dict(t=now, cur=cur, games=[f"{g['home']}|{g['visit']}" for g in games]), open(F(RW_STATE), 'w', encoding='utf-8'), ensure_ascii=False)
+    except Exception as e: print('RotoWire ιστορικο σφαλμα —', e)
+
+def backfill(B, season, J, sched):
+    """Συμπληρωνει ph/pa (λεπτα + PIR παικτων) στα φετινα ματς του el_box.json που δεν τα εχουν. J = συναρτηση GET json.
+    22/10/2026: καθε παικτης = [id, ονομα, λεπτα, PIR]· ματς που ειχαν μονο λεπτα (παλια μορφη) ξανα-κατεβαινουν μια φορα."""
+    n = 0
+    for x in sched:
+        k = f"{season}_{x['code']}"
+        if not x.get('played') or k not in B or 'err' in B[k]: continue
+        if 'ph' in B[k] and all(len(p) >= 4 for p in B[k]['ph'] + B[k].get('pa', [])): continue
+        b = J(f"https://live.euroleague.net/api/Boxscore?gamecode={x['code']}&seasoncode={season}")
+        if not b or not b.get('Stats'): continue
+        for side, t in (('ph', b['Stats'][0]), ('pa', b['Stats'][1])):
+            L = []
+            for p in (t.get('PlayersStats') or []):
+                try: mm, ss = str(p.get('Minutes')).split(':'); mn = int(mm) + int(ss) / 60
+                except Exception: mn = 0.0
+                if mn > 0: L.append([str(p.get('Player_ID', '')).strip(), p.get('Player'), round(mn, 1), int(p.get('Valuation') or 0)])
+            B[k][side] = L
+        n += 1
+    return n
+
+def _team_games(B, season, code):
+    g = [v for k, v in B.items() if k.startswith(season + '_') and 'ph' in v and code in (v.get('hcode'), v.get('acode'))]
+    g.sort(key=lambda v: v['utc'])
+    return [(v['utc'], {p[0]: p[2] for p in (v['ph'] if v['hcode'] == code else v['pa'])}, {p[0]: p[1] for p in (v['ph'] if v['hcode'] == code else v['pa'])}) for v in g]
+
+# 22/10/2026 (Στελιος «περνα το»): ΑΞΙΑ ΑΠΟΥΣΙΑΣ = λεπτα + PIR (el_absence_v2_test V1, el_absence_return_test R0, LOSO E2021-25):
+#   κοστος = (V_B0 + V_B1·z) × λεπτα/40 × g(k),  z = (PIR/40 − 12.1) / 5.6,  PIR/40 = Σ PIR / (Σ λεπτα + 200) × 40 στα τελευταια 60 ματς
+#   (περσινα+ απο el_player_pir_prev.json + φετινα απο el_box). picks ≥8% +9.4% → +10.5% (+55.5 → +65.8μ, 5/5)· RMSE 3/5 (ενα κριτηριο ✗,
+#   αποφαση Στελιου). Επιστροφες: ΚΑΜΙΑ διορθωση (el_absence_return_test: καμια εκδοχη δεν περασε με λογικη).
+V_B0, V_B1, PIR_MU, PIR_SD, PIR_PRIOR = 0.56, 1.06, 12.1, 5.6, 200.0
+# 29/10/2026 (Στελιος «ναι περνα το»): ΧΑΝΤΙΚΑΠ = «PIR + ΑΜΥΝΑ» (el_pird_tests / el_pird_open_news, E2021-25):
+#   κοστος = (B0 + B1·zPIR + B2·zΑΜΥΝΑ)·λεπτα/40·g(k) · zΑΜΥΝΑ = −D του Σ / sd (el_defense.py, + = καλος αμυνομενος) · B απο el_defense_params.json
+#   (ελαχιστα τετραγωνα τελειας γνωσης E2021-25: 0.26 / 0.88 / 0.81). «Οπως παιζουμε» LOSO +92.0 vs PIR +76.9μ, ειδησεις μεσα στη μερα +21 vs +7·
+#   CLV χαμηλοτερο (η αγορα δεν τιμολογει αμυνα), τυχη p .06 LOSO / .45 WF. Το σκετο PIR (V_B0/V_B1) μενει ΚΑΤΑΓΡΑΦΗ (adj_pir → el_pir_shadow.jsonl).
+#   Κριση: μετα την 20η αγωνιστικη — αν «PIR + αμυνα» πισω απο PIR σε μοναδες → επιστροφη. ENGINE = 'PIR' επαναφερει το παλιο.
+ENGINE = 'PIR+D'
+# 29/10/2026 (Στελιος «οκ βγαλε το on/off»): ΣΥΝΟΛΑ ΧΩΡΙΣ διορθωση απουσιων. el_totals_absence_final / el_total_physics_step5 (1563 ματς E2021-25):
+#   «οπως ο scanner» χωρις +80.4 vs on/off +60.2 (LOSO), WF +69.3 vs +53.6 — η ζημια απο ειδησεις μεσα στη μερα (η αγορα συνολων τις τιμολογει)·
+#   ακριβεια ιδια (16.544). Το on/off υπολογιζεται ακομα ως tot_onoff (μονο πληροφορια), tot = 0. TOTALS_ONOFF = True επαναφερει.
+TOTALS_ONOFF = False
+def _def_params():
+    try:
+        import el_defense; return el_defense.params()
+    except Exception:
+        return None
+def _zd(pid):
+    try:
+        import el_defense; return el_defense.zd(pid)
+    except Exception:
+        return None
+_PIR_PREV = None
+def _pir_prev():
+    global _PIR_PREV
+    if _PIR_PREV is None:
+        try: _PIR_PREV = json.load(open(F('el_player_pir_prev.json'), encoding='utf-8'))['players']
+        except Exception: _PIR_PREV = {}
+    return _PIR_PREV
+
+def pir40(B, season, pid, before_utc):
+    """PIR ανα 40′ (μαζεμενο προς 0 με +200′) απο τα τελευταια 60 ματς (περσινα + φετινα πριν το ματς)· None αν δεν υπαρχει PIR."""
+    h = [tuple(x) for x in (_pir_prev().get(pid) or {}).get('g', [])]
+    for k, v in sorted(B.items(), key=lambda kv: kv[1].get('utc', '')):
+        if not k.startswith(season + '_') or 'ph' not in v or v.get('utc', '') >= before_utc: continue
+        for p in v['ph'] + v.get('pa', []):
+            if p[0] == pid and len(p) >= 4 and p[2] > 0: h.append((p[2], p[3]))
+    h = h[-60:]
+    if not h: return None
+    return sum(x[1] for x in h) / (sum(x[0] for x in h) + PIR_PRIOR) * 40
+
+def _match(name, roster):
+    """RotoWire «Mike James» → id στο ρόστερ {id: «JAMES, MIKE»}"""
+    t = _tok(name)
+    if not t: return None
+    best = None
+    for pid, nm in roster.items():
+        u = _tok(nm)
+        if not u: continue
+        if t[-1] in u and (len(t) == 1 or any(w[0] == t[0][0] for w in u if w != t[-1])):
+            if best is None: best = pid
+            else: return None                                          # διφορουμενο
+    return best
+
+def _otok(s):
+    s = unicodedata.normalize('NFKD', str(s or '')).encode('ascii', 'ignore').decode().lower()
+    return [w for w in re.split(r'[^a-z]+', s) if w]
+
+def load_onoff(base_only=False):
+    """→ (profiles {(sur, first): (onO, onD)}, κατα επωνυμο, coef, sd, alias {ονομα box: κλειδι προφιλ}) ή None"""
+    try: d = json.load(open(F('el_onoff_prev.json'), encoding='utf-8'))
+    except Exception: return None
+    P_, S_ = {}, {}
+    for x in d.get('players', []):
+        k = (tuple(x['sur']), x['first']); P_[k] = (x['onO'], x['onD']); S_.setdefault(k[0], []).append(k)
+    AL = {}                                                     # 23/10/2026: ονοματα που δεν ταιριαζουν (el_onoff_alias_build.py — ομαδα+φανελα)
+    if not base_only:
+        try: AL = {n: (tuple(v[0]), v[1]) for n, v in json.load(open(F('el_onoff_alias.json'), encoding='utf-8'))['alias'].items()}
+        except Exception: AL = {}
+    return P_, S_, d['coef'], d['sd'], AL
+
+def onoff_of(name, OO):
+    """ονομα ρόστερ «SURNAME, FIRST» → (onO, onD) περσινα ή None (ιδια αντιστοιχιση με το τεστ)"""
+    if not OO: return None
+    P_, S_ = OO[0], OO[1]
+    if len(OO) > 4 and str(name) in OO[4] and OO[4][str(name)] in P_: return P_[OO[4][str(name)]]
+    sur, fst = (str(name).split(',', 1) + [''])[:2] if ',' in str(name) else (str(name), '')
+    k = (tuple(_otok(sur)), (_otok(fst) or [''])[0])
+    if k in P_: return P_[k]
+    c = [x for x in S_.get(k[0], []) if x[1][:1] == k[1][:1]]
+    return P_[c[0]] if len(c) == 1 else None
+
+# 23/10/2026 (Στελιος «περνα το»): GTD της σελιδας lineups μετραει στο ΧΑΝΤΙΚΑΠ με πιθανοτητα απουσιας (el_gtd_model_test G_page:
+# χαντικαπ +40.1 → +62.3μ, RMSE 4/5, 5/5 θετικες· συνολα ✗ → στα ΣΥΝΟΛΑ ο GTD μενει «παιζει»). p = 1 − ποσοστο που επαιξε (el_gtd_model_test):
+#   δεν επαιξε στο προηγουμενο ματς της ομαδας: βασικος (≥20′) .70 · ρολιστας .60 — αλλιως (νεος τραυματισμος / αμφιβολος): .40 · .50
+GTD_P = {('missed', True): 0.70, ('missed', False): 0.60, ('new', True): 0.40, ('new', False): 0.50}
+
+def _box_shadow_cost(pid, before_utc, avg, g):
+    """23/10/2026 ΣΚΙΑ (Στελιος «ναι»): κοστος με τον «δικο box» δεικτη (el_box_shadow.py)· None αν λειπουν τα αρχεια — δεν αγγιζει το live."""
+    try:
+        import el_box_shadow; return el_box_shadow.cost(pid, before_utc, avg, g)
+    except Exception:
+        return None
+
+def team_cost(B, season, code, out_names, before_utc, prev, OO=None, gtd_names=(), shadow=None):
+    """→ (κοστος χαντικαπ, [λεπτομερειες], Σ w·onO/sd, Σ w·onD/sd) · gtd_names: μονο στο χαντικαπ, × GTD_P
+    shadow: dict → shadow['box'] += κοστος σκιας «δικο box» · shadow['pir'] += κοστος με σκετο PIR (29/10: ο παλιος live τυπος, μονο καταγραφη)"""
+    tg = [x for x in _team_games(B, season, code) if x[0] < before_utc]
+    if not tg: return 0.0, [], 0.0, 0.0
+    DP = _def_params() if ENGINE == 'PIR+D' else None
+    if DP is None and ENGINE == 'PIR+D' and shadow is not None: shadow['def_ok'] = False
+    roster = {}
+    for _, _, nm in tg: roster.update(nm)
+    last10 = tg[-10:]; played = {pid: sum(1 for _, mn, _ in last10 if mn.get(pid, 0) > 0) for pid in roster}
+    cost, det, so, sd_ = 0.0, [], 0.0, 0.0
+    for name, is_gtd in [(n, False) for n in out_names] + [(n, True) for n in gtd_names]:
+        pid = _match(name, roster)
+        st_ = 'αμφίβολος' if is_gtd else 'OUT'                      # 29/10 (Στελιος): σημειωση = ποιος λειπει + κοστος, χωρις PIR/αμυνα
+        if not pid: det.append(f'{name} {st_} → 0 (δεν έχει παίξει φέτος)'); continue
+        if played.get(pid, 0) < 3: det.append(f'{name} {st_} → 0 (όχι τακτικός)'); continue
+        mins = list((prev.get(pid) or {}).get('mins', [])) + [mn[pid] for _, mn, _ in tg if mn.get(pid, 0) > 0]
+        avg = sum(mins[-10:]) / len(mins[-10:]) if mins else 0.0
+        if avg < MIN_MIN: det.append(f'{name} {st_} → 0 (λίγα λεπτά)'); continue
+        k = 1
+        for _, mn, _ in reversed(tg):
+            if mn.get(pid, 0) > 0: break
+            k += 1
+        g = 1.0 if k <= 3 else (G_LONG if k <= 10 else 0.0)
+        pv = pir40(B, season, pid, before_utc)
+        z = 0.0 if pv is None else (pv - PIR_MU) / PIR_SD
+        c_pir = (V_B0 + V_B1 * z) * avg / 40 * g
+        zd = _zd(pid) if DP is not None else None
+        c = (DP['B0'] + DP['B1'] * z + DP['B2'] * (zd or 0.0)) * avg / 40 * g if DP is not None else c_pir
+        cb = _box_shadow_cost(pid, before_utc, avg, g) if shadow is not None else None
+        if cb is None and shadow is not None: shadow['ok'] = False
+        if is_gtd:
+            pw = GTD_P[('missed' if tg[-1][1].get(pid, 0) <= 0 else 'new', avg >= 20)]
+            c *= pw; cost += c
+            if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb * pw
+            if shadow is not None: shadow['pir'] = shadow.get('pir', 0.0) + c_pir * pw
+            det.append(f'{name} αμφίβολος {pw:.0%} → {c:.2f}')
+            continue
+        cost += c
+        if cb is not None: shadow['box'] = shadow.get('box', 0.0) + cb
+        if shadow is not None: shadow['pir'] = shadow.get('pir', 0.0) + c_pir
+        oo = onoff_of(roster.get(pid, name), OO) if g > 0 else None
+        if oo and OO:
+            so += avg / 40 * g * oo[0] / OO[3]['onO']; sd_ += avg / 40 * g * oo[1] / OO[3]['onD']
+        det.append(f'{name} OUT → {c:.2f}')
+    return round(cost, 2), det, so, sd_
+
+MANUAL_F = 'el_absence_manual.json'
+def manual_for(g, ko):
+    """27/10/2026 (Στελιος «δεν μπορεις να περασεις χειροκινητα;»): χειροκινητες απουσιες για ΣΥΓΚΕΚΡΙΜΕΝΟ ματς, ΠΑΝΩ απο τη RotoWire (μετρανε ως OUT).
+    el_absence_manual.json: {"<code ματς>": {"<κωδικος ομαδας>": ["Ονομα Επωνυμο", ...], "note": "..."}} — ισχυει μονο για εκεινο το ματς.
+    → {'home': [...], 'visit': [...]} (κενο αν τιποτα)."""
+    try: M = json.load(open(F(MANUAL_F), encoding='utf-8'))
+    except Exception: return {}
+    e = M.get(str(g.get('code'))) or {}
+    out = {}
+    for side_, tc in (('home', g.get('hcode')), ('visit', g.get('acode'))):
+        if e.get(tc): out[side_] = [str(x) for x in e[tc]]
+    return out
+
+def adjustments(games, B=None):
+    """games: λιστα ματς el_projections (home, away, hcode, acode, utc). → {code: dict(adj, cost_h, cost_a, note)}"""
+    B = B if B is not None else json.load(open(F('el_box.json'), encoding='utf-8'))
+    try: prev = json.load(open(F('el_player_min_prev.json'), encoding='utf-8'))['players']
+    except Exception: prev = {}
+    OO = load_onoff()
+    rw = fetch_rotowire()
+    if not rw: return {}
+    season = max((k.split('_')[0] for k in B if k.startswith('E')), default=None)
+    res = {}
+    now = dt.datetime.now(dt.timezone.utc)
+    for g in games:
+        if g.get('played'): continue
+        try: ko = dt.datetime.fromisoformat(str(g['utc']).replace('Z', '+00:00'))
+        except Exception: continue
+        if not (now - dt.timedelta(hours=3) <= ko <= now + dt.timedelta(hours=60)): continue     # μονο η τρεχουσα αγωνιστικη (η RotoWire δειχνει μονο αυτη)
+        best = None
+        for r in rw:
+            if set(_tok(r['home'])) & set(_tok(g['home'])) and set(_tok(r['visit'])) & set(_tok(g['away'])): best = r; break
+        man = manual_for(g, ko)                                    # 27/10: χειροκινητες απουσιες (el_absence_manual.json) ΠΑΝΩ απο τη RotoWire
+        if not best and not man: continue
+        best = dict(home=g['home'], visit=g['away'], inj={'home': list((best or {}).get('inj', {}).get('home', [])), 'visit': list((best or {}).get('inj', {}).get('visit', []))})
+        for side_, names in man.items():
+            for nm_ in names:
+                sur = _tok(nm_)[-1:]
+                best['inj'][side_] = [x for x in best['inj'][side_] if _tok(x[0])[-1:] != sur] + [(nm_, 'OUT')]
+        out_h = [n for n, s in best['inj']['home'] if s.upper() == 'OUT']; out_a = [n for n, s in best['inj']['visit'] if s.upper() == 'OUT']
+        gtd_h = [n for n, s in best['inj']['home'] if s.upper() != 'OUT']; gtd_a = [n for n, s in best['inj']['visit'] if s.upper() != 'OUT']
+        shh, sha = {'box': 0.0, 'ok': True}, {'box': 0.0, 'ok': True}
+        ch, dh, oh_, dh_ = team_cost(B, season, g['hcode'], out_h, g['utc'], prev, OO, gtd_h, shadow=shh)
+        ca, da, oa_, da_ = team_cost(B, season, g['acode'], out_a, g['utc'], prev, OO, gtd_a, shadow=sha)
+        tot = 0.0; tot_onoff = 0.0
+        if OO:                                                     # ΣΥΝΟΛΑ: ποντοι γηπ += bO·δικα επιθ + bD·αμυνα φιλοξ (και αντιστροφα)
+            bO, bD = OO[2]['bO'], OO[2]['bD']
+            tot_onoff = round(bO * oh_ + bD * da_ + bO * oa_ + bD * dh_, 2)
+            if TOTALS_ONOFF: tot = tot_onoff
+        parts = []
+        if dh: parts.append(f"{g['home']} (κόστος {ch:.2f}): " + ', '.join(dh))
+        if da: parts.append(f"{g['away']} (κόστος {ca:.2f}): " + ', '.join(da))
+        if man: parts.append('χειροκινητα OUT (Στελιος): ' + ', '.join(n for v in man.values() for n in v))
+        res[str(g['code'])] = dict(adj=round(ca - ch, 2), cost_h=ch, cost_a=ca, tot=tot, tot_onoff=tot_onoff, note=' · '.join(parts))
+        res[str(g['code'])].update(adj_pir=round(sha.get('pir', 0.0) - shh.get('pir', 0.0), 2), engine=ENGINE if shh.get('def_ok', True) and sha.get('def_ok', True) else 'PIR')
+        if shh['ok'] and sha['ok']:                                # 23/10 ΣΚΙΑ «δικο box» (el_box_shadow) — μονο καταγραφη στο el_picks
+            res[str(g['code'])].update(adj_box=round(sha['box'] - shh['box'], 2), cost_box_h=round(shh['box'], 2), cost_box_a=round(sha['box'], 2))
+        if tot: parts.append(f'συνολο {tot:+.1f} (on/off αμυνα & επιθεση)'); res[str(g['code'])]['note'] = ' · '.join(parts)
+    return res
+
+if __name__ == '__main__':
+    import sys; sys.stdout.reconfigure(encoding='utf-8')
+    P = json.load(open(F('el_projections.json'), encoding='utf-8'))
+    for c, v in adjustments(P['games']).items():
+        g = next(x for x in P['games'] if str(x['code']) == c)
+        print(f"{g['home']} - {g['away']}: διαφορα {g['margin']:+.1f} → {g['margin'] + v['adj']:+.1f} (γηπ −{v['cost_h']}, φιλ −{v['cost_a']}) · συνολο {g['total']:.1f} → {g['total'] + v['tot']:.1f} · {v['note']}")

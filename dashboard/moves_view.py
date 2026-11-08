@@ -1,0 +1,640 @@
+# -*- coding: utf-8 -*-
+"""moves_view.py — Market Watch tab (α λα steamwatch): Biggest Movers των επερχομενων
+ματς + διαγραμμα κινησης ανα ματς (1Χ2 & χαντικαπ), απο το δικο μας odds_history
+(Pinnacle/Matchbook snapshots του scanner — αλλαγες μονο)."""
+import os, json, datetime
+import html as _h
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HIST_F = os.path.join(ROOT, 'odds_history.jsonl')
+UTC = datetime.timezone.utc
+try:
+    from zoneinfo import ZoneInfo
+    ATHENS = ZoneInfo('Europe/Athens')
+except Exception:
+    ATHENS = UTC
+TLOGO = 'https://images.fotmob.com/image_resources/logo/teamlogo/{}.png'
+C_HOME, C_DRAW, C_AWAY = '#34d17a', '#f3c74b', '#e05563'
+
+
+def _dt(s):
+    try:
+        d = datetime.datetime.fromisoformat(str(s).replace('Z', '+00:00'))
+        return d.replace(tzinfo=UTC) if d.tzinfo is None else d.astimezone(UTC)
+    except (ValueError, TypeError):
+        return None
+
+
+def load_history():
+    """{key: {'meta':…, 'snaps': [σε χρονικη σειρα]}} απο το odds_history.jsonl."""
+    H = {}
+    if not os.path.exists(HIST_F):
+        return H
+    for line in open(HIST_F, encoding='utf-8'):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        t = _dt(r.get('t'))
+        if t is None:
+            continue
+        key = f"{r.get('hid')}_{r.get('aid')}"
+        d = H.setdefault(key, dict(meta=dict(lg=r.get('lg'), home=r.get('home'), away=r.get('away'),
+                                             hid=r.get('hid'), aid=r.get('aid'), ko=r.get('ko')),
+                                   snaps=[]))
+        if r.get('ko'):
+            d['meta']['ko'] = r['ko']
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'),
+                               h2h=r.get('h2h')))
+    _load_intl(H)
+    _load_euro(H)
+    _load_nba(H)
+    for d in H.values():
+        d['snaps'].sort(key=lambda s: s['t'])
+    return H
+
+
+INTL_F = os.path.join(ROOT, 'intl_odds_hist.jsonl')
+
+
+def _load_intl(H):
+    """26/9/2026 (Στελιος): και οι ΕΘΝΙΚΕΣ στο Market Watch οσο υπαρχει παραθυρο — απο το intl_odds_hist.jsonl (Odds API, μια γραμμη
+    ανα αλλαγη· κυρια πηγη Pinnacle, αλλιως Bovada με γκανιοτα «σαν Pinnacle», 1Χ2 Betfair οπου λειπει). lg = 'NL A'..'NL D'."""
+    if not os.path.exists(INTL_F):
+        return
+    names = {}
+    for fn in ('intl_projections_dashboard.json',):
+        try:
+            dd = json.load(open(os.path.join(ROOT, fn), encoding='utf-8'))
+            for c in dd.get('comps', []):
+                for m in c.get('matches', []):
+                    names[int(m['hid'])] = m['home']; names[int(m['aid'])] = m['away']
+        except Exception:
+            pass
+    try:
+        for line in open(os.path.join(ROOT, 'intl_closing.jsonl'), encoding='utf-8'):
+            c = json.loads(line); names.setdefault(int(c['hid']), c['home']); names.setdefault(int(c['aid']), c['away'])
+    except Exception:
+        pass
+    for line in open(INTL_F, encoding='utf-8'):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        t = _dt(r.get('t'))
+        if t is None or not r.get('key'):
+            continue
+        try:
+            hid, aid = [int(x) for x in r['key'].split('_')[:2]]
+        except Exception:
+            continue
+        d = H.setdefault('intl_' + r['key'], dict(meta=dict(lg=r.get('comp'), home=names.get(hid, str(hid)), away=names.get(aid, str(aid)),
+                                                            hid=hid, aid=aid, ko=r.get('ko'), intl=True), snaps=[]))
+        h2h = [r.get('h'), r.get('d'), r.get('a')] if (r.get('h') and r.get('d') and r.get('a')) else None
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book=r.get('book')))
+
+
+EURO_F = os.path.join(ROOT, 'euro_odds_hist.jsonl')
+EURO_LG = {'ChampionsLeague': 'Champions League', 'EuropaLeague': 'Europa League', 'ConferenceLeague': 'Conference League'}
+
+
+def _load_euro(H):
+    """10/10/2026 (Στελιος «ενεργοποιησε το market watch στα ευρωπαικα»): Champions / Europa / Conference League απο το
+    euro_odds_hist.jsonl (euro_odds_scan: Pinnacle, μια γραμμη ανα αλλαγη — 1Χ2, κυρια γραμμη χαντικαπ γηπεδουχου, ορια).
+    Ονοματα / ids ομαδων απο το euro_projections.json (κλειδι mid)."""
+    if not os.path.exists(EURO_F):
+        return
+    names = {}
+    try:
+        for m in json.load(open(os.path.join(ROOT, 'euro_projections.json'), encoding='utf-8')).get('matches', []):
+            names[str(m['mid'])] = (m['home'], m['away'], m.get('hid'), m.get('aid'))
+    except Exception:
+        pass
+    for line in open(EURO_F, encoding='utf-8'):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        t = _dt(r.get('t')); mid = str(r.get('mid') or '')
+        nm = names.get(mid)
+        if t is None or not nm:
+            continue
+        d = H.setdefault('euro_' + mid, dict(meta=dict(lg=EURO_LG.get(r.get('comp'), r.get('comp')), home=nm[0], away=nm[1],
+                                                         hid=nm[2], aid=nm[3], ko=r.get('ko'), euro=True), snaps=[]))
+        if r.get('ko'):
+            d['meta']['ko'] = r['ko']
+        h2h = [r.get('h'), r.get('d'), r.get('a')] if (r.get('h') and r.get('d') and r.get('a')) else None
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book='Pinnacle',
+                               tl=r.get('tl'), to=r.get('to'), tu=r.get('tu')))      # 10/10: + συνολα γκολ (ευρωπαϊκα)
+
+
+NBA_F = os.path.join(ROOT, 'nba_odds_hist.jsonl')
+
+
+def _load_nba(H):
+    """22/10/2026 (Στελιος «προσθεσε το nba στο market watch»): απο το nba_odds_hist.jsonl (nba_odds_scan: Pinnacle, μια γραμμη ανα
+    αλλαγη — νικητης (χωρις ισοπαλια), χαντικαπ γηπεδουχου, συνολο ποντων). Ονοματα/λογοτυπα απο το nba_projections.json (κλειδι code)."""
+    if not os.path.exists(NBA_F):
+        return
+    names = {}
+    try:
+        for g in json.load(open(os.path.join(ROOT, 'nba_projections.json'), encoding='utf-8')).get('games', []):
+            names[str(g['code'])] = (g['home'], g['away'], g.get('hcode'), g.get('acode'), g.get('hcrest'), g.get('acrest'))
+    except Exception:
+        pass
+    for line in open(NBA_F, encoding='utf-8'):
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        t = _dt(r.get('t')); code = str(r.get('code') or '')
+        nm = names.get(code)
+        if t is None or not nm:
+            continue
+        d = H.setdefault('nba_' + code, dict(meta=dict(lg='NBA', home=nm[0], away=nm[1], hid=nm[2], aid=nm[3], logo=nm[4], ko=r.get('commence'),
+                                                        nba=True), snaps=[]))
+        if r.get('commence'):
+            d['meta']['ko'] = r['commence']
+        h2h = [r.get('mh'), None, r.get('ma')] if (r.get('mh') and r.get('ma')) else None
+        d['snaps'].append(dict(t=t, line=r.get('line'), oh=r.get('oh'), oa=r.get('oa'), h2h=h2h, book='Pinnacle',
+                               tl=r.get('tl'), to=r.get('to'), tu=r.get('tu')))
+
+
+def _logo(m):
+    """λογοτυπο: ESPN για NBA (meta logo), αλλιως FotMob απο το id"""
+    return m.get('logo') or TLOGO.format(m.get('hid'))
+
+
+def ou_label(d=None, lg=None):
+    """«Ποντοι» για NBA, «Γκολ» για ποδοσφαιρο"""
+    return 'Ποντοι' if (lg == 'NBA' or (d and d.get('meta', {}).get('nba'))) else 'Γκολ'
+
+
+def upcoming(H, horizon_days=8):
+    now = datetime.datetime.now(UTC)
+    out = []
+    for key, d in H.items():
+        ko = _dt(d['meta'].get('ko'))
+        if ko and now - datetime.timedelta(minutes=30) < ko < now + datetime.timedelta(days=horizon_days):
+            out.append((key, d, ko))
+    out.sort(key=lambda x: x[2])
+    return out
+
+
+# ---------- Biggest Movers ----------
+def movers_rows(H, hours=48, top=12, min_move=0.01):
+    """Μεγαλυτερες κινησεις 1Χ2 στα επερχομενα: ποια πλευρα «πηρε χρημα» (επεσε η αποδοση)."""
+    now = datetime.datetime.now(UTC)
+    rows = []
+    for key, d, ko in upcoming(H):
+        snaps = [s for s in d['snaps'] if s.get('h2h')]
+        if len(snaps) < 2:
+            continue
+        cur = snaps[-1]
+        base = None
+        for s in snaps:                     # πρωτο snapshot μεσα στο παραθυρο των Χ ωρων
+            if s['t'] >= now - datetime.timedelta(hours=hours):
+                base = s; break
+        if base is None or base is cur:
+            base = snaps[0]
+        if base is cur:
+            continue
+        best = None
+        for i, side in enumerate(('H', 'D', 'A')):
+            b, c = base['h2h'][i], cur['h2h'][i]
+            if not b or not c:
+                continue
+            mv = (c - b) / b
+            if best is None or mv < best[0]:      # πιο αρνητικο = μαζεψε χρημα
+                best = (mv, side, b, c, i)
+        if best is None or best[0] > -min_move:
+            continue
+        mv, side, b, c, i = best
+        spark = [s['h2h'][i] for s in snaps if s.get('h2h') and s['h2h'][i]]
+        m = d['meta']
+        backed = m['home'] if side == 'H' else (m['away'] if side == 'A' else 'Ισοπαλια')
+        rows.append(dict(key=key, lg=m['lg'], home=m['home'], away=m['away'], hid=m['hid'], logo=m.get('logo'),
+                         ko=ko, side=side, backed=backed, move=mv, before=b, now=c, spark=spark))
+    rows.sort(key=lambda r: r['move'])
+    return rows[:top]
+
+
+def line_change_rows(H, horizon_days=8):
+    """Ματς (μελλοντικα) οπου η ΑΣΙΑΤΙΚΗ ΓΡΑΜΜΗ αλλαξε απο την πρωτη καταγραφη.
+    -> [dict] ταξινομημενα κατα ποτε εγινε η ΤΕΛΕΥΤΑΙΑ αλλαγη (πιο προσφατα πρωτα)."""
+    import datetime as _dtm
+    now = _dtm.datetime.now(_dtm.timezone.utc)
+    out = []
+    for _key, d, _ko in upcoming(H, horizon_days):
+        if d['meta'].get('nba'):          # 22/10: η ενοτητα ειναι για το ασιατικο του ποδοσφαιρου (σκαλια μισου γκολ) — NBA στη λιστα/διαγραμμα
+            continue
+        sn = [x for x in d['snaps'] if x.get('line') is not None]
+        if len(sn) < 2:
+            continue
+        chain = [sn[0]]
+        for x in sn[1:]:
+            if x['line'] != chain[-1]['line']:
+                chain.append(x)
+        if len(chain) < 2:
+            continue
+        last = chain[-1]
+        hrs = (now - last['t']).total_seconds() / 3600
+        out.append(dict(meta=d['meta'], chain=[c['line'] for c in chain],
+                        line0=chain[0]['line'], line1=last['line'],
+                        oh=sn[-1].get('oh'), oa=sn[-1].get('oa'),
+                        moved_hrs=hrs, nsteps=len(chain) - 1))
+    out.sort(key=lambda r: r['moved_hrs'])
+    return out
+
+
+def line_change_html(rows):
+    body = ''
+    for r in rows:
+        m = r['meta']
+        steps = ' → '.join(('%+g' % c) for c in r['chain'])
+        big = abs((r['line1'] or 0) - (r['line0'] or 0)) >= 0.5
+        hl = 'color:#ffb84d;font-weight:700;' if big else 'color:#e8edf8;font-weight:700;'
+        when = ('%dλ' % round(r['moved_hrs'] * 60)) if r['moved_hrs'] < 1 else ('%dω' % round(r['moved_hrs']))
+        body += (
+            '<tr>'
+            f'<td class="mt"><div class="nm">{_h.escape(m.get("home") or "")} – {_h.escape(m.get("away") or "")}</div>'
+            f'<div class="sub">{_h.escape(m.get("lg") or "")} · {_kofmt(_dt(m.get("ko")))}</div></td>'
+            f'<td class="ch" style="{hl}">{steps}</td>'
+            f'<td class="od">{(r["oh"] or 0):.2f} / {(r["oa"] or 0):.2f}</td>'
+            f'<td class="wh">πριν {when}</td>'
+            '</tr>')
+    css = """<style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf8;padding:2px;}
+    table{width:100%;border-collapse:collapse;background:#111827;border:1px solid #1e2d47;border-radius:12px;overflow:hidden;}
+    td{padding:9px 12px;border-bottom:1px solid #121b30;font-size:13px;}
+    td.mt .nm{font-weight:600;font-size:13.5px;}
+    td.mt .sub{color:#5a6b8c;font-size:10.5px;margin-top:1px;}
+    td.ch{font-family:'JetBrains Mono',monospace;font-size:13.5px;white-space:nowrap;}
+    td.od{font-family:'JetBrains Mono',monospace;color:#8fa3c8;white-space:nowrap;width:110px;}
+    td.wh{color:#5a6b8c;font-size:11px;width:70px;text-align:right;}
+    </style><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">"""
+    head = ('<tr><td class="mt" style="color:#6b7fa3;font-size:10px;text-transform:uppercase;letter-spacing:1px">ΜΑΤΣ</td>'
+            '<td class="ch" style="color:#6b7fa3;font-size:10px;letter-spacing:1px">ΓΡΑΜΜΗ (γηπεδουχος)</td>'
+            '<td class="od" style="color:#6b7fa3;font-size:10px;letter-spacing:1px">ΤΩΡΑ</td>'
+            '<td class="wh" style="color:#6b7fa3;font-size:10px">ΠΟΤΕ</td></tr>')
+    return css + '<table>' + head + body + '</table>'
+
+
+def _spark_svg(vals, color='#34d17a', w=96, h=26):
+    if len(vals) < 2:
+        return ''
+    lo, hi = min(vals), max(vals)
+    rng = (hi - lo) or 1e-9
+    pts = []
+    for i, v in enumerate(vals):
+        x = 2 + i * (w - 4) / (len(vals) - 1)
+        y = h - 3 - (v - lo) / rng * (h - 6)
+        pts.append(f'{x:.1f},{y:.1f}')
+    return (f'<svg width="{w}" height="{h}" viewBox="0 0 {w} {h}">'
+            f'<polyline points="{" ".join(pts)}" fill="none" stroke="{color}" '
+            f'stroke-width="1.6" stroke-linejoin="round"/></svg>')
+
+
+CSS = """
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0f1e;font-family:'DM Sans','Segoe UI',sans-serif;color:#e8edf8;padding:2px;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:9.5px;color:#6b7fa3;text-transform:uppercase;letter-spacing:.8px;text-align:left;
+   padding:8px 8px;border-bottom:1px solid #1e2d47;}
+th.c,td.c{text-align:center;}
+td{padding:9px 8px;border-bottom:1px solid #121b30;font-size:12.5px;vertical-align:middle;}
+td img{width:17px;height:17px;object-fit:contain;vertical-align:-4px;margin-right:6px;}
+.mt{font-weight:700;color:#e8edf8;}
+.dim{color:#5a6b8c;font-size:10px;font-family:'JetBrains Mono',monospace;}
+.tagH,.tagD,.tagA{display:inline-block;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;margin-right:6px;}
+.tagH{background:#10251b;color:#34d17a;border:1px solid #1e4a33;}
+.tagD{background:#2b2410;color:#f3c74b;border:1px solid #4a3e1e;}
+.tagA{background:#2a1418;color:#e05563;border:1px solid #4a1e26;}
+.mv{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:#34d17a;}
+.od{font-family:'JetBrains Mono',monospace;color:#8fa3c8;}
+.odb{font-family:'JetBrains Mono',monospace;font-weight:700;color:#e8edf8;font-size:14px;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+"""
+
+_DAYS = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ']
+
+
+def _kofmt(ko):
+    k = ko.astimezone(ATHENS)
+    return f'{_DAYS[k.weekday()]} {k.day}/{k.month} {k:%H:%M}'
+
+
+def movers_html(rows):
+    H = [CSS, '<table><tr><th>Ματς</th><th>Πηρε χρημα</th><th class="c">Κινηση</th>'
+              '<th class="c">Πριν</th><th class="c">Τωρα</th><th class="c">Πορεια</th></tr>']
+    tagcls = {'H': 'tagH', 'D': 'tagD', 'A': 'tagA'}
+    sparkc = {'H': C_HOME, 'D': C_DRAW, 'A': C_AWAY}
+    for r in rows:
+        H.append(
+            f'<tr><td><span class="mt"><img src="{_logo(r)}">'
+            f'{_h.escape(r["home"])} – {_h.escape(r["away"])}</span>'
+            f'<div class="dim">{r["lg"]} · {_kofmt(r["ko"])}</div></td>'
+            f'<td><span class="{tagcls[r["side"]]}">{r["side"]}</span>{_h.escape(str(r["backed"]))}</td>'
+            f'<td class="c"><span class="mv">↓{abs(r["move"])*100:.1f}%</span></td>'
+            f'<td class="c od">{r["before"]:.2f}</td>'
+            f'<td class="c odb">{r["now"]:.2f}</td>'
+            f'<td class="c">{_spark_svg(r["spark"], sparkc[r["side"]])}</td></tr>')
+    H.append('</table>')
+    return ''.join(H)
+
+
+# ---------- λιστα ματς πρωταθληματος ----------
+def league_html(H, lg):
+    rows = []
+    any_ou = any(has_ou(d) for _, d, _ in upcoming(H) if d['meta']['lg'] == lg)
+    for key, d, ko in upcoming(H):
+        if d['meta']['lg'] != lg:
+            continue
+        snaps = [s for s in d['snaps'] if s.get('h2h')]
+        cells = ''
+        if len(snaps) >= 2:
+            b, c = snaps[0], snaps[-1]
+            for i, col in ((0, C_HOME), (1, C_DRAW), (2, C_AWAY)):
+                bb, cc = b['h2h'][i], c['h2h'][i]
+                if not cc:
+                    cells += '<td class="c dim">—</td>'; continue
+                mv = (cc - bb) / bb * 100 if bb and cc else 0
+                arrow = ('<span style="color:#e05563">↑</span>' if mv > 0.5 else
+                         ('<span style="color:#34d17a">↓</span>' if mv < -0.5 else
+                          '<span style="color:#5a6b8c">·</span>'))
+                cells += f'<td class="c odb">{cc:.2f} <span class="dim">{arrow}{abs(mv):.1f}%</span></td>'
+        elif snaps:
+            c = snaps[-1]
+            cells = ''.join((f'<td class="c odb">{c["h2h"][i]:.2f}</td>' if c['h2h'][i] else '<td class="c dim">—</td>') for i in range(3))
+        else:
+            cells = '<td class="c dim" colspan="3">—</td>'
+        last = d['snaps'][-1]
+        ah = (f'{last["line"]:+g} <span class="dim">({last["oh"]:.2f}/{last["oa"]:.2f})</span>'
+              if last.get('line') is not None else '—')
+        if any_ou:
+            ah += '</td><td class="c od">' + (f'{last["tl"]:g} <span class="dim">({last["to"]:.2f}/{last["tu"]:.2f})</span>'
+                                              if (last.get('tl') is not None and last.get('to') and last.get('tu')) else '—')
+        m = d['meta']
+        rows.append(f'<tr><td><span class="mt"><img src="{_logo(m)}">'
+                    f'{_h.escape(m["home"])} – {_h.escape(m["away"])}</span>'
+                    f'<div class="dim">{_kofmt(ko)} · {len(d["snaps"])} καταγραφες</div></td>'
+                    f'{cells}<td class="c od">{ah}</td></tr>')
+    if not rows:
+        return CSS + '<div class="dim" style="padding:14px">Δεν υπαρχουν καταγραφες για επερχομενα ματς εδω ακομα.</div>'
+    return (CSS + '<table><tr><th>Ματς</th><th class="c">1</th><th class="c">Χ</th>'
+                  '<th class="c">2</th><th class="c">Γραμμη AH</th>' + (f'<th class="c">{ou_label(lg=lg)} (O/U)</th>' if any_ou else '') + '</tr>' + ''.join(rows) + '</table>')
+
+
+# ---------- σελιδα ματς: καρτες, line-moves, ιστορικο ----------
+def _implied(vals):
+    inv = [1 / v for v in vals if v]
+    tot = sum(inv)
+    return [i / tot for i in inv] if tot else []
+
+
+def outcome_cards_html(d):
+    """3 καρτες 1Χ2: τωρα, ανοιγμα, implied%, %μεταβολη (α λα steamwatch)."""
+    snaps = [s for s in d['snaps'] if s.get('h2h')]
+    if not snaps:
+        return CSS + '<div class="dim" style="padding:10px">Χωρις 1Χ2 καταγραφες.</div>'
+    o, c = snaps[0]['h2h'], snaps[-1]['h2h']
+    _iv = [v for v in c if v]; _ip = _implied(_iv); imp = [(_ip[_iv.index(v)] if v else None) for v in c]   # 22/10: NBA χωρις ισοπαλια
+    m = d['meta']
+    names = [('HOME', m['home'], C_HOME), ('DRAW', 'Ισοπαλια', C_DRAW), ('AWAY', m['away'], C_AWAY)]
+    cards = ''
+    for i, (tag, nm, col) in enumerate(names):
+        if not o[i] or not c[i]:
+            continue
+        mv = (c[i] - o[i]) / o[i] * 100
+        arr = ('<span style="color:#e05563">↑ %.1f%%</span>' % mv if mv > 0.05 else
+               ('<span style="color:#34d17a">↓ %.1f%%</span>' % abs(mv) if mv < -0.05 else
+                '<span style="color:#5a6b8c">·</span>'))
+        spark = _spark_svg([s['h2h'][i] for s in snaps if s['h2h'][i]], col, w=110, h=30)
+        cards += (f'<div style="flex:1;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px;">'
+                  f'<div class="dim" style="letter-spacing:1px"><span style="color:{col}">●</span> {tag} · '
+                  f'{_h.escape(str(nm)).upper()[:18]}</div>'
+                  f'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">'
+                  f'<div><span style="font-family:JetBrains Mono,monospace;font-size:26px;font-weight:700">{c[i]:.2f}</span>'
+                  f'<div class="dim">Open {o[i]:.2f} · {imp[i]*100:.1f}%</div></div>'
+                  f'<div style="text-align:right">{arr}<div>{spark}</div></div></div></div>')
+    return CSS + f'<div style="display:flex;gap:10px">{cards}</div>'
+
+
+def ah_summary(d):
+    """Τρεχουσα γραμμη/αποδοσεις, ανοιγμα, και αλυσιδα LINE MOVED."""
+    snaps = [s for s in d['snaps'] if s.get('line') is not None]
+    if not snaps:
+        return None
+    o, c = snaps[0], snaps[-1]
+    moves = []
+    for s in snaps:
+        if not moves or abs(s['line'] - moves[-1][0]) > 0.01:
+            moves.append((s['line'], s['t']))
+    return dict(open_line=o['line'], open_oh=o['oh'], open_oa=o['oa'],
+                line=c['line'], oh=c['oh'], oa=c['oa'],
+                chg_h=(c['oh'] - o['oh']) / o['oh'] * 100 if o.get('oh') and c.get('oh') else None,
+                chg_a=(c['oa'] - o['oa']) / o['oa'] * 100 if o.get('oa') and c.get('oa') else None,
+                moves=moves)
+
+
+def ah_cards_html(d):
+    s = ah_summary(d)
+    if s is None:
+        return CSS + '<div class="dim" style="padding:10px">Χωρις AH καταγραφες.</div>'
+    m = d['meta']
+
+    def pct(v):
+        if v is None:
+            return ''
+        col = '#e05563' if v > 0.05 else ('#34d17a' if v < -0.05 else '#5a6b8c')
+        sym = '↑' if v > 0.05 else ('↓' if v < -0.05 else '·')
+        return f'<span style="color:{col};font-size:11px">{sym}{abs(v):.1f}%</span>'
+
+    chain = ''
+    if len(s['moves']) > 1:
+        parts = []
+        for ln, t in s['moves']:
+            parts.append(f'<b>{ln:+g}</b> <span class="dim">({t.astimezone(ATHENS):%d/%m %H:%M})</span>')
+        chain = ('<div style="margin-top:8px;padding:8px 12px;background:#182444;border:1px solid #2d4470;'
+                 'border-radius:8px;font-size:12px">LINE MOVED&nbsp;&nbsp;' + ' → '.join(parts) + '</div>')
+    html = (f'<div style="display:flex;gap:10px">'
+            f'<div style="flex:1.2;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px">'
+            f'<div class="dim">ΓΡΑΜΜΗ (οπτικη γηπεδουχου)</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:26px;font-weight:700">{s["line"]:+g}</span>'
+            f'<div class="dim">Open {s["open_line"]:+g}</div></div>'
+            f'<div style="flex:1;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px">'
+            f'<div class="dim"><span style="color:{C_HOME}">●</span> {_h.escape(str(m["home"])).upper()[:16]}</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:700">{s["oh"]:.2f}</span> {pct(s["chg_h"])}'
+            f'<div class="dim">Open {s["open_oh"]:.2f}</div></div>'
+            f'<div style="flex:1;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px">'
+            f'<div class="dim"><span style="color:{C_AWAY}">●</span> {_h.escape(str(m["away"])).upper()[:16]}</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:700">{s["oa"]:.2f}</span> {pct(s["chg_a"])}'
+            f'<div class="dim">Open {s["open_oa"]:.2f}</div></div></div>{chain}')
+    return CSS + html
+
+
+C_OVER, C_UNDER = '#3ec98f', '#b98cff'
+
+
+def has_ou(d):
+    return any(s.get('tl') is not None for s in d['snaps'])
+
+
+def ou_summary(d):
+    """10/10/2026: συνολα γκολ — τρεχουσα γραμμη/αποδοσεις, ανοιγμα, αλυσιδα αλλαγων γραμμης."""
+    snaps = [s for s in d['snaps'] if s.get('tl') is not None and s.get('to') and s.get('tu')]
+    if not snaps:
+        return None
+    o, c = snaps[0], snaps[-1]
+    moves = []
+    for s in snaps:
+        if not moves or abs(s['tl'] - moves[-1][0]) > 0.01:
+            moves.append((s['tl'], s['t']))
+    return dict(open_line=o['tl'], open_o=o['to'], open_u=o['tu'], line=c['tl'], o=c['to'], u=c['tu'],
+                chg_o=(c['to'] - o['to']) / o['to'] * 100, chg_u=(c['tu'] - o['tu']) / o['tu'] * 100, moves=moves)
+
+
+def ou_cards_html(d):
+    s = ou_summary(d)
+    if s is None:
+        return CSS + '<div class="dim" style="padding:10px">Χωρις καταγραφες συνολων.</div>'
+
+    def pct(v):
+        col = '#e05563' if v > 0.05 else ('#34d17a' if v < -0.05 else '#5a6b8c')
+        sym = '↑' if v > 0.05 else ('↓' if v < -0.05 else '·')
+        return f'<span style="color:{col};font-size:11px">{sym}{abs(v):.1f}%</span>'
+
+    chain = ''
+    if len(s['moves']) > 1:
+        parts = [f'<b>{ln:g}</b> <span class="dim">({t.astimezone(ATHENS):%d/%m %H:%M})</span>' for ln, t in s['moves']]
+        chain = ('<div style="margin-top:8px;padding:8px 12px;background:#182444;border:1px solid #2d4470;'
+                 'border-radius:8px;font-size:12px">LINE MOVED&nbsp;&nbsp;' + ' → '.join(parts) + '</div>')
+    box = 'flex:1;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px'
+    html = (f'<div style="display:flex;gap:10px">'
+            f'<div style="flex:1.2;background:#111827;border:1px solid #1e2d47;border-radius:12px;padding:12px 15px">'
+            f'<div class="dim">ΓΡΑΜΜΗ ΓΚΟΛ</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:26px;font-weight:700">{s["line"]:g}</span>'
+            f'<div class="dim">Open {s["open_line"]:g}</div></div>'
+            f'<div style="{box}"><div class="dim"><span style="color:{C_OVER}">●</span> OVER</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:700">{s["o"]:.2f}</span> {pct(s["chg_o"])}'
+            f'<div class="dim">Open {s["open_o"]:.2f}</div></div>'
+            f'<div style="{box}"><div class="dim"><span style="color:{C_UNDER}">●</span> UNDER</div>'
+            f'<span style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:700">{s["u"]:.2f}</span> {pct(s["chg_u"])}'
+            f'<div class="dim">Open {s["open_u"]:.2f}</div></div></div>{chain}')
+    return CSS + html
+
+
+def history_html(d):
+    """Πινακας Odds History (αλλαγες μονο, νεοτερο πρωτα) με ↑↓ βελακια."""
+    snaps = [s for s in d['snaps'] if s.get('h2h')]
+    if len(snaps) < 1:
+        return CSS + '<div class="dim" style="padding:10px">Χωρις καταγραφες.</div>'
+    rows = []
+    prev = None
+    with_ou = has_ou(d)
+    for s in snaps:
+        cells = ''
+        for i in range(3):
+            v = s['h2h'][i]
+            mark = ''
+            if prev is not None and v and prev['h2h'][i]:
+                if v > prev['h2h'][i]:
+                    mark = ' <span style="color:#e05563">↑</span>'
+                elif v < prev['h2h'][i]:
+                    mark = ' <span style="color:#34d17a">↓</span>'
+            cells += f'<td class="c od">{v:.2f}{mark}</td>' if v else '<td class="c dim">—</td>'
+        ah = f'{s["line"]:+g} ({s["oh"]:.2f}/{s["oa"]:.2f})' if s.get('line') is not None else '—'
+        ou = ''
+        if with_ou:
+            ou = (f'<td class="c od">{s["tl"]:g} ({s["to"]:.2f}/{s["tu"]:.2f})</td>' if (s.get('tl') is not None and s.get('to') and s.get('tu'))
+                  else '<td class="c dim">—</td>')
+        tag = ' <span class="dim">(πρωτη)</span>' if prev is None else ''
+        rows.append(f'<tr><td class="od">{s["t"].astimezone(ATHENS):%d/%m %H:%M}{tag}</td>{cells}'
+                    f'<td class="c od">{ah}</td>{ou}</tr>')
+        prev = s
+    rows.reverse()
+    return (CSS + f'<div class="dim" style="padding:4px 0 8px">{len(snaps)} αλλαγες καταγεγραμμενες</div>'
+            '<table><tr><th>Χρονος</th><th class="c">1</th><th class="c">Χ</th><th class="c">2</th>'
+            '<th class="c">AH</th>' + (f'<th class="c">{ou_label(d)} (O/U)</th>' if with_ou else '') + '</tr>' + ''.join(rows) + '</table>')
+
+
+# ---------- διαγραμμα ματς ----------
+def match_fig(d, market='1x2', mode='ΑΠΟΔΟΣΕΙΣ', hours=None):
+    """mode: ΑΠΟΔΟΣΕΙΣ | % ΜΕΤΑΒΟΛΗ | IMPLIED % · hours: παραθυρο (None=ολα)."""
+    import plotly.graph_objects as go
+    snaps = list(d['snaps'])
+    # changes-only αποθηκευση: τραβα την τελευταια τιμη μεχρι τωρα (η τη σεντρα)
+    now = datetime.datetime.now(UTC)
+    ko = _dt(d['meta'].get('ko'))
+    end = min(now, ko) if ko else now
+    if snaps and end > snaps[-1]['t']:
+        snaps = snaps + [dict(snaps[-1], t=end)]
+    if hours:
+        cut = end - datetime.timedelta(hours=hours)
+        older = [s for s in snaps if s['t'] < cut]
+        recent = [s for s in snaps if s['t'] >= cut]
+        snaps = ([dict(older[-1], t=cut)] if older else []) + recent
+    fig = go.Figure()
+    ytitle = {'ΑΠΟΔΟΣΕΙΣ': 'αποδοση', '% ΜΕΤΑΒΟΛΗ': '% απο την αρχη', 'IMPLIED %': 'πιθανοτητα %'}.get(mode, 'αποδοση')
+    lay = dict(paper_bgcolor='#0a0f1e', plot_bgcolor='#0d1426', height=380,
+               margin=dict(l=10, r=10, t=16, b=10),
+               font=dict(color='#8fa3c8', family='DM Sans', size=11),
+               xaxis=dict(gridcolor='#121b30'), yaxis=dict(gridcolor='#16203a', title=ytitle),
+               legend=dict(orientation='h', y=1.1, bgcolor='rgba(0,0,0,0)'),
+               hovermode='x unified')
+    xs = [s['t'].astimezone(ATHENS) for s in snaps]
+
+    def transform(series_list):
+        """[(ονομα, χρωμα, [τιμες])] -> μετασχηματισμος κατα mode."""
+        if mode == '% ΜΕΤΑΒΟΛΗ':
+            out = []
+            for nm, col, ys in series_list:
+                base = next((y for y in ys if y), None)
+                out.append((nm, col, [((y / base - 1) * 100 if y and base else None) for y in ys]))
+            return out
+        if mode == 'IMPLIED %':
+            cols = [list(x) for x in zip(*[ys for _, _, ys in series_list])]
+            probs = [_implied(row) if all(row) else [None] * len(row) for row in cols]
+            out = []
+            for j, (nm, col, _) in enumerate(series_list):
+                out.append((nm, col, [(p[j] * 100 if p and p[j] is not None else None) for p in probs]))
+            return out
+        return series_list
+
+    if market == '1x2':
+        m = d['meta']
+        raw = []
+        for i, (nm, col) in enumerate(((m['home'], C_HOME), ('Ισοπαλια', C_DRAW), (m['away'], C_AWAY))):
+            ys = [s['h2h'][i] if s.get('h2h') else None for s in snaps]
+            if any(ys):
+                raw.append((str(nm), col, ys))
+        for nm, col, ys in transform(raw):
+            fig.add_trace(go.Scatter(x=xs, y=ys, name=nm, mode='lines',
+                                     line=dict(color=col, width=2, shape='hv'), connectgaps=True))
+    elif market == 'ou':                       # 10/10: συνολα γκολ (ευρωπαϊκα)
+        raw = [('Over', C_OVER, [s.get('to') for s in snaps]), ('Under', C_UNDER, [s.get('tu') for s in snaps])]
+        for nm, col, ys in transform(raw):
+            fig.add_trace(go.Scatter(x=xs, y=ys, name=nm, mode='lines',
+                                     line=dict(color=col, width=2, shape='hv'), connectgaps=True))
+        fig.add_trace(go.Scatter(x=xs, y=[s.get('tl') for s in snaps], name=f'Γραμμη {ou_label(d).lower()}',
+                                 mode='lines', line=dict(color='#7ea2ff', width=1.5, dash='dot', shape='hv'),
+                                 yaxis='y2'))
+        lay['yaxis2'] = dict(overlaying='y', side='right', showgrid=False, title=f'γραμμη {ou_label(d).lower()}',
+                             zerolinecolor='#26324e')
+    else:
+        m = d['meta']
+        raw = [(str(m['home']), C_HOME, [s.get('oh') for s in snaps]),
+               (str(m['away']), C_AWAY, [s.get('oa') for s in snaps])]
+        for nm, col, ys in transform(raw):
+            fig.add_trace(go.Scatter(x=xs, y=ys, name=nm, mode='lines',
+                                     line=dict(color=col, width=2, shape='hv'), connectgaps=True))
+        fig.add_trace(go.Scatter(x=xs, y=[s.get('line') for s in snaps], name='Γραμμη',
+                                 mode='lines', line=dict(color='#7ea2ff', width=1.5, dash='dot', shape='hv'),
+                                 yaxis='y2'))
+        lay['yaxis2'] = dict(overlaying='y', side='right', showgrid=False, title='γραμμη',
+                             zerolinecolor='#26324e')
+    fig.update_layout(**lay)
+    return fig
