@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-08T19:55+00:00",
+ "generated": "2026-11-08T20:06+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -8011,12 +8011,12 @@
    "away": "Philadelphia 76ers",
    "hcode": "CHI",
    "acode": "PHI",
-   "margin": -8.35,
+   "margin": -8.4,
    "total": 235.7,
    "total_src": "μοντελο",
    "pts_h": 113.7,
-   "pts_a": 122.0,
-   "p_home": 0.268,
+   "pts_a": 122.1,
+   "p_home": 0.267,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -8031,9 +8031,9 @@
    "rl_a": "2026-11-06",
    "margin_base": -7.22,
    "total_base": 236.1,
-   "abs_dm": -1.13,
-   "abs_dt": -0.41,
-   "abs_shadow": 0.21,
+   "abs_dm": -1.19,
+   "abs_dt": -0.39,
+   "abs_shadow": 0.18,
    "abs_h": [
     [
      "Powell,Norman",
@@ -8043,20 +8043,12 @@
      1.0
     ]
    ],
-   "abs_a": [
-    [
-     "Embiid,Joel",
-     32.2,
-     1,
-     "Probable",
-     0.04
-    ]
-   ],
+   "abs_a": [],
    "inj_src": "official",
    "abs_lo": 0.83,
    "abs_ld": 0.026,
-   "abs_lop": 0.887,
-   "abs_ldp": 0.038,
+   "abs_lop": 0.83,
+   "abs_ldp": 0.026,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
