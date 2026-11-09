@@ -795,7 +795,11 @@
 "close_t": "2026-11-08T18:16",
 "clv_line": 0.25,
 "clv_price": null,
-"close_lim": 10000
+"close_lim": 10000,
+"score": "2-1",
+"tg": 3,
+"pnl": 0.447,
+"pnl_close": 0.0
 },
 "5868122": {
 "seen": "2026-10-31T17:19",
@@ -826,7 +830,11 @@
 "close_t": "2026-11-08T17:20",
 "clv_line": 0.0,
 "clv_price": 0.0202,
-"close_lim": 20000
+"close_lim": 20000,
+"score": "0-0",
+"tg": 0,
+"pnl": 1.02,
+"pnl_close": 0.98
 },
 "5881215": {
 "seen": "2026-10-31T19:32",
@@ -962,7 +970,11 @@
 "close_t": "2026-11-08T15:00",
 "clv_line": 0.0,
 "clv_price": -0.0354,
-"close_lim": 20000
+"close_lim": 20000,
+"score": "1-0",
+"tg": 1,
+"pnl": -1.0,
+"pnl_close": -1.0
 },
 "5802987": {
 "seen": "2026-11-02T05:25",
@@ -1046,6 +1058,31 @@
 0.004
 ],
 "T_market": 3.381,
+"paper": true,
+"window": "8-14"
+},
+"5795521": {
+"seen": "2026-11-08T23:37",
+"backfill": true,
+"lg": "EPL",
+"gw": 11,
+"grp": "top-5",
+"home": "Liverpool",
+"away": "Manchester United",
+"ko": "2026-11-22T16:30",
+"hours_before": 328.9,
+"side": "over",
+"line": 3.0,
+"odds": 1.962,
+"edge": 0.1114,
+"lim": 500,
+"T_model": 3.258,
+"T_anchor": 3.5,
+"anchor": [
+0.237,
+0.004
+],
+"T_market": 3.12,
 "paper": true,
 "window": "8-14"
 }
