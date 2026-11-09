@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-09T22:06+00:00",
+ "generated": "2026-11-09T22:17+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -8492,12 +8492,12 @@
    "away": "Cleveland Cavaliers",
    "hcode": "CHO",
    "acode": "CLE",
-   "margin": -9.58,
+   "margin": -9.63,
    "total": 215.5,
    "total_src": "μοντελο",
    "pts_h": 103.0,
-   "pts_a": 112.5,
-   "p_home": 0.239,
+   "pts_a": 112.6,
+   "p_home": 0.238,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -8512,16 +8512,16 @@
    "rl_a": "2026-11-07",
    "margin_base": -8.79,
    "total_base": 215.3,
-   "abs_dm": -0.79,
-   "abs_dt": 0.15,
+   "abs_dm": -0.84,
+   "abs_dt": 0.18,
    "abs_shadow": 0.47,
    "abs_h": [
     [
      "Diabate,Moussa",
      28.7,
      0,
-     "Doubtful",
-     0.963
+     "Out",
+     1.0
     ],
     [
      "Miller,Brandon",
@@ -8562,10 +8562,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.944,
-   "abs_ld": 0.111,
-   "abs_lop": 2.543,
-   "abs_ldp": 1.426,
+   "abs_lo": 2.271,
+   "abs_ld": 1.074,
+   "abs_lop": 2.555,
+   "abs_ldp": 1.461,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
