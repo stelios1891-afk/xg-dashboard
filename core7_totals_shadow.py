@@ -62,9 +62,9 @@ def settle(tg, L, o, over):
     return round(r, 3)
 
 
-def run(now=None, verbose=False):
+def run(now=None, verbose=False, arch='match_projections_archive.json', log_f=LOG_F):
     now = now or dt.datetime.now(UTC)
-    A = json.load(open(os.path.join(ROOT, 'match_projections_archive.json'), encoding='utf-8'))
+    A = json.load(open(os.path.join(ROOT, arch), encoding='utf-8'))
     OH = collections.defaultdict(list)
     for l in open(os.path.join(ROOT, 'odds_history.jsonl'), encoding='utf-8'):
         try:
@@ -111,7 +111,7 @@ def run(now=None, verbose=False):
         L_ = [x for x in TEAM_KO.get(k, []) if x < ko - dt.timedelta(hours=6)]
         return (not L_) or (max(L_) + dt.timedelta(hours=2) <= t)
     try:
-        log = json.load(open(LOG_F, encoding='utf-8'))
+        log = json.load(open(log_f, encoding='utf-8'))
     except Exception:
         log = {}
     n_new = 0
@@ -161,8 +161,8 @@ def run(now=None, verbose=False):
                     e['pnl_close'] = settle(a + b, e['close_line'], e['close_odds'], e['side'] == 'over')
             except Exception:
                 pass
-    json.dump(log, open(LOG_F, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
-    print(f'core7_totals_shadow: νεες {n_new} · συνολο {len(log)} · αγκυρα απο {sum(len(v) for v in UPD.values()) // 2} ματς')
+    json.dump(log, open(log_f, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
+    print(f'{os.path.basename(log_f)[:-5]}: νεες {n_new} · συνολο {len(log)} · αγκυρα απο {sum(len(v) for v in UPD.values()) // 2} ματς')
     if verbose:
         for e in sorted(log.values(), key=lambda e: e['ko']):
             print(f"  {e['ko']} αγ.{e['gw']:2d} {e['lg']:12s} {e['home'][:18]:18s}-{e['away'][:18]:18s} {e['side']:5s} {e['line']} @{e['odds']} edge {100 * e['edge']:4.1f}% "
@@ -174,3 +174,9 @@ def run(now=None, verbose=False):
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
     run(verbose='-v' in sys.argv)
+    # 10/11 (Στελιος «βαλτη σε παραλληλη καταγραφη»): ΙΔΙΟΣ κανονας με μειγμα xG/γκολ ραμπα 100→80 (core7_totals_b80.py χτιζει το αρχειο)
+    if os.path.exists(os.path.join(ROOT, 'match_projections_archive_b80.json')):
+        try:
+            run(verbose='-v' in sys.argv, arch='match_projections_archive_b80.json', log_f=os.path.join(ROOT, 'core7_totals_shadow_b80.json'))
+        except Exception as ex:
+            print(f'b80 καταγραφη: {type(ex).__name__}: {ex}')
