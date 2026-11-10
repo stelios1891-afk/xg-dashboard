@@ -15,7 +15,7 @@ OUTV = V
 RED = None
 if '~' in V:                            # 5/10: <variant>~nored | ~revred = ιδια εκδοχη με αλλη διορθωση κοκκινων (core7_red_adj_test)
     V, RED = V.split('~')
-src_csv = 'teamgame_inputs_5s_wf.csv'
+src_csv = os.environ.get('SRC_CSV', 'teamgame_inputs_5s_wf.csv')   # 10/11: SRC_CSV=teamgame_inputs_6s_wf.csv (+2627)
 if V in ('nocomp', 'pen76', 'both'):
     T = pd.read_csv(src_csv)
     np_part = T['np_raw'] if V in ('nocomp', 'both') else T['comp_np_scaled']
@@ -44,7 +44,7 @@ if RED in ('emp', 'emps', 'empa', 'skrip', 'caley'):     # 5/10: νεες φορ
     T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1)
     if os.environ.get('NOCOMP'):        # 9/10: χωρις Caley συμπιεση (np_raw) ΜΑΖΙ με κοκκινες emps & σωστο SoS — core7_nocomp_714
         T['xg_model'] = T['np_raw'] + PENW * T['pen'] + T['red_xg']; T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1); OUTV += '@nocomp'
-    csv = f'tmp_mech_inputs_{V}_{RED}{os.environ.get("NOCOMP", "")}{os.environ.get("PENW", "")}.csv'; T.to_csv(csv, index=False)
+    csv = f'tmp_mech_inputs_{V}_{RED}{os.environ.get("NOCOMP", "")}{os.environ.get("PENW", "")}{os.environ.get("SRC_CSV", "")[16:18]}.csv'; T.to_csv(csv, index=False)
     print('κοκκινες', RED, 'ματς-ομαδες με διορθωση:', sum(1 for a in A if a['term'] or a['fc'] != 1))
 elif RED:
     T = pd.read_csv(csv)
@@ -90,6 +90,11 @@ if V.startswith('bl_'):                 # 1/10: bl_<BL> = LIVE (σωστο SoS 0
 if V == 'nosos':                       # 1/10: χωρις διορθωση προγραμματος (SoS) στις αγων. 7-14
     assert 'ST = 1.5;' in pre
     pre = pre.replace('ST = 1.5;', 'ST = 0.0;')
+if os.environ.get('SRC_CSV', '').startswith('teamgame_inputs_6s'):   # 10/11: και η φετινη σεζον στις προβλεψεις
+    assert "SEAS = ['2223', '2324', '2425', '2526']" in pre
+    pre = pre.replace("SEAS = ['2223', '2324', '2425', '2526']", "SEAS = ['2223', '2324', '2425', '2526', '2627']", 1); OUTV += '@6s'
+    sos_test.FIVE_SEASONS = list(sos_test.FIVE_SEASONS) + ['2627']   # corrected_config φορτωνει τις σεζον απο εδω
+    if '2627' not in sos_test._SEAS_ORDER: sos_test._SEAS_ORDER = list(sos_test._SEAS_ORDER) + ['2627']
 if os.environ.get('KWARM'):              # 9/10: K warm-start απο env (μεγαλο = μονο περσινο, ~0 = μονο φετινο) — core7_early_weakness
     assert 'K = 8.0;' in pre
     pre = pre.replace('K = 8.0;', f"K = {float(os.environ['KWARM'])};", 1); OUTV += f"@K{os.environ['KWARM']}"
