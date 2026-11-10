@@ -87,6 +87,11 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python dashboard/proj_archive.py || echo "proj archive failed (μη κρισιμο)"
 
+      - name: Archive b80 projections (παραλληλη καταγραφη συνολων, ραμπα 100→80 — core7_totals_b80.py, 10/11)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python core7_totals_b80.py || echo "b80 archive failed (μη κρισιμο)"
+
       - name: Season projections (Monte Carlo 10k, ~20s)
         env:
           PYTHONIOENCODING: utf-8
@@ -106,6 +111,7 @@ jobs:
           git add -f season_projections.json || true
           git add -f core7_anchor_offsets.json || true
           git add -f match_projections_archive.json || true
+          git add -f match_projections_archive_b80.json || true
           git add -f player_xgi.jsonl || true
           git add -f xi_formula_lab.json || true
           # commit ΜΟΝΟ αν αλλαξαν τα raw data (νεα ματς / Opta revisions) — οχι μονο float-noise στο csv
