@@ -28,6 +28,7 @@ def isodate(s):
 
 LEAGUES=['EPL','LaLiga','SerieA','Bundesliga','Ligue1','PrimeiraLiga','Eredivisie']   # CORE 7
 SEASONS=['2122','2223','2324','2425','2526']     # κλειδωμενες (ιδιες με teamgame_inputs_5s.csv)
+if os.environ.get('WF_SEASONS'): SEASONS=os.environ['WF_SEASONS'].split(',')   # 10/11: π.χ. +2627 για τεστ φετινης (core7_totals_early_mech)
 KF=4.0
 
 def w(xg):
@@ -127,7 +128,7 @@ df['xgps']=df['xg_model']/df['ns_eff'].clip(lower=1)
 COLS=['league','season','mid','date','team','opp','is_home','gf','np_raw','np_comp','pen','ns','red_xg',
       'comp_np_scaled','sf','xg_model','ns_eff','xgps','sf_wf','md_wf']
 df=df[COLS].sort_values(['league','season','date','mid','is_home'])
-OUT='teamgame_inputs_5s_wf.csv'
+OUT=os.environ.get('WF_OUT','teamgame_inputs_5s_wf.csv')
 df.to_csv(OUT,index=False)
 print(f"{OUT}: {len(df)} γραμμες-ομαδα ({len(df)//2} ματς)")
 print(f"σεζον: {SEASONS}   KF={KF}")

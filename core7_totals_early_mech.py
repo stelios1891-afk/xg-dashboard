@@ -372,4 +372,16 @@ if __name__ == '__main__':
                 print(fmt(lab, z, z0)); print(' ' * 31 + acc_txt(a, a0))
             if len(C) > 2:
                 ch, oos = loso(C); print('LOSO: ' + ' '.join(f'{s_[2:]}→{v}' for s_, v in ch.items()) + f' · εκτος δειγματος {oos:+.1f}μ vs βαση {z0.pnl.sum() / 2:+.1f}μ')
+    if which == 'τ13':
+        print('\n== Τ13 ΣΥΝΔΥΑΣΜΟΙ (αρχεια @6s = με τα σημερινα δεδομενα· οι 4 ιστορικες σεζον)')
+        def run_file(f):
+            P_, S_ = load(f); t_ = table(P_, S_, anchored(P_), hmin=0); return t_, picks_from(t_, P_), accuracy(t_)
+        t0_, z0, a0 = run_file('core7_mech_preds_bl_0.6~emps@6s.csv')
+        print(fmt('βαση xG 60% K=8', z0)); print(' ' * 31 + acc_txt(a0))
+        C = {'βαση': z0}
+        for lab, f in (('xG 80%', 'bl_0.8~emps@6s'), ('xG 90%', 'bl_0.9~emps@6s'), ('K=16', 'cur_0.75_6_13~emps@6s@K16'),
+                       ('xG 80% + K=16', 'bl_0.8~emps@6s@K16'), ('xG 90% + K=16', 'bl_0.9~emps@6s@K16')):
+            t_, z, a = run_file(f'core7_mech_preds_{f}.csv'); C[lab] = z
+            print(fmt(lab, z, z0)); print(' ' * 31 + acc_txt(a, a0))
+        ch, oos = loso(C); print('LOSO: ' + ' '.join(f'{s_[2:]}→{v}' for s_, v in ch.items()) + f' · εκτος δειγματος {oos:+.1f}μ vs βαση {z0.pnl.sum() / 2:+.1f}μ')
     base.to_csv('core7_totals_early_base_rows.csv', index=False)
