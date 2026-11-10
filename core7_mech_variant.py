@@ -37,12 +37,14 @@ if RED in ('emp', 'emps', 'empa', 'skrip', 'caley'):     # 5/10: νεες φορ
     A = [ADJ.get((mi, int(t)), dict(fc=1., fr=1., fn=1., term=0.)) for mi, t in zip(T.mid, T.team)]
     T['comp_np_scaled'] = T['comp_np_scaled'] * [a['fc'] for a in A]; T['np_raw'] = T['np_raw'] * [a['fr'] for a in A]
     T['ns'] = T['ns'] * [a['fn'] for a in A]; T['red_xg'] = [a['term'] for a in A]
-    T['xg_model'] = T['comp_np_scaled'] + 0.25 * T['pen'] + T['red_xg']
+    PENW = float(os.environ.get('PENW', '0.25'))   # 10/11: αξια πεναλτι απο env (core7_totals_early_mech Τ6)· 0.25 = live
+    T['xg_model'] = T['comp_np_scaled'] + PENW * T['pen'] + T['red_xg']
+    if os.environ.get('PENW'): OUTV += f"@pen{os.environ['PENW']}"
     T['ns_eff'] = np.maximum(T['ns'] + T['pen'] + T['red_xg'] / 0.10, 0.5 * (T['ns'] + T['pen']))
     T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1)
     if os.environ.get('NOCOMP'):        # 9/10: χωρις Caley συμπιεση (np_raw) ΜΑΖΙ με κοκκινες emps & σωστο SoS — core7_nocomp_714
-        T['xg_model'] = T['np_raw'] + 0.25 * T['pen'] + T['red_xg']; T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1); OUTV += '@nocomp'
-    csv = f'tmp_mech_inputs_{V}_{RED}{os.environ.get("NOCOMP", "")}.csv'; T.to_csv(csv, index=False)
+        T['xg_model'] = T['np_raw'] + PENW * T['pen'] + T['red_xg']; T['xgps'] = T['xg_model'] / T['ns_eff'].clip(lower=1); OUTV += '@nocomp'
+    csv = f'tmp_mech_inputs_{V}_{RED}{os.environ.get("NOCOMP", "")}{os.environ.get("PENW", "")}.csv'; T.to_csv(csv, index=False)
     print('κοκκινες', RED, 'ματς-ομαδες με διορθωση:', sum(1 for a in A if a['term'] or a['fc'] != 1))
 elif RED:
     T = pd.read_csv(csv)
