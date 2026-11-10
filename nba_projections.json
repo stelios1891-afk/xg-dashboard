@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-10T18:23+00:00",
+ "generated": "2026-11-10T18:34+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -9052,12 +9052,12 @@
    "away": "Miami Heat",
    "hcode": "UTA",
    "acode": "MIA",
-   "margin": -5.0,
-   "total": 227.3,
+   "margin": -5.95,
+   "total": 227.0,
    "total_src": "μοντελο",
-   "pts_h": 111.1,
-   "pts_a": 116.1,
-   "p_home": 0.356,
+   "pts_h": 110.5,
+   "pts_a": 116.5,
+   "p_home": 0.33,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -9072,8 +9072,8 @@
    "rl_a": "2026-11-08",
    "margin_base": -2.32,
    "total_base": 227.8,
-   "abs_dm": -2.68,
-   "abs_dt": -0.54,
+   "abs_dm": -3.63,
+   "abs_dt": -0.78,
    "abs_shadow": -0.6,
    "abs_h": [
     [
@@ -9094,8 +9094,8 @@
      "Markkanen,Lauri",
      30.9,
      0,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -9108,10 +9108,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.945,
-   "abs_ld": 0.141,
-   "abs_lop": 1.6,
-   "abs_ldp": 0.265,
+   "abs_lo": 2.268,
+   "abs_ld": 0.38,
+   "abs_lop": 2.368,
+   "abs_ldp": 0.403,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
