@@ -149,6 +149,9 @@ def run(now=None, verbose=False):
                      clv_price=round(e['odds'] / pc - 1, 4) if abs(Lc - e['line']) < .01 else None, close_lim=pre[-1][2])
         if not r['score'] and r['ko'] < now - dt.timedelta(days=3) and 'tg' not in e:
             e['void'] = True                                          # αναβολη / χωρις σκορ → ακυρο (δεν μετραει)
+        if r['score'] and 'tg' not in e and abs((r['ko'] - utc(e['ko'])).total_seconds()) > 3 * 86400:
+            e['void'] = True                                          # 10/11: αναβληθηκε και παιχτηκε >3 μερες μετα (π.χ. Ραγιο–Αθλετικ 10/10) → μενει ακυρο
+            continue
         if r['score'] and 'tg' not in e:
             e.pop('void', None)
             try:
