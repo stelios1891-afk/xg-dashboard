@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-10T20:42+00:00",
+ "generated": "2026-11-10T20:59+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -9176,12 +9176,12 @@
    "away": "Orlando Magic",
    "hcode": "SAC",
    "acode": "ORL",
-   "margin": -2.39,
-   "total": 223.1,
+   "margin": -1.51,
+   "total": 222.8,
    "total_src": "μοντελο",
-   "pts_h": 110.3,
-   "pts_a": 112.7,
-   "p_home": 0.43,
+   "pts_h": 110.7,
+   "pts_a": 112.2,
+   "p_home": 0.455,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -9196,25 +9196,10 @@
    "rl_a": "2026-11-07",
    "margin_base": -4.62,
    "total_base": 222.1,
-   "abs_dm": 2.31,
-   "abs_dt": 0.97,
-   "abs_shadow": 0.41,
-   "abs_h": [
-    [
-     "Murray,Keegan",
-     25.7,
-     1,
-     "Questionable",
-     0.46
-    ],
-    [
-     "Sabonis,Domantas",
-     35.6,
-     0,
-     "Questionable",
-     0.42
-    ]
-   ],
+   "abs_dm": 3.19,
+   "abs_dt": 0.73,
+   "abs_shadow": 0.16,
+   "abs_h": [],
    "abs_a": [
     [
      "Banchero,Paolo",
@@ -9241,8 +9226,8 @@
    "inj_src": "official",
    "abs_lo": 1.365,
    "abs_ld": 1.253,
-   "abs_lop": 1.526,
-   "abs_ldp": 1.729,
+   "abs_lop": 1.319,
+   "abs_ldp": 1.388,
    "trade_dm": -0.08,
    "trades": [
     [
