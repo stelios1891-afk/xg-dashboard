@@ -19,6 +19,7 @@ COMPS = {'EL': dict(league=382, pre='el', lab=''), 'EC': dict(league=377, pre='e
 H = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36', 'Accept': 'application/json',
      'Referer': 'https://www.pinnacle.com/', 'Origin': 'https://www.pinnacle.com'}
 WINDOW_H = 48
+NO_LIM_MSG = {'NBA'}   # 10/11 Στελιος: «ολα τα μηνυματα οριων για το nba αφαιρεσετα» (παιζει στο ανοιγμα)· το «🟢 ΑΝΟΙΞΕ» μενει, το ιστορικο γραφεται κανονικα
 LIM_CAP = {'EL': 3000, 'EC': None, 'BCL': 2000, 'NBA': 3000}   # 21/10 Στελιος: «οριο ↑» μονο μεχρι αυτο το οριο (None = παντα)
 Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
 def dec(a): return round(1 + (a / 100 if a > 0 else 100 / -a), 3) if a else None
@@ -113,7 +114,7 @@ def main(notify_tg=True, comp='EL'):
             for mk_, nm in (('sp', 'χαντικαπ'), ('tot', 'συνολο')):
                 a, b = (prev.get(mk_) or {}).get('lim', 0), (cur.get(mk_) or {}).get('lim', 0)
                 if b > a and (LIM_CAP.get(comp) is None or b <= LIM_CAP[comp]): ups.append(f'{nm} {a:g} → {b:g}')
-            if ups and g and str(g.get('code')) in act:
+            if ups and g and str(g.get('code')) in act and comp not in NO_LIM_MSG:
                 msgs.append(f"💰 ΟΡΙΟ PINNACLE ↑ · {LAB}{home} - {away} ({tip}, σε {hrs:.1f}ω)\n{' · '.join(ups)}\n{desc()}" + (f"\n{edges()}" if edges() else ''))
         if prev is None or any((prev.get(x) or {}) != (cur.get(x) or {}) for x in ('sp', 'tot', 'ml')):
             hist.append(dict(t=now.isoformat(timespec='minutes'), id=m['id'], home=home, away=away, start=m['startTime'], hrs=round(hrs, 2), code=(g or {}).get('code'), **cur))
