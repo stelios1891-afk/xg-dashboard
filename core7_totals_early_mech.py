@@ -384,4 +384,25 @@ if __name__ == '__main__':
             t_, z, a = run_file(f'core7_mech_preds_{f}.csv'); C[lab] = z
             print(fmt(lab, z, z0)); print(' ' * 31 + acc_txt(a, a0))
         ch, oos = loso(C); print('LOSO: ' + ' '.join(f'{s_[2:]}→{v}' for s_, v in ch.items()) + f' · εκτος δειγματος {oos:+.1f}μ vs βαση {z0.pnl.sum() / 2:+.1f}μ')
+    if which == 'τ14':
+        print('\n== Τ14 ΡΑΜΠΑ ή ΣΤΑΘΕΡΟ ΜΕΙΓΜΑ xG/ΓΚΟΛ (αρχεια @6s· οι 4 ιστορικες σεζον· βαση = σημερινη ραμπα 100→60)')
+        def run_file(f):
+            P_, S_ = load(f); t_ = table(P_, S_, anchored(P_), hmin=0); return t_, picks_from(t_, P_), accuracy(t_)
+        t0_, z0, a0 = run_file('core7_mech_preds_bl_0.6~emps@6s.csv')
+        R = {'ραμπα 100→60 (σημερα)': (z0, a0)}
+        for lab, f in (('ραμπα 100→80', 'bl_0.8~emps@6s'), ('ραμπα 100→90', 'bl_0.9~emps@6s'),
+                       ('σταθερο 60%', 'bl_0.6~emps@6s@flat'), ('σταθερο 80%', 'bl_0.8~emps@6s@flat'),
+                       ('σταθερο 90%', 'bl_0.9~emps@6s@flat'), ('σταθερο 100% (μονο xG)', 'bl_1.0~emps@6s')):
+            t_, z, a = run_file(f'core7_mech_preds_{f}.csv'); R[lab] = (z, a)
+        for part, cond in (('ΟΛΑ (αγων. 8+)', lambda z: z.md >= 0), ('ΑΓΩΝ. 8-14 (εκει διαφερει η ραμπα)', lambda z: z.md <= 13),
+                           ('ΑΓΩΝ. 15+', lambda z: z.md >= 14)):
+            print(f'\n-- {part}')
+            zb = z0[cond(z0)]
+            for lab, (z, a) in R.items():
+                zz = z[cond(z)]
+                print(fmt(lab, zz, None if lab.startswith('ραμπα 100→60') else zb))
+                if part.startswith('ΟΛΑ'):
+                    print(' ' * 31 + acc_txt(a, None if lab.startswith('ραμπα 100→60') else a0))
+        ch, oos = loso({k: v[0] for k, v in R.items()})
+        print('\nLOSO: ' + ' '.join(f'{s_[2:]}→{v}' for s_, v in ch.items()) + f' · εκτος δειγματος {oos:+.1f}μ vs βαση {z0.pnl.sum() / 2:+.1f}μ')
     base.to_csv('core7_totals_early_base_rows.csv', index=False)

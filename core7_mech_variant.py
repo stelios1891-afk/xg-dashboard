@@ -98,6 +98,11 @@ if os.environ.get('SRC_CSV', '').startswith('teamgame_inputs_6s'):   # 10/11: κ
 if os.environ.get('KWARM'):              # 9/10: K warm-start απο env (μεγαλο = μονο περσινο, ~0 = μονο φετινο) — core7_early_weakness
     assert 'K = 8.0;' in pre
     pre = pre.replace('K = 8.0;', f"K = {float(os.environ['KWARM'])};", 1); OUTV += f"@K{os.environ['KWARM']}"
+if os.environ.get('FLAT'):                # 10/11: σταθερο μειγμα xG/γκολ BL απο την 1η αγωνιστικη (χωρις ραμπα) — core7_totals_early_mech Τ14
+    assert 'D_BLEND = (1.0 - BL) * (SPLIT + KG) / SPLIT' in pre
+    pre = pre.replace('D_BLEND = (1.0 - BL) * (SPLIT + KG) / SPLIT', 'D_BLEND = (1.0 - BL) * (SPLIT + KG) / SPLIT; D_BLEND = 0.0; _FLAT = True', 1)
+    assert 'return 1.0 - D_BLEND * n / (n + KG) if n <= SPLIT else BL' in pre
+    pre = pre.replace('return 1.0 - D_BLEND * n / (n + KG) if n <= SPLIT else BL', 'return BL', 1); OUTV += '@flat'
 g = {'__name__': 'mech'}
 exec(pre, g)
 g['P'].to_csv(f'core7_mech_preds_{OUTV}.csv', index=False)
