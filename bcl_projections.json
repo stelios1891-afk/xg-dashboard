@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-10T09:49+00:00",
+ "generated": "2026-11-10T10:00+00:00",
  "season": 2026,
  "comp": "BCL",
  "model": "BCL: (1−0.75)·μονο BCL (περσι 1.4, λ 8, HL 9999, τυχη 0.5) + 0.75·κοινη κλιμακα (ολα τα ματς, περσι 1.3, λ 1.5, φιλικα 0.5, εγχωρια ×1.5) + αποδοσεις νικητη 2.5·z·4/(4+ματς BCL)",
@@ -1247,6 +1247,52 @@
    "p_home": 0.637,
    "version": "bcl1",
    "venue": ""
+  },
+  {
+   "code": "pin1639971982",
+   "round": 6,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-11-11T17:30:00Z",
+   "home": "Rytas Vilnius",
+   "away": "Nanterre",
+   "hcode": "d2OmwT1J",
+   "acode": "SA51NIt1",
+   "margin": 4.34,
+   "m_bcl": 9.38,
+   "m_common": 1.44,
+   "played": false,
+   "total": 170.4,
+   "total_src": "μοντελο",
+   "mkt_tl": 170.0,
+   "pts_h": 87.4,
+   "pts_a": 83.0,
+   "p_home": 0.641,
+   "version": "bcl1",
+   "venue": ""
+  },
+  {
+   "code": "pin1639979734",
+   "round": 6,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-11-11T17:30:00Z",
+   "home": "Peristeri BC",
+   "away": "Pallacanestro Varese",
+   "hcode": "Q96Izpwc",
+   "acode": "4hrT8BJq",
+   "margin": 3.22,
+   "m_bcl": 3.72,
+   "m_common": 5.2,
+   "played": false,
+   "total": 166.4,
+   "total_src": "μοντελο",
+   "mkt_tl": 164.5,
+   "pts_h": 84.8,
+   "pts_a": 81.6,
+   "p_home": 0.606,
+   "version": "bcl1",
+   "venue": ""
   }
  ],
  "ratings": [
@@ -1260,101 +1306,11 @@
    "games": 3
   },
   {
-   "code": "vaT6tQCQ",
-   "name": "BK Sabah Baku",
-   "net": -4.09,
-   "O": -0.45,
-   "D": 1.82,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "UJluM9H6",
-   "name": "Falco KC Szombathely",
-   "net": -2.22,
-   "O": 1.07,
-   "D": 5.21,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "A9r0pkx2",
-   "name": "BK Pardubice",
-   "net": -10.17,
-   "O": -2.3,
-   "D": -1.99,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "vy2cTqpo",
-   "name": "Rasta Vechta",
-   "net": -3.05,
-   "O": 1.08,
-   "D": 0.13,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "4IvWGyfG",
-   "name": "Pallacanestro Reggiana",
-   "net": -0.84,
-   "O": 2.53,
-   "D": -3.06,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "QR2OmUw1",
-   "name": "Galatasaray",
-   "net": 5.71,
-   "O": 8.74,
-   "D": -4.25,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "Oxl4DF93",
-   "name": "FC Porto",
-   "net": -4.09,
-   "O": -0.59,
-   "D": 0.47,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "SA51NIt1",
-   "name": "Nanterre",
-   "net": 6.18,
-   "O": 3.44,
-   "D": -1.37,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "UylfCwh5",
-   "name": "BC Juventus Utena",
-   "net": -4.1,
-   "O": 2.21,
-   "D": -0.86,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "Cjh1xKbk",
-   "name": "SK Slavia Prague ERA NBK",
-   "net": -13.36,
-   "O": 0,
-   "D": 0,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "Srews2dH",
-   "name": "SIG Strasbourg",
-   "net": 0.99,
-   "O": 4.04,
-   "D": -2.46,
+   "code": "d2OmwT1J",
+   "name": "Rytas Vilnius",
+   "net": 5.07,
+   "O": 13.61,
+   "D": -0.94,
    "pace": 0.0,
    "games": 3
   },
@@ -1368,6 +1324,33 @@
    "games": 3
   },
   {
+   "code": "vy2cTqpo",
+   "name": "Rasta Vechta",
+   "net": -3.05,
+   "O": 1.08,
+   "D": 0.13,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "SA51NIt1",
+   "name": "Nanterre",
+   "net": 6.18,
+   "O": 3.44,
+   "D": -1.37,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "QR2OmUw1",
+   "name": "Galatasaray",
+   "net": 5.71,
+   "O": 8.74,
+   "D": -4.25,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
    "code": "Q96Izpwc",
    "name": "Peristeri BC",
    "net": 2.59,
@@ -1377,20 +1360,20 @@
    "games": 3
   },
   {
-   "code": "QBvnpKKH",
-   "name": "Bnei Herzliya",
-   "net": -4.86,
-   "O": 1.17,
-   "D": 0.69,
+   "code": "pGKYY0dJ",
+   "name": "Salon Vilpas Vikings",
+   "net": -4.3,
+   "O": 0.85,
+   "D": -0.39,
    "pace": 0.0,
    "games": 3
   },
   {
-   "code": "4hrT8BJq",
-   "name": "Pallacanestro Varese",
-   "net": -0.05,
-   "O": -2.27,
-   "D": -4.12,
+   "code": "UylfCwh5",
+   "name": "BC Juventus Utena",
+   "net": -4.1,
+   "O": 2.21,
+   "D": -0.86,
    "pace": 0.0,
    "games": 3
   },
@@ -1413,38 +1396,20 @@
    "games": 3
   },
   {
-   "code": "pYaI8xaK",
-   "name": "KK Cibona",
-   "net": -6.11,
-   "O": 1.08,
-   "D": 2.08,
+   "code": "ncLyc03K",
+   "name": "Alba Berlin",
+   "net": 2.2,
+   "O": 8.21,
+   "D": -2.43,
    "pace": 0.0,
-   "games": 3
+   "games": 2
   },
   {
-   "code": "6TSpW3Cb",
-   "name": "Cholet Basket",
-   "net": 1.04,
-   "O": 5.12,
-   "D": -3.67,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "pGKYY0dJ",
-   "name": "Salon Vilpas Vikings",
-   "net": -4.3,
-   "O": 0.85,
-   "D": -0.39,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "86MXctlE",
-   "name": "Baskets Bonn",
-   "net": 1.94,
-   "O": 0.45,
-   "D": -1.34,
+   "code": "Srews2dH",
+   "name": "SIG Strasbourg",
+   "net": 0.99,
+   "O": 4.04,
+   "D": -2.46,
    "pace": 0.0,
    "games": 3
   },
@@ -1458,11 +1423,74 @@
    "games": 3
   },
   {
-   "code": "rNP3sgeq",
-   "name": "AEK Athens",
-   "net": -0.38,
-   "O": 7.38,
-   "D": -3.61,
+   "code": "86MXctlE",
+   "name": "Baskets Bonn",
+   "net": 1.94,
+   "O": 0.45,
+   "D": -1.34,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "6TSpW3Cb",
+   "name": "Cholet Basket",
+   "net": 1.04,
+   "O": 5.12,
+   "D": -3.67,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "Sn9ppE18",
+   "name": "Club Joventut Badalona",
+   "net": 8.65,
+   "O": 6.92,
+   "D": -7.87,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "UJluM9H6",
+   "name": "Falco KC Szombathely",
+   "net": -2.22,
+   "O": 1.07,
+   "D": 5.21,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "4IvWGyfG",
+   "name": "Pallacanestro Reggiana",
+   "net": -0.84,
+   "O": 2.53,
+   "D": -3.06,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
+   "code": "QBvnpKKH",
+   "name": "Bnei Herzliya",
+   "net": -4.86,
+   "O": 1.17,
+   "D": 0.69,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "Cjh1xKbk",
+   "name": "SK Slavia Prague ERA NBK",
+   "net": -13.36,
+   "O": 0,
+   "D": 0,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
+   "code": "zkhjVsDQ",
+   "name": "Legia Warszawa",
+   "net": -5.56,
+   "O": -0.87,
+   "D": -1.66,
    "pace": 0.0,
    "games": 3
   },
@@ -1476,11 +1504,65 @@
    "games": 3
   },
   {
+   "code": "A9r0pkx2",
+   "name": "BK Pardubice",
+   "net": -10.17,
+   "O": -2.3,
+   "D": -1.99,
+   "pace": 0.0,
+   "games": 2
+  },
+  {
    "code": "f3MFiPKg",
    "name": "Spartak Subotica",
    "net": 3.51,
    "O": 1.48,
    "D": -3.64,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "Oxl4DF93",
+   "name": "FC Porto",
+   "net": -4.09,
+   "O": -0.59,
+   "D": 0.47,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "GWZ15Sne",
+   "name": "Bilbao Basket",
+   "net": 7.09,
+   "O": 4.3,
+   "D": 1.43,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "4hrT8BJq",
+   "name": "Pallacanestro Varese",
+   "net": -0.05,
+   "O": -2.27,
+   "D": -4.12,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "rNP3sgeq",
+   "name": "AEK Athens",
+   "net": -0.38,
+   "O": 7.38,
+   "D": -3.61,
+   "pace": 0.0,
+   "games": 3
+  },
+  {
+   "code": "pYaI8xaK",
+   "name": "KK Cibona",
+   "net": -6.11,
+   "O": 1.08,
+   "D": 2.08,
    "pace": 0.0,
    "games": 3
   },
@@ -1494,47 +1576,11 @@
    "games": 3
   },
   {
-   "code": "d2OmwT1J",
-   "name": "Rytas Vilnius",
-   "net": 5.07,
-   "O": 13.61,
-   "D": -0.94,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "zkhjVsDQ",
-   "name": "Legia Warszawa",
-   "net": -5.56,
-   "O": -0.87,
-   "D": -1.66,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "ncLyc03K",
-   "name": "Alba Berlin",
-   "net": 2.2,
-   "O": 8.21,
-   "D": -2.43,
-   "pace": 0.0,
-   "games": 2
-  },
-  {
-   "code": "GWZ15Sne",
-   "name": "Bilbao Basket",
-   "net": 7.09,
-   "O": 4.3,
-   "D": 1.43,
-   "pace": 0.0,
-   "games": 3
-  },
-  {
-   "code": "Sn9ppE18",
-   "name": "Club Joventut Badalona",
-   "net": 8.65,
-   "O": 6.92,
-   "D": -7.87,
+   "code": "vaT6tQCQ",
+   "name": "BK Sabah Baku",
+   "net": -4.09,
+   "O": -0.45,
+   "D": 1.82,
    "pace": 0.0,
    "games": 3
   }
