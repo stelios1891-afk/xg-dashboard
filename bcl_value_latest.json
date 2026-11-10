@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-11-10T10:16+00:00",
+ "scanned_at": "2026-11-10T10:22+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
   {
@@ -80,6 +80,31 @@
    "model_line": -3.2,
    "mkt_line": -5.5,
    "hrs_birth": 31.5
+  },
+  {
+   "lg": "BCL",
+   "paper": "lowinfo",
+   "home": "SK Slavia Prague ERA NBK",
+   "away": "Igokea",
+   "hcode": "Cjh1xKbk",
+   "acode": "bH3GbrA3",
+   "code": "pin1639971969",
+   "round": 6,
+   "group": null,
+   "when": "2026-11-11T17:00",
+   "bcl": true,
+   "model": "BCL: (1−0.75)·μονο BCL (περσι 1.4, λ 8, HL 9999, τυχη 0.5) +",
+   "late_kind": "λιγα δεδομενα",
+   "mkt_note": "⚠ λίγα δεδομένα: SK Slavia Prague ERA NBK χωρίς ιστορικό στη μηχανή, 3 ματς BCL φέτος — καταγραφή ως το 4ο ματς",
+   "mkt": "hcap",
+   "side": -1,
+   "hcap": 4.5,
+   "odds": 1.909,
+   "edge": 0.5841,
+   "proj_odds": 1.21,
+   "model_line": 6.9,
+   "mkt_line": -4.5,
+   "hrs_birth": 30.6
   }
  ]
 }
