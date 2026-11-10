@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-11-10T07:26+00:00",
+ "scanned_at": "2026-11-10T07:31+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
   {
@@ -21,20 +21,20 @@
    "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
    "mkt": "hcap",
    "side": 1,
-   "hcap": 5.5,
-   "odds": 1.99,
-   "edge": 0.1596,
-   "proj_odds": 1.72,
+   "hcap": 6.0,
+   "odds": 1.943,
+   "edge": 0.1609,
+   "proj_odds": 1.67,
    "model_line": 2.7,
-   "mkt_line": 5.5,
+   "mkt_line": 6.0,
    "first": {
     "line": 5.5,
     "oh": 2.01,
     "oa": 1.885,
     "seen": "2026-11-10T01:40+00:00"
    },
-   "move_note": "ανοιγμα Sacramento Kings +5.5 @2.01 → τωρα +5.5 @1.99 · ουσιαστικα ιδια",
-   "move_pts": 0.2,
+   "move_note": "ανοιγμα Sacramento Kings +5.5 @2.01 → τωρα +6 @1.94 · ουσιαστικα ιδια",
+   "move_pts": 0.0,
    "hrs_birth": 25.5
   },
   {
@@ -53,8 +53,8 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": 9.5,
-   "odds": 1.909,
-   "edge": 0.2037,
+   "odds": 1.935,
+   "edge": 0.2201,
    "proj_odds": 1.59,
    "model_line": 5.0,
    "mkt_line": 9.5,
@@ -64,8 +64,8 @@
     "oa": 1.935,
     "seen": "2026-11-10T01:40+00:00"
    },
-   "move_note": "ανοιγμα Utah Jazz +10.5 @1.95 → τωρα +9.5 @1.91 · αγορα 1.4 π. ΥΠΕΡ μας",
-   "move_pts": 1.4,
+   "move_note": "ανοιγμα Utah Jazz +10.5 @1.95 → τωρα +9.5 @1.94 · αγορα 1.1 π. ΥΠΕΡ μας",
+   "move_pts": 1.1,
    "fat_note": "😴 Jazz: αλλαγη ωρας 1ω −0.7 · Heat: αλλαγη ωρας 1ω −0.7 · αλληλοαναιρουνται",
    "fat_pts": 0.0,
    "hrs_birth": 24.5
@@ -85,20 +85,20 @@
    "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
    "mkt": "hcap",
    "side": 1,
-   "hcap": 2.0,
-   "odds": 1.98,
-   "edge": 0.1448,
-   "proj_odds": 1.72,
+   "hcap": 2.5,
+   "odds": 1.943,
+   "edge": 0.1513,
+   "proj_odds": 1.69,
    "model_line": -0.7,
-   "mkt_line": 2.0,
+   "mkt_line": 2.5,
    "first": {
     "line": 1.5,
     "oh": 1.99,
     "oa": 1.893,
     "seen": "2026-11-10T01:40+00:00"
    },
-   "move_note": "ανοιγμα Portland Trail Blazers +1.5 @1.99 → τωρα +2 @1.98 · αγορα 0.4 π. ΚΟΝΤΡΑ μας",
-   "move_pts": -0.4,
+   "move_note": "ανοιγμα Portland Trail Blazers +1.5 @1.99 → τωρα +2.5 @1.94 · αγορα 0.6 π. ΚΟΝΤΡΑ μας",
+   "move_pts": -0.6,
    "hrs_birth": 26.5
   },
   {
@@ -127,6 +127,33 @@
    "mkt_line": 227.0,
    "gno": 10,
    "hrs_birth": 26.5
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Phoenix Suns",
+   "away": "Los Angeles Clippers",
+   "hcode": "PHO",
+   "acode": "LAC",
+   "code": "pin1639904597",
+   "round": 4,
+   "group": null,
+   "when": "2026-11-11T02:10",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "total",
+   "side": 0,
+   "hcap": 225.5,
+   "bet": "Under 225.5",
+   "odds": 1.885,
+   "edge": 0.1123,
+   "proj_odds": 1.69,
+   "model_total": 221.4,
+   "mix_total": 221.4,
+   "mkt_total": 224.9,
+   "mkt_line": 225.5,
+   "gno": 9,
+   "hrs_birth": 18.6
   }
  ]
 }
