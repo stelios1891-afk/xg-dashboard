@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-10T23:12+00:00",
+ "generated": "2026-11-10T23:23+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -8942,12 +8942,12 @@
    "away": "Milwaukee Bucks",
    "hcode": "NYK",
    "acode": "MIL",
-   "margin": 14.38,
-   "total": 217.7,
+   "margin": 15.01,
+   "total": 217.3,
    "total_src": "μοντελο",
-   "pts_h": 116.0,
-   "pts_a": 101.6,
-   "p_home": 0.857,
+   "pts_h": 116.2,
+   "pts_a": 101.2,
+   "p_home": 0.867,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -8962,16 +8962,16 @@
    "rl_a": "2026-11-08",
    "margin_base": 15.19,
    "total_base": 217.4,
-   "abs_dm": -0.81,
-   "abs_dt": 0.29,
-   "abs_shadow": -0.04,
+   "abs_dm": -0.18,
+   "abs_dt": -0.06,
+   "abs_shadow": -0.1,
    "abs_h": [
     [
      "Hart,Josh",
      31.6,
      0,
-     "Doubtful",
-     0.965
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -8979,15 +8979,15 @@
      "Herro,Tyler",
      30.7,
      1,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0,
-   "abs_ld": 0,
-   "abs_lop": 0.728,
-   "abs_ldp": 0.652,
+   "abs_lo": 1.238,
+   "abs_ld": 0.563,
+   "abs_lop": 1.238,
+   "abs_ldp": 0.563,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
