@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-11T16:06+00:00",
+ "generated": "2026-11-11T16:24+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -9526,12 +9526,12 @@
    "away": "Brooklyn Nets",
    "hcode": "NOP",
    "acode": "BRK",
-   "margin": 0.4,
-   "total": 226.6,
+   "margin": -0.78,
+   "total": 226.0,
    "total_src": "μοντελο",
-   "pts_h": 113.5,
-   "pts_a": 113.1,
-   "p_home": 0.512,
+   "pts_h": 112.6,
+   "pts_a": 113.4,
+   "p_home": 0.477,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -9546,16 +9546,16 @@
    "rl_a": "2026-11-08",
    "margin_base": 0.17,
    "total_base": 226.6,
-   "abs_dm": 0.23,
-   "abs_dt": 0.07,
+   "abs_dm": -0.95,
+   "abs_dt": -0.56,
    "abs_shadow": -0.06,
    "abs_h": [
     [
      "MurphyIII,Trey",
      32.8,
      0,
-     "Probable",
-     0.04
+     "Doubtful",
+     0.965
     ]
    ],
    "abs_a": [
@@ -9563,8 +9563,8 @@
      "BrownJr.,Mikel",
      23.3,
      0,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
      "Demin,Egor",
@@ -9582,10 +9582,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0,
-   "abs_ld": 0,
-   "abs_lop": -0.168,
-   "abs_ldp": -0.013,
+   "abs_lo": 0.0,
+   "abs_ld": 0.0,
+   "abs_lop": 0.782,
+   "abs_ldp": -0.17,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
