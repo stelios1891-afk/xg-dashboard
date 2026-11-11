@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-11T03:12+00:00",
+ "generated": "2026-11-11T03:23+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -9359,6 +9359,76 @@
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/ind.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/wsh.png"
+  },
+  {
+   "code": "pin1639986819",
+   "round": 4,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-11-12T00:10:00Z",
+   "home": "New York Knicks",
+   "away": "Cleveland Cavaliers",
+   "hcode": "NYK",
+   "acode": "CLE",
+   "margin": 1.12,
+   "total": 218.7,
+   "total_src": "μοντελο",
+   "pts_h": 109.9,
+   "pts_a": 108.8,
+   "p_home": 0.533,
+   "played": false,
+   "version": "nba1",
+   "venue": "",
+   "b2b_h": 1,
+   "b2b_a": 0,
+   "tz_h": 0.0,
+   "tz_a": 0.0,
+   "gno": 11,
+   "gp_h": 10,
+   "gp_a": 11,
+   "rl_h": "2026-11-10",
+   "rl_a": "2026-11-09",
+   "margin_base": 1.25,
+   "total_base": 218.5,
+   "abs_dm": -0.13,
+   "abs_dt": 0.28,
+   "abs_shadow": 0.0,
+   "abs_h": [
+    [
+     "Josh Hart",
+     31.6,
+     0,
+     "Out",
+     1.0
+    ]
+   ],
+   "abs_a": [
+    [
+     "Merrill,Sam",
+     23.1,
+     0,
+     "Out",
+     1.0
+    ],
+    [
+     "Tyson,Jaylon",
+     20.8,
+     0,
+     "Questionable",
+     0.46
+    ]
+   ],
+   "inj_src": "espn",
+   "abs_lo": 1.044,
+   "abs_ld": 0.822,
+   "abs_lop": 1.145,
+   "abs_ldp": 0.848,
+   "trade_dm": 0.0,
+   "trades": [],
+   "roster_dm": 0.0,
+   "roster_now": [],
+   "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/ny.png",
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/cle.png"
   },
   {
    "code": "pin1639986815",
