@@ -1023,13 +1023,18 @@ def test_f_intl_consensus_and_ledger():
     assert abs(cs[0]['edge'] - 0.11) < 1e-9, 'edge συναινεσης = το μικροτερο'
     assert ic.late_note(1.5) and ic.late_note(0.4) and not ic.late_note(5)
     now = dt.datetime(2026, 9, 25, 17, 0, tzinfo=dt.timezone.utc)
-    dash = {'comps': [{'comp': 'NL B', 'matches': [dict(home='X', away='Y', utc='2026-09-25 18:45', picks=pk),
+    dash = {'comps': [{'comp': 'NL A', 'matches': [dict(home='X', away='Y', utc='2026-09-25 18:45', picks=pk),
                                                    dict(home='Z', away='W', utc='2026-09-29 18:45', picks=pk)]}]}
     known = set(); rows = L.new_entries(dash, known, now)
     cons = [r for r in rows if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ']
     assert len(cons) == 2 and all(r['home'] == 'X' for r in rows), 'μονο ματς ≤72ω'
     assert all(r['late'] for r in cons), 'pick 1.75ω πριν πρεπει να εχει σημειωση'
     assert L.new_entries(dash, known, now) == [], 'δευτερη φορα: καμια νεα εγγραφη (πρωτη εμφανιση μονο)'
+    # 11/11/2026 (Στελιος «περνα τα»): over σε NL B/C/D → ροη ΚΑΤΑΓΡΑΦΗ (οχι ΣΥΝΑΙΝΕΣΗ → οχι Telegram/Pick History)· χαντικαπ ιδιο
+    dB = {'comps': [{'comp': 'NL B', 'matches': [dict(home='X', away='Y', utc='2026-09-25 18:45', picks=pk)]}]}
+    rB = L.new_entries(dB, set(), now)
+    assert [r['mkt'] for r in rB if r['stream'] == 'ΣΥΝΑΙΝΕΣΗ'] == ['AH'] and [r['mkt'] for r in rB if r['stream'] == 'ΚΑΤΑΓΡΑΦΗ'] == ['OVER'], rB
+    assert not any(r['stream'] == 'ΚΑΤΑΓΡΑΦΗ' for r in rows), 'NL A over μενει κανονικο pick'
     # Telegram (25/9): μηνυμα νεου pick + εκκαθαρισης χτιζεται· χωρις TELEGRAM_TOKEN δεν στελνει ουτε βαζει σημαια
     msg = L.tg_new_msg(cons)
     assert 'ΕΘΝΙΚΕΣ' in msg and 'Y +1.25 @1.90' in msg and 'Over 2.25' in msg and '21:45' in msg, msg

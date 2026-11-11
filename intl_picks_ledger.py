@@ -69,7 +69,8 @@ def new_entries(dash, known, now, removed=None):
             hours = (ko - now).total_seconds() / 3600
             if hours <= 0 or hours > WINDOW_H:
                 continue
-            streams = [('ΣΥΝΑΙΝΕΣΗ', ic.consensus(m['picks']))] + list(ic.model_picks(m['picks']).items())
+            _cs = ic.consensus(m['picks'])           # 11/11: over NL B/C/D → ροη ΚΑΤΑΓΡΑΦΗ (χωρις Telegram/Pick History)
+            streams = [('ΣΥΝΑΙΝΕΣΗ', ic.playable(_cs, comp)), ('ΚΑΤΑΓΡΑΦΗ', ic.log_only(_cs, comp))] + list(ic.model_picks(m['picks']).items())
             for stream, ps in streams:
                 for p in ps:
                     k = pick_key(comp, m, stream, p); reentry = None
