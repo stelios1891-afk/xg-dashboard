@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-11T17:59+00:00",
+ "generated": "2026-11-11T18:10+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -9450,12 +9450,12 @@
    "away": "Boston Celtics",
    "hcode": "TOR",
    "acode": "BOS",
-   "margin": -5.64,
-   "total": 218.2,
+   "margin": -4.02,
+   "total": 218.5,
    "total_src": "μοντελο",
-   "pts_h": 106.3,
-   "pts_a": 111.9,
-   "p_home": 0.338,
+   "pts_h": 107.2,
+   "pts_a": 111.2,
+   "p_home": 0.383,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -9470,9 +9470,9 @@
    "rl_a": "2026-11-10",
    "margin_base": -0.12,
    "total_base": 218.1,
-   "abs_dm": -5.52,
-   "abs_dt": 0.11,
-   "abs_shadow": 0.0,
+   "abs_dm": -3.9,
+   "abs_dt": 0.38,
+   "abs_shadow": 0.87,
    "abs_h": [
     [
      "Barnes,Scottie",
@@ -9503,12 +9503,20 @@
      0.42
     ]
    ],
-   "abs_a": [],
+   "abs_a": [
+    [
+     "George,Paul",
+     30.1,
+     1,
+     "Out",
+     1.0
+    ]
+   ],
    "inj_src": "official",
-   "abs_lo": 3.571,
-   "abs_ld": 1.774,
-   "abs_lop": 4.126,
-   "abs_ldp": 2.177,
+   "abs_lo": 4.224,
+   "abs_ld": 2.362,
+   "abs_lop": 4.778,
+   "abs_ldp": 2.765,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
