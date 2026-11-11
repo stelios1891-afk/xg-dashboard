@@ -1,15 +1,110 @@
 {
-"_asof": "2026-11-11T09:01",
-"_xi": {},
+"_asof": "2026-11-11T10:01",
+"_xi": {
 "6595": {
-"291399": {
-"name": "Abdülkerim Bardakci",
-"type": "suspension",
-"ret": "Mid November 2026",
-"doubtful": false,
 "match": "Turkiye - Belgium",
-"until": "2026-11-20"
+"utc": "2026-11-12T17:00",
+"type": "predicted",
+"players": [
+{
+"pid": 603669,
+"name": "Uğurcan Çakir"
 },
+{
+"pid": 867225,
+"name": "Zeki Çelik"
+},
+{
+"pid": 845990,
+"name": "Ozan Kabak"
+},
+{
+"pid": 823078,
+"name": "Merih Demiral"
+},
+{
+"pid": 774448,
+"name": "Ferdi Kadıoğlu"
+},
+{
+"pid": 738064,
+"name": "Salih Özcan"
+},
+{
+"pid": 304733,
+"name": "Hakan Çalhanoglu"
+},
+{
+"pid": 1092015,
+"name": "Oğuz Aydın"
+},
+{
+"pid": 1253890,
+"name": "Arda Güler"
+},
+{
+"pid": 890232,
+"name": "Barış Alper Yılmaz"
+},
+{
+"pid": 1406300,
+"name": "Deniz Gül"
+}
+]
+},
+"8263": {
+"match": "Turkiye - Belgium",
+"utc": "2026-11-12T17:00",
+"type": "predicted",
+"players": [
+{
+"pid": 1178602,
+"name": "Senne Lammens"
+},
+{
+"pid": 465750,
+"name": "Timothy Castagne"
+},
+{
+"pid": 1252070,
+"name": "Nathan Ngoy"
+},
+{
+"pid": 445873,
+"name": "Brandon Mechele"
+},
+{
+"pid": 1134871,
+"name": "Maxim De Cuyper"
+},
+{
+"pid": 863869,
+"name": "Nicolas Raskin"
+},
+{
+"pid": 465960,
+"name": "Youri Tielemans"
+},
+{
+"pid": 688876,
+"name": "Dodi Lukébakio"
+},
+{
+"pid": 169200,
+"name": "Kevin De Bruyne"
+},
+{
+"pid": 942368,
+"name": "Jérémy Doku"
+},
+{
+"pid": 1095432,
+"name": "Charles De Ketelaere"
+}
+]
+}
+},
+"6595": {
 "1366373": {
 "name": "Ümit Akdağ",
 "type": "suspension",
@@ -25,6 +120,14 @@
 "doubtful": false,
 "match": "Turkiye - Belgium",
 "until": "2026-11-30"
+},
+"291399": {
+"name": "Abdülkerim Bardakci",
+"type": "suspension",
+"ret": "Mid November 2026",
+"doubtful": false,
+"match": "Turkiye - Belgium",
+"until": "2026-11-20"
 }
 },
 "8263": {
@@ -109,6 +212,14 @@
 "doubtful": false,
 "match": "England - Croatia",
 "until": "2026-11-20"
+},
+"959597": {
+"name": "Luka Sučić",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "England - Croatia",
+"until": null
 },
 "1186228": {
 "name": "Josip Šutalo",
@@ -346,6 +457,14 @@
 "match": "Serbia - Germany",
 "until": "2026-11-20"
 },
+"1410437": {
+"name": "Aleksandar Stanković",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "Serbia - Germany",
+"until": null
+},
 "992025": {
 "name": "Aleksa Terzić",
 "type": "injury",
@@ -545,6 +664,25 @@
 "until": "2026-11-22"
 }
 },
-"_alerts": [],
-"_hash": "ecef81843ec035db4d1a71e2e58722cf"
+"_alerts": [
+{
+"key": "6595|845991|2026-11-12T17:00",
+"team": "Turkiye",
+"name": "Yunus Akgun",
+"v": 19.148055,
+"started_last": true,
+"match": "Turkiye - Belgium",
+"utc": "2026-11-12T17:00"
+},
+{
+"key": "8263|1342754|2026-11-12T17:00",
+"team": "Belgium",
+"name": "Diego Moreira",
+"v": 47.913497,
+"started_last": true,
+"match": "Turkiye - Belgium",
+"utc": "2026-11-12T17:00"
+}
+],
+"_hash": "9c50a198bb3b919f420250955bfc344e"
 }
