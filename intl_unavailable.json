@@ -1,5 +1,5 @@
 {
-"_asof": "2026-11-11T10:01",
+"_asof": "2026-11-11T11:02",
 "_xi": {
 "6595": {
 "match": "Turkiye - Belgium",
@@ -102,6 +102,210 @@
 "name": "Charles De Ketelaere"
 }
 ]
+},
+"8496": {
+"match": "Czechia - Spain",
+"utc": "2026-11-12T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 1341475,
+"name": "Antonín Kinský"
+},
+{
+"pid": 307317,
+"name": "Vladimír Coufal"
+},
+{
+"pid": 1288146,
+"name": "Stepán Chaloupek"
+},
+{
+"pid": 798029,
+"name": "Ladislav Krejcí"
+},
+{
+"pid": 923526,
+"name": "Jirí Sláma"
+},
+{
+"pid": 836797,
+"name": "Alex Král"
+},
+{
+"pid": 524437,
+"name": "Tomás Souček"
+},
+{
+"pid": 1151313,
+"name": "Lukás Červ"
+},
+{
+"pid": 1412656,
+"name": "Lukás Ambros"
+},
+{
+"pid": 1118147,
+"name": "Kryštof Daněk"
+},
+{
+"pid": 969870,
+"name": "Adam Hložek"
+}
+]
+},
+"6720": {
+"match": "Czechia - Spain",
+"utc": "2026-11-12T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 660625,
+"name": "Unai Simón"
+},
+{
+"pid": 941573,
+"name": "Pedro Porro"
+},
+{
+"pid": 1532137,
+"name": "Pau Cubarsí"
+},
+{
+"pid": 411617,
+"name": "Aymeric Laporte"
+},
+{
+"pid": 873289,
+"name": "Marc Cucurella"
+},
+{
+"pid": 1083323,
+"name": "Pedri"
+},
+{
+"pid": 605654,
+"name": "Fabián Ruiz"
+},
+{
+"pid": 1202110,
+"name": "Nico Williams"
+},
+{
+"pid": 1404415,
+"name": "Fermín López"
+},
+{
+"pid": 942372,
+"name": "Álex Baena"
+},
+{
+"pid": 881771,
+"name": "Ferrán Torres"
+}
+]
+},
+"8491": {
+"match": "England - Croatia",
+"utc": "2026-11-12T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 303919,
+"name": "Jordan Pickford"
+},
+{
+"pid": 1107620,
+"name": "Jarell Quansah"
+},
+{
+"pid": 959407,
+"name": "James Hill"
+},
+{
+"pid": 188058,
+"name": "Daniel Burn"
+},
+{
+"pid": 1197655,
+"name": "Lewis Hall"
+},
+{
+"pid": 654096,
+"name": "Declan Rice"
+},
+{
+"pid": 1089691,
+"name": "Elliot Anderson"
+},
+{
+"pid": 1597668,
+"name": "Rio Ngumoha"
+},
+{
+"pid": 1077894,
+"name": "Jude Bellingham"
+},
+{
+"pid": 906937,
+"name": "Anthony Gordon"
+},
+{
+"pid": 194165,
+"name": "Harry Kane"
+}
+]
+},
+"10155": {
+"match": "England - Croatia",
+"utc": "2026-11-12T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 383971,
+"name": "Dominik Livaković"
+},
+{
+"pid": 950824,
+"name": "Josip Stanišić"
+},
+{
+"pid": 1413996,
+"name": "Luka Vušković"
+},
+{
+"pid": 557799,
+"name": "Duje Ćaleta-Car"
+},
+{
+"pid": 1070712,
+"name": "Joško Gvardiol"
+},
+{
+"pid": 31097,
+"name": "Luka Modrić"
+},
+{
+"pid": 239219,
+"name": "Mateo Kovačić"
+},
+{
+"pid": 557677,
+"name": "Nikola Vlašić"
+},
+{
+"pid": 446266,
+"name": "Mario Pašalić"
+},
+{
+"pid": 1215064,
+"name": "Martin Baturina"
+},
+{
+"pid": 251269,
+"name": "Ante Budimir"
+}
+]
 }
 },
 "6595": {
@@ -187,14 +391,6 @@
 }
 },
 "8491": {
-"1406436": {
-"name": "Myles Lewis-Skelly",
-"type": "suspension",
-"ret": "Mid November 2026",
-"doubtful": false,
-"match": "England - Croatia",
-"until": "2026-11-20"
-},
 "844425": {
 "name": "Marc Guéhi",
 "type": "injury",
@@ -202,17 +398,17 @@
 "doubtful": false,
 "match": "England - Croatia",
 "until": "2026-11-30"
-}
 },
-"10155": {
-"163670": {
-"name": "Ivan Perišić",
+"1406436": {
+"name": "Myles Lewis-Skelly",
 "type": "suspension",
 "ret": "Mid November 2026",
 "doubtful": false,
 "match": "England - Croatia",
 "until": "2026-11-20"
+}
 },
+"10155": {
 "959597": {
 "name": "Luka Sučić",
 "type": "injury",
@@ -252,6 +448,14 @@
 "doubtful": false,
 "match": "England - Croatia",
 "until": "2026-11-30"
+},
+"163670": {
+"name": "Ivan Perišić",
+"type": "suspension",
+"ret": "Mid November 2026",
+"doubtful": false,
+"match": "England - Croatia",
+"until": "2026-11-20"
 }
 },
 "6723": {
@@ -682,7 +886,25 @@
 "started_last": true,
 "match": "Turkiye - Belgium",
 "utc": "2026-11-12T17:00"
+},
+{
+"key": "8496|1186978|2026-11-12T19:45",
+"team": "Czechia",
+"name": "Lukas Hornicek",
+"v": 29.427251,
+"started_last": true,
+"match": "Czechia - Spain",
+"utc": "2026-11-12T19:45"
+},
+{
+"key": "8491|883080|2026-11-12T19:45",
+"team": "England",
+"name": "Morgan Rogers",
+"v": 100.370386,
+"started_last": true,
+"match": "England - Croatia",
+"utc": "2026-11-12T19:45"
 }
 ],
-"_hash": "9c50a198bb3b919f420250955bfc344e"
+"_hash": "663500dcd967b19a8e37c1c8d5ba26bb"
 }
