@@ -1,5 +1,5 @@
 {
-"_asof": "2026-11-11T11:02",
+"_asof": "2026-11-11T12:05",
 "_xi": {
 "6595": {
 "match": "Turkiye - Belgium",
@@ -306,6 +306,108 @@
 "name": "Ante Budimir"
 }
 ]
+},
+"8204": {
+"match": "Italy - France",
+"utc": "2026-11-12T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 618878,
+"name": "Gianluigi Donnarumma"
+},
+{
+"pid": 1429912,
+"name": "Michael Kayode"
+},
+{
+"pid": 1202358,
+"name": "Giorgio Scalvini"
+},
+{
+"pid": 805451,
+"name": "Alessandro Bastoni"
+},
+{
+"pid": 1105912,
+"name": "Riccardo Calafiori"
+},
+{
+"pid": 541820,
+"name": "Nicolò Barella"
+},
+{
+"pid": 867414,
+"name": "Sandro Tonali"
+},
+{
+"pid": 1339345,
+"name": "Issa Doumbia"
+},
+{
+"pid": 1320863,
+"name": "Antonio Vergara"
+},
+{
+"pid": 1367618,
+"name": "Francesco Pio Esposito"
+},
+{
+"pid": 1030212,
+"name": "Sebastiano Esposito"
+}
+]
+},
+"6723": {
+"match": "Italy - France",
+"utc": "2026-11-12T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 466439,
+"name": "Mike Maignan"
+},
+{
+"pid": 1197250,
+"name": "Malo Gusto"
+},
+{
+"pid": 658554,
+"name": "Dayot Upamecano"
+},
+{
+"pid": 1473534,
+"name": "Jérémy Jacquet"
+},
+{
+"pid": 1177358,
+"name": "Adrien Truffert"
+},
+{
+"pid": 352879,
+"name": "Adrien Rabiot"
+},
+{
+"pid": 1076647,
+"name": "Lucas Da Cunha"
+},
+{
+"pid": 1104053,
+"name": "Rayan Cherki"
+},
+{
+"pid": 1029063,
+"name": "Michael Olise"
+},
+{
+"pid": 701154,
+"name": "Kylian Mbappé"
+},
+{
+"pid": 1339208,
+"name": "Désiré Doué"
+}
+]
 }
 },
 "6595": {
@@ -459,14 +561,6 @@
 }
 },
 "6723": {
-"914458": {
-"name": "Aurélien Tchouaméni",
-"type": "injury",
-"ret": "Doubtful",
-"doubtful": true,
-"match": "Italy - France",
-"until": null
-},
 "621562": {
 "name": "Marcus Thuram",
 "type": "injury",
@@ -482,6 +576,14 @@
 "doubtful": false,
 "match": "Italy - France",
 "until": "2026-11-30"
+},
+"914458": {
+"name": "Aurélien Tchouaméni",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "Italy - France",
+"until": null
 }
 },
 "10024": {
@@ -904,7 +1006,16 @@
 "started_last": true,
 "match": "England - Croatia",
 "utc": "2026-11-12T19:45"
+},
+{
+"key": "6723|1297165|2026-11-12T19:45",
+"team": "France",
+"name": "Bradley Barcola",
+"v": 100.394373,
+"started_last": true,
+"match": "Italy - France",
+"utc": "2026-11-12T19:45"
 }
 ],
-"_hash": "663500dcd967b19a8e37c1c8d5ba26bb"
+"_hash": "44ccb9b7884e3fbb692b28ac901e4af2"
 }
