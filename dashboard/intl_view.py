@@ -429,8 +429,13 @@ def _consensus_row(m):
     """25/9 (αποφαση Στελιου): το ΚΑΝΟΝΙΚΟ pick = συναινεση ≥2 απο 3 μοντελα (handicap + over)."""
     cs = m.get('consensus') or []
     led = _ledger_items(m)
+    # 11/11/2026 (Στελιος): over συναινεσης σε NL B/C/D = ΜΟΝΟ καταγραφη (οχι pick)
+    logrow = ''.join(f'<span class="bd" style="opacity:.7">📝 Over {c["line"]:g} @{c["odds"]:.2f} · edge ≥{c["edge"]*100:.0f}% · μονο καταγραφη (over NL B-D)</span>'
+                     for c in (m.get('consensus_log') or []))
+    if logrow:
+        led = led + logrow
     if not cs:
-        return (f'<div class="pkrow cons"><span class="vk" style="color:#f5b731">ΗΜΕΡΟΛΟΓΙΟ</span>{led}</div>' if led else '')
+        return (f'<div class="pkrow cons"><span class="vk" style="color:#f5b731">{"ΚΑΤΑΓΡΑΦΗ" if logrow and not _ledger_items(m) else "ΗΜΕΡΟΛΟΓΙΟ"}</span>{led}</div>' if led else '')
     items = []
     for c in cs:
         if c['mkt'] == 'OVER':

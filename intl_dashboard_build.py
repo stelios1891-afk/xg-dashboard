@@ -453,7 +453,9 @@ def _snap(all_ms):
 import intl_consensus
 for _c, _ms in comps.items():
     for _m in _ms:
-        _m['consensus'] = intl_consensus.consensus(_m['picks'])
+        _cs = intl_consensus.consensus(_m['picks'])
+        _m['consensus'] = intl_consensus.playable(_cs, _c)          # 11/11: over NL B/C/D → μονο καταγραφη
+        _m['consensus_log'] = intl_consensus.log_only(_cs, _c)
         # 26/9: BTTS ΜΟΝΟ ενημερωτικα (P μοντελου ανα εκδοχη + «αγορα» απο AH+O/U της πηγης) — intl_pricing.btts_p / market_lambdas
         try:
             _bt = {v: round(intl_pricing.btts_p(max(V['xg_h'], .05), max(V['xg_a'], .05)), 4)

@@ -52,6 +52,22 @@ def consensus(picks, need=NEED):
     return sorted(out, key=lambda d: (d['mkt'], d['side']))
 
 
+# 11/11/2026 (Στελιος «περνα τα»): OVER σε NL B/C/D = ΜΟΝΟ ΚΑΤΑΓΡΑΦΗ (οχι Telegram/Pick History). Λογος: ιστορικα over συναινεσης
+# NL A +22% αλλα NL B ≈0% (n36) / NL C 0…−4% (n28)· παραθυρο Σεπ-Οκτ 2026: over −17.6% (18, ολα B-D), NL B −35.6% (10), CLV ~0
+# (γραμμη 3 υπερ / 5 κοντρα) ενω χαντικαπ +15% με γραμμη 15/4 υπερ· φετος NL B 2.22 γκολ & xG 2.22 (ιστορικα 2.71/2.39).
+OVER_LOG_ONLY = ('NL B', 'NL C', 'NL D')
+
+
+def playable(cons, comp):
+    """τα picks συναινεσης που ΠΑΙΖΟΝΤΑΙ (χωρις τα over των NL B/C/D)."""
+    return [c for c in cons if not (c['mkt'] == 'OVER' and comp in OVER_LOG_ONLY)]
+
+
+def log_only(cons, comp):
+    """over συναινεσης σε NL B/C/D → μονο καταγραφη (ροη ΚΑΤΑΓΡΑΦΗ στο ledger)."""
+    return [c for c in cons if c['mkt'] == 'OVER' and comp in OVER_LOG_ONLY]
+
+
 def label(c, home, away):
     """ανθρωπινο κειμενο: «Ελβετια −1.25 @1.89» ή «Over 2.25 @2.03»."""
     if c['mkt'] == 'OVER':
