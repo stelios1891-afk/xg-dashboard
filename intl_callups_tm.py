@@ -172,7 +172,7 @@ def parse_val(s):
 
 # hauptlink = η στηλη ονοματος του squad table (δοκιμασμενο: δινει καθαρες γραμμες)
 RX_PLAYER = re.compile(r'class="hauptlink"[^>]*>\s*<a[^>]*href="/([a-z0-9\-]+)/profil/spieler/(\d+)"')
-RX_VAL = re.compile(r'>(€[\d.,]+[mk])</a>')
+RX_VAL = re.compile(r'>(€[\d.,]+[mkMK])</a>')   # 11/11/2026: το TM γραφει πλεον «€800.0K»/«€12.0M» (κεφαλαια) → 0 αξιες TM
 
 # 25/9 ΧΕΙΡΟΚΙΝΗΤΕΣ ΑΠΟΥΣΙΕΣ (Στελιος): intl_absences_manual.json {ομαδα: {"out": [ονοματα], "until": "YYYY-MM-DD", "note": ...}} —
 # οσοι δηλωθουν βγαινουν ΑΜΕΣΩΣ απο την κληση (αξια κλησης + σημαια «λειπει»), χωρις να περιμενουμε το Transfermarkt. Ληγει μονο του (until).
@@ -243,7 +243,7 @@ for tid, nm in sorted(TIDS.items(), key=lambda kv: kv[1]):
         pm = RX_PLAYER.search(row)
         if not pm:
             continue
-        tm_nm = pm.group(1).replace('-', ' '); vm = re.search(r'(€[\d.,]+[mk])', row); tmv = parse_val(vm.group(1)) if vm else None
+        tm_nm = pm.group(1).replace('-', ' '); vm = re.search(r'(€[\d.,]+[mkMK])', row); tmv = parse_val(vm.group(1)) if vm else None
         best = max(((match_score((PV.get(str(p)) or {}).get('name', ''), tm_nm), d_, p) for p, d_ in cands.items() if p not in used), default=(0, '', None))
         pid = best[2] if best[0] >= 1.5 else None      # μονο επωνυμο με αλλο μικρο ονομα = ΑΛΛΟΣ παικτης (Georgiy ≠ Hovhannes Harutyunyan) → αξια TM × K
         if pid is not None:
@@ -336,6 +336,8 @@ for o in OUT.values():
     o['n_mapped'] = sum(1 for pl in o['players'] if pl['pid'] is not None); o['k_tm'] = K_TM
 print(f'K (SciSports/TM) = {K_TM:.3f} απο {len(_ratios)} αντιστοιχισμενους · αντιστοιχιση: '
       f"{sum(o['n_mapped'] for o in OUT.values())}/{sum(len(o['players']) for o in OUT.values())} παικτες")
+if not TIDS:                        # 11/11/2026: αδειες προβολες → 0/0 ομαδες εγραφε ΑΔΕΙΑ κληση· τωρα σφαλμα, η προηγουμενη μενει
+    print('ΣΦΑΛΜΑ: καμια ομαδα στο intl_projections.csv — το intl_vcall_tm.json ΜΕΝΕΙ οπως ηταν'); sys.exit(1)
 if len(OUT) < 0.8 * len(TIDS):     # 25/9: μπλοκαρισμα/σφαλματα TM → ΔΕΝ σβηνεται η προηγουμενη κληση
     print(f'ΣΦΑΛΜΑ: μονο {len(OUT)}/{len(TIDS)} ομαδες απο TM — το intl_vcall_tm.json ΜΕΝΕΙ οπως ηταν'); sys.exit(1)
 json.dump(OUT, open('intl_vcall_tm.json', 'w', encoding='utf-8'), ensure_ascii=False)

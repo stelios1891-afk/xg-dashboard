@@ -48,7 +48,28 @@ def match_soon(hours=72):
         return False
     now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     t = pd.to_datetime(P.utc)
-    return bool(((t > now) & (t <= now + dt.timedelta(hours=hours))).any())
+    if ((t > now) & (t <= now + dt.timedelta(hours=hours))).any():
+        return True
+    # 11/11/2026: οι προβολες ξαναχτιζονται μονο με νεα αποτελεσματα → μετα απο κενο εθνικων (Οκτ→Νοε) το intl_projections.csv ηταν ΑΔΕΙΟ
+    # και αυτος ο ελεγχος δεν εβλεπε ποτε τα ματς του Νοεμβριου (κοτα-αυγο). Τωρα ρωταει και απευθειας το προγραμμα NL στο FotMob.
+    try:
+        import urllib.request, gzip, json
+        hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36', 'Accept': '*/*',
+               'Referer': 'https://www.fotmob.com/'}
+        for lid in (9806, 9807, 9808, 9809):
+            raw = urllib.request.urlopen(urllib.request.Request(f'https://www.fotmob.com/api/data/leagues?id={lid}&season=2026%2F2027', headers=hdr), timeout=25).read()
+            d = json.loads(gzip.decompress(raw) if raw[:2] == b'\x1f\x8b' else raw)
+            for m in d.get('fixtures', {}).get('allMatches', []):
+                st = m.get('status', {})
+                if st.get('finished') or st.get('cancelled') or not st.get('utcTime'):
+                    continue
+                ko = dt.datetime.fromisoformat(st['utcTime'][:16])
+                if now < ko <= now + dt.timedelta(hours=hours):
+                    log(f'προβολες χωρις τα επερχομενα — το FotMob εχει ματς NL στις {hours}ω ({st["utcTime"][:16]} UTC)')
+                    return True
+    except Exception as e:
+        log(f'ελεγχος FotMob απετυχε: {type(e).__name__}: {e}')
+    return False
 
 
 def main(force=False):
@@ -58,6 +79,11 @@ def main(force=False):
         log(f'git pull απετυχε — σταματω (τιποτα δεν αλλαξε): {out[-200:]}'); return 1
     if not force and not match_soon():
         log('κανενα ματς εθνικων στις επομενες 72 ωρες — τιποτα'); return 0
+    # 11/11/2026: το intl_callups_tm παιρνει τις ομαδες απο το intl_projections.csv → μετα απο κενο εθνικων ηταν αδειο (0/0 ομαδες).
+    # Πρωτα χτιζεται το προγραμμα (intl_project με την παλια κληση), μετα η νεα κληση, μετα ξανα intl_project παρακατω.
+    rc, out = run([PY, 'intl_project.py'])
+    if rc != 0:
+        git('checkout', '--', *FILES); log('intl_project (προγραμμα) απετυχε — επαναφορα αρχειων: ' + out[-300:]); return 1
     rc, out = run([PY, 'intl_callups_tm.py'])
     tail = [l for l in out.splitlines() if l.startswith(('ΟΚ', 'ΣΦΑΛΜΑ', 'K ('))]
     if rc != 0:
