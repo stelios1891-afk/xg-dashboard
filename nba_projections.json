@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-11T14:54+00:00",
+ "generated": "2026-11-11T15:05+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -9380,12 +9380,12 @@
    "away": "Cleveland Cavaliers",
    "hcode": "NYK",
    "acode": "CLE",
-   "margin": 1.31,
-   "total": 218.7,
+   "margin": 2.1,
+   "total": 218.4,
    "total_src": "μοντελο",
-   "pts_h": 110.0,
-   "pts_a": 108.7,
-   "p_home": 0.539,
+   "pts_h": 110.2,
+   "pts_a": 108.1,
+   "p_home": 0.562,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -9400,16 +9400,16 @@
    "rl_a": "2026-11-09",
    "margin_base": 1.44,
    "total_base": 218.5,
-   "abs_dm": -0.13,
-   "abs_dt": 0.28,
+   "abs_dm": 0.66,
+   "abs_dt": -0.06,
    "abs_shadow": 0.0,
    "abs_h": [
     [
      "Josh Hart",
      31.6,
      0,
-     "Out",
-     1.0
+     "Questionable",
+     0.42
     ]
    ],
    "abs_a": [
@@ -9429,10 +9429,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.044,
-   "abs_ld": 0.822,
-   "abs_lop": 1.145,
-   "abs_ldp": 0.848,
+   "abs_lo": 0.662,
+   "abs_ld": 0.059,
+   "abs_lop": 0.924,
+   "abs_ldp": 0.406,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -9712,12 +9712,12 @@
    "away": "Los Angeles Lakers",
    "hcode": "MIL",
    "acode": "LAL",
-   "margin": -16.05,
-   "total": 227.4,
+   "margin": -15.37,
+   "total": 227.7,
    "total_src": "μοντελο",
-   "pts_h": 105.7,
-   "pts_a": 121.7,
-   "p_home": 0.117,
+   "pts_h": 106.2,
+   "pts_a": 121.6,
+   "p_home": 0.127,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -9732,16 +9732,16 @@
    "rl_a": "2026-11-09",
    "margin_base": -15.09,
    "total_base": 228.1,
-   "abs_dm": -0.96,
-   "abs_dt": -0.72,
+   "abs_dm": -0.28,
+   "abs_dt": -0.36,
    "abs_shadow": 0.0,
    "abs_h": [
     [
      "Tyler Herro",
      30.7,
      0,
-     "Out",
-     1.0
+     "Questionable",
+     0.42
     ]
    ],
    "abs_a": [
@@ -9754,10 +9754,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.856,
-   "abs_ld": -0.2,
-   "abs_lop": 0.899,
-   "abs_ldp": -0.271,
+   "abs_lo": 0,
+   "abs_ld": 0,
+   "abs_lop": 0.402,
+   "abs_ldp": -0.155,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -9775,12 +9775,12 @@
    "away": "Orlando Magic",
    "hcode": "UTA",
    "acode": "ORL",
-   "margin": -1.05,
-   "total": 217.4,
+   "margin": -1.43,
+   "total": 217.2,
    "total_src": "μοντελο",
-   "pts_h": 108.2,
-   "pts_a": 109.2,
-   "p_home": 0.469,
+   "pts_h": 107.9,
+   "pts_a": 109.3,
+   "p_home": 0.458,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -9795,8 +9795,8 @@
    "rl_a": "2026-11-10",
    "margin_base": -1.88,
    "total_base": 217.0,
-   "abs_dm": 0.82,
-   "abs_dt": 0.44,
+   "abs_dm": 0.45,
+   "abs_dt": 0.26,
    "abs_shadow": 0.0,
    "abs_h": [
     [
@@ -9810,8 +9810,8 @@
      "Keyonte George",
      32.1,
      0,
-     "Out",
-     1.0
+     "Doubtful",
+     0.965
     ],
     [
      "Jaren Jackson",
@@ -9823,15 +9823,15 @@
    ],
    "abs_a": [
     [
-     "Paolo Banchero",
-     33.5,
-     0,
-     "Out",
-     1.0
-    ],
-    [
      "Tristan da Silva",
      30.3,
+     0,
+     "Questionable",
+     0.42
+    ],
+    [
+     "Paolo Banchero",
+     33.5,
      0,
      "Out",
      1.0
@@ -9845,10 +9845,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.202,
-   "abs_ld": 1.715,
-   "abs_lop": 2.757,
-   "abs_ldp": 1.815,
+   "abs_lo": 1.463,
+   "abs_ld": 2.021,
+   "abs_lop": 2.791,
+   "abs_ldp": 1.651,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
