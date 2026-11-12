@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-12T03:45+00:00",
+ "generated": "2026-11-12T04:03+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -10070,6 +10070,83 @@
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/wsh.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/det.png"
+  },
+  {
+   "code": "pin1639982171",
+   "round": 4,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-11-13T00:10:00Z",
+   "home": "Philadelphia 76ers",
+   "away": "Toronto Raptors",
+   "hcode": "PHI",
+   "acode": "TOR",
+   "margin": 7.7,
+   "total": 222.1,
+   "total_src": "μοντελο",
+   "pts_h": 114.9,
+   "pts_a": 107.2,
+   "p_home": 0.716,
+   "played": false,
+   "version": "nba1",
+   "venue": "",
+   "b2b_h": 0,
+   "b2b_a": 1,
+   "tz_h": 0.0,
+   "tz_a": 0.0,
+   "gno": 12,
+   "gp_h": 12,
+   "gp_a": 11,
+   "rl_h": "2026-11-10",
+   "rl_a": "2026-11-11",
+   "margin_base": 4.53,
+   "total_base": 222.4,
+   "abs_dm": 3.17,
+   "abs_dt": -0.31,
+   "abs_shadow": 0.56,
+   "abs_h": [
+    [
+     "Embiid,Joel",
+     31.8,
+     1,
+     "Questionable",
+     0.42
+    ],
+    [
+     "James,LeBron",
+     32.5,
+     1,
+     "Questionable",
+     0.42
+    ]
+   ],
+   "abs_a": [
+    [
+     "Kawhi Leonard",
+     26.0,
+     0,
+     "Out",
+     1.0
+    ],
+    [
+     "Scottie Barnes",
+     33.4,
+     0,
+     "Out",
+     1.0
+    ]
+   ],
+   "inj_src": "official",
+   "abs_lo": 3.571,
+   "abs_ld": 1.774,
+   "abs_lop": 4.715,
+   "abs_ldp": 2.05,
+   "trade_dm": 0.0,
+   "trades": [],
+   "roster_dm": 0.0,
+   "roster_now": [],
+   "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/phi.png",
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/tor.png"
   },
   {
    "code": "pin1640044290",
