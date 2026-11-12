@@ -1,5 +1,5 @@
 {
- "scanned_at": "2026-11-12T11:23+00:00",
+ "scanned_at": "2026-11-12T11:34+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
@@ -21,20 +21,20 @@
    "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
    "mkt": "hcap",
    "side": -1,
-   "hcap": -10.0,
-   "odds": 1.893,
-   "edge": 0.1204,
-   "proj_odds": 1.68,
+   "hcap": -10.5,
+   "odds": 1.98,
+   "edge": 0.1418,
+   "proj_odds": 1.73,
    "model_line": 13.1,
-   "mkt_line": 10.0,
+   "mkt_line": 10.5,
    "first": {
     "line": 10.0,
     "oh": 1.917,
     "oa": 1.99,
     "seen": "2026-11-12T03:33+00:00"
    },
-   "move_note": "ανοιγμα Detroit Pistons -10 @1.99 → τωρα -10 @1.89 · αγορα 0.9 π. ΥΠΕΡ μας",
-   "move_pts": 0.9,
+   "move_note": "ανοιγμα Detroit Pistons -10 @1.99 → τωρα -10.5 @1.98 · αγορα 0.5 π. ΥΠΕΡ μας",
+   "move_pts": 0.5,
    "fat_note": "😴 Wizards: back-to-back −3 · καθαρο 3.0 π. ΥΠΕΡ μας",
    "fat_pts": 3.0,
    "hrs_birth": 20.6
@@ -98,33 +98,6 @@
    "mkt_line": 214.5,
    "gno": 11,
    "hrs_birth": 23.4
-  },
-  {
-   "lg": "NBA",
-   "paper": false,
-   "home": "Washington Wizards",
-   "away": "Detroit Pistons",
-   "hcode": "WAS",
-   "acode": "DET",
-   "code": "pin1639982172",
-   "round": 4,
-   "group": null,
-   "when": "2026-11-13T00:10",
-   "nba": true,
-   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
-   "mkt": "total",
-   "side": 0,
-   "hcap": 220.5,
-   "bet": "Over 220.5",
-   "odds": 1.943,
-   "edge": 0.0916,
-   "proj_odds": 1.78,
-   "model_total": 223.3,
-   "mix_total": 223.3,
-   "mkt_total": 220.5,
-   "mkt_line": 220.5,
-   "gno": 12,
-   "hrs_birth": 20.4
   }
  ]
 }
