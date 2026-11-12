@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-12T18:04+00:00",
+ "generated": "2026-11-12T18:15+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -10085,12 +10085,12 @@
    "away": "Toronto Raptors",
    "hcode": "PHI",
    "acode": "TOR",
-   "margin": 6.56,
-   "total": 221.5,
+   "margin": 6.76,
+   "total": 221.8,
    "total_src": "μοντελο",
-   "pts_h": 114.0,
+   "pts_h": 114.3,
    "pts_a": 107.5,
-   "p_home": 0.686,
+   "p_home": 0.692,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -10105,9 +10105,9 @@
    "rl_a": "2026-11-11",
    "margin_base": 4.47,
    "total_base": 222.3,
-   "abs_dm": 2.08,
-   "abs_dt": -0.78,
-   "abs_shadow": 0.56,
+   "abs_dm": 2.28,
+   "abs_dt": -0.48,
+   "abs_shadow": 0.97,
    "abs_h": [
     [
      "Embiid,Joel",
@@ -10120,20 +10120,20 @@
      "James,LeBron",
      32.5,
      1,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
     [
-     "Scottie Barnes",
+     "Barnes,Scottie",
      33.4,
      0,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ],
     [
-     "Kawhi Leonard",
+     "Leonard,Kawhi",
      26.0,
      0,
      "Out",
@@ -10141,10 +10141,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.505,
-   "abs_ld": 0.425,
-   "abs_lop": 4.096,
-   "abs_ldp": 1.267,
+   "abs_lo": 4.904,
+   "abs_ld": 2.147,
+   "abs_lop": 5.488,
+   "abs_ldp": 2.266,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
