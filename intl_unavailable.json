@@ -1,5 +1,5 @@
 {
-"_asof": "2026-11-12T07:55",
+"_asof": "2026-11-12T08:59",
 "_xi": {
 "6595": {
 "match": "Turkiye - Belgium",
@@ -406,6 +406,210 @@
 {
 "pid": 1297165,
 "name": "Bradley Barcola"
+}
+]
+},
+"8498": {
+"match": "Scotland - North Macedonia",
+"utc": "2026-11-13T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 760746,
+"name": "Angus Gunn"
+},
+{
+"pid": 582499,
+"name": "Kieran Tierney"
+},
+{
+"pid": 640642,
+"name": "Jack Hendry"
+},
+{
+"pid": 1410414,
+"name": "Luke Graham"
+},
+{
+"pid": 1324871,
+"name": "Ben Gannon-Doak"
+},
+{
+"pid": 942549,
+"name": "Billy Gilmour"
+},
+{
+"pid": 888921,
+"name": "Lewis Ferguson"
+},
+{
+"pid": 357880,
+"name": "Andrew Robertson"
+},
+{
+"pid": 356406,
+"name": "John McGinn"
+},
+{
+"pid": 843099,
+"name": "Scott McTominay"
+},
+{
+"pid": 509151,
+"name": "Oli McBurnie"
+}
+]
+},
+"8260": {
+"match": "Scotland - North Macedonia",
+"utc": "2026-11-13T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 254241,
+"name": "Stole Dimitrievski"
+},
+{
+"pid": 938267,
+"name": "Bojan Ilievski"
+},
+{
+"pid": 1512796,
+"name": "Anes Meljichi"
+},
+{
+"pid": 308469,
+"name": "Visar Musliu"
+},
+{
+"pid": 406283,
+"name": "Ezgjan Alioski"
+},
+{
+"pid": 851025,
+"name": "Jani Atanasov"
+},
+{
+"pid": 741049,
+"name": "Eljif Elmas"
+},
+{
+"pid": 973820,
+"name": "Dimitar Mitrovski"
+},
+{
+"pid": 592783,
+"name": "Enis Bardhi"
+},
+{
+"pid": 552673,
+"name": "Ljupco Doriev"
+},
+{
+"pid": 1347804,
+"name": "Elmin Rastoder"
+}
+]
+},
+"8205": {
+"match": "Serbia - Germany",
+"utc": "2026-11-13T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 543021,
+"name": "Vanja Milinković-Savić"
+},
+{
+"pid": 1786574,
+"name": "Stefan Gudelj"
+},
+{
+"pid": 540967,
+"name": "Srdjan Babić"
+},
+{
+"pid": 1122595,
+"name": "Strahinja Eraković"
+},
+{
+"pid": 1513910,
+"name": "Kosta Nedeljković"
+},
+{
+"pid": 1661160,
+"name": "Petar Sukačev"
+},
+{
+"pid": 1050178,
+"name": "Lazar Samardžić"
+},
+{
+"pid": 463301,
+"name": "Milinković-Savić"
+},
+{
+"pid": 556972,
+"name": "Saša Lukić"
+},
+{
+"pid": 1480699,
+"name": "Mihajlo Cvetković"
+},
+{
+"pid": 351860,
+"name": "Aleksandar Mitrović"
+}
+]
+},
+"8570": {
+"match": "Serbia - Germany",
+"utc": "2026-11-13T19:45",
+"type": "predicted",
+"players": [
+{
+"pid": 184554,
+"name": "Marc ter Stegen"
+},
+{
+"pid": 1281090,
+"name": "Philipp Treu"
+},
+{
+"pid": 469700,
+"name": "Jonathan Tah"
+},
+{
+"pid": 1002058,
+"name": "Nico Schlotterbeck"
+},
+{
+"pid": 1395447,
+"name": "Nathaniel Brown"
+},
+{
+"pid": 966019,
+"name": "Felix Nmecha"
+},
+{
+"pid": 460632,
+"name": "Joshua Kimmich"
+},
+{
+"pid": 1737700,
+"name": "Lennart Karl"
+},
+{
+"pid": 1152455,
+"name": "Florian Wirtz"
+},
+{
+"pid": 1613676,
+"name": "Saïd El Mala"
+},
+{
+"pid": 749736,
+"name": "Kai Havertz"
 }
 ]
 },
@@ -947,14 +1151,6 @@
 }
 },
 "8205": {
-"556972": {
-"name": "Saša Lukić",
-"type": "suspension",
-"ret": "Mid November 2026",
-"doubtful": false,
-"match": "Serbia - Germany",
-"until": "2026-11-20"
-},
 "495962": {
 "name": "Nemanja Maksimović",
 "type": "suspension",
@@ -1232,7 +1428,25 @@
 "started_last": true,
 "match": "England - Croatia",
 "utc": "2026-11-12T19:45"
+},
+{
+"key": "8205|1048023|2026-11-13T19:45",
+"team": "Serbia",
+"name": "Strahinja Pavlovic",
+"v": 42.008094,
+"started_last": true,
+"match": "Serbia - Germany",
+"utc": "2026-11-13T19:45"
+},
+{
+"key": "8570|1473580|2026-11-13T19:45",
+"team": "Germany",
+"name": "Aleksandar Pavlovic",
+"v": 93.771825,
+"started_last": true,
+"match": "Serbia - Germany",
+"utc": "2026-11-13T19:45"
 }
 ],
-"_hash": "2654a5203c1b91001a5850ae5c875d5b"
+"_hash": "dbd02dcc72651716d52c030f59fe5887"
 }
