@@ -1,10 +1,10 @@
 {
- "scanned_at": "2026-11-12T07:43+00:00",
+ "scanned_at": "2026-11-12T07:49+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
  "n_new": 0,
- "n_changed": 0,
+ "n_changed": 1,
  "picks": [
   {
    "lg": "NBA",
@@ -22,8 +22,8 @@
    "mkt": "hcap",
    "side": -1,
    "hcap": -10.0,
-   "odds": 1.943,
-   "edge": 0.1492,
+   "odds": 1.926,
+   "edge": 0.1394,
    "proj_odds": 1.68,
    "model_line": 13.1,
    "mkt_line": 10.0,
@@ -33,38 +33,11 @@
     "oa": 1.99,
     "seen": "2026-11-12T03:33+00:00"
    },
-   "move_note": "ανοιγμα Detroit Pistons -10 @1.99 → τωρα -10 @1.94 · αγορα 0.3 π. ΥΠΕΡ μας",
-   "move_pts": 0.3,
+   "move_note": "ανοιγμα Detroit Pistons -10 @1.99 → τωρα -10 @1.93 · αγορα 0.5 π. ΥΠΕΡ μας",
+   "move_pts": 0.5,
    "fat_note": "😴 Wizards: back-to-back −3 · καθαρο 3.0 π. ΥΠΕΡ μας",
    "fat_pts": 3.0,
    "hrs_birth": 20.6
-  },
-  {
-   "lg": "NBA",
-   "paper": false,
-   "home": "Phoenix Suns",
-   "away": "Charlotte Hornets",
-   "hcode": "PHO",
-   "acode": "CHO",
-   "code": "pin1640044291",
-   "round": 4,
-   "group": null,
-   "when": "2026-11-13T02:10",
-   "nba": true,
-   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
-   "mkt": "total",
-   "side": 0,
-   "hcap": 214.5,
-   "bet": "Under 214.5",
-   "odds": 1.901,
-   "edge": 0.0805,
-   "proj_odds": 1.76,
-   "model_total": 211.4,
-   "mix_total": 211.4,
-   "mkt_total": 214.1,
-   "mkt_line": 214.5,
-   "gno": 11,
-   "hrs_birth": 23.4
   }
  ]
 }
