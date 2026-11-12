@@ -1,42 +1,42 @@
 {
-"_asof": "2026-11-12T13:13",
+"_asof": "2026-11-12T16:08",
 "_xi": {
 "6595": {
 "match": "Turkiye - Belgium",
 "utc": "2026-11-12T17:00",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 603669,
 "name": "Uğurcan Çakir"
 },
 {
-"pid": 867225,
-"name": "Zeki Çelik"
-},
-{
-"pid": 845990,
-"name": "Ozan Kabak"
+"pid": 1092015,
+"name": "Oğuz Aydın"
 },
 {
 "pid": 823078,
 "name": "Merih Demiral"
 },
 {
+"pid": 845990,
+"name": "Ozan Kabak"
+},
+{
 "pid": 774448,
 "name": "Ferdi Kadıoğlu"
 },
 {
-"pid": 738064,
-"name": "Salih Özcan"
+"pid": 1183589,
+"name": "İsmail Yüksek"
 },
 {
 "pid": 935409,
 "name": "Orkun Kökçü"
 },
 {
-"pid": 1092015,
-"name": "Oğuz Aydın"
+"pid": 845991,
+"name": "Yunus Akgün"
 },
 {
 "pid": 1253890,
@@ -47,15 +47,15 @@
 "name": "Barış Alper Yılmaz"
 },
 {
-"pid": 1406300,
-"name": "Deniz Gül"
+"pid": 464486,
+"name": "Enes Ünal"
 }
 ]
 },
 "8263": {
 "match": "Turkiye - Belgium",
 "utc": "2026-11-12T17:00",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1178602,
@@ -78,6 +78,10 @@
 "name": "Maxim De Cuyper"
 },
 {
+"pid": 169200,
+"name": "Kevin De Bruyne"
+},
+{
 "pid": 863869,
 "name": "Nicolas Raskin"
 },
@@ -86,20 +90,67 @@
 "name": "Youri Tielemans"
 },
 {
-"pid": 688876,
-"name": "Dodi Lukébakio"
-},
-{
-"pid": 169200,
-"name": "Kevin De Bruyne"
-},
-{
-"pid": 942368,
-"name": "Jérémy Doku"
+"pid": 1342754,
+"name": "Diego Moreira"
 },
 {
 "pid": 1095432,
 "name": "Charles De Ketelaere"
+},
+{
+"pid": 942368,
+"name": "Jérémy Doku"
+}
+]
+},
+"6583": {
+"match": "Armenia - Cyprus",
+"utc": "2026-11-12T17:00",
+"type": "unavailable",
+"players": [
+{
+"pid": 1657875,
+"name": "Aleksandr Mishiev"
+},
+{
+"pid": 1690753,
+"name": "Artem Bandikyan"
+},
+{
+"pid": 1393690,
+"name": "Georgiy Arutiunian"
+},
+{
+"pid": 1339293,
+"name": "Styopa Mkrtchyan"
+},
+{
+"pid": 951976,
+"name": "Nair Tiknizyan"
+},
+{
+"pid": 1784995,
+"name": "Karlen Hovhannisyan"
+},
+{
+"pid": 1200931,
+"name": "Ugochukwu Iwu"
+},
+{
+"pid": 948743,
+"name": "Narek Grigoryan"
+},
+{
+"pid": 1300497,
+"name": "Artur Serobyan"
+},
+{
+"pid": 1065537,
+"name": "Zhirayr Shaghoyan"
+},
+{
+"pid": 1527112,
+"name": "Artur Gharibyan"
 }
 ]
 },
@@ -1092,6 +1143,16 @@
 "until": "2026-11-30"
 }
 },
+"507764": {
+"833690": {
+"name": "Graeme Torrilla",
+"type": "suspension",
+"ret": "Mid November 2026",
+"doubtful": false,
+"match": "Andorra - Gibraltar",
+"until": "2026-11-20"
+}
+},
 "8497": {
 "1127054": {
 "name": "Tomás Suslov",
@@ -1119,16 +1180,6 @@
 "ret": "Mid November 2026",
 "doubtful": false,
 "match": "Luxembourg - Estonia",
-"until": "2026-11-20"
-}
-},
-"507764": {
-"833690": {
-"name": "Graeme Torrilla",
-"type": "suspension",
-"ret": "Mid November 2026",
-"doubtful": false,
-"match": "Andorra - Gibraltar",
 "until": "2026-11-20"
 }
 },
@@ -1418,24 +1469,6 @@
 },
 "_alerts": [
 {
-"key": "6595|845991|2026-11-12T17:00",
-"team": "Turkiye",
-"name": "Yunus Akgun",
-"v": 19.148055,
-"started_last": true,
-"match": "Turkiye - Belgium",
-"utc": "2026-11-12T17:00"
-},
-{
-"key": "8263|1342754|2026-11-12T17:00",
-"team": "Belgium",
-"name": "Diego Moreira",
-"v": 47.913497,
-"started_last": true,
-"match": "Turkiye - Belgium",
-"utc": "2026-11-12T17:00"
-},
-{
 "key": "8496|1186978|2026-11-12T19:45",
 "team": "Czechia",
 "name": "Lukas Hornicek",
@@ -1472,5 +1505,5 @@
 "utc": "2026-11-13T19:45"
 }
 ],
-"_hash": "bddfef3c044070b26d2ca789c1a54356"
+"_hash": "37f0518534e8959e3f49218bc4ed819a"
 }
