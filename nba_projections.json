@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-13T17:55+00:00",
+ "generated": "2026-11-13T18:06+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -10565,12 +10565,12 @@
    "away": "Memphis Grizzlies",
    "hcode": "NOP",
    "acode": "MEM",
-   "margin": -5.4,
-   "total": 234.1,
+   "margin": -6.52,
+   "total": 234.2,
    "total_src": "μοντελο",
-   "pts_h": 114.3,
-   "pts_a": 119.7,
-   "p_home": 0.345,
+   "pts_h": 113.8,
+   "pts_a": 120.3,
+   "p_home": 0.315,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -10585,14 +10585,21 @@
    "rl_a": "2026-11-11",
    "margin_base": -4.83,
    "total_base": 234.3,
-   "abs_dm": -0.8,
-   "abs_dt": -0.21,
-   "abs_shadow": 0.61,
+   "abs_dm": -1.92,
+   "abs_dt": -0.09,
+   "abs_shadow": 1.2,
    "abs_h": [
     [
      "MurphyIII,Trey",
      32.8,
      0,
+     "Out",
+     1.0
+    ],
+    [
+     "Murray,Dejounte",
+     31.4,
+     1,
      "Doubtful",
      0.965
     ]
@@ -10607,10 +10614,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.038,
-   "abs_ld": 0.469,
-   "abs_lop": 1.03,
-   "abs_ldp": 0.306,
+   "abs_lo": 1.066,
+   "abs_ld": 0.3,
+   "abs_lop": 1.572,
+   "abs_ldp": 0.695,
    "trade_dm": 0.23,
    "trades": [
     [
