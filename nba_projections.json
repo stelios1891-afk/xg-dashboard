@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-13T21:11+00:00",
+ "generated": "2026-11-13T21:23+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -10774,12 +10774,12 @@
    "away": "Portland Trail Blazers",
    "hcode": "SAC",
    "acode": "POR",
-   "margin": -11.99,
-   "total": 228.4,
+   "margin": -12.37,
+   "total": 228.6,
    "total_src": "μοντελο",
-   "pts_h": 108.2,
-   "pts_a": 120.2,
-   "p_home": 0.187,
+   "pts_h": 108.1,
+   "pts_a": 120.5,
+   "p_home": 0.18,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -10794,16 +10794,16 @@
    "rl_a": "2026-11-11",
    "margin_base": -12.66,
    "total_base": 228.5,
-   "abs_dm": 0.75,
-   "abs_dt": -0.03,
-   "abs_shadow": 0.23,
+   "abs_dm": 0.37,
+   "abs_dt": 0.17,
+   "abs_shadow": 0.5,
    "abs_h": [
     [
      "Achiuwa,Precious",
      26.1,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -10816,10 +10816,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.72,
-   "abs_ld": 0.161,
-   "abs_lop": 0.735,
-   "abs_ldp": 0.339,
+   "abs_lo": 0.753,
+   "abs_ld": 0.547,
+   "abs_lop": 0.753,
+   "abs_ldp": 0.547,
    "trade_dm": -0.08,
    "trades": [
     [
