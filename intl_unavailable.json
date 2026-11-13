@@ -1,10 +1,10 @@
 {
-"_asof": "2026-11-13T17:44",
+"_asof": "2026-11-13T18:48",
 "_xi": {
 "6708": {
 "match": "Netherlands - Greece",
 "utc": "2026-11-13T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1131987,
@@ -15,10 +15,6 @@
 "name": "Denzel Dumfries"
 },
 {
-"pid": 942381,
-"name": "Jurriën Timber"
-},
-{
 "pid": 974618,
 "name": "Jan Paul van Hecke"
 },
@@ -27,59 +23,63 @@
 "name": "Micky van de Ven"
 },
 {
-"pid": 970563,
-"name": "Quinten Timber"
-},
-{
-"pid": 638622,
-"name": "Frenkie de Jong"
+"pid": 942381,
+"name": "Jurriën Timber"
 },
 {
 "pid": 792429,
 "name": "Joey Veerman"
 },
 {
+"pid": 638622,
+"name": "Frenkie de Jong"
+},
+{
 "pid": 941213,
 "name": "Crysencio Summerville"
 },
 {
-"pid": 660301,
-"name": "Donyell Malen"
+"pid": 868344,
+"name": "Tijjani Reijnders"
 },
 {
 "pid": 806552,
 "name": "Cody Gakpo"
+},
+{
+"pid": 660301,
+"name": "Donyell Malen"
 }
 ]
 },
 "6383": {
 "match": "Netherlands - Greece",
 "utc": "2026-11-13T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1072068,
 "name": "Konstantinos Tzolakis"
 },
 {
-"pid": 1119687,
-"name": "Georgios Vagiannidis"
+"pid": 949866,
+"name": "Lazaros Rota"
 },
 {
 "pid": 719219,
 "name": "Konstantinos Mavropanos"
 },
 {
-"pid": 1337884,
-"name": "Konstantinos Koulierakis"
+"pid": 719055,
+"name": "Panagiotis Retsos"
 },
 {
 "pid": 671529,
 "name": "Konstantinos Tsimikas"
 },
 {
-"pid": 575227,
-"name": "Giorgos Masouras"
+"pid": 1536436,
+"name": "Konstantinos Karetsas"
 },
 {
 "pid": 260750,
@@ -103,34 +103,438 @@
 }
 ]
 },
+"10045": {
+"match": "Andorra - Gibraltar",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 1101270,
+"name": "Iker Álvarez"
+},
+{
+"pid": 1677239,
+"name": "Biel Borrà"
+},
+{
+"pid": 674240,
+"name": "Max Llovera"
+},
+{
+"pid": 1581138,
+"name": "Ian Olivera"
+},
+{
+"pid": 388024,
+"name": "Moisés San Nicolás"
+},
+{
+"pid": 1564542,
+"name": "Ot Remolins"
+},
+{
+"pid": 1423594,
+"name": "Éric Izquierdo"
+},
+{
+"pid": 1499307,
+"name": "Arón Rodrigo"
+},
+{
+"pid": 1177220,
+"name": "Guillaume López"
+},
+{
+"pid": 1091359,
+"name": "Albert Rosas"
+}
+]
+},
+"507764": {
+"match": "Andorra - Gibraltar",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 762381,
+"name": "Jaylan Hankins"
+},
+{
+"pid": 550721,
+"name": "Ethan Jolley"
+},
+{
+"pid": 1379843,
+"name": "Dan Bent"
+},
+{
+"pid": 581716,
+"name": "Bernardo Lopes"
+},
+{
+"pid": 1180799,
+"name": "Julian Valarino"
+},
+{
+"pid": 1301994,
+"name": "Carlos Richards"
+},
+{
+"pid": 1180805,
+"name": "Kian Ronan"
+},
+{
+"pid": 1369640,
+"name": "Nicholas Pozo"
+},
+{
+"pid": 1435434,
+"name": "James Scanlon"
+},
+{
+"pid": 833687,
+"name": "Tjay De Barr"
+},
+{
+"pid": 1239953,
+"name": "Dylan Borge"
+}
+]
+},
+"8497": {
+"match": "Slovakia - Faroe Islands",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 651910,
+"name": "Dominik Greif"
+},
+{
+"pid": 521846,
+"name": "Martin Valjent"
+},
+{
+"pid": 541825,
+"name": "Lubomír Šatka"
+},
+{
+"pid": 309328,
+"name": "Milan Škriniar"
+},
+{
+"pid": 727897,
+"name": "Dávid Hancko"
+},
+{
+"pid": 869326,
+"name": "Ludovit Reis"
+},
+{
+"pid": 484858,
+"name": "Albert Rusnák"
+},
+{
+"pid": 350634,
+"name": "Ondrej Duda"
+},
+{
+"pid": 766606,
+"name": "Erik Prekop"
+},
+{
+"pid": 940594,
+"name": "David Strelec"
+},
+{
+"pid": 518628,
+"name": "Lukás Haraslín"
+}
+]
+},
+"8269": {
+"match": "Slovakia - Faroe Islands",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 1067673,
+"name": "Mattias Lamhauge"
+},
+{
+"pid": 138124,
+"name": "Odmar Færø"
+},
+{
+"pid": 551281,
+"name": "Gunnar Vatnhamar"
+},
+{
+"pid": 846006,
+"name": "Andrias Edmundsson"
+},
+{
+"pid": 857959,
+"name": "Jóannes Kalsø Danielsen"
+},
+{
+"pid": 857954,
+"name": "Jákup Andreasen"
+},
+{
+"pid": 1154746,
+"name": "Géza Dávid Turi"
+},
+{
+"pid": 214352,
+"name": "Viljormur Davidsen"
+},
+{
+"pid": 1155663,
+"name": "Áki Samuelsen"
+},
+{
+"pid": 652263,
+"name": "Petur Knudsen"
+},
+{
+"pid": 1016081,
+"name": "Hanus Sørensen"
+}
+]
+},
+"5792": {
+"match": "Luxembourg - Estonia",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 148331,
+"name": "Anthony Moris"
+},
+{
+"pid": 291929,
+"name": "Laurent Jans"
+},
+{
+"pid": 766608,
+"name": "Vahid Selimović"
+},
+{
+"pid": 798826,
+"name": "Tim Hall"
+},
+{
+"pid": 625581,
+"name": "Florian Bohnert"
+},
+{
+"pid": 736173,
+"name": "Vincent Thill"
+},
+{
+"pid": 1089478,
+"name": "Mathias Olesen"
+},
+{
+"pid": 1670232,
+"name": "Tomás Cruz"
+},
+{
+"pid": 2005801,
+"name": "Hamza Kadamani"
+},
+{
+"pid": 642598,
+"name": "Sébastien Thill"
+},
+{
+"pid": 1536762,
+"name": "Aiman Dardari"
+}
+]
+},
+"8261": {
+"match": "Luxembourg - Estonia",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 982692,
+"name": "Karl Hein"
+},
+{
+"pid": 1176726,
+"name": "Maksim Paskotši"
+},
+{
+"pid": 1269208,
+"name": "Erko Tõugjas"
+},
+{
+"pid": 462863,
+"name": "Karol Mets"
+},
+{
+"pid": 620980,
+"name": "Rasmus Peetson"
+},
+{
+"pid": 1215622,
+"name": "Michael Schjønning-Larsen"
+},
+{
+"pid": 1512735,
+"name": "Patrik Kristal"
+},
+{
+"pid": 695067,
+"name": "Mattias Käit"
+},
+{
+"pid": 1178610,
+"name": "Kevor Palumets"
+},
+{
+"pid": 1177437,
+"name": "Rocco Shein"
+},
+{
+"pid": 973281,
+"name": "Mattias Männilaan"
+}
+]
+},
+"5799": {
+"match": "Liechtenstein - Azerbaijan",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 151113,
+"name": "Benjamin Büchel"
+},
+{
+"pid": 851887,
+"name": "Livio Meier"
+},
+{
+"pid": 833698,
+"name": "Jens Hofer"
+},
+{
+"pid": 1421540,
+"name": "Severin Schlegel"
+},
+{
+"pid": 1626065,
+"name": "Emanuel Zünd"
+},
+{
+"pid": 756915,
+"name": "Maximilian Göppel"
+},
+{
+"pid": 756916,
+"name": "Aron Sele"
+},
+{
+"pid": 192842,
+"name": "Marcel Büchel"
+},
+{
+"pid": 1421538,
+"name": "Alessio Hasler"
+},
+{
+"pid": 1421541,
+"name": "Fabio Luque Notaro"
+},
+{
+"pid": 2280245,
+"name": "Alessandro Lo Russo"
+}
+]
+},
+"8566": {
+"match": "Liechtenstein - Azerbaijan",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 304890,
+"name": "Emil Balayev"
+},
+{
+"pid": 672833,
+"name": "Qismət Alıyev"
+},
+{
+"pid": 652285,
+"name": "Rahil Məmmədov"
+},
+{
+"pid": 251855,
+"name": "Bədavi Hüseynov"
+},
+{
+"pid": 1441450,
+"name": "Rəhman Daşdəmirov"
+},
+{
+"pid": 1863490,
+"name": "Oruc Mammadov"
+},
+{
+"pid": 1351085,
+"name": "Abdulakh Khaybulaev"
+},
+{
+"pid": 1119168,
+"name": "Tural Bayramov"
+},
+{
+"pid": 688887,
+"name": "Aleksey Isaev"
+},
+{
+"pid": 1387408,
+"name": "Rüfat Abbasov"
+},
+{
+"pid": 464251,
+"name": "Mahir Emreli"
+}
+]
+},
 "5787": {
 "match": "Slovenia - Switzerland",
 "utc": "2026-11-13T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 177126,
 "name": "Jan Oblak"
 },
 {
-"pid": 1110819,
-"name": "David Brekalo"
+"pid": 955204,
+"name": "Vanja Drkušić"
 },
 {
 "pid": 861805,
 "name": "Jaka Bijol"
 },
 {
-"pid": 955204,
-"name": "Vanja Drkušić"
+"pid": 1382364,
+"name": "Srdjan Kuzmić"
+},
+{
+"pid": 1050895,
+"name": "Žan Zaletel"
 },
 {
 "pid": 846739,
 "name": "Žan Karničnik"
-},
-{
-"pid": 1382364,
-"name": "Srdjan Kuzmić"
 },
 {
 "pid": 1072535,
@@ -157,15 +561,15 @@
 "6717": {
 "match": "Slovenia - Switzerland",
 "utc": "2026-11-13T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 764018,
 "name": "Gregor Kobel"
 },
 {
-"pid": 1693531,
-"name": "Sascha Britschgi"
+"pid": 1595629,
+"name": "Zachary Athekame"
 },
 {
 "pid": 517346,
@@ -176,32 +580,32 @@
 "name": "Manuel Akanji"
 },
 {
-"pid": 115591,
-"name": "Ricardo Rodríguez"
+"pid": 1693531,
+"name": "Sascha Britschgi"
+},
+{
+"pid": 792756,
+"name": "Michel Aebischer"
+},
+{
+"pid": 598355,
+"name": "Denis Zakaria"
 },
 {
 "pid": 201704,
 "name": "Remo Freuler"
 },
 {
-"pid": 1163219,
-"name": "Ardon Jashari"
-},
-{
-"pid": 707970,
-"name": "Djibril Sow"
-},
-{
 "pid": 1161211,
 "name": "Fabian Rieder"
 },
 {
-"pid": 1022649,
-"name": "Dan Ndoye"
+"pid": 527103,
+"name": "Breel Embolo"
 },
 {
-"pid": 1067168,
-"name": "Zeki Amdouni"
+"pid": 1022649,
+"name": "Dan Ndoye"
 }
 ]
 },
@@ -219,24 +623,24 @@
 "name": "Kieran Tierney"
 },
 {
-"pid": 640642,
-"name": "Jack Hendry"
-},
-{
 "pid": 1410414,
 "name": "Luke Graham"
+},
+{
+"pid": 640642,
+"name": "Jack Hendry"
 },
 {
 "pid": 1324871,
 "name": "Ben Gannon-Doak"
 },
 {
-"pid": 942549,
-"name": "Billy Gilmour"
-},
-{
 "pid": 888921,
 "name": "Lewis Ferguson"
+},
+{
+"pid": 942549,
+"name": "Billy Gilmour"
 },
 {
 "pid": 357880,
@@ -310,7 +714,7 @@
 "8205": {
 "match": "Serbia - Germany",
 "utc": "2026-11-13T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 543021,
@@ -325,8 +729,8 @@
 "name": "Srdjan Babić"
 },
 {
-"pid": 1122595,
-"name": "Strahinja Eraković"
+"pid": 766611,
+"name": "Nikola Milenković"
 },
 {
 "pid": 1513910,
@@ -353,15 +757,15 @@
 "name": "Mihajlo Cvetković"
 },
 {
-"pid": 351860,
-"name": "Aleksandar Mitrović"
+"pid": 94267,
+"name": "Dušan Tadić"
 }
 ]
 },
 "8570": {
 "match": "Serbia - Germany",
 "utc": "2026-11-13T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 184554,
@@ -376,36 +780,138 @@
 "name": "Jonathan Tah"
 },
 {
-"pid": 1002058,
-"name": "Nico Schlotterbeck"
+"pid": 1137407,
+"name": "Malick Thiaw"
 },
 {
-"pid": 1395447,
-"name": "Nathaniel Brown"
+"pid": 614384,
+"name": "Maximilian Mittelstädt"
 },
 {
-"pid": 966019,
-"name": "Felix Nmecha"
+"pid": 1473580,
+"name": "Aleksandar Pavlović"
 },
 {
 "pid": 460632,
 "name": "Joshua Kimmich"
 },
 {
-"pid": 1737700,
-"name": "Lennart Karl"
+"pid": 1430151,
+"name": "Brajan Gruda"
 },
 {
 "pid": 1152455,
 "name": "Florian Wirtz"
 },
 {
-"pid": 1613676,
-"name": "Saïd El Mala"
+"pid": 1302666,
+"name": "Derry Scherhant"
 },
 {
 "pid": 749736,
 "name": "Kai Havertz"
+}
+]
+},
+"10150": {
+"match": "Bulgaria - Iceland",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 749677,
+"name": "Daniel Naumov"
+},
+{
+"pid": 1308396,
+"name": "Yoni Stoyanov"
+},
+{
+"pid": 491440,
+"name": "Stefan Velkov"
+},
+{
+"pid": 1411812,
+"name": "Emil Tsenov"
+},
+{
+"pid": 1162008,
+"name": "Hristiyan Petrov"
+},
+{
+"pid": 1187963,
+"name": "Andrian Kraev"
+},
+{
+"pid": 1080983,
+"name": "Ilia Gruev"
+},
+{
+"pid": 1093782,
+"name": "Lukas Petkov"
+},
+{
+"pid": 861657,
+"name": "Georgi Rusev"
+},
+{
+"pid": 1481050,
+"name": "Kristiyan Balov"
+},
+{
+"pid": 318806,
+"name": "Atanas Iliev"
+}
+]
+},
+"8536": {
+"match": "Bulgaria - Iceland",
+"utc": "2026-11-13T19:45",
+"type": "standard",
+"players": [
+{
+"pid": 850962,
+"name": "Hákon Rafn Valdimarsson"
+},
+{
+"pid": 161937,
+"name": "Victor Pálsson"
+},
+{
+"pid": 745912,
+"name": "Stefán Thórdarson"
+},
+{
+"pid": 289237,
+"name": "Daníel Grétarsson"
+},
+{
+"pid": 796756,
+"name": "Logi Tómasson"
+},
+{
+"pid": 1044470,
+"name": "Hákon Arnar Haraldsson"
+},
+{
+"pid": 1000428,
+"name": "Ísak Jóhannesson"
+},
+{
+"pid": 856936,
+"name": "Kristall Ingason"
+},
+{
+"pid": 1050161,
+"name": "Andri Guðjohnsen"
+},
+{
+"pid": 1097229,
+"name": "Orri Óskarsson"
+},
+{
+"pid": 942193,
+"name": "Mikael Egill Ellertsson"
 }
 ]
 },
@@ -2174,7 +2680,7 @@
 "type": "injury",
 "ret": "Doubtful",
 "doubtful": true,
-"match": "Switzerland - Scotland",
+"match": "Slovenia - Switzerland",
 "until": null
 }
 },
@@ -2572,33 +3078,6 @@
 },
 "_alerts": [
 {
-"key": "8205|1048023|2026-11-13T19:45",
-"team": "Serbia",
-"name": "Strahinja Pavlovic",
-"v": 42.008094,
-"started_last": true,
-"match": "Serbia - Germany",
-"utc": "2026-11-13T19:45"
-},
-{
-"key": "8205|1410437|2026-11-13T19:45",
-"team": "Serbia",
-"name": "Aleksandar Stankovic",
-"v": 42.007164,
-"started_last": true,
-"match": "Serbia - Germany",
-"utc": "2026-11-13T19:45"
-},
-{
-"key": "8570|1473580|2026-11-13T19:45",
-"team": "Germany",
-"name": "Aleksandar Pavlovic",
-"v": 93.771825,
-"started_last": true,
-"match": "Serbia - Germany",
-"utc": "2026-11-13T19:45"
-},
-{
 "key": "8520|1386775|2026-11-14T19:45",
 "team": "Sweden",
 "name": "Lucas Bergvall",
@@ -2617,5 +3096,5 @@
 "utc": "2026-11-14T19:45"
 }
 ],
-"_hash": "a412c504a1aa7bebcae5786c299e4fa2"
+"_hash": "3d60a19da2636913678ec674b373513a"
 }
