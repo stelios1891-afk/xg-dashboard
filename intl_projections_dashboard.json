@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-13 13:39",
- "toa_scanned": "2026-11-13 13:39",
+ "generated": "2026-11-13 13:45",
+ "toa_scanned": "2026-11-13 13:45",
  "toa_matches": 26,
  "ng_snapshot": "2026-11-13 13:06",
  "ng_snapshot_afconq": null,
@@ -87,14 +87,14 @@
       },
       "matchbook": {
        "ah_line": -1.0,
-       "oh": 2.0,
-       "oa": 1.95,
+       "oh": 1.99,
+       "oa": 1.97,
        "ou_line": 3.5,
        "over": 2.42,
        "under": 1.69,
-       "o1": 1.61,
+       "o1": 1.6,
        "ox": 4.7,
-       "o2": 5.8
+       "o2": 5.9
       },
       "bovada": {
        "ah_line": -1.0,
@@ -109,16 +109,16 @@
        "raw_h": 1.56,
        "raw_d": 4.5,
        "raw_a": 5.0,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 6.32,
-       "over_h2h_adj": 2.65,
+       "over_h2h_adj": 2.61,
        "raw_oh": 1.93,
        "raw_oa": 1.89,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.72,
-       "over_spreads_adj": 3.22,
+       "over_spreads_adj": 3.21,
        "raw_over": 1.82,
        "raw_under": 2.02,
        "gap_totals": 1.12,
@@ -127,21 +127,21 @@
        "over_totals_adj": 3.33
       },
       "betfair_ex_eu": {
-       "o1": 1.55,
-       "ox": 4.53,
-       "o2": 5.59,
-       "raw_h": 1.61,
+       "o1": 1.54,
+       "ox": 4.54,
+       "o2": 5.69,
+       "raw_h": 1.6,
        "raw_d": 4.7,
-       "raw_a": 5.8,
-       "raw_over": 0.63,
+       "raw_a": 5.9,
+       "raw_over": 0.73,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -157,10 +157,10 @@
         "need_over": 2.08
        },
        "matchbook": {
-        "ah_home": 0.6,
+        "ah_home": 0.2,
         "fair_h": 1.95,
         "need_h": 2.25,
-        "ah_away": -4.8,
+        "ah_away": -4.1,
         "fair_a": 2.05,
         "need_a": 2.36,
         "over": -0.0,
@@ -195,10 +195,10 @@
         "need_over": 2.39
        },
        "matchbook": {
-        "ah_home": -0.5,
+        "ah_home": -0.8,
         "fair_h": 1.98,
         "need_h": 2.28,
-        "ah_away": -3.7,
+        "ah_away": -2.9,
         "fair_a": 2.02,
         "need_a": 2.33,
         "over": -13.3,
@@ -233,10 +233,10 @@
         "need_over": 2.48
        },
        "matchbook": {
-        "ah_home": 5.2,
+        "ah_home": 4.8,
         "fair_h": 1.85,
         "need_h": 2.12,
-        "ah_away": -9.2,
+        "ah_away": -8.5,
         "fair_a": 2.18,
         "need_a": 2.52,
         "over": -16.3,
@@ -276,17 +276,17 @@
       "mkt": 0.5916,
       "real": {
        "book": "pinnacle",
-       "yes": 1.65,
-       "no": 2.31,
-       "when": "2026-11-13T12:11",
+       "yes": 1.61,
+       "no": 2.4,
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
-         1.65,
-         2.31
+         1.61,
+         2.4
         ],
         "matchbook": [
-         1.67,
-         2.42
+         1.65,
+         2.48
         ]
        }
       }
@@ -365,7 +365,7 @@
        "ou_line": 3.25,
        "over": 1.89,
        "under": 1.98,
-       "o1": 10.56,
+       "o1": 10.58,
        "ox": 6.88,
        "o2": 1.25
       },
@@ -388,21 +388,21 @@
        "over": 1.89,
        "under": 1.97,
        "o1": 10.1,
-       "ox": 6.73,
+       "ox": 6.74,
        "o2": 1.28,
        "raw_h": 9.75,
        "raw_d": 6.5,
        "raw_a": 1.24,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 6.29,
-       "over_h2h_adj": 2.61,
+       "over_h2h_adj": 2.58,
        "raw_oh": 1.98,
        "raw_oa": 1.85,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.56,
-       "over_spreads_adj": 3.06,
+       "over_spreads_adj": 3.05,
        "raw_over": 1.87,
        "raw_under": 1.95,
        "gap_totals": 1.12,
@@ -421,11 +421,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -562,7 +562,7 @@
        "book": "pinnacle",
        "yes": 1.91,
        "no": 1.93,
-       "when": "2026-11-13T12:11",
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
          1.91,
@@ -662,7 +662,7 @@
        "under": 1.86,
        "o1": 1.25,
        "ox": 7.4,
-       "o2": 13.0
+       "o2": 13.5
       },
       "bovada": {
        "ah_line": -2.0,
@@ -696,20 +696,20 @@
       },
       "betfair_ex_eu": {
        "o1": 1.21,
-       "ox": 7.18,
-       "o2": 12.61,
+       "ox": 7.16,
+       "o2": 13.05,
        "raw_h": 1.25,
        "raw_d": 7.4,
-       "raw_a": 13.0,
-       "raw_over": 1.21,
+       "raw_a": 13.5,
+       "raw_over": 0.92,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -942,11 +942,11 @@
        "oh": 2.1,
        "oa": 1.84,
        "ou_line": 3.5,
-       "over": 2.4,
+       "over": 2.42,
        "under": 1.66,
-       "o1": 1.55,
+       "o1": 1.54,
        "ox": 4.9,
-       "o2": 6.4
+       "o2": 6.6
       },
       "bovada": {
        "ah_line": -1.0,
@@ -979,21 +979,21 @@
        "over_totals_adj": 3.77
       },
       "betfair_ex_eu": {
-       "o1": 1.5,
-       "ox": 4.66,
-       "o2": 6.22,
+       "o1": 1.48,
+       "ox": 4.72,
+       "o2": 6.35,
        "raw_h": 1.54,
-       "raw_d": 4.8,
-       "raw_a": 6.4,
-       "raw_over": 1.39,
+       "raw_d": 4.9,
+       "raw_a": 6.6,
+       "raw_over": 0.49,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -1015,7 +1015,7 @@
         "ah_away": 11.2,
         "fair_a": 1.63,
         "need_a": 1.82,
-        "over": 6.6,
+        "over": 7.5,
         "p_over": 44.4,
         "need_over": 2.43
        },
@@ -1053,7 +1053,7 @@
         "ah_away": 5.9,
         "fair_a": 1.71,
         "need_a": 1.92,
-        "over": -2.0,
+        "over": -1.2,
         "p_over": 40.8,
         "need_over": 2.65
        },
@@ -1091,7 +1091,7 @@
         "ah_away": -0.3,
         "fair_a": 1.82,
         "need_a": 2.04,
-        "over": -5.2,
+        "over": -4.4,
         "p_over": 39.5,
         "need_over": 2.74
        },
@@ -1219,7 +1219,7 @@
        "under": 2.06,
        "o1": 2.1,
        "ox": 3.86,
-       "o2": 3.33
+       "o2": 3.32
       },
       "matchbook": {
        "ah_line": -0.25,
@@ -1236,16 +1236,16 @@
        "ou_line": 2.75,
        "over": 1.8,
        "under": 2.05,
-       "o1": 2.09,
+       "o1": 2.08,
        "ox": 3.81,
        "o2": 3.25,
        "raw_h": 2.05,
        "raw_d": 3.75,
        "raw_a": 3.2,
-       "gap_h2h": 1.79,
+       "gap_h2h": 1.77,
        "gap_h2h_day": "2026-11-15",
        "over_h2h": 6.7,
-       "over_h2h_adj": 4.9,
+       "over_h2h_adj": 4.93,
        "raw_oh": 1.82,
        "raw_oa": 2.02,
        "gap_spreads": 1.58,
@@ -1270,11 +1270,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -1501,10 +1501,10 @@
        "raw_h": 1.5,
        "raw_d": 4.45,
        "raw_a": 5.75,
-       "gap_h2h": 1.79,
+       "gap_h2h": 1.77,
        "gap_h2h_day": "2026-11-15",
        "over_h2h": 6.53,
-       "over_h2h_adj": 4.74,
+       "over_h2h_adj": 4.76,
        "raw_oh": 1.83,
        "raw_oa": 2.0,
        "gap_spreads": 1.58,
@@ -1529,11 +1529,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -1769,10 +1769,10 @@
        "raw_h": 1.22,
        "raw_d": 6.5,
        "raw_a": 10.5,
-       "gap_h2h": 1.79,
+       "gap_h2h": 1.77,
        "gap_h2h_day": "2026-11-15",
        "over_h2h": 6.88,
-       "over_h2h_adj": 5.08,
+       "over_h2h_adj": 5.1,
        "raw_oh": 2.02,
        "raw_oa": 1.82,
        "gap_spreads": 1.58,
@@ -1797,11 +1797,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -2034,10 +2034,10 @@
        "raw_h": 1.7,
        "raw_d": 4.0,
        "raw_a": 4.45,
-       "gap_h2h": 1.79,
+       "gap_h2h": 1.77,
        "gap_h2h_day": "2026-11-15",
        "over_h2h": 6.3,
-       "over_h2h_adj": 4.5,
+       "over_h2h_adj": 4.52,
        "raw_oh": 1.89,
        "raw_oa": 1.93,
        "gap_spreads": 1.58,
@@ -2062,11 +2062,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -2277,9 +2277,9 @@
       "sbobet": null,
       "pinnacle": null,
       "matchbook": {
-       "ah_line": -0.5,
-       "oh": 1.82,
-       "oa": 2.04,
+       "ah_line": -0.75,
+       "oh": 2.02,
+       "oa": 1.81,
        "ou_line": 3.5,
        "over": 2.24,
        "under": 1.63,
@@ -2299,20 +2299,20 @@
        "pin_margin": 4.37
       },
       "source": "matchbook",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "matchbook",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
        "pinnacle": null,
        "matchbook": {
-        "ah_home": -19.4,
-        "fair_h": 2.23,
-        "need_h": 2.5,
-        "ah_away": 10.7,
+        "ah_home": -21.4,
+        "fair_h": 2.62,
+        "need_h": 2.97,
+        "ah_away": -1.6,
         "fair_a": 1.81,
         "need_a": 2.03,
         "over": -21.0,
@@ -2327,10 +2327,10 @@
       "A": {
        "pinnacle": null,
        "matchbook": {
-        "ah_home": -18.0,
-        "fair_h": 2.19,
-        "need_h": 2.46,
-        "ah_away": 9.1,
+        "ah_home": -19.7,
+        "fair_h": 2.55,
+        "need_h": 2.9,
+        "ah_away": -3.0,
         "fair_a": 1.84,
         "need_a": 2.06,
         "over": -13.2,
@@ -2345,10 +2345,10 @@
       "AV": {
        "pinnacle": null,
        "matchbook": {
-        "ah_home": -14.3,
-        "fair_h": 2.09,
-        "need_h": 2.35,
-        "ah_away": 5.0,
+        "ah_home": -15.7,
+        "fair_h": 2.41,
+        "need_h": 2.74,
+        "ah_away": -6.7,
         "fair_a": 1.91,
         "need_a": 2.14,
         "over": -17.5,
@@ -2362,7 +2362,7 @@
       }
      },
      "picks": {
-      "H": "DOG 2 +0.50 @2.04 (Matchbook, +11%)",
+      "H": "",
       "A": "",
       "AV": "",
       "over": "",
@@ -2375,7 +2375,7 @@
       "H": 0.5774,
       "A": 0.5959,
       "AV": 0.6037,
-      "mkt": 0.6326
+      "mkt": 0.632
      }
     },
     {
@@ -2459,11 +2459,11 @@
       "bovada": null,
       "betfair_ex_eu": null,
       "source": "matchbook",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "matchbook",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -2619,11 +2619,11 @@
       "bovada": null,
       "betfair_ex_eu": null,
       "source": "matchbook",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "matchbook",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -2776,11 +2776,11 @@
       "bovada": null,
       "betfair_ex_eu": null,
       "source": "matchbook",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "matchbook",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -2928,20 +2928,20 @@
        "under": 1.95,
        "o1": 1.21,
        "ox": 7.51,
-       "o2": 14.5,
+       "o2": 14.51,
        "raw_h": 1.17,
        "raw_d": 7.25,
        "raw_a": 14.0,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 6.41,
-       "over_h2h_adj": 2.73,
+       "over_h2h_adj": 2.7,
        "raw_oh": 1.89,
        "raw_oa": 1.93,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.72,
-       "over_spreads_adj": 3.22,
+       "over_spreads_adj": 3.21,
        "raw_over": 1.89,
        "raw_under": 1.93,
        "gap_totals": 1.12,
@@ -2960,11 +2960,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -3085,12 +3085,12 @@
       "mkt": 0.3802,
       "real": {
        "book": "pinnacle",
-       "yes": 2.51,
+       "yes": 2.52,
        "no": 1.56,
-       "when": "2026-11-13T12:11",
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
-         2.51,
+         2.52,
          1.56
         ]
        }
@@ -3182,22 +3182,22 @@
        "ou_line": 2.0,
        "over": 1.97,
        "under": 1.89,
-       "o1": 6.21,
+       "o1": 6.22,
        "ox": 3.42,
-       "o2": 1.74,
+       "o2": 1.73,
        "raw_h": 6.0,
        "raw_d": 3.3,
-       "raw_a": 1.68,
-       "gap_h2h": 3.67,
+       "raw_a": 1.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
-       "over_h2h": 6.49,
-       "over_h2h_adj": 2.82,
+       "over_h2h": 6.85,
+       "over_h2h_adj": 3.14,
        "raw_oh": 1.93,
        "raw_oa": 1.89,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.72,
-       "over_spreads_adj": 3.22,
+       "over_spreads_adj": 3.21,
        "raw_over": 1.95,
        "raw_under": 1.87,
        "gap_totals": 1.12,
@@ -3206,21 +3206,21 @@
        "over_totals_adj": 3.63
       },
       "betfair_ex_eu": {
-       "o1": 6.39,
-       "ox": 3.44,
-       "o2": 1.68,
-       "raw_h": 6.6,
+       "o1": 6.56,
+       "ox": 3.42,
+       "o2": 1.67,
+       "raw_h": 6.8,
        "raw_d": 3.55,
        "raw_a": 1.73,
-       "raw_over": 1.12,
+       "raw_over": 0.68,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -3325,12 +3325,12 @@
       "mkt": 0.3668,
       "real": {
        "book": "pinnacle",
-       "yes": 2.51,
+       "yes": 2.5,
        "no": 1.56,
-       "when": "2026-11-13T12:11",
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
-         2.51,
+         2.5,
          1.56
         ]
        }
@@ -3446,21 +3446,21 @@
        "over_totals_adj": 3.84
       },
       "betfair_ex_eu": {
-       "o1": 1.84,
-       "ox": 3.76,
-       "o2": 4.3,
+       "o1": 1.83,
+       "ox": 3.74,
+       "o2": 4.37,
        "raw_h": 1.88,
        "raw_d": 3.85,
-       "raw_a": 4.4,
-       "raw_over": 1.89,
+       "raw_a": 4.5,
+       "raw_over": 1.39,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -3696,11 +3696,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -3913,11 +3913,11 @@
        "pin_margin": 4.37
       },
       "source": "betfair_ex_eu",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "betfair_ex_eu",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -4080,11 +4080,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -4320,11 +4320,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -4560,11 +4560,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -5721,13 +5721,13 @@
        "raw_h": 2.51,
        "raw_d": 2.9,
        "raw_a": 2.95,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 8.22,
-       "over_h2h_adj": 4.55,
+       "over_h2h_adj": 4.51,
        "raw_oh": 1.77,
        "raw_oa": 2.1,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.12,
        "over_spreads_adj": 2.61,
@@ -5739,21 +5739,21 @@
        "over_totals_adj": 3.33
       },
       "betfair_ex_eu": {
-       "o1": 2.55,
-       "ox": 3.04,
-       "o2": 3.09,
+       "o1": 2.54,
+       "ox": 3.03,
+       "o2": 3.13,
        "raw_h": 2.64,
        "raw_d": 3.15,
-       "raw_a": 3.2,
-       "raw_over": 0.87,
+       "raw_a": 3.25,
+       "raw_over": 0.39,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -5956,21 +5956,21 @@
        "over": 2.07,
        "under": 1.82,
        "o1": 5.07,
-       "ox": 3.73,
-       "o2": 1.72,
+       "ox": 3.78,
+       "o2": 1.71,
        "raw_h": 4.9,
-       "raw_d": 3.6,
-       "raw_a": 1.66,
-       "gap_h2h": 3.67,
+       "raw_d": 3.65,
+       "raw_a": 1.65,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
-       "over_h2h": 8.43,
-       "over_h2h_adj": 4.75,
+       "over_h2h": 8.41,
+       "over_h2h_adj": 4.7,
        "raw_oh": 1.93,
        "raw_oa": 1.89,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.72,
-       "over_spreads_adj": 3.22,
+       "over_spreads_adj": 3.21,
        "raw_over": 2.05,
        "raw_under": 1.8,
        "gap_totals": 1.12,
@@ -5979,21 +5979,21 @@
        "over_totals_adj": 3.21
       },
       "betfair_ex_eu": {
-       "o1": 5.21,
+       "o1": 5.3,
        "ox": 3.76,
-       "o2": 1.71,
-       "raw_h": 5.4,
+       "o2": 1.7,
+       "raw_h": 5.5,
        "raw_d": 3.9,
-       "raw_a": 1.77,
-       "raw_over": 0.66,
+       "raw_a": 1.76,
+       "raw_over": 0.64,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -6098,12 +6098,12 @@
       "mkt": 0.4717,
       "real": {
        "book": "pinnacle",
-       "yes": 1.99,
+       "yes": 1.98,
        "no": 1.85,
-       "when": "2026-11-13T12:11",
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
-         1.99,
+         1.98,
          1.85
         ]
        }
@@ -6201,13 +6201,13 @@
        "raw_h": 2.55,
        "raw_d": 2.93,
        "raw_a": 2.85,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 8.43,
-       "over_h2h_adj": 4.76,
+       "over_h2h_adj": 4.72,
        "raw_oh": 1.8,
        "raw_oa": 2.05,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.34,
        "over_spreads_adj": 2.83,
@@ -6229,11 +6229,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -6340,7 +6340,7 @@
        "book": "pinnacle",
        "yes": 2.16,
        "no": 1.72,
-       "when": "2026-11-13T12:11",
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
          2.16,
@@ -6430,8 +6430,8 @@
       "matchbook": null,
       "bovada": {
        "ah_line": -1.25,
-       "oh": 1.88,
-       "oa": 2.01,
+       "oh": 1.86,
+       "oa": 2.03,
        "ou_line": 2.5,
        "over": 1.95,
        "under": 1.91,
@@ -6441,16 +6441,16 @@
        "raw_h": 1.34,
        "raw_d": 4.6,
        "raw_a": 8.5,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 8.13,
-       "over_h2h_adj": 4.46,
-       "raw_oh": 1.85,
-       "raw_oa": 1.98,
-       "gap_spreads": 1.5,
+       "over_h2h_adj": 4.42,
+       "raw_oh": 1.83,
+       "raw_oa": 2.0,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
-       "over_spreads": 4.56,
-       "over_spreads_adj": 3.06,
+       "over_spreads": 4.64,
+       "over_spreads_adj": 3.13,
        "raw_over": 1.93,
        "raw_under": 1.89,
        "gap_totals": 1.12,
@@ -6469,11 +6469,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -6490,10 +6490,10 @@
        },
        "matchbook": null,
        "bovada": {
-        "ah_home": 29.4,
+        "ah_home": 28.2,
         "fair_h": 1.4,
         "need_h": 1.57,
-        "ah_away": -30.1,
+        "ah_away": -29.5,
         "fair_a": 2.83,
         "need_a": 3.19,
         "over": 11.9,
@@ -6518,10 +6518,10 @@
        },
        "matchbook": null,
        "bovada": {
-        "ah_home": 1.3,
+        "ah_home": 0.4,
         "fair_h": 1.83,
         "need_h": 2.07,
-        "ah_away": 2.4,
+        "ah_away": 3.4,
         "fair_a": 1.93,
         "need_a": 2.17,
         "over": 0.5,
@@ -6546,10 +6546,10 @@
        },
        "matchbook": null,
        "bovada": {
-        "ah_home": 31.3,
+        "ah_home": 30.1,
         "fair_h": 1.38,
         "need_h": 1.55,
-        "ah_away": -32.4,
+        "ah_away": -31.8,
         "fair_a": 2.93,
         "need_a": 3.3,
         "over": 13.1,
@@ -6594,13 +6594,13 @@
       "mkt": 0.4026,
       "real": {
        "book": "pinnacle",
-       "yes": 2.34,
-       "no": 1.62,
-       "when": "2026-11-13T12:11",
+       "yes": 2.36,
+       "no": 1.61,
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
-         2.34,
-         1.62
+         2.36,
+         1.61
         ]
        }
       }
@@ -7646,16 +7646,16 @@
        "raw_h": 1.63,
        "raw_d": 3.15,
        "raw_a": 6.5,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 8.48,
-       "over_h2h_adj": 4.81,
+       "over_h2h_adj": 4.77,
        "raw_oh": 1.89,
        "raw_oa": 1.93,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.72,
-       "over_spreads_adj": 3.22,
+       "over_spreads_adj": 3.21,
        "raw_over": 1.98,
        "raw_under": 1.85,
        "gap_totals": 1.12,
@@ -7665,20 +7665,20 @@
       },
       "betfair_ex_eu": {
        "o1": 1.65,
-       "ox": 3.27,
-       "o2": 7.5,
-       "raw_h": 1.72,
+       "ox": 3.28,
+       "o2": 7.53,
+       "raw_h": 1.71,
        "raw_d": 3.4,
        "raw_a": 7.8,
-       "raw_over": 0.37,
+       "raw_over": 0.71,
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -7802,7 +7802,7 @@
        "book": "pinnacle",
        "yes": 3.18,
        "no": 1.36,
-       "when": "2026-11-13T12:11",
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
          3.18,
@@ -7895,26 +7895,26 @@
        "oh": 1.92,
        "oa": 1.96,
        "ou_line": 2.25,
-       "over": 1.91,
-       "under": 1.95,
+       "over": 1.95,
+       "under": 1.91,
        "o1": 16.56,
        "ox": 5.95,
        "o2": 1.21,
        "raw_h": 16.0,
        "raw_d": 5.75,
        "raw_a": 1.17,
-       "gap_h2h": 3.67,
+       "gap_h2h": 3.71,
        "gap_h2h_day": "2026-11-13",
        "over_h2h": 9.11,
-       "over_h2h_adj": 5.44,
+       "over_h2h_adj": 5.4,
        "raw_oh": 1.89,
        "raw_oa": 1.93,
-       "gap_spreads": 1.5,
+       "gap_spreads": 1.51,
        "gap_spreads_day": "2026-11-13",
        "over_spreads": 4.72,
-       "over_spreads_adj": 3.22,
-       "raw_over": 1.89,
-       "raw_under": 1.93,
+       "over_spreads_adj": 3.21,
+       "raw_over": 1.93,
+       "raw_under": 1.89,
        "gap_totals": 1.12,
        "gap_totals_day": "2026-11-13",
        "over_totals": 4.72,
@@ -7931,11 +7931,11 @@
        "pin_margin": 4.37
       },
       "source": "pinnacle",
-      "ts": "2026-11-13 13:39",
+      "ts": "2026-11-13 13:45",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.37,
-      "x12_ts": "2026-11-13 13:39"
+      "x12_ts": "2026-11-13 13:45"
      },
      "edges": {
       "H": {
@@ -7958,8 +7958,8 @@
         "ah_away": -6.9,
         "fair_a": 2.09,
         "need_a": 2.38,
-        "over": -6.6,
-        "p_over": 48.9,
+        "over": -4.9,
+        "p_over": 48.8,
         "need_over": 2.26
        },
        "betfair_ex_eu": null,
@@ -7986,8 +7986,8 @@
         "ah_away": -10.2,
         "fair_a": 2.18,
         "need_a": 2.48,
-        "over": -4.4,
-        "p_over": 50.1,
+        "over": -2.6,
+        "p_over": 49.9,
         "need_over": 2.2
        },
        "betfair_ex_eu": null,
@@ -8014,8 +8014,8 @@
         "ah_away": -10.2,
         "fair_a": 2.18,
         "need_a": 2.48,
-        "over": -9.4,
-        "p_over": 47.5,
+        "over": -7.7,
+        "p_over": 47.3,
         "need_over": 2.34
        },
        "betfair_ex_eu": null,
@@ -8040,13 +8040,13 @@
       "mkt": 0.2226,
       "real": {
        "book": "pinnacle",
-       "yes": 3.85,
-       "no": 1.26,
-       "when": "2026-11-13T12:11",
+       "yes": 4.05,
+       "no": 1.24,
+       "when": "2026-11-13T13:45",
        "books": {
         "pinnacle": [
-         3.85,
-         1.26
+         4.05,
+         1.24
         ]
        }
       }
