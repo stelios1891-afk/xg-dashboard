@@ -1,10 +1,10 @@
 {
-"_asof": "2026-11-14T18:47",
+"_asof": "2026-11-14T18:54",
 "_xi": {
 "8361": {
 "match": "Portugal - Denmark",
 "utc": "2026-11-14T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 795630,
@@ -15,12 +15,12 @@
 "name": "Alberto Costa"
 },
 {
-"pid": 1343750,
-"name": "Renato Veiga"
-},
-{
 "pid": 614006,
 "name": "Rúben Dias"
+},
+{
+"pid": 1343750,
+"name": "Renato Veiga"
 },
 {
 "pid": 751550,
@@ -55,7 +55,7 @@
 "8238": {
 "match": "Portugal - Denmark",
 "utc": "2026-11-14T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 967941,
@@ -78,28 +78,28 @@
 "name": "Joakim Mæhle"
 },
 {
-"pid": 1016093,
-"name": "Gustav Isaksen"
+"pid": 266523,
+"name": "Pierre-Emile Højbjerg"
 },
 {
 "pid": 950199,
 "name": "Morten Hjulmand"
 },
 {
-"pid": 266523,
-"name": "Pierre-Emile Højbjerg"
+"pid": 1016093,
+"name": "Gustav Isaksen"
 },
 {
 "pid": 888912,
 "name": "Mikkel Damsgaard"
 },
 {
-"pid": 1199272,
-"name": "Rasmus Højlund"
-},
-{
 "pid": 965349,
 "name": "Mohamed Daramy"
+},
+{
+"pid": 1199272,
+"name": "Rasmus Højlund"
 }
 ]
 },
@@ -208,11 +208,15 @@
 "10259": {
 "match": "Northern Ireland - Ukraine",
 "utc": "2026-11-14T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1420144,
 "name": "Pierce Charles"
+},
+{
+"pid": 1367703,
+"name": "Terry Devlin"
 },
 {
 "pid": 1443861,
@@ -235,16 +239,8 @@
 "name": "Shea Charles"
 },
 {
-"pid": 1077926,
-"name": "Ethan Galbraith"
-},
-{
 "pid": 1336751,
 "name": "Justin Devenny"
-},
-{
-"pid": 1395985,
-"name": "Patrick Kelly"
 },
 {
 "pid": 1246270,
@@ -253,21 +249,21 @@
 {
 "pid": 1211646,
 "name": "Jamie Donley"
+},
+{
+"pid": 1077926,
+"name": "Ethan Galbraith"
 }
 ]
 },
 "6718": {
 "match": "Northern Ireland - Ukraine",
 "utc": "2026-11-14T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1022350,
 "name": "Anatoliy Trubin"
-},
-{
-"pid": 1410340,
-"name": "Taras Mykhavko"
 },
 {
 "pid": 1140003,
@@ -278,28 +274,32 @@
 "name": "Eduard Sarapiy"
 },
 {
-"pid": 1252039,
-"name": "Illia Krupskyi"
-},
-{
-"pid": 728941,
-"name": "Yegor Nazaryna"
-},
-{
-"pid": 1232216,
-"name": "Ivan Varfolomeev"
-},
-{
-"pid": 1192419,
-"name": "Oleg Ocheretko"
+"pid": 656667,
+"name": "Mykola Matviyenko"
 },
 {
 "pid": 874025,
 "name": "Vitaliy Mykolenko"
 },
 {
-"pid": 1516142,
-"name": "Igor Krasnopir"
+"pid": 845695,
+"name": "Oleksii Kashchuk"
+},
+{
+"pid": 1157236,
+"name": "Yehor Yarmoliuk"
+},
+{
+"pid": 1192419,
+"name": "Oleg Ocheretko"
+},
+{
+"pid": 1192398,
+"name": "Georgiy Sudakov"
+},
+{
+"pid": 955572,
+"name": "Danylo Sikan"
 },
 {
 "pid": 643690,
@@ -310,7 +310,7 @@
 "9730": {
 "match": "Romania - Poland",
 "utc": "2026-11-14T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 1159532,
@@ -321,16 +321,20 @@
 "name": "Andrei Rațiu"
 },
 {
-"pid": 1203661,
-"name": "Radu Drăgușin"
-},
-{
 "pid": 1377221,
 "name": "Andrei Coubiș"
 },
 {
-"pid": 559954,
-"name": "Nicușor Bancu"
+"pid": 1203661,
+"name": "Radu Drăgușin"
+},
+{
+"pid": 1413851,
+"name": "Lisav Naif Eissat"
+},
+{
+"pid": 770163,
+"name": "Alexandru Cicâldau"
 },
 {
 "pid": 862022,
@@ -339,10 +343,6 @@
 {
 "pid": 759567,
 "name": "Vlad Dragomir"
-},
-{
-"pid": 770163,
-"name": "Alexandru Cicâldau"
 },
 {
 "pid": 645107,
@@ -361,7 +361,7 @@
 "8568": {
 "match": "Romania - Poland",
 "utc": "2026-11-14T19:45",
-"type": "predicted",
+"type": "standard",
 "players": [
 {
 "pid": 450742,
@@ -384,14 +384,6 @@
 "name": "Oskar Kubiak"
 },
 {
-"pid": 1395322,
-"name": "Wiktor Nowak"
-},
-{
-"pid": 1121295,
-"name": "Kacper Urbański"
-},
-{
 "pid": 1580955,
 "name": "Marcel Reguła"
 },
@@ -400,12 +392,20 @@
 "name": "Sebastian Szymański"
 },
 {
+"pid": 1395322,
+"name": "Wiktor Nowak"
+},
+{
 "pid": 1053714,
 "name": "Nicola Zalewski"
 },
 {
 "pid": 93447,
 "name": "Robert Lewandowski"
+},
+{
+"pid": 558136,
+"name": "Karol Świderski"
 }
 ]
 },
@@ -2882,16 +2882,6 @@
 "until": null
 }
 },
-"_alerts": [
-{
-"key": "8238|1436856|2026-11-14T19:45",
-"team": "Denmark",
-"name": "Victor Froholdt",
-"v": 71.327284,
-"started_last": true,
-"match": "Portugal - Denmark",
-"utc": "2026-11-14T19:45"
-}
-],
-"_hash": "7d45a27b2ba3a0cbfc87948da75058d8"
+"_alerts": [],
+"_hash": "2fb4a330549f55149121889761de5827"
 }
