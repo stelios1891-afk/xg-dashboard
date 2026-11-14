@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-14T23:34+00:00",
+ "generated": "2026-11-14T23:46+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -11037,12 +11037,12 @@
    "away": "Brooklyn Nets",
    "hcode": "MEM",
    "acode": "BRK",
-   "margin": 1.16,
+   "margin": 1.12,
    "total": 224.4,
    "total_src": "μοντελο",
-   "pts_h": 112.8,
+   "pts_h": 112.7,
    "pts_a": 111.6,
-   "p_home": 0.534,
+   "p_home": 0.533,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -11057,8 +11057,8 @@
    "rl_a": "2026-11-11",
    "margin_base": 3.0,
    "total_base": 225.1,
-   "abs_dm": -1.61,
-   "abs_dt": -0.73,
+   "abs_dm": -1.65,
+   "abs_dt": -0.74,
    "abs_shadow": 0.38,
    "abs_h": [
     [
@@ -11085,32 +11085,18 @@
    ],
    "abs_a": [
     [
-     "BrownJr.,Mikel",
-     23.3,
-     0,
-     "Probable",
-     0.07
-    ],
-    [
      "PorterJr.,Michael",
      32.4,
      1,
      "Questionable",
      0.42
-    ],
-    [
-     "Traore,Nolan",
-     22.1,
-     0,
-     "Probable",
-     0.07
     ]
    ],
    "inj_src": "official",
    "abs_lo": 1.198,
    "abs_ld": 0.126,
-   "abs_lop": 1.936,
-   "abs_ldp": 0.238,
+   "abs_lop": 1.968,
+   "abs_ldp": 0.241,
    "trade_dm": -0.23,
    "trades": [
     [
@@ -11134,12 +11120,12 @@
    "away": "Chicago Bulls",
    "hcode": "MIN",
    "acode": "CHI",
-   "margin": 17.15,
-   "total": 236.4,
+   "margin": 17.22,
+   "total": 236.8,
    "total_src": "μοντελο",
-   "pts_h": 126.8,
-   "pts_a": 109.6,
-   "p_home": 0.898,
+   "pts_h": 127.0,
+   "pts_a": 109.8,
+   "p_home": 0.899,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -11154,9 +11140,9 @@
    "rl_a": "2026-11-13",
    "margin_base": 17.41,
    "total_base": 237.8,
-   "abs_dm": -0.26,
-   "abs_dt": -1.32,
-   "abs_shadow": 0.47,
+   "abs_dm": -0.19,
+   "abs_dt": -0.92,
+   "abs_shadow": 0.83,
    "abs_h": [
     [
      "Edwards,Anthony",
@@ -11168,18 +11154,11 @@
    ],
    "abs_a": [
     [
-     "Powell,Norman",
-     29.1,
-     1,
-     "Questionable",
-     0.46
-    ],
-    [
      "Smith,Jalen",
      25.2,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
      "Wilson,Caleb",
@@ -11190,10 +11169,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.278,
-   "abs_ld": -0.187,
-   "abs_lop": 2.836,
-   "abs_ldp": 0.098,
+   "abs_lo": 2.656,
+   "abs_ld": 0.406,
+   "abs_lop": 2.656,
+   "abs_ldp": 0.406,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
