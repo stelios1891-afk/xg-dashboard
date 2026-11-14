@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-14T01:41+00:00",
+ "generated": "2026-11-14T01:53+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -10668,12 +10668,12 @@
    "away": "Golden State Warriors",
    "hcode": "SAS",
    "acode": "GSW",
-   "margin": 8.69,
-   "total": 220.8,
+   "margin": 9.89,
+   "total": 220.9,
    "total_src": "μοντελο",
-   "pts_h": 114.7,
-   "pts_a": 106.0,
-   "p_home": 0.74,
+   "pts_h": 115.4,
+   "pts_a": 105.5,
+   "p_home": 0.768,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -10688,25 +10688,10 @@
    "rl_a": "2026-11-11",
    "margin_base": 7.88,
    "total_base": 222.2,
-   "abs_dm": 0.81,
-   "abs_dt": -1.38,
-   "abs_shadow": 0.27,
-   "abs_h": [
-    [
-     "Fox,De'Aaron",
-     29.1,
-     1,
-     "Questionable",
-     0.46
-    ],
-    [
-     "Vassell,Devin",
-     30.4,
-     0,
-     "Questionable",
-     0.42
-    ]
-   ],
+   "abs_dm": 2.02,
+   "abs_dt": -1.26,
+   "abs_shadow": -0.06,
+   "abs_h": [],
    "abs_a": [
     [
      "Curry,Stephen",
@@ -10719,8 +10704,8 @@
    "inj_src": "official",
    "abs_lo": 1.898,
    "abs_ld": -0.316,
-   "abs_lop": 2.701,
-   "abs_ldp": -0.025,
+   "abs_lop": 1.898,
+   "abs_ldp": -0.316,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
