@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-15 21:17",
+ "generated": "2026-11-15 21:38",
  "toa_scanned": "2026-11-15 21:16",
- "toa_matches": 22,
- "ng_snapshot": "2026-11-15 21:17",
+ "toa_matches": 21,
+ "ng_snapshot": "2026-11-15 21:37",
  "ng_snapshot_afconq": null,
  "comps": [
   {
@@ -275,294 +275,6 @@
         "pinnacle": [
          1.6,
          2.43
-        ]
-       }
-      }
-     }
-    },
-    {
-     "utc": "2026-11-15 19:45",
-     "home": "Croatia",
-     "away": "Czechia",
-     "hid": 10155,
-     "aid": 8496,
-     "dead": "",
-     "callups": "Croatia: Luka Sučić(18.9M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται) | Czechia: Michal Sadílek(7.0M, εκτος αποστολης στο προηγουμενο — δεν αφαιρειται), Pavel Šulc(22.3M)",
-     "init_ah": "",
-     "init_ou": "",
-     "versions": {
-      "H": {
-       "R_h": 1803.0,
-       "R_a": 1689.0,
-       "vadj": 65.0,
-       "diff": 238.0,
-       "xg_h": 2.21,
-       "xg_a": 1.05,
-       "T": 3.05,
-       "xg_h_D": 2.14,
-       "xg_a_D": 1.122,
-       "p1": 62,
-       "px": 26,
-       "p2": 12,
-       "fair_1": 1.61,
-       "fair_x": 3.85,
-       "fair_2": 8.33
-      },
-      "A": {
-       "R_h": 1834.0,
-       "R_a": 1649.0,
-       "vadj": 0.0,
-       "diff": 246.0,
-       "xg_h": 1.99,
-       "xg_a": 0.8,
-       "T": 2.79,
-       "xg_h_D": 2.015,
-       "xg_a_D": 0.777,
-       "p1": 62,
-       "px": 26,
-       "p2": 12,
-       "fair_1": 1.61,
-       "fair_x": 3.85,
-       "fair_2": 8.33
-      },
-      "AV": {
-       "R_h": 1834.0,
-       "R_a": 1649.0,
-       "vadj": 65.0,
-       "diff": 311.0,
-       "xg_h": 2.25,
-       "xg_a": 0.76,
-       "T": 2.83,
-       "xg_h_D": 2.161,
-       "xg_a_D": 0.845,
-       "p1": 70,
-       "px": 21,
-       "p2": 9,
-       "fair_1": 1.43,
-       "fair_x": 4.76,
-       "fair_2": 11.11
-      }
-     },
-     "market": {
-      "crown": null,
-      "sbobet": null,
-      "pinnacle": {
-       "ah_line": -1.25,
-       "oh": 1.84,
-       "oa": 2.08,
-       "ou_line": 2.75,
-       "over": 1.89,
-       "under": 2.0,
-       "o1": 1.4,
-       "ox": 4.85,
-       "o2": 8.35
-      },
-      "matchbook": {
-       "ah_line": -1.5,
-       "oh": 2.08,
-       "oa": 1.9,
-       "o1": 1.4,
-       "ox": 5.2,
-       "o2": 9.6
-      },
-      "bovada": {
-       "ah_line": -1.5,
-       "oh": 2.04,
-       "oa": 1.87,
-       "ou_line": 2.75,
-       "over": 1.9,
-       "under": 1.99,
-       "o1": 1.4,
-       "ox": 4.88,
-       "o2": 8.48,
-       "raw_h": 1.36,
-       "raw_d": 4.75,
-       "raw_a": 8.25,
-       "gap_h2h": 2.93,
-       "gap_h2h_day": "2026-11-15",
-       "over_h2h": 6.7,
-       "over_h2h_adj": 3.78,
-       "raw_oh": 2.0,
-       "raw_oa": 1.83,
-       "gap_spreads": 2.15,
-       "gap_spreads_day": "2026-11-15",
-       "over_spreads": 4.64,
-       "over_spreads_adj": 2.49,
-       "raw_over": 1.87,
-       "raw_under": 1.95,
-       "gap_totals": 1.85,
-       "gap_totals_day": "2026-11-15",
-       "over_totals": 4.76,
-       "over_totals_adj": 2.91
-      },
-      "betfair_ex_eu": {
-       "o1": 1.35,
-       "ox": 5.03,
-       "o2": 9.29,
-       "raw_h": 1.4,
-       "raw_d": 5.2,
-       "raw_a": 9.6,
-       "raw_over": 1.08,
-       "pin_margin": 4.46
-      },
-      "source": "pinnacle",
-      "ts": "2026-11-15 19:44",
-      "ng_ts": null,
-      "x12_source": "pinnacle",
-      "pin_margin": 4.46,
-      "x12_ts": "2026-11-15 19:44"
-     },
-     "edges": {
-      "H": {
-       "pinnacle": {
-        "ah_home": -16.8,
-        "fair_h": 2.24,
-        "need_h": 2.54,
-        "ah_away": 23.5,
-        "fair_a": 1.66,
-        "need_a": 1.85,
-        "over": 1.1,
-        "p_over": 53.5,
-        "need_over": 2.04
-       },
-       "matchbook": {
-        "ah_home": -18.7,
-        "fair_h": 2.52,
-        "need_h": 2.83,
-        "ah_away": 12.9,
-        "fair_a": 1.66,
-        "need_a": 1.85
-       },
-       "bovada": {
-        "ah_home": -20.3,
-        "fair_h": 2.52,
-        "need_h": 2.83,
-        "ah_away": 11.2,
-        "fair_a": 1.66,
-        "need_a": 1.85,
-        "over": 1.6,
-        "p_over": 53.5,
-        "need_over": 2.04
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "A": {
-       "pinnacle": {
-        "ah_home": -16.6,
-        "fair_h": 2.24,
-        "need_h": 2.54,
-        "ah_away": 24.3,
-        "fair_a": 1.65,
-        "need_a": 1.84,
-        "over": -10.1,
-        "p_over": 47.6,
-        "need_over": 2.33
-       },
-       "matchbook": {
-        "ah_home": -19.6,
-        "fair_h": 2.55,
-        "need_h": 2.86,
-        "ah_away": 13.7,
-        "fair_a": 1.65,
-        "need_a": 1.84
-       },
-       "bovada": {
-        "ah_home": -21.1,
-        "fair_h": 2.55,
-        "need_h": 2.86,
-        "ah_away": 12.0,
-        "fair_a": 1.65,
-        "need_a": 1.84,
-        "over": -9.7,
-        "p_over": 47.5,
-        "need_over": 2.33
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      },
-      "AV": {
-       "pinnacle": {
-        "ah_home": -4.2,
-        "fair_h": 1.9,
-        "need_h": 2.16,
-        "ah_away": 9.7,
-        "fair_a": 1.87,
-        "need_a": 2.09,
-        "over": -8.2,
-        "p_over": 48.6,
-        "need_over": 2.27
-       },
-       "matchbook": {
-        "ah_home": -4.9,
-        "fair_h": 2.15,
-        "need_h": 2.42,
-        "ah_away": 0.4,
-        "fair_a": 1.87,
-        "need_a": 2.09
-       },
-       "bovada": {
-        "ah_home": -6.7,
-        "fair_h": 2.15,
-        "need_h": 2.42,
-        "ah_away": -1.2,
-        "fair_a": 1.87,
-        "need_a": 2.09,
-        "over": -7.8,
-        "p_over": 48.6,
-        "need_over": 2.27
-       },
-       "betfair_ex_eu": null,
-       "crown": null,
-       "sbobet": null
-      }
-     },
-     "picks": {
-      "H": "DOG 2 +1.25 @2.08 (Pinnacle, +23%)",
-      "A": "DOG 2 +1.25 @2.08 (Pinnacle, +24%)",
-      "AV": "",
-      "over": "",
-      "over_A": "",
-      "over_AV": ""
-     },
-     "consensus": [
-      {
-       "mkt": "AH",
-       "role": "dog",
-       "side": 2,
-       "line": 1.25,
-       "odds": 2.08,
-       "book": "Pinnacle",
-       "edge": 0.23,
-       "models": "Μ1+Μ2",
-       "n": 2,
-       "edges": {
-        "Μ1": 0.23,
-        "Μ2": 0.24
-       }
-      }
-     ],
-     "consensus_log": [],
-     "btts": {
-      "H": 0.5788,
-      "A": 0.4754,
-      "AV": 0.4762,
-      "mkt": 0.4709,
-      "real": {
-       "book": "pinnacle",
-       "yes": 2.05,
-       "no": 1.82,
-       "when": "2026-11-15T19:44",
-       "books": {
-        "matchbook": [
-         2.06,
-         1.92
-        ],
-        "pinnacle": [
-         2.05,
-         1.82
         ]
        }
       }
@@ -2712,7 +2424,7 @@
        "diff": 149.0,
        "xg_h": 1.77,
        "xg_a": 1.05,
-       "T": 2.59,
+       "T": 2.6,
        "xg_h_D": 1.782,
        "xg_a_D": 1.031,
        "p1": 50,
@@ -4602,10 +4314,10 @@
        "xg_a_D": 1.081,
        "p1": 33,
        "px": 35,
-       "p2": 32,
+       "p2": 31,
        "fair_1": 3.03,
        "fair_x": 2.86,
-       "fair_2": 3.12
+       "fair_2": 3.23
       },
       "A": {
        "R_h": 1394.0,
@@ -4856,10 +4568,10 @@
        "T": 3.01,
        "xg_h_D": 2.598,
        "xg_a_D": 0.67,
-       "p1": 83,
+       "p1": 84,
        "px": 12,
        "p2": 4,
-       "fair_1": 1.2,
+       "fair_1": 1.19,
        "fair_x": 8.33,
        "fair_2": 25.0
       },
