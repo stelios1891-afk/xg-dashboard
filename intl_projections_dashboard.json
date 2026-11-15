@@ -1,8 +1,8 @@
 {
- "generated": "2026-11-15 18:04",
- "toa_scanned": "2026-11-15 18:04",
+ "generated": "2026-11-15 18:06",
+ "toa_scanned": "2026-11-15 18:06",
  "toa_matches": 24,
- "ng_snapshot": "2026-11-15 17:02",
+ "ng_snapshot": "2026-11-15 18:05",
  "ng_snapshot_afconq": null,
  "comps": [
   {
@@ -134,11 +134,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -264,17 +264,17 @@
       "mkt": 0.6127,
       "real": {
        "book": "pinnacle",
-       "yes": 1.54,
-       "no": 2.56,
-       "when": "2026-11-15T17:35",
+       "yes": 1.53,
+       "no": 2.58,
+       "when": "2026-11-15T18:06",
        "books": {
         "matchbook": [
          1.57,
-         2.68
+         2.72
         ],
         "pinnacle": [
-         1.54,
-         2.56
+         1.53,
+         2.58
         ]
        }
       }
@@ -358,9 +358,9 @@
        "o2": 7.34
       },
       "matchbook": {
-       "ah_line": -1.25,
-       "oh": 2.1,
-       "oa": 1.88,
+       "ah_line": -1.0,
+       "oh": 1.8,
+       "oa": 2.2,
        "ou_line": 2.5,
        "over": 1.8,
        "under": 2.24,
@@ -409,11 +409,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -429,12 +429,12 @@
         "need_over": 2.04
        },
        "matchbook": {
-        "ah_home": -7.2,
-        "fair_h": 2.25,
-        "need_h": 2.55,
-        "ah_away": 12.2,
-        "fair_a": 1.65,
-        "need_a": 1.85,
+        "ah_home": -7.5,
+        "fair_h": 1.97,
+        "need_h": 2.26,
+        "ah_away": 4.9,
+        "fair_a": 2.04,
+        "need_a": 2.34,
         "over": 5.7,
         "p_over": 58.7,
         "need_over": 1.84
@@ -467,12 +467,12 @@
         "need_over": 2.33
        },
        "matchbook": {
-        "ah_home": -6.7,
-        "fair_h": 2.24,
-        "need_h": 2.54,
-        "ah_away": 12.5,
-        "fair_a": 1.65,
-        "need_a": 1.84,
+        "ah_home": -6.0,
+        "fair_h": 1.93,
+        "need_h": 2.22,
+        "ah_away": 3.2,
+        "fair_a": 2.08,
+        "need_a": 2.4,
         "over": -4.9,
         "p_over": 52.8,
         "need_over": 2.05
@@ -505,12 +505,12 @@
         "need_over": 2.28
        },
        "matchbook": {
-        "ah_home": 7.1,
-        "fair_h": 1.91,
-        "need_h": 2.17,
-        "ah_away": -0.2,
-        "fair_a": 1.86,
-        "need_a": 2.08,
+        "ah_home": 5.2,
+        "fair_h": 1.66,
+        "need_h": 1.91,
+        "ah_away": -10.6,
+        "fair_a": 2.51,
+        "need_a": 2.9,
         "over": -3.3,
         "p_over": 53.7,
         "need_over": 2.01
@@ -566,10 +566,10 @@
        "book": "pinnacle",
        "yes": 1.92,
        "no": 1.93,
-       "when": "2026-11-15T17:35",
+       "when": "2026-11-15T18:06",
        "books": {
         "matchbook": [
-         1.94,
+         1.95,
          2.0
         ],
         "pinnacle": [
@@ -659,14 +659,14 @@
       },
       "matchbook": {
        "ah_line": -2.25,
-       "oh": 2.08,
+       "oh": 2.06,
        "oa": 1.87,
        "ou_line": 3.5,
-       "over": 1.83,
+       "over": 1.82,
        "under": 2.18,
-       "o1": 1.2,
-       "ox": 9.2,
-       "o2": 14.5
+       "o1": 1.21,
+       "ox": 9.0,
+       "o2": 15.0
       },
       "bovada": {
        "ah_line": -2.25,
@@ -700,20 +700,20 @@
       },
       "betfair_ex_eu": {
        "o1": 1.16,
-       "ox": 8.87,
-       "o2": 14.47,
-       "raw_h": 1.2,
-       "raw_d": 9.2,
+       "ox": 8.64,
+       "o2": 14.4,
+       "raw_h": 1.21,
+       "raw_d": 9.0,
        "raw_a": 15.0,
-       "raw_over": 0.87,
+       "raw_over": 0.42,
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -729,13 +729,13 @@
         "need_over": 2.98
        },
        "matchbook": {
-        "ah_home": -33.5,
+        "ah_home": -34.1,
         "fair_h": 3.27,
         "need_h": 3.72,
         "ah_away": 26.7,
         "fair_a": 1.46,
         "need_a": 1.62,
-        "over": -22.4,
+        "over": -22.9,
         "p_over": 42.4,
         "need_over": 2.55
        },
@@ -767,13 +767,13 @@
         "need_over": 2.48
        },
        "matchbook": {
-        "ah_home": -9.6,
+        "ah_home": -10.4,
         "fair_h": 2.29,
         "need_h": 2.6,
         "ah_away": 15.7,
         "fair_a": 1.59,
         "need_a": 1.78,
-        "over": -9.7,
+        "over": -10.2,
         "p_over": 49.3,
         "need_over": 2.19
        },
@@ -805,13 +805,13 @@
         "need_over": 2.54
        },
        "matchbook": {
-        "ah_home": -12.1,
+        "ah_home": -12.9,
         "fair_h": 2.37,
         "need_h": 2.69,
         "ah_away": 4.6,
         "fair_a": 1.76,
         "need_a": 1.97,
-        "over": -11.3,
+        "over": -11.8,
         "p_over": 48.4,
         "need_over": 2.23
        },
@@ -848,17 +848,17 @@
       "mkt": 0.5287,
       "real": {
        "book": "pinnacle",
-       "yes": 1.78,
-       "no": 2.08,
-       "when": "2026-11-15T17:35",
+       "yes": 1.83,
+       "no": 2.01,
+       "when": "2026-11-15T18:06",
        "books": {
         "matchbook": [
-         1.83,
-         2.12
+         1.85,
+         2.1
         ],
         "pinnacle": [
-         1.78,
-         2.08
+         1.83,
+         2.01
         ]
        }
       }
@@ -944,7 +944,7 @@
       "matchbook": {
        "ah_line": -0.5,
        "oh": 2.1,
-       "oa": 1.89,
+       "oa": 1.88,
        "o1": 2.12,
        "ox": 4.2,
        "o2": 3.4
@@ -990,11 +990,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -1013,7 +1013,7 @@
         "ah_home": 15.4,
         "fair_h": 1.79,
         "need_h": 2.01,
-        "ah_away": -17.7,
+        "ah_away": -18.1,
         "fair_a": 2.26,
         "need_a": 2.54
        },
@@ -1048,7 +1048,7 @@
         "ah_home": 14.0,
         "fair_h": 1.81,
         "need_h": 2.03,
-        "ah_away": -16.4,
+        "ah_away": -16.9,
         "fair_a": 2.23,
         "need_a": 2.5
        },
@@ -1083,7 +1083,7 @@
         "ah_home": 14.0,
         "fair_h": 1.81,
         "need_h": 2.03,
-        "ah_away": -16.4,
+        "ah_away": -16.9,
         "fair_a": 2.23,
         "need_a": 2.5
        },
@@ -1139,11 +1139,11 @@
        "book": "pinnacle",
        "yes": 1.51,
        "no": 2.65,
-       "when": "2026-11-15T17:35",
+       "when": "2026-11-15T18:06",
        "books": {
         "matchbook": [
-         1.54,
-         2.78
+         1.52,
+         2.88
         ],
         "pinnacle": [
          1.51,
@@ -1233,7 +1233,7 @@
       "matchbook": {
        "ah_line": -0.5,
        "oh": 1.92,
-       "oa": 2.02,
+       "oa": 2.06,
        "ou_line": 3.5,
        "over": 2.04,
        "under": 1.91,
@@ -1282,11 +1282,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -1305,7 +1305,7 @@
         "ah_home": -15.9,
         "fair_h": 2.25,
         "need_h": 2.53,
-        "ah_away": 10.6,
+        "ah_away": 12.7,
         "fair_a": 1.8,
         "need_a": 2.01,
         "over": -25.0,
@@ -1343,7 +1343,7 @@
         "ah_home": -11.4,
         "fair_h": 2.13,
         "need_h": 2.39,
-        "ah_away": 5.7,
+        "ah_away": 7.8,
         "fair_a": 1.88,
         "need_a": 2.11,
         "over": -16.4,
@@ -1381,7 +1381,7 @@
         "ah_home": -7.5,
         "fair_h": 2.05,
         "need_h": 2.29,
-        "ah_away": 1.7,
+        "ah_away": 3.7,
         "fair_a": 1.96,
         "need_a": 2.19,
         "over": -20.2,
@@ -1405,7 +1405,7 @@
       }
      },
      "picks": {
-      "H": "DOG 2 +0.50 @2.02 (Matchbook, +11%)",
+      "H": "DOG 2 +0.50 @2.06 (Matchbook, +13%)",
       "A": "",
       "AV": "",
       "over": "",
@@ -1563,11 +1563,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -1788,7 +1788,7 @@
       },
       "matchbook": {
        "ah_line": 0.0,
-       "oh": 1.86,
+       "oh": 1.87,
        "oa": 2.1,
        "o1": 2.48,
        "ox": 4.0,
@@ -1835,11 +1835,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -1855,7 +1855,7 @@
         "need_over": 2.66
        },
        "matchbook": {
-        "ah_home": 2.9,
+        "ah_home": 3.3,
         "fair_h": 1.76,
         "need_h": 2.04,
         "ah_away": -7.6,
@@ -1890,7 +1890,7 @@
         "need_over": 2.6
        },
        "matchbook": {
-        "ah_home": -1.1,
+        "ah_home": -0.7,
         "fair_h": 1.86,
         "need_h": 2.16,
         "ah_away": -3.1,
@@ -1925,7 +1925,7 @@
         "need_over": 2.88
        },
        "matchbook": {
-        "ah_home": -3.9,
+        "ah_home": -3.5,
         "fair_h": 1.94,
         "need_h": 2.25,
         "ah_away": 0.1,
@@ -2091,11 +2091,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -2345,11 +2345,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -2585,11 +2585,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -2825,11 +2825,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -3053,11 +3053,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -3298,11 +3298,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -3542,11 +3542,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -3770,11 +3770,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -3998,11 +3998,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -4699,11 +4699,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -4939,11 +4939,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -5179,11 +5179,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -5435,11 +5435,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -5696,11 +5696,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
@@ -5936,11 +5936,11 @@
        "pin_margin": 4.59
       },
       "source": "pinnacle",
-      "ts": "2026-11-15 18:04",
+      "ts": "2026-11-15 18:06",
       "ng_ts": null,
       "x12_source": "pinnacle",
       "pin_margin": 4.59,
-      "x12_ts": "2026-11-15 18:04"
+      "x12_ts": "2026-11-15 18:06"
      },
      "edges": {
       "H": {
