@@ -1,0 +1,681 @@
+{
+ "asof": "2026-09-24",
+ "window_days": 365,
+ "method": "p80 XI value 365d (core7_value_test / season_sim_tests Γ3)",
+ "leagues": {
+  "EPL": {
+   "8455": {
+    "name": "Chelsea",
+    "vfull": 669067444,
+    "n_xi": 33
+   },
+   "8456": {
+    "name": "Manchester City",
+    "vfull": 723509387,
+    "n_xi": 33
+   },
+   "8463": {
+    "name": "Leeds United",
+    "vfull": 189086165,
+    "n_xi": 33
+   },
+   "8472": {
+    "name": "Sunderland",
+    "vfull": 224679770,
+    "n_xi": 33
+   },
+   "8586": {
+    "name": "Tottenham Hotspur",
+    "vfull": 509319042,
+    "n_xi": 33
+   },
+   "8650": {
+    "name": "Liverpool",
+    "vfull": 717616416,
+    "n_xi": 33
+   },
+   "8667": {
+    "name": "Hull City",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "8668": {
+    "name": "Everton",
+    "vfull": 253344112,
+    "n_xi": 33
+   },
+   "8669": {
+    "name": "Coventry City",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "8678": {
+    "name": "AFC Bournemouth",
+    "vfull": 301475945,
+    "n_xi": 33
+   },
+   "9825": {
+    "name": "Arsenal",
+    "vfull": 758713049,
+    "n_xi": 33
+   },
+   "9826": {
+    "name": "Crystal Palace",
+    "vfull": 372257159,
+    "n_xi": 33
+   },
+   "9879": {
+    "name": "Fulham",
+    "vfull": 251703821,
+    "n_xi": 33
+   },
+   "9902": {
+    "name": "Ipswich Town",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "9937": {
+    "name": "Brentford",
+    "vfull": 323908504,
+    "n_xi": 33
+   },
+   "10203": {
+    "name": "Nottingham Forest",
+    "vfull": 394578311,
+    "n_xi": 33
+   },
+   "10204": {
+    "name": "Brighton & Hove Albion",
+    "vfull": 334634682,
+    "n_xi": 33
+   },
+   "10252": {
+    "name": "Aston Villa",
+    "vfull": 388472286,
+    "n_xi": 33
+   },
+   "10260": {
+    "name": "Manchester United",
+    "vfull": 441748375,
+    "n_xi": 33
+   },
+   "10261": {
+    "name": "Newcastle United",
+    "vfull": 450895831,
+    "n_xi": 33
+   }
+  },
+  "LaLiga": {
+   "8302": {
+    "name": "Sevilla",
+    "vfull": 91837129,
+    "n_xi": 32
+   },
+   "8305": {
+    "name": "Getafe",
+    "vfull": 44212273,
+    "n_xi": 32
+   },
+   "8315": {
+    "name": "Athletic Club",
+    "vfull": 258488284,
+    "n_xi": 32
+   },
+   "8370": {
+    "name": "Rayo Vallecano",
+    "vfull": 62036385,
+    "n_xi": 32
+   },
+   "8371": {
+    "name": "Osasuna",
+    "vfull": 65742407,
+    "n_xi": 33
+   },
+   "8558": {
+    "name": "Espanyol",
+    "vfull": 71193505,
+    "n_xi": 32
+   },
+   "8560": {
+    "name": "Real Sociedad",
+    "vfull": 175252888,
+    "n_xi": 32
+   },
+   "8581": {
+    "name": "Levante",
+    "vfull": 62432362,
+    "n_xi": 32
+   },
+   "8603": {
+    "name": "Real Betis",
+    "vfull": 143405211,
+    "n_xi": 32
+   },
+   "8633": {
+    "name": "Real Madrid",
+    "vfull": 777907770,
+    "n_xi": 32
+   },
+   "8634": {
+    "name": "Barcelona",
+    "vfull": 728072016,
+    "n_xi": 33
+   },
+   "8696": {
+    "name": "Racing Santander",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "9783": {
+    "name": "Deportivo A Coruña",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "9864": {
+    "name": "Málaga",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "9866": {
+    "name": "Deportivo Alavés",
+    "vfull": 42730125,
+    "n_xi": 32
+   },
+   "9906": {
+    "name": "Atlético Madrid",
+    "vfull": 402392306,
+    "n_xi": 30
+   },
+   "9910": {
+    "name": "Celta Vigo",
+    "vfull": 79666148,
+    "n_xi": 32
+   },
+   "10205": {
+    "name": "Villarreal",
+    "vfull": 162391295,
+    "n_xi": 32
+   },
+   "10267": {
+    "name": "Valencia",
+    "vfull": 109843181,
+    "n_xi": 32
+   },
+   "10268": {
+    "name": "Elche",
+    "vfull": 40042010,
+    "n_xi": 33
+   }
+  },
+  "SerieA": {
+   "6504": {
+    "name": "Monza",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "7881": {
+    "name": "Venezia",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "7943": {
+    "name": "Sassuolo",
+    "vfull": 101853270,
+    "n_xi": 34
+   },
+   "8524": {
+    "name": "Atalanta",
+    "vfull": 251411642,
+    "n_xi": 34
+   },
+   "8529": {
+    "name": "Cagliari",
+    "vfull": 76601996,
+    "n_xi": 34
+   },
+   "8535": {
+    "name": "Fiorentina",
+    "vfull": 177645644,
+    "n_xi": 34
+   },
+   "8543": {
+    "name": "Lazio",
+    "vfull": 142026399,
+    "n_xi": 34
+   },
+   "8564": {
+    "name": "Milan",
+    "vfull": 268709346,
+    "n_xi": 34
+   },
+   "8600": {
+    "name": "Udinese",
+    "vfull": 89871471,
+    "n_xi": 34
+   },
+   "8636": {
+    "name": "Inter",
+    "vfull": 420963699,
+    "n_xi": 34
+   },
+   "8686": {
+    "name": "Roma",
+    "vfull": 255267525,
+    "n_xi": 34
+   },
+   "9804": {
+    "name": "Torino",
+    "vfull": 75213175,
+    "n_xi": 34
+   },
+   "9857": {
+    "name": "Bologna",
+    "vfull": 157461798,
+    "n_xi": 34
+   },
+   "9875": {
+    "name": "Napoli",
+    "vfull": 239524438,
+    "n_xi": 34
+   },
+   "9885": {
+    "name": "Juventus",
+    "vfull": 389992317,
+    "n_xi": 34
+   },
+   "9888": {
+    "name": "Lecce",
+    "vfull": 40133078,
+    "n_xi": 34
+   },
+   "9891": {
+    "name": "Frosinone",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "10167": {
+    "name": "Parma",
+    "vfull": 107616494,
+    "n_xi": 34
+   },
+   "10171": {
+    "name": "Como",
+    "vfull": 188940509,
+    "n_xi": 34
+   },
+   "10233": {
+    "name": "Genoa",
+    "vfull": 90440410,
+    "n_xi": 34
+   }
+  },
+  "Bundesliga": {
+   "8149": {
+    "name": "Union Berlin",
+    "vfull": 71125146,
+    "n_xi": 30
+   },
+   "8178": {
+    "name": "Bayer Leverkusen",
+    "vfull": 244770679,
+    "n_xi": 30
+   },
+   "8226": {
+    "name": "Hoffenheim",
+    "vfull": 104438457,
+    "n_xi": 30
+   },
+   "8232": {
+    "name": "Elversberg",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "8358": {
+    "name": "Freiburg",
+    "vfull": 89765892,
+    "n_xi": 30
+   },
+   "8406": {
+    "name": "Augsburg",
+    "vfull": 86915936,
+    "n_xi": 30
+   },
+   "8460": {
+    "name": "Paderborn",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "8697": {
+    "name": "Werder Bremen",
+    "vfull": 100046733,
+    "n_xi": 30
+   },
+   "8722": {
+    "name": "1. FC Köln",
+    "vfull": 75839141,
+    "n_xi": 30
+   },
+   "9788": {
+    "name": "Borussia Mönchengladbach",
+    "vfull": 84871934,
+    "n_xi": 30
+   },
+   "9789": {
+    "name": "Borussia Dortmund",
+    "vfull": 319814018,
+    "n_xi": 30
+   },
+   "9790": {
+    "name": "Hamburger SV",
+    "vfull": 73587003,
+    "n_xi": 30
+   },
+   "9810": {
+    "name": "Eintracht Frankfurt",
+    "vfull": 229236480,
+    "n_xi": 30
+   },
+   "9823": {
+    "name": "Bayern München",
+    "vfull": 536726132,
+    "n_xi": 30
+   },
+   "9905": {
+    "name": "Mainz 05",
+    "vfull": 90117561,
+    "n_xi": 30
+   },
+   "10189": {
+    "name": "Schalke 04",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "10269": {
+    "name": "VfB Stuttgart",
+    "vfull": 224311321,
+    "n_xi": 30
+   },
+   "178475": {
+    "name": "RB Leipzig",
+    "vfull": 221129409,
+    "n_xi": 30
+   }
+  },
+  "Ligue1": {
+   "6379": {
+    "name": "Paris FC",
+    "vfull": 78281532,
+    "n_xi": 29
+   },
+   "8121": {
+    "name": "Angers",
+    "vfull": 22041443,
+    "n_xi": 29
+   },
+   "8521": {
+    "name": "Brest",
+    "vfull": 53075684,
+    "n_xi": 29
+   },
+   "8583": {
+    "name": "Auxerre",
+    "vfull": 48977217,
+    "n_xi": 29
+   },
+   "8588": {
+    "name": "Lens",
+    "vfull": 58116362,
+    "n_xi": 29
+   },
+   "8592": {
+    "name": "Marseille",
+    "vfull": 238478099,
+    "n_xi": 29
+   },
+   "8639": {
+    "name": "Lille",
+    "vfull": 142817952,
+    "n_xi": 29
+   },
+   "8682": {
+    "name": "Le Mans",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "8689": {
+    "name": "Lorient",
+    "vfull": 39181005,
+    "n_xi": 29
+   },
+   "9746": {
+    "name": "Le Havre",
+    "vfull": 24463840,
+    "n_xi": 29
+   },
+   "9748": {
+    "name": "Lyon",
+    "vfull": 120262759,
+    "n_xi": 29
+   },
+   "9829": {
+    "name": "Monaco",
+    "vfull": 237320623,
+    "n_xi": 29
+   },
+   "9831": {
+    "name": "Nice",
+    "vfull": 104363859,
+    "n_xi": 29
+   },
+   "9847": {
+    "name": "Paris Saint-Germain",
+    "vfull": 713132338,
+    "n_xi": 29
+   },
+   "9848": {
+    "name": "Strasbourg",
+    "vfull": 187876264,
+    "n_xi": 29
+   },
+   "9851": {
+    "name": "Rennes",
+    "vfull": 122032951,
+    "n_xi": 29
+   },
+   "9941": {
+    "name": "Toulouse",
+    "vfull": 98408504,
+    "n_xi": 29
+   },
+   "10242": {
+    "name": "Troyes",
+    "vfull": null,
+    "n_xi": 0
+   }
+  },
+  "Eredivisie": {
+   "6413": {
+    "name": "PEC Zwolle",
+    "vfull": 14838280,
+    "n_xi": 28
+   },
+   "6414": {
+    "name": "Telstar",
+    "vfull": 9025101,
+    "n_xi": 28
+   },
+   "6422": {
+    "name": "Fortuna Sittard",
+    "vfull": 10839894,
+    "n_xi": 28
+   },
+   "6433": {
+    "name": "Go Ahead Eagles",
+    "vfull": 19071489,
+    "n_xi": 28
+   },
+   "7788": {
+    "name": "Cambuur",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "8464": {
+    "name": "NEC Nijmegen",
+    "vfull": 29918070,
+    "n_xi": 28
+   },
+   "8525": {
+    "name": "Willem II",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "8593": {
+    "name": "Ajax",
+    "vfull": 125827383,
+    "n_xi": 28
+   },
+   "8611": {
+    "name": "FC Twente",
+    "vfull": 42453431,
+    "n_xi": 28
+   },
+   "8614": {
+    "name": "Sparta Rotterdam",
+    "vfull": 21539521,
+    "n_xi": 28
+   },
+   "8640": {
+    "name": "PSV Eindhoven",
+    "vfull": 171367253,
+    "n_xi": 28
+   },
+   "8674": {
+    "name": "FC Groningen",
+    "vfull": 24497977,
+    "n_xi": 28
+   },
+   "9908": {
+    "name": "FC Utrecht",
+    "vfull": 48202535,
+    "n_xi": 28
+   },
+   "10217": {
+    "name": "ADO Den Haag",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "10218": {
+    "name": "Excelsior",
+    "vfull": 9544018,
+    "n_xi": 28
+   },
+   "10228": {
+    "name": "SC Heerenveen",
+    "vfull": 30285127,
+    "n_xi": 28
+   },
+   "10229": {
+    "name": "AZ Alkmaar",
+    "vfull": 102533605,
+    "n_xi": 28
+   },
+   "10235": {
+    "name": "Feyenoord",
+    "vfull": 129506149,
+    "n_xi": 28
+   }
+  },
+  "PrimeiraLiga": {
+   "1567": {
+    "name": "Santa Clara",
+    "vfull": 18330805,
+    "n_xi": 28
+   },
+   "1634": {
+    "name": "Famalicão",
+    "vfull": 44256601,
+    "n_xi": 28
+   },
+   "1786": {
+    "name": "Académico Viseu",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "7841": {
+    "name": "Rio Ave",
+    "vfull": 20568148,
+    "n_xi": 28
+   },
+   "7842": {
+    "name": "Estoril",
+    "vfull": 22654253,
+    "n_xi": 28
+   },
+   "7844": {
+    "name": "Vitória de Guimarães",
+    "vfull": 11379413,
+    "n_xi": 28
+   },
+   "8348": {
+    "name": "Moreirense",
+    "vfull": 14024081,
+    "n_xi": 28
+   },
+   "9764": {
+    "name": "Gil Vicente",
+    "vfull": 15125422,
+    "n_xi": 28
+   },
+   "9768": {
+    "name": "Sporting CP",
+    "vfull": 302888230,
+    "n_xi": 28
+   },
+   "9772": {
+    "name": "Benfica",
+    "vfull": 236607053,
+    "n_xi": 28
+   },
+   "9773": {
+    "name": "FC Porto",
+    "vfull": 300007450,
+    "n_xi": 28
+   },
+   "9780": {
+    "name": "Alverca",
+    "vfull": 17837598,
+    "n_xi": 28
+   },
+   "10212": {
+    "name": "Marítimo",
+    "vfull": null,
+    "n_xi": 0
+   },
+   "10214": {
+    "name": "Nacional",
+    "vfull": 12258012,
+    "n_xi": 28
+   },
+   "10264": {
+    "name": "Braga",
+    "vfull": 87403476,
+    "n_xi": 28
+   },
+   "158085": {
+    "name": "Arouca",
+    "vfull": 12505365,
+    "n_xi": 28
+   },
+   "212821": {
+    "name": "Casa Pia AC",
+    "vfull": 12045696,
+    "n_xi": 28
+   },
+   "1074320": {
+    "name": "Estrela da Amadora",
+    "vfull": 9492650,
+    "n_xi": 28
+   }
+  }
+ }
+}

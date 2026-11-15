@@ -1,0 +1,330 @@
+"""
+toa_live.py — LIVE value picks μεσω The Odds API (TOA· πληρωμενη συνδρομη ~100k/μηνα).
+
+Τραβαει τρεχοντα Asian Handicap (spreads) Pinnacle+Matchbook ανα λιγκα (~1 credit/λιγκα),
+ταιριαζει ονοματα με το μοντελο (FotMob), και βγαζει value +handicap picks (ιδια μηχανη
+& staking με live_odds.compute_picks). Το μοντελο ΒΑΘΜΟΝΟΜΗΘΗΚΕ σε TOA odds → σωστη πηγη.
+
+TOA_KEY: inline env var (NEVER σε αρχειο). Κοστος: markets=spreads × region=eu = 1 credit/λιγκα.
+"""
+import coach_flags
+import os, sys, time, datetime
+from collections import defaultdict
+import requests
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dashboard'))
+import picks as engine
+import live_odds   # reuse assign() / team_match()
+import build_data   # flatten_warmstart (flat cross-season prior)
+import core7_anchor  # 29/9: αγκυρα αγορας (κοντες γραμμες, 15η+)
+
+BASE = 'https://api.the-odds-api.com/v4'
+SPORT = {'EPL': 'soccer_epl', 'LaLiga': 'soccer_spain_la_liga', 'SerieA': 'soccer_italy_serie_a',
+         'Bundesliga': 'soccer_germany_bundesliga', 'Ligue1': 'soccer_france_ligue_one',
+         'PrimeiraLiga': 'soccer_portugal_primeira_liga',
+         'Eredivisie': 'soccer_netherlands_eredivisie'}   # CORE 7 (Belgium & ScottishPrem εκτος portfolio, 2026-08)
+# TOA ονομα -> FotMob/μοντελο ονομα (προσθηκες οποτε φανει block)
+TOA_ALIAS = {'Internazionale': 'Inter'}   # 1/10: ονομα Pinnacle (guest API)
+
+def _key():
+    k = os.environ.get('TOA_KEY')
+    if not k:
+        raise RuntimeError("TOA_KEY δεν βρεθηκε στο environment (inline).")
+    return k
+
+def _pb(g, bk):
+    """AH (spreads) γραμμη ενος bookmaker -> (line_home_persp, home_odds, away_odds)."""
+    ht, at = g.get('home_team'), g.get('away_team')
+    for b in g.get('bookmakers', []):
+        if b.get('key') != bk:
+            continue
+        for m in b.get('markets', []):
+            if m.get('key') == 'spreads':
+                hp = ha = aa = None
+                for o in m.get('outcomes', []):
+                    if o.get('name') == ht:
+                        hp = o.get('point'); ha = o.get('price')
+                    elif o.get('name') == at:
+                        aa = o.get('price')
+                if hp is not None and ha and aa:
+                    return (float(hp), float(ha), float(aa))
+    return None
+
+def _tot(g, bk):
+    """Γραμμη total (totals) ενος bookmaker -> (line, over_odds, under_odds).
+    13/9 (ledger πακετο 5.1): η κινηση του total ειναι ο διαχωριστης ειδηση/ροη
+    (ταξινομηση κινησεων + διαβαθμιση Τ3) — πρεπει να καταγραφεται απο ΤΩΡΑ,
+    δεν ανακατασκευαζεται αναδρομικα. Κοστος: +1 market/λιγκα/scan."""
+    for b in g.get('bookmakers', []):
+        if b.get('key') != bk:
+            continue
+        for m in b.get('markets', []):
+            if m.get('key') == 'totals':
+                pt = ov = un = None
+                for o in m.get('outcomes', []):
+                    nm = str(o.get('name', '')).lower()
+                    if nm == 'over':
+                        pt = o.get('point'); ov = o.get('price')
+                    elif nm == 'under':
+                        un = o.get('price')
+                if pt is not None and ov and un:
+                    return (float(pt), float(ov), float(un))
+    return None
+
+def _h2h(g, bk):
+    """1X2 (h2h) ενος bookmaker -> (home_odds, draw_odds, away_odds)."""
+    ht, at = g.get('home_team'), g.get('away_team')
+    for b in g.get('bookmakers', []):
+        if b.get('key') != bk:
+            continue
+        for m in b.get('markets', []):
+            if m.get('key') == 'h2h':
+                h = d = a = None
+                for o in m.get('outcomes', []):
+                    nm = o.get('name')
+                    if nm == ht:
+                        h = o.get('price')
+                    elif nm == at:
+                        a = o.get('price')
+                    elif nm and str(nm).lower() == 'draw':
+                        d = o.get('price')
+                if h and d and a:
+                    return (float(h), float(d), float(a))
+    return None
+
+PIN_LEAGUE = {'EPL': 'epl', 'LaLiga': 'laliga', 'SerieA': 'seriea', 'Bundesliga': 'bundesliga', 'Ligue1': 'ligue1',
+              'PrimeiraLiga': 'primeira', 'Eredivisie': 'eredivisie'}
+
+def _fixtures(events):
+    fx = []
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    for g in events:
+        # ΣΕΝΤΡΑ (12/9/2026, Στελιος): το TOA επιστρεφει και ματς ΣΕ ΕΞΕΛΙΞΗ με in-play
+        # τιμες. Τα ΚΡΑΤΑΜΕ για καταγραφη (dom_live_odds, εως ΚΟ+150') με σημαια
+        # inplay=True, αλλα ΔΕΝ επηρεαζουν picks / market 1X2 / pregame odds_history.
+        try:
+            ct = datetime.datetime.fromisoformat(
+                str(g.get('commence_time', '')).replace('Z', '+00:00'))
+        except (ValueError, TypeError):
+            continue
+        mins_in = (now_utc - ct).total_seconds() / 60
+        if mins_in > 150:
+            continue                      # τελειωμενα: τιποτα
+        inplay = mins_in > 0
+        pin = _pb(g, 'pinnacle'); mb = _pb(g, 'matchbook')
+        if pin and mb and abs(pin[0] - mb[0]) < 0.01:
+            c = (pin[0], max(pin[1], mb[1]), max(pin[2], mb[2]))   # best price και των δυο
+        else:
+            c = pin or mb
+        if not c:
+            continue
+        fx.append(dict(home_toa=g.get('home_team'), away_toa=g.get('away_team'),
+                       line=c[0], home_odds=c[1], away_odds=c[2],
+                       h2h=_h2h(g, 'pinnacle') or _h2h(g, 'matchbook'),   # 1X2 (Pinnacle preferred)
+                       startTime=(g.get('commence_time') or '')[:16],
+                       inplay=inplay,
+                       # 13/9 (ledger πακετο 5.1): PINNACLE ΧΩΡΙΣΤΑ — το CLV της 2627
+                       # θα μετριεται σε Pinnacle −6h· το blend best-of δεν αρκει.
+                       pin=pin, mb=mb,
+                       ou=_tot(g, 'pinnacle') or _tot(g, 'matchbook'),
+                       limits=(g.get('bookmakers') or [{}])[0].get('limits')))
+    return fx
+
+def fetch_all(leagues):
+    """{league: [fixtures]} + credits_remaining, credits_cost.
+    1/10/2026 (Στελιος «απο τη στιγμη που το ποδοσφαιρο ειναι δωρεαν, ανοιξε το»): ΠΡΩΤΑ PINNACLE (pin_api, 0 credits, ιδια μορφη)·
+    Matchbook ΔΕΝ υπαρχει στην Pinnacle → τιμη = Pinnacle (οχι πια best-of Pinnacle/Matchbook). Αν η Pinnacle αποτυχει για μια λιγκα →
+    Odds API για εκεινη τη λιγκα (Pinnacle+Matchbook, οπως πριν) + ειδοποιηση. Επιστροφη: odds_source.json → "football": "toa"."""
+    import pin_api
+    use_pin = pin_api.source('football') == 'pinnacle'
+    out = {}; rem = None; cost = 0
+    for lg in leagues:
+        sport = SPORT.get(lg)
+        if not sport:
+            out[lg] = []; continue
+        if use_pin and PIN_LEAGUE.get(lg):
+            try:
+                out[lg] = _fixtures(pin_api.toa_like(PIN_LEAGUE[lg], include_alt=False)); continue
+            except pin_api.PinError as e:
+                pin_api.fallback_notice(f'football-{lg}', str(e))
+        r = requests.get(f'{BASE}/sports/{sport}/odds',
+                         params=dict(apiKey=_key(), regions='eu', markets='spreads,h2h,totals',
+                                     bookmakers='pinnacle,matchbook', oddsFormat='decimal'), timeout=45)
+        rem = r.headers.get('x-requests-remaining', rem)
+        try:
+            cost += int(r.headers.get('x-requests-last') or 0)
+        except ValueError:
+            pass
+        if r.status_code != 200:
+            out[lg] = []; continue
+        out[lg] = _fixtures(r.json())
+        time.sleep(0.3)
+    return out, rem, cost
+
+def _al(n):
+    return TOA_ALIAS.get(n, n)
+
+def compute_picks_toa(leagues, ratings_season, current_season=None):
+    """Structured value picks απο TOA — ιδια εξοδος με live_odds.compute_picks (+credits).
+    Ratings = warm-start blend K=8 (φετινο in-season + περσινο prior· βλ. build_data.league_ratings)."""
+    if current_season is None:
+        current_season = build_data.CURRENT_SEASON
+    M, id2name = engine.load_matches(list(SPORT), [ratings_season])
+    Mc, id2c = engine.load_matches(list(SPORT), [current_season])   # φετινο in-season
+    id2name.update(id2c)
+    name2id = {v: k for k, v in id2name.items()}
+    lg_names = defaultdict(set)
+    for _, r in M.iterrows():
+        lg_names[r['league']].add(id2name.get(r['home']))
+        lg_names[r['league']].add(id2name.get(r['away']))
+    allfix, rem, cost = fetch_all(leagues)
+    all_picks, all_blocked, all_norating = [], [], []
+    market_1x2 = {}   # "{home_id}_{away_id}" -> {h,d,a,when} (ολα τα matched fixtures, οχι μονο picks)
+    odds_rows = []    # στιγμιοτυπα γραμμων/αποδοσεων για το odds_history (ολα τα matched fixtures)
+    fav714 = []       # 9/10: σκια κοντα φαβορι 7-14 (scan_value → dom_fav714_shadow.jsonl)
+    for lg in leagues:
+        # ΚΟΙΝΗ λογικη με το dashboard -> build_data.league_ratings()
+        # (flat περσινο prior + διορθωμενες νεοφωτιστες + warm-start blend K=K_WARM).
+        # ΜΗΝ την ξαναγραψεις εδω: πρεπει scanner & dashboard να δινουν ΤΑ ΙΔΙΑ ratings.
+        try:
+            LR = build_data.league_ratings(lg, M, Mc, ratings_season, current_season, id2name, name2id)
+        except Exception as e:
+            print(f'  [{lg}] ratings error: {type(e).__name__}: {e}'); continue
+        blended = LR['blended']; lg_shots = LR['lg_shots']; lg_xgps = LR['lg_xgps']; hf = LR['hf']
+        for _f in LR['fixtures']:      # ονοματα (& νεοφωτιστες) -> name-matching + market 1X2
+            for _nk in ('home_name', 'away_name'):
+                if _f.get(_nk): lg_names[lg].add(_f[_nk])
+        fixtures = allfix.get(lg, [])
+        toa_names = sorted({_al(n) for f in fixtures for n in (f['home_toa'], f['away_toa']) if n})
+        res = live_odds.assign(toa_names, sorted(x for x in lg_names.get(lg, set()) if x))
+        for f in fixtures:
+            hfot, hok, hnote = live_odds.team_match(_al(f['home_toa']), res)
+            afot, aok, anote = live_odds.team_match(_al(f['away_toa']), res)
+            if not (hok and aok):
+                bad = f['home_toa'] if not hok else f['away_toa']
+                all_blocked.append((lg, f, bad, hnote if not hok else anote)); continue
+            H = name2id.get(hfot); A = name2id.get(afot)
+            if H is None or A is None:
+                all_norating.append((lg, f, hfot if H is None else afot, 'δεν υπαρχει στα ratings')); continue
+            if f.get('h2h') and not f.get('inplay'):   # market 1X2: ΜΟΝΟ pregame (καρτες)
+                mh, mdw, ma = f['h2h']
+                market_1x2[f"{H}_{A}"] = dict(h=round(mh, 2), d=round(mdw, 2), a=round(ma, 2), when=f['startTime'])
+            if f.get('line') is not None:   # ιστορικο τιμων: πληρες στιγμιοτυπο ανα fixture (2026-08-28)
+                odds_rows.append(dict(lg=lg, hid=H, aid=A, home=hfot, away=afot,
+                                      ko=f.get('startTime'), line=f['line'],
+                                      oh=f.get('home_odds'), oa=f.get('away_odds'),
+                                      h2h=[round(x, 2) for x in f['h2h']] if f.get('h2h') else None,
+                                      inplay=bool(f.get('inplay')),
+                                      pin=list(f['pin']) if f.get('pin') else None,
+                                      mb=list(f['mb']) if f.get('mb') else None,
+                                      ou=list(f['ou']) if f.get('ou') else None,
+                                      lim=({k: f['limits'].get(k) for k in ('spreads', 'totals', 'h2h')} if f.get('limits') else None)))   # 5/10: ορια Pinnacle (Στελιος: ποσα δινει 5-7 μερες πριν)
+            if f.get('inplay'):
+                continue   # in-play: καταγραφη μονο — ΟΧΙ picks
+            rh = blended.get(H); ra = blended.get(A)
+            if rh is None or ra is None:
+                all_norating.append((lg, f, f"{hfot}/{afot}", 'χωρις rating (prior/in-season)')); continue
+            pf = build_data._predict_ratings(rh, ra, lg_shots, lg_xgps, hf)
+            xg_h, xg_a = pf['home_adj_xg'], pf['away_adj_xg']
+            # αγωνιστικη: ποσα ματς εχει παιξει ΦΕΤΟΣ η καθε ομαδα (για το CLV ημερολογιο: md>=7)
+            lgc = Mc[Mc.league == lg] if len(Mc) else Mc
+            md = min(int(((lgc.home == H) | (lgc.away == H)).sum()),
+                     int(((lgc.home == A) | (lgc.away == A)).sum())) + 1 if len(lgc) else 1
+            # 29/9/2026 (Στελιος): ΑΓΚΥΡΑ ΑΓΟΡΑΣ μονο σε κοντες γραμμες (+0.5/+0.75) απο την 15η — core7_anchor.py
+            xr_h, xr_a = xg_h, xg_a        # ωμα (χωρις αγκυρα) — τα φαβορι παιρνουν δικη τους αγκυρα .7
+            xg_h, xg_a, anc = core7_anchor.apply(lg, H, A, xg_h, xg_a, f['line'], md)
+            _cn = coach_flags.notes(H) + coach_flags.notes(A)          # 5/10: αλλαγη προπονητη (πληροφορια καρτας)
+            _np0 = len(all_picks)                                      # 16/10: για την ενδειξη σερι εκτος (fatigue_flags)
+            for b in engine.evaluate_bet(xg_h, xg_a, f['line'], f['home_odds'], f['away_odds']):
+                _why = coach_flags.filter_reason(H if b['side'] == 1 else A, md)   # 5/10 (manager_picks_test): κοψιμο dog 15+ υπερ «κακης και στα δυο» με νεο προπονητη (1-8 ματς)
+                if _why:
+                    coach_flags.log_cut(dict(lg=lg, home=hfot, away=afot, when=f['startTime'], md=md, side=b['side'], hcap=b['hcap'],
+                                             odds=b['odds'], edge=round(b['edge'], 4), line=f['line'], reason=_why))
+                    continue
+                all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
+                                      when=f['startTime'], md=md, role='dog', **({'coach_notes': _cn} if _cn else {}),
+                                      mxh=round(xg_h, 3), mxa=round(xg_a, 3),
+                                      **b, hnote=hnote, anote=anote, **({'anchor': anc} if anc else {})))
+            # 9/10/2026 (Στελιος «ναι περνα τα»): ΣΚΙΑ κοντα φαβορι 7-14 — καθε στιγμιοτυπο (και οταν ΔΕΝ πληροι), κρινεται στο κλεισιμο
+            try:
+                if engine.FAV714_MD[0] <= md <= engine.FAV714_MD[1] and abs(f['line']) in engine.FAV714_LINES:
+                    _s = 1 if f['line'] < 0 else -1; _o = f['home_odds'] if _s == 1 else f['away_odds']; _ud = -abs(f['line'])
+                    _e = engine.fav_edge_q(xr_h, xr_a, _s, _ud, _o)
+                    fav714.append(dict(lg=lg, home=hfot, away=afot, hid=H, aid=A, ko=f['startTime'], md=md, side=_s, hcap=_ud,
+                                       odds=round(_o, 3), edge=round(_e, 4), q=bool(engine.OMIN <= _o <= engine.OMAX and _e >= 0),
+                                       mxh=round(xr_h, 3), mxa=round(xr_a, 3), pin=list(f['pin']) if f.get('pin') else None))
+                    if False and fav714[-1]['q']:     # 25/10/2026 (Στελιος «βρες τα κοντα φαβορι ... αφαιρεσε τα απο παντου»): ΟΧΙ πια κανονικο pick — μονο η σκια (dom_fav714_shadow) συνεχιζει. 9/10 (Στελιος «βαλτα να ερχονται κανονικα»): και ως ΚΑΝΟΝΙΚΟ pick (Telegram/ledger, paper οπως ολα τα 7-14)
+                        _pw, _pp = engine.p_cover_q(engine.gd_dist_dom(max(xr_h, .05), max(xr_a, .05)), _s, _ud)
+                        all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A, when=f['startTime'], md=md,
+                                              role='fav', rule='fav714', **({'coach_notes': _cn} if _cn else {}),
+                                              mxh=round(xr_h, 3), mxa=round(xr_a, 3), side=_s, hcap=_ud, odds=_o, pw=_pw, pp=_pp, edge=_e,
+                                              proj_odds=((1 - _pp) / _pw if _pw > 0 else float('inf')), hnote=hnote, anote=anote))
+            except Exception as _ex:
+                print(f'  fav714 σκια σφαλμα (μη κρισιμο): {type(_ex).__name__}: {_ex}')
+            # 1/10/2026 (Στελιος «βαλτα κανονικα»): ΦΑΒΟΡΙ απο την 15η — αγκυρα .7 σε ολες τις γραμμες + σωστα τεταρτα, edge ≥10%
+            if md >= engine.FAV_MIN_MD:
+                fx_h, fx_a, fanc = core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)
+                for b in engine.evaluate_fav(fx_h, fx_a, f['line'], f['home_odds'], f['away_odds']):
+                    all_picks.append(dict(lg=lg, home=hfot, away=afot, home_id=H, away_id=A,
+                                          when=f['startTime'], md=md, **({'coach_notes': _cn} if _cn else {}),
+                                          mxh=round(fx_h, 3), mxa=round(fx_a, 3),
+                                          **b, hnote=hnote, anote=anote, **({'anchor': fanc} if fanc else {})))
+            # 16/10/2026 (Στελιος «καντο ναι»): ΣΕΡΙ ΕΚΤΟΣ — ενδειξη στα picks του ματς + ΣΚΙΑ «B» (φιλοξ. 3ο+ εκτος ΚΑΙ ξεκουραση ≤3.5μ,
+            # υπεροχη +0.18 υπερ γηπ., ucl_away3_penalty_test: εγχωρια B 46 ματς, RMSE 4/4) → fatigue_shadow.jsonl. ΟΧΙ στο μοντελο.
+            try:
+                import fatigue_flags as FF
+                _fs = FF.away_state(A, H, f['startTime'])
+                _fn = FF.note(afot, _fs)
+                if _fn:
+                    for _p in all_picks[_np0:]:
+                        _p['fatigue'] = _fn
+                _ko = datetime.datetime.fromisoformat(str(f['startTime']).replace('Z', '+00:00'))
+                _ko = _ko if _ko.tzinfo else _ko.replace(tzinfo=datetime.timezone.utc)
+                _hb = (_ko - datetime.datetime.now(datetime.timezone.utc)).total_seconds() / 3600
+                if _fs and _fs['streak'] >= FF.STREAK_MIN and _fs['rest'] <= FF.REST_MAX_DOM and 0 < _hb <= FF.ENTRY_H:
+                    _sx = FF.shift(xg_h, xg_a, FF.D_DOM)
+                    _rows = {}
+                    for _tag, (_xh, _xa) in (('base', (xg_h, xg_a)), ('pen', _sx)):
+                        for _b in engine.evaluate_bet(_xh, _xa, f['line'], f['home_odds'], f['away_odds']):
+                            _rows.setdefault((_b['side'], 'dog'), {})[_tag] = _b
+                    if md >= engine.FAV_MIN_MD:
+                        _fx = core7_anchor.apply_fav(lg, H, A, xr_h, xr_a, md)
+                        for _tag, (_xh, _xa) in (('base', _fx[:2]), ('pen', FF.shift(_fx[0], _fx[1], FF.D_DOM))):
+                            for _b in engine.evaluate_fav(_xh, _xa, f['line'], f['home_odds'], f['away_odds']):
+                                _rows.setdefault((_b['side'], 'fav'), {})[_tag] = _b
+                    FF.shadow_write([dict(key=f"domB|{H}_{A}_{str(f['startTime'])[:16]}|{_sd}|{_rl}", var='εγχωρια B (σερι≥3 & ξεκ.≤3.5μ, δ 0.18)',
+                                          seen=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='minutes'), hours_before=round(_hb, 1),
+                                          lg=lg, home=hfot, away=afot, hid=H, aid=A, ko=str(f['startTime'])[:16], md=md,
+                                          streak=_fs['streak'], rest=_fs['rest'], km14=_fs['km14'], side=_sd, role=_rl,
+                                          line=f['line'], odds_h=f['home_odds'], odds_a=f['away_odds'],
+                                          pick_base=('base' in _v), edge_base=(round(_v['base']['edge'], 4) if 'base' in _v else None),
+                                          pick_pen=('pen' in _v), edge_pen=(round(_v['pen']['edge'], 4) if 'pen' in _v else None),
+                                          hcap=(_v.get('pen') or _v.get('base'))['hcap'], odds=(_v.get('pen') or _v.get('base'))['odds'])
+                                     for (_sd, _rl), _v in _rows.items()])
+            except Exception as _ex:
+                print(f'  σερι εκτος σφαλμα (μη κρισιμο): {type(_ex).__name__}: {_ex}')
+    KELLY_FRAC = 0.125; CAP = 0.20
+    for p in all_picks:
+        p['stake'] = KELLY_FRAC * p['edge'] / (p['odds'] - 1)
+    gross = sum(p['stake'] for p in all_picks)
+    scale = CAP / gross if gross > CAP else 1.0
+    for p in all_picks:
+        p['stake_final'] = p['stake'] * scale
+    return dict(picks=all_picks, blocked=all_blocked, norating=all_norating,
+                gross=gross, scale=scale, cap=CAP, credits_remaining=rem, credits_cost=cost,
+                market_1x2=market_1x2, odds_rows=odds_rows, fav714=fav714)
+
+if __name__ == '__main__':
+    res = compute_picks_toa(list(SPORT), sys.argv[1] if len(sys.argv) > 1 else '2526')
+    print(f"credits remaining {res['credits_remaining']} · κοστος αυτου του scan {res['credits_cost']}")
+    print(f"picks {len(res['picks'])} · blocked {len(res['blocked'])} · norating {len(res['norating'])}\n")
+    for p in sorted(res['picks'], key=lambda x: -x['edge'])[:20]:
+        team = p['home'] if p['side'] == 1 else p['away']
+        print(f"  [{p['lg']}] {p['home']}–{p['away']}: {team} {'+' if p['hcap']>=0 else ''}{p['hcap']:g} "
+              f"· Betfair {p['odds']:.2f} · proj {p['proj_odds']:.2f} · edge {p['edge']*100:.0f}% · "
+              f"ποντ {p['stake_final']*100:.1f}%")
+    if res['blocked']:
+        print(f"\nblocked ονοματα (χρειαζονται alias):")
+        for lg, f, bad, reason in res['blocked'][:15]:
+            print(f"  [{lg}] {f['home_toa']} v {f['away_toa']} -> «{bad}» {reason}")
