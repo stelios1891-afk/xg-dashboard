@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-15T00:39+00:00",
+ "generated": "2026-11-15T00:50+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -10953,7 +10953,7 @@
    "pts_h": 112.9,
    "pts_a": 119.0,
    "p_home": 0.326,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 1,
@@ -11037,12 +11037,12 @@
    "away": "Brooklyn Nets",
    "hcode": "MEM",
    "acode": "BRK",
-   "margin": 1.72,
-   "total": 223.7,
+   "margin": 1.38,
+   "total": 223.9,
    "total_src": "μοντελο",
    "pts_h": 112.7,
-   "pts_a": 111.0,
-   "p_home": 0.551,
+   "pts_a": 111.3,
+   "p_home": 0.541,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -11057,16 +11057,16 @@
    "rl_a": "2026-11-11",
    "margin_base": 3.0,
    "total_base": 225.1,
-   "abs_dm": -1.05,
-   "abs_dt": -1.4,
+   "abs_dm": -1.39,
+   "abs_dt": -1.15,
    "abs_shadow": 0.38,
    "abs_h": [
     [
      "Edey,Zach",
      20.8,
      0,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
      "Grant,Jerami",
@@ -11093,10 +11093,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.965,
-   "abs_ld": -0.121,
-   "abs_lop": 2.982,
-   "abs_ldp": 0.094,
+   "abs_lo": 3.003,
+   "abs_ld": 0.348,
+   "abs_lop": 3.003,
+   "abs_ldp": 0.348,
    "trade_dm": -0.23,
    "trades": [
     [
