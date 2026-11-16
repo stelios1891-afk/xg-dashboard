@@ -1,5 +1,5 @@
 {
-"_asof": "2026-11-16T16:12",
+"_asof": "2026-11-16T16:58",
 "_xi": {
 "8261": {
 "match": "Estonia - Bulgaria",
@@ -74,12 +74,16 @@
 "name": "Rosen Bozhinov"
 },
 {
+"pid": 1308396,
+"name": "Yoni Stoyanov"
+},
+{
 "pid": 538325,
 "name": "Dimitar Velkovski"
 },
 {
-"pid": 1308396,
-"name": "Yoni Stoyanov"
+"pid": 1093782,
+"name": "Lukas Petkov"
 },
 {
 "pid": 1187963,
@@ -92,10 +96,6 @@
 {
 "pid": 752928,
 "name": "Svetoslav Kovachev"
-},
-{
-"pid": 1093782,
-"name": "Lukas Petkov"
 },
 {
 "pid": 1693363,
@@ -1682,10 +1682,10 @@
 "638622": {
 "name": "Frenkie de Jong",
 "type": "injury",
-"ret": "About 1-2 weeks",
-"doubtful": false,
+"ret": "Doubtful",
+"doubtful": true,
 "match": "Germany - Netherlands",
-"until": "2026-11-27"
+"until": null
 },
 "940446": {
 "name": "Brian Brobbey",
@@ -1751,6 +1751,14 @@
 }
 },
 "6717": {
+"860752": {
+"name": "Rubén Vargas",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
+"match": "Switzerland - Scotland",
+"until": null
+},
 "1480623": {
 "name": "Winsley Boteli",
 "type": "injury",
@@ -2059,5 +2067,5 @@
 "utc": "2026-11-17T19:45"
 }
 ],
-"_hash": "294203c4eaac6c3d009b11d4f5c57d5d"
+"_hash": "a8df7637dd880f4695bce5a6f185985e"
 }
