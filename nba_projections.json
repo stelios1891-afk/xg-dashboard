@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-15T23:45+00:00",
+ "generated": "2026-11-16T00:18+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -11370,7 +11370,9 @@
    "roster_dm": 0.0,
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/phx.png",
-   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png"
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
+   "hs": 123,
+   "as_": 131
   },
   {
    "code": "pin1640243542",
@@ -11425,7 +11427,9 @@
    "roster_dm": 0.0,
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/lac.png",
-   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/cha.png"
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/cha.png",
+   "hs": 113,
+   "as_": 105
   },
   {
    "code": "pin1640248689",
@@ -11630,7 +11634,7 @@
    "pts_h": 110.2,
    "pts_a": 116.1,
    "p_home": 0.333,
-   "played": false,
+   "played": true,
    "version": "nba1",
    "venue": "",
    "b2b_h": 0,
