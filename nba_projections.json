@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T14:38+00:00",
+ "generated": "2026-11-16T14:49+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -12014,12 +12014,12 @@
    "away": "Memphis Grizzlies",
    "hcode": "WAS",
    "acode": "MEM",
-   "margin": -5.14,
-   "total": 233.0,
+   "margin": -5.15,
+   "total": 233.2,
    "total_src": "μοντελο",
-   "pts_h": 113.9,
-   "pts_a": 119.1,
-   "p_home": 0.352,
+   "pts_h": 114.0,
+   "pts_a": 119.2,
+   "p_home": 0.351,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -12034,16 +12034,16 @@
    "rl_a": "2026-11-14",
    "margin_base": -7.43,
    "total_base": 233.6,
-   "abs_dm": 2.05,
-   "abs_dt": -0.55,
+   "abs_dm": 2.04,
+   "abs_dt": -0.4,
    "abs_shadow": 0.0,
    "abs_h": [
     [
      "Tre Johnson",
      23.8,
      0,
-     "Out",
-     1.0
+     "Questionable",
+     0.46
     ]
    ],
    "abs_a": [
@@ -12063,10 +12063,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.803,
-   "abs_ld": -0.354,
-   "abs_lop": 0.821,
-   "abs_ldp": -0.138,
+   "abs_lo": 1.198,
+   "abs_ld": 0.126,
+   "abs_lop": 1.034,
+   "abs_ldp": 0.121,
    "trade_dm": 0.23,
    "trades": [
     [
@@ -12145,12 +12145,12 @@
    "away": "Houston Rockets",
    "hcode": "MIA",
    "acode": "HOU",
-   "margin": 0.97,
-   "total": 235.1,
+   "margin": -0.84,
+   "total": 234.6,
    "total_src": "μοντελο",
-   "pts_h": 118.0,
-   "pts_a": 117.1,
-   "p_home": 0.529,
+   "pts_h": 116.9,
+   "pts_a": 117.7,
+   "p_home": 0.475,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -12165,8 +12165,8 @@
    "rl_a": "2026-11-15",
    "margin_base": -1.31,
    "total_base": 233.8,
-   "abs_dm": 2.28,
-   "abs_dt": 1.28,
+   "abs_dm": 0.47,
+   "abs_dt": 0.8,
    "abs_shadow": 0.0,
    "abs_h": [
     [
@@ -12182,8 +12182,8 @@
      "Fred VanVleet",
      30.5,
      0,
-     "Out",
-     1.0
+     "Probable",
+     0.04
     ],
     [
      "Marcus Smart",
@@ -12194,10 +12194,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.022,
-   "abs_ld": 1.659,
-   "abs_lop": 1.069,
-   "abs_ldp": 1.813,
+   "abs_lo": 0.039,
+   "abs_ld": 0.669,
+   "abs_lop": 0.125,
+   "abs_ldp": 0.862,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
