@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T00:52+00:00",
+ "generated": "2026-11-16T01:03+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -11763,12 +11763,12 @@
    "away": "Oklahoma City Thunder",
    "hcode": "SAC",
    "acode": "OKC",
-   "margin": -9.61,
-   "total": 220.0,
+   "margin": -11.05,
+   "total": 219.3,
    "total_src": "μοντελο",
-   "pts_h": 105.2,
-   "pts_a": 114.8,
-   "p_home": 0.238,
+   "pts_h": 104.1,
+   "pts_a": 115.2,
+   "p_home": 0.206,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -11783,9 +11783,9 @@
    "rl_a": "2026-11-13",
    "margin_base": -12.64,
    "total_base": 218.5,
-   "abs_dm": 3.2,
-   "abs_dt": 1.54,
-   "abs_shadow": 0.02,
+   "abs_dm": 1.76,
+   "abs_dt": 0.79,
+   "abs_shadow": -0.61,
    "abs_h": [
     [
      "Achiuwa,Precious",
@@ -11800,6 +11800,13 @@
      1,
      "Questionable",
      0.42
+    ],
+    [
+     "LaVine,Zach",
+     32.3,
+     1,
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -11811,13 +11818,6 @@
      1.0
     ],
     [
-     "Mitchell,Ajay",
-     27.7,
-     0,
-     "Questionable",
-     0.46
-    ],
-    [
      "Williams,Jalen",
      31.7,
      0,
@@ -11826,10 +11826,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.98,
-   "abs_ld": 2.449,
-   "abs_lop": 2.369,
-   "abs_ldp": 2.728,
+   "abs_lo": 2.211,
+   "abs_ld": 1.928,
+   "abs_lop": 2.278,
+   "abs_ldp": 1.933,
    "trade_dm": -0.16,
    "trades": [
     [
