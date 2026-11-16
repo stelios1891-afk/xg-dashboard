@@ -1,5 +1,5 @@
 {
-"_asof": "2026-11-16T10:51",
+"_asof": "2026-11-16T12:52",
 "_xi": {
 "8269": {
 "match": "Faroe Islands - Moldova",
@@ -1024,23 +1024,23 @@
 "8568": {
 "match": "Poland - Sweden",
 "utc": "2026-11-17T19:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 450742,
 "name": "Bartłomiej Drągowski"
 },
 {
-"pid": 729731,
-"name": "Matty Cash"
+"pid": 1112702,
+"name": "Arkadiusz Pyrka"
 },
 {
 "pid": 1800401,
 "name": "Kacper Potulski"
 },
 {
-"pid": 1021834,
-"name": "Jakub Kiwior"
+"pid": 306174,
+"name": "Tomasz Kędziora"
 },
 {
 "pid": 1782189,
@@ -1075,7 +1075,7 @@
 "8520": {
 "match": "Poland - Sweden",
 "utc": "2026-11-17T19:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 546252,
@@ -1534,7 +1534,7 @@
 "5791": {
 "match": "Ireland - Kosovo",
 "utc": "2026-11-17T19:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 776689,
@@ -1585,11 +1585,15 @@
 "430156": {
 "match": "Ireland - Kosovo",
 "utc": "2026-11-17T19:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 1053716,
 "name": "Amir Saipi"
+},
+{
+"pid": 929861,
+"name": "Lindrit Kamberi"
 },
 {
 "pid": 1373723,
@@ -1600,32 +1604,28 @@
 "name": "Kreshnik Hajrizi"
 },
 {
-"pid": 929861,
-"name": "Lindrit Kamberi"
-},
-{
-"pid": 560945,
-"name": "Mërgim Vojvoda"
-},
-{
 "pid": 1729818,
 "name": "Dion Gallapeni"
 },
 {
-"pid": 862616,
-"name": "Edon Zhegrova"
+"pid": 1379459,
+"name": "Lindon Emërllahu"
 },
 {
 "pid": 1478148,
 "name": "Leon Avdullahu"
 },
 {
-"pid": 1190351,
-"name": "Veldin Hodža"
+"pid": 560945,
+"name": "Mërgim Vojvoda"
 },
 {
 "pid": 660165,
 "name": "Milot Rashica"
+},
+{
+"pid": 1382371,
+"name": "Baton Zabërgja"
 },
 {
 "pid": 517052,
@@ -2041,14 +2041,6 @@
 }
 },
 "8568": {
-"1021834": {
-"name": "Jakub Kiwior",
-"type": "suspension",
-"ret": "Mid November 2026",
-"doubtful": false,
-"match": "Poland - Sweden",
-"until": "2026-11-20"
-},
 "729731": {
 "name": "Matty Cash",
 "type": "injury",
@@ -2057,13 +2049,13 @@
 "match": "Poland - Sweden",
 "until": null
 },
-"362212": {
-"name": "Piotr Zieliński",
-"type": "injury",
-"ret": "Early December 2026",
+"1021834": {
+"name": "Jakub Kiwior",
+"type": "suspension",
+"ret": "Mid November 2026",
 "doubtful": false,
 "match": "Poland - Sweden",
-"until": "2026-12-10"
+"until": "2026-11-20"
 },
 "402419": {
 "name": "Przemysław Frankowski",
@@ -2072,6 +2064,14 @@
 "doubtful": false,
 "match": "Poland - Sweden",
 "until": "2026-12-07"
+},
+"362212": {
+"name": "Piotr Zieliński",
+"type": "injury",
+"ret": "Early December 2026",
+"doubtful": false,
+"match": "Poland - Sweden",
+"until": "2026-12-10"
 }
 },
 "8520": {
@@ -2219,13 +2219,13 @@
 }
 },
 "430156": {
-"1190351": {
-"name": "Veldin Hodža",
-"type": "suspension",
-"ret": "Mid November 2026",
-"doubtful": false,
+"1067805": {
+"name": "Lumbardh Dellova",
+"type": "injury",
+"ret": "Doubtful",
+"doubtful": true,
 "match": "Ireland - Kosovo",
-"until": "2026-11-20"
+"until": null
 },
 "862616": {
 "name": "Edon Zhegrova",
@@ -2235,6 +2235,14 @@
 "match": "Ireland - Kosovo",
 "until": "2026-11-27"
 },
+"1190351": {
+"name": "Veldin Hodža",
+"type": "suspension",
+"ret": "Mid November 2026",
+"doubtful": false,
+"match": "Ireland - Kosovo",
+"until": "2026-11-20"
+},
 "1315511": {
 "name": "Ermal Krasniqi",
 "type": "injury",
@@ -2242,14 +2250,6 @@
 "doubtful": false,
 "match": "Ireland - Kosovo",
 "until": "2026-11-27"
-},
-"1067805": {
-"name": "Lumbardh Dellova",
-"type": "injury",
-"ret": "Doubtful",
-"doubtful": true,
-"match": "Ireland - Kosovo",
-"until": null
 }
 },
 "8567": {
@@ -2273,5 +2273,5 @@
 }
 },
 "_alerts": [],
-"_hash": "d406d0e2b84acf1b3c4634ee54228f28"
+"_hash": "87dd6ec86c1466719703a1510f4130f6"
 }
