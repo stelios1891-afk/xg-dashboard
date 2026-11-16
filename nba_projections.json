@@ -1,12 +1,12 @@
 {
- "generated": "2026-11-16T00:43+00:00",
+ "generated": "2026-11-16T00:52+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
  "sigma_margin": 13.5,
  "sigma_total": 18.0,
- "res_t": -1.4391444905598958,
- "res_t_alt": -0.15196718987208024,
+ "res_t": -1.6256984456380208,
+ "res_t_alt": -0.2962276258814391,
  "games": [
   {
    "code": "pin1633801637",
@@ -11506,7 +11506,9 @@
    "roster_dm": 0.0,
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/utah.png",
-   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/sa.png"
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/sa.png",
+   "hs": 102,
+   "as_": 110
   },
   {
    "code": "pin1640248688",
@@ -11699,10 +11701,10 @@
    "hcode": "MIL",
    "acode": "ATL",
    "margin": -9.95,
-   "total": 230.1,
+   "total": 229.9,
    "total_src": "μοντελο",
-   "pts_h": 110.1,
-   "pts_a": 120.0,
+   "pts_h": 110.0,
+   "pts_a": 119.9,
    "p_home": 0.231,
    "played": false,
    "version": "nba1",
@@ -11717,7 +11719,7 @@
    "rl_h": "2026-11-13",
    "rl_a": "2026-11-13",
    "margin_base": -9.5,
-   "total_base": 230.1,
+   "total_base": 229.9,
    "abs_dm": -0.45,
    "abs_dt": -0.04,
    "abs_shadow": 0.28,
@@ -11761,11 +11763,11 @@
    "away": "Oklahoma City Thunder",
    "hcode": "SAC",
    "acode": "OKC",
-   "margin": -9.6,
-   "total": 220.2,
+   "margin": -9.61,
+   "total": 220.0,
    "total_src": "μοντελο",
-   "pts_h": 105.3,
-   "pts_a": 114.9,
+   "pts_h": 105.2,
+   "pts_a": 114.8,
    "p_home": 0.238,
    "played": false,
    "version": "nba1",
@@ -11780,7 +11782,7 @@
    "rl_h": "2026-11-13",
    "rl_a": "2026-11-13",
    "margin_base": -12.64,
-   "total_base": 218.6,
+   "total_base": 218.5,
    "abs_dm": 3.2,
    "abs_dt": 1.54,
    "abs_shadow": 0.02,
@@ -11854,7 +11856,7 @@
    "net": 2.93,
    "O": 0.6,
    "D": -2.34,
-   "pace": 3.03,
+   "pace": 3.04,
    "games": 13
   },
   {
@@ -11863,25 +11865,25 @@
    "net": 10.08,
    "O": 4.41,
    "D": -5.67,
-   "pace": -3.66,
+   "pace": -3.65,
    "games": 12
   },
   {
    "code": "BRK",
    "name": "Brooklyn Nets",
-   "net": -2.24,
+   "net": -2.23,
    "O": -1.9,
    "D": 0.33,
-   "pace": -0.4,
+   "pace": -0.39,
    "games": 12
   },
   {
    "code": "CHI",
    "name": "Chicago Bulls",
-   "net": -2.33,
+   "net": -2.34,
    "O": -0.0,
    "D": 2.33,
-   "pace": 4.12,
+   "pace": 4.15,
    "games": 12
   },
   {
@@ -11890,7 +11892,7 @@
    "net": -4.27,
    "O": -5.0,
    "D": -0.73,
-   "pace": -2.69,
+   "pace": -2.68,
    "games": 13
   },
   {
@@ -11899,23 +11901,23 @@
    "net": 4.56,
    "O": 5.35,
    "D": 0.78,
-   "pace": -0.11,
+   "pace": -0.1,
    "games": 14
   },
   {
    "code": "DAL",
    "name": "Dallas Mavericks",
-   "net": 1.51,
+   "net": 1.5,
    "O": 0.82,
-   "D": -0.69,
-   "pace": 1.06,
+   "D": -0.68,
+   "pace": 1.11,
    "games": 13
   },
   {
    "code": "DEN",
    "name": "Denver Nuggets",
    "net": 4.68,
-   "O": 4.31,
+   "O": 4.32,
    "D": -0.36,
    "pace": -1.77,
    "games": 11
@@ -11926,25 +11928,25 @@
    "net": 6.91,
    "O": 2.54,
    "D": -4.37,
-   "pace": -0.08,
+   "pace": -0.07,
    "games": 12
   },
   {
    "code": "GSW",
    "name": "Golden State Warriors",
-   "net": 3.45,
+   "net": 3.44,
    "O": 1.53,
-   "D": -1.92,
-   "pace": -0.47,
+   "D": -1.91,
+   "pace": -0.45,
    "games": 13
   },
   {
    "code": "HOU",
    "name": "Houston Rockets",
    "net": 7.91,
-   "O": 4.93,
+   "O": 4.94,
    "D": -2.98,
-   "pace": -2.49,
+   "pace": -2.46,
    "games": 13
   },
   {
@@ -11953,7 +11955,7 @@
    "net": -0.18,
    "O": -0.4,
    "D": -0.22,
-   "pace": 0.69,
+   "pace": 0.7,
    "games": 14
   },
   {
@@ -11962,7 +11964,7 @@
    "net": -3.69,
    "O": -1.68,
    "D": 2.02,
-   "pace": -0.59,
+   "pace": -0.58,
    "games": 12
   },
   {
@@ -11971,25 +11973,25 @@
    "net": 5.9,
    "O": 5.42,
    "D": -0.48,
-   "pace": 0.28,
+   "pace": 0.3,
    "games": 14
   },
   {
    "code": "MEM",
    "name": "Memphis Grizzlies",
-   "net": 2.84,
-   "O": 2.44,
+   "net": 2.86,
+   "O": 2.45,
    "D": -0.41,
-   "pace": 0.72,
+   "pace": 0.75,
    "games": 13
   },
   {
    "code": "MIA",
    "name": "Miami Heat",
-   "net": 2.43,
-   "O": 2.75,
+   "net": 2.44,
+   "O": 2.76,
    "D": 0.32,
-   "pace": 2.24,
+   "pace": 2.26,
    "games": 13
   },
   {
@@ -11998,7 +12000,7 @@
    "net": -7.58,
    "O": -3.53,
    "D": 4.05,
-   "pace": -0.42,
+   "pace": -0.41,
    "games": 13
   },
   {
@@ -12007,16 +12009,16 @@
    "net": 7.41,
    "O": 1.62,
    "D": -5.79,
-   "pace": 0.84,
+   "pace": 0.88,
    "games": 13
   },
   {
    "code": "NOP",
    "name": "New Orleans Pelicans",
-   "net": -6.25,
-   "O": -1.35,
+   "net": -6.24,
+   "O": -1.34,
    "D": 4.9,
-   "pace": 1.49,
+   "pace": 1.52,
    "games": 14
   },
   {
@@ -12025,25 +12027,25 @@
    "net": 6.17,
    "O": 1.85,
    "D": -4.32,
-   "pace": -3.5,
+   "pace": -3.49,
    "games": 12
   },
   {
    "code": "OKC",
    "name": "Oklahoma City Thunder",
    "net": 7.73,
-   "O": 0.78,
-   "D": -6.96,
-   "pace": -0.01,
+   "O": 0.77,
+   "D": -6.95,
+   "pace": 0.01,
    "games": 13
   },
   {
    "code": "ORL",
    "name": "Orlando Magic",
-   "net": 0.84,
-   "O": -1.08,
+   "net": 0.85,
+   "O": -1.07,
    "D": -1.92,
-   "pace": -0.49,
+   "pace": -0.46,
    "games": 12
   },
   {
@@ -12052,16 +12054,16 @@
    "net": 4.14,
    "O": 1.5,
    "D": -2.64,
-   "pace": 0.38,
+   "pace": 0.39,
    "games": 14
   },
   {
    "code": "PHO",
    "name": "Phoenix Suns",
-   "net": -0.23,
+   "net": -0.24,
    "O": 0.56,
    "D": 0.79,
-   "pace": -0.39,
+   "pace": -0.37,
    "games": 12
   },
   {
@@ -12069,27 +12071,27 @@
    "name": "Portland Trail Blazers",
    "net": 7.05,
    "O": 3.7,
-   "D": -3.36,
-   "pace": 0.82,
+   "D": -3.35,
+   "pace": 0.85,
    "games": 12
   },
   {
    "code": "SAC",
    "name": "Sacramento Kings",
-   "net": -6.77,
-   "O": -3.31,
+   "net": -6.78,
+   "O": -3.32,
    "D": 3.46,
-   "pace": 0.02,
+   "pace": 0.05,
    "games": 12
   },
   {
    "code": "SAS",
    "name": "San Antonio Spurs",
-   "net": 12.45,
-   "O": 6.0,
-   "D": -6.45,
-   "pace": -0.21,
-   "games": 13
+   "net": 12.28,
+   "O": 5.91,
+   "D": -6.37,
+   "pace": -0.49,
+   "games": 14
   },
   {
    "code": "TOR",
@@ -12103,11 +12105,11 @@
   {
    "code": "UTA",
    "name": "Utah Jazz",
-   "net": -4.18,
-   "O": -2.82,
-   "D": 1.35,
-   "pace": 0.81,
-   "games": 13
+   "net": -4.01,
+   "O": -2.75,
+   "D": 1.26,
+   "pace": 0.53,
+   "games": 14
   },
   {
    "code": "WAS",
@@ -12115,7 +12117,7 @@
    "net": -3.42,
    "O": -1.35,
    "D": 2.06,
-   "pace": 0.08,
+   "pace": 0.09,
    "games": 13
   }
  ]
