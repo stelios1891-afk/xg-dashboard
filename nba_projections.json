@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T22:06+00:00",
+ "generated": "2026-11-16T22:22+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -11868,12 +11868,12 @@
    "away": "Orlando Magic",
    "hcode": "BOS",
    "acode": "ORL",
-   "margin": 9.92,
-   "total": 212.5,
+   "margin": 9.3,
+   "total": 213.0,
    "total_src": "μοντελο",
-   "pts_h": 111.2,
-   "pts_a": 101.3,
-   "p_home": 0.769,
+   "pts_h": 111.1,
+   "pts_a": 101.8,
+   "p_home": 0.755,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -11888,16 +11888,16 @@
    "rl_a": "2026-11-13",
    "margin_base": 9.17,
    "total_base": 212.4,
-   "abs_dm": 0.75,
-   "abs_dt": 0.11,
-   "abs_shadow": 0.61,
+   "abs_dm": 0.13,
+   "abs_dt": 0.56,
+   "abs_shadow": 1.34,
    "abs_h": [
     [
      "Queta,Neemias",
      22.2,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -11910,10 +11910,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.872,
-   "abs_ld": 0.164,
-   "abs_lop": 1.025,
-   "abs_ldp": 0.623,
+   "abs_lo": 1.203,
+   "abs_ld": 1.162,
+   "abs_lop": 1.203,
+   "abs_ldp": 1.162,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
