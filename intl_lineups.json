@@ -19187,7 +19187,7 @@
 "update": true
 },
 "NL C|Estonia|Bulgaria|2026-11-16 17:00": {
-"t": "2026-11-16 15:34",
+"t": "2026-11-16 16:09",
 "sig": [
 431759,
 462863,
@@ -19196,7 +19196,7 @@
 620980,
 651711,
 695067,
-783581,
+841927,
 948077,
 973281,
 982692,
@@ -19221,11 +19221,11 @@
 752928,
 766829,
 861657,
+899649,
 1022815,
 1054476,
 1080983,
 1093782,
-1162008,
 1187963,
 1257843,
 1258102,
@@ -19234,11 +19234,11 @@
 1354820,
 1411812,
 1481050,
-1620791,
+1682652,
 1693363
 ],
 "mid": "5181959",
-"min_before": 86,
+"min_before": 51,
 "teams": {
 "h": {
 "nm": "Estonia",
@@ -19247,29 +19247,26 @@
 "dE": 0.0,
 "out23": [],
 "new": [],
-"bench": [
-"Marten-Chris Paalberg"
-],
+"bench": [],
 "unav": []
 },
 "a": {
 "nm": "Bulgaria",
-"v0": 30417812.0,
-"v1": 30256000.36,
-"dE": -0.3,
+"v0": 30256000.0,
+"v1": 30333615.36,
+"dE": 0.1,
 "out23": [
-"Valentin Antov(1.0M)"
+"Hristiyan Petrov(0.9M)"
 ],
 "new": [],
 "bench": [
-"Rosen Bozhinov",
 "Marin Petkov",
-"Plamen Andreev"
+"Kristiyan Balov"
 ],
 "unav": []
 }
 },
-"delta_elo": 0.3,
+"delta_elo": -0.1,
 "src": "pinnacle",
 "ev0": {
 "Μ1": {
@@ -19283,11 +19280,11 @@
 2
 ]
 ],
-"e_h": -28.5,
+"e_h": -24.3,
 "f_h": 2.68,
-"e_a": 18.7,
-"f_a": 1.53,
-"e_o": -7.8
+"e_a": 12.5,
+"f_a": 1.52,
+"e_o": 4.5
 },
 "Μ3": {
 "xg": [
@@ -19300,11 +19297,11 @@
 2
 ]
 ],
-"e_h": -34.3,
-"f_h": 2.92,
-"e_a": 24.2,
+"e_h": -30.4,
+"f_h": 2.91,
+"e_a": 17.7,
 "f_a": 1.46,
-"e_o": -12.3
+"e_o": 0.2
 }
 },
 "ev1": {
@@ -19319,11 +19316,11 @@
 2
 ]
 ],
-"e_h": -28.4,
-"f_h": 2.67,
-"e_a": 18.6,
-"f_a": 1.53,
-"e_o": -7.8
+"e_h": -24.3,
+"f_h": 2.68,
+"e_a": 12.5,
+"f_a": 1.52,
+"e_o": 4.5
 },
 "Μ3": {
 "xg": [
@@ -19336,45 +19333,40 @@
 2
 ]
 ],
-"e_h": -34.2,
-"f_h": 2.92,
-"e_a": 24.1,
+"e_h": -30.4,
+"f_h": 2.91,
+"e_a": 17.7,
 "f_a": 1.46,
-"e_o": -12.3
+"e_o": 0.2
 }
 },
 "m2": {
-"e_h": -23.6,
-"e_a": 14.1,
-"e_o": -4.5,
-"picks": [
-[
-"AH",
-2
-]
-]
+"e_h": -19.1,
+"e_a": 8.1,
+"e_o": 7.7,
+"picks": []
 },
-"cons0": "Bulgaria +0.5 (Μ1+Μ2+Μ3)",
-"cons1": "Bulgaria +0.5 (Μ1+Μ2+Μ3)",
-"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Estonia – Bulgaria (19:00)\nEstonia: αξια 14.4→14.4M (+0 Elo) · ακριβοι στον παγκο: Marten-Chris Paalberg\nBulgaria: αξια 30.4→30.3M (-0 Elo) · εκτος 23: Valentin Antov(1.0M) · ακριβοι στον παγκο: Rosen Bozhinov, Marin Petkov, Plamen Andreev\nAH -0.5 @2.00/1.89 (Pinnacle): Μ1 γηπ -28→-28% / φιλ +19→+19% · Μ3 γηπ -34→-34% / φιλ +24→+24% · Μ2 -24/+14%\nΣυναινεση: πριν Bulgaria +0.5 (Μ1+Μ2+Μ3) → με αποστολες Bulgaria +0.5 (Μ1+Μ2+Μ3)",
-"update": false
+"cons0": "Bulgaria +0.5 (Μ1+Μ3)",
+"cons1": "Bulgaria +0.5 (Μ1+Μ3)",
+"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Estonia – Bulgaria (19:00)\nEstonia: αξια 14.4→14.4M (+0 Elo)\nBulgaria: αξια 30.3→30.3M (+0 Elo) · εκτος 23: Hristiyan Petrov(0.9M) · ακριβοι στον παγκο: Marin Petkov, Kristiyan Balov\nAH -0.5 @2.12/1.79 (Pinnacle): Μ1 γηπ -24→-24% / φιλ +12→+12% · Μ3 γηπ -30→-30% / φιλ +18→+18% · Μ2 -19/+8%\nΣυναινεση: πριν Bulgaria +0.5 (Μ1+Μ3) → με αποστολες Bulgaria +0.5 (Μ1+Μ3)",
+"update": true
 },
 "NL C|Iceland|Luxembourg|2026-11-16 17:00": {
-"t": "2026-11-16 15:34",
+"t": "2026-11-16 16:09",
 "sig": [
 110169,
 157729,
 161937,
 179759,
+264913,
 289237,
 316847,
 562903,
 650234,
 723695,
-745912,
 796756,
 850962,
-856936,
+852424,
 873236,
 937032,
 939593,
@@ -19394,9 +19386,9 @@
 736173,
 754959,
 766608,
+790159,
 798826,
 857904,
-929792,
 1067261,
 1089478,
 1193350,
@@ -19411,20 +19403,20 @@
 2120236
 ],
 "mid": "5181960",
-"min_before": 86,
+"min_before": 51,
 "teams": {
 "h": {
 "nm": "Iceland",
 "v0": 91926541.0,
-"v1": 91926541.0,
-"dE": 0.0,
+"v1": 90984598.0,
+"dE": -0.6,
 "out23": [
-"Alfons Sampsted(1.1M)"
+"Alfons Sampsted(1.1M)",
+"Stefan Teitur Thordarson(1.1M)"
 ],
 "new": [
 "Mikael Egill Ellertsson(7.2M)",
-"Kristian Hlynsson(4.8M)",
-"Kristall Ingason(2.0M)"
+"Kristian Hlynsson(4.8M)"
 ],
 "bench": [
 "Kristian Hlynsson"
@@ -19443,14 +19435,12 @@
 "new": [],
 "bench": [
 "Tiago Pereira Cardoso",
-"Enzo Duarte"
+"Hamza Kadamani"
 ],
-"unav": [
-"Tim Hall (τραυμ.)"
-]
+"unav": []
 }
 },
-"delta_elo": 0.0,
+"delta_elo": -0.6,
 "src": "pinnacle",
 "ev0": {
 "Μ1": {
@@ -19459,11 +19449,11 @@
 0.54
 ],
 "picks": [],
-"e_h": 3.3,
+"e_h": 5.7,
 "f_h": 1.69,
-"e_a": -23.3,
+"e_a": -25.1,
 "f_a": 2.56,
-"e_o": 4.5
+"e_o": 8.7
 },
 "Μ3": {
 "xg": [
@@ -19476,11 +19466,11 @@
 1
 ]
 ],
-"e_h": 10.2,
+"e_h": 12.9,
 "f_h": 1.57,
-"e_a": -31.0,
-"f_a": 2.85,
-"e_o": 7.1
+"e_a": -32.6,
+"f_a": 2.86,
+"e_o": 11.2
 }
 },
 "ev1": {
@@ -19490,11 +19480,11 @@
 0.54
 ],
 "picks": [],
-"e_h": 3.3,
+"e_h": 5.6,
 "f_h": 1.69,
-"e_a": -23.3,
+"e_a": -25.0,
 "f_a": 2.56,
-"e_o": 4.5
+"e_o": 8.7
 },
 "Μ3": {
 "xg": [
@@ -19507,26 +19497,26 @@
 1
 ]
 ],
-"e_h": 10.2,
+"e_h": 12.8,
 "f_h": 1.57,
-"e_a": -31.0,
+"e_a": -32.5,
 "f_a": 2.85,
-"e_o": 7.1
+"e_o": 11.1
 }
 },
 "m2": {
-"e_h": -19.9,
-"e_a": 3.0,
-"e_o": -4.8,
+"e_h": -18.1,
+"e_a": 0.5,
+"e_o": -0.1,
 "picks": []
 },
 "cons0": "καμια",
 "cons1": "καμια",
-"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Iceland – Luxembourg (19:00)\nIceland: αξια 91.9→91.9M (+0 Elo) · εκτος 23: Alfons Sampsted(1.1M) · νεοι (οχι στη λιστα TM): Mikael Egill Ellertsson(7.2M), Kristian Hlynsson(4.8M), Kristall Ingason(2.0M) · μη διαθεσιμοι: Kristall Ingason (τραυμ.), Stefán Thórdarson (τραυμ.) · ακριβοι στον παγκο: Kristian Hlynsson\nLuxembourg: αξια 5.6→5.6M (-0 Elo) · μη διαθεσιμοι: Tim Hall (τραυμ.) · ακριβοι στον παγκο: Tiago Pereira Cardoso, Enzo Duarte\nAH -1.75 @1.83/2.06 (Pinnacle): Μ1 γηπ +3→+3% / φιλ -23→-23% · Μ3 γηπ +10→+10% / φιλ -31→-31% · Μ2 -20/+3%\nΣυναινεση: πριν καμια → με αποστολες καμια",
-"update": false
+"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL C · Iceland – Luxembourg (19:00)\nIceland: αξια 91.9→91.0M (-1 Elo) · εκτος 23: Alfons Sampsted(1.1M), Stefan Teitur Thordarson(1.1M) · νεοι (οχι στη λιστα TM): Mikael Egill Ellertsson(7.2M), Kristian Hlynsson(4.8M) · μη διαθεσιμοι: Kristall Ingason (τραυμ.), Stefán Thórdarson (τραυμ.) · ακριβοι στον παγκο: Kristian Hlynsson\nLuxembourg: αξια 5.6→5.6M (-0 Elo) · ακριβοι στον παγκο: Tiago Pereira Cardoso, Hamza Kadamani\nAH -1.75 @1.88/2.01 (Pinnacle): Μ1 γηπ +6→+6% / φιλ -25→-25% · Μ3 γηπ +13→+13% / φιλ -33→-32% · Μ2 -18/+0%\nΣυναινεση: πριν καμια → με αποστολες καμια",
+"update": true
 },
 "NL D|Lithuania|Liechtenstein|2026-11-16 17:00": {
-"t": "2026-11-16 15:34",
+"t": "2026-11-16 16:09",
 "sig": [
 487356,
 652962,
@@ -19544,7 +19534,6 @@
 1178624,
 1189153,
 1281972,
-1312274,
 1351125,
 1360601,
 1379498,
@@ -19564,29 +19553,30 @@
 859756,
 929284,
 948230,
+1205181,
 1205182,
 1238458,
-1392757,
 1421538,
 1421540,
 1421541,
 1579814,
 1626065,
+1770979,
 2007854,
-2280242,
 2280245,
 2288397
 ],
 "mid": "5181885",
-"min_before": 86,
+"min_before": 51,
 "teams": {
 "h": {
 "nm": "Lithuania",
-"v0": 10202322.0,
-"v1": 9202185.0,
-"dE": -5.8,
+"v0": 9202185.0,
+"v1": 8909132.0,
+"dE": -1.8,
 "out23": [
-"Lukas Michelbrink(1.5M)"
+"Lukas Michelbrink(1.5M)",
+"Armandas Kucys(0.5M)"
 ],
 "new": [],
 "bench": [
@@ -19602,17 +19592,19 @@
 "v1": null,
 "dE": 0.0,
 "out23": [
-"Alessandro Lo Russo(0.2M)"
+"Alessandro Lo Russo(0.2M)",
+"Tim Tiado Oehri(0.0M)"
 ],
 "new": [],
 "bench": [
 "Andrin Netzer",
+"Fabio Luque Notaro",
 "Justin Ospelt"
 ],
 "unav": []
 }
 },
-"delta_elo": -5.8,
+"delta_elo": -1.8,
 "src": "pinnacle",
 "ev0": {
 "Μ1": {
@@ -19621,11 +19613,11 @@
 0.34
 ],
 "picks": [],
-"e_h": -16.9,
-"f_h": 2.21,
-"e_a": -1.8,
-"f_a": 1.97,
-"e_o": -6.6
+"e_h": -21.2,
+"f_h": 2.53,
+"e_a": 8.8,
+"f_a": 1.57,
+"e_o": -9.0
 },
 "Μ3": {
 "xg": [
@@ -19633,48 +19625,48 @@
 0.32
 ],
 "picks": [],
-"e_h": -12.3,
-"f_h": 2.05,
-"e_a": -7.3,
-"f_a": 2.12,
-"e_o": -3.9
+"e_h": -16.1,
+"f_h": 2.36,
+"e_a": 3.6,
+"f_a": 1.65,
+"e_o": -6.4
 }
 },
 "ev1": {
 "Μ1": {
 "xg": [
-2.52,
+2.53,
 0.35
 ],
 "picks": [],
-"e_h": -17.9,
-"f_h": 2.25,
-"e_a": -0.5,
-"f_a": 1.93,
-"e_o": -7.3
+"e_h": -21.6,
+"f_h": 2.55,
+"e_a": 9.1,
+"f_a": 1.57,
+"e_o": -9.2
 },
 "Μ3": {
 "xg": [
-2.62,
+2.64,
 0.33
 ],
 "picks": [],
-"e_h": -13.3,
-"f_h": 2.08,
-"e_a": -6.1,
-"f_a": 2.08,
-"e_o": -4.6
+"e_h": -16.5,
+"f_h": 2.37,
+"e_a": 4.0,
+"f_a": 1.65,
+"e_o": -6.6
 }
 },
 "m2": {
-"e_h": 2.9,
-"e_a": -7.3,
-"e_o": 2.9,
+"e_h": 0.6,
+"e_a": 3.7,
+"e_o": 0.2,
 "picks": []
 },
 "cons0": "καμια",
 "cons1": "καμια",
-"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL D · Lithuania – Liechtenstein (19:00)\nLithuania: αξια 10.2→9.2M (-6 Elo) · εκτος 23: Lukas Michelbrink(1.5M) · μη διαθεσιμοι: Armandas Kučys (τιμωρια) · ακριβοι στον παγκο: Vilius Armalas\nLiechtenstein: αξια — · εκτος 23: Alessandro Lo Russo(0.2M) · ακριβοι στον παγκο: Andrin Netzer, Justin Ospelt\nAH -2 @1.82/2.03 (Pinnacle): Μ1 γηπ -17→-18% / φιλ -2→-0% · Μ3 γηπ -12→-13% / φιλ -7→-6% · Μ2 +3/-7%\nΣυναινεση: πριν καμια → με αποστολες καμια",
-"update": false
+"text": "📋 ΑΠΟΣΤΟΛΕΣ · NL D · Lithuania – Liechtenstein (19:00)\nLithuania: αξια 9.2→8.9M (-2 Elo) · εκτος 23: Lukas Michelbrink(1.5M), Armandas Kucys(0.5M) · μη διαθεσιμοι: Armandas Kučys (τιμωρια) · ακριβοι στον παγκο: Vilius Armalas\nLiechtenstein: αξια — · εκτος 23: Alessandro Lo Russo(0.2M), Tim Tiado Oehri(0.0M) · ακριβοι στον παγκο: Andrin Netzer, Fabio Luque Notaro, Justin Ospelt\nAH -2.25 @2.04/1.81 (Pinnacle): Μ1 γηπ -21→-22% / φιλ +9→+9% · Μ3 γηπ -16→-16% / φιλ +4→+4% · Μ2 +1/+4%\nΣυναινεση: πριν καμια → με αποστολες καμια",
+"update": true
 }
 }
