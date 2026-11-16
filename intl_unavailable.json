@@ -1,5 +1,5 @@
 {
-"_asof": "2026-11-16T12:52",
+"_asof": "2026-11-16T13:38",
 "_xi": {
 "8269": {
 "match": "Faroe Islands - Moldova",
@@ -1636,19 +1636,19 @@
 "8567": {
 "match": "Israel - Austria",
 "utc": "2026-11-17T19:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 949321,
 "name": "Daniel Peretz"
 },
 {
-"pid": 899188,
-"name": "Idan Nachmias"
+"pid": 1477873,
+"name": "Ilay Feingold"
 },
 {
-"pid": 940461,
-"name": "Raz Shlomo"
+"pid": 899188,
+"name": "Idan Nachmias"
 },
 {
 "pid": 1687592,
@@ -1659,12 +1659,12 @@
 "name": "Eliazer Dasa"
 },
 {
-"pid": 1091975,
-"name": "Liel Abada"
+"pid": 1337914,
+"name": "Roy Revivo"
 },
 {
-"pid": 580694,
-"name": "Dor Peretz"
+"pid": 1091975,
+"name": "Liel Abada"
 },
 {
 "pid": 1605895,
@@ -1679,15 +1679,15 @@
 "name": "Oscar Gloukh"
 },
 {
-"pid": 1404547,
-"name": "Idan Toklomati"
+"pid": 1177306,
+"name": "Dor Turgeman"
 }
 ]
 },
 "8255": {
 "match": "Israel - Austria",
 "utc": "2026-11-17T19:45",
-"type": "lastStarting11",
+"type": "predicted",
 "players": [
 {
 "pid": 450739,
@@ -1698,40 +1698,40 @@
 "name": "Stefan Posch"
 },
 {
-"pid": 643724,
-"name": "Philipp Lienhart"
+"pid": 951921,
+"name": "Michael Svoboda"
 },
 {
-"pid": 754126,
-"name": "Kevin Danso"
+"pid": 1073980,
+"name": "David Affengruber"
 },
 {
-"pid": 423812,
-"name": "Phillipp Mwene"
+"pid": 1027194,
+"name": "Alexander Prass"
 },
 {
-"pid": 526827,
-"name": "Konrad Laimer"
+"pid": 426726,
+"name": "Sascha Horvath"
 },
 {
 "pid": 1024672,
 "name": "Nicolas Seiwald"
 },
 {
-"pid": 749488,
-"name": "Romano Schmid"
+"pid": 1114554,
+"name": "Yusuf Demir"
 },
 {
 "pid": 747718,
 "name": "Christoph Baumgartner"
 },
 {
-"pid": 1232205,
-"name": "Christoph Lang"
+"pid": 749488,
+"name": "Romano Schmid"
 },
 {
-"pid": 198316,
-"name": "Michael Gregoritsch"
+"pid": 858198,
+"name": "Saša Kalajdžić"
 }
 ]
 },
@@ -2272,6 +2272,34 @@
 "until": "2026-11-20"
 }
 },
-"_alerts": [],
-"_hash": "87dd6ec86c1466719703a1510f4130f6"
+"_alerts": [
+{
+"key": "8567|1404547|2026-11-17T19:45",
+"team": "Israel",
+"name": "Idan Toklomati",
+"v": 5.932637,
+"started_last": true,
+"match": "Israel - Austria",
+"utc": "2026-11-17T19:45"
+},
+{
+"key": "8255|526827|2026-11-17T19:45",
+"team": "Austria",
+"name": "Konrad Laimer",
+"v": 34.833415,
+"started_last": true,
+"match": "Israel - Austria",
+"utc": "2026-11-17T19:45"
+},
+{
+"key": "8255|754126|2026-11-17T19:45",
+"team": "Austria",
+"name": "Kevin Danso",
+"v": 23.665163,
+"started_last": true,
+"match": "Israel - Austria",
+"utc": "2026-11-17T19:45"
+}
+],
+"_hash": "700b3768c0b336162f2fa8816fa8269a"
 }
