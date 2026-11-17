@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-11-17T09:07+00:00",
+ "scanned_at": "2026-11-17T09:12+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
   {
@@ -124,6 +124,31 @@
    "model_line": -17.3,
    "mkt_line": -10.5,
    "hrs_birth": 32.0
+  },
+  {
+   "lg": "BCL",
+   "paper": "lowinfo",
+   "home": "Unicaja Malaga",
+   "away": "BK Pardubice",
+   "hcode": "K6HkdCoR",
+   "acode": "A9r0pkx2",
+   "code": "pin1640357031",
+   "round": 7,
+   "group": null,
+   "when": "2026-11-18T19:30",
+   "bcl": true,
+   "model": "BCL: (1−0.75)·μονο BCL (περσι 1.4, λ 8, HL 9999, τυχη 0.5) +",
+   "late_kind": "λιγα δεδομενα",
+   "mkt_note": "⚠ λίγα δεδομένα: BK Pardubice χωρίς ιστορικό στη μηχανή, 3 ματς BCL φέτος — καταγραφή ως το 4ο ματς",
+   "mkt": "hcap",
+   "side": 1,
+   "hcap": -22.0,
+   "odds": 1.87,
+   "edge": 0.4061,
+   "proj_odds": 1.32,
+   "model_line": -30.1,
+   "mkt_line": -22.0,
+   "hrs_birth": 34.3
   }
  ]
 }
