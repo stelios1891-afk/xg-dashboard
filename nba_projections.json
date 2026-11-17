@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-17T02:46+00:00",
+ "generated": "2026-11-17T02:57+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -12548,6 +12548,76 @@
    "roster_now": [],
    "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/lac.png",
    "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/utah.png"
+  },
+  {
+   "code": "pin1640325583",
+   "round": 5,
+   "phase": "RS",
+   "group": null,
+   "utc": "2026-11-18T04:10:00Z",
+   "home": "Los Angeles Lakers",
+   "away": "Charlotte Hornets",
+   "hcode": "LAL",
+   "acode": "CHO",
+   "margin": 8.53,
+   "total": 216.5,
+   "total_src": "μοντελο",
+   "pts_h": 112.5,
+   "pts_a": 104.0,
+   "p_home": 0.736,
+   "played": false,
+   "version": "nba1",
+   "venue": "",
+   "b2b_h": 0,
+   "b2b_a": 0,
+   "tz_h": 1.0,
+   "tz_a": 0.0,
+   "gno": 14,
+   "gp_h": 14,
+   "gp_a": 13,
+   "rl_h": "2026-11-15",
+   "rl_a": "2026-11-15",
+   "margin_base": 11.39,
+   "total_base": 217.3,
+   "abs_dm": -2.86,
+   "abs_dt": -0.73,
+   "abs_shadow": 0.62,
+   "abs_h": [
+    [
+     "Kessler,Walker",
+     30.6,
+     1,
+     "Out",
+     1.0
+    ],
+    [
+     "Reaves,Austin",
+     35.3,
+     0,
+     "Out",
+     1.0
+    ]
+   ],
+   "abs_a": [
+    [
+     "Schroder,Dennis",
+     30.0,
+     0,
+     "Out",
+     1.0
+    ]
+   ],
+   "inj_src": "official",
+   "abs_lo": 2.013,
+   "abs_ld": 0.272,
+   "abs_lop": 2.013,
+   "abs_ldp": 0.272,
+   "trade_dm": 0.0,
+   "trades": [],
+   "roster_dm": 0.0,
+   "roster_now": [],
+   "hcrest": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
+   "acrest": "https://a.espncdn.com/i/teamlogos/nba/500/cha.png"
   }
  ],
  "ratings": [
