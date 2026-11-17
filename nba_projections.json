@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-17T18:56+00:00",
+ "generated": "2026-11-17T19:07+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -12507,12 +12507,12 @@
    "away": "Portland Trail Blazers",
    "hcode": "MIN",
    "acode": "POR",
-   "margin": 1.65,
-   "total": 224.0,
+   "margin": 1.24,
+   "total": 224.1,
    "total_src": "μοντελο",
-   "pts_h": 112.8,
-   "pts_a": 111.2,
-   "p_home": 0.549,
+   "pts_h": 112.7,
+   "pts_a": 111.4,
+   "p_home": 0.537,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -12527,21 +12527,21 @@
    "rl_a": "2026-11-16",
    "margin_base": 2.91,
    "total_base": 225.4,
-   "abs_dm": -1.25,
-   "abs_dt": -1.45,
-   "abs_shadow": 0.12,
+   "abs_dm": -1.67,
+   "abs_dt": -1.35,
+   "abs_shadow": 0.3,
    "abs_h": [
     [
-     "Jonathan Kuminga",
-     30.6,
-     1,
-     "Questionable",
-     0.42
-    ],
-    [
-     "Anthony Edwards",
+     "Edwards,Anthony",
      33.8,
      0,
+     "Out",
+     1.0
+    ],
+    [
+     "Kuminga,Jonathan",
+     30.6,
+     1,
      "Out",
      1.0
     ]
@@ -12556,10 +12556,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.998,
-   "abs_ld": -0.025,
-   "abs_lop": 3.033,
-   "abs_ldp": 0.067,
+   "abs_lo": 3.083,
+   "abs_ld": 0.193,
+   "abs_lop": 3.083,
+   "abs_ldp": 0.193,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
