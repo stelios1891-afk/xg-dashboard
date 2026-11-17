@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-17T23:15+00:00",
+ "generated": "2026-11-17T23:34+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -12390,7 +12390,7 @@
    "away": "New York Knicks",
    "hcode": "TOR",
    "acode": "NYK",
-   "margin": -2.54,
+   "margin": -2.55,
    "total": 212.3,
    "total_src": "μοντελο",
    "pts_h": 104.9,
@@ -12445,7 +12445,7 @@
    "away": "Detroit Pistons",
    "hcode": "SAS",
    "acode": "DET",
-   "margin": 8.06,
+   "margin": 8.07,
    "total": 220.4,
    "total_src": "μοντελο",
    "pts_h": 114.2,
@@ -12463,7 +12463,7 @@
    "gp_a": 12,
    "rl_h": "2026-11-15",
    "rl_a": "2026-11-14",
-   "margin_base": 6.56,
+   "margin_base": 6.57,
    "total_base": 220.6,
    "abs_dm": 1.5,
    "abs_dt": -0.22,
@@ -12711,27 +12711,27 @@
   {
    "code": "ATL",
    "name": "Atlanta Hawks",
-   "net": 2.87,
+   "net": 2.86,
    "O": 0.01,
-   "D": -2.86,
+   "D": -2.85,
    "pace": 3.1,
    "games": 14
   },
   {
    "code": "BOS",
    "name": "Boston Celtics",
-   "net": 10.37,
-   "O": 4.82,
-   "D": -5.55,
+   "net": 10.41,
+   "O": 4.84,
+   "D": -5.57,
    "pace": -3.74,
    "games": 14
   },
   {
    "code": "BRK",
    "name": "Brooklyn Nets",
-   "net": -2.56,
-   "O": -1.33,
-   "D": 1.23,
+   "net": -2.54,
+   "O": -1.32,
+   "D": 1.22,
    "pace": -0.32,
    "games": 13
   },
@@ -12748,8 +12748,8 @@
    "code": "CHO",
    "name": "Charlotte Hornets",
    "net": -4.27,
-   "O": -5.21,
-   "D": -0.93,
+   "O": -5.2,
+   "D": -0.94,
    "pace": -2.71,
    "games": 13
   },
@@ -12765,8 +12765,8 @@
   {
    "code": "DAL",
    "name": "Dallas Mavericks",
-   "net": 0.23,
-   "O": 0.23,
+   "net": 0.24,
+   "O": 0.24,
    "D": 0.0,
    "pace": 0.98,
    "games": 14
@@ -12821,7 +12821,7 @@
    "name": "Los Angeles Clippers",
    "net": -3.59,
    "O": -1.64,
-   "D": 1.95,
+   "D": 1.94,
    "pace": -0.56,
    "games": 12
   },
@@ -12846,9 +12846,9 @@
   {
    "code": "MIA",
    "name": "Miami Heat",
-   "net": 3.32,
-   "O": 3.54,
-   "D": 0.22,
+   "net": 3.35,
+   "O": 3.56,
+   "D": 0.21,
    "pace": 2.14,
    "games": 14
   },
@@ -12873,9 +12873,9 @@
   {
    "code": "NOP",
    "name": "New Orleans Pelicans",
-   "net": -5.17,
-   "O": -1.17,
-   "D": 4.01,
+   "net": -5.16,
+   "O": -1.16,
+   "D": 4.0,
    "pace": 1.36,
    "games": 15
   },
@@ -12883,7 +12883,7 @@
    "code": "NYK",
    "name": "New York Knicks",
    "net": 6.32,
-   "O": 1.7,
+   "O": 1.71,
    "D": -4.61,
    "pace": -3.75,
    "games": 13
@@ -12900,18 +12900,18 @@
   {
    "code": "ORL",
    "name": "Orlando Magic",
-   "net": 1.84,
-   "O": -0.46,
-   "D": -2.3,
+   "net": 1.8,
+   "O": -0.48,
+   "D": -2.28,
    "pace": -0.39,
    "games": 13
   },
   {
    "code": "PHI",
    "name": "Philadelphia 76ers",
-   "net": 4.49,
-   "O": 2.41,
-   "D": -2.08,
+   "net": 4.43,
+   "O": 2.38,
+   "D": -2.05,
    "pace": 0.44,
    "games": 15
   },
@@ -12945,9 +12945,9 @@
   {
    "code": "SAS",
    "name": "San Antonio Spurs",
-   "net": 12.13,
+   "net": 12.14,
    "O": 5.8,
-   "D": -6.33,
+   "D": -6.34,
    "pace": -0.48,
    "games": 14
   },
