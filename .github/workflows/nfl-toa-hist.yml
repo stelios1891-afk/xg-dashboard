@@ -8,6 +8,7 @@ name: nfl-toa-hist
 on:
   workflow_dispatch: {}
   push:
+    branches: [main]          # μονο στο main: στις 5/11 ετρεξε σε κλαδο αλλης συνομιλιας και αποθηκευσε εκει
     paths:
       - 'nfl_toa_request.txt'
 
