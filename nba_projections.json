@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-18T23:07+00:00",
+ "generated": "2026-11-18T23:18+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -12788,12 +12788,12 @@
    "away": "Houston Rockets",
    "hcode": "IND",
    "acode": "HOU",
-   "margin": -8.78,
-   "total": 225.6,
+   "margin": -9.42,
+   "total": 225.5,
    "total_src": "μοντελο",
-   "pts_h": 108.4,
-   "pts_a": 117.2,
-   "p_home": 0.258,
+   "pts_h": 108.1,
+   "pts_a": 117.5,
+   "p_home": 0.243,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -12808,8 +12808,8 @@
    "rl_a": "2026-11-16",
    "margin_base": -5.79,
    "total_base": 227.2,
-   "abs_dm": -2.98,
-   "abs_dt": -1.52,
+   "abs_dm": -3.63,
+   "abs_dt": -1.64,
    "abs_shadow": 0.0,
    "abs_h": [
     [
@@ -12827,20 +12827,12 @@
      1.0
     ]
    ],
-   "abs_a": [
-    [
-     "Thompson,Amen",
-     33.0,
-     0,
-     "Questionable",
-     0.42
-    ]
-   ],
+   "abs_a": [],
    "inj_src": "official",
    "abs_lo": 3.35,
    "abs_ld": 0.033,
-   "abs_lop": 3.731,
-   "abs_ldp": 0.344,
+   "abs_lop": 3.35,
+   "abs_ldp": 0.033,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -12858,12 +12850,12 @@
    "away": "Memphis Grizzlies",
    "hcode": "CLE",
    "acode": "MEM",
-   "margin": 2.19,
-   "total": 236.6,
+   "margin": 2.62,
+   "total": 236.8,
    "total_src": "μοντελο",
-   "pts_h": 119.4,
-   "pts_a": 117.2,
-   "p_home": 0.565,
+   "pts_h": 119.7,
+   "pts_a": 117.1,
+   "p_home": 0.577,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -12878,17 +12870,10 @@
    "rl_a": "2026-11-16",
    "margin_base": 3.48,
    "total_base": 236.7,
-   "abs_dm": -1.52,
-   "abs_dt": -0.05,
-   "abs_shadow": 0.2,
+   "abs_dm": -1.1,
+   "abs_dt": 0.09,
+   "abs_shadow": 0.21,
    "abs_h": [
-    [
-     "Merrill,Sam",
-     23.1,
-     0,
-     "Questionable",
-     0.46
-    ],
     [
      "Mobley,Evan",
      31.6,
@@ -12907,8 +12892,8 @@
      "Watson,Peyton",
      26.9,
      1,
-     "Doubtful",
-     0.963
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -12921,10 +12906,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.471,
-   "abs_ld": 1.122,
-   "abs_lop": 2.722,
-   "abs_ldp": 1.315,
+   "abs_lo": 2.415,
+   "abs_ld": 1.294,
+   "abs_lop": 2.415,
+   "abs_ldp": 1.294,
    "trade_dm": 0.23,
    "trades": [
     [
@@ -12948,12 +12933,12 @@
    "away": "Philadelphia 76ers",
    "hcode": "ORL",
    "acode": "PHI",
-   "margin": 0.91,
-   "total": 223.0,
+   "margin": 1.43,
+   "total": 223.2,
    "total_src": "μοντελο",
-   "pts_h": 111.9,
-   "pts_a": 111.0,
-   "p_home": 0.527,
+   "pts_h": 112.3,
+   "pts_a": 110.9,
+   "p_home": 0.542,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -12968,9 +12953,9 @@
    "rl_a": "2026-11-16",
    "margin_base": -0.75,
    "total_base": 224.6,
-   "abs_dm": 1.66,
-   "abs_dt": -1.59,
-   "abs_shadow": 0.65,
+   "abs_dm": 2.18,
+   "abs_dt": -1.32,
+   "abs_shadow": 1.08,
    "abs_h": [
     [
      "Banchero,Paolo",
@@ -12999,15 +12984,15 @@
      "Wade,Dean",
      26.5,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.661,
-   "abs_ld": 0.042,
-   "abs_lop": 3.726,
-   "abs_ldp": 0.27,
+   "abs_lo": 2.858,
+   "abs_ld": 0.644,
+   "abs_lop": 3.832,
+   "abs_ldp": 0.595,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
