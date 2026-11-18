@@ -1,37 +1,14 @@
 {
- "scanned_at": "2026-11-18T20:20",
+ "scanned_at": "2026-11-18T20:29",
  "ratings_season": "2526",
- "gross": 0.717900847427224,
- "scale": 0.2785900040607971,
+ "gross": 0.7318611486843448,
+ "scale": 0.2732758807589894,
  "cap": 0.2,
  "credits_remaining": null,
  "credits_cost": 0,
- "n_new": 0,
+ "n_new": 1,
  "n_changed": 0,
  "picks": [
-  {
-   "lg": "EPL",
-   "home": "Tottenham Hotspur",
-   "away": "Ipswich Town",
-   "home_id": 8586,
-   "away_id": 9902,
-   "when": "2026-11-21T15:00",
-   "md": 11,
-   "role": "dog",
-   "mxh": 1.65,
-   "mxa": 0.964,
-   "side": -1,
-   "hcap": 1.0,
-   "odds": 2.02,
-   "pw": 0.46887355723542806,
-   "pp": 0.24260225189096565,
-   "edge": 0.17537930665512624,
-   "proj_odds": 1.6153560729139909,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.021492562090089,
-   "stake_final": 0.005987612959954828
-  },
   {
    "lg": "EPL",
    "home": "Leeds United",
@@ -53,7 +30,30 @@
    "hnote": "",
    "anote": "",
    "stake": 0.018957473962733187,
-   "stake_final": 0.0052813627482602935
+   "stake_final": 0.00518062039413152
+  },
+  {
+   "lg": "EPL",
+   "home": "Tottenham Hotspur",
+   "away": "Ipswich Town",
+   "home_id": 8586,
+   "away_id": 9902,
+   "when": "2026-11-21T15:00",
+   "md": 11,
+   "role": "dog",
+   "mxh": 1.65,
+   "mxa": 0.964,
+   "side": -1,
+   "hcap": 1.0,
+   "odds": 2.02,
+   "pw": 0.46887355723542806,
+   "pp": 0.24260225189096565,
+   "edge": 0.17537930665512624,
+   "proj_odds": 1.6153560729139909,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.021492562090089,
+   "stake_final": 0.005873398834936337
   },
   {
    "lg": "EPL",
@@ -76,53 +76,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.030339471807651803,
-   "stake_final": 0.008452273574096154
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Deportivo A Coruña",
-   "away": "Barcelona",
-   "home_id": 9783,
-   "away_id": 8634,
-   "when": "2026-11-29T15:15",
-   "md": 13,
-   "role": "dog",
-   "mxh": 0.953,
-   "mxa": 2.217,
-   "side": 1,
-   "hcap": 1.5,
-   "odds": 2.02,
-   "pw": 0.5725177128601391,
-   "pp": 0.0,
-   "edge": 0.13896673796396064,
-   "proj_odds": 1.7466708497179562,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.01703023749558341,
-   "stake_final": 0.004744453933050921
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Real Madrid",
-   "away": "Deportivo Alavés",
-   "home_id": 8633,
-   "away_id": 9866,
-   "when": "2026-11-28T20:00",
-   "md": 13,
-   "role": "dog",
-   "mxh": 2.348,
-   "mxa": 0.706,
-   "side": -1,
-   "hcap": 2.25,
-   "odds": 1.862,
-   "pw": 0.7089808152829947,
-   "pp": 0.0,
-   "edge": 0.301788034173718,
-   "proj_odds": 1.4104754013701244,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.04376276597646723,
-   "stake_final": 0.012191869151095719
+   "stake_final": 0.008291045879998574
   },
   {
    "lg": "LaLiga",
@@ -145,7 +99,53 @@
    "hnote": "",
    "anote": "",
    "stake": 0.04455993982745914,
-   "stake_final": 0.012413953817480717
+   "stake_final": 0.012177156802916467
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Real Madrid",
+   "away": "Deportivo Alavés",
+   "home_id": 8633,
+   "away_id": 9866,
+   "when": "2026-11-28T20:00",
+   "md": 13,
+   "role": "dog",
+   "mxh": 2.348,
+   "mxa": 0.706,
+   "side": -1,
+   "hcap": 2.25,
+   "odds": 1.862,
+   "pw": 0.7089808152829947,
+   "pp": 0.0,
+   "edge": 0.301788034173718,
+   "proj_odds": 1.4104754013701244,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.04376276597646723,
+   "stake_final": 0.011959308416668616
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Deportivo A Coruña",
+   "away": "Barcelona",
+   "home_id": 9783,
+   "away_id": 8634,
+   "when": "2026-11-29T15:15",
+   "md": 13,
+   "role": "dog",
+   "mxh": 0.953,
+   "mxa": 2.217,
+   "side": 1,
+   "hcap": 1.5,
+   "odds": 2.02,
+   "pw": 0.5725177128601391,
+   "pp": 0.0,
+   "edge": 0.13896673796396064,
+   "proj_odds": 1.7466708497179562,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.01703023749558341,
+   "stake_final": 0.004653953151140322
   },
   {
    "lg": "LaLiga",
@@ -168,7 +168,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.026671861861216627,
-   "stake_final": 0.007430514104225359
+   "stake_final": 0.007288776541606072
   },
   {
    "lg": "LaLiga",
@@ -191,7 +191,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.024892886491187392,
-   "stake_final": 0.006934909348664857
+   "stake_final": 0.006802625480512784
   },
   {
    "lg": "SerieA",
@@ -214,7 +214,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01834022107413276,
-   "stake_final": 0.005109402263518562
+   "stake_final": 0.005011940067348208
   },
   {
    "lg": "SerieA",
@@ -237,7 +237,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03952310066264748,
-   "stake_final": 0.011010740774102253
+   "stake_final": 0.010800710143911187
   },
   {
    "lg": "SerieA",
@@ -263,7 +263,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.025209877324534873,
-   "stake_final": 0.007023219826214367
+   "stake_final": 0.006889251429688343
   },
   {
    "lg": "SerieA",
@@ -286,7 +286,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.02166112427402218,
-   "stake_final": 0.0060345726994612695
+   "stake_final": 0.005919462814213336
   },
   {
    "lg": "SerieA",
@@ -312,7 +312,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03137960203055703,
-   "stake_final": 0.00874204345711908
+   "stake_final": 0.008575288382767044
   },
   {
    "lg": "SerieA",
@@ -335,7 +335,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.02519338519673575,
-   "stake_final": 0.007018625284263839
+   "stake_final": 0.006884744528938448
   },
   {
    "lg": "SerieA",
@@ -361,7 +361,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.016838178467587558,
-   "stake_final": 0.004690948207661643
+   "stake_final": 0.0046014680511070405
   },
   {
    "lg": "Bundesliga",
@@ -384,7 +384,33 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01645242253110694,
-   "stake_final": 0.004583480459751032
+   "stake_final": 0.004496050257807291
+  },
+  {
+   "lg": "Bundesliga",
+   "home": "Borussia Mönchengladbach",
+   "away": "Borussia Dortmund",
+   "home_id": 9788,
+   "away_id": 9789,
+   "when": "2026-11-21T14:30",
+   "md": 10,
+   "role": "dog",
+   "coach_notes": [
+    "Borussia Mönchengladbach: νεος προπονητης Alexander Blessin (πρωτα μεταβατικος Jan-Moritz Lichte) απο 2026-09-19 — 7ο ματς · πριν: τυχερη (αποτελεσματα καλυτερα απο τα data)"
+   ],
+   "mxh": 1.069,
+   "mxa": 1.802,
+   "side": 1,
+   "hcap": 1.0,
+   "odds": 1.926,
+   "pw": 0.45788224235603375,
+   "pp": 0.23425668162768065,
+   "edge": 0.10341791171275105,
+   "proj_odds": 1.6723586274763267,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.013960301257120824,
+   "stake_final": 0.00381501362170052
   },
   {
    "lg": "Bundesliga",
@@ -410,7 +436,7 @@
    "hnote": "low-confidence",
    "anote": "",
    "stake": 0.02633583449341877,
-   "stake_final": 0.0073369002384660155
+   "stake_final": 0.007196948366711988
   },
   {
    "lg": "Bundesliga",
@@ -436,7 +462,7 @@
    "hnote": "",
    "anote": "low-confidence",
    "stake": 0.02492768106565267,
-   "stake_final": 0.006944602769306432
+   "stake_final": 0.006812133998495417
   },
   {
    "lg": "Bundesliga",
@@ -459,7 +485,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.012686344546054374,
-   "stake_final": 0.003534288778601959
+   "stake_final": 0.003466871979435011
   },
   {
    "lg": "Ligue1",
@@ -482,7 +508,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.014679526934475409,
-   "stake_final": 0.004089569468286085
+   "stake_final": 0.004011560652144075
   },
   {
    "lg": "Ligue1",
@@ -505,7 +531,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03320395430943188,
-   "stake_final": 0.009250289765899148
+   "stake_final": 0.009073839858591238
   },
   {
    "lg": "Ligue1",
@@ -528,7 +554,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.020090320972421888,
-   "stake_final": 0.005596962601289731
+   "stake_final": 0.0054902001584693876
   },
   {
    "lg": "Ligue1",
@@ -551,7 +577,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.04057284060717562,
-   "stake_final": 0.01130318782951113
+   "stake_final": 0.011087578751820008
   },
   {
    "lg": "Ligue1",
@@ -574,33 +600,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.024432697272538054,
-   "stake_final": 0.006806705232372603
-  },
-  {
-   "lg": "PrimeiraLiga",
-   "home": "Benfica",
-   "away": "Famalicão",
-   "home_id": 9772,
-   "away_id": 1634,
-   "when": "2026-11-30T20:15",
-   "md": 12,
-   "role": "dog",
-   "coach_notes": [
-    "Famalicão: νεος προπονητης Ricardo Silva απο 2026-10-25 — 4ο ματς · πριν: τυχερη (αποτελεσματα καλυτερα απο τα data)"
-   ],
-   "mxh": 2.145,
-   "mxa": 0.694,
-   "side": -1,
-   "hcap": 2.0,
-   "odds": 1.833,
-   "pw": 0.5362635011063808,
-   "pp": 0.21504101262749048,
-   "edge": 0.18461078526283797,
-   "proj_odds": 1.4637561306205586,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.027702698868973287,
-   "stake_final": 0.007717694990402307
+   "stake_final": 0.006676866866470595
   },
   {
    "lg": "PrimeiraLiga",
@@ -626,7 +626,56 @@
    "hnote": "",
    "anote": "",
    "stake": 0.029746790065303588,
-   "stake_final": 0.008287158365088605
+   "stake_final": 0.008129080254848594
+  },
+  {
+   "lg": "PrimeiraLiga",
+   "home": "Benfica",
+   "away": "Famalicão",
+   "home_id": 9772,
+   "away_id": 1634,
+   "when": "2026-11-30T20:15",
+   "md": 12,
+   "role": "dog",
+   "coach_notes": [
+    "Famalicão: νεος προπονητης Ricardo Silva απο 2026-10-25 — 4ο ματς · πριν: τυχερη (αποτελεσματα καλυτερα απο τα data)"
+   ],
+   "mxh": 2.145,
+   "mxa": 0.694,
+   "side": -1,
+   "hcap": 2.0,
+   "odds": 1.833,
+   "pw": 0.5362635011063808,
+   "pp": 0.21504101262749048,
+   "edge": 0.18461078526283797,
+   "proj_odds": 1.4637561306205586,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.027702698868973287,
+   "stake_final": 0.007570479432819735
+  },
+  {
+   "lg": "Eredivisie",
+   "home": "Go Ahead Eagles",
+   "away": "Fortuna Sittard",
+   "home_id": 6433,
+   "away_id": 6422,
+   "when": "2026-11-22T15:45",
+   "md": 13,
+   "role": "dog",
+   "mxh": 1.784,
+   "mxa": 1.395,
+   "side": -1,
+   "hcap": 1.0,
+   "odds": 1.806,
+   "pw": 0.5355178472052778,
+   "pp": 0.21091815380975,
+   "edge": 0.16511456431705812,
+   "proj_odds": 1.473493087687467,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.025607097443712486,
+   "stake_final": 0.006997802107611795
   },
   {
    "lg": "Eredivisie",
@@ -652,30 +701,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.015609949774353652,
-   "stake_final": 0.004348775971026023
-  },
-  {
-   "lg": "Eredivisie",
-   "home": "Go Ahead Eagles",
-   "away": "Fortuna Sittard",
-   "home_id": 6433,
-   "away_id": 6422,
-   "when": "2026-11-22T15:45",
-   "md": 13,
-   "role": "dog",
-   "mxh": 1.784,
-   "mxa": 1.395,
-   "side": -1,
-   "hcap": 1.0,
-   "odds": 1.806,
-   "pw": 0.5355178472052778,
-   "pp": 0.21091815380975,
-   "edge": 0.16511456431705812,
-   "proj_odds": 1.473493087687467,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.025607097443712486,
-   "stake_final": 0.007133881380829088
+   "stake_final": 0.004265822773190082
   }
  ]
 }
