@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-18T02:07+00:00",
+ "generated": "2026-11-18T02:18+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -12648,12 +12648,12 @@
    "away": "Charlotte Hornets",
    "hcode": "LAL",
    "acode": "CHO",
-   "margin": 8.42,
-   "total": 216.2,
+   "margin": 9.6,
+   "total": 215.6,
    "total_src": "μοντελο",
-   "pts_h": 112.3,
-   "pts_a": 103.9,
-   "p_home": 0.734,
+   "pts_h": 112.6,
+   "pts_a": 103.0,
+   "p_home": 0.761,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -12668,9 +12668,9 @@
    "rl_a": "2026-11-15",
    "margin_base": 11.28,
    "total_base": 216.9,
-   "abs_dm": -2.86,
-   "abs_dt": -0.73,
-   "abs_shadow": 0.62,
+   "abs_dm": -1.68,
+   "abs_dt": -1.29,
+   "abs_shadow": 0.63,
    "abs_h": [
     [
      "Kessler,Walker",
@@ -12689,6 +12689,13 @@
    ],
    "abs_a": [
     [
+     "Allen,Grayson",
+     27.0,
+     1,
+     "Out",
+     1.0
+    ],
+    [
      "Schroder,Dennis",
      30.0,
      0,
@@ -12697,10 +12704,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 2.013,
-   "abs_ld": 0.272,
-   "abs_lop": 2.013,
-   "abs_ldp": 0.272,
+   "abs_lo": 2.883,
+   "abs_ld": 0.153,
+   "abs_lop": 2.883,
+   "abs_ldp": 0.153,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
