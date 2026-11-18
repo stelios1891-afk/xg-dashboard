@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-18T20:52+00:00",
+ "generated": "2026-11-18T21:03+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -13486,12 +13486,12 @@
    "away": "Utah Jazz",
    "hcode": "LAL",
    "acode": "UTA",
-   "margin": 12.9,
-   "total": 230.8,
+   "margin": 11.87,
+   "total": 230.4,
    "total_src": "μοντελο",
-   "pts_h": 121.9,
-   "pts_a": 109.0,
-   "p_home": 0.83,
+   "pts_h": 121.1,
+   "pts_a": 109.3,
+   "p_home": 0.81,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -13506,42 +13506,35 @@
    "rl_a": "2026-11-17",
    "margin_base": 10.51,
    "total_base": 230.6,
-   "abs_dm": 2.16,
-   "abs_dt": 0.19,
+   "abs_dm": 1.12,
+   "abs_dt": -0.27,
    "abs_shadow": 0.0,
    "abs_h": [
     [
-     "Austin Reaves",
+     "Reaves,Austin",
      35.3,
      0,
-     "Questionable",
-     0.42
-    ],
-    [
-     "Walker Kessler",
-     30.6,
-     0,
-     "Probable",
-     0.04
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
     [
-     "Jaxson Hayes",
+     "Hayes,Jaxson",
      23.6,
      0,
      "Questionable",
      0.46
     ],
     [
-     "Jaren Jackson",
+     "JacksonJr.,Jaren",
      26.0,
      0,
      "Out",
      1.0
     ],
     [
-     "Lauri Markkanen",
+     "Markkanen,Lauri",
      30.9,
      0,
      "Out",
@@ -13549,10 +13542,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.421,
-   "abs_ld": 1.007,
-   "abs_lop": 2.159,
-   "abs_ldp": 1.274,
+   "abs_lo": 3.073,
+   "abs_ld": 1.064,
+   "abs_lop": 3.108,
+   "abs_ldp": 1.289,
    "trade_dm": 0.23,
    "trades": [
     [
