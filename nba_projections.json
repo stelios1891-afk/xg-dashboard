@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-19T14:53+00:00",
+ "generated": "2026-11-19T15:10+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -13743,12 +13743,12 @@
    "away": "Golden State Warriors",
    "hcode": "MEM",
    "acode": "GSW",
-   "margin": 4.34,
-   "total": 226.5,
+   "margin": 5.01,
+   "total": 227.7,
    "total_src": "μοντελο",
-   "pts_h": 115.4,
-   "pts_a": 111.1,
-   "p_home": 0.626,
+   "pts_h": 116.4,
+   "pts_a": 111.4,
+   "p_home": 0.645,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -13763,9 +13763,9 @@
    "rl_a": "2026-11-18",
    "margin_base": 3.29,
    "total_base": 228.0,
-   "abs_dm": 1.28,
-   "abs_dt": -1.46,
-   "abs_shadow": 0.0,
+   "abs_dm": 1.95,
+   "abs_dt": -0.26,
+   "abs_shadow": 1.11,
    "abs_h": [
     [
      "Ty Jerome",
@@ -13777,6 +13777,13 @@
    ],
    "abs_a": [
     [
+     "Draymond Green",
+     25.4,
+     1,
+     "Doubtful",
+     0.963
+    ],
+    [
      "Stephen Curry",
      26.5,
      0,
@@ -13787,8 +13794,8 @@
    "inj_src": "official",
    "abs_lo": 1.898,
    "abs_ld": -0.316,
-   "abs_lop": 2.401,
-   "abs_ldp": -0.263,
+   "abs_lop": 1.871,
+   "abs_ldp": 0.68,
    "trade_dm": -0.23,
    "trades": [
     [
