@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-19T14:42+00:00",
+ "generated": "2026-11-19T14:53+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -13604,12 +13604,12 @@
    "away": "Portland Trail Blazers",
    "hcode": "MIL",
    "acode": "POR",
-   "margin": -14.31,
+   "margin": -13.9,
    "total": 227.6,
    "total_src": "μοντελο",
-   "pts_h": 106.6,
-   "pts_a": 121.0,
-   "p_home": 0.145,
+   "pts_h": 106.9,
+   "pts_a": 120.8,
+   "p_home": 0.152,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -13624,16 +13624,16 @@
    "rl_a": "2026-11-17",
    "margin_base": -15.76,
    "total_base": 227.8,
-   "abs_dm": 1.45,
-   "abs_dt": -0.22,
+   "abs_dm": 1.86,
+   "abs_dt": -0.19,
    "abs_shadow": 0.41,
    "abs_h": [
     [
      "Ryan Rollins",
      22.7,
      0,
-     "Out",
-     1.0
+     "Questionable",
+     0.46
     ]
    ],
    "abs_a": [
@@ -13660,10 +13660,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.124,
-   "abs_ld": 0.324,
-   "abs_lop": 1.733,
-   "abs_ldp": 0.65,
+   "abs_lo": 0.72,
+   "abs_ld": 0.161,
+   "abs_lop": 1.514,
+   "abs_ldp": 0.562,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -13743,12 +13743,12 @@
    "away": "Golden State Warriors",
    "hcode": "MEM",
    "acode": "GSW",
-   "margin": 3.33,
-   "total": 226.2,
+   "margin": 4.34,
+   "total": 226.5,
    "total_src": "μοντελο",
-   "pts_h": 114.8,
-   "pts_a": 111.5,
-   "p_home": 0.597,
+   "pts_h": 115.4,
+   "pts_a": 111.1,
+   "p_home": 0.626,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -13763,16 +13763,16 @@
    "rl_a": "2026-11-18",
    "margin_base": 3.29,
    "total_base": 228.0,
-   "abs_dm": 0.27,
-   "abs_dt": -1.74,
+   "abs_dm": 1.28,
+   "abs_dt": -1.46,
    "abs_shadow": 0.0,
    "abs_h": [
     [
      "Ty Jerome",
      30.5,
      0,
-     "Out",
-     1.0
+     "Questionable",
+     0.42
     ]
    ],
    "abs_a": [
@@ -13785,10 +13785,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 3.096,
-   "abs_ld": -0.19,
-   "abs_lop": 3.096,
-   "abs_ldp": -0.19,
+   "abs_lo": 1.898,
+   "abs_ld": -0.316,
+   "abs_lop": 2.401,
+   "abs_ldp": -0.263,
    "trade_dm": -0.23,
    "trades": [
     [
