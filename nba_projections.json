@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-19T18:53+00:00",
+ "generated": "2026-11-19T19:05+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -13604,12 +13604,12 @@
    "away": "Portland Trail Blazers",
    "hcode": "MIL",
    "acode": "POR",
-   "margin": -13.9,
-   "total": 227.6,
+   "margin": -14.75,
+   "total": 228.2,
    "total_src": "μοντελο",
-   "pts_h": 106.9,
-   "pts_a": 120.8,
-   "p_home": 0.152,
+   "pts_h": 106.7,
+   "pts_a": 121.5,
+   "p_home": 0.137,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -13624,16 +13624,23 @@
    "rl_a": "2026-11-17",
    "margin_base": -15.76,
    "total_base": 227.8,
-   "abs_dm": 1.86,
-   "abs_dt": -0.19,
-   "abs_shadow": 0.41,
+   "abs_dm": 1.01,
+   "abs_dt": 0.41,
+   "abs_shadow": 0.86,
    "abs_h": [
     [
-     "Ryan Rollins",
-     22.7,
-     0,
-     "Questionable",
-     0.46
+     "Kuzma,Kyle",
+     26.8,
+     1,
+     "Out",
+     1.0
+    ],
+    [
+     "Turner,Myles",
+     26.3,
+     1,
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -13660,10 +13667,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.72,
-   "abs_ld": 0.161,
-   "abs_lop": 1.514,
-   "abs_ldp": 0.562,
+   "abs_lo": 0.361,
+   "abs_ld": 0.564,
+   "abs_lop": 0.969,
+   "abs_ldp": 0.89,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -13743,12 +13750,12 @@
    "away": "Golden State Warriors",
    "hcode": "MEM",
    "acode": "GSW",
-   "margin": 5.03,
-   "total": 227.8,
+   "margin": 3.34,
+   "total": 227.9,
    "total_src": "μοντελο",
-   "pts_h": 116.4,
-   "pts_a": 111.4,
-   "p_home": 0.645,
+   "pts_h": 115.6,
+   "pts_a": 112.3,
+   "p_home": 0.598,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -13763,16 +13770,23 @@
    "rl_a": "2026-11-18",
    "margin_base": 3.29,
    "total_base": 228.0,
-   "abs_dm": 1.97,
-   "abs_dt": -0.21,
-   "abs_shadow": 1.15,
+   "abs_dm": 0.28,
+   "abs_dt": -0.04,
+   "abs_shadow": 1.76,
    "abs_h": [
     [
-     "Ty Jerome",
+     "Edey,Zach",
+     20.7,
+     1,
+     "Out",
+     1.0
+    ],
+    [
+     "Jerome,Ty",
      30.5,
      0,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ]
    ],
    "abs_a": [
@@ -13792,10 +13806,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.347,
-   "abs_ld": 0.664,
-   "abs_lop": 1.851,
-   "abs_ldp": 0.717,
+   "abs_lo": 2.584,
+   "abs_ld": 1.257,
+   "abs_lop": 2.584,
+   "abs_ldp": 1.257,
    "trade_dm": -0.23,
    "trades": [
     [
