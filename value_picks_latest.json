@@ -1,37 +1,14 @@
 {
- "scanned_at": "2026-11-20T09:07",
+ "scanned_at": "2026-11-20T09:25",
  "ratings_season": "2526",
- "gross": 0.8156419936503249,
- "scale": 0.24520561907917449,
+ "gross": 0.781564723942024,
+ "scale": 0.25589691278701554,
  "cap": 0.2,
  "credits_remaining": null,
  "credits_cost": 0,
  "n_new": 0,
- "n_changed": 1,
+ "n_changed": 0,
  "picks": [
-  {
-   "lg": "EPL",
-   "home": "Leeds United",
-   "away": "Coventry City",
-   "home_id": 8463,
-   "away_id": 8669,
-   "when": "2026-11-28T15:00",
-   "md": 11,
-   "role": "dog",
-   "mxh": 1.586,
-   "mxa": 0.926,
-   "side": -1,
-   "hcap": 1.0,
-   "odds": 1.901,
-   "pw": 0.4754388013986835,
-   "pp": 0.24568742166628996,
-   "edge": 0.1366454723233808,
-   "proj_odds": 1.5865608278386483,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.018957473962733187,
-   "stake_final": 0.0046484791392093225
-  },
   {
    "lg": "EPL",
    "home": "Tottenham Hotspur",
@@ -53,30 +30,53 @@
    "hnote": "",
    "anote": "",
    "stake": 0.021492562090089,
-   "stake_final": 0.005270096992897869
+   "stake_final": 0.005499880286737021
   },
   {
    "lg": "EPL",
-   "home": "Manchester City",
-   "away": "Fulham",
-   "home_id": 8456,
-   "away_id": 9879,
-   "when": "2026-11-21T12:30",
+   "home": "Leeds United",
+   "away": "Coventry City",
+   "home_id": 8463,
+   "away_id": 8669,
+   "when": "2026-11-28T15:00",
    "md": 11,
    "role": "dog",
-   "mxh": 1.96,
-   "mxa": 0.928,
+   "mxh": 1.586,
+   "mxa": 0.926,
    "side": -1,
-   "hcap": 1.25,
-   "odds": 2.09,
-   "pw": 0.6289553630377465,
-   "pp": 0.0,
-   "edge": 0.29394986837755577,
-   "proj_odds": 1.5899379491259469,
+   "hcap": 1.0,
+   "odds": 1.901,
+   "pw": 0.4754388013986835,
+   "pp": 0.24568742166628996,
+   "edge": 0.1366454723233808,
+   "proj_odds": 1.5865608278386483,
    "hnote": "",
    "anote": "",
-   "stake": 0.033709847291004104,
-   "stake_final": 0.008265843974055094
+   "stake": 0.018957473962733187,
+   "stake_final": 0.004851159061303652
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Real Madrid",
+   "away": "Deportivo Alavés",
+   "home_id": 8633,
+   "away_id": 9866,
+   "when": "2026-11-28T20:00",
+   "md": 13,
+   "role": "dog",
+   "mxh": 2.348,
+   "mxa": 0.706,
+   "side": -1,
+   "hcap": 2.25,
+   "odds": 1.862,
+   "pw": 0.7089808152829947,
+   "pp": 0.0,
+   "edge": 0.301788034173718,
+   "proj_odds": 1.4104754013701244,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.04376276597646723,
+   "stake_final": 0.011198756708398606
   },
   {
    "lg": "LaLiga",
@@ -102,7 +102,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01573122093857774,
-   "stake_final": 0.003857383769115227
+   "stake_final": 0.004025570872552501
   },
   {
    "lg": "LaLiga",
@@ -125,7 +125,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01703023749558341,
-   "stake_final": 0.0041759099281699005
+   "stake_final": 0.00435798519914947
   },
   {
    "lg": "LaLiga",
@@ -148,7 +148,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.02617477526207254,
-   "stake_final": 0.0064182019723947594
+   "stake_final": 0.006698044182458309
   },
   {
    "lg": "LaLiga",
@@ -171,53 +171,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.06488337450988275,
-   "stake_final": 0.01590976801464173
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Real Madrid",
-   "away": "Deportivo Alavés",
-   "home_id": 8633,
-   "away_id": 9866,
-   "when": "2026-11-28T20:00",
-   "md": 13,
-   "role": "dog",
-   "mxh": 2.348,
-   "mxa": 0.706,
-   "side": -1,
-   "hcap": 2.25,
-   "odds": 1.862,
-   "pw": 0.7089808152829947,
-   "pp": 0.0,
-   "edge": 0.301788034173718,
-   "proj_odds": 1.4104754013701244,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.04376276597646723,
-   "stake_final": 0.01073087612387668
-  },
-  {
-   "lg": "LaLiga",
-   "home": "Getafe",
-   "away": "Atlético Madrid",
-   "home_id": 8305,
-   "away_id": 9906,
-   "when": "2026-11-22T20:00",
-   "md": 13,
-   "role": "dog",
-   "mxh": 0.74,
-   "mxa": 1.336,
-   "side": 1,
-   "hcap": 1.0,
-   "odds": 1.87,
-   "pw": 0.49445835886356154,
-   "pp": 0.26152272207014304,
-   "edge": 0.17325448997866427,
-   "proj_odds": 1.4935075212948898,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.024892886491187392,
-   "stake_final": 0.006103875642739224
+   "stake_final": 0.016603455228282736
   },
   {
    "lg": "LaLiga",
@@ -240,7 +194,30 @@
    "hnote": "",
    "anote": "",
    "stake": 0.026671861861216627,
-   "stake_final": 0.006540090399673846
+   "stake_final": 0.006825247108567078
+  },
+  {
+   "lg": "LaLiga",
+   "home": "Getafe",
+   "away": "Atlético Madrid",
+   "home_id": 8305,
+   "away_id": 9906,
+   "when": "2026-11-22T20:00",
+   "md": 13,
+   "role": "dog",
+   "mxh": 0.74,
+   "mxa": 1.336,
+   "side": 1,
+   "hcap": 1.0,
+   "odds": 1.87,
+   "pw": 0.49445835886356154,
+   "pp": 0.26152272207014304,
+   "edge": 0.17325448997866427,
+   "proj_odds": 1.4935075212948898,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.024892886491187392,
+   "stake_final": 0.006370012803452458
   },
   {
    "lg": "SerieA",
@@ -263,7 +240,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.023244558271140612,
-   "stake_final": 0.00569969630109698
+   "stake_final": 0.00594821070068277
   },
   {
    "lg": "SerieA",
@@ -286,7 +263,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.011522773857456287,
-   "stake_final": 0.002825448897226896
+   "stake_final": 0.002948642256865994
   },
   {
    "lg": "SerieA",
@@ -309,7 +286,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03875922469006737,
-   "stake_final": 0.009503979685156795
+   "stake_final": 0.00991836594020651
   },
   {
    "lg": "SerieA",
@@ -335,7 +312,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.025209877324534873,
-   "stake_final": 0.006181603576272616
+   "stake_final": 0.006451129779087861
   },
   {
    "lg": "SerieA",
@@ -361,7 +338,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.017818880562637376,
-   "stake_final": 0.004369289639659366
+   "stake_final": 0.004559796525299463
   },
   {
    "lg": "SerieA",
@@ -387,7 +364,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03137960203055703,
-   "stake_final": 0.007694454742360857
+   "stake_final": 0.008029943284104708
   },
   {
    "lg": "SerieA",
@@ -410,7 +387,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.017829588144012726,
-   "stake_final": 0.00437191519877935
+   "stake_final": 0.004562536562316831
   },
   {
    "lg": "SerieA",
@@ -433,56 +410,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.01986420970440033,
-   "stake_final": 0.004870815838086028
-  },
-  {
-   "lg": "Bundesliga",
-   "home": "Mainz 05",
-   "away": "Union Berlin",
-   "home_id": 9905,
-   "away_id": 8149,
-   "when": "2026-11-28T14:30",
-   "md": 10,
-   "role": "dog",
-   "mxh": 1.856,
-   "mxa": 1.067,
-   "side": -1,
-   "hcap": 1.0,
-   "odds": 2.07,
-   "pw": 0.4449857539777251,
-   "pp": 0.23399626883506947,
-   "edge": 0.1408327368662754,
-   "proj_odds": 1.7214118077210958,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.01645242253110694,
-   "stake_final": 0.004034226452092236
-  },
-  {
-   "lg": "Bundesliga",
-   "home": "Bayern München",
-   "away": "1. FC Köln",
-   "home_id": 9823,
-   "away_id": 8722,
-   "when": "2026-11-20T19:30",
-   "md": 10,
-   "role": "dog",
-   "coach_notes": [
-    "Bayern München: νεος προπονητης Aaron Danks απο 2026-10-25 — 4ο ματς · πριν: τυχερη (αποτελεσματα καλυτερα απο τα data)"
-   ],
-   "mxh": 3.281,
-   "mxa": 0.849,
-   "side": -1,
-   "hcap": 3.0,
-   "odds": 1.935,
-   "pw": 0.5351057799102368,
-   "pp": 0.18212266176112682,
-   "edge": 0.20254262876095286,
-   "proj_odds": 1.5284404858719167,
-   "hnote": "low-confidence",
-   "anote": "",
-   "stake": 0.02707789154558193,
-   "stake_final": 0.006639651159793162
+   "stake_final": 0.0050831899383099195
   },
   {
    "lg": "Bundesliga",
@@ -508,7 +436,56 @@
    "hnote": "",
    "anote": "low-confidence",
    "stake": 0.02492768106565267,
-   "stake_final": 0.0061124074679115795
+   "stake_final": 0.00637891662763986
+  },
+  {
+   "lg": "Bundesliga",
+   "home": "Mainz 05",
+   "away": "Union Berlin",
+   "home_id": 9905,
+   "away_id": 8149,
+   "when": "2026-11-28T14:30",
+   "md": 10,
+   "role": "dog",
+   "mxh": 1.856,
+   "mxa": 1.067,
+   "side": -1,
+   "hcap": 1.0,
+   "odds": 2.07,
+   "pw": 0.4449857539777251,
+   "pp": 0.23399626883506947,
+   "edge": 0.1408327368662754,
+   "proj_odds": 1.7214118077210958,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.01645242253110694,
+   "stake_final": 0.0042101241335778024
+  },
+  {
+   "lg": "Bundesliga",
+   "home": "Bayern München",
+   "away": "1. FC Köln",
+   "home_id": 9823,
+   "away_id": 8722,
+   "when": "2026-11-20T19:30",
+   "md": 10,
+   "role": "dog",
+   "coach_notes": [
+    "Bayern München: νεος προπονητης Aaron Danks απο 2026-10-25 — 4ο ματς · πριν: τυχερη (αποτελεσματα καλυτερα απο τα data)"
+   ],
+   "mxh": 3.281,
+   "mxa": 0.849,
+   "side": -1,
+   "hcap": 3.0,
+   "odds": 1.926,
+   "pw": 0.5351057799102368,
+   "pp": 0.18212266176112682,
+   "edge": 0.1978711553023364,
+   "proj_odds": 1.5284404858719167,
+   "hnote": "low-confidence",
+   "anote": "",
+   "stake": 0.026710469128285154,
+   "stake_final": 0.006835126589021057
   },
   {
    "lg": "Bundesliga",
@@ -531,30 +508,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03386518335942122,
-   "stake_final": 0.008303933250876638
-  },
-  {
-   "lg": "Ligue1",
-   "home": "Paris FC",
-   "away": "Angers",
-   "home_id": 6379,
-   "away_id": 8121,
-   "when": "2026-11-22T14:00",
-   "md": 11,
-   "role": "dog",
-   "mxh": 1.94,
-   "mxa": 0.77,
-   "side": -1,
-   "hcap": 1.5,
-   "odds": 1.952,
-   "pw": 0.6032017624341046,
-   "pp": 0.0,
-   "edge": 0.16022239793625415,
-   "proj_odds": 1.6578200898563236,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.021037604771041774,
-   "stake_final": 0.005158538901826293
+   "stake_final": 0.008665995872642102
   },
   {
    "lg": "Ligue1",
@@ -577,30 +531,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.023932110225094318,
-   "stake_final": 0.005868287903615294
-  },
-  {
-   "lg": "Ligue1",
-   "home": "Monaco",
-   "away": "Auxerre",
-   "home_id": 9829,
-   "away_id": 8583,
-   "when": "2026-11-21T19:45",
-   "md": 11,
-   "role": "dog",
-   "mxh": 1.827,
-   "mxa": 0.97,
-   "side": -1,
-   "hcap": 1.25,
-   "odds": 2.03,
-   "pw": 0.6690833313333433,
-   "pp": 0.0,
-   "edge": 0.33756448766848646,
-   "proj_odds": 1.4945821442109593,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.04096656403743768,
-   "stake_final": 0.010045231696346553
+   "stake_final": 0.006124153123080203
   },
   {
    "lg": "Ligue1",
@@ -623,7 +554,53 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03320395430943188,
-   "stake_final": 0.008141796172320867
+   "stake_final": 0.008496789400104737
+  },
+  {
+   "lg": "Ligue1",
+   "home": "Monaco",
+   "away": "Auxerre",
+   "home_id": 9829,
+   "away_id": 8583,
+   "when": "2026-11-21T19:45",
+   "md": 11,
+   "role": "dog",
+   "mxh": 1.827,
+   "mxa": 0.97,
+   "side": -1,
+   "hcap": 1.25,
+   "odds": 2.03,
+   "pw": 0.6690833313333433,
+   "pp": 0.0,
+   "edge": 0.33756448766848646,
+   "proj_odds": 1.4945821442109593,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.04096656403743768,
+   "stake_final": 0.010483217264671878
+  },
+  {
+   "lg": "Ligue1",
+   "home": "Paris FC",
+   "away": "Angers",
+   "home_id": 6379,
+   "away_id": 8121,
+   "when": "2026-11-22T14:00",
+   "md": 11,
+   "role": "dog",
+   "mxh": 1.94,
+   "mxa": 0.77,
+   "side": -1,
+   "hcap": 1.5,
+   "odds": 1.952,
+   "pw": 0.6032017624341046,
+   "pp": 0.0,
+   "edge": 0.16022239793625415,
+   "proj_odds": 1.6578200898563236,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.021037604771041774,
+   "stake_final": 0.005383458113342979
   },
   {
    "lg": "PrimeiraLiga",
@@ -649,7 +626,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.03082290024262931,
-   "stake_final": 0.007557948335809557
+   "stake_final": 0.007887485015230993
   },
   {
    "lg": "PrimeiraLiga",
@@ -675,30 +652,7 @@
    "hnote": "",
    "anote": "",
    "stake": 0.029746790065303588,
-   "stake_final": 0.007294080073581004
-  },
-  {
-   "lg": "Eredivisie",
-   "home": "Go Ahead Eagles",
-   "away": "Fortuna Sittard",
-   "home_id": 6433,
-   "away_id": 6422,
-   "when": "2026-11-22T15:45",
-   "md": 13,
-   "role": "dog",
-   "mxh": 1.784,
-   "mxa": 1.395,
-   "side": -1,
-   "hcap": 1.0,
-   "odds": 1.806,
-   "pw": 0.5355178472052778,
-   "pp": 0.21091815380975,
-   "edge": 0.16511456431705812,
-   "proj_odds": 1.473493087687467,
-   "hnote": "",
-   "anote": "",
-   "stake": 0.025607097443712486,
-   "stake_final": 0.006279004181506266
+   "stake_final": 0.007612111743034652
   },
   {
    "lg": "Eredivisie",
@@ -724,7 +678,30 @@
    "hnote": "",
    "anote": "",
    "stake": 0.02906607359029045,
-   "stake_final": 0.007127164568908014
+   "stake_final": 0.007437918498595531
+  },
+  {
+   "lg": "Eredivisie",
+   "home": "Go Ahead Eagles",
+   "away": "Fortuna Sittard",
+   "home_id": 6433,
+   "away_id": 6422,
+   "when": "2026-11-22T15:45",
+   "md": 13,
+   "role": "dog",
+   "mxh": 1.784,
+   "mxa": 1.395,
+   "side": -1,
+   "hcap": 1.0,
+   "odds": 1.806,
+   "pw": 0.5355178472052778,
+   "pp": 0.21091815380975,
+   "edge": 0.16511456431705812,
+   "proj_odds": 1.473493087687467,
+   "hnote": "",
+   "anote": "",
+   "stake": 0.025607097443712486,
+   "stake_final": 0.006552777181282303
   }
  ]
 }
