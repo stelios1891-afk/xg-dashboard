@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-21T22:18+00:00",
+ "generated": "2026-11-21T22:30+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -14516,12 +14516,12 @@
    "away": "Portland Trail Blazers",
    "hcode": "NYK",
    "acode": "POR",
-   "margin": 0.26,
-   "total": 216.8,
+   "margin": -0.43,
+   "total": 217.1,
    "total_src": "μοντελο",
-   "pts_h": 108.5,
-   "pts_a": 108.3,
-   "p_home": 0.508,
+   "pts_h": 108.3,
+   "pts_a": 108.7,
+   "p_home": 0.487,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -14536,8 +14536,8 @@
    "rl_a": "2026-11-19",
    "margin_base": 2.41,
    "total_base": 216.2,
-   "abs_dm": -2.15,
-   "abs_dt": 0.58,
+   "abs_dm": -2.84,
+   "abs_dt": 0.87,
    "abs_shadow": 3.45,
    "abs_h": [
     [
@@ -14557,13 +14557,6 @@
    ],
    "abs_a": [
     [
-     "Avdija,Deni",
-     32.9,
-     0,
-     "Questionable",
-     0.42
-    ],
-    [
      "Morant,Ja",
      26.0,
      0,
@@ -14574,8 +14567,8 @@
    "inj_src": "official",
    "abs_lo": 3.271,
    "abs_ld": 2.501,
-   "abs_lop": 3.863,
-   "abs_ldp": 2.512,
+   "abs_lop": 3.271,
+   "abs_ldp": 2.501,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
