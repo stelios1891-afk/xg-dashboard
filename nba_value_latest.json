@@ -1,10 +1,10 @@
 {
- "scanned_at": "2026-11-22T17:41+00:00",
+ "scanned_at": "2026-11-22T19:05+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
  "n_new": 0,
- "n_changed": 0,
+ "n_changed": 1,
  "picks": [
   {
    "lg": "NBA",
@@ -22,10 +22,10 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": 9.5,
-   "odds": 2.02,
-   "edge": 0.2749,
-   "proj_odds": 1.58,
-   "model_line": 5.0,
+   "odds": 2.03,
+   "edge": 0.2434,
+   "proj_odds": 1.63,
+   "model_line": 5.6,
    "mkt_line": 9.5,
    "first": {
     "line": 8.5,
@@ -33,7 +33,7 @@
     "oa": 1.917,
     "seen": "2026-11-22T00:59+00:00"
    },
-   "move_note": "ανοιγμα Chicago Bulls +8.5 @1.97 → τωρα +9.5 @2.02 · αγορα 1.4 π. ΚΟΝΤΡΑ μας",
+   "move_note": "ανοιγμα Chicago Bulls +8.5 @1.97 → τωρα +9.5 @2.03 · αγορα 1.4 π. ΚΟΝΤΡΑ μας",
    "move_pts": -1.4,
    "fat_note": "😴 Nuggets: αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΥΠΕΡ μας",
    "fat_pts": 0.68,
@@ -88,8 +88,8 @@
    "mkt": "hcap",
    "side": 1,
    "hcap": 8.5,
-   "odds": 1.917,
-   "edge": 0.1557,
+   "odds": 1.909,
+   "edge": 0.1508,
    "proj_odds": 1.66,
    "model_line": 5.0,
    "mkt_line": 8.5,
@@ -99,38 +99,11 @@
     "oa": 1.926,
     "seen": "2026-11-22T08:46+00:00"
    },
-   "move_note": "ανοιγμα Golden State Warriors +9.5 @1.96 → τωρα +8.5 @1.92 · αγορα 1.4 π. ΥΠΕΡ μας",
-   "move_pts": 1.4,
+   "move_note": "ανοιγμα Golden State Warriors +9.5 @1.96 → τωρα +8.5 @1.91 · αγορα 1.5 π. ΥΠΕΡ μας",
+   "move_pts": 1.5,
    "fat_note": "😴 Celtics: back-to-back −3 · καθαρο 3.0 π. ΥΠΕΡ μας",
    "fat_pts": 3.0,
    "hrs_birth": 16.9
-  },
-  {
-   "lg": "NBA",
-   "paper": false,
-   "home": "New York Knicks",
-   "away": "Indiana Pacers",
-   "hcode": "NYK",
-   "acode": "IND",
-   "code": "pin1640540348",
-   "round": 6,
-   "group": null,
-   "when": "2026-11-23T01:10",
-   "nba": true,
-   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
-   "mkt": "total",
-   "side": 0,
-   "hcap": 214.5,
-   "bet": "Under 214.5",
-   "odds": 1.943,
-   "edge": 0.0873,
-   "proj_odds": 1.79,
-   "model_total": 211.8,
-   "mix_total": 211.8,
-   "mkt_total": 214.6,
-   "mkt_line": 214.5,
-   "gno": 16,
-   "hrs_birth": 20.4
   }
  ]
 }
