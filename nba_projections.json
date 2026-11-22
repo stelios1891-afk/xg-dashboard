@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22T17:12+00:00",
+ "generated": "2026-11-22T17:23+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -15039,12 +15039,12 @@
    "away": "Denver Nuggets",
    "hcode": "CHI",
    "acode": "DEN",
-   "margin": -5.27,
-   "total": 238.4,
+   "margin": -4.98,
+   "total": 238.3,
    "total_src": "μοντελο",
-   "pts_h": 116.5,
-   "pts_a": 121.8,
-   "p_home": 0.348,
+   "pts_h": 116.7,
+   "pts_a": 121.6,
+   "p_home": 0.356,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -15059,10 +15059,17 @@
    "rl_a": "2026-11-20",
    "margin_base": -3.47,
    "total_base": 238.3,
-   "abs_dm": -1.81,
-   "abs_dt": 0.03,
-   "abs_shadow": 0.09,
+   "abs_dm": -1.51,
+   "abs_dt": -0.02,
+   "abs_shadow": 0.14,
    "abs_h": [
+    [
+     "Claxton,Nic",
+     20.7,
+     1,
+     "Questionable",
+     0.46
+    ],
     [
      "Powell,Norman",
      29.6,
@@ -15074,8 +15081,8 @@
      "Smith,Jalen",
      25.3,
      0,
-     "Questionable",
-     0.46
+     "Probable",
+     0.07
     ],
     [
      "Williams,Patrick",
@@ -15096,8 +15103,8 @@
    "inj_src": "official",
    "abs_lo": 0.0,
    "abs_ld": 0.0,
-   "abs_lop": 0.529,
-   "abs_ldp": 0.291,
+   "abs_lop": 0.284,
+   "abs_ldp": 0.117,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
