@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22T20:57+00:00",
+ "generated": "2026-11-22T21:09+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -15317,12 +15317,12 @@
    "away": "Boston Celtics",
    "hcode": "GSW",
    "acode": "BOS",
-   "margin": -3.44,
-   "total": 212.4,
+   "margin": -4.16,
+   "total": 212.2,
    "total_src": "μοντελο",
-   "pts_h": 104.5,
-   "pts_a": 107.9,
-   "p_home": 0.399,
+   "pts_h": 104.0,
+   "pts_a": 108.2,
+   "p_home": 0.379,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -15337,8 +15337,8 @@
    "rl_a": "2026-11-21",
    "margin_base": -3.75,
    "total_base": 213.2,
-   "abs_dm": 0.31,
-   "abs_dt": -0.76,
+   "abs_dm": -0.41,
+   "abs_dt": -1.01,
    "abs_shadow": 0.86,
    "abs_h": [
     [
@@ -15351,14 +15351,7 @@
    ],
    "abs_a": [
     [
-     "Derrick White",
-     30.2,
-     0,
-     "Questionable",
-     0.42
-    ],
-    [
-     "Paul George",
+     "George,Paul",
      29.6,
      1,
      "Out",
@@ -15368,8 +15361,8 @@
    "inj_src": "official",
    "abs_lo": 2.539,
    "abs_ld": 0.262,
-   "abs_lop": 3.007,
-   "abs_ldp": 0.74,
+   "abs_lop": 2.539,
+   "abs_ldp": 0.262,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
