@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22T21:24+00:00",
+ "generated": "2026-11-22T21:36+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -14942,12 +14942,12 @@
    "away": "Oklahoma City Thunder",
    "hcode": "MIA",
    "acode": "OKC",
-   "margin": 1.76,
-   "total": 231.8,
+   "margin": 3.49,
+   "total": 231.3,
    "total_src": "μοντελο",
-   "pts_h": 116.8,
-   "pts_a": 115.0,
-   "p_home": 0.552,
+   "pts_h": 117.4,
+   "pts_a": 113.9,
+   "p_home": 0.602,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -14962,9 +14962,9 @@
    "rl_a": "2026-11-20",
    "margin_base": -1.98,
    "total_base": 231.4,
-   "abs_dm": 3.82,
-   "abs_dt": 0.41,
-   "abs_shadow": 1.18,
+   "abs_dm": 5.55,
+   "abs_dt": -0.14,
+   "abs_shadow": 2.12,
    "abs_h": [
     [
      "Antetokounmpo,Giannis",
@@ -14979,8 +14979,8 @@
      "Gilgeous-Alexander,Shai",
      34.0,
      1,
-     "Questionable",
-     0.42
+     "Out",
+     1.0
     ],
     [
      "Holmgren,Chet",
@@ -14998,10 +14998,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.947,
-   "abs_ld": 2.064,
-   "abs_lop": 4.442,
-   "abs_ldp": 2.633,
+   "abs_lo": 5.431,
+   "abs_ld": 2.849,
+   "abs_lop": 6.463,
+   "abs_ldp": 3.088,
    "trade_dm": -0.08,
    "trades": [
     [
