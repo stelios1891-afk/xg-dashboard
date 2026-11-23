@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-23T00:25+00:00",
+ "generated": "2026-11-23T00:43+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -15228,12 +15228,12 @@
    "away": "Indiana Pacers",
    "hcode": "NYK",
    "acode": "IND",
-   "margin": 6.02,
-   "total": 212.4,
+   "margin": 6.35,
+   "total": 212.6,
    "total_src": "μοντελο",
-   "pts_h": 109.2,
-   "pts_a": 103.2,
-   "p_home": 0.672,
+   "pts_h": 109.5,
+   "pts_a": 103.1,
+   "p_home": 0.681,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -15248,9 +15248,9 @@
    "rl_a": "2026-11-20",
    "margin_base": 5.72,
    "total_base": 212.9,
-   "abs_dm": 0.3,
-   "abs_dt": -0.45,
-   "abs_shadow": 0.09,
+   "abs_dm": 0.63,
+   "abs_dt": -0.25,
+   "abs_shadow": 0.0,
    "abs_h": [
     [
      "Anunoby,OG",
@@ -15258,13 +15258,6 @@
      0,
      "Out",
      1.0
-    ],
-    [
-     "Towns,Karl-Anthony",
-     33.6,
-     0,
-     "Questionable",
-     0.42
     ]
    ],
    "abs_a": [
@@ -15274,20 +15267,13 @@
      0,
      "Out",
      1.0
-    ],
-    [
-     "Siakam,Pascal",
-     32.3,
-     1,
-     "Questionable",
-     0.42
     ]
    ],
    "inj_src": "official",
    "abs_lo": 3.477,
    "abs_ld": 1.492,
-   "abs_lop": 4.684,
-   "abs_ldp": 1.891,
+   "abs_lop": 3.477,
+   "abs_ldp": 1.492,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
