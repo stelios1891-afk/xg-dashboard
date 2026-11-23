@@ -1,9 +1,9 @@
 {
- "scanned_at": "2026-11-23T02:06+00:00",
+ "scanned_at": "2026-11-23T02:12+00:00",
  "hc_min": 0.08,
  "tot_min": 0.08,
  "tot_w": 1.0,
- "n_new": 0,
+ "n_new": 2,
  "n_changed": 0,
  "picks": [
   {
@@ -69,6 +69,64 @@
    "fat_note": "😴 Grizzlies: αλλαγη ωρας 1ω −0.7 · καθαρο 0.7 π. ΚΟΝΤΡΑ μας",
    "fat_pts": -0.68,
    "hrs_birth": 22.2
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Toronto Raptors",
+   "away": "Milwaukee Bucks",
+   "hcode": "TOR",
+   "acode": "MIL",
+   "code": "pin1640570248",
+   "round": 6,
+   "group": null,
+   "when": "2026-11-24T00:40",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "hcap",
+   "side": -1,
+   "hcap": 11.0,
+   "odds": 1.943,
+   "edge": 0.138,
+   "proj_odds": 1.7,
+   "model_line": -8.1,
+   "mkt_line": -11.0,
+   "first": {
+    "line": -11.0,
+    "oh": 1.943,
+    "oa": 1.943,
+    "seen": "2026-11-23T02:12+00:00"
+   },
+   "move_note": "ανοιγμα Milwaukee Bucks +11 @1.94 → τωρα +11 @1.94 · ουσιαστικα ιδια",
+   "move_pts": -0.0,
+   "hrs_birth": 22.5
+  },
+  {
+   "lg": "NBA",
+   "paper": false,
+   "home": "Minnesota Timberwolves",
+   "away": "Brooklyn Nets",
+   "hcode": "MIN",
+   "acode": "BRK",
+   "code": "pin1640571827",
+   "round": 6,
+   "group": null,
+   "when": "2026-11-24T00:40",
+   "nba": true,
+   "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B",
+   "mkt": "total",
+   "side": 0,
+   "hcap": 224.0,
+   "bet": "Under 224",
+   "odds": 1.917,
+   "edge": 0.1975,
+   "proj_odds": 1.6,
+   "model_total": 218.3,
+   "mix_total": 218.3,
+   "mkt_total": 223.8,
+   "mkt_line": 224.0,
+   "gno": 17,
+   "hrs_birth": 22.5
   }
  ]
 }
