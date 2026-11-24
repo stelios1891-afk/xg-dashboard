@@ -1,12 +1,12 @@
 {
- "generated": "2026-11-24T23:19+00:00",
+ "generated": "2026-11-24T23:31+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
  "sigma_margin": 13.5,
  "sigma_total": 18.0,
  "res_t": -0.184212646484375,
- "res_t_alt": 0.6235088340602156,
+ "res_t_alt": 0.6235088340602459,
  "games": [
   {
    "code": "pin1633801637",
@@ -16084,12 +16084,12 @@
    "away": "Detroit Pistons",
    "hcode": "ORL",
    "acode": "DET",
-   "margin": -3.69,
-   "total": 217.2,
+   "margin": -1.32,
+   "total": 216.8,
    "total_src": "μοντελο",
-   "pts_h": 106.8,
-   "pts_a": 110.5,
-   "p_home": 0.392,
+   "pts_h": 107.7,
+   "pts_a": 109.1,
+   "p_home": 0.461,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -16104,9 +16104,9 @@
    "rl_a": "2026-11-22",
    "margin_base": -4.02,
    "total_base": 217.7,
-   "abs_dm": 0.33,
-   "abs_dt": -0.51,
-   "abs_shadow": 0.06,
+   "abs_dm": 2.7,
+   "abs_dt": -0.91,
+   "abs_shadow": 1.56,
    "abs_h": [
     [
      "Banchero,Paolo",
@@ -16121,8 +16121,8 @@
      "Cunningham,Cade",
      35.1,
      1,
-     "Probable",
-     0.04
+     "Out",
+     1.0
     ],
     [
      "Robinson,Duncan",
@@ -16133,10 +16133,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.744,
-   "abs_ld": 0.379,
-   "abs_lop": 1.847,
-   "abs_ldp": 0.413,
+   "abs_lo": 4.299,
+   "abs_ld": 1.238,
+   "abs_lop": 4.299,
+   "abs_ldp": 1.238,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
@@ -16154,7 +16154,7 @@
    "away": "Boston Celtics",
    "hcode": "WAS",
    "acode": "BOS",
-   "margin": -7.68,
+   "margin": -7.67,
    "total": 216.3,
    "total_src": "μοντελο",
    "pts_h": 104.3,
@@ -16172,7 +16172,7 @@
    "gp_a": 17,
    "rl_h": "2026-11-22",
    "rl_a": "2026-11-22",
-   "margin_base": -7.68,
+   "margin_base": -7.67,
    "total_base": 216.3,
    "abs_dm": 0.0,
    "abs_dt": 0.0,
@@ -16206,7 +16206,7 @@
    "total_src": "μοντελο",
    "pts_h": 118.5,
    "pts_a": 112.9,
-   "p_home": 0.66,
+   "p_home": 0.661,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -16278,7 +16278,7 @@
   {
    "code": "CHI",
    "name": "Chicago Bulls",
-   "net": -0.81,
+   "net": -0.82,
    "O": 0.52,
    "D": 1.33,
    "pace": 3.79,
@@ -16350,7 +16350,7 @@
   {
    "code": "IND",
    "name": "Indiana Pacers",
-   "net": 0.23,
+   "net": 0.22,
    "O": -0.52,
    "D": -0.74,
    "pace": 1.44,
@@ -16378,7 +16378,7 @@
    "code": "MEM",
    "name": "Memphis Grizzlies",
    "net": 4.22,
-   "O": 3.72,
+   "O": 3.73,
    "D": -0.49,
    "pace": 0.54,
    "games": 18
@@ -16395,7 +16395,7 @@
   {
    "code": "MIL",
    "name": "Milwaukee Bucks",
-   "net": -5.89,
+   "net": -5.88,
    "O": -2.12,
    "D": 3.77,
    "pace": 0.41,
@@ -16413,7 +16413,7 @@
   {
    "code": "NOP",
    "name": "New Orleans Pelicans",
-   "net": -4.73,
+   "net": -4.72,
    "O": -1.16,
    "D": 3.56,
    "pace": 1.28,
@@ -16422,9 +16422,9 @@
   {
    "code": "NYK",
    "name": "New York Knicks",
-   "net": 6.54,
-   "O": 1.44,
-   "D": -5.1,
+   "net": 6.49,
+   "O": 1.41,
+   "D": -5.08,
    "pace": -3.87,
    "games": 17
   },
@@ -16440,7 +16440,7 @@
   {
    "code": "ORL",
    "name": "Orlando Magic",
-   "net": 0.6,
+   "net": 0.61,
    "O": -0.48,
    "D": -1.09,
    "pace": -0.73,
@@ -16449,7 +16449,7 @@
   {
    "code": "PHI",
    "name": "Philadelphia 76ers",
-   "net": 3.82,
+   "net": 3.81,
    "O": 3.42,
    "D": -0.39,
    "pace": 0.4,
@@ -16467,7 +16467,7 @@
   {
    "code": "POR",
    "name": "Portland Trail Blazers",
-   "net": 7.55,
+   "net": 7.54,
    "O": 3.03,
    "D": -4.52,
    "pace": 0.92,
@@ -16494,9 +16494,9 @@
   {
    "code": "TOR",
    "name": "Toronto Raptors",
-   "net": 3.05,
-   "O": 1.37,
-   "D": -1.67,
+   "net": 3.1,
+   "O": 1.4,
+   "D": -1.7,
    "pace": -0.97,
    "games": 17
   },
