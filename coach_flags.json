@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23 05:16 UTC",
+ "updated": "2026-11-24 05:15 UTC",
  "season": "2627",
  "teams": {
   "8650": {
@@ -103,7 +103,7 @@
    "name": "Brentford",
    "lg": "EPL",
    "coach": "Keith Andrews",
-   "played": 10,
+   "played": 11,
    "summer_new": false
   },
   "10260": {
@@ -144,7 +144,7 @@
    "name": "Everton",
    "lg": "EPL",
    "coach": "David Moyes",
-   "played": 10,
+   "played": 11,
    "summer_new": false
   },
   "8669": {
@@ -197,7 +197,7 @@
    "name": "Levante",
    "lg": "LaLiga",
    "coach": "Luís Castro",
-   "played": 12,
+   "played": 13,
    "summer_new": false
   },
   "10267": {
@@ -286,7 +286,7 @@
    "name": "Elche",
    "lg": "LaLiga",
    "coach": "Martín Anselmi",
-   "played": 12,
+   "played": 13,
    "summer_new": false
   },
   "8603": {
@@ -427,7 +427,7 @@
    "name": "Fiorentina",
    "lg": "SerieA",
    "coach": "Paolo Vanoli",
-   "played": 11,
+   "played": 12,
    "summer_new": false,
    "change": {
     "date": "2026-09-11",
@@ -435,8 +435,8 @@
     "first": "Paolo Vanoli",
     "caretaker_first": false,
     "perm": "Paolo Vanoli",
-    "played_since": 8,
-    "next_match_no": 9,
+    "played_since": 9,
+    "next_match_no": 10,
     "pre_luck": -0.862,
     "pre_gd": -1.25,
     "pre_xgd": -0.39,
@@ -528,8 +528,21 @@
   "6504": {
    "name": "Monza",
    "lg": "SerieA",
-   "coach": "Ivan Jurić",
-   "played": 11
+   "coach": "Matteo Paro",
+   "played": 12,
+   "change": {
+    "date": "2026-11-23",
+    "old": "Ivan Jurić",
+    "first": "Matteo Paro",
+    "caretaker_first": false,
+    "perm": "Matteo Paro",
+    "played_since": 1,
+    "next_match_no": 2,
+    "pre_luck": -0.299,
+    "pre_gd": -0.5,
+    "pre_xgd": -0.2,
+    "type": "bad_both"
+   }
   },
   "9891": {
    "name": "Frosinone",
