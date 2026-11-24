@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-24T01:21+00:00",
+ "generated": "2026-11-24T01:33+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -15906,12 +15906,12 @@
    "away": "San Antonio Spurs",
    "hcode": "SAC",
    "acode": "SAS",
-   "margin": -11.55,
-   "total": 222.7,
+   "margin": -9.21,
+   "total": 223.0,
    "total_src": "μοντελο",
-   "pts_h": 105.6,
-   "pts_a": 117.1,
-   "p_home": 0.196,
+   "pts_h": 106.9,
+   "pts_a": 116.1,
+   "p_home": 0.248,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -15926,17 +15926,17 @@
    "rl_a": "2026-11-21",
    "margin_base": -14.8,
    "total_base": 222.3,
-   "abs_dm": 3.33,
-   "abs_dt": 0.41,
-   "abs_shadow": 1.59,
+   "abs_dm": 5.67,
+   "abs_dt": 0.74,
+   "abs_shadow": 3.45,
    "abs_h": [],
    "abs_a": [
     [
      "Fox,De'Aaron",
      27.2,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
      "Harper,Dylan",
@@ -15949,15 +15949,15 @@
      "Wembanyama,Victor",
      29.6,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0.773,
-   "abs_ld": 0.512,
-   "abs_lop": 2.265,
-   "abs_ldp": 1.542,
+   "abs_lo": 4.016,
+   "abs_ld": 2.751,
+   "abs_lop": 4.016,
+   "abs_ldp": 2.751,
    "trade_dm": -0.08,
    "trades": [
     [
