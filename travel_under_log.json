@@ -11974,5 +11974,135 @@
 1.89,
 2.01
 ]
+},
+"5781818": {
+"seen": "2026-11-25T19:05",
+"lg": "Eredivisie",
+"ko": "2026-11-29T19:00",
+"home": "NEC Nijmegen",
+"away": "FC Twente",
+"T_model": 3.14,
+"ah_first": [
+0.5,
+2.02,
+1.84
+],
+"first": {
+"t": "2026-11-25T19:05",
+"line": 3.5,
+"over": 1.97,
+"under": 1.87
+},
+"trav": [
+{
+"side": "home",
+"team": "NEC Nijmegen",
+"eu_comp": "EuropaLeague",
+"eu_at": "NEC Nijmegen",
+"eu_t": "2026-11-26T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -0.5,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "FC Twente",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Freiburg",
+"eu_t": "2026-11-26T20:00",
+"eu_away": true,
+"km": 474,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "PSV Eindhoven",
+"km": 55,
+"rest": 12.9
+},
+{
+"d": "26/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Rennes",
+"km": 0,
+"rest": 5.2
+}
+],
+"scen": "Π🏠 Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 55,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "22/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Eredivisie",
+"opp": "Willem II",
+"km": 0,
+"rest": 13.9
+},
+{
+"d": "26/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Freiburg",
+"km": 474,
+"rest": 4.4
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 446,
+"km14": 920,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-25T19:05",
+"line": 3.5,
+"over": 1.97,
+"under": 1.87
+},
+"ah_last": [
+0.5,
+2.02,
+1.84
+]
 }
 }
