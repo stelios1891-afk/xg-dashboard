@@ -10040,5 +10040,112 @@
 1.89,
 2.0
 ]
+},
+"5795528": {
+"seen": "2026-11-25T12:04",
+"lg": "EPL",
+"ko": "2026-11-29T12:00",
+"home": "Everton",
+"away": "Liverpool",
+"T_model": 2.85,
+"ah_first": [
+0.5,
+2.03,
+1.88
+],
+"first": {
+"t": "2026-11-25T12:04",
+"line": 2.75,
+"over": 1.89,
+"under": 2.0
+},
+"trav": [
+{
+"side": "away",
+"team": "Liverpool",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Club Brugge",
+"eu_t": "2026-11-25T20:00",
+"eu_away": true,
+"km": 486,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "23/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Brentford",
+"km": 283,
+"rest": 17.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 1,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 283,
+"km14": 566,
+"rest": 5.7,
+"min_rest": 5.7,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "22/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "EPL",
+"opp": "Manchester United",
+"km": 298,
+"rest": 14.1
+},
+{
+"d": "25/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Club Brugge",
+"km": 486,
+"rest": 3.1
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 2,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 488,
+"km14": 1272,
+"rest": 3.7,
+"min_rest": 3.1,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-25T12:04",
+"line": 2.75,
+"over": 1.89,
+"under": 2.0
+},
+"ah_last": [
+0.5,
+2.03,
+1.88
+]
 }
 }
