@@ -9709,15 +9709,15 @@
 }
 },
 "last": {
-"t": "2026-11-25T08:57",
+"t": "2026-11-25T18:47",
 "line": 3.0,
-"over": 1.89,
-"under": 2.01
+"over": 1.91,
+"under": 1.98
 },
 "ah_last": [
 -1.5,
-1.94,
-1.97
+1.98,
+1.93
 ]
 },
 "5803004": {
@@ -11146,15 +11146,15 @@
 }
 },
 "last": {
-"t": "2026-11-25T15:24",
-"line": 3.75,
-"over": 1.8,
-"under": 2.0
+"t": "2026-11-25T18:47",
+"line": 4.0,
+"over": 1.96,
+"under": 1.76
 },
 "ah_last": [
 2.0,
-1.81,
-1.92
+1.83,
+1.89
 ]
 },
 "5781813": {
@@ -11843,6 +11843,136 @@
 0.0,
 2.04,
 1.87
+]
+},
+"5881233": {
+"seen": "2026-11-25T18:47",
+"lg": "Bundesliga",
+"ko": "2026-11-29T18:30",
+"home": "Borussia Dortmund",
+"away": "Bayer Leverkusen",
+"T_model": 3.04,
+"ah_first": [
+-0.25,
+1.89,
+2.01
+],
+"first": {
+"t": "2026-11-25T18:47",
+"line": 3.25,
+"over": 2.02,
+"under": 1.88
+},
+"trav": [
+{
+"side": "home",
+"team": "Borussia Dortmund",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Arsenal",
+"eu_t": "2026-11-24T20:00",
+"eu_away": true,
+"km": 523,
+"inzone": true,
+"patt": 1,
+"sup": 0.25,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Bayer Leverkusen",
+"eu_comp": "EuropaLeague",
+"eu_at": "Dinamo Zagreb",
+"eu_t": "2026-11-26T17:45",
+"eu_away": true,
+"km": 882,
+"inzone": true,
+"patt": 1,
+"sup": -0.25,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Borussia Mönchengladbach",
+"km": 82,
+"rest": 14.0
+},
+{
+"d": "24/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Arsenal",
+"km": 453,
+"rest": 3.2
+}
+],
+"scen": "Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 523,
+"km14": 1058,
+"rest": 4.9,
+"min_rest": 3.2,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Paderborn",
+"km": 15,
+"rest": 13.0
+},
+{
+"d": "26/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Dinamo Zagreb",
+"km": 882,
+"rest": 5.1
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 890,
+"km14": 1786,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-25T18:47",
+"line": 3.25,
+"over": 2.02,
+"under": 1.88
+},
+"ah_last": [
+-0.25,
+1.89,
+2.01
 ]
 }
 }
