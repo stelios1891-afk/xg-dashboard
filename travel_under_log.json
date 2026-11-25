@@ -10919,5 +10919,242 @@
 1.81,
 2.09
 ]
+},
+"5881235": {
+"seen": "2026-11-25T15:24",
+"lg": "Bundesliga",
+"ko": "2026-11-29T14:30",
+"home": "Freiburg",
+"away": "RB Leipzig",
+"T_model": 3.23,
+"ah_first": [
+0.0,
+2.1,
+1.83
+],
+"first": {
+"t": "2026-11-25T15:24",
+"line": 3.25,
+"over": 2.03,
+"under": 1.87
+},
+"trav": [
+{
+"side": "home",
+"team": "Freiburg",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Freiburg",
+"eu_t": "2026-11-26T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -0.0,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "RB Leipzig",
+"eu_comp": "ChampionsLeague",
+"eu_at": "RB Leipzig",
+"eu_t": "2026-11-24T20:00",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": 0.0,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Elversberg",
+"km": 153,
+"rest": 12.9
+},
+{
+"d": "26/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "FC Twente",
+"km": 153,
+"rest": 5.2
+}
+],
+"scen": "Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 307,
+"rest": 2.8,
+"min_rest": 2.8,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "Bundesliga",
+"opp": "Union Berlin",
+"km": 149,
+"rest": 14.0
+},
+{
+"d": "24/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Lens",
+"km": 149,
+"rest": 3.2
+}
+],
+"scen": "Π✈ Ε🏠 → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 492,
+"km14": 791,
+"rest": 4.8,
+"min_rest": 3.2,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-25T15:24",
+"line": 3.25,
+"over": 2.03,
+"under": 1.87
+},
+"ah_last": [
+0.0,
+2.1,
+1.83
+]
+},
+"5868143": {
+"seen": "2026-11-25T15:24",
+"lg": "LaLiga",
+"ko": "2026-11-29T15:15",
+"home": "Deportivo A Coruña",
+"away": "Barcelona",
+"T_model": 3.35,
+"ah_first": [
+2.0,
+1.81,
+1.92
+],
+"first": {
+"t": "2026-11-25T15:24",
+"line": 3.75,
+"over": 1.8,
+"under": 2.0
+},
+"trav": [
+{
+"side": "away",
+"team": "Barcelona",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Sabah FK",
+"eu_t": "2026-11-25T17:45",
+"eu_away": true,
+"km": 3952,
+"inzone": true,
+"patt": 1,
+"sup": 2.0,
+"cat": "μεγαλη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Deportivo Alavés",
+"km": 426,
+"rest": 13.9
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 469,
+"km14": 895,
+"rest": 8.1,
+"min_rest": 8.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "22/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Villarreal",
+"km": 492,
+"rest": 13.7
+},
+{
+"d": "25/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Sabah FK",
+"km": 3952,
+"rest": 3.2
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 4725,
+"km14": 9170,
+"rest": 3.9,
+"min_rest": 3.2,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-25T15:24",
+"line": 3.75,
+"over": 1.8,
+"under": 2.0
+},
+"ah_last": [
+2.0,
+1.81,
+1.92
+]
 }
 }
