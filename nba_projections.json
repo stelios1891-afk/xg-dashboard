@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-25T21:03+00:00",
+ "generated": "2026-11-25T21:15+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -16254,12 +16254,12 @@
    "away": "Miami Heat",
    "hcode": "PHI",
    "acode": "MIA",
-   "margin": 1.15,
+   "margin": 1.05,
    "total": 240.7,
    "total_src": "μοντελο",
    "pts_h": 120.9,
    "pts_a": 119.8,
-   "p_home": 0.534,
+   "p_home": 0.531,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -16274,8 +16274,8 @@
    "rl_a": "2026-11-22",
    "margin_base": 2.41,
    "total_base": 241.1,
-   "abs_dm": -1.26,
-   "abs_dt": -0.42,
+   "abs_dm": -1.36,
+   "abs_dt": -0.4,
    "abs_shadow": 0.0,
    "abs_h": [
     [
@@ -16286,20 +16286,12 @@
      1.0
     ]
    ],
-   "abs_a": [
-    [
-     "Antetokounmpo,Giannis",
-     32.5,
-     0,
-     "Probable",
-     0.04
-    ]
-   ],
+   "abs_a": [],
    "inj_src": "official",
    "abs_lo": 1.337,
    "abs_ld": 0.272,
-   "abs_lop": 1.436,
-   "abs_ldp": 0.295,
+   "abs_lop": 1.337,
+   "abs_ldp": 0.272,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
