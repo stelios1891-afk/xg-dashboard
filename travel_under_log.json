@@ -10030,15 +10030,15 @@
 }
 },
 "last": {
-"t": "2026-11-25T16:31",
+"t": "2026-11-25T17:39",
 "line": 3.5,
 "over": 1.85,
-"under": 2.02
+"under": 2.03
 },
 "ah_last": [
 -2.25,
-1.86,
-2.03
+1.85,
+2.04
 ]
 },
 "5795528": {
@@ -11606,6 +11606,243 @@
 -0.75,
 1.89,
 2.03
+]
+},
+"5749760": {
+"seen": "2026-11-25T17:39",
+"lg": "SerieA",
+"ko": "2026-11-29T17:00",
+"home": "Roma",
+"away": "Monza",
+"T_model": 3.32,
+"ah_first": [
+-2.0,
+1.92,
+1.96
+],
+"first": {
+"t": "2026-11-25T17:39",
+"line": 3.5,
+"over": 1.93,
+"under": 1.94
+},
+"trav": [
+{
+"side": "home",
+"team": "Roma",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Paris Saint-Germain",
+"eu_t": "2026-11-25T20:00",
+"eu_away": true,
+"km": 1105,
+"inzone": true,
+"patt": 1,
+"sup": 2.0,
+"cat": "μεγαλη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Parma",
+"km": 361,
+"rest": 13.9
+},
+{
+"d": "25/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Paris Saint-Germain",
+"km": 762,
+"rest": 4.1
+}
+],
+"scen": "Π✈ Ε✈ → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 1105,
+"km14": 2228,
+"rest": 3.9,
+"min_rest": 3.9,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "23/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Fiorentina",
+"km": 0,
+"rest": 15.2
+}
+],
+"scen": "Π🏠 → Π✈",
+"n7": 1,
+"n14": 1,
+"away_streak_before": 0,
+"here": "εκτ",
+"trip_now": 478,
+"km14": 478,
+"rest": 5.9,
+"min_rest": 5.9,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-25T17:39",
+"line": 3.5,
+"over": 1.93,
+"under": 1.94
+},
+"ah_last": [
+-2.0,
+1.92,
+1.96
+]
+},
+"5868142": {
+"seen": "2026-11-25T17:39",
+"lg": "LaLiga",
+"ko": "2026-11-29T17:30",
+"home": "Celta Vigo",
+"away": "Villarreal",
+"T_model": 2.4,
+"ah_first": [
+0.0,
+2.04,
+1.87
+],
+"first": {
+"t": "2026-11-25T17:39",
+"line": 2.75,
+"over": 1.98,
+"under": 1.89
+},
+"trav": [
+{
+"side": "home",
+"team": "Celta Vigo",
+"eu_comp": "EuropaLeague",
+"eu_at": "Celta Vigo",
+"eu_t": "2026-11-26T17:45",
+"eu_away": false,
+"km": 0,
+"inzone": true,
+"patt": 1,
+"sup": -0.0,
+"cat": "γηινη",
+"focus": false
+},
+{
+"side": "away",
+"team": "Villarreal",
+"eu_comp": "ChampionsLeague",
+"eu_at": "Slavia Prague",
+"eu_t": "2026-11-25T17:45",
+"eu_away": true,
+"km": 1601,
+"inzone": true,
+"patt": 1,
+"sup": 0.0,
+"cat": "γηινη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Real Madrid",
+"km": 0,
+"rest": 8.0
+},
+{
+"d": "26/11",
+"ha": "εντ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "AFC Bournemouth",
+"km": 465,
+"rest": 4.9
+}
+],
+"scen": "Π✈ Ε🏠 → Π🏠",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 0,
+"here": "εντ",
+"trip_now": 0,
+"km14": 465,
+"rest": 3.0,
+"min_rest": 3.0,
+"euro14": 1,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "22/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Barcelona",
+"km": 247,
+"rest": 13.8
+},
+{
+"d": "25/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ChampionsLeague",
+"opp": "Slavia Prague",
+"km": 1357,
+"rest": 3.2
+}
+],
+"scen": "Π✈ Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 2,
+"here": "εκτ",
+"trip_now": 1979,
+"km14": 3583,
+"rest": 4.0,
+"min_rest": 3.2,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-25T17:39",
+"line": 2.75,
+"over": 1.98,
+"under": 1.89
+},
+"ah_last": [
+0.0,
+2.04,
+1.87
 ]
 }
 }
