@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-25T21:51+00:00",
+ "generated": "2026-11-25T22:09+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -16309,12 +16309,12 @@
    "away": "Chicago Bulls",
    "hcode": "CHO",
    "acode": "CHI",
-   "margin": 0.54,
-   "total": 222.0,
+   "margin": 1.29,
+   "total": 222.3,
    "total_src": "μοντελο",
-   "pts_h": 111.3,
-   "pts_a": 110.7,
-   "p_home": 0.516,
+   "pts_h": 111.8,
+   "pts_a": 110.5,
+   "p_home": 0.538,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -16329,9 +16329,9 @@
    "rl_a": "2026-11-23",
    "margin_base": -0.36,
    "total_base": 223.0,
-   "abs_dm": 0.9,
-   "abs_dt": -1.01,
-   "abs_shadow": 0.44,
+   "abs_dm": 1.64,
+   "abs_dt": -0.78,
+   "abs_shadow": 0.9,
    "abs_h": [
     [
      "Allen,Grayson",
@@ -16367,8 +16367,8 @@
      "Smith,Jalen",
      26.2,
      1,
-     "Questionable",
-     0.46
+     "Out",
+     1.0
     ],
     [
      "Wilson,Caleb",
@@ -16379,10 +16379,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 1.844,
-   "abs_ld": -0.331,
-   "abs_lop": 1.999,
-   "abs_ldp": -0.009,
+   "abs_lo": 2.237,
+   "abs_ld": 0.285,
+   "abs_lop": 2.211,
+   "abs_ldp": 0.324,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
