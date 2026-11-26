@@ -12583,5 +12583,112 @@
 1.94,
 1.92
 ]
+},
+"5749765": {
+"seen": "2026-11-26T17:35",
+"lg": "SerieA",
+"ko": "2026-11-30T17:30",
+"home": "Lecce",
+"away": "Atalanta",
+"T_model": 2.79,
+"ah_first": [
+0.5,
+1.98,
+1.93
+],
+"first": {
+"t": "2026-11-26T17:35",
+"line": 3.0,
+"over": 2.07,
+"under": 1.83
+},
+"trav": [
+{
+"side": "away",
+"team": "Atalanta",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Borac Banja Luka",
+"eu_t": "2026-11-26T20:00",
+"eu_away": true,
+"km": 598,
+"inzone": true,
+"patt": 1,
+"sup": 0.5,
+"cat": "γηινη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Lazio",
+"km": 519,
+"rest": 14.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 2,
+"here": "εντ",
+"trip_now": 512,
+"km14": 1031,
+"rest": 9.1,
+"min_rest": 9.1,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "22/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Inter",
+"km": 32,
+"rest": 14.2
+},
+{
+"d": "26/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Borac Banja Luka",
+"km": 598,
+"rest": 4.0
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 497,
+"km14": 1127,
+"rest": 3.9,
+"min_rest": 3.9,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-26T17:35",
+"line": 3.0,
+"over": 2.07,
+"under": 1.83
+},
+"ah_last": [
+0.5,
+1.98,
+1.93
+]
 }
 }
