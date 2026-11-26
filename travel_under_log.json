@@ -12797,5 +12797,112 @@
 1.98,
 1.93
 ]
+},
+"5868145": {
+"seen": "2026-11-26T20:13",
+"lg": "LaLiga",
+"ko": "2026-11-30T20:00",
+"home": "Espanyol",
+"away": "Getafe",
+"T_model": 1.88,
+"ah_first": [
+-0.5,
+2.07,
+1.85
+],
+"first": {
+"t": "2026-11-26T20:13",
+"line": 2.0,
+"over": 1.85,
+"under": 2.04
+},
+"trav": [
+{
+"side": "away",
+"team": "Getafe",
+"eu_comp": "ConferenceLeague",
+"eu_at": "Iberia 1999",
+"eu_t": "2026-11-26T17:45",
+"eu_away": true,
+"km": 4014,
+"inzone": true,
+"patt": 1,
+"sup": -0.5,
+"cat": "γηινη",
+"focus": true
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "20/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Athletic Club",
+"km": 465,
+"rest": 13.2
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 465,
+"km14": 930,
+"rest": 10.0,
+"min_rest": 10.0,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "22/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "LaLiga",
+"opp": "Atlético Madrid",
+"km": 310,
+"rest": 14.1
+},
+{
+"d": "26/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "ConferenceLeague",
+"opp": "Iberia 1999",
+"km": 4014,
+"rest": 3.9
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 3515,
+"km14": 7839,
+"rest": 4.1,
+"min_rest": 3.9,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-26T20:13",
+"line": 2.0,
+"over": 1.85,
+"under": 2.04
+},
+"ah_last": [
+-0.5,
+2.07,
+1.85
+]
 }
 }
