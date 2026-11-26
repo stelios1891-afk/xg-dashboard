@@ -10802,15 +10802,15 @@
 }
 },
 "last": {
-"t": "2026-11-25T14:18",
+"t": "2026-11-26T19:54",
 "line": 2.75,
 "over": 2.03,
-"under": 1.86
+"under": 1.87
 },
 "ah_last": [
 0.0,
-2.01,
-1.89
+2.06,
+1.85
 ]
 },
 "5795534": {
@@ -12687,6 +12687,113 @@
 },
 "ah_last": [
 0.5,
+1.98,
+1.93
+]
+},
+"5749761": {
+"seen": "2026-11-26T19:54",
+"lg": "SerieA",
+"ko": "2026-11-30T19:45",
+"home": "Cagliari",
+"away": "Milan",
+"T_model": 2.5,
+"ah_first": [
+0.75,
+1.98,
+1.93
+],
+"first": {
+"t": "2026-11-26T19:54",
+"line": 2.5,
+"over": 1.92,
+"under": 1.97
+},
+"trav": [
+{
+"side": "away",
+"team": "Milan",
+"eu_comp": "EuropaLeague",
+"eu_at": "Olympiacos",
+"eu_t": "2026-11-26T17:45",
+"eu_away": true,
+"km": 1465,
+"inzone": true,
+"patt": 1,
+"sup": 0.75,
+"cat": "δυνατη",
+"focus": false
+}
+],
+"sched": {
+"home": {
+"seq": [
+{
+"d": "21/11",
+"ha": "εκτ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Como",
+"km": 735,
+"rest": 14.0
+}
+],
+"scen": "Π✈ → Π🏠",
+"n7": 0,
+"n14": 1,
+"away_streak_before": 1,
+"here": "εντ",
+"trip_now": 735,
+"km14": 1471,
+"rest": 9.2,
+"min_rest": 9.2,
+"euro14": 0,
+"euro_away14": 0,
+"cups14": 0
+},
+"away": {
+"seq": [
+{
+"d": "22/11",
+"ha": "εντ",
+"kind": "Π",
+"comp": "SerieA",
+"opp": "Frosinone",
+"km": 119,
+"rest": 14.1
+},
+{
+"d": "26/11",
+"ha": "εκτ",
+"kind": "Ε",
+"comp": "EuropaLeague",
+"opp": "Olympiacos",
+"km": 1465,
+"rest": 4.0
+}
+],
+"scen": "Π🏠 Ε✈ → Π✈",
+"n7": 1,
+"n14": 2,
+"away_streak_before": 1,
+"here": "εκτ",
+"trip_now": 1269,
+"km14": 2853,
+"rest": 4.1,
+"min_rest": 4.0,
+"euro14": 1,
+"euro_away14": 1,
+"cups14": 0
+}
+},
+"last": {
+"t": "2026-11-26T19:54",
+"line": 2.5,
+"over": 1.92,
+"under": 1.97
+},
+"ah_last": [
+0.75,
 1.98,
 1.93
 ]
