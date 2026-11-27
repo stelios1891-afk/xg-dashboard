@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-27T18:14+00:00",
+ "generated": "2026-11-27T18:26+00:00",
  "season": 2027,
  "comp": "NBA",
  "model": "NBA: χαντικαπ (0.8, 8, 60, 0.75, 5.0, 1.0, 0.75, 0.25) + B2B 3.0 + ζωνη ωρας 0.68/ωρα (προηγ. ματς ≤2μ) + αφετηρια ανα ομαδα √μεριδιου · συνολα (0.7, 6, 45, 0.5, 5.0, 0.0, 0.0, 0.0) τυχη αμυνας 0.25 + Φ3",
@@ -16866,12 +16866,12 @@
    "away": "Miami Heat",
    "hcode": "NYK",
    "acode": "MIA",
-   "margin": 2.93,
+   "margin": 2.87,
    "total": 223.2,
    "total_src": "μοντελο",
    "pts_h": 113.0,
-   "pts_a": 110.1,
-   "p_home": 0.586,
+   "pts_a": 110.2,
+   "p_home": 0.584,
    "played": false,
    "version": "nba1",
    "venue": "",
@@ -16886,16 +16886,16 @@
    "rl_a": "2026-11-25",
    "margin_base": 5.43,
    "total_base": 222.2,
-   "abs_dm": -2.5,
-   "abs_dt": 0.93,
+   "abs_dm": -2.56,
+   "abs_dt": 0.96,
    "abs_shadow": 0.67,
    "abs_h": [
     [
      "Anunoby,OG",
      34.2,
      0,
-     "Doubtful",
-     0.965
+     "Out",
+     1.0
     ],
     [
      "Towns,Karl-Anthony",
@@ -16915,10 +16915,10 @@
     ]
    ],
    "inj_src": "official",
-   "abs_lo": 0,
-   "abs_ld": 0,
-   "abs_lop": 1.645,
-   "abs_ldp": 1.752,
+   "abs_lo": 0.899,
+   "abs_ld": 1.387,
+   "abs_lop": 1.676,
+   "abs_ldp": 1.801,
    "trade_dm": 0.0,
    "trades": [],
    "roster_dm": 0.0,
